@@ -1,0 +1,33 @@
+{
+    "name": "lncd/oauth2server",
+    "description": "OAuth 2.0 server",
+    "version": "0.0.1",
+    "require": {
+        "php": ">=5.3.0",
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/lncd/oauth2server"
+        }
+    ],
+    "keywords": [
+    	"oauth",
+    	"oauth2",
+    	"server"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Bilbie",
+            "email": "php-oauth2-server@alexbilbie.com",
+            "homepage": "http://www.httpster.org",
+            "role": "Developer"
+        }
+    ],
+     "autoload": {
+        "psr-0": {
+        	"oauth2server": "src/"
+        }
+    }
+}
