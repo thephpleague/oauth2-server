@@ -2,7 +2,7 @@
 
 namespace LNCD\OAuth2server;
 
-class OAuthSererClientException extends Exception {}
+class OAuthServerClientException extends Exception {}
 
 class OAuthServerUserException extends Exception {}
 
