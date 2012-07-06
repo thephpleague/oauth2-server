@@ -173,6 +173,47 @@ class Server
         return $params;
     }
 
+    function newAuthoriseRequest(string $typeId, array $authoriseParams)
+    {
+        // Check if the user already has an access token
+        $accessToken = $this->db->hasAccessToken($userId, 
+            $authoriseParams['client_id']);
+
+        if ($accessToken !== false) {
+
+            // Validate the access token matches the scopes requested
+            $originalScopes = $this->db->accessTokenScopes($accessToken);
+
+            foreach ($authoriseParams['scopes'] as $scope) {
+
+                if ( ! in_array($scope, $originalScopes))
+                {
+                    throw new OAuthServerClientException('invalid_scope: ' . 
+                        $this->errors['invalid_scope']);
+                }
+
+            }
+
+            // The user has authorised the client so generate a new 
+            // authorisation code and return it
+            
+            $authCode = $this->newAuthCode($authoriseParams['client_id'], 
+                'user', $typeId, $authoriseParams['redirect_uri'], 
+                $authoriseParams['scopes'], $accessToken);
+
+            return $authCode;
+        }
+
+        else
+        {
+            $authCode = $this->newAuthCode($authoriseParams['client_id'], 
+                'user', $typeId, $authoriseParams['redirect_uri'], 
+                $authoriseParams['scopes']);
+
+            return $authCode;
+        }
+    }
+
     /**
      * Generates a unique code
      * 
