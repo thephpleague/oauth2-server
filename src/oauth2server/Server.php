@@ -241,7 +241,7 @@ class Server
 
         // If an access token exists then update the existing session with the 
         // new authorisation code otherwise create a new session
-        if ($access_token !== null) {
+        if ($accessToken !== null) {
 
             $this->db->updateSession(
                 $clientId,
