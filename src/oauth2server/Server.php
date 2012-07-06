@@ -182,7 +182,7 @@ class Server
     public function newAuthoriseRequest(string $typeId, array $authoriseParams)
     {
         // Check if the user already has an access token
-        $accessToken = $this->db->hasAccessToken($userId, 
+        $accessToken = $this->db->hasAccessToken($typeId, 
             $authoriseParams['client_id']);
 
         if ($accessToken !== false) {
