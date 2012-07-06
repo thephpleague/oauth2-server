@@ -173,6 +173,19 @@ class Server
         return $params;
     }
 
+    /**
+     * Generates a unique code
+     * 
+     * Generate a unique code for an authorisation code, or token
+     * 
+     * @access public
+     * @return string
+     */
+    private function generateCode()
+    {
+        return sha1(uniqid(microtime()));
+    }
+
     public function newAuthCode(string $clientId, $type = 'user', 
         string $typeId, string $redirectUri, $scopes = array(), 
         string $access_token = null)
