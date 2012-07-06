@@ -271,7 +271,7 @@ class Server
             foreach ($scopes as $scope) {
 
                 $this->db->addSessionScope($sessionId, $scope);
-                
+
             }
 
         }
