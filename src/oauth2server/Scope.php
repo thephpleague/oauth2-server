@@ -11,6 +11,6 @@ class Scope
 
     public function details($scopes)
     {
-        
+        // returns details about a scope to display to a user
     }
 }
