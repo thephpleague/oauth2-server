@@ -283,7 +283,7 @@ class Server
      * 
      * @param string $redirect_uri    The redirect URI
      * @param array  $params          The parameters to be appended to the URL
-     * @param string $query_delimeter The delimiter between the variables and the URL
+     * @param string $query_delimeter The query string delimiter (default: ?)
      * 
      * @access public
      * @return string
