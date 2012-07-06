@@ -38,6 +38,11 @@ class Server
         maintenance of the server.'
     ); 
 
+    /**
+     * Constructor
+     * @param  array $options Optional list of options to overwrite the defaults
+     * @return void
+     */
     public function __construct(array $options = null)
     {
         if ($options !== null) {
@@ -45,11 +50,21 @@ class Server
         }
     }
 
+    /**
+     * Register a database abstrator class
+     * @param  object $db A class that implements OAuth2ServerDatabase
+     * @return void
+     */
     public function registerDbAbstractor(object $db)
     {
         $this->db = $db;
     }
 
+    /**
+     * Check authorise parameters
+     * @param  array $authParams Optional array of parsed $_GET keys
+     * @return array             Authorise request parameters
+     */
     public function checkAuthoriseParams(array $authParams = null)
     {
         $params = array();
