@@ -4,26 +4,26 @@ interface OAuth2ServerDatabase
 {
     public function validateClient(
         string $clientId,
-        $clientSecret,
-        $redirectUri
+        string $clientSecret = null,
+        string $redirectUri = null
     );
 
     public function newSession(
         string $clientId,
         string $redirectUri,
         string $type = 'user',
-        string $typeId,
-        $authCode,
-        $accessToken,
+        string $typeId = null,
+        string $authCode = null,
+        string $accessToken = null,
         string $stage = 'request'
     );
 
     public function updateSession(
         string $clientId,
         string $type = 'user',
-        string $typeId,
-        $authCode,
-        $accessToken,
+        string $typeId = null,
+        string $authCode = null,
+        string $accessToken = null,
         string $stage
     );
 
