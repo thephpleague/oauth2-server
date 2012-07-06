@@ -11,6 +11,14 @@ class OAuthServerException extends Exception {}
 class Server
 {
     private $db = NULL;
+
+    private $config = array(
+        'response_types'    =>  array(
+            'code'
+        ),
+        'scope_delimeter'   =>  ','
+    );
+
     protected $errors = array(
         'invalid_request'   =>  'The request is missing a required parameter, includes an invalid parameter value, 
         includes a parameter more than once, or is otherwise malformed.',
@@ -26,6 +34,11 @@ class Server
     ); 
 
     public function __construct()
+    public function __construct(array $options)
+    {
+        $this->options = array_merge($this->config, $options);
+    }
+
     public function registerDbAbstractor(object $db)
     {
         
