@@ -251,8 +251,7 @@ class Server
                 'request'
             );
         
-        // Create a new oauth session
-        } else {
+        } else { // Create a new oauth session
 
             // Delete any existing sessions just to be sure
             $this->db->deleteSession($clientId, $type, $typeId);
