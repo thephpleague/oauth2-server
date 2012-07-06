@@ -39,6 +39,20 @@ interface OAuth2ServerDatabase
         string $authCode
     );
 
+    /**
+     * Has access token
+     * 
+     * Check if an access token exists for a user (or an application)
+     * 
+     * @access public
+     * @return bool|string Return FALSE is a token doesn't exist or return the 
+     * access token as a string
+     */
+    public function hasAccessToken(
+        string $typeId,
+        string $clientId
+    );
+
     public function getAccessToken(int $sessionId);
 
     public function removeAuthCode(int $sessionId);
