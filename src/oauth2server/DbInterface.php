@@ -11,16 +11,16 @@ interface OAuth2ServerDatabase
     public function newSession(
         string $clientId,
         string $redirectUri,
-        string $type = 'user',
+        $type = 'user',
         string $typeId = null,
         string $authCode = null,
         string $accessToken = null,
-        string $stage = 'request'
+        $stage = 'request'
     );
 
     public function updateSession(
         string $clientId,
-        string $type = 'user',
+        $type = 'user',
         string $typeId = null,
         string $authCode = null,
         string $accessToken = null,
