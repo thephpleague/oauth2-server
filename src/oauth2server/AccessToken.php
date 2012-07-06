@@ -4,7 +4,7 @@ namespace LNCD\OAuth2server;
 
 class AccessToken
 {
-    function __construct()
+    public function __construct()
     {
 
     }
