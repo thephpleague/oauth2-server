@@ -10,6 +10,7 @@ class OAuthServerException extends Exception {}
 
 class Server
 {
+    private $db = NULL;
     protected $errors = array(
         'invalid_request'   =>  'The request is missing a required parameter, includes an invalid parameter value, 
         includes a parameter more than once, or is otherwise malformed.',
@@ -25,8 +26,10 @@ class Server
     ); 
 
     public function __construct()
+    public function registerDbAbstractor(object $db)
     {
         
+        $this->db = $db;
     }
 
     public function registerDbAbstractor()
