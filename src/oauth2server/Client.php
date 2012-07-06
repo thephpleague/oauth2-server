@@ -18,7 +18,7 @@ class Client
 
     }
 
-    public function redirectUri(string $redirectUri, array $params, $queryDelimeter = '?')
+    public function redirectUri(string $redirectUri, array $params, string $queryDelimeter = '?')
     {
         // Generates the redirect uri with appended params
     }
