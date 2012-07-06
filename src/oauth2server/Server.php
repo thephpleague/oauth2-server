@@ -173,6 +173,52 @@ class Server
         return $params;
     }
 
+    public function newAuthCode(string $clientId, $type = 'user', 
+        string $typeId, string $redirectUri, $scopes = array(), 
+        string $access_token = null)
+    {
+        $authCode = $this->generateCode();
+
+        // Update an existing session with the new code
+        if ($access_token !== null) {
+
+            $this->db->updateSession(
+                $clientId,
+                $type,
+                $typeId,
+                $authCode,
+                $accessToken,
+                'request'
+            );
+        
+        // Create a new oauth session
+        } else {
+
+            // Delete any existing sessions just to be sure
+            $this->db->deleteSession($clientId, $type, $typeId);
+               
+            // Create a new session     
+            $sessionId = $this->db->newSession(
+                $clientId,
+                $redirectUri,
+                $type,
+                $typeId,
+                $authCode,
+                null,
+                $stage = 'request'
+            );
+                        
+            // Add the scopes
+            foreach ($scopes as $scope)
+            {                
+                $this->db->addSessionScope($sessionId, $scope);
+            }
+
+        }
+        
+        return $authCode;
+    }
+
     /**
      * Generates the redirect uri with appended params
      * 
