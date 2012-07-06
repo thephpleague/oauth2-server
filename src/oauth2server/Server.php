@@ -192,10 +192,11 @@ class Server
 
             foreach ($authoriseParams['scopes'] as $scope) {
 
-                if ( ! in_array($scope, $originalScopes))
-                {
+                if ( ! in_array($scope, $originalScopes)) {
+
                     throw new OAuthServerClientException('invalid_scope: ' . 
                         $this->errors['invalid_scope']);
+
                 }
 
             }
@@ -208,10 +209,9 @@ class Server
                 $authoriseParams['scopes'], $accessToken);
 
             return $authCode;
-        }
+        
+        } else {
 
-        else
-        {
             $authCode = $this->newAuthCode($authoriseParams['client_id'], 
                 'user', $typeId, $authoriseParams['redirect_uri'], 
                 $authoriseParams['scopes']);
@@ -268,9 +268,10 @@ class Server
             );
                         
             // Add the scopes
-            foreach ($scopes as $scope)
-            {                
+            foreach ($scopes as $scope) {
+
                 $this->db->addSessionScope($sessionId, $scope);
+                
             }
 
         }
