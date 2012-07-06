@@ -33,7 +33,6 @@ class Server
         temporary overloading or maintenance of the server.'
     ); 
 
-    public function __construct()
     public function __construct(array $options)
     {
         $this->options = array_merge($this->config, $options);
@@ -41,13 +40,104 @@ class Server
 
     public function registerDbAbstractor(object $db)
     {
-        
         $this->db = $db;
     }
 
-    public function registerDbAbstractor()
+    public function checkAuthoriseParams(array $authParams = NULL)
     {
+        $params = array();
 
+        // Client ID
+        if ( ! isset($authParams['client_id']) && ! isset($_GET['client_id'])) {
+
+            throw new OAuthServerClientException('invalid_request: ' . $this->errors['invalid_request']);
+
+        } else {
+
+            $params['client_id'] = (isset($authParams['client_id'])) ? 
+                $authParams['client_id'] : $_GET['client_id'];
+
+        }
+
+        // Redirect URI
+        if ( ! isset($authParams['redirect_uri']) && ! isset($_GET['redirect_uri'])) {
+
+            throw new OAuthServerClientException('invalid_request: ' . $this->errors['invalid_request']);
+
+        } else {
+
+            $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ? 
+                $authParams['redirect_uri'] : $_GET['redirect_uri'];
+
+        }
+
+        // Validate client ID and redirect URI
+        $clientDetails = $this->db->validateClient($params['client_id'], null, $params['redirect_uri']);
+
+        if ($clientDetails === false) {
+
+            throw new OAuthServerClientException('unauthorized_client: ' . $this->errors['unauthorized_client']);
+        }
+
+        // Response type
+        if ( ! isset($authParams['response_type']) && ! isset($_GET['response_type'])) {
+
+            throw new OAuthServerClientException('invalid_request: ' . $this->errors['invalid_request']);
+
+        } else {
+
+            $params['response_type'] = (isset($authParams['response_type'])) ? 
+                $authParams['response_type'] : $_GET['response_type'];
+
+            // Ensure response type is one that is recognised
+            if ( ! in_array($params['response_type'], $this->config['response_types'])) {
+
+                throw new OAuthServerClientException('unsupported_response_type: ' . 
+                    $this->errors['unsupported_response_type']);
+
+            }
+        }
+
+        // Get and validate scopes
+        if (isset($authParams['scope']) || isset($_GET['scope'])) {
+
+            $scopes = (isset($authParams['client_id'])) ?$authParams['scope'] : $_GET['scope'];
+
+            $scopes = explode($this->config['scope_delimeter'], $scopes);
+
+            for ($i = 0; $i++; $i < count($scopes))
+            {
+                $scopes[$i] = trim($scopes[$i]);
+
+                if ($scopes[$i] === '') {
+                    unset($scopes[$i]);
+                }
+            }
+
+            if (count($scopes) === 0)
+            {
+                throw new OAuthServerClientException('invalid_request: ' . $this->errors['invalid_request']);
+            }
+
+            $params['scopes'] = array();
+
+            foreach ($scopes as $scope)
+            {
+
+                $scopeDetails = $this->db->getScope($scope);
+
+                if ($scopeDetails === false) {
+
+                    throw new OAuthServerClientException('invalid_scope: ' . $this->errors['invalid_scope']);
+
+                }
+
+                $params['scopes'][] = $scopeDetails;
+
+            }
+        }
+
+        return $params;
     }
 
 }
