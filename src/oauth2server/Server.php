@@ -20,17 +20,22 @@ class Server
     );
 
     protected $errors = array(
-        'invalid_request'   =>  'The request is missing a required parameter, includes an invalid parameter value, 
-        includes a parameter more than once, or is otherwise malformed.',
-        'unauthorized_client'   =>  'The client is not authorized to request an access token using this method.',
-        'access_denied' =>  'The resource owner or authorization server denied the request.',
-        'unsupported_response_type' =>  'The authorization server does not support obtaining an access token using this 
-        method.',
-        'invalid_scope' =>  'The requested scope is invalid, unknown, or malformed.',
-        'server_error'  =>  'The authorization server encountered an unexpected condition which prevented it from 
-        fulfilling the request.',
-        'temporarily_unavailable'   =>  'The authorization server is currently unable to handle the request due to a 
-        temporary overloading or maintenance of the server.'
+        'invalid_request'   =>  'The request is missing a required parameter, 
+            includes an invalid parameter value, includes a parameter more than 
+            once, or is otherwise malformed.',
+        'unauthorized_client'   =>  'The client is not authorized to request an 
+            access token using this method.',
+        'access_denied' =>  'The resource owner or authorization server denied 
+            the request.',
+        'unsupported_response_type' =>  'The authorization server does not 
+            support obtaining an access token using this method.',
+        'invalid_scope' =>  'The requested scope is invalid, unknown, or 
+            malformed.',
+        'server_error'  =>  'The authorization server encountered an unexpected 
+            condition which prevented it from fulfilling the request.',
+        'temporarily_unavailable'   =>  'The authorization server is currently 
+        unable to handle the request due to a temporary overloading or 
+        maintenance of the server.'
     ); 
 
     public function __construct(array $options)
@@ -50,7 +55,8 @@ class Server
         // Client ID
         if ( ! isset($authParams['client_id']) && ! isset($_GET['client_id'])) {
 
-            throw new OAuthServerClientException('invalid_request: ' . $this->errors['invalid_request']);
+            throw new OAuthServerClientException('invalid_request: ' . 
+                $this->errors['invalid_request']);
 
         } else {
 
@@ -60,9 +66,11 @@ class Server
         }
 
         // Redirect URI
-        if ( ! isset($authParams['redirect_uri']) && ! isset($_GET['redirect_uri'])) {
+        if ( ! isset($authParams['redirect_uri']) && 
+            ! isset($_GET['redirect_uri'])) {
 
-            throw new OAuthServerClientException('invalid_request: ' . $this->errors['invalid_request']);
+            throw new OAuthServerClientException('invalid_request: ' . 
+                $this->errors['invalid_request']);
 
         } else {
 
@@ -72,17 +80,21 @@ class Server
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->db->validateClient($params['client_id'], null, $params['redirect_uri']);
+        $clientDetails = $this->db->validateClient($params['client_id'], null, 
+            $params['redirect_uri']);
 
         if ($clientDetails === false) {
 
-            throw new OAuthServerClientException('unauthorized_client: ' . $this->errors['unauthorized_client']);
+            throw new OAuthServerClientException('unauthorized_client: ' . 
+                $this->errors['unauthorized_client']);
         }
 
         // Response type
-        if ( ! isset($authParams['response_type']) && ! isset($_GET['response_type'])) {
+        if ( ! isset($authParams['response_type']) && 
+            ! isset($_GET['response_type'])) {
 
-            throw new OAuthServerClientException('invalid_request: ' . $this->errors['invalid_request']);
+            throw new OAuthServerClientException('invalid_request: ' . 
+                $this->errors['invalid_request']);
 
         } else {
 
@@ -90,10 +102,11 @@ class Server
                 $authParams['response_type'] : $_GET['response_type'];
 
             // Ensure response type is one that is recognised
-            if ( ! in_array($params['response_type'], $this->config['response_types'])) {
+            if ( ! in_array($params['response_type'], 
+                $this->config['response_types'])) {
 
-                throw new OAuthServerClientException('unsupported_response_type: ' . 
-                    $this->errors['unsupported_response_type']);
+                throw new OAuthServerClientException('unsupported_response_type:
+                 ' . $this->errors['unsupported_response_type']);
 
             }
         }
@@ -101,7 +114,10 @@ class Server
         // Get and validate scopes
         if (isset($authParams['scope']) || isset($_GET['scope'])) {
 
-            $scopes = (isset($authParams['client_id'])) ?$authParams['scope'] : $_GET['scope'];
+            $scopes = $_GET['scope'];
+            if (isset($authParams['client_id'])) {
+                $authParams['scope'];
+            }
 
             $scopes = explode($this->config['scope_delimeter'], $scopes);
 
@@ -115,7 +131,8 @@ class Server
 
             if (count($scopes) === 0) {
 
-                throw new OAuthServerClientException('invalid_request: ' . $this->errors['invalid_request']);
+                throw new OAuthServerClientException('invalid_request: ' . 
+                    $this->errors['invalid_request']);
             }
 
             $params['scopes'] = array();
@@ -126,7 +143,8 @@ class Server
 
                 if ($scopeDetails === false) {
 
-                    throw new OAuthServerClientException('invalid_scope: ' . $this->errors['invalid_scope']);
+                    throw new OAuthServerClientException('invalid_scope: ' . 
+                        $this->errors['invalid_scope']);
 
                 }
 
