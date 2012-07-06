@@ -179,7 +179,7 @@ class Server
         return $params;
     }
 
-    function newAuthoriseRequest(string $typeId, array $authoriseParams)
+    public function newAuthoriseRequest(string $typeId, array $authoriseParams)
     {
         // Check if the user already has an access token
         $accessToken = $this->db->hasAccessToken($userId, 
