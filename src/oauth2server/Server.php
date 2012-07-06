@@ -10,7 +10,7 @@ class OAuthServerException extends Exception {}
 
 class Server
 {
-    private $db = NULL;
+    private $db = null;
 
     private $config = array(
         'response_types'    =>  array(
@@ -43,7 +43,7 @@ class Server
         $this->db = $db;
     }
 
-    public function checkAuthoriseParams(array $authParams = NULL)
+    public function checkAuthoriseParams(array $authParams = null)
     {
         $params = array();
 
