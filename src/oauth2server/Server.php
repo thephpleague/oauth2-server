@@ -264,7 +264,7 @@ class Server
                 $typeId,
                 $authCode,
                 null,
-                $stage = 'request'
+                'request'
             );
                         
             // Add the scopes
