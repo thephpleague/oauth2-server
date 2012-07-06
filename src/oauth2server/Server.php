@@ -105,8 +105,7 @@ class Server
 
             $scopes = explode($this->config['scope_delimeter'], $scopes);
 
-            for ($i = 0; $i++; $i < count($scopes))
-            {
+            for ($i = 0; $i++; $i < count($scopes)) {
                 $scopes[$i] = trim($scopes[$i]);
 
                 if ($scopes[$i] === '') {
@@ -114,15 +113,14 @@ class Server
                 }
             }
 
-            if (count($scopes) === 0)
-            {
+            if (count($scopes) === 0) {
+
                 throw new OAuthServerClientException('invalid_request: ' . $this->errors['invalid_request']);
             }
 
             $params['scopes'] = array();
 
-            foreach ($scopes as $scope)
-            {
+            foreach ($scopes as $scope) {
 
                 $scopeDetails = $this->db->getScope($scope);
 
