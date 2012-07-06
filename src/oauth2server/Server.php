@@ -40,6 +40,8 @@ class Server
 
     /**
      * Constructor
+     * 
+     * @access public
      * @param  array $options Optional list of options to overwrite the defaults
      * @return void
      */
@@ -52,6 +54,8 @@ class Server
 
     /**
      * Register a database abstrator class
+     * 
+     * @access public
      * @param  object $db A class that implements OAuth2ServerDatabase
      * @return void
      */
@@ -61,7 +65,9 @@ class Server
     }
 
     /**
-     * Check authorise parameters
+     * Check client authorise parameters
+     * 
+     * @access public
      * @param  array $authParams Optional array of parsed $_GET keys
      * @return array             Authorise request parameters
      */
