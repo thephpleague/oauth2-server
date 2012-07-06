@@ -41,6 +41,9 @@ class Server
     public function __construct(array $options)
     {
         $this->options = array_merge($this->config, $options);
+        if ($options !== null) {
+            $this->options = array_merge($this->config, $options);
+        }
     }
 
     public function registerDbAbstractor(object $db)
