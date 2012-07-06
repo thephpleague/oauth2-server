@@ -290,7 +290,8 @@ class Server
      * @return string
      */
     public function redirectUri(string $redirectUri, $params = array(), 
-        $queryDelimeter = '?') {
+        $queryDelimeter = '?')
+    {
       
         if (strstr($redirectUri, $queryDelimeter)) {
 
