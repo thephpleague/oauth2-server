@@ -6,7 +6,7 @@ class Client
 {
 	protected $id;
 	protected $secret;
-	protected $redirect_uri
+	protected $redirect_uri;
 
 	public function __construct()
 	{
