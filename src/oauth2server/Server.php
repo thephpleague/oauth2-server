@@ -173,4 +173,32 @@ class Server
         return $params;
     }
 
+    /**
+     * Generates the redirect uri with appended params
+     * 
+     * @param string $redirect_uri    The redirect URI
+     * @param array  $params          The parameters to be appended to the URL
+     * @param string $query_delimeter The delimiter between the variables and the URL
+     * 
+     * @access public
+     * @return string
+     */
+    public function redirectUri(string $redirectUri, $params = array(), 
+        $queryDelimeter = '?') {
+      
+        if (strstr($redirectUri, $queryDelimeter)) {
+
+            $redirectUri = $redirectUri . '&' . http_build_query($params);
+
+        } else {
+
+            $redirectUri = $redirectUri . $queryDelimeter . 
+            http_build_query($params);
+
+        }
+        
+        return $redirectUri;
+
+    }
+
 }
