@@ -65,7 +65,7 @@ class Server
      * @param  array $authParams Optional array of parsed $_GET keys
      * @return array             Authorise request parameters
      */
-    public function checkAuthoriseParams(array $authParams = null)
+    public function checkClientAuthoriseParams(array $authParams = null)
     {
         $params = array();
 
