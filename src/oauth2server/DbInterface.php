@@ -29,6 +29,7 @@ interface OAuth2ServerDatabase
 
     public function deleteSession(
         string $clientId,
+        string $type,
         string $typeId
     );
 
