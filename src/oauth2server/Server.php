@@ -235,7 +235,7 @@ class Server
 
     public function newAuthCode(string $clientId, $type = 'user', 
         string $typeId, string $redirectUri, $scopes = array(), 
-        string $access_token = null)
+        string $accessToken = null)
     {
         $authCode = $this->generateCode();
 
