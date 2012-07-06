@@ -60,9 +60,4 @@ interface OAuth2ServerDatabase
     );
 
     public function accessTokenScopes(string $accessToken);
-
-    public function validateUser(
-        string $username,
-        string $password
-    );
 }
