@@ -239,7 +239,8 @@ class Server
     {
         $authCode = $this->generateCode();
 
-        // Update an existing session with the new code
+        // If an access token exists then update the existing session with the 
+        // new authorisation code otherwise create a new session
         if ($access_token !== null) {
 
             $this->db->updateSession(
@@ -251,7 +252,7 @@ class Server
                 'request'
             );
         
-        } else { // Create a new oauth session
+        } else {
 
             // Delete any existing sessions just to be sure
             $this->db->deleteSession($clientId, $type, $typeId);
