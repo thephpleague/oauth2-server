@@ -11,7 +11,8 @@ class AccessToken
 
     public function get(int $sessionId)
     {
-        // returns an access token that the user may already have (else generate a new one)
+        // returns an access token that the user may already have
+        // (else generate a new one)
     }
 
     public function validate(string $accessToken, array $scopes)
