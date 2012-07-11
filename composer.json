@@ -5,7 +5,7 @@
     "homepage": "https://github.com/lncd/oauth2server",
     "license": "MIT",
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.3.0"
     },
     "repositories": [
         {
