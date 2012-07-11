@@ -79,7 +79,7 @@ class Server
      * @param  object $db A class that implements OAuth2ServerDatabase
      * @return void
      */
-    public function registerDbAbstractor(object $db)
+    public function registerDbAbstractor($db)
     {
         $this->db = $db;
     }
