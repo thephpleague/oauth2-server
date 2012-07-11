@@ -22,11 +22,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace OAuth2;
 
-class OAuthServerClientException extends Exception {}
+class OAuthServerClientException extends \Exception {}
 
-class OAuthServerUserException extends Exception {}
+class OAuthServerUserException extends \Exception {}
 
-class OAuthServerException extends Exception {}
+class OAuthServerException extends \Exception {}
 
 class Server
 {
