@@ -22,6 +22,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace oauth2server;
 
+use oauth2server\OAuth2ServerDatabase;
+
 class OAuthServerClientException extends \Exception {}
 
 class OAuthServerUserException extends \Exception {}
