@@ -24,6 +24,8 @@ namespace oauth2server;
 
 use oauth2server\OAuth2ServerDatabase;
 
+abstract class ServerDB implements OAuth2ServerDatabase {}
+
 class OAuthServerClientException extends \Exception {}
 
 class OAuthServerUserException extends \Exception {}
