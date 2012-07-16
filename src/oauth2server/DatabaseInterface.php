@@ -6,8 +6,8 @@ interface DatabaseInteface
 {
     public function validateClient(
         $clientId,
-        $clientSecret,
-        $redirectUri
+        $clientSecret = null,
+        $redirectUri = null
     );
 
     public function newSession(
