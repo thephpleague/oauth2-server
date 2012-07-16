@@ -22,43 +22,43 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace oauth2server;
 
-interface OAuth2ServerDatabase
+interface DatabaseInteface
 {
     public function validateClient(
-        string $clientId,
-        string $clientSecret = null,
-        string $redirectUri = null
+        $clientId,
+        $clientSecret,
+        $redirectUri
     );
 
     public function newSession(
-        string $clientId,
-        string $redirectUri,
+        $clientId,
+        $redirectUri,
         $type = 'user',
-        string $typeId = null,
-        string $authCode = null,
-        string $accessToken = null,
+        $typeId = null,
+        $authCode = null,
+        $accessToken = null,
         $stage = 'request'
     );
 
     public function updateSession(
-        string $clientId,
+        $clientId,
         $type = 'user',
-        string $typeId = null,
-        string $authCode = null,
-        string $accessToken = null,
-        string $stage
+        $typeId = null,
+        $authCode = null,
+        $accessToken = null,
+        $stage
     );
 
     public function deleteSession(
-        string $clientId,
-        string $type,
-        string $typeId
+        $clientId,
+        $type,
+        $typeId
     );
 
     public function validateAuthCode(
-        string $clientId,
-        string $redirectUri,
-        string $authCode
+        $clientId,
+        $redirectUri,
+        $authCode
     );
 
     /**
@@ -67,34 +67,34 @@ interface OAuth2ServerDatabase
      * Check if an access token exists for a user (or an application)
      * 
      * @access public
-     * @return bool|string Return FALSE is a token doesn't exist or return the 
+     * @return bool|Return FALSE is a token doesn't exist or return the 
      * access token as a string
      */
     public function hasAccessToken(
-        string $typeId,
-        string $clientId
+        $typeId,
+        $clientId
     );
 
-    public function getAccessToken(int $sessionId);
+    public function getAccessToken($sessionId);
 
-    public function removeAuthCode(int $sessionId);
+    public function removeAuthCode($sessionId);
 
     public function setAccessToken(
-        int $sessionId,
-        string $accessToken
+        $sessionId,
+        $accessToken
     );
 
     public function addSessionScope(
-        int $sessionId,
-        string $scope
+        $sessionId,
+        $scope
     );
 
-    public function getScope(string $scope);
+    public function getScope($scope);
 
     public function updateSessionScopeAccessToken(
-        int $sesstionId,
-        string $accessToken
+        $sesstionId,
+        $accessToken
     );
 
-    public function accessTokenScopes(string $accessToken);
+    public function accessTokenScopes($accessToken);
 }
