@@ -5,7 +5,27 @@ namespace oauth2server;
 interface DatabaseInteface
 {
     /**
-     * [validateClient description]
+     * Validate a client
+     * 
+     * Database query:
+     * 
+     * <code>
+     * # Client ID + redirect URI
+     * SELECT clients.id FROM clients LEFT JOIN client_endpoints ON
+     *  client_endpoints.client_id = clients.id WHERE clients.id = $clientId AND
+     *  client_endpoints.redirect_uri = $redirectUri
+     * 
+     * # Client ID + client secret
+     * SELECT clients.id FROM clients  WHERE clients.id = $clientId AND
+     *  clients.secret = $clientSecret
+     * 
+     * # Client ID + client secret + redirect URI
+     * SELECT clients.id FROM clients LEFT JOIN client_endpoints ON
+     *  client_endpoints.client_id = clients.id WHERE clients.id = $clientId AND
+     *  clients.secret = $clientSecret AND client_endpoints.redirect_uri =
+     *  $redirectUri
+     * </code>
+     * 
      * @param  string $clientId     The client's ID
      * @param  string $clientSecret The client's secret (default = "null")
      * @param  string $redirectUri  The client's redirect URI (default = "null")
@@ -18,7 +38,17 @@ interface DatabaseInteface
     );
 
     /**
-     * [newSession description]
+     * Create a new OAuth session
+     * 
+     * Database query:
+     * 
+     * <code>
+     * INSERT INTO oauth_sessions (client_id, redirect_uri, owner_type,
+     *  owner_id, auth_code, access_token, stage, first_requested, last_updated)
+     *  VALUES ($clientId, $redirectUri, $type, $typeId, $authCode,
+     *  $accessToken, $stage, UNIX_TIMESTAMP(NOW()), UNIX_TIMESTAMP(NOW()))
+     * </code>
+     * 
      * @param  string $clientId    The client ID
      * @param  string $redirectUri The redirect URI
      * @param  string $type        The session owner's type (default = "user")
@@ -39,7 +69,16 @@ interface DatabaseInteface
     );
 
     /**
-     * [updateSession description]
+     * Update an OAuth session
+     * 
+     * Database query:
+     * 
+     * <code>
+     * UPDATE oauth_sessions SET auth_code = $authCode, access_token =
+     *  $accessToken, stage = $stage, last_updated = UNIX_TIMESTAMP(NOW()) WHERE
+     *  client_id = $clientId AND owner_type = $type AND owner_id = $typeId
+     * </code>
+     * 
      * @param  string $clientId    The client ID
      * @param  string $type        The session owner's type (default = "user")
      * @param  string $typeId      The session owner's ID (default = "null")
@@ -58,7 +97,13 @@ interface DatabaseInteface
     );
 
     /**
-     * [deleteSession description]
+     * Delete an OAuth session
+     * 
+     * <code>
+     * DELETE FROM oauth_sessions WHERE client_id = $clientId AND owner_type =
+     *  $type AND owner_id = $typeId
+     * </code>
+     * 
      * @param  string $clientId The client ID
      * @param  string $type     The session owner's type 
      * @param  string $typeId   The session owner's ID
