@@ -137,8 +137,10 @@ interface DatabaseInteface
      *     [owner_id] => (string) The session owner's ID
      *     [auth_code] => (string) The authorisation code
      *     [stage] => (string) The session's stage
-     *     [first_requested] => (int) Unix timestamp of the time the session was first generated
-     *     [last_updated] => (int) Unix timestamp of the time the session was last updated
+     *     [first_requested] => (int) Unix timestamp of the time the session was
+     *      first generated
+     *     [last_updated] => (int) Unix timestamp of the time the session was
+     *      last updated
      * )
      * </code>
      * 
