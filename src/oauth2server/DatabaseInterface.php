@@ -2,7 +2,7 @@
 
 namespace oauth2server;
 
-interface DatabaseInteface
+interface Database
 {
     /**
      * Validate a client
