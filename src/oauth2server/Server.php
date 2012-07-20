@@ -179,7 +179,15 @@ class Server
         return $params;
     }
 
-    public function newAuthoriseRequest(string $typeId, array $authoriseParams)
+    /**
+     * Parse a new authorise request
+     * 
+     * @param  string $type            The session owner's type
+     * @param  string $typeId          The session owner's ID
+     * @param  array  $authoriseParams The authorise request $_GET parameters
+     * @return string                  An authorisation code
+     */
+    public function newAuthoriseRequest(string $type, string $typeId, array $authoriseParams)
     {
         // Check if the user already has an access token
         $accessToken = $this->db->hasAccessToken($typeId, 
@@ -221,21 +229,31 @@ class Server
     }
 
     /**
-     * Generates a unique code
+     * Generate a unique code
      * 
      * Generate a unique code for an authorisation code, or token
      * 
-     * @access public
-     * @return string
+     * @return string A unique code
      */
     private function generateCode()
     {
         return sha1(uniqid(microtime()));
     }
 
-    public function newAuthCode(string $clientId, $type = 'user', 
-        string $typeId, string $redirectUri, $scopes = array(), 
-        string $accessToken = null)
+    /**
+     * Create a new authorisation code
+     * 
+     * @param  string $clientId    The client ID
+     * @param  string $type        The type of the owner of the session
+     * @param  string $typeId      The session owner's ID
+     * @param  string $redirectUri The redirect URI
+     * @param  array  $scopes      The requested scopes
+     * @param  string $accessToken The access token (default = null)
+     * @return string              An authorisation code
+     */
+    public function newAuthCode(string $clientId, $type = 'user',
+     string $typeId, string $redirectUri, $scopes = array(),
+     string $accessToken = null)
     {
         $authCode = $this->generateCode();
 
@@ -278,20 +296,18 @@ class Server
         }
         
         return $authCode;
-    }
+    }    
 
     /**
      * Generates the redirect uri with appended params
      * 
-     * @param string $redirect_uri    The redirect URI
-     * @param array  $params          The parameters to be appended to the URL
-     * @param string $query_delimeter The query string delimiter (default: ?)
-     * 
-     * @access public
-     * @return string
+     * @param  string $redirectUri     The redirect URI
+     * @param  array  $params          The parameters to be appended to the URL
+     * @param  string $query_delimeter The query string delimiter (default: ?)
+     * @return string                  The updated redirect URI
      */
     public function redirectUri(string $redirectUri, $params = array(), 
-        $queryDelimeter = '?')
+     $queryDelimeter = '?')
     {
       
         if (strstr($redirectUri, $queryDelimeter)) {
