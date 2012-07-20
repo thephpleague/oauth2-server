@@ -194,7 +194,7 @@ maintenance of the server.'
      array $authoriseParams)
     {
         // Check if the user already has an access token
-        $accessToken = $this->db->hasAccessToken($typeId, 
+        $accessToken = $this->db->hasAccessToken($type, $typeId, 
             $authoriseParams['client_id']);
 
         if ($accessToken !== false) {
