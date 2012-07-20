@@ -88,7 +88,8 @@ maintenance of the server.'
         // Client ID
         if ( ! isset($authParams['client_id']) && ! isset($_GET['client_id'])) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
+            throw new OAuthServerClientException(sprintf(
+                $this->errors['invalid_request'], 'client_id'), 0);
 
         } else {
 
@@ -101,7 +102,8 @@ maintenance of the server.'
         if ( ! isset($authParams['redirect_uri']) && 
             ! isset($_GET['redirect_uri'])) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'redirect_uri'), 0);
+            throw new OAuthServerClientException(sprintf(
+                $this->errors['invalid_request'], 'redirect_uri'), 0);
 
         } else {
 
@@ -116,14 +118,16 @@ maintenance of the server.'
 
         if ($clientDetails === false) {
 
-            throw new OAuthServerClientException($this->errors['unauthorized_client'], 1);
+            throw new OAuthServerClientException(
+                $this->errors['unauthorized_client'], 1);
         }
 
         // Response type
         if ( ! isset($authParams['response_type']) && 
             ! isset($_GET['response_type'])) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'response_type'), 0);
+            throw new OAuthServerClientException(sprintf(
+                $this->errors['invalid_request'], 'response_type'), 0);
 
         } else {
 
@@ -134,7 +138,8 @@ maintenance of the server.'
             if ( ! in_array($params['response_type'], 
                 $this->config['response_types'])) {
 
-                throw new OAuthServerClientException($this->errors['unsupported_response_type'], 3);
+                throw new OAuthServerClientException(
+                    $this->errors['unsupported_response_type'], 3);
 
             }
         }
@@ -159,7 +164,8 @@ maintenance of the server.'
 
             if (count($scopes) === 0) {
 
-                throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'scope'), 0);
+                throw new OAuthServerClientException(sprintf(
+                    $this->errors['invalid_request'], 'scope'), 0);
             }
 
             $params['scopes'] = array();
@@ -170,7 +176,8 @@ maintenance of the server.'
 
                 if ($scopeDetails === false) {
 
-                    throw new OAuthServerClientException(sprintf($this->errors['invalid_scope'], $scope), 4);
+                    throw new OAuthServerClientException(sprintf(
+                        $this->errors['invalid_scope'], $scope), 4);
 
                 }
 
@@ -206,7 +213,8 @@ maintenance of the server.'
 
                 if ( ! in_array($scope, $originalScopes)) {
 
-                    throw new OAuthServerClientException($this->errors['invalid_scope'], 4);
+                    throw new OAuthServerClientException(
+                        $this->errors['invalid_scope'], 4);
 
                 }
 
