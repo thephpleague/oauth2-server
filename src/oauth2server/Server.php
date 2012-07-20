@@ -154,7 +154,7 @@ maintenance of the server.'
 
             $scopes = explode($this->config['scope_delimeter'], $scopes);
 
-            for ($i = 0; $i++; $i < count($scopes)) {
+            for ($i = 0; $i < count($scopes); $i++) {
                 $scopes[$i] = trim($scopes[$i]);
 
                 if ($scopes[$i] === '') {
