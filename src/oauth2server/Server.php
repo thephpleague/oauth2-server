@@ -8,7 +8,7 @@ class OAuthServerUserException extends \Exception {}
 
 class OAuthServerException extends \Exception {}
 
-class Server
+class AuthServer
 {
     private $db = null;
 
