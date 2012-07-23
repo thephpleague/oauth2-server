@@ -1,5 +1,5 @@
 {
-	"name": "lncd/OAuth2",
+	"name": "lncd/Oauth2",
 	"description": "OAuth 2.0 server - UNDER DEVELOPMENT - NOT READY FOR PRIMETIME",
 	"version": "0.0.1",
 	"homepage": "https://github.com/lncd/OAuth2",
@@ -28,7 +28,7 @@
 	],
 	"autoload": {
 		"psr-0": {
-			"oauth2server": "src/"
+			"Oauth2": "src/"
 		}
 	}
 }
