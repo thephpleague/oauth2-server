@@ -153,22 +153,22 @@ interface Database
     );
 
     /**
-     * Return the access token for a given session owner and client combination
+     * Return the session ID for a given session owner and client combination
      * 
      * Database query:
      * 
      * <code>
-     * SELECT access_token FROM oauth_sessions WHERE client_id = $clientId
+     * SELECT id FROM oauth_sessions WHERE client_id = $clientId
      *  AND owner_type = $type AND owner_id = $typeId
      * </code>
      * 
      * @param  string      $type     The session owner's type 
      * @param  string      $typeId   The session owner's ID
      * @param  string      $clientId The client ID
-     * @return string|null           Return the access token as a string if 
-     *  found otherwise returns null
+     * @return string|null           Return the session ID as an integer if 
+     *  found otherwise returns false
      */
-    public function hasAccessToken(
+    public function hasSession(
         $type,
         $typeId,
         $clientId
