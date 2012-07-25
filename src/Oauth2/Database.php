@@ -86,12 +86,10 @@ interface Database
      * @return void
      */
     public function updateSession(
-        $clientId,
-        $type = 'user',
-        $typeId = null,
+        $sessionId,
         $authCode = null,
         $accessToken = null,
-        $stage
+        $stage = 'request'
     );
 
     /**
