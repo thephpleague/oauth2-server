@@ -374,22 +374,15 @@ maintenance of the server.',
 
         switch ($params['grant_type'])
         {
-            // Authorization code grant
-            case 'authorization_code':
+            
+            case 'authorization_code': // Authorization code grant
                 return $this->completeAuthCodeGrant($authParams, $params);
                 break;
 
-            // Refresh token
-            case 'refresh_token':
-
-            // Resource owner password credentials grant
-            case 'password':
-
-            // Client credentials grant
-            case 'client_credentials':
-
-            // Unsupported 
-            default:
+            case 'refresh_token': // Refresh token
+            case 'password': // Resource owner password credentials grant
+            case 'client_credentials': // Client credentials grant
+            default: // Unsupported
                 throw new OAuthServerException($this->errors['server_error'] . 
                  'Tried to process an unsuppported grant type.',
                  5);
