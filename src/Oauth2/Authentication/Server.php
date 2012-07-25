@@ -339,16 +339,78 @@ maintenance of the server.',
     }
 
     /**
-     * Complete the authorisation code grant
+     * Issue an access token
      * 
      * @access public
+     * 
      * @param  array $authParams Optional array of parsed $_POST keys
+     * 
      * @return array             Authorise request parameters
      */
-    public function completeAuthCodeGrant($authParams = null)
+    public function issueAccessToken($authParams = null)
     {
         $params = array();
 
+        // Grant type (must be 'authorization_code')
+        if ( ! isset($authParams['grant_type']) && 
+            ! isset($_POST['grant_type'])) {
+
+            throw new OAuthServerClientException(sprintf(
+                $this->errors['invalid_request'], 'grant_type'), 0);
+
+        } else {
+
+            $params['grant_type'] = (isset($authParams['grant_type'])) ? 
+                $authParams['grant_type'] : $_POST['grant_type'];
+
+            // Ensure response type is one that is recognised
+            if ( ! in_array($params['response_type'],
+             $this->config['grant_types'])) {
+
+                throw new OAuthServerClientException(
+                    $this->errors['unsupported_grant_type'], 7);
+
+            }
+        }
+
+        switch ($params['grant_type'])
+        {
+            // Authorization code grant
+            case 'authorization_code':
+                return $this->completeAuthCodeGrant($authParams, $params);
+                break;
+
+            // Refresh token
+            case 'refresh_token':
+
+            // Resource owner password credentials grant
+            case 'password':
+
+            // Client credentials grant
+            case 'client_credentials':
+
+            // Unsupported 
+            default:
+                throw new OAuthServerException($this->errors['server_error'] . 
+                 'Tried to process an unsuppported grant type.',
+                 5);
+                break;
+        }
+    }
+
+    /**
+     * Complete the authorisation code grant
+     * 
+     * @access private
+     * 
+     * @param  array $authParams Array of parsed $_POST keys
+     * @param  array $params     Generated parameters from issueAccessToken()
+     * 
+     * @return array             Authorise request parameters
+     */
+    private function completeAuthCodeGrant($authParams = array(), $params =
+     array())
+    {
         // Client ID
         if ( ! isset($authParams['client_id']) &&
          ! isset($_POST['client_id'])) {
@@ -400,27 +462,6 @@ maintenance of the server.',
 
             throw new OAuthServerClientException(
                 $this->errors['invalid_client'], 8);
-        }
-
-        // Grant type (must be 'authorization_code')
-        if ( ! isset($authParams['grant_type']) && 
-            ! isset($_POST['grant_type'])) {
-
-            throw new OAuthServerClientException(sprintf(
-                $this->errors['invalid_request'], 'grant_type'), 0);
-
-        } else {
-
-            $params['grant_type'] = (isset($authParams['grant_type'])) ? 
-                $authParams['grant_type'] : $_POST['grant_type'];
-
-            // Ensure response type is one that is recognised
-            if ($params['response_type'] !== 'authorization_code') {
-
-                throw new OAuthServerClientException(
-                    $this->errors['unsupported_grant_type'], 7);
-
-            }
         }
 
         // The authorization code
@@ -477,6 +518,7 @@ maintenance of the server.',
      * @param  string $redirectUri     The redirect URI
      * @param  array  $params          The parameters to be appended to the URL
      * @param  string $query_delimeter The query string delimiter (default: ?)
+     * 
      * @return string                  The updated redirect URI
      */
     public function redirectUri($redirectUri, $params = array(), 
