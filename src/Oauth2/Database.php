@@ -145,8 +145,8 @@ interface Database
      * @param  string     $clientId    The client ID
      * @param  string     $redirectUri The redirect URI
      * @param  string     $authCode    The authorisation code
-     * @return array|null              Returns an array if the authorisation
-     *  code is valid otherwise returns null  
+     * @return int|bool                Returns the session ID if the auth code
+     *  is valid otherwise returns false 
      */
     public function validateAuthCode(
         $clientId,
