@@ -130,7 +130,7 @@ maintenance of the server.',
         if ($clientDetails === false) {
 
             throw new OAuthServerClientException(
-                $this->errors['unauthorized_client'], 1);
+                $this->errors['invalid_client'], 8);
         }
 
         // Response type
