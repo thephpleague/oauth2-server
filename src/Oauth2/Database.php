@@ -76,16 +76,14 @@ interface Database
      * <code>
      * UPDATE oauth_sessions SET auth_code = $authCode, access_token =
      *  $accessToken, stage = $stage, last_updated = UNIX_TIMESTAMP(NOW()) WHERE
-     *  client_id = $clientId AND owner_type = $type AND owner_id = $typeId
+     *  id = $sessionId
      * </code>
      * 
-     * @param  string $clientId    The client ID
-     * @param  string $type        The session owner's type (default = "user")
-     * @param  string $typeId      The session owner's ID (default = "null")
+     * @param  string $sessionId   The session ID
      * @param  string $authCode    The authorisation code (default = "null")
      * @param  string $accessToken The access token (default = "null")
      * @param  string $stage       The stage of the session (default ="request")
-     * @return [type]              [description]
+     * @return void
      */
     public function updateSession(
         $clientId,
