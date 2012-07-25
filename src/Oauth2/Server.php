@@ -92,7 +92,7 @@ maintenance of the server.',
      * @param  array $authParams Optional array of parsed $_GET keys
      * @return array             Authorise request parameters
      */
-    public function checkClientAuthoriseParams(array $authParams = null)
+    public function checkClientAuthoriseParams($authParams = null)
     {
         $params = array();
 
