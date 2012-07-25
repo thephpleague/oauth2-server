@@ -13,10 +13,11 @@ class Server
     private $db = null;
 
     private $config = array(
-        'response_types'    =>  array(
-            'code'
-        ),
-        'scope_delimeter'   =>  ','
+        'response_types'        =>  array(
+                'code'
+            ),
+        'scope_delimeter'       =>  ',',
+        'access_token_expire'   =>  0
     );
 
     public $exceptionCodes = array(
