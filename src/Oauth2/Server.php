@@ -303,7 +303,7 @@ maintenance of the server.'
      * @param  string $query_delimeter The query string delimiter (default: ?)
      * @return string                  The updated redirect URI
      */
-    public function redirectUri(string $redirectUri, $params = array(), 
+    public function redirectUri($redirectUri, $params = array(), 
      $queryDelimeter = '?')
     {
       
