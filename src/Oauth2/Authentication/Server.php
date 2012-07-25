@@ -1,6 +1,6 @@
 <?php
 
-namespace Oauth2;
+namespace Oauth2\Authentication;
 
 class OAuthServerClientException extends \Exception {}
 
