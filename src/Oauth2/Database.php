@@ -91,6 +91,7 @@ interface Database
         $authCode = null,
         $accessToken = null,
         $stage = 'request'
+        $accessTokenExpire = null,
     );
 
     /**
