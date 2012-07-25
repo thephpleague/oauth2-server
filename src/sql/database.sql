@@ -53,6 +53,6 @@ CREATE TABLE `oauth_session_scopes` (
   KEY `session_id` (`session_id`),
   KEY `access_token` (`access_token`),
   KEY `scope` (`scope`),
-  CONSTRAINT `oauth_session_scopes_ibfk_2` FOREIGN KEY (`scope`) REFERENCES `scopes` (`scope`) ON DELETE CASCADE,
-  CONSTRAINT `oauth_session_scopes_ibfk_3` FOREIGN KEY (`scope`) REFERENCES `scopes` (`scope`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `oauth_session_scopes_ibfk_3` FOREIGN KEY (`scope`) REFERENCES `scopes` (`scope`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `oauth_session_scopes_ibfk_4` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
