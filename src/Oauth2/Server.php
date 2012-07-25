@@ -304,7 +304,136 @@ maintenance of the server.',
         }
         
         return $authCode;
-    }    
+    }
+
+    /**
+     * Complete the authorisation code grant
+     * 
+     * @access public
+     * @param  array $authParams Optional array of parsed $_POST keys
+     * @return array             Authorise request parameters
+     */
+    public function completeAuthCodeGrant($authParams = null)
+    {
+        $params = array();
+
+        // Client ID
+        if ( ! isset($authParams['client_id']) && ! isset($_POST['client_id'])) {
+
+            throw new OAuthServerClientException(sprintf(
+                $this->errors['invalid_request'], 'client_id'), 0);
+
+        } else {
+
+            $params['client_id'] = (isset($authParams['client_id'])) ? 
+                $authParams['client_id'] : $_POST['client_id'];
+
+        }
+
+        // Client secret
+        if ( ! isset($authParams['client_secret']) && ! isset($_POST['client_secret'])) {
+
+            throw new OAuthServerClientException(sprintf(
+                $this->errors['invalid_request'], 'client_secret'), 0);
+
+        } else {
+
+            $params['client_secret'] = (isset($authParams['client_secret'])) ? 
+                $authParams['client_secret'] : $_POST['client_secret'];
+
+        }
+
+        // Redirect URI
+        if ( ! isset($authParams['redirect_uri']) && 
+            ! isset($_POST['redirect_uri'])) {
+
+            throw new OAuthServerClientException(sprintf(
+                $this->errors['invalid_request'], 'redirect_uri'), 0);
+
+        } else {
+
+            $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ? 
+                $authParams['redirect_uri'] : $_POST['redirect_uri'];
+
+        }
+
+        // Validate client ID and redirect URI
+        $clientDetails = $this->db->validateClient($params['client_id'], $params['client_secret'], 
+            $params['redirect_uri']);
+
+        if ($clientDetails === false) {
+
+            throw new OAuthServerClientException(
+                $this->errors['invalid_client'], 8);
+        }
+
+        // Grant type (must be 'authorization_code')
+        if ( ! isset($authParams['grant_type']) && 
+            ! isset($_POST['grant_type'])) {
+
+            throw new OAuthServerClientException(sprintf(
+                $this->errors['invalid_request'], 'grant_type'), 0);
+
+        } else {
+
+            $params['grant_type'] = (isset($authParams['grant_type'])) ? 
+                $authParams['grant_type'] : $_POST['grant_type'];
+
+            // Ensure response type is one that is recognised
+            if ($params['response_type'] !== 'authorization_code') {
+
+                throw new OAuthServerClientException(
+                    $this->errors['unsupported_grant_type'], 7);
+
+            }
+        }
+
+        // The authorization code
+        if ( ! isset($authParams['code']) && 
+            ! isset($_GET['code'])) {
+
+            throw new OAuthServerClientException(sprintf(
+                $this->errors['invalid_request'], 'code'), 0);
+
+        } else {
+
+            $params['code'] = (isset($authParams['code'])) ? 
+                $authParams['code'] : $_POST['code'];
+
+        }
+
+        // Verify the authorization code matches the client_id and the
+        //  request_uri
+        $sessionId = $this->db->validateAuthCode($params['client_id'],
+         $params['request_uri'], $params['code']);
+
+        if ( ! $sessionId)
+        {
+            throw new OAuthServerClientException(sprintf(
+                $this->errors['invalid_grant'], 'code'), 9);
+        }
+
+        else
+        {
+            // A session ID was returned so update it with an access token,
+            //  remove the authorisation code, change the stage to 'granted'
+
+            $accessToken = $this->generateCode();
+
+            $accessTokenExpires = ($this->config['access_token_ttl'] === null) ? null : time() + $this->config['access_token_ttl'];
+
+            $this->db->updateSession($sessionId, null, $accessToken, $accessTokenExpires, 'granted');
+
+            // Update the session's scopes to reference the access token
+            $this->db->updateSessionScopeAccessToken($sessionId, $accessToken);
+
+            return array(
+                'access_token'  =>  $accessToken,
+                'token_type'    =>  'bearer',
+                'expires_in'    =>  $this->config['access_token_ttl']
+            );
+        }
+    }
 
     /**
      * Generates the redirect uri with appended params
