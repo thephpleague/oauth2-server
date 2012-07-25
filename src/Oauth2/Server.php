@@ -27,7 +27,10 @@ class Server
         3   =>  'unsupported_response_type',
         4   =>  'invalid_scope',
         5   =>  'server_error',
-        6   =>  'temporarily_unavailable'
+        6   =>  'temporarily_unavailable',
+        7   =>  'unsupported_grant_type',
+        8   =>  'invalid_client',
+        9   =>  'invalid_grant'
     );
 
     protected $errors = array(
@@ -46,7 +49,14 @@ support obtaining an access token using this method.',
 condition which prevented it from fulfilling the request.',
         'temporarily_unavailable'   =>  'The authorization server is currently 
 unable to handle the request due to a temporary overloading or 
-maintenance of the server.'
+maintenance of the server.',
+        'unsupported_grant_type'    =>  'The authorization grant type is not
+         supported by the authorization server',
+        'invalid_client'    =>  'Client authentication failed',
+        'invalid_grant'     =>  'The provided authorization grant is invalid,
+         expired, revoked, does not match the redirection URI used in the
+          authorization request, or was issued to another client. Check the
+           "%s" parameter.'
     );
 
     /**
