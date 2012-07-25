@@ -284,9 +284,9 @@ maintenance of the server.'
             );
                         
             // Add the scopes
-            foreach ($scopes as $scope) {
+            foreach ($scopes as $key => $scope) {
 
-                $this->db->addSessionScope($sessionId, $scope);
+                $this->db->addSessionScope($sessionId, $scope['scope']);
 
             }
 
