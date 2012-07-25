@@ -10,8 +10,16 @@ class OAuthServerException extends \Exception {}
 
 class Server
 {
-    private $db = null;
+    /**
+     * Reference to the database abstractor
+     * @var object
+     */
+    private $db;
 
+    /**
+     * Server configuration
+     * @var array
+     */
     private $config = array(
         'scope_delimeter'       =>  ',',
         'access_token_ttl'   =>  null
@@ -32,6 +40,11 @@ class Server
     private $grant_types    =   array(
         'authorization_code'
     );
+
+    /**
+     * Exception error codes
+     * @var array
+     */
     public $exceptionCodes = array(
         0   =>  'invalid_request',
         1   =>  'unauthorized_client',
@@ -45,7 +58,14 @@ class Server
         9   =>  'invalid_grant'
     );
 
-    protected $errors = array(
+    /**
+     * Error codes.
+     * 
+     * To provide i8ln errors just overwrite the keys
+     * 
+     * @var array
+     */
+    public $errors = array(
         'invalid_request'   =>  'The request is missing a required parameter,
  includes an invalid parameter value, includes a parameter more than
  once, or is otherwise malformed. Check the "%s" parameter.',
