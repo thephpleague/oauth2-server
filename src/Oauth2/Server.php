@@ -201,43 +201,23 @@ maintenance of the server.'
      */
     public function newAuthoriseRequest($type, $typeId, $authoriseParams)
     {
-        // Check if the user already has an access token
-        $accessToken = $this->db->hasAccessToken($type, $typeId, 
-            $authoriseParams['client_id']);
+        // Remove any old sessions the user might have
+        $this->db->deleteSession(
+            $authoriseParams['client_id'],
+            $type,
+            $typeId
+        );
 
-        if ($accessToken !== false) {
+        // Create the new auth code
+        $authCode = $this->newAuthCode(
+            $authoriseParams['client_id'], 
+            'user',
+            $typeId,
+            $authoriseParams['redirect_uri'], 
+            $authoriseParams['scopes']
+        );
 
-            // Validate the access token matches the scopes requested
-            $originalScopes = $this->db->accessTokenScopes($accessToken);
-
-            foreach ($authoriseParams['scopes'] as $scope) {
-
-                if ( ! in_array($scope, $originalScopes)) {
-
-                    throw new OAuthServerClientException(
-                        $this->errors['invalid_scope'], 4);
-
-                }
-
-            }
-
-            // The user has authorised the client so generate a new 
-            // authorisation code and return it
-            
-            $authCode = $this->newAuthCode($authoriseParams['client_id'], 
-                'user', $typeId, $authoriseParams['redirect_uri'], 
-                $authoriseParams['scopes'], $accessToken);
-
-            return $authCode;
-        
-        } else {
-
-            $authCode = $this->newAuthCode($authoriseParams['client_id'], 
-                'user', $typeId, $authoriseParams['redirect_uri'], 
-                $authoriseParams['scopes']);
-
-            return $authCode;
-        }
+        return $authCode;
     }
 
     /**
