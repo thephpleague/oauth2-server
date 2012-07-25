@@ -98,7 +98,7 @@ maintenance of the server.',
      * @param  array $options Optional list of options to overwrite the defaults
      * @return void
      */
-    public function __construct(array $options = null)
+    public function __construct($options = null)
     {
         if ($options !== null) {
             $this->options = array_merge($this->config, $options);
