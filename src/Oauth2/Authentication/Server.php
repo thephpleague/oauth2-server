@@ -13,16 +13,25 @@ class Server
     private $db = null;
 
     private $config = array(
-        'response_types'        =>  array(
-                'code'
-            ),
-        'grant_types'           =>  array(
-                'authorization_code'
-            ),
         'scope_delimeter'       =>  ',',
         'access_token_ttl'   =>  null
     );
 
+    /**
+     * Supported response types
+     * @var array
+     */
+    private $response_types =   array(
+        'code'
+    );
+    
+    /**
+     * Supported grant types
+     * @var array
+     */
+    private $grant_types    =   array(
+        'authorization_code'
+    );
     public $exceptionCodes = array(
         0   =>  'invalid_request',
         1   =>  'unauthorized_client',
