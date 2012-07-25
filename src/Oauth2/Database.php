@@ -65,8 +65,8 @@ interface Database
         $typeId = null,
         $authCode = null,
         $accessToken = null,
-        $stage = 'request'
         $accessTokenExpire = null,
+        $stage = 'requested'
     );
 
     /**
@@ -90,8 +90,8 @@ interface Database
         $sessionId,
         $authCode = null,
         $accessToken = null,
-        $stage = 'request'
         $accessTokenExpire = null,
+        $stage = 'requested'
     );
 
     /**
