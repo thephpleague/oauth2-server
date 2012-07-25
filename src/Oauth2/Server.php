@@ -16,6 +16,9 @@ class Server
         'response_types'        =>  array(
                 'code'
             ),
+        'grant_types'           =>  array(
+                'authorization_code'
+            ),
         'scope_delimeter'       =>  ',',
         'access_token_ttl'   =>  null
     );
@@ -318,7 +321,8 @@ maintenance of the server.',
         $params = array();
 
         // Client ID
-        if ( ! isset($authParams['client_id']) && ! isset($_POST['client_id'])) {
+        if ( ! isset($authParams['client_id']) &&
+         ! isset($_POST['client_id'])) {
 
             throw new OAuthServerClientException(sprintf(
                 $this->errors['invalid_request'], 'client_id'), 0);
@@ -331,7 +335,8 @@ maintenance of the server.',
         }
 
         // Client secret
-        if ( ! isset($authParams['client_secret']) && ! isset($_POST['client_secret'])) {
+        if ( ! isset($authParams['client_secret']) &&
+         ! isset($_POST['client_secret'])) {
 
             throw new OAuthServerClientException(sprintf(
                 $this->errors['invalid_request'], 'client_secret'), 0);
@@ -358,7 +363,8 @@ maintenance of the server.',
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->db->validateClient($params['client_id'], $params['client_secret'], 
+        $clientDetails = $this->db->validateClient($params['client_id'],
+         $params['client_secret'], 
             $params['redirect_uri']);
 
         if ($clientDetails === false) {
@@ -407,22 +413,23 @@ maintenance of the server.',
         $sessionId = $this->db->validateAuthCode($params['client_id'],
          $params['request_uri'], $params['code']);
 
-        if ( ! $sessionId)
-        {
+        if ( ! $sessionId) {
+
             throw new OAuthServerClientException(sprintf(
                 $this->errors['invalid_grant'], 'code'), 9);
-        }
+        
+        } else {
 
-        else
-        {
             // A session ID was returned so update it with an access token,
             //  remove the authorisation code, change the stage to 'granted'
 
             $accessToken = $this->generateCode();
 
-            $accessTokenExpires = ($this->config['access_token_ttl'] === null) ? null : time() + $this->config['access_token_ttl'];
+            $accessTokenExpires = ($this->config['access_token_ttl'] === null)
+             ? null : time() + $this->config['access_token_ttl'];
 
-            $this->db->updateSession($sessionId, null, $accessToken, $accessTokenExpires, 'granted');
+            $this->db->updateSession($sessionId, null, $accessToken,
+             $accessTokenExpires, 'granted');
 
             // Update the session's scopes to reference the access token
             $this->db->updateSessionScopeAccessToken($sessionId, $accessToken);
