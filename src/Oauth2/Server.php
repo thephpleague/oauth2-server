@@ -243,9 +243,14 @@ maintenance of the server.'
      * @param  string $accessToken The access token (default = null)
      * @return string              An authorisation code
      */
-    public function newAuthCode(string $clientId, $type = 'user',
-     string $typeId, string $redirectUri, $scopes = array(),
-     string $accessToken = null)
+    public function newAuthCode(
+        $clientId,
+        $type = 'user',
+        $typeId,
+        $redirectUri,
+        $scopes = array(),
+        $accessToken = null
+        )
     {
         $authCode = $this->generateCode();
 
