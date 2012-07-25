@@ -253,7 +253,7 @@ maintenance of the server.',
      * @param  string $accessToken The access token (default = null)
      * @return string              An authorisation code
      */
-    public function newAuthCode(
+    private function newAuthCode(
         $clientId,
         $type = 'user',
         $typeId,
