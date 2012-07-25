@@ -199,8 +199,7 @@ maintenance of the server.'
      * @param  array  $authoriseParams The authorise request $_GET parameters
      * @return string                  An authorisation code
      */
-    public function newAuthoriseRequest(string $type, string $typeId,
-     array $authoriseParams)
+    public function newAuthoriseRequest($type, $typeId, $authoriseParams)
     {
         // Check if the user already has an access token
         $accessToken = $this->db->hasAccessToken($type, $typeId, 
