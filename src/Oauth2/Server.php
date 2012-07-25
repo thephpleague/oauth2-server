@@ -17,7 +17,7 @@ class Server
                 'code'
             ),
         'scope_delimeter'       =>  ',',
-        'access_token_expire'   =>  0
+        'access_token_ttl'   =>  null
     );
 
     public $exceptionCodes = array(
