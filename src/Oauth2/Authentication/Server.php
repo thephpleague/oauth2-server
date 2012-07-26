@@ -364,7 +364,7 @@ maintenance of the server.',
                 $authParams['grant_type'] : $_POST['grant_type'];
 
             // Ensure response type is one that is recognised
-            if ( ! in_array($params['response_type'], $this->grant_types)) {
+            if ( ! in_array($params['grant_type'], $this->grant_types)) {
 
                 throw new OAuthServerClientException(
                     $this->errors['unsupported_grant_type'], 7);
