@@ -66,29 +66,16 @@ class Server
      * @var array
      */
     public $errors = array(
-        'invalid_request'   =>  'The request is missing a required parameter,
- includes an invalid parameter value, includes a parameter more than
- once, or is otherwise malformed. Check the "%s" parameter.',
-        'unauthorized_client'   =>  'The client is not authorized to request an 
-access token using this method.',
-        'access_denied' =>  'The resource owner or authorization server denied 
-the request.',
-        'unsupported_response_type' =>  'The authorization server does not 
-support obtaining an access token using this method.',
-        'invalid_scope' =>  'The requested scope is invalid, unknown, or 
-            malformed. Check the "%s" scope.',
-        'server_error'  =>  'The authorization server encountered an unexpected 
-condition which prevented it from fulfilling the request.',
-        'temporarily_unavailable'   =>  'The authorization server is currently 
-unable to handle the request due to a temporary overloading or 
-maintenance of the server.',
-        'unsupported_grant_type'    =>  'The authorization grant type is not
-         supported by the authorization server',
+        'invalid_request'   =>  'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "%s" parameter.',
+        'unauthorized_client'   =>  'The client is not authorized to request an access token using this method.',
+        'access_denied' =>  'The resource owner or authorization server denied the request.',
+        'unsupported_response_type' =>  'The authorization server does not support obtaining an access token using this method.',
+        'invalid_scope' =>  'The requested scope is invalid, unknown, or malformed. Check the "%s" scope.',
+        'server_error'  =>  'The authorization server encountered an unexpected condition which prevented it from fulfilling the request.',
+        'temporarily_unavailable'   =>  'The authorization server is currently unable to handle the request due to a temporary overloading or maintenance of the server.',
+        'unsupported_grant_type'    =>  'The authorization grant type is not supported by the authorization server',
         'invalid_client'    =>  'Client authentication failed',
-        'invalid_grant'     =>  'The provided authorization grant is invalid,
-         expired, revoked, does not match the redirection URI used in the
-          authorization request, or was issued to another client. Check the
-           "%s" parameter.'
+        'invalid_grant'     =>  'The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client. Check the "%s" parameter.'
     );
 
     /**
@@ -131,33 +118,27 @@ maintenance of the server.',
         // Client ID
         if ( ! isset($authParams['client_id']) && ! isset($_GET['client_id'])) {
 
-            throw new OAuthServerClientException(sprintf(
-                $this->errors['invalid_request'], 'client_id'), 0);
+            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
 
         } else {
 
-            $params['client_id'] = (isset($authParams['client_id'])) ? 
-                $authParams['client_id'] : $_GET['client_id'];
+            $params['client_id'] = (isset($authParams['client_id'])) ? $authParams['client_id'] : $_GET['client_id'];
 
         }
 
         // Redirect URI
-        if ( ! isset($authParams['redirect_uri']) && 
-            ! isset($_GET['redirect_uri'])) {
+        if ( ! isset($authParams['redirect_uri']) && ! isset($_GET['redirect_uri'])) {
 
-            throw new OAuthServerClientException(sprintf(
-                $this->errors['invalid_request'], 'redirect_uri'), 0);
+            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'redirect_uri'), 0);
 
         } else {
 
-            $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ? 
-                $authParams['redirect_uri'] : $_GET['redirect_uri'];
+            $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ? $authParams['redirect_uri'] : $_GET['redirect_uri'];
 
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->db->validateClient($params['client_id'], null, 
-            $params['redirect_uri']);
+        $clientDetails = $this->db->validateClient($params['client_id'], null, $params['redirect_uri']);
 
         if ($clientDetails === false) {
 
@@ -166,23 +147,18 @@ maintenance of the server.',
         }
 
         // Response type
-        if ( ! isset($authParams['response_type']) && 
-            ! isset($_GET['response_type'])) {
+        if ( ! isset($authParams['response_type']) && ! isset($_GET['response_type'])) {
 
-            throw new OAuthServerClientException(sprintf(
-                $this->errors['invalid_request'], 'response_type'), 0);
+            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'response_type'), 0);
 
         } else {
 
-            $params['response_type'] = (isset($authParams['response_type'])) ? 
-                $authParams['response_type'] : $_GET['response_type'];
+            $params['response_type'] = (isset($authParams['response_type'])) ? $authParams['response_type'] : $_GET['response_type'];
 
             // Ensure response type is one that is recognised
-            if ( ! in_array($params['response_type'], 
-                $this->response_types)) {
+            if ( ! in_array($params['response_type'], $this->response_types)) {
 
-                throw new OAuthServerClientException(
-                    $this->errors['unsupported_response_type'], 3);
+                throw new OAuthServerClientException($this->errors['unsupported_response_type'], 3);
 
             }
         }
@@ -208,8 +184,7 @@ maintenance of the server.',
 
             if (count($scopes) === 0) {
 
-                throw new OAuthServerClientException(sprintf(
-                    $this->errors['invalid_request'], 'scope'), 0);
+                throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'scope'), 0);
             }
 
             $params['scopes'] = array();
@@ -220,8 +195,7 @@ maintenance of the server.',
 
                 if ($scopeDetails === false) {
 
-                    throw new OAuthServerClientException(sprintf(
-                        $this->errors['invalid_scope'], $scope), 4);
+                    throw new OAuthServerClientException(sprintf($this->errors['invalid_scope'], $scope), 4);
 
                 }
 
@@ -285,14 +259,7 @@ maintenance of the server.',
      * @param  string $accessToken The access token (default = null)
      * @return string              An authorisation code
      */
-    private function newAuthCode(
-        $clientId,
-        $type = 'user',
-        $typeId,
-        $redirectUri,
-        $scopes = array(),
-        $accessToken = null
-        )
+    private function newAuthCode($clientId, $type = 'user', $typeId, $redirectUri, $scopes = array(), $accessToken = null)
     {
         $authCode = $this->generateCode();
 
@@ -352,22 +319,18 @@ maintenance of the server.',
         $params = array();
 
         // Grant type (must be 'authorization_code')
-        if ( ! isset($authParams['grant_type']) && 
-            ! isset($_POST['grant_type'])) {
+        if ( ! isset($authParams['grant_type']) && ! isset($_POST['grant_type'])) {
 
-            throw new OAuthServerClientException(sprintf(
-                $this->errors['invalid_request'], 'grant_type'), 0);
+            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'grant_type'), 0);
 
         } else {
 
-            $params['grant_type'] = (isset($authParams['grant_type'])) ? 
-                $authParams['grant_type'] : $_POST['grant_type'];
+            $params['grant_type'] = (isset($authParams['grant_type'])) ? $authParams['grant_type'] : $_POST['grant_type'];
 
             // Ensure response type is one that is recognised
             if ( ! in_array($params['grant_type'], $this->grant_types)) {
 
-                throw new OAuthServerClientException(
-                    $this->errors['unsupported_grant_type'], 7);
+                throw new OAuthServerClientException($this->errors['unsupported_grant_type'], 7);
 
             }
         }
@@ -383,9 +346,7 @@ maintenance of the server.',
             case 'password': // Resource owner password credentials grant
             case 'client_credentials': // Client credentials grant
             default: // Unsupported
-                throw new OAuthServerException($this->errors['server_error'] . 
-                 'Tried to process an unsuppported grant type.',
-                 5);
+                throw new OAuthServerException($this->errors['server_error'] . 'Tried to process an unsuppported grant type.', 5);
                 break;
         }
     }
@@ -404,81 +365,73 @@ maintenance of the server.',
      array())
     {
         // Client ID
-        if ( ! isset($authParams['client_id']) &&
-         ! isset($_POST['client_id'])) {
+        if ( ! isset($authParams['client_id']) && ! isset($_POST['client_id'])) {
 
-            throw new OAuthServerClientException(sprintf(
-                $this->errors['invalid_request'], 'client_id'), 0);
+            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
 
         } else {
 
-            $params['client_id'] = (isset($authParams['client_id'])) ? 
-                $authParams['client_id'] : $_POST['client_id'];
+            $params['client_id'] = (isset($authParams['client_id'])) ? $authParams['client_id'] : $_POST['client_id'];
 
         }
 
         // Client secret
-        if ( ! isset($authParams['client_secret']) &&
-         ! isset($_POST['client_secret'])) {
+        if ( ! isset($authParams['client_secret']) && ! isset($_POST['client_secret'])) {
 
-            throw new OAuthServerClientException(sprintf(
-                $this->errors['invalid_request'], 'client_secret'), 0);
+            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'client_secret'), 0);
 
         } else {
 
-            $params['client_secret'] = (isset($authParams['client_secret'])) ? 
-                $authParams['client_secret'] : $_POST['client_secret'];
+            $params['client_secret'] = (isset($authParams['client_secret'])) ? $authParams['client_secret'] : $_POST['client_secret'];
 
         }
 
         // Redirect URI
-        if ( ! isset($authParams['redirect_uri']) && 
-            ! isset($_POST['redirect_uri'])) {
+        if ( ! isset($authParams['redirect_uri']) && ! isset($_POST['redirect_uri'])) {
 
-            throw new OAuthServerClientException(sprintf(
-                $this->errors['invalid_request'], 'redirect_uri'), 0);
+            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'redirect_uri'), 0);
 
         } else {
 
-            $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ? 
-                $authParams['redirect_uri'] : $_POST['redirect_uri'];
+            $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ? $authParams['redirect_uri'] : $_POST['redirect_uri'];
 
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->db->validateClient($params['client_id'],
-         $params['client_secret'], 
-            $params['redirect_uri']);
+        $clientDetails = $this->db->validateClient(
+            $params['client_id'],
+            $params['client_secret'], 
+            $params['redirect_uri']
+        );
 
         if ($clientDetails === false) {
 
-            throw new OAuthServerClientException(
-                $this->errors['invalid_client'], 8);
+            throw new OAuthServerClientException($this->errors['invalid_client'], 8);
         }
 
         // The authorization code
         if ( ! isset($authParams['code']) && 
             ! isset($_GET['code'])) {
 
-            throw new OAuthServerClientException(sprintf(
-                $this->errors['invalid_request'], 'code'), 0);
+            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'code'), 0);
 
         } else {
 
-            $params['code'] = (isset($authParams['code'])) ? 
-                $authParams['code'] : $_POST['code'];
+            $params['code'] = (isset($authParams['code'])) ? $authParams['code'] : $_POST['code'];
 
         }
 
         // Verify the authorization code matches the client_id and the
         //  request_uri
-        $sessionId = $this->db->validateAuthCode($params['client_id'],
-         $params['request_uri'], $params['code']);
+        $sessionId = $this->db->validateAuthCode(
+            $params['client_id'],
+            $params['request_uri'],
+            $params['code']
+        );
 
         if ( ! $sessionId) {
 
-            throw new OAuthServerClientException(sprintf(
-                $this->errors['invalid_grant'], 'code'), 9);
+            throw new OAuthServerClientException(sprintf($this->errors['invalid_grant'], 'code'), 9);
         
         } else {
 
@@ -487,14 +440,21 @@ maintenance of the server.',
 
             $accessToken = $this->generateCode();
 
-            $accessTokenExpires = ($this->config['access_token_ttl'] === null)
-             ? null : time() + $this->config['access_token_ttl'];
+            $accessTokenExpires = ($this->config['access_token_ttl'] === null) ? null : time() + $this->config['access_token_ttl'];
 
-            $this->db->updateSession($sessionId, null, $accessToken,
-             $accessTokenExpires, 'granted');
+            $this->db->updateSession(
+                $sessionId,
+                null,
+                $accessToken,
+                $accessTokenExpires,
+                'granted'
+            );
 
             // Update the session's scopes to reference the access token
-            $this->db->updateSessionScopeAccessToken($sessionId, $accessToken);
+            $this->db->updateSessionScopeAccessToken(
+                $sessionId,
+                $accessToken
+            );
 
             return array(
                 'access_token'  =>  $accessToken,
@@ -513,8 +473,7 @@ maintenance of the server.',
      * 
      * @return string                  The updated redirect URI
      */
-    public function redirectUri($redirectUri, $params = array(), 
-     $queryDelimeter = '?')
+    public function redirectUri($redirectUri, $params = array(), $queryDelimeter = '?')
     {
       
         if (strstr($redirectUri, $queryDelimeter)) {
@@ -523,8 +482,7 @@ maintenance of the server.',
 
         } else {
 
-            $redirectUri = $redirectUri . $queryDelimeter . 
-            http_build_query($params);
+            $redirectUri = $redirectUri . $queryDelimeter . http_build_query($params);
 
         }
         
