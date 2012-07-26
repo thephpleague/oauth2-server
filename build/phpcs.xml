@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <ruleset name="PHP_CodeSniffer">
 
-	<description>PHP_CodeSniffer configuration for OAuth 2.0 server</description>
+	<description>PHP_CodeSniffer configuration</description>
 
-	<rule ref="PSR"/>
+	<rule ref="PSR2"/>
 
 </ruleset>
