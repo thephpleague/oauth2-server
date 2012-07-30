@@ -422,13 +422,13 @@ class Server
 
         // Verify the authorization code matches the client_id and the
         //  request_uri
-        $sessionId = $this->db->validateAuthCode(
+        $session = $this->db->validateAuthCode(
             $params['client_id'],
             $params['redirect_uri'],
             $params['code']
         );
 
-        if ( ! $sessionId) {
+        if ( ! $session) {
 
             throw new OAuthServerClientException(sprintf($this->errors['invalid_grant'], 'code'), 9);
         
@@ -442,7 +442,7 @@ class Server
             $accessTokenExpires = ($this->config['access_token_ttl'] === null) ? null : time() + $this->config['access_token_ttl'];
 
             $this->db->updateSession(
-                $sessionId,
+                $session['id'],
                 null,
                 $accessToken,
                 $accessTokenExpires,
@@ -451,7 +451,7 @@ class Server
 
             // Update the session's scopes to reference the access token
             $this->db->updateSessionScopeAccessToken(
-                $sessionId,
+                $session['id'],
                 $accessToken
             );
 
