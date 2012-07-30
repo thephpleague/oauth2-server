@@ -424,7 +424,7 @@ class Server
         //  request_uri
         $sessionId = $this->db->validateAuthCode(
             $params['client_id'],
-            $params['request_uri'],
+            $params['redirect_uri'],
             $params['code']
         );
 
