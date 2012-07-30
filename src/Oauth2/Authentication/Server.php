@@ -361,8 +361,7 @@ class Server
      * 
      * @return array             Authorise request parameters
      */
-    private function completeAuthCodeGrant($authParams = array(), $params =
-     array())
+    private function completeAuthCodeGrant($authParams = array(), $params = array())
     {
         // Client ID
         if ( ! isset($authParams['client_id']) && ! isset($_POST['client_id'])) {
