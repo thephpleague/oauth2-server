@@ -119,7 +119,7 @@ interface Database
      * Database query:
      * 
      * <code>
-     * SELECT * FROM oauth_sessions WHERE client_id = $clientID AND
+     * SELECT id FROM oauth_sessions WHERE client_id = $clientID AND
      *  redirect_uri = $redirectUri AND auth_code = $authCode
      * </code>
      * 
