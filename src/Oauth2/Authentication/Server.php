@@ -2,11 +2,20 @@
 
 namespace Oauth2\Authentication;
 
-class OAuthServerClientException extends \Exception {}
+class OAuthServerClientException extends \Exception
+{
 
-class OAuthServerUserException extends \Exception {}
+}
 
-class OAuthServerException extends \Exception {}
+class OAuthServerUserException extends \Exception
+{
+
+}
+
+class OAuthServerException extends \Exception
+{
+
+}
 
 class Server
 {
@@ -259,7 +268,7 @@ class Server
      * @param  string $accessToken The access token (default = null)
      * @return string              An authorisation code
      */
-    private function newAuthCode($clientId, $type = 'user', $typeId, $redirectUri, $scopes = array(), $accessToken = null)
+    private function newAuthCode($clientId, $type, $typeId, $redirectUri, $scopes = array(), $accessToken = null)
     {
         $authCode = $this->generateCode();
 
@@ -488,5 +497,4 @@ class Server
         return $redirectUri;
 
     }
-
 }
