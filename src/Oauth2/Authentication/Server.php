@@ -327,7 +327,6 @@ class Server
     {
         $params = array();
 
-        // Grant type (must be 'authorization_code')
         if ( ! isset($authParams['grant_type']) && ! isset($_POST['grant_type'])) {
 
             throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'grant_type'), 0);
@@ -336,7 +335,7 @@ class Server
 
             $params['grant_type'] = (isset($authParams['grant_type'])) ? $authParams['grant_type'] : $_POST['grant_type'];
 
-            // Ensure response type is one that is recognised
+            // Ensure grant type is one that is recognised
             if ( ! in_array($params['grant_type'], $this->grant_types)) {
 
                 throw new OAuthServerClientException($this->errors['unsupported_grant_type'], 7);
@@ -349,7 +348,7 @@ class Server
             
             case 'authorization_code': // Authorization code grant
                 return $this->completeAuthCodeGrant($authParams, $params);
-                break;
+                break;  
 
             case 'refresh_token': // Refresh token
             case 'password': // Resource owner password credentials grant
