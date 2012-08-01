@@ -5,7 +5,10 @@
 	"homepage": "https://github.com/lncd/OAuth2",
 	"license": "MIT",
 	"require": {
-		"php": ">=5.3.0"
+		"php": ">=5.3.0",
+	},
+	"require-dev": {
+		"EHER/PHPUnit": "*"
 	},
 	"repositories": [
 		{
