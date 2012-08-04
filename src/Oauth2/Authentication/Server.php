@@ -151,8 +151,7 @@ class Server
 
         if ($clientDetails === false) {
 
-            throw new OAuthServerClientException(
-                $this->errors['invalid_client'], 8);
+            throw new OAuthServerClientException($this->errors['invalid_client'], 8);
         }
 
         // Response type
