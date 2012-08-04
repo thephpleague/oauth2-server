@@ -174,10 +174,7 @@ class Server
         // Get and validate scopes
         if (isset($authParams['scope']) || isset($_GET['scope'])) {
 
-            $scopes = $_GET['scope'];
-            if (isset($authParams['client_id'])) {
-                $authParams['scope'];
-            }
+            $scopes = (isset($_GET['scope'])) ? $_GET['scope'] : $authParams['scope'];
 
             $scopes = explode($this->config['scope_delimeter'], $scopes);
 
