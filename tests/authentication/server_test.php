@@ -2,11 +2,13 @@
 
 class Server_test extends PHPUnit_Framework_TestCase {
 
-	function __construct()
+	function setUp()
 	{
 		$this->oauth = new Oauth2\Authentication\Server();
 		
-		//$this->oauth->registerDbAbstractor($this->oauthdb);
+		require_once('database_mock.php');
+		$this->oauthdb = new OAuthdb();
+		$this->oauth->registerDbAbstractor($this->oauthdb);
 	}
 
 	function test_generateCode()
@@ -33,28 +35,34 @@ class Server_test extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('http://example.com/foo#foo=bar', $result3);
 	}
 
-	function test_checkClientAuthoriseParams()
+	function test_checkClientAuthoriseParams_GET()
 	{
-		// Test without passing params
 		$_GET['client_id'] = 'test';
 		$_GET['redirect_uri'] = 'http://example.com/test';
 		$_GET['response_type'] = 'code';
 		$_GET['scope'] = 'test';
 		
-		$this->assertEquals(array(
+		$expect = array(
 			'client_id'	=>	'test',
 			'redirect_uri'	=>	'http://example.com/test',
 			'response_type'	=>	'code',
 			'scopes'	=>	array(
-				'id'	=>	1,
-				'scope'	=>	'test',
-				'name'	=>	'test',
-				'description'	=>	'test'
+					0 => array(
+					'id'	=>	1,
+					'scope'	=>	'test',
+					'name'	=>	'test',
+					'description'	=>	'test'
+				)
 			)
-		), $this->oauth->checkClientAuthoriseParams());
+		);
 
+		$result = $this->oauth->checkClientAuthoriseParams();
 
-		// Test with passed params
+		$this->assertEquals($expect, $result);
+	}
+
+	function test_checkClientAuthoriseParams_PassedParams()
+	{
 		unset($_GET['client_id']);
 		unset($_GET['redirect_uri']);
 		unset($_GET['response_type']);
@@ -71,7 +79,7 @@ class Server_test extends PHPUnit_Framework_TestCase {
 			'client_id'	=>	'test',
 			'redirect_uri'	=>	'http://example.com/test',
 			'response_type'	=>	'code',
-			'scopes'	=>	array(array(
+			'scopes'	=>	array(0 => array(
 				'id'	=>	1,
 				'scope'	=>	'test',
 				'name'	=>	'test',
@@ -81,6 +89,22 @@ class Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	function test_newAuthoriseRequest()
+	{
+		$result = $this->oauth->newAuthoriseRequest('user', '123', array(
+			'client_id'	=>	'test',
+			'redirect_uri'	=>	'http://example.com/test',
+			'scopes'	=>	array(array(
+				'id'	=>	1,
+				'scope'	=>	'test',
+				'name'	=>	'test',
+				'description'	=>	'test'
+			))
+		));
+
+		$this->assertEquals(40, strlen($result));
+	}
+
+	function test_newAuthoriseRequest_isUnique()
 	{
 		$result1 = $this->oauth->newAuthoriseRequest('user', '123', array(
 			'client_id'	=>	'test',
@@ -104,8 +128,34 @@ class Server_test extends PHPUnit_Framework_TestCase {
 			))
 		));
 
-		$this->assertEquals(40, strlen($result1));
 		$this->assertNotEquals($result1, $result2);
+	}
+
+	function test_issueAccessToken_POST()
+	{
+		$auth_code = $this->oauth->newAuthoriseRequest('user', '123', array(
+			'client_id'	=>	'test',
+			'redirect_uri'	=>	'http://example.com/test',
+			'scopes'	=>	array(array(
+				'id'	=>	1,
+				'scope'	=>	'test',
+				'name'	=>	'test',
+				'description'	=>	'test'
+			))
+		));
+
+		$_POST['client_id'] = 'test';
+		$_POST['client_secret'] = 'test';
+		$_POST['redirect_uri'] = 'http://example.com/test';
+		$_POST['grant_type'] = 'authorization_code';
+		$_POST['code'] = $auth_code;
+
+		$result = $this->oauth->issueAccessToken();
+
+		$this->assertCount(3, $result);
+		$this->assertArrayHasKey('access_token', $result);
+		$this->assertArrayHasKey('token_type', $result);
+		$this->assertArrayHasKey('expires_in', $result);
 	}
 
 }
