@@ -23,7 +23,7 @@ class Server
      * Reference to the database abstractor
      * @var object
      */
-    private $db;
+    private $db = null;
 
     /**
      * Server configuration
@@ -147,7 +147,7 @@ class Server
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->db->validateClient($params['client_id'], null, $params['redirect_uri']);
+        $clientDetails = $this->dbcall('validateClient', $params['client_id'], null, $params['redirect_uri']);
 
         if ($clientDetails === false) {
 
@@ -196,7 +196,7 @@ class Server
 
             foreach ($scopes as $scope) {
 
-                $scopeDetails = $this->db->getScope($scope);
+                $scopeDetails = $this->dbcall('getScope', $scope);
 
                 if ($scopeDetails === false) {
 
@@ -223,7 +223,7 @@ class Server
     public function newAuthoriseRequest($type, $typeId, $authoriseParams)
     {
         // Remove any old sessions the user might have
-        $this->db->deleteSession(
+        $this->dbcall('deleteSession',
             $authoriseParams['client_id'],
             $type,
             $typeId
@@ -272,7 +272,7 @@ class Server
         // new authorisation code otherwise create a new session
         if ($accessToken !== null) {
 
-            $this->db->updateSession(
+            $this->dbcall('updateSession',
                 $clientId,
                 $type,
                 $typeId,
@@ -284,10 +284,10 @@ class Server
         } else {
 
             // Delete any existing sessions just to be sure
-            $this->db->deleteSession($clientId, $type, $typeId);
+            $this->dbcall('deleteSession', $clientId, $type, $typeId);
                
             // Create a new session     
-            $sessionId = $this->db->newSession(
+            $sessionId = $this->dbcall('newSession',
                 $clientId,
                 $redirectUri,
                 $type,
@@ -301,7 +301,7 @@ class Server
             // Add the scopes
             foreach ($scopes as $key => $scope) {
 
-                $this->db->addSessionScope($sessionId, $scope['scope']);
+                $this->dbcall('addSessionScope', $sessionId, $scope['scope']);
 
             }
 
@@ -401,7 +401,7 @@ class Server
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->db->validateClient(
+        $clientDetails = $this->dbcall('validateClient',
             $params['client_id'],
             $params['client_secret'], 
             $params['redirect_uri']
@@ -426,7 +426,7 @@ class Server
 
         // Verify the authorization code matches the client_id and the
         //  request_uri
-        $session = $this->db->validateAuthCode(
+        $session = $this->dbcall('validateAuthCode',
             $params['client_id'],
             $params['redirect_uri'],
             $params['code']
@@ -445,7 +445,7 @@ class Server
 
             $accessTokenExpires = ($this->config['access_token_ttl'] === null) ? null : time() + $this->config['access_token_ttl'];
 
-            $this->db->updateSession(
+            $this->dbcall('updateSession',
                 $session['id'],
                 null,
                 $accessToken,
@@ -454,7 +454,7 @@ class Server
             );
 
             // Update the session's scopes to reference the access token
-            $this->db->updateSessionScopeAccessToken(
+            $this->dbcall('updateSessionScopeAccessToken',
                 $session['id'],
                 $accessToken
             );
@@ -491,5 +491,24 @@ class Server
         
         return $redirectUri;
 
+    }
+
+    /**
+     * Call database methods from the abstractor
+     * 
+     * @return mixed The query result
+     */
+    private function dbcall()
+    {
+        if ($this->db === null) {
+            throw new OAuthServerException('No registered database abstractor');
+        }
+
+        $args = func_get_args();
+        $method = $args[0];
+        unset ($args[0]);
+        $params = $args;
+
+        return call_user_func(array($this, $method), $args);
     }
 }
