@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="PHP OAuth 2.0 Server" default="build">
-	<target name="build" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpcb"/>
+	<target name="build" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpunit,phpdox,phpcb"/>
 	
 	<target name="build-parallel" depends="prepare,lint,tools-parallel,phpcb"/>
 	
-	<target name="minimal" depends="prepare,lint,phploc,pdepend,phpcpd,phpdox,phpcb" />
+	<target name="minimal" depends="prepare,lint,phploc,pdepend,phpcpd,phpunit,phpdox,phpcb" />
 	
 	<target name="tools-parallel" description="Run tools in parallel">
 		<parallel threadCount="2">
@@ -107,6 +107,13 @@
 			<arg value="--log-pmd" />
 			<arg value="${basedir}/build/logs/pmd-cpd.xml" />
 			<arg path="${basedir}/src" />
+		</exec>
+	</target>
+
+	<target name="phpunit" description="Run unit tests with PHPUnit">
+		<exec executable="phpunit" failonerror="true">
+			<arg value="--configuration" />
+			<arg value="${basedir}/build/phpunit.xml" />
 		</exec>
 	</target>
 	
