@@ -9,7 +9,7 @@
 	stopOnSkipped="false">
 	<testsuites>
 		<testsuite name="Test Suite">
-			<directory suffix="test.php">./authentication</directory>
+			<directory suffix="test.php">../tests/authentication</directory>
 		</testsuite>
 	</testsuites>
 	<filters>
@@ -18,4 +18,12 @@
 			<directory suffix=".php">PHP_LIBDIR</directory>
 		</blacklist>
 	</filters>
+	<logging>
+	<log type="coverage-html" target="build/coverage" title="Name of Project"
+	  charset="UTF-8" yui="true" highlight="true"
+	  lowUpperBound="35" highLowerBound="70"/>
+	<log type="coverage-clover" target="build/logs/clover.xml"/>
+	<log type="junit" target="build/logs/junit.xml"
+	  logIncompleteSkipped="false"/>
+	</logging>
 </phpunit>
