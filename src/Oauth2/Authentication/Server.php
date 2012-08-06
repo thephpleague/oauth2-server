@@ -197,7 +197,7 @@ class Server
             foreach ($scopes as $scope) {
 
                 $scopeDetails = $this->dbcall('getScope', $scope);
-
+                //die(var_dump($scopeDetails));
                 if ($scopeDetails === false) {
 
                     throw new OAuthServerClientException(sprintf($this->errors['invalid_scope'], $scope), 4);
@@ -504,11 +504,15 @@ class Server
             throw new OAuthServerException('No registered database abstractor');
         }
 
+        if ( ! $this->db instanceof Database) {
+            throw new OAuthServerException('Registered database abstractor is not an instance of Oauth2\Authentication\Database');
+        }
+
         $args = func_get_args();
         $method = $args[0];
-        unset ($args[0]);
-        $params = $args;
+        unset($args[0]);
+        $params = array_values($args);
 
-        return call_user_func(array($this, $method), $args);
+        return call_user_func_array(array($this->db, $method), $args);
     }
 }
