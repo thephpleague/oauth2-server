@@ -1,1 +1,1 @@
-vendor/bin/phpunit --coverage-text --configuration tests/phpunit.xml
+vendor/bin/phpunit --coverage-text --configuration build/phpunit.xml
