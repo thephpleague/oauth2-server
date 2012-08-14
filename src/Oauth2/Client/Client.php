@@ -11,13 +11,11 @@ include('Provider.php');
  *
  * @author Phil Sturgeon < @philsturgeon >
  */
-class Client {
+class Client
+{
 
 	/**
-	 * Create a new provider.
-	 *
-	 *     // Load the Twitter provider
-	 *     $provider = $this->oauth2->provider('twitter');
+	 * Create a new provider client.
 	 *
 	 * @param   string   provider name
 	 * @param   array    provider options
