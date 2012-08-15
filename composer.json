@@ -7,6 +7,9 @@
 	"require": {
 		"php": ">=5.3.0"
 	},
+	"require-dev": {
+		"EHER/PHPUnit": "*"
+	},
 	"repositories": [
 		{
 			"type": "git",
