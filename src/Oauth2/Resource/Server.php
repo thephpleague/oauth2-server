@@ -13,7 +13,7 @@ class Server
      * The access token.
      * @access private
      */
-    private $_accessToken = NULL;
+    private $_accessToken = null;
 
     /**
      * The scopes the access token has access to.
@@ -25,13 +25,13 @@ class Server
      * The type of owner of the access token.
      * @access private
      */
-    private $_type = NULL;
+    private $_type = null;
 
     /**
      * The ID of the owner of the access token.
      * @access private
      */
-    private $_typeId = NULL;
+    private $_typeId = null;
 
     /**
      * Server configuration
