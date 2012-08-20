@@ -10,6 +10,12 @@ class OAuthResourceServerException extends \Exception
 class Server
 {
     /**
+     * Reference to the database abstractor
+     * @var object
+     */
+    private $_db = null;
+
+    /**
      * The access token.
      * @access private
      */
@@ -37,8 +43,20 @@ class Server
      * Server configuration
      * @var array
      */
-    private $config = array(
+    private $_config = array(
         'token_key' =>  'oauth_token'
+    );
+
+    /**
+     * Error codes.
+     * 
+     * To provide i8ln errors just overwrite the keys
+     * 
+     * @var array
+     */
+    public $errors = array(
+        'missing_access_token'  =>  'An access token was not presented with the request',
+        'invalid_access_token'  =>  'The access token is not registered with the resource server'
     );
 
     /**
@@ -56,21 +74,22 @@ class Server
 
     /**
      * Magic method to test if access token represents a particular owner type
-     * @param  [type] $method     [description]
-     * @param  [type] $arguements [description]
-     * @return [type]             [description]
+     * @param  string $method     The method name
+     * @param  mixed  $arguements The method arguements
+     * @return bool               If method is valid, and access token is owned by the requested party then true,
      */
-    public function __call($method, $arguements)
+    public function __call($method, $arguements = null)
     {
-        if (substr($method, 0, 2) === 'is')
-        {
-            if ($this->_type === strtolower(substr($method, 2)))
-            {
+        if (substr($method, 0, 2) === 'is') {
+
+            if ($this->_type === strtolower(substr($method, 2))) {
                 return $this->_typeId;
             }
             
             return false;
         }
+
+        trigger_error('Call to undefined function ' . $method . '()');
     }
 
     /**
@@ -82,7 +101,7 @@ class Server
      */
     public function registerDbAbstractor($db)
     {
-        $this->db = $db;
+        $this->_db = $db;
     }
     
     /**
@@ -99,18 +118,18 @@ class Server
         switch ($server['REQUEST_METHOD'])
         {           
             case 'POST':
-                $accessToken = isset($_POST[$this->config['token_key']]) ? $_POST[$this->config['token_key']] : null;
+                $accessToken = isset($_POST[$this->_config['token_key']]) ? $_POST[$this->_config['token_key']] : null;
                 break;
 
             default:
-            $accessToken = isset($_GET[$this->config['token_key']]) ? $_GET[$this->config['token_key']] : null;
+            $accessToken = isset($_GET[$this->_config['token_key']]) ? $_GET[$this->_config['token_key']] : null;
                 break;
         }
 
         // Try and get an access token from the auth header
         $headers = getallheaders();
-        if (isset($headers['Authorization']))
-        {
+        if (isset($headers['Authorization'])) {
+
             $rawToken = trim(str_replace('Bearer', '', $headers['Authorization']));
             if ( ! empty($rawToken))
             {
@@ -118,38 +137,29 @@ class Server
             }
         }
         
-        if ($accessToken)
-        {
-            $sessionQuery = $this->ci->db->get_where('oauth_sessions', array('access_token' => $accessToken, 'stage' => 'granted'));
-            
-            if ($session_query->num_rows() === 1)
+        if ($accessToken) {
+
+            $result = $this->_dbCall('validateAccessToken', array($accessToken));
+
+            if ($result === false)
             {
-                $session = $session_query->row();
-                $this->_accessToken = $session->access_token;
-                $this->_type = $session->type;
-                $this->_typeId = $session->type_id;
-                
-                $scopes_query = $this->ci->db->get_where('oauth_session_scopes', array('access_token' => $accessToken));
-                if ($scopes_query->num_rows() > 0)
-                {
-                    foreach ($scopes_query->result() as $scope)
-                    {
-                        $this->_scopes[] = $scope->scope;
-                    }
-                }
+                throw new OAuthResourceServerException($this->errors['invalid_access_token']);
             }
-            
+
             else
             {
-                $this->ci->output->set_status_header(403);
-                $this->ci->output->set_output('Invalid access token');
+                $this->_accessToken = $accessToken;
+                $this->_type = $result['owner_type'];
+                $this->_typeId = $result['owner_id'];
+
+                // Get the scopes
+                $this->_scopes = $this->_dbCall('sessionScopes', array($result['id']));
             }
-        }
-        
-        else
-        {
-            $this->ci->output->set_status_header(403);
-            $this->ci->output->set_output('Missing access token');
+
+        } else  {
+
+            throw new OAuthResourceServerException($this->errors['missing_access_token']);
+
         }
     }
     
@@ -194,13 +204,13 @@ class Server
      * 
      * @return mixed The query result
      */
-    private function dbcall()
+    private function _dbCall()
     {
-        if ($this->db === null) {
+        if ($this->_db === null) {
             throw new OAuthResourceServerException('No registered database abstractor');
         }
 
-        if ( ! $this->db instanceof Database) {
+        if ( ! $this->_db instanceof Database) {
             throw new OAuthResourceServerException('Registered database abstractor is not an instance of Oauth2\Resource\Database');
         }
 
@@ -209,6 +219,6 @@ class Server
         unset($args[0]);
         $params = array_values($args);
 
-        return call_user_func_array(array($this->db, $method), $args);
+        return call_user_func_array(array($this->_db, $method), $args);
     }
 }
