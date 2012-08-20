@@ -219,6 +219,6 @@ class Server
         unset($args[0]);
         $params = array_values($args);
 
-        return call_user_func_array(array($this->_db, $method), $args);
+        return call_user_func_array(array($this->_db, $method), $params);
     }
 }
