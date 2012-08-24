@@ -127,13 +127,15 @@ class Server
         }
 
         // Try and get an access token from the auth header
-        $headers = getallheaders();
-        if (isset($headers['Authorization'])) {
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+            if (isset($headers['Authorization'])) {
 
-            $rawToken = trim(str_replace('Bearer', '', $headers['Authorization']));
-            if ( ! empty($rawToken))
-            {
-                $accessToken = base64_decode($rawToken);
+                $rawToken = trim(str_replace('Bearer', '', $headers['Authorization']));
+                if ( ! empty($rawToken))
+                {
+                    $accessToken = base64_decode($rawToken);
+                }
             }
         }
         
