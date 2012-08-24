@@ -1,6 +1,6 @@
 <?php
 
-class Server_test extends PHPUnit_Framework_TestCase {
+class Resource_Server_test extends PHPUnit_Framework_TestCase {
 
 	function setUp()
 	{
