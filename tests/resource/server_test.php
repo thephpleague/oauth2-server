@@ -72,16 +72,21 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException \Oauth2\Resource\OAuthResourceServerException
+	 * @expectedException        \Oauth2\Resource\OAuthResourceServerException
+	 * @expectedExceptionMessage An access token was not presented with the request
 	 */
 	function test_init_missingToken()
 	{
 		$this->server->init();
 	}
 
+	/**
+	 * @expectedException        \Oauth2\Resource\OAuthResourceServerException
+	 * @expectedExceptionMessage The access token is not registered with the resource server
+	 */
 	function test_init_wrongToken()
 	{
-		$_POST['oauth_token'] = 'test12345';
+		$_POST['oauth_token'] = 'blah';
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 
 		$this->server->init();
