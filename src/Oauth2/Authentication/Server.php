@@ -413,8 +413,7 @@ class Server
         }
 
         // The authorization code
-        if ( ! isset($authParams['code']) && 
-            ! isset($_POST['code'])) {
+        if ( ! isset($authParams['code']) && ! isset($_POST['code'])) {
 
             throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'code'), 0);
 
