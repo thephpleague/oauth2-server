@@ -1,7 +1,7 @@
 {
 	"name": "lncd/Oauth2",
 	"description": "OAuth 2.0 server - UNDER DEVELOPMENT - NOT READY FOR PRIMETIME",
-	"version": "0.0.1",
+	"version": "0.1",
 	"homepage": "https://github.com/lncd/OAuth2",
 	"license": "MIT",
 	"require": {
