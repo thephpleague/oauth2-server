@@ -4,11 +4,13 @@ use Oauth2\Resource\Database;
 
 class ResourceDB implements Database
 {
-	private $accessTokens = array('test12345' => array(
-		'id'	=>	1,
-		'owner_type'	=>	'user',
-		'owner_id'	=>	123
-	));
+	private $accessTokens = array(
+		'test12345' => array(
+			'id'	=>	1,
+			'owner_type'	=>	'user',
+			'owner_id'	=>	123
+		)
+	);
 
 	private $sessionScopes = array(
 		1	=>	array(
