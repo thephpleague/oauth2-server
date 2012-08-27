@@ -1,0 +1,40 @@
+{
+	"name": "lncd/Oauth2",
+	"description": "OAuth 2.0 Framework",
+	"version": "0.1",
+	"homepage": "https://github.com/lncd/OAuth2",
+	"license": "MIT",
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"require-dev": {
+		"EHER/PHPUnit": "*"
+	},
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/lncd/OAuth2"
+		}
+	],
+	"keywords": [
+		"oauth",
+		"oauth2",
+		"server",
+		"authorization",
+		"authentication",
+		"resource"
+	],
+	"authors": [
+		{
+			"name": "Alex Bilbie",
+			"email": "oauth2server@alexbilbie.com",
+			"homepage": "http://www.httpster.org",
+			"role": "Developer"
+		}
+	],
+	"autoload": {
+		"psr-0": {
+			"Oauth2": "src/"
+		}
+	}
+}

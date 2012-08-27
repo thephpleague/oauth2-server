@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<ruleset name="PHP_CodeSniffer">
+
+	<description>PHP_CodeSniffer configuration</description>
+
+	<rule ref="PSR2"/>
+
+</ruleset>
