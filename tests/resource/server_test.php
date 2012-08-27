@@ -67,7 +67,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase {
 	function test_init_header()
 	{
 		// Test with authorisation header
-		//$this->markTestIncomplete('Authorisation header test has not been implemented yet.');
+		$this->markTestIncomplete('Authorisation header test has not been implemented yet.');
 	}
 
 	/**
