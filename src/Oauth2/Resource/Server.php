@@ -128,12 +128,14 @@ class Server
 
         // Try and get an access token from the auth header
         if (function_exists('getallheaders')) {
+
             $headers = getallheaders();
+            
             if (isset($headers['Authorization'])) {
 
                 $rawToken = trim(str_replace('Bearer', '', $headers['Authorization']));
-                if ( ! empty($rawToken))
-                {
+
+                if ( ! empty($rawToken)) {
                     $accessToken = base64_decode($rawToken);
                 }
             }
@@ -143,13 +145,12 @@ class Server
 
             $result = $this->_dbCall('validateAccessToken', $accessToken);
 
-            if ($result === false)
-            {
-                throw new OAuthResourceServerException($this->errors['invalid_access_token']);
-            }
+            if ($result === false) {
 
-            else
-            {
+                throw new OAuthResourceServerException($this->errors['invalid_access_token']);
+
+            } else {
+
                 $this->_accessToken = $accessToken;
                 $this->_type = $result['owner_type'];
                 $this->_typeId = $result['owner_id'];
@@ -158,7 +159,7 @@ class Server
                 $this->_scopes = $this->_dbCall('sessionScopes', $result['id']);
             }
 
-        } else  {
+        } else {
 
             throw new OAuthResourceServerException($this->errors['missing_access_token']);
 
@@ -175,24 +176,22 @@ class Server
      */
     public function hasScope($scopes)
     {
-        if (is_string($scopes))
-        {
-            if (in_array($scopes, $this->_scopes))
-            {
+        if (is_string($scopes)) {
+
+            if (in_array($scopes, $this->_scopes)) {
                 return true;
             }
             
             return false;
-        }
-        
-        elseif (is_array($scopes))
-        {
-            foreach ($scopes as $scope)
-            {
-                if ( ! in_array($scope, $this->_scopes))
-                {
+
+        } elseif (is_array($scopes)) {
+
+            foreach ($scopes as $scope) {
+
+                if ( ! in_array($scope, $this->_scopes)) {
                     return false;
                 }
+
             }
             
             return true;
