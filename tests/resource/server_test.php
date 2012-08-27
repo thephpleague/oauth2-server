@@ -13,14 +13,29 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase {
 
 	function test_init_POST()
 	{
+		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_POST['oauth_token'] = 'test12345';
 
 		$this->server->init();
 
-		$this->assertEquals($this->server->_accessToken, $_POST['oauth_token']);
-		$this->assertEquals($this->server->_type, 'user');
-		$this->assertEquals($this->server->_typeId, 123);
-		$this->assertEquals($this->server->_scopes, array('foo', 'bar'));
+		$reflector = new ReflectionClass($this->server);
+
+		$_accessToken = $reflector->getProperty('_accessToken');
+		$_accessToken->setAccessible(true);
+
+		$_type = $reflector->getProperty('_type');
+		$_type->setAccessible(true);
+
+		$_typeId = $reflector->getProperty('_typeId');
+		$_typeId->setAccessible(true);
+
+		$_scopes = $reflector->getProperty('_scopes');
+		$_scopes->setAccessible(true);
+
+		$this->assertEquals($_accessToken->getValue($this->server), $_POST['oauth_token']);
+		$this->assertEquals($_type->getValue($this->server), 'user');
+		$this->assertEquals($_typeId->getValue($this->server), 123);
+		$this->assertEquals($_scopes->getValue($this->server), array('foo', 'bar'));
 	}
 
 	function test_init_GET()
@@ -29,23 +44,44 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase {
 
 		$this->server->init();
 
-		$this->assertEquals($this->server->_accessToken, $_GET['oauth_token']);
-		$this->assertEquals($this->server->_type, 'user');
-		$this->assertEquals($this->server->_typeId, 123);
-		$this->assertEquals($this->server->_scopes, array('foo', 'bar'));
+		$reflector = new ReflectionClass($this->server);
+
+		$_accessToken = $reflector->getProperty('_accessToken');
+		$_accessToken->setAccessible(true);
+
+		$_type = $reflector->getProperty('_type');
+		$_type->setAccessible(true);
+
+		$_typeId = $reflector->getProperty('_typeId');
+		$_typeId->setAccessible(true);
+
+		$_scopes = $reflector->getProperty('_scopes');
+		$_scopes->setAccessible(true);
+
+		$this->assertEquals($_accessToken->getValue($this->server), $_GET['oauth_token']);
+		$this->assertEquals($_type->getValue($this->server), 'user');
+		$this->assertEquals($_typeId->getValue($this->server), 123);
+		$this->assertEquals($_scopes->getValue($this->server), array('foo', 'bar'));
 	}
 
 	function test_init_header()
 	{
 		// Test with authorisation header
+		//$this->markTestIncomplete('Authorisation header test has not been implemented yet.');
 	}
 
 	/**
-	 * @exception OAuthResourceServerException
+	 * @expectedException \Oauth2\Resource\OAuthResourceServerException
 	 */
+	function test_init_missingToken()
+	{
+		$this->server->init();
+	}
+
 	function test_init_wrongToken()
 	{
-		$_POST['access_token'] = 'test12345';
+		$_POST['oauth_token'] = 'test12345';
+		$_SERVER['REQUEST_METHOD'] = 'POST';
 
 		$this->server->init();
 	}
@@ -53,6 +89,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase {
 	function test_hasScope()
 	{
 		$_POST['oauth_token'] = 'test12345';
+		$_SERVER['REQUEST_METHOD'] = 'POST';
 
 		$this->server->init();
 
@@ -67,6 +104,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase {
 	function test___call()
 	{
 		$_POST['oauth_token'] = 'test12345';
+		$_SERVER['REQUEST_METHOD'] = 'POST';
 
 		$this->server->init();
 
