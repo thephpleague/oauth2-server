@@ -8,6 +8,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase {
 		$this->server = new Oauth2\Resource\Server();
 		$this->db = new ResourceDB();
 
+		$this->assertInstanceOf('Oauth2\Resource\Database', $this->db);
 		$this->server->registerDbAbstractor($this->db);
 	}
 

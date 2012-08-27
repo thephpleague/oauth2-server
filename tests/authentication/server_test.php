@@ -5,9 +5,10 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	function setUp()
 	{
 		$this->oauth = new Oauth2\Authentication\Server();
-		
+
 		require_once('database_mock.php');
 		$this->oauthdb = new OAuthdb();
+		$this->assertInstanceOf('Oauth2\Authentication\Database', $this->oauthdb);
 		$this->oauth->registerDbAbstractor($this->oauthdb);
 	}
 
