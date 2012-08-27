@@ -369,10 +369,10 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	function test_noRegisteredDatabaseAbstractor()
 	{
 		$reflector = new ReflectionClass($this->oauth);
-		$method = $reflector->getMethod('dbcall');
+		$method = $reflector->getMethod('_dbCall');
 		$method->setAccessible(true);
 
-		$dbAbstractor = $reflector->getProperty('db');
+		$dbAbstractor = $reflector->getProperty('_db');
 		$dbAbstractor->setAccessible(true);
 		$dbAbstractor->setValue($this->oauth, null);
 
@@ -389,7 +389,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 		$this->oauth->registerDbAbstractor($fake);
 
 		$reflector = new ReflectionClass($this->oauth);
-		$method = $reflector->getMethod('dbcall');
+		$method = $reflector->getMethod('_dbCall');
 		$method->setAccessible(true);
 
 		$result = $method->invoke($this->oauth);
