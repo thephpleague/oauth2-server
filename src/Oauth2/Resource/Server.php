@@ -141,7 +141,7 @@ class Server
         
         if ($accessToken) {
 
-            $result = $this->_dbCall('validateAccessToken', array($accessToken));
+            $result = $this->_dbCall('validateAccessToken', $accessToken);
 
             if ($result === false)
             {
@@ -155,7 +155,7 @@ class Server
                 $this->_typeId = $result['owner_id'];
 
                 // Get the scopes
-                $this->_scopes = $this->_dbCall('sessionScopes', array($result['id']));
+                $this->_scopes = $this->_dbCall('sessionScopes', $result['id']);
             }
 
         } else  {
