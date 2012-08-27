@@ -197,7 +197,7 @@ class Server
             foreach ($scopes as $scope) {
 
                 $scopeDetails = $this->dbcall('getScope', $scope);
-                //die(var_dump($scopeDetails));
+                
                 if ($scopeDetails === false) {
 
                     throw new OAuthServerClientException(sprintf($this->errors['invalid_scope'], $scope), 4);
