@@ -115,7 +115,7 @@ class Server
         $accessToken = null;
 
         // Try and get the access token via an access_token or oauth_token parameter
-        switch ($server['REQUEST_METHOD'])
+        switch ($_SERVER['REQUEST_METHOD'])
         {           
             case 'POST':
                 $accessToken = isset($_POST[$this->_config['token_key']]) ? $_POST[$this->_config['token_key']] : null;
