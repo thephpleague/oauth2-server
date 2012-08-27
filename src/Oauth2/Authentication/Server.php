@@ -23,13 +23,13 @@ class Server
      * Reference to the database abstractor
      * @var object
      */
-    private $db = null;
+    private $_db = null;
 
     /**
      * Server configuration
      * @var array
      */
-    private $config = array(
+    private $_config = array(
         'scope_delimeter'       =>  ',',
         'access_token_ttl'   =>  null
     );
@@ -38,7 +38,7 @@ class Server
      * Supported response types
      * @var array
      */
-    private $response_types =   array(
+    private $_responseTypes =   array(
         'code'
     );
     
@@ -46,7 +46,7 @@ class Server
      * Supported grant types
      * @var array
      */
-    private $grant_types    =   array(
+    private $_grantTypes    =   array(
         'authorization_code'
     );
 
@@ -97,7 +97,7 @@ class Server
     public function __construct($options = null)
     {
         if ($options !== null) {
-            $this->options = array_merge($this->config, $options);
+            $this->options = array_merge($this->_config, $options);
         }
     }
 
@@ -110,7 +110,7 @@ class Server
      */
     public function registerDbAbstractor($db)
     {
-        $this->db = $db;
+        $this->_db = $db;
     }
 
     /**
@@ -147,7 +147,7 @@ class Server
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->dbcall('validateClient', $params['client_id'], null, $params['redirect_uri']);
+        $clientDetails = $this->_dbCall('validateClient', $params['client_id'], null, $params['redirect_uri']);
 
         if ($clientDetails === false) {
 
@@ -164,7 +164,7 @@ class Server
             $params['response_type'] = (isset($authParams['response_type'])) ? $authParams['response_type'] : $_GET['response_type'];
 
             // Ensure response type is one that is recognised
-            if ( ! in_array($params['response_type'], $this->response_types)) {
+            if ( ! in_array($params['response_type'], $this->_responseTypes)) {
 
                 throw new OAuthServerClientException($this->errors['unsupported_response_type'], 3);
 
@@ -176,7 +176,7 @@ class Server
 
             $scopes = (isset($_GET['scope'])) ? $_GET['scope'] : $authParams['scope'];
 
-            $scopes = explode($this->config['scope_delimeter'], $scopes);
+            $scopes = explode($this->_config['scope_delimeter'], $scopes);
 
             // Remove any junk scopes
             for ($i = 0; $i < count($scopes); $i++) {
@@ -196,7 +196,7 @@ class Server
 
             foreach ($scopes as $scope) {
 
-                $scopeDetails = $this->dbcall('getScope', $scope);
+                $scopeDetails = $this->_dbCall('getScope', $scope);
                 
                 if ($scopeDetails === false) {
 
@@ -223,7 +223,7 @@ class Server
     public function newAuthoriseRequest($type, $typeId, $authoriseParams)
     {
         // Remove any old sessions the user might have
-        $this->dbcall('deleteSession',
+        $this->_dbCall('deleteSession',
             $authoriseParams['client_id'],
             $type,
             $typeId
@@ -272,7 +272,7 @@ class Server
         // new authorisation code otherwise create a new session
         if ($accessToken !== null) {
 
-            $this->dbcall('updateSession',
+            $this->_dbCall('updateSession',
                 $clientId,
                 $type,
                 $typeId,
@@ -284,10 +284,10 @@ class Server
         } else {
 
             // Delete any existing sessions just to be sure
-            $this->dbcall('deleteSession', $clientId, $type, $typeId);
+            $this->_dbCall('deleteSession', $clientId, $type, $typeId);
                
             // Create a new session     
-            $sessionId = $this->dbcall('newSession',
+            $sessionId = $this->_dbCall('newSession',
                 $clientId,
                 $redirectUri,
                 $type,
@@ -301,7 +301,7 @@ class Server
             // Add the scopes
             foreach ($scopes as $key => $scope) {
 
-                $this->dbcall('addSessionScope', $sessionId, $scope['scope']);
+                $this->_dbCall('addSessionScope', $sessionId, $scope['scope']);
 
             }
 
@@ -332,7 +332,7 @@ class Server
             $params['grant_type'] = (isset($authParams['grant_type'])) ? $authParams['grant_type'] : $_POST['grant_type'];
 
             // Ensure grant type is one that is recognised
-            if ( ! in_array($params['grant_type'], $this->grant_types)) {
+            if ( ! in_array($params['grant_type'], $this->_grantTypes)) {
 
                 throw new OAuthServerClientException($this->errors['unsupported_grant_type'], 7);
 
@@ -401,7 +401,7 @@ class Server
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->dbcall('validateClient',
+        $clientDetails = $this->_dbCall('validateClient',
             $params['client_id'],
             $params['client_secret'], 
             $params['redirect_uri']
@@ -425,7 +425,7 @@ class Server
 
         // Verify the authorization code matches the client_id and the
         //  request_uri
-        $session = $this->dbcall('validateAuthCode',
+        $session = $this->_dbCall('validateAuthCode',
             $params['client_id'],
             $params['redirect_uri'],
             $params['code']
@@ -442,9 +442,9 @@ class Server
 
             $accessToken = $this->generateCode();
 
-            $accessTokenExpires = ($this->config['access_token_ttl'] === null) ? null : time() + $this->config['access_token_ttl'];
+            $accessTokenExpires = ($this->_config['access_token_ttl'] === null) ? null : time() + $this->_config['access_token_ttl'];
 
-            $this->dbcall('updateSession',
+            $this->_dbCall('updateSession',
                 $session['id'],
                 null,
                 $accessToken,
@@ -453,7 +453,7 @@ class Server
             );
 
             // Update the session's scopes to reference the access token
-            $this->dbcall('updateSessionScopeAccessToken',
+            $this->_dbCall('updateSessionScopeAccessToken',
                 $session['id'],
                 $accessToken
             );
@@ -461,7 +461,7 @@ class Server
             return array(
                 'access_token'  =>  $accessToken,
                 'token_type'    =>  'bearer',
-                'expires_in'    =>  $this->config['access_token_ttl']
+                'expires_in'    =>  $this->_config['access_token_ttl']
             );
         }
     }
@@ -497,13 +497,13 @@ class Server
      * 
      * @return mixed The query result
      */
-    private function dbcall()
+    private function _dbCall()
     {
-        if ($this->db === null) {
+        if ($this->_db === null) {
             throw new OAuthServerException('No registered database abstractor');
         }
 
-        if ( ! $this->db instanceof Database) {
+        if ( ! $this->_db instanceof Database) {
             throw new OAuthServerException('Registered database abstractor is not an instance of Oauth2\Authentication\Database');
         }
 
@@ -512,6 +512,6 @@ class Server
         unset($args[0]);
         $params = array_values($args);
 
-        return call_user_func_array(array($this->db, $method), $params);
+        return call_user_func_array(array($this->_db, $method), $params);
     }
 }
