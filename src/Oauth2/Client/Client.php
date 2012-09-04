@@ -21,7 +21,7 @@ class Provider
 	 * @param   array    provider options
 	 * @return  OAuth_Provider
 	 */
-	public static function provider($name, array $options = NULL)
+	public function __construct($name, array $options = NULL)
 	{
 		$name = ucfirst(strtolower($name));
 
