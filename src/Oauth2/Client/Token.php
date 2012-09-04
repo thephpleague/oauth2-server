@@ -11,7 +11,8 @@ namespace Oauth2\Client;
  * @copyright  (c) 2011 HappyNinjas Ltd
  */
 
-abstract class Token {
+abstract class Token
+{
 
 	/**
 	 * Create a new token object.
