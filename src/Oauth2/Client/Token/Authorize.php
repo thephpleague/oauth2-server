@@ -18,7 +18,7 @@ class AuthorizeToken extends Oauth2\Client\Token
 	/**
 	 * @var  string  redirect_uri
 	 */
-	protected $redirect_uri;
+	protected $redirectUri;
 
 	/**
 	 * Sets the token, expiry, etc values.
@@ -39,7 +39,7 @@ class AuthorizeToken extends Oauth2\Client\Token
         }
 		
 		$this->code = $options['code'];
-		$this->redirect_uri = $options['redirect_uri'];
+		$this->redirectUri = $options['redirect_uri'];
 	}
 
 	/**
