@@ -4,7 +4,7 @@ namespace Oauth2\Client;
 
 include('Exception.php');
 include('Token.php');
-include('Provider.php');
+include('IDP.php');
 
 /**
  * OAuth2.0
