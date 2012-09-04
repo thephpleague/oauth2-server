@@ -14,9 +14,9 @@ namespace Oauth2\Client\Token;
 class AccessToken extends Oauth2\Client\Token
 {
 	/**
-	 * @var  string  access_token
+	 * @var  string  accessToken
 	 */
-	protected $access_token;
+	protected $accessToken;
 
 	/**
 	 * @var  int  expires
@@ -24,9 +24,9 @@ class AccessToken extends Oauth2\Client\Token
 	protected $expires;
 
 	/**
-	 * @var  string  refresh_token
+	 * @var  string  refreshToken
 	 */
-	protected $refresh_token;
+	protected $refreshToken;
 
 	/**
 	 * @var  string  uid
@@ -51,7 +51,7 @@ class AccessToken extends Oauth2\Client\Token
 		// 	throw new Exception('We do not know when this access_token will expire');
 		// }
 
-		$this->access_token = $options['access_token'];
+		$this->accessToken = $options['access_token'];
 		
 		// Some providers (not many) give the uid here, so lets take it
 		isset($options['uid']) and $this->uid = $options['uid'];
@@ -69,7 +69,7 @@ class AccessToken extends Oauth2\Client\Token
 		isset($options['expires']) and $this->expires = time() + ((int) $options['expires']);
 		
 		// Grab a refresh token so we can update access tokens when they expires
-		isset($options['refresh_token']) and $this->refresh_token = $options['refresh_token'];
+		isset($options['refresh_token']) and $this->refreshToken = $options['refresh_token'];
 	}
 
 	/**
@@ -79,7 +79,7 @@ class AccessToken extends Oauth2\Client\Token
 	 */
 	public function __toString()
 	{
-		return (string) $this->access_token;
+		return (string) $this->accessToken;
 	}
 
 } // End OAuth2_Token_Access
