@@ -28,14 +28,14 @@ class AuthorizeToken extends Oauth2\Client\Token
 	 */
 	public function __construct(array $options)
 	{
-		if ( ! isset($options['code']))
-	    {
-            throw new Exception('Required option not passed: code');
-        }
+		if ( ! isset($options['code'])) {
 
-        elseif ( ! isset($options['redirect_uri']))
-        {
+            throw new Exception('Required option not passed: code');
+
+        } elseif ( ! isset($options['redirect_uri'])) {
+
             throw new Exception('Required option not passed: redirect_uri');
+            
         }
 		
 		$this->code = $options['code'];
