@@ -29,7 +29,7 @@ abstract class Token
 
 		include_once 'Token/'.$name.'.php';
 
-		$class = 'OAuth2_Token_'.$name;
+		$class = $name.'Token';
 
 		return new $class($options);
 	}
