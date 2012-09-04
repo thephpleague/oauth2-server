@@ -2,48 +2,23 @@
 
 namespace Oauth2\Client\Provider;
 
-class Blooie extends Oauth2\Client\Provider
+class Blooie extends Oauth2\Client\IDP
 {  
 	public $scope = array('user.profile', 'user.picture');
 
 	public $method = 'POST';
 
-	public function url_authorize()
+	public function urlAuthorize()
 	{
-		switch (ENVIRONMENT)
-		{
-			case PYRO_DEVELOPMENT:
-				return 'http://local.bloo.ie/oauth';
-
-			case PYRO_STAGING:
-				return 'http://blooie-staging.pagodabox.com/oauth';
-
-			case PYRO_PRODUCTIION:
-				return 'https://bloo.ie/oauth';
-
-			default:
-				exit('What the crap?!');
-		}
-		
+		return 'https://bloo.ie/oauth';	
 	}
 
-	public function url_access_token()
+	public function urlAccessToken()
 	{
-		switch (ENVIRONMENT)
-		{
-			case PYRO_DEVELOPMENT:
-				return 'http://local.bloo.ie/oauth/access_token';
+		return 'https://bloo.ie/oauth/access_token';
+	}
 
-			case PYRO_STAGING:
-				return 'http://blooie-staging.pagodabox.com/oauth/access_token';
-
-			case PYRO_PRODUCTIION:
-				return 'https://bloo.ie/oauth/access_token';
-
-			default:
-		}
-
-	public function get_user_info(OAuth2_Token_Access $token)
+	public function getUserInfo(OAuth2\Token\Access $token)
 	{
 		$url = 'https://graph.facebook.com/me?'.http_build_query(array(
 			'access_token' => $token->access_token,
