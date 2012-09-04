@@ -11,7 +11,7 @@ include('Provider.php');
  *
  * @author Phil Sturgeon < @philsturgeon >
  */
-class Client
+class Provider
 {
 
 	/**
