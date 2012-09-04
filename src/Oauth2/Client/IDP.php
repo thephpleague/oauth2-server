@@ -12,7 +12,7 @@ namespace Oauth2\Client;
  * @license    http://philsturgeon.co.uk/code/dbad-license
  */
 
-abstract class Provider
+abstract class IDP
 {
 	/**
 	 * @var  string  provider name
