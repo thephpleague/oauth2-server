@@ -96,20 +96,20 @@ abstract class IDP
 	/**
 	 * Returns the authorization URL for the provider.
 	 *
-	 *     $url = $provider->url_authorize();
+	 *     $url = $provider->urlAuthorize();
 	 *
 	 * @return  string
 	 */
-	abstract public function url_authorize();
+	abstract public function urlAuthorize();
 
 	/**
 	 * Returns the access token endpoint for the provider.
 	 *
-	 *     $url = $provider->url_access_token();
+	 *     $url = $provider->urlAccessToken();
 	 *
 	 * @return  string
 	 */
-	abstract public function url_access_token();
+	abstract public function urlAccessToken();
 
 	/*
 	* Get an authorization code from Facebook.  Redirects to Facebook, which this redirects back to the app using the redirect address you've set.
@@ -128,7 +128,7 @@ abstract class IDP
 			'approval_prompt'   => 'force' // - google force-recheck
 		);
 		
-		redirect($this->url_authorize().'?'.http_build_query($params));
+		redirect($this->urlAuthorize().'?'.http_build_query($params));
 	}
 
 	/*
@@ -145,8 +145,8 @@ abstract class IDP
 			'grant_type' 	=> isset($options['grant_type']) ? $options['grant_type'] : 'authorization_code',
 		);
 
-		switch ($params['grant_type'])
-		{
+		switch ($params['grant_type']) {
+
 			case 'authorization_code':
 				$params['code'] = $code;
 				$params['redirect_uri'] = isset($options['redirect_uri']) ? $options['redirect_uri'] : $this->redirect_uri;
@@ -155,13 +155,14 @@ abstract class IDP
 			case 'refresh_token':
 				$params['refresh_token'] = $code;
 			break;
+			
 		}
 
 		$response = null;	
-		$url = $this->url_access_token();
+		$url = $this->urlAccessToken();
 
-		switch ($this->method)
-		{
+		switch ($this->method) {
+
 			case 'GET':
 
 				// Need to switch to Request library, but need to test it on one that works
@@ -205,13 +206,14 @@ abstract class IDP
 				throw new OutOfBoundsException("Method '{$this->method}' must be either GET or POST");
 		}
 
-		if ( ! empty($return['error']))
-		{
+		if ( ! empty($return['error'])) {
+
 			throw new OAuth2_Exception($return);
+
 		}
 		
-		switch ($params['grant_type'])
-		{
+		switch ($params['grant_type']) {
+
 			case 'authorization_code':
 				return OAuth2_Token::factory('access', $return);
 			break;
@@ -219,6 +221,7 @@ abstract class IDP
 			case 'refresh_token':
 				return OAuth2_Token::factory('refresh', $return);
 			break;
+
 		}
 		
 	}
