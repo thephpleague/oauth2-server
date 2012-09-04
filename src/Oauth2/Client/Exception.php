@@ -27,19 +27,20 @@ class Exception extends \Exception {
 
 		$code = isset($result['code']) ? $result['code'] : 0;
 
-		if (isset($result['error']))
-		{
+		if (isset($result['error'])) {
+
 			// OAuth 2.0 Draft 10 style
 			$message = $result['error'];
-		}
-		elseif (isset($result['message']))
-		{
+
+		} elseif (isset($result['message'])) {
+
 			// cURL style
 			$message = $result['message'];
-		}
-		else
-		{
+
+		} else {
+
 			$message = 'Unknown Error.';
+
 		}
 
 		parent::__construct($message, $code);
@@ -54,15 +55,16 @@ class Exception extends \Exception {
 	*/
 	public function getType()
 	{
-		if (isset($this->result['error']))
-		{
+		if (isset($this->result['error'])) {
+
 			$message = $this->result['error'];
-			if (is_string($message))
-			{
+
+			if (is_string($message)) {
 				// OAuth 2.0 Draft 10 style
 				return $message;
 			}
 		}
+
 		return 'Exception';
 	}
 
@@ -75,10 +77,11 @@ class Exception extends \Exception {
 	public function __toString()
 	{
 		$str = $this->getType() . ': ';
-		if ($this->code != 0)
-		{
+
+		if ($this->code != 0) {
 			$str .= $this->code . ': ';
 		}
+		
 		return $str . $this->message;
 	}
 
