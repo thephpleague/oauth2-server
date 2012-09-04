@@ -2,13 +2,8 @@
 
 namespace Oauth2\Client;
 
-/**
- * OAuth2.0 draft v10 exception handling.
- *
- * @author Originally written by Naitik Shah <naitik@facebook.com>.
- * @author Update to draft v10 by Edison Wong <hswong3i@pantarei-design.com>.
- */
-class Exception extends \Exception {
+class Exception extends \Exception
+{
 
 	/**
 	 * The result from the API server that represents the exception information.
