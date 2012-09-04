@@ -25,7 +25,7 @@ class Provider
 	{
 		$name = ucfirst(strtolower($name));
 
-		include_once 'Provider/'.$name.'.php';
+		require_once 'Provider/'.$name.'.php';
 
 		return new $name($options);
 	}
