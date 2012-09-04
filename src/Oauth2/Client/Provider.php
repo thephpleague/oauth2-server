@@ -22,7 +22,7 @@ abstract class Provider
 	/**
 	 * @var  string  uid key name
 	 */
-	public $uid_key = 'uid';
+	public $uidKey = 'uid';
 
 	/**
 	 * @var  string  additional request parameters to be used for remote requests
@@ -47,7 +47,7 @@ abstract class Provider
 	/**
 	 * @var  string  scope separator, most use "," but some like Google are spaces
 	 */
-	protected $scope_seperator = ',';
+	protected $scopeSeperator = ',';
 
 	/**
 	 * Overloads default class properties from the options.
@@ -70,13 +70,13 @@ abstract class Provider
 			throw new Exception('Required option not provided: id');
 		}
 
-		$this->client_id = $options['id'];
+		$this->clientId = $options['id'];
 		
 		isset($options['callback']) and $this->callback = $options['callback'];
 		isset($options['secret']) and $this->client_secret = $options['secret'];
 		isset($options['scope']) and $this->scope = $options['scope'];
 
-		$this->redirect_uri = site_url(get_instance()->uri->uri_string());
+		$this->redirectUri = site_url(get_instance()->uri->uri_string());
 	}
 
 	/**
@@ -123,7 +123,7 @@ abstract class Provider
 			'client_id' 		=> $this->client_id,
 			'redirect_uri' 		=> isset($options['redirect_uri']) ? $options['redirect_uri'] : $this->redirect_uri,
 			'state' 			=> $state,
-			'scope'				=> is_array($this->scope) ? implode($this->scope_seperator, $this->scope) : $this->scope,
+			'scope'				=> is_array($this->scope) ? implode($this->scopeSeperator, $this->scope) : $this->scope,
 			'response_type' 	=> 'code',
 			'approval_prompt'   => 'force' // - google force-recheck
 		);
@@ -140,8 +140,8 @@ abstract class Provider
 	public function access($code, $options = array())
 	{
 		$params = array(
-			'client_id' 	=> $this->client_id,
-			'client_secret' => $this->client_secret,
+			'client_id' 	=> $this->clientId,
+			'client_secret' => $this->clientSecret,
 			'grant_type' 	=> isset($options['grant_type']) ? $options['grant_type'] : 'authorization_code',
 		);
 
@@ -193,8 +193,8 @@ abstract class Provider
 					)
 				);
 
-				$_default_opts = stream_context_get_params(stream_context_get_default());
-				$context = stream_context_create(array_merge_recursive($_default_opts['options'], $opts));
+				$defaultOpts = stream_context_get_params(stream_context_get_default());
+				$context = stream_context_create(array_merge_recursive($defaultOpts['options'], $opts));
 				$response = file_get_contents($url, false, $context);
 
 				$return = json_decode($response, true);
