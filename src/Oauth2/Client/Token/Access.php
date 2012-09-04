@@ -41,15 +41,9 @@ class AccessToken extends Oauth2\Client\Token
 	 */
 	public function __construct(array $options = null)
 	{
-		if ( ! isset($options['access_token']))
-		{
+		if ( ! isset($options['access_token'])) {
 			throw new Exception('Required option not passed: access_token'.PHP_EOL.print_r($options, true));
 		}
-		
-		// if ( ! isset($options['expires_in']) and ! isset($options['expires']))
-		// {
-		// 	throw new Exception('We do not know when this access_token will expire');
-		// }
 
 		$this->accessToken = $options['access_token'];
 		
