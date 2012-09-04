@@ -25,7 +25,17 @@ class Provider
 	{
 		$name = ucfirst(strtolower($name));
 
-		require_once 'Provider/'.$name.'.php';
+		$fileName = 'Provider/'.$name.'.php';
+
+		if (file_exists($fileName)) {
+
+			require_once $fileName;
+
+		} else {
+
+			throw new Exception('There is no provider configuration file for '.$name);
+
+		}
 
 		return new $name($options);
 	}
