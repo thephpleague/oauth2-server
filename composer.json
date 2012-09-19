@@ -1,7 +1,7 @@
 {
 	"name": "lncd/Oauth2",
 	"description": "OAuth 2.0 Framework",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"homepage": "https://github.com/lncd/OAuth2",
 	"license": "MIT",
 	"require": {
@@ -27,7 +27,7 @@
 	"authors": [
 		{
 			"name": "Alex Bilbie",
-			"email": "oauth2server@alexbilbie.com",
+			"email": "oauth2@alexbilbie.com",
 			"homepage": "http://www.httpster.org",
 			"role": "Developer"
 		}
