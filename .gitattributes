@@ -1,0 +1,4 @@
+tests/ export-ignore
+phpunit.xml export-ignore
+build.xml export-ignore
+test export-ignore
