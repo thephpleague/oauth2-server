@@ -2,7 +2,12 @@
 
 namespace Oauth2\Resource;
 
-class OAuthResourceServerException extends \Exception
+class ServerException extends \Exception
+{
+
+}
+
+class ClientException extends \Exception
 {
 
 }
@@ -56,7 +61,9 @@ class Server
      */
     public $errors = array(
         'missing_access_token'  =>  'An access token was not presented with the request',
-        'invalid_access_token'  =>  'The access token is not registered with the resource server'
+        'invalid_access_token'  =>  'The access token is not registered with the resource server',
+        'missing_access_token_details'  =>  'The registered database abstractor did not return a valid access token details response',
+        'invalid_access_token_scopes'   =>  'The registered database abstractor did not return a valid access token scopes response',
     );
 
     /**
@@ -150,21 +157,33 @@ class Server
 
             if ($result === false) {
 
-                throw new OAuthResourceServerException($this->errors['invalid_access_token']);
+                throw new ClientException($this->errors['invalid_access_token']);
 
             } else {
+
+                if ( ! array_key_exists('id', $result) || ! array_key_exists('owner_id', $result) || 
+                     ! array_key_exists('owner_type', $result)) {
+                    throw new ServerException($this->errors['missing_access_token_details']);
+                }
 
                 $this->_accessToken = $accessToken;
                 $this->_type = $result['owner_type'];
                 $this->_typeId = $result['owner_id'];
 
                 // Get the scopes
-                $this->_scopes = $this->_dbCall('sessionScopes', $result['id']);
+                $scopes = $this->_dbCall('sessionScopes', $result['id']);
+
+                if ( ! is_array($scopes))
+                {
+                    throw new ServerException($this->errors['invalid_access_token_scopes']);
+                }
+
+                $this->_scopes = $scopes;
             }
 
         } else {
 
-            throw new OAuthResourceServerException($this->errors['missing_access_token']);
+            throw new ClientException($this->errors['missing_access_token']);
 
         }
     }
@@ -211,11 +230,11 @@ class Server
     private function _dbCall()
     {
         if ($this->_db === null) {
-            throw new OAuthResourceServerException('No registered database abstractor');
+            throw new ServerException('No registered database abstractor');
         }
 
         if ( ! $this->_db instanceof Database) {
-            throw new OAuthResourceServerException('Registered database abstractor is not an instance of Oauth2\Resource\Database');
+            throw new ServerException('The registered database abstractor is not an instance of Oauth2\Resource\Database');
         }
 
         $args = func_get_args();

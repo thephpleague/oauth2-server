@@ -38,6 +38,10 @@ The resource server allows you to secure your API endpoints by checking for a va
 * Support for [JSON web tokens](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-json-web-token/).
 * Support for [SAML assertions](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-saml2-bearer/).
 
+### Client support
+
+* Merge in https://github.com/philsturgeon/codeigniter-oauth2
+
 ---
 
 This code will be developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which has been funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.
