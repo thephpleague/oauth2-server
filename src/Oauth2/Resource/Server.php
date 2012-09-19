@@ -121,6 +121,9 @@ class Server
     {
         $accessToken = null;
 
+        
+        $_SERVER['REQUEST_METHOD'] = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : null;
+
         // Try and get the access token via an access_token or oauth_token parameter
         switch ($_SERVER['REQUEST_METHOD'])
         {           
