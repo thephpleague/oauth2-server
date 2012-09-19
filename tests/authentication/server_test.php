@@ -90,7 +90,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    0
 	 */
 	function test_checkClientAuthoriseParams_missingClientId()
@@ -99,7 +99,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    0
 	 */
 	function test_checkClientAuthoriseParams_missingRedirectUri()
@@ -110,7 +110,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    0
 	 */
 	function test_checkClientAuthoriseParams_missingResponseType()
@@ -122,7 +122,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    0
 	 */
 	function test_checkClientAuthoriseParams_missingScopes()
@@ -136,7 +136,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    4
 	 */
 	function test_checkClientAuthoriseParams_invalidScopes()
@@ -247,7 +247,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    0
 	 */
 	function test_issueAccessToken_missingGrantType()
@@ -256,7 +256,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    7
 	 */
 	function test_issueAccessToken_unsupportedGrantType()
@@ -267,7 +267,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    0
 	 */
 	function test_completeAuthCodeGrant_missingClientId()
@@ -280,7 +280,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    0
 	 */
 	function test_completeAuthCodeGrant_missingClientSecret()
@@ -295,7 +295,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    0
 	 */
 	function test_completeAuthCodeGrant_missingRedirectUri()
@@ -311,7 +311,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    8
 	 */
 	function test_completeAuthCodeGrant_invalidClient()
@@ -328,7 +328,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    0
 	 */
 	function test_completeAuthCodeGrant_missingCode()
@@ -345,7 +345,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerClientException
+	 * @expectedException        Oauth2\Authentication\ClientException
 	 * @expectedExceptionCode    9
 	 */
 	function test_completeAuthCodeGrant_invalidCode()
@@ -363,7 +363,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerException
+	 * @expectedException        Oauth2\Authentication\ServerException
 	 * @expectedExceptionMessage No registered database abstractor
 	 */
 	function test_noRegisteredDatabaseAbstractor()
@@ -380,7 +380,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException        Oauth2\Authentication\OAuthServerException
+	 * @expectedException        Oauth2\Authentication\ServerException
 	 * @expectedExceptionMessage Registered database abstractor is not an instance of Oauth2\Authentication\Database
 	 */
 	function test_invalidRegisteredDatabaseAbstractor()

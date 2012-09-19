@@ -2,17 +2,17 @@
 
 namespace Oauth2\Authentication;
 
-class OAuthServerClientException extends \Exception
+class ClientException extends \Exception
 {
 
 }
 
-class OAuthServerUserException extends \Exception
+class UserException extends \Exception
 {
 
 }
 
-class OAuthServerException extends \Exception
+class ServerException extends \Exception
 {
 
 }
@@ -127,7 +127,7 @@ class Server
         // Client ID
         if ( ! isset($authParams['client_id']) && ! isset($_GET['client_id'])) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
 
         } else {
 
@@ -138,7 +138,7 @@ class Server
         // Redirect URI
         if ( ! isset($authParams['redirect_uri']) && ! isset($_GET['redirect_uri'])) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'redirect_uri'), 0);
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'redirect_uri'), 0);
 
         } else {
 
@@ -151,13 +151,13 @@ class Server
 
         if ($clientDetails === false) {
 
-            throw new OAuthServerClientException($this->errors['invalid_client'], 8);
+            throw new ClientException($this->errors['invalid_client'], 8);
         }
 
         // Response type
         if ( ! isset($authParams['response_type']) && ! isset($_GET['response_type'])) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'response_type'), 0);
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'response_type'), 0);
 
         } else {
 
@@ -166,7 +166,7 @@ class Server
             // Ensure response type is one that is recognised
             if ( ! in_array($params['response_type'], $this->_responseTypes)) {
 
-                throw new OAuthServerClientException($this->errors['unsupported_response_type'], 3);
+                throw new ClientException($this->errors['unsupported_response_type'], 3);
 
             }
         }
@@ -189,7 +189,7 @@ class Server
 
             if (count($scopes) === 0) {
 
-                throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'scope'), 0);
+                throw new ClientException(sprintf($this->errors['invalid_request'], 'scope'), 0);
             }
 
             $params['scopes'] = array();
@@ -200,7 +200,7 @@ class Server
                 
                 if ($scopeDetails === false) {
 
-                    throw new OAuthServerClientException(sprintf($this->errors['invalid_scope'], $scope), 4);
+                    throw new ClientException(sprintf($this->errors['invalid_scope'], $scope), 4);
 
                 }
 
@@ -325,7 +325,7 @@ class Server
 
         if ( ! isset($authParams['grant_type']) && ! isset($_POST['grant_type'])) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'grant_type'), 0);
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'grant_type'), 0);
 
         } else {
 
@@ -334,7 +334,7 @@ class Server
             // Ensure grant type is one that is recognised
             if ( ! in_array($params['grant_type'], $this->_grantTypes)) {
 
-                throw new OAuthServerClientException($this->errors['unsupported_grant_type'], 7);
+                throw new ClientException($this->errors['unsupported_grant_type'], 7);
 
             }
         }
@@ -350,7 +350,7 @@ class Server
             case 'password': // Resource owner password credentials grant
             case 'client_credentials': // Client credentials grant
             default: // Unsupported
-                throw new OAuthServerException($this->errors['server_error'] . 'Tried to process an unsuppported grant type.', 5);
+                throw new ServerException($this->errors['server_error'] . 'Tried to process an unsuppported grant type.', 5);
                 break;
         }
     }
@@ -370,7 +370,7 @@ class Server
         // Client ID
         if ( ! isset($authParams['client_id']) && ! isset($_POST['client_id'])) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
 
         } else {
 
@@ -381,7 +381,7 @@ class Server
         // Client secret
         if ( ! isset($authParams['client_secret']) && ! isset($_POST['client_secret'])) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'client_secret'), 0);
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'client_secret'), 0);
 
         } else {
 
@@ -392,7 +392,7 @@ class Server
         // Redirect URI
         if ( ! isset($authParams['redirect_uri']) && ! isset($_POST['redirect_uri'])) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'redirect_uri'), 0);
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'redirect_uri'), 0);
 
         } else {
 
@@ -409,13 +409,13 @@ class Server
 
         if ($clientDetails === false) {
 
-            throw new OAuthServerClientException($this->errors['invalid_client'], 8);
+            throw new ClientException($this->errors['invalid_client'], 8);
         }
 
         // The authorization code
         if ( ! isset($authParams['code']) && ! isset($_POST['code'])) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_request'], 'code'), 0);
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'code'), 0);
 
         } else {
 
@@ -433,7 +433,7 @@ class Server
 
         if ( ! $session) {
 
-            throw new OAuthServerClientException(sprintf($this->errors['invalid_grant'], 'code'), 9);
+            throw new ClientException(sprintf($this->errors['invalid_grant'], 'code'), 9);
         
         } else {
 
@@ -500,11 +500,11 @@ class Server
     private function _dbCall()
     {
         if ($this->_db === null) {
-            throw new OAuthServerException('No registered database abstractor');
+            throw new ServerException('No registered database abstractor');
         }
 
         if ( ! $this->_db instanceof Database) {
-            throw new OAuthServerException('Registered database abstractor is not an instance of Oauth2\Authentication\Database');
+            throw new ServerException('Registered database abstractor is not an instance of Oauth2\Authentication\Database');
         }
 
         $args = func_get_args();
