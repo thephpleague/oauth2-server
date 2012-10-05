@@ -1,43 +1,19 @@
 <?php
 
-namespace Oauth2\Client;
+namespace OAuth2\Client;
 
-include('Exception.php');
-include('Token.php');
-include('IDP.php');
+include_once('Exception.php');
 
-/**
- * OAuth2.0
- *
- * @author Phil Sturgeon < @philsturgeon >
- */
-class Provider
+class Client
 {
-
-	/**
-	 * Create a new provider client.
-	 *
-	 * @param   string   provider name
-	 * @param   array    provider options
-	 * @return  OAuth_Provider
-	 */
-	public function __construct($name, array $options = NULL)
+	public function __construct($name, array $options = null)
 	{
-		$name = ucfirst(strtolower($name));
+		if ( ! class_exists($name)) {
 
-		$fileName = 'Provider/'.$name.'.php';
-
-		if (file_exists($fileName)) {
-
-			require_once $fileName;
-
-		} else {
-
-			throw new Exception('There is no provider configuration file for '.$name);
+			throw new OAuth2\Client\Exception('There is no identity provider called: '.$name);
 
 		}
 
 		return new $name($options);
 	}
-
 }
