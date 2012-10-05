@@ -9,23 +9,21 @@
  * @license    http://philsturgeon.co.uk/code/dbad-license
  */
 
-namespace Oauth2\Client\Provider;
-
-class Facebook extends Oauth2\Client\Provider
+class Facebook extends Oauth2\Client\IDP
 {
 	protected $scope = array('offline_access', 'email', 'read_stream');
 
-	public function url_authorize()
+	public function urlAuthorize()
 	{
 		return 'https://www.facebook.com/dialog/oauth';
 	}
 
-	public function url_access_token()
+	public function urlAccessToken()
 	{
 		return 'https://graph.facebook.com/oauth/access_token';
 	}
 
-	public function get_user_info(OAuth2_Token_Access $token)
+	public function getUserInfo(Oauth2\Token\Access $token)
 	{
 		$url = 'https://graph.facebook.com/me?'.http_build_query(array(
 			'access_token' => $token->access_token,
@@ -33,7 +31,6 @@ class Facebook extends Oauth2\Client\Provider
 
 		$user = json_decode(file_get_contents($url));
 
-		// Create a response from the request
 		return array(
 			'uid' => $user->id,
 			'nickname' => isset($user->username) ? $user->username : null,

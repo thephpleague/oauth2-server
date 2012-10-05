@@ -1,7 +1,5 @@
 <?php
 
-namespace Oauth2\Client\Provider;
-
 class Blooie extends Oauth2\Client\IDP
 {  
 	public $scope = array('user.profile', 'user.picture');
@@ -18,7 +16,7 @@ class Blooie extends Oauth2\Client\IDP
 		return 'https://bloo.ie/oauth/access_token';
 	}
 
-	public function getUserInfo(OAuth2\Token\Access $token)
+	public function getUserInfo(Oauth2\Token\Access $token)
 	{
 		$url = 'https://graph.facebook.com/me?'.http_build_query(array(
 			'access_token' => $token->access_token,
@@ -26,7 +24,6 @@ class Blooie extends Oauth2\Client\IDP
 
 		$user = json_decode(file_get_contents($url));
 
-		// Create a response from the request
 		return array(
 			'uid' => $user->id,
 			'nickname' => $user->username,

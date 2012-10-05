@@ -9,21 +9,21 @@
  * @license    http://philsturgeon.co.uk/code/dbad-license
  */
 
-class OAuth2_Provider_Foursquare extends OAuth2_Provider
+class Foursquare extends Oauth2\Client\IDP
 {  
 	public $method = 'POST';
 
-	public function url_authorize()
+	public function urlAuthorize()
 	{
 		return 'https://foursquare.com/oauth2/authenticate';
 	}
 
-	public function url_access_token()
+	public function urlAccessToken()
 	{
 		return 'https://foursquare.com/oauth2/access_token';
 	}
 
-	public function get_user_info(OAuth2_Token_Access $token)
+	public function getUserInfo(Oauth2\Token\Access $token)
 	{
 		$url = 'https://api.foursquare.com/v2/users/self?'.http_build_query(array(
 			'oauth_token' => $token->access_token,
@@ -36,7 +36,6 @@ class OAuth2_Provider_Foursquare extends OAuth2_Provider
 		// Create a response from the request
 		return array(
 			'uid' => $user->id,
-			//'nickname' => $user->login,
 			'name' => sprintf('%s %s', $user->firstName, $user->lastName),
 			'email' => $user->contact->email,
 			'image' => $user->photo,
