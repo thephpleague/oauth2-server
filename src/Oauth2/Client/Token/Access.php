@@ -11,7 +11,7 @@ namespace Oauth2\Client\Token;
  * @copyright  (c) 2011 HappyNinjas Ltd
  */
 
-class AccessToken extends Oauth2\Client\Token
+class Access extends Oauth2\Client\Token
 {
 	/**
 	 * @var  string  accessToken
@@ -76,4 +76,4 @@ class AccessToken extends Oauth2\Client\Token
 		return (string) $this->accessToken;
 	}
 
-} // End OAuth2_Token_Access
+}

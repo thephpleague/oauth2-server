@@ -8,7 +8,7 @@
  * @copyright  (c) 2011 HappyNinjas Ltd
  */
 
-class AuthorizeToken extends Oauth2\Client\Token
+class Authorize extends Oauth2\Client\Token
 {
 	/**
 	 * @var  string  code
@@ -52,4 +52,4 @@ class AuthorizeToken extends Oauth2\Client\Token
 		return (string) $this->code;
 	}
 
-} // End OAuth2_Token_Access
+}
