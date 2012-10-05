@@ -120,19 +120,24 @@ class Server
     public function init()
     {
         $accessToken = null;
-
         
-        $_SERVER['REQUEST_METHOD'] = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : null;
+        $_SERVER['REQUEST_METHOD'] = isset($_SERVER['REQUEST_METHOD']) ?
+                                                $_SERVER['REQUEST_METHOD'] :
+                                                null;
 
         // Try and get the access token via an access_token or oauth_token parameter
         switch ($_SERVER['REQUEST_METHOD'])
         {           
             case 'POST':
-                $accessToken = isset($_POST[$this->_config['token_key']]) ? $_POST[$this->_config['token_key']] : null;
+                $accessToken = isset($_POST[$this->_config['token_key']]) ?
+                                        $_POST[$this->_config['token_key']] :
+                                        null;
                 break;
 
             default:
-            $accessToken = isset($_GET[$this->_config['token_key']]) ? $_GET[$this->_config['token_key']] : null;
+            $accessToken = isset($_GET[$this->_config['token_key']]) ?
+                                        $_GET[$this->_config['token_key']] :
+                                        null;
                 break;
         }
 
@@ -161,7 +166,8 @@ class Server
 
             } else {
 
-                if ( ! array_key_exists('id', $result) || ! array_key_exists('owner_id', $result) || 
+                if ( ! array_key_exists('id', $result) ||
+                     ! array_key_exists('owner_id', $result) || 
                      ! array_key_exists('owner_type', $result)) {
                     throw new ServerException($this->errors['missing_access_token_details']);
                 }
