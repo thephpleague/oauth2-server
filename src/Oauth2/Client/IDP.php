@@ -50,10 +50,10 @@ class IDP {
 			'redirect_uri' 		=> $this->redirectUri,
 			'state' 			=> $state,
 			'scope'				=> is_array($this->scope) ? implode($this->scopeSeperator, $this->scope) : $this->scope,
-			'response_type' 	=> isset($options['response_type'] ? $options['response_type'] : 'code',
+			'response_type' 	=> isset($options['response_type']) ? $options['response_type'] : 'code',
 			'approval_prompt'   => 'force' // - google force-recheck
 		);
-		
+
 		header('Location: ' . $this->urlAuthorize().'?'.http_build_query($params));
 		exit;
 	}
@@ -76,13 +76,13 @@ class IDP {
 			case 'refresh_token':
 				$params['refresh_token'] = $code;
 			break;
-			
+
 		}
 
 		switch ($this->method) {
 
 			case 'get':
-				$client = new Client($this->urlAccessToken() .= '?'.http_build_query($params));	
+				$client = new Client($this->urlAccessToken() .= '?'.http_build_query($params));
 				$response = $client->get();
 				break;
 
