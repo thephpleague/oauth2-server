@@ -40,6 +40,8 @@ class IDP {
 
 	abstract public function urlAccessToken();
 
+	abstract public function urlUserInfo();
+
 	public function authorize($options = array())
 	{
 		$state = md5(uniqid(rand(), TRUE));
