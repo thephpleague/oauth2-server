@@ -131,7 +131,9 @@ class Server
 
         } else {
 
-            $params['client_id'] = (isset($authParams['client_id'])) ? $authParams['client_id'] : $_GET['client_id'];
+            $params['client_id'] = (isset($authParams['client_id'])) ?
+                                            $authParams['client_id'] : 
+                                            $_GET['client_id'];
 
         }
 
@@ -142,12 +144,19 @@ class Server
 
         } else {
 
-            $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ? $authParams['redirect_uri'] : $_GET['redirect_uri'];
+            $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ?
+                                                $authParams['redirect_uri'] :
+                                                $_GET['redirect_uri'];
 
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->_dbCall('validateClient', $params['client_id'], null, $params['redirect_uri']);
+        $clientDetails = $this->_dbCall(
+            'validateClient',
+            $params['client_id'],
+            null,
+            $params['redirect_uri']
+        );
 
         if ($clientDetails === false) {
 
@@ -161,7 +170,9 @@ class Server
 
         } else {
 
-            $params['response_type'] = (isset($authParams['response_type'])) ? $authParams['response_type'] : $_GET['response_type'];
+            $params['response_type'] = (isset($authParams['response_type'])) ?
+                                                $authParams['response_type'] :
+                                                $_GET['response_type'];
 
             // Ensure response type is one that is recognised
             if ( ! in_array($params['response_type'], $this->_responseTypes)) {
@@ -174,12 +185,15 @@ class Server
         // Get and validate scopes
         if (isset($authParams['scope']) || isset($_GET['scope'])) {
 
-            $scopes = (isset($_GET['scope'])) ? $_GET['scope'] : $authParams['scope'];
+            $scopes = (isset($_GET['scope'])) ?
+                                $_GET['scope'] :
+                                $authParams['scope'];
 
             $scopes = explode($this->_config['scope_delimeter'], $scopes);
 
             // Remove any junk scopes
             for ($i = 0; $i < count($scopes); $i++) {
+
                 $scopes[$i] = trim($scopes[$i]);
 
                 if ($scopes[$i] === '') {
@@ -196,7 +210,10 @@ class Server
 
             foreach ($scopes as $scope) {
 
-                $scopeDetails = $this->_dbCall('getScope', $scope);
+                $scopeDetails = $this->_dbCall(
+                    'getScope',
+                    $scope
+                );
                 
                 if ($scopeDetails === false) {
 
@@ -223,7 +240,8 @@ class Server
     public function newAuthoriseRequest($type, $typeId, $authoriseParams)
     {
         // Remove any old sessions the user might have
-        $this->_dbCall('deleteSession',
+        $this->_dbCall(
+            'deleteSession',
             $authoriseParams['client_id'],
             $type,
             $typeId
@@ -272,7 +290,8 @@ class Server
         // new authorisation code otherwise create a new session
         if ($accessToken !== null) {
 
-            $this->_dbCall('updateSession',
+            $this->_dbCall(
+                'updateSession',
                 $clientId,
                 $type,
                 $typeId,
@@ -287,7 +306,8 @@ class Server
             $this->_dbCall('deleteSession', $clientId, $type, $typeId);
                
             // Create a new session     
-            $sessionId = $this->_dbCall('newSession',
+            $sessionId = $this->_dbCall(
+                'newSession',
                 $clientId,
                 $redirectUri,
                 $type,
@@ -301,7 +321,11 @@ class Server
             // Add the scopes
             foreach ($scopes as $key => $scope) {
 
-                $this->_dbCall('addSessionScope', $sessionId, $scope['scope']);
+                $this->_dbCall(
+                    'addSessionScope',
+                    $sessionId,
+                    $scope['scope']
+                );
 
             }
 
@@ -329,7 +353,9 @@ class Server
 
         } else {
 
-            $params['grant_type'] = (isset($authParams['grant_type'])) ? $authParams['grant_type'] : $_POST['grant_type'];
+            $params['grant_type'] = (isset($authParams['grant_type'])) ?
+                                                $authParams['grant_type'] :
+                                                $_POST['grant_type'];
 
             // Ensure grant type is one that is recognised
             if ( ! in_array($params['grant_type'], $this->_grantTypes)) {
@@ -374,7 +400,9 @@ class Server
 
         } else {
 
-            $params['client_id'] = (isset($authParams['client_id'])) ? $authParams['client_id'] : $_POST['client_id'];
+            $params['client_id'] = (isset($authParams['client_id'])) ?
+                                            $authParams['client_id'] :
+                                            $_POST['client_id'];
 
         }
 
@@ -385,7 +413,9 @@ class Server
 
         } else {
 
-            $params['client_secret'] = (isset($authParams['client_secret'])) ? $authParams['client_secret'] : $_POST['client_secret'];
+            $params['client_secret'] = (isset($authParams['client_secret'])) ?
+                                                $authParams['client_secret'] :
+                                                $_POST['client_secret'];
 
         }
 
@@ -396,12 +426,15 @@ class Server
 
         } else {
 
-            $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ? $authParams['redirect_uri'] : $_POST['redirect_uri'];
+            $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ?
+                                                $authParams['redirect_uri'] :
+                                                $_POST['redirect_uri'];
 
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->_dbCall('validateClient',
+        $clientDetails = $this->_dbCall(
+            'validateClient',
             $params['client_id'],
             $params['client_secret'], 
             $params['redirect_uri']
@@ -419,13 +452,16 @@ class Server
 
         } else {
 
-            $params['code'] = (isset($authParams['code'])) ? $authParams['code'] : $_POST['code'];
+            $params['code'] = (isset($authParams['code'])) ?
+                                        $authParams['code'] :
+                                        $_POST['code'];
 
         }
 
         // Verify the authorization code matches the client_id and the
         //  request_uri
-        $session = $this->_dbCall('validateAuthCode',
+        $session = $this->_dbCall(
+            'validateAuthCode',
             $params['client_id'],
             $params['redirect_uri'],
             $params['code']
@@ -442,9 +478,12 @@ class Server
 
             $accessToken = $this->generateCode();
 
-            $accessTokenExpires = ($this->_config['access_token_ttl'] === null) ? null : time() + $this->_config['access_token_ttl'];
+            $accessTokenExpires = ($this->_config['access_token_ttl'] === null) ?
+                                    null :
+                                    time() + $this->_config['access_token_ttl'];
 
-            $this->_dbCall('updateSession',
+            $this->_dbCall(
+                'updateSession',
                 $session['id'],
                 null,
                 $accessToken,
@@ -453,7 +492,8 @@ class Server
             );
 
             // Update the session's scopes to reference the access token
-            $this->_dbCall('updateSessionScopeAccessToken',
+            $this->_dbCall(
+                'updateSessionScopeAccessToken',
                 $session['id'],
                 $accessToken
             );

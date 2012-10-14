@@ -1,14 +1,15 @@
 {
-	"name": "lncd/Oauth2",
+	"name": "lncd/oauth2",
 	"description": "OAuth 2.0 Framework",
-	"version": "0.2.3",
+	"version": "0.3",
 	"homepage": "https://github.com/lncd/OAuth2",
 	"license": "MIT",
 	"require": {
-		"php": ">=5.3.0"
+		"php": ">=5.3.0",
+		"guzzle/guzzle": "*"
 	},
 	"require-dev": {
-		"EHER/PHPUnit": "*"
+		"phpunit/phpunit": "*"
 	},
 	"repositories": [
 		{
@@ -27,7 +28,7 @@
 	"authors": [
 		{
 			"name": "Alex Bilbie",
-			"email": "oauth2@alexbilbie.com",
+			"email": "hello@alexbilbie.com",
 			"homepage": "http://www.httpster.org",
 			"role": "Developer"
 		}
@@ -36,5 +37,8 @@
 		"psr-0": {
 			"Oauth2": "src/"
 		}
+	},
+	"suggest": {
+		"lncd/oauth2-facebook": "Adds support for Facebook as an IDP"
 	}
 }

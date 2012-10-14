@@ -54,9 +54,9 @@ class Server
 
     /**
      * Error codes.
-     * 
+     *
      * To provide i8ln errors just overwrite the keys
-     * 
+     *
      * @var array
      */
     public $errors = array(
@@ -68,7 +68,7 @@ class Server
 
     /**
      * Constructor
-     * 
+     *
      * @access public
      * @return void
      */
@@ -92,7 +92,7 @@ class Server
             if ($this->_type === strtolower(substr($method, 2))) {
                 return $this->_typeId;
             }
-            
+
             return false;
         }
 
@@ -101,7 +101,7 @@ class Server
 
     /**
      * Register a database abstrator class
-     * 
+     *
      * @access public
      * @param  object $db A class that implements OAuth2ServerDatabase
      * @return void
@@ -110,10 +110,10 @@ class Server
     {
         $this->_db = $db;
     }
-    
+
     /**
      * Init function
-     * 
+     *
      * @access public
      * @return void
      */
@@ -121,18 +121,23 @@ class Server
     {
         $accessToken = null;
 
-        
-        $_SERVER['REQUEST_METHOD'] = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : null;
+        $_SERVER['REQUEST_METHOD'] = isset($_SERVER['REQUEST_METHOD']) ?
+                                                $_SERVER['REQUEST_METHOD'] :
+                                                null;
 
         // Try and get the access token via an access_token or oauth_token parameter
         switch ($_SERVER['REQUEST_METHOD'])
-        {           
+        {
             case 'POST':
-                $accessToken = isset($_POST[$this->_config['token_key']]) ? $_POST[$this->_config['token_key']] : null;
+                $accessToken = isset($_POST[$this->_config['token_key']]) ?
+                                        $_POST[$this->_config['token_key']] :
+                                        null;
                 break;
 
             default:
-            $accessToken = isset($_GET[$this->_config['token_key']]) ? $_GET[$this->_config['token_key']] : null;
+            $accessToken = isset($_GET[$this->_config['token_key']]) ?
+                                        $_GET[$this->_config['token_key']] :
+                                        null;
                 break;
         }
 
@@ -140,17 +145,17 @@ class Server
         if (function_exists('getallheaders')) {
 
             $headers = getallheaders();
-            
+
             if (isset($headers['Authorization'])) {
 
                 $rawToken = trim(str_replace('Bearer', '', $headers['Authorization']));
 
                 if ( ! empty($rawToken)) {
-                    $accessToken = base64_decode($rawToken);
+                    $accessToken = $rawToken;
                 }
             }
         }
-        
+
         if ($accessToken) {
 
             $result = $this->_dbCall('validateAccessToken', $accessToken);
@@ -161,7 +166,8 @@ class Server
 
             } else {
 
-                if ( ! array_key_exists('id', $result) || ! array_key_exists('owner_id', $result) || 
+                if ( ! array_key_exists('id', $result) ||
+                     ! array_key_exists('owner_id', $result) ||
                      ! array_key_exists('owner_type', $result)) {
                     throw new ServerException($this->errors['missing_access_token_details']);
                 }
@@ -187,12 +193,12 @@ class Server
 
         }
     }
-    
+
     /**
      * Test if the access token has a specific scope
-     * 
+     *
      * @param mixed $scopes Scope(s) to check
-     * 
+     *
      * @access public
      * @return string|bool
      */
@@ -203,7 +209,7 @@ class Server
             if (in_array($scopes, $this->_scopes)) {
                 return true;
             }
-            
+
             return false;
 
         } elseif (is_array($scopes)) {
@@ -215,16 +221,16 @@ class Server
                 }
 
             }
-            
+
             return true;
         }
-        
+
         return false;
     }
 
     /**
      * Call database methods from the abstractor
-     * 
+     *
      * @return mixed The query result
      */
     private function _dbCall()
