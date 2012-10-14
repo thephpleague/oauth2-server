@@ -8,7 +8,7 @@
  * @copyright  (c) 2011 HappyNinjas Ltd
  */
 
-class Authorize extends Oauth2\Client\Token
+class Authorize extends \Oauth2\Client\Token
 {
 	/**
 	 * @var  string  code
@@ -35,9 +35,9 @@ class Authorize extends Oauth2\Client\Token
         } elseif ( ! isset($options['redirect_uri'])) {
 
             throw new Exception('Required option not passed: redirect_uri');
-            
+
         }
-		
+
 		$this->code = $options['code'];
 		$this->redirectUri = $options['redirect_uri'];
 	}

@@ -11,7 +11,7 @@ namespace Oauth2\Client\Token;
  * @copyright  (c) 2011 HappyNinjas Ltd
  */
 
-class Access extends Oauth2\Client\Token
+class Access extends \Oauth2\Client\Token
 {
 	/**
 	 * @var  string  accessToken
@@ -42,26 +42,26 @@ class Access extends Oauth2\Client\Token
 	public function __construct(array $options = null)
 	{
 		if ( ! isset($options['access_token'])) {
-			throw new Exception('Required option not passed: access_token'.PHP_EOL.print_r($options, true));
+			throw new \BadMethodCallException('Required option not passed: access_token'.PHP_EOL.print_r($options, true));
 		}
 
 		$this->accessToken = $options['access_token'];
-		
+
 		// Some providers (not many) give the uid here, so lets take it
 		isset($options['uid']) and $this->uid = $options['uid'];
-		
+
 		//Vkontakte uses user_id instead of uid
 		isset($options['user_id']) and $this->uid = $options['user_id'];
-		
+
 		//Mailru uses x_mailru_vid instead of uid
 		isset($options['x_mailru_vid']) and $this->uid = $options['x_mailru_vid'];
-		
+
 		// We need to know when the token expires, add num. seconds to current time
 		isset($options['expires_in']) and $this->expires = time() + ((int) $options['expires_in']);
-		
+
 		// Facebook is just being a spec ignoring jerk
 		isset($options['expires']) and $this->expires = time() + ((int) $options['expires']);
-		
+
 		// Grab a refresh token so we can update access tokens when they expires
 		isset($options['refresh_token']) and $this->refreshToken = $options['refresh_token'];
 	}

@@ -37,5 +37,8 @@
 		"psr-0": {
 			"Oauth2": "src/"
 		}
+	},
+	"suggest": {
+		"lncd/oauth2-facebook": "Adds support for Facebook as an IDP"
 	}
 }

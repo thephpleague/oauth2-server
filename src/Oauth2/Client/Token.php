@@ -16,7 +16,7 @@ abstract class Token
 	{
 		include_once 'Token/'.ucfirst(strtolower($name)).'.php';
 
-		$class = $name.'Token';
+		$class = 'Oauth2\Client\Token\\'.ucfirst($name);
 
 		return new $class($options);
 	}

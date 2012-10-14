@@ -2,128 +2,229 @@
 
 namespace OAuth2\Client;
 
-use Guzzle\Service\Client;
+use Guzzle\Service\Client as GuzzleClient;
 
-class IDPException extends \Exception {}
+class IDPException extends \Exception
+{
+    protected $result;
 
-class IDP {
+    public function __construct($result)
+    {
+        $this->result = $result;
 
-	public $clientId = '';
+        $code = isset($result['code']) ? $result['code'] : 0;
 
-	public $clientSecret = '';
+        if (isset($result['error'])) {
 
-	public $redirectUri = '';
+            // OAuth 2.0 Draft 10 style
+            $message = $result['error'];
 
-	public $name;
+        } elseif (isset($result['message'])) {
 
-	public $uidKey = 'uid';
+            // cURL style
+            $message = $result['message'];
 
-	public $scopes = array();
+        } else {
 
-	public $method = 'post';
+            $message = 'Unknown Error.';
 
-	public $scopeSeperator = ',';
+        }
 
-	public $responseType = 'json';
+        parent::__construct($message['message'], $message['code']);
+    }
 
-	public function __construct()
-	{
-		//$this->redirectUri = $_SERVER[]
-	}
+    public function getType()
+    {
+        if (isset($this->result['error'])) {
 
-	public function __get($key)
-	{
-		return $this->$key;
-	}
+            $message = $this->result['error'];
 
-	abstract public function urlAuthorize();
+            if (is_string($message)) {
+                // OAuth 2.0 Draft 10 style
+                return $message;
+            }
+        }
 
-	abstract public function urlAccessToken();
+        return 'Exception';
+    }
 
-	abstract public function urlUserInfo();
+    /**
+     * To make debugging easier.
+     *
+     * @returns
+     *   The string representation of the error.
+     */
+    public function __toString()
+    {
+        $str = $this->getType() . ': ';
 
-	public function authorize($options = array())
-	{
-		$state = md5(uniqid(rand(), TRUE));
-		setcookie($this->name.'_authorize_state', $state);
+        if ($this->code != 0) {
+            $str .= $this->code . ': ';
+        }
 
-		$params = array(
-			'client_id' 		=> $this->clientId,
-			'redirect_uri' 		=> $this->redirectUri,
-			'state' 			=> $state,
-			'scope'				=> is_array($this->scope) ? implode($this->scopeSeperator, $this->scope) : $this->scope,
-			'response_type' 	=> isset($options['response_type']) ? $options['response_type'] : 'code',
-			'approval_prompt'   => 'force' // - google force-recheck
-		);
+        return $str . $this->message;
+    }
 
-		header('Location: ' . $this->urlAuthorize().'?'.http_build_query($params));
-		exit;
-	}
+}
 
-	public function getAccessToken()
-	{
-		$params = array(
-			'client_id' 	=> $this->clientId,
-			'client_secret' => $this->clientSecret,
-			'grant_type' 	=> isset($options['grant_type']) ? $options['grant_type'] : 'authorization_code',
-		);
+abstract class IDP {
 
-		switch ($params['grant_type']) {
+    public $clientId = '';
 
-			case 'authorization_code':
-				$params['code'] = $code;
-				$params['redirect_uri'] = isset($options['redirect_uri']) ? $options['redirect_uri'] : $this->redirect_uri;
-			break;
+    public $clientSecret = '';
 
-			case 'refresh_token':
-				$params['refresh_token'] = $code;
-			break;
+    public $redirectUri = '';
 
-		}
+    public $name;
 
-		switch ($this->method) {
+    public $uidKey = 'uid';
 
-			case 'get':
-				$client = new Client($this->urlAccessToken() .= '?'.http_build_query($params));
-				$response = $client->get();
-				break;
+    public $scopes = array();
 
-			default:
-				$client = new Client($this->urlAccessToken());
-				$response = $client->{$this->method}(null, null, $params);
-				break;
+    public $method = 'post';
 
-		}
+    public $scopeSeperator = ',';
 
-		switch ($this->responseType) {
+    public $responseType = 'json';
 
-			case 'json':
-				$result = json_decode($response, true);
-			break;
+    public function __construct($options)
+    {
+        foreach ($options as $option => $value) {
+            if (isset($this->{$option})) {
+                $this->{$option} = $value;
+            }
+        }
+    }
 
-			case 'string':
-				parse_str($response, $result);
-			break;
+    abstract public function urlAuthorize();
 
-		}
+    abstract public function urlAccessToken();
 
-		if (isset($result['error']) && ! empty($result['error'])) {
+    abstract public function urlUserDetails(\Oauth2\Client\Token\Access $token);
 
-			throw new Oauth2\Client\IDPException($result);
+    abstract public function userDetails($response, \Oauth2\Client\Token\Access $token);
 
-		}
+    public function authorize($options = array())
+    {
+        $state = md5(uniqid(rand(), TRUE));
+        setcookie($this->name.'_authorize_state', $state);
 
-		switch ($params['grant_type']) {
+        $params = array(
+            'client_id'         => $this->clientId,
+            'redirect_uri'      => $this->redirectUri,
+            'state'             => $state,
+            'scope'             => is_array($this->scope) ? implode($this->scopeSeperator, $this->scope) : $this->scope,
+            'response_type'     => isset($options['response_type']) ? $options['response_type'] : 'code',
+            'approval_prompt'   => 'force' // - google force-recheck
+        );
 
-			case 'authorization_code':
-				return Oauth2\Client\Token::factory('access', $result);
-			break;
+        header('Location: ' . $this->urlAuthorize().'?'.http_build_query($params));
+        exit;
+    }
 
-			case 'refresh_token':
-				return Oauth2\Client\Token::factory('refresh', $result);
-			break;
+    public function getAccessToken($code = NULL, $options = array())
+    {
+        if ($code === NULL) {
+            throw new \BadMethodCallException('Missing authorization code');
+        }
 
-		}
-	}
+        $params = array(
+            'client_id'     => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'grant_type'    => isset($options['grantType']) ? $options['grantType'] : 'authorization_code',
+        );
+
+        switch ($params['grant_type']) {
+
+            case 'authorization_code':
+                $params['code'] = $code;
+                $params['redirect_uri'] = isset($options['redirectUri']) ? $options['redirectUri'] : $this->redirectUri;
+            break;
+
+            case 'refresh_token':
+                $params['refresh_token'] = $code;
+            break;
+
+        }
+
+        try {
+
+            switch ($this->method) {
+
+                case 'get':
+
+                    $client = new GuzzleClient($this->urlAccessToken() . '?' . http_build_query($params));
+                    $request = $client->send();
+                    $response = $request->getBody();
+
+                    break;
+
+                case 'post':
+
+                    $client = new GuzzleClient($this->urlAccessToken());
+                    $request = $client->post(null, null, $params)->send();
+                    $response = $request->getBody();
+
+                    break;
+
+            }
+
+        }
+
+        catch (\Guzzle\Http\Exception\BadResponseException $e)
+        {
+            $raw_response = explode("\n", $e->getResponse());
+            $response = end($raw_response);
+        }
+
+        switch ($this->responseType) {
+
+            case 'json':
+                $result = json_decode($response, true);
+            break;
+
+            case 'string':
+                parse_str($response, $result);
+            break;
+
+        }
+
+        if (isset($result['error']) && ! empty($result['error'])) {
+
+            throw new \Oauth2\Client\IDPException($result);
+
+        }
+
+        switch ($params['grant_type']) {
+
+            case 'authorization_code':
+                return \Oauth2\Client\Token::factory('access', $result);
+            break;
+
+            case 'refresh_token':
+                return \Oauth2\Client\Token::factory('refresh', $result);
+            break;
+
+        }
+    }
+
+    public function getUserDetails(\Oauth2\Client\Token\Access $token)
+    {
+        $url = $this->urlUserDetails($token);
+
+        try {
+            $client = new GuzzleClient($url);
+            $request = $client->get()->send();
+            $response = $request->getBody();
+
+            return $this->userDetails(json_decode($response), $token);
+        }
+
+        catch (\Guzzle\Http\Exception\BadResponseException $e)
+        {
+            $raw_response = explode("\n", $e->getResponse());
+            throw new \Oauth2\Client\IDPException(end($raw_response));
+        }
+    }
 
 }
