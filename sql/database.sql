@@ -20,7 +20,7 @@ CREATE TABLE `client_endpoints` (
 -- Create syntax for TABLE 'oauth_sessions'
 CREATE TABLE `oauth_sessions` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `client_id` varchar(32) NOT NULL DEFAULT '',
+  `client_id` varchar(40) NOT NULL DEFAULT '',
   `redirect_uri` varchar(250) NOT NULL DEFAULT '',
   `owner_type` enum('user','client') NOT NULL DEFAULT 'user',
   `owner_id` varchar(255) DEFAULT NULL,
