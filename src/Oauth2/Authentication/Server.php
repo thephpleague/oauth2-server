@@ -297,7 +297,7 @@ class Server
                 $typeId,
                 $authCode,
                 $accessToken,
-                'request'
+                'requested'
             );
         
         } else {
@@ -315,7 +315,7 @@ class Server
                 $authCode,
                 null,
                 null,
-                'request'
+                'requested'
             );
                         
             // Add the scopes
