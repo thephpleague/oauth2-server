@@ -163,6 +163,8 @@ class Server
             throw new ClientException($this->errors['invalid_client'], 8);
         }
 
+        $params['client_details'] = $clientDetails;
+
         // Response type
         if ( ! isset($authParams['response_type']) && ! isset($_GET['response_type'])) {
 
