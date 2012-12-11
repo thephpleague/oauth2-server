@@ -41,7 +41,7 @@ class Server
     private $_responseTypes =   array(
         'code'
     );
-    
+
     /**
      * Supported grant types
      * @var array
@@ -69,9 +69,9 @@ class Server
 
     /**
      * Error codes.
-     * 
+     *
      * To provide i8ln errors just overwrite the keys
-     * 
+     *
      * @var array
      */
     public $errors = array(
@@ -89,7 +89,7 @@ class Server
 
     /**
      * Constructor
-     * 
+     *
      * @access public
      * @param  array $options Optional list of options to overwrite the defaults
      * @return void
@@ -103,7 +103,7 @@ class Server
 
     /**
      * Register a database abstrator class
-     * 
+     *
      * @access public
      * @param  object $db A class that implements OAuth2ServerDatabase
      * @return void
@@ -115,7 +115,7 @@ class Server
 
     /**
      * Check client authorise parameters
-     * 
+     *
      * @access public
      * @param  array $authParams Optional array of parsed $_GET keys
      * @return array             Authorise request parameters
@@ -132,7 +132,7 @@ class Server
         } else {
 
             $params['client_id'] = (isset($authParams['client_id'])) ?
-                                            $authParams['client_id'] : 
+                                            $authParams['client_id'] :
                                             $_GET['client_id'];
 
         }
@@ -162,6 +162,8 @@ class Server
 
             throw new ClientException($this->errors['invalid_client'], 8);
         }
+
+        $params['client_details'] = $clientDetails;
 
         // Response type
         if ( ! isset($authParams['response_type']) && ! isset($_GET['response_type'])) {
@@ -214,7 +216,7 @@ class Server
                     'getScope',
                     $scope
                 );
-                
+
                 if ($scopeDetails === false) {
 
                     throw new ClientException(sprintf($this->errors['invalid_scope'], $scope), 4);
@@ -231,7 +233,7 @@ class Server
 
     /**
      * Parse a new authorise request
-     * 
+     *
      * @param  string $type            The session owner's type
      * @param  string $typeId          The session owner's ID
      * @param  array  $authoriseParams The authorise request $_GET parameters
@@ -249,10 +251,10 @@ class Server
 
         // Create the new auth code
         $authCode = $this->newAuthCode(
-            $authoriseParams['client_id'], 
+            $authoriseParams['client_id'],
             'user',
             $typeId,
-            $authoriseParams['redirect_uri'], 
+            $authoriseParams['redirect_uri'],
             $authoriseParams['scopes']
         );
 
@@ -261,9 +263,9 @@ class Server
 
     /**
      * Generate a unique code
-     * 
+     *
      * Generate a unique code for an authorisation code, or token
-     * 
+     *
      * @return string A unique code
      */
     private function generateCode()
@@ -273,7 +275,7 @@ class Server
 
     /**
      * Create a new authorisation code
-     * 
+     *
      * @param  string $clientId    The client ID
      * @param  string $type        The type of the owner of the session
      * @param  string $typeId      The session owner's ID
@@ -286,7 +288,7 @@ class Server
     {
         $authCode = $this->generateCode();
 
-        // If an access token exists then update the existing session with the 
+        // If an access token exists then update the existing session with the
         // new authorisation code otherwise create a new session
         if ($accessToken !== null) {
 
@@ -299,13 +301,13 @@ class Server
                 $accessToken,
                 'requested'
             );
-        
+
         } else {
 
             // Delete any existing sessions just to be sure
             $this->_dbCall('deleteSession', $clientId, $type, $typeId);
-               
-            // Create a new session     
+
+            // Create a new session
             $sessionId = $this->_dbCall(
                 'newSession',
                 $clientId,
@@ -317,7 +319,7 @@ class Server
                 null,
                 'requested'
             );
-                        
+
             // Add the scopes
             foreach ($scopes as $key => $scope) {
 
@@ -330,17 +332,17 @@ class Server
             }
 
         }
-        
+
         return $authCode;
     }
 
     /**
      * Issue an access token
-     * 
+     *
      * @access public
-     * 
+     *
      * @param  array $authParams Optional array of parsed $_POST keys
-     * 
+     *
      * @return array             Authorise request parameters
      */
     public function issueAccessToken($authParams = null)
@@ -367,10 +369,10 @@ class Server
 
         switch ($params['grant_type'])
         {
-            
+
             case 'authorization_code': // Authorization code grant
                 return $this->completeAuthCodeGrant($authParams, $params);
-                break;  
+                break;
 
             case 'refresh_token': // Refresh token
             case 'password': // Resource owner password credentials grant
@@ -383,12 +385,12 @@ class Server
 
     /**
      * Complete the authorisation code grant
-     * 
+     *
      * @access private
-     * 
+     *
      * @param  array $authParams Array of parsed $_POST keys
      * @param  array $params     Generated parameters from issueAccessToken()
-     * 
+     *
      * @return array             Authorise request parameters
      */
     private function completeAuthCodeGrant($authParams = array(), $params = array())
@@ -436,7 +438,7 @@ class Server
         $clientDetails = $this->_dbCall(
             'validateClient',
             $params['client_id'],
-            $params['client_secret'], 
+            $params['client_secret'],
             $params['redirect_uri']
         );
 
@@ -470,7 +472,7 @@ class Server
         if ( ! $session) {
 
             throw new ClientException(sprintf($this->errors['invalid_grant'], 'code'), 9);
-        
+
         } else {
 
             // A session ID was returned so update it with an access token,
@@ -508,16 +510,16 @@ class Server
 
     /**
      * Generates the redirect uri with appended params
-     * 
+     *
      * @param  string $redirectUri     The redirect URI
      * @param  array  $params          The parameters to be appended to the URL
      * @param  string $query_delimeter The query string delimiter (default: ?)
-     * 
+     *
      * @return string                  The updated redirect URI
      */
     public function redirectUri($redirectUri, $params = array(), $queryDelimeter = '?')
     {
-      
+
         if (strstr($redirectUri, $queryDelimeter)) {
 
             $redirectUri = $redirectUri . '&' . http_build_query($params);
@@ -527,14 +529,14 @@ class Server
             $redirectUri = $redirectUri . $queryDelimeter . http_build_query($params);
 
         }
-        
+
         return $redirectUri;
 
     }
 
     /**
      * Call database methods from the abstractor
-     * 
+     *
      * @return mixed The query result
      */
     private function _dbCall()
