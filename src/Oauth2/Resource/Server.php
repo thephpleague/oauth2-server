@@ -75,7 +75,7 @@ class Server
     public function __construct($options = null)
     {
         if ($options !== null) {
-            $this->config = array_merge($this->config, $options);
+            $this->_config = array_merge($this->_config, $options);
         }
     }
 
