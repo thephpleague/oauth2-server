@@ -77,6 +77,7 @@ interface Database
         $typeId = null,
         $authCode = null,
         $accessToken = null,
+        $refreshToken = null,
         $accessTokenExpire = null,
         $stage = 'requested'
     );
@@ -102,6 +103,7 @@ interface Database
         $sessionId,
         $authCode = null,
         $accessToken = null,
+        $refreshToken = null,
         $accessTokenExpire = null,
         $stage = 'requested'
     );
@@ -124,6 +126,26 @@ interface Database
         $type,
         $typeId
     );
+
+
+    /**
+     * Update the refresh token
+     *
+     * Database query:
+     *
+     * <code>
+     * UPDATE oauth_sessions SET access_token = $newAccessToken, refresh_token =
+     *  $newRefreshToken, access_toke_expires = $accessTokenExpires, last_updated = UNIX_TIMESTAMP(NOW()) WHERE
+     *  refresh_token = $currentRefreshToken
+     * </code>
+     *
+     * @param  string $currentRefreshToken   The session's current refresh token
+     * @param  string $newAccessToken        The new access token for this session
+     * @param  string $newRefreshToken       The new refresh token for the session
+     * @param  int    $accessTokenExpires    The UNIX timestamp of when the new token expires
+     * @return bool   Whether the $currentRefreshToken was valid or not.
+     */
+    public function refreshToken($currentRefreshToken, $newAccessToken, $newRefreshToken, $accessTokenExpires);
 
     /**
      * Validate that an authorisation code is valid
