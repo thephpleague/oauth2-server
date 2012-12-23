@@ -30,8 +30,8 @@ class Server
      * @var array
      */
     private $_config = array(
-        'scope_delimeter'       =>  ',',
-        'access_token_ttl'   =>  null
+        'scope_delimeter'   =>  ',',
+        'access_token_ttl'  =>  3600
     );
 
     /**
