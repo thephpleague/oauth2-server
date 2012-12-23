@@ -38,7 +38,7 @@ class Server
      * Supported response types
      * @var array
      */
-    private $_responseTypes =   array(
+    private $_responseTypes = array(
         'code'
     );
 
@@ -46,7 +46,7 @@ class Server
      * Supported grant types
      * @var array
      */
-    private $_grantTypes    =   array(
+    private $_grantTypes = array(
         'authorization_code',
         'user_credentials',
         'refresh_token',
