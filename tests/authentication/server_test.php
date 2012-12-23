@@ -1,398 +1,401 @@
 <?php
 
-class Authentication_Server_test extends PHPUnit_Framework_TestCase {
+class Authentication_Server_test extends PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
+        require 'src/OAuth2/Authentication/Server.php';
+        require 'src/OAuth2/Authentication/Database.php';
 
-	function setUp()
-	{
-		$this->oauth = new Oauth2\Authentication\Server();
+        $this->oauth = new Oauth2\Authentication\Server();
 
-		require_once('database_mock.php');
-		$this->oauthdb = new OAuthdb();
-		$this->assertInstanceOf('Oauth2\Authentication\Database', $this->oauthdb);
-		$this->oauth->registerDbAbstractor($this->oauthdb);
-	}
+        require_once 'database_mock.php';
+        $this->oauthdb = new OAuthdb();
+        $this->assertInstanceOf('Oauth2\Authentication\Database', $this->oauthdb);
+        $this->oauth->registerDbAbstractor($this->oauthdb);
+    }
 
-	function test_generateCode()
-	{
-		$reflector = new ReflectionClass($this->oauth);
-		$method = $reflector->getMethod('generateCode');
-		$method->setAccessible(true);
+    public function test_generateCode()
+    {
+        $reflector = new ReflectionClass($this->oauth);
+        $method = $reflector->getMethod('generateCode');
+        $method->setAccessible(true);
 
-		$result = $method->invoke($this->oauth);
-		$result2 = $method->invoke($this->oauth);
+        $result = $method->invoke($this->oauth);
+        $result2 = $method->invoke($this->oauth);
 
-		$this->assertEquals(40, strlen($result));
-		$this->assertNotEquals($result, $result2);
-	}
+        $this->assertEquals(40, strlen($result));
+        $this->assertNotEquals($result, $result2);
+    }
 
-	function test_redirectUri()
-	{
-		$result1 = $this->oauth->redirectUri('http://example.com/foo');
-		$result2 = $this->oauth->redirectUri('http://example.com/foo', array('foo' => 'bar'));
-		$result3 = $this->oauth->redirectUri('http://example.com/foo', array('foo' => 'bar'), '#');
+    public function test_redirectUri()
+    {
+        $result1 = $this->oauth->redirectUri('http://example.com/foo');
+        $result2 = $this->oauth->redirectUri('http://example.com/foo', array('foo' => 'bar'));
+        $result3 = $this->oauth->redirectUri('http://example.com/foo', array('foo' => 'bar'), '#');
 
-		$this->assertEquals('http://example.com/foo?', $result1);
-		$this->assertEquals('http://example.com/foo?foo=bar', $result2);
-		$this->assertEquals('http://example.com/foo#foo=bar', $result3);
-	}
+        $this->assertEquals('http://example.com/foo?', $result1);
+        $this->assertEquals('http://example.com/foo?foo=bar', $result2);
+        $this->assertEquals('http://example.com/foo#foo=bar', $result3);
+    }
 
-	function test_checkClientAuthoriseParams_GET()
-	{
-		$_GET['client_id'] = 'test';
-		$_GET['redirect_uri'] = 'http://example.com/test';
-		$_GET['response_type'] = 'code';
-		$_GET['scope'] = 'test';
-		
-		$expect = array(
-			'client_id'	=>	'test',
-			'redirect_uri'	=>	'http://example.com/test',
-			'response_type'	=>	'code',
-			'scopes'	=>	array(
-					0 => array(
-					'id'	=>	1,
-					'scope'	=>	'test',
-					'name'	=>	'test',
-					'description'	=>	'test'
-				)
-			)
-		);
+    public function test_checkClientAuthoriseParams_GET()
+    {
+        $_GET['client_id'] = 'test';
+        $_GET['redirect_uri'] = 'http://example.com/test';
+        $_GET['response_type'] = 'code';
+        $_GET['scope'] = 'test';
 
-		$result = $this->oauth->checkClientAuthoriseParams();
+        $expect = array(
+            'client_id' =>  'test',
+            'redirect_uri'  =>  'http://example.com/test',
+            'response_type' =>  'code',
+            'scopes'    =>  array(
+                    0 => array(
+                    'id'    =>  1,
+                    'scope' =>  'test',
+                    'name'  =>  'test',
+                    'description'   =>  'test'
+                )
+            )
+        );
 
-		$this->assertEquals($expect, $result);
-	}
+        $result = $this->oauth->checkClientAuthoriseParams();
 
-	function test_checkClientAuthoriseParams_PassedParams()
-	{
-		unset($_GET['client_id']);
-		unset($_GET['redirect_uri']);
-		unset($_GET['response_type']);
-		unset($_GET['scope']);
+        $this->assertEquals($expect, $result);
+    }
 
-		$params = array(
-			'client_id'	=>	'test',
-			'redirect_uri'	=>	'http://example.com/test',
-			'response_type'	=>	'code',
-			'scope'	=>	'test'
-		);
+    public function test_checkClientAuthoriseParams_PassedParams()
+    {
+        unset($_GET['client_id']);
+        unset($_GET['redirect_uri']);
+        unset($_GET['response_type']);
+        unset($_GET['scope']);
 
-		$this->assertEquals(array(
-			'client_id'	=>	'test',
-			'redirect_uri'	=>	'http://example.com/test',
-			'response_type'	=>	'code',
-			'scopes'	=>	array(0 => array(
-				'id'	=>	1,
-				'scope'	=>	'test',
-				'name'	=>	'test',
-				'description'	=>	'test'
-			))
-		), $this->oauth->checkClientAuthoriseParams($params));
-	}
+        $params = array(
+            'client_id' =>  'test',
+            'redirect_uri'  =>  'http://example.com/test',
+            'response_type' =>  'code',
+            'scope' =>  'test'
+        );
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    0
-	 */
-	function test_checkClientAuthoriseParams_missingClientId()
-	{
-		$this->oauth->checkClientAuthoriseParams();
-	}
+        $this->assertEquals(array(
+            'client_id' =>  'test',
+            'redirect_uri'  =>  'http://example.com/test',
+            'response_type' =>  'code',
+            'scopes'    =>  array(0 => array(
+                'id'    =>  1,
+                'scope' =>  'test',
+                'name'  =>  'test',
+                'description'   =>  'test'
+            ))
+        ), $this->oauth->checkClientAuthoriseParams($params));
+    }
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    0
-	 */
-	function test_checkClientAuthoriseParams_missingRedirectUri()
-	{
-		$_GET['client_id'] = 'test';
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_checkClientAuthoriseParams_missingClientId()
+    {
+        $this->oauth->checkClientAuthoriseParams();
+    }
 
-		$this->oauth->checkClientAuthoriseParams();
-	}
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_checkClientAuthoriseParams_missingRedirectUri()
+    {
+        $_GET['client_id'] = 'test';
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    0
-	 */
-	function test_checkClientAuthoriseParams_missingResponseType()
-	{
-		$_GET['client_id'] = 'test';
-		$_GET['redirect_uri'] = 'http://example.com/test';
+        $this->oauth->checkClientAuthoriseParams();
+    }
 
-		$this->oauth->checkClientAuthoriseParams();
-	}
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_checkClientAuthoriseParams_missingResponseType()
+    {
+        $_GET['client_id'] = 'test';
+        $_GET['redirect_uri'] = 'http://example.com/test';
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    0
-	 */
-	function test_checkClientAuthoriseParams_missingScopes()
-	{
-		$_GET['client_id'] = 'test';
-		$_GET['redirect_uri'] = 'http://example.com/test';
-		$_GET['response_type'] = 'code';
-		$_GET['scope'] = ' ';
+        $this->oauth->checkClientAuthoriseParams();
+    }
 
-		$this->oauth->checkClientAuthoriseParams();
-	}
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_checkClientAuthoriseParams_missingScopes()
+    {
+        $_GET['client_id'] = 'test';
+        $_GET['redirect_uri'] = 'http://example.com/test';
+        $_GET['response_type'] = 'code';
+        $_GET['scope'] = ' ';
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    4
-	 */
-	function test_checkClientAuthoriseParams_invalidScopes()
-	{
-		$_GET['client_id'] = 'test';
-		$_GET['redirect_uri'] = 'http://example.com/test';
-		$_GET['response_type'] = 'code';
-		$_GET['scope'] = 'blah';
+        $this->oauth->checkClientAuthoriseParams();
+    }
 
-		$this->oauth->checkClientAuthoriseParams();
-	}
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    4
+     */
+    public function test_checkClientAuthoriseParams_invalidScopes()
+    {
+        $_GET['client_id'] = 'test';
+        $_GET['redirect_uri'] = 'http://example.com/test';
+        $_GET['response_type'] = 'code';
+        $_GET['scope'] = 'blah';
 
-	function test_newAuthoriseRequest()
-	{
-		$result = $this->oauth->newAuthoriseRequest('user', '123', array(
-			'client_id'	=>	'test',
-			'redirect_uri'	=>	'http://example.com/test',
-			'scopes'	=>	array(array(
-				'id'	=>	1,
-				'scope'	=>	'test',
-				'name'	=>	'test',
-				'description'	=>	'test'
-			))
-		));
+        $this->oauth->checkClientAuthoriseParams();
+    }
 
-		$this->assertEquals(40, strlen($result));
-	}
+    public function test_newAuthoriseRequest()
+    {
+        $result = $this->oauth->newAuthoriseRequest('user', '123', array(
+            'client_id' =>  'test',
+            'redirect_uri'  =>  'http://example.com/test',
+            'scopes'    =>  array(array(
+                'id'    =>  1,
+                'scope' =>  'test',
+                'name'  =>  'test',
+                'description'   =>  'test'
+            ))
+        ));
 
-	function test_newAuthoriseRequest_isUnique()
-	{
-		$result1 = $this->oauth->newAuthoriseRequest('user', '123', array(
-			'client_id'	=>	'test',
-			'redirect_uri'	=>	'http://example.com/test',
-			'scopes'	=>	array(array(
-				'id'	=>	1,
-				'scope'	=>	'test',
-				'name'	=>	'test',
-				'description'	=>	'test'
-			))
-		));
+        $this->assertEquals(40, strlen($result));
+    }
 
-		$result2 = $this->oauth->newAuthoriseRequest('user', '123', array(
-			'client_id'	=>	'test',
-			'redirect_uri'	=>	'http://example.com/test',
-			'scopes'	=>	array(array(
-				'id'	=>	1,
-				'scope'	=>	'test',
-				'name'	=>	'test',
-				'description'	=>	'test'
-			))
-		));
+    public function test_newAuthoriseRequest_isUnique()
+    {
+        $result1 = $this->oauth->newAuthoriseRequest('user', '123', array(
+            'client_id' =>  'test',
+            'redirect_uri'  =>  'http://example.com/test',
+            'scopes'    =>  array(array(
+                'id'    =>  1,
+                'scope' =>  'test',
+                'name'  =>  'test',
+                'description'   =>  'test'
+            ))
+        ));
 
-		$this->assertNotEquals($result1, $result2);
-	}
+        $result2 = $this->oauth->newAuthoriseRequest('user', '123', array(
+            'client_id' =>  'test',
+            'redirect_uri'  =>  'http://example.com/test',
+            'scopes'    =>  array(array(
+                'id'    =>  1,
+                'scope' =>  'test',
+                'name'  =>  'test',
+                'description'   =>  'test'
+            ))
+        ));
 
-	function test_issueAccessToken_POST()
-	{
-		$auth_code = $this->oauth->newAuthoriseRequest('user', '123', array(
-			'client_id'	=>	'test',
-			'redirect_uri'	=>	'http://example.com/test',
-			'scopes'	=>	array(array(
-				'id'	=>	1,
-				'scope'	=>	'test',
-				'name'	=>	'test',
-				'description'	=>	'test'
-			))
-		));
+        $this->assertNotEquals($result1, $result2);
+    }
 
-		$_POST['client_id'] = 'test';
-		$_POST['client_secret'] = 'test';
-		$_POST['redirect_uri'] = 'http://example.com/test';
-		$_POST['grant_type'] = 'authorization_code';
-		$_POST['code'] = $auth_code;
+    public function test_issueAccessToken_POST()
+    {
+        $auth_code = $this->oauth->newAuthoriseRequest('user', '123', array(
+            'client_id' =>  'test',
+            'redirect_uri'  =>  'http://example.com/test',
+            'scopes'    =>  array(array(
+                'id'    =>  1,
+                'scope' =>  'test',
+                'name'  =>  'test',
+                'description'   =>  'test'
+            ))
+        ));
 
-		$result = $this->oauth->issueAccessToken();
+        $_POST['client_id'] = 'test';
+        $_POST['client_secret'] = 'test';
+        $_POST['redirect_uri'] = 'http://example.com/test';
+        $_POST['grant_type'] = 'authorization_code';
+        $_POST['code'] = $auth_code;
 
-		$this->assertCount(3, $result);
-		$this->assertArrayHasKey('access_token', $result);
-		$this->assertArrayHasKey('token_type', $result);
-		$this->assertArrayHasKey('expires_in', $result);
-	}
+        $result = $this->oauth->issueAccessToken();
 
-	function test_issueAccessToken_PassedParams()
-	{
-		$auth_code = $this->oauth->newAuthoriseRequest('user', '123', array(
-			'client_id'	=>	'test',
-			'redirect_uri'	=>	'http://example.com/test',
-			'scopes'	=>	array(array(
-				'id'	=>	1,
-				'scope'	=>	'test',
-				'name'	=>	'test',
-				'description'	=>	'test'
-			))
-		));
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('access_token', $result);
+        $this->assertArrayHasKey('token_type', $result);
+        $this->assertArrayHasKey('expires_in', $result);
+    }
 
-		$params['client_id'] = 'test';
-		$params['client_secret'] = 'test';
-		$params['redirect_uri'] = 'http://example.com/test';
-		$params['grant_type'] = 'authorization_code';
-		$params['code'] = $auth_code;
+    public function test_issueAccessToken_PassedParams()
+    {
+        $auth_code = $this->oauth->newAuthoriseRequest('user', '123', array(
+            'client_id' =>  'test',
+            'redirect_uri'  =>  'http://example.com/test',
+            'scopes'    =>  array(array(
+                'id'    =>  1,
+                'scope' =>  'test',
+                'name'  =>  'test',
+                'description'   =>  'test'
+            ))
+        ));
 
-		$result = $this->oauth->issueAccessToken($params);
+        $params['client_id'] = 'test';
+        $params['client_secret'] = 'test';
+        $params['redirect_uri'] = 'http://example.com/test';
+        $params['grant_type'] = 'authorization_code';
+        $params['code'] = $auth_code;
 
-		$this->assertCount(3, $result);
-		$this->assertArrayHasKey('access_token', $result);
-		$this->assertArrayHasKey('token_type', $result);
-		$this->assertArrayHasKey('expires_in', $result);
-	}
+        $result = $this->oauth->issueAccessToken($params);
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    0
-	 */
-	function test_issueAccessToken_missingGrantType()
-	{
-		$this->oauth->issueAccessToken();
-	}
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('access_token', $result);
+        $this->assertArrayHasKey('token_type', $result);
+        $this->assertArrayHasKey('expires_in', $result);
+    }
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    7
-	 */
-	function test_issueAccessToken_unsupportedGrantType()
-	{
-		$params['grant_type'] = 'blah';
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_issueAccessToken_missingGrantType()
+    {
+        $this->oauth->issueAccessToken();
+    }
 
-		$this->oauth->issueAccessToken($params);
-	}
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    7
+     */
+    public function test_issueAccessToken_unsupportedGrantType()
+    {
+        $params['grant_type'] = 'blah';
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    0
-	 */
-	function test_completeAuthCodeGrant_missingClientId()
-	{
-		$reflector = new ReflectionClass($this->oauth);
-		$method = $reflector->getMethod('completeAuthCodeGrant');
-		$method->setAccessible(true);
+        $this->oauth->issueAccessToken($params);
+    }
 
-		$method->invoke($this->oauth);
-	}
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_completeAuthCodeGrant_missingClientId()
+    {
+        $reflector = new ReflectionClass($this->oauth);
+        $method = $reflector->getMethod('completeAuthCodeGrant');
+        $method->setAccessible(true);
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    0
-	 */
-	function test_completeAuthCodeGrant_missingClientSecret()
-	{
-		$reflector = new ReflectionClass($this->oauth);
-		$method = $reflector->getMethod('completeAuthCodeGrant');
-		$method->setAccessible(true);
+        $method->invoke($this->oauth);
+    }
 
-		$authParams['client_id'] = 'test';
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_completeAuthCodeGrant_missingClientSecret()
+    {
+        $reflector = new ReflectionClass($this->oauth);
+        $method = $reflector->getMethod('completeAuthCodeGrant');
+        $method->setAccessible(true);
 
-		$method->invoke($this->oauth, $authParams);
-	}
+        $authParams['client_id'] = 'test';
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    0
-	 */
-	function test_completeAuthCodeGrant_missingRedirectUri()
-	{
-		$reflector = new ReflectionClass($this->oauth);
-		$method = $reflector->getMethod('completeAuthCodeGrant');
-		$method->setAccessible(true);
+        $method->invoke($this->oauth, $authParams);
+    }
 
-		$authParams['client_id'] = 'test';
-		$authParams['client_secret'] = 'test';
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_completeAuthCodeGrant_missingRedirectUri()
+    {
+        $reflector = new ReflectionClass($this->oauth);
+        $method = $reflector->getMethod('completeAuthCodeGrant');
+        $method->setAccessible(true);
 
-		$method->invoke($this->oauth, $authParams);
-	}
+        $authParams['client_id'] = 'test';
+        $authParams['client_secret'] = 'test';
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    8
-	 */
-	function test_completeAuthCodeGrant_invalidClient()
-	{
-		$reflector = new ReflectionClass($this->oauth);
-		$method = $reflector->getMethod('completeAuthCodeGrant');
-		$method->setAccessible(true);
+        $method->invoke($this->oauth, $authParams);
+    }
 
-		$authParams['client_id'] = 'test';
-		$authParams['client_secret'] = 'test123';
-		$authParams['redirect_uri'] = 'http://example.com/test';
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    8
+     */
+    public function test_completeAuthCodeGrant_invalidClient()
+    {
+        $reflector = new ReflectionClass($this->oauth);
+        $method = $reflector->getMethod('completeAuthCodeGrant');
+        $method->setAccessible(true);
 
-		$method->invoke($this->oauth, $authParams);
-	}
+        $authParams['client_id'] = 'test';
+        $authParams['client_secret'] = 'test123';
+        $authParams['redirect_uri'] = 'http://example.com/test';
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    0
-	 */
-	function test_completeAuthCodeGrant_missingCode()
-	{
-		$reflector = new ReflectionClass($this->oauth);
-		$method = $reflector->getMethod('completeAuthCodeGrant');
-		$method->setAccessible(true);
+        $method->invoke($this->oauth, $authParams);
+    }
 
-		$authParams['client_id'] = 'test';
-		$authParams['client_secret'] = 'test';
-		$authParams['redirect_uri'] = 'http://example.com/test';
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_completeAuthCodeGrant_missingCode()
+    {
+        $reflector = new ReflectionClass($this->oauth);
+        $method = $reflector->getMethod('completeAuthCodeGrant');
+        $method->setAccessible(true);
 
-		$method->invoke($this->oauth, $authParams);
-	}
+        $authParams['client_id'] = 'test';
+        $authParams['client_secret'] = 'test';
+        $authParams['redirect_uri'] = 'http://example.com/test';
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ClientException
-	 * @expectedExceptionCode    9
-	 */
-	function test_completeAuthCodeGrant_invalidCode()
-	{
-		$reflector = new ReflectionClass($this->oauth);
-		$method = $reflector->getMethod('completeAuthCodeGrant');
-		$method->setAccessible(true);
+        $method->invoke($this->oauth, $authParams);
+    }
 
-		$authParams['client_id'] = 'test';
-		$authParams['client_secret'] = 'test';
-		$authParams['redirect_uri'] = 'http://example.com/test';
-		$authParams['code'] = 'blah';
+    /**
+     * @expectedException        Oauth2\Authentication\ClientException
+     * @expectedExceptionCode    9
+     */
+    public function test_completeAuthCodeGrant_invalidCode()
+    {
+        $reflector = new ReflectionClass($this->oauth);
+        $method = $reflector->getMethod('completeAuthCodeGrant');
+        $method->setAccessible(true);
 
-		$method->invoke($this->oauth, $authParams);
-	}
+        $authParams['client_id'] = 'test';
+        $authParams['client_secret'] = 'test';
+        $authParams['redirect_uri'] = 'http://example.com/test';
+        $authParams['code'] = 'blah';
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ServerException
-	 * @expectedExceptionMessage No registered database abstractor
-	 */
-	function test_noRegisteredDatabaseAbstractor()
-	{
-		$reflector = new ReflectionClass($this->oauth);
-		$method = $reflector->getMethod('_dbCall');
-		$method->setAccessible(true);
+        $method->invoke($this->oauth, $authParams);
+    }
 
-		$dbAbstractor = $reflector->getProperty('_db');
-		$dbAbstractor->setAccessible(true);
-		$dbAbstractor->setValue($this->oauth, null);
+    /**
+     * @expectedException        Oauth2\Authentication\ServerException
+     * @expectedExceptionMessage No registered database abstractor
+     */
+    public function test_noRegisteredDatabaseAbstractor()
+    {
+        $reflector = new ReflectionClass($this->oauth);
+        $method = $reflector->getMethod('_dbCall');
+        $method->setAccessible(true);
 
-		$result = $method->invoke($this->oauth);
-	}
+        $dbAbstractor = $reflector->getProperty('_db');
+        $dbAbstractor->setAccessible(true);
+        $dbAbstractor->setValue($this->oauth, null);
 
-	/**
-	 * @expectedException        Oauth2\Authentication\ServerException
-	 * @expectedExceptionMessage Registered database abstractor is not an instance of Oauth2\Authentication\Database
-	 */
-	function test_invalidRegisteredDatabaseAbstractor()
-	{
-		$fake = new stdClass;
-		$this->oauth->registerDbAbstractor($fake);
+        $result = $method->invoke($this->oauth);
+    }
 
-		$reflector = new ReflectionClass($this->oauth);
-		$method = $reflector->getMethod('_dbCall');
-		$method->setAccessible(true);
+    /**
+     * @expectedException        Oauth2\Authentication\ServerException
+     * @expectedExceptionMessage Registered database abstractor is not an instance of Oauth2\Authentication\Database
+     */
+    public function test_invalidRegisteredDatabaseAbstractor()
+    {
+        $fake = new stdClass;
+        $this->oauth->registerDbAbstractor($fake);
 
-		$result = $method->invoke($this->oauth);
-	}
+        $reflector = new ReflectionClass($this->oauth);
+        $method = $reflector->getMethod('_dbCall');
+        $method->setAccessible(true);
+
+        $result = $method->invoke($this->oauth);
+    }
 
 }
