@@ -40,7 +40,7 @@ class OAuthdb implements Database
         return $this->clients[0];
     }
 
-    public function newSession($clientId, $redirectUri, $type = 'user', $typeId = null, $authCode = null, $accessToken = null, $accessTokenExpire = null, $stage = 'requested')
+    public function newSession($clientId, $redirectUri, $type = 'user', $typeId = null, $authCode = null, $accessToken = null, $refreshToken = null, $accessTokenExpire = null, $stage = 'requested')
     {
         $id = count($this->sessions);
 
@@ -52,6 +52,7 @@ class OAuthdb implements Database
             'owner_id'  =>  $typeId,
             'auth_code' =>  $authCode,
             'access_token'  =>  $accessToken,
+            'refresh_token' =>  $refreshToken,
             'access_token_expire'   =>  $accessTokenExpire,
             'stage' =>  $stage
         );
@@ -62,10 +63,11 @@ class OAuthdb implements Database
         return $id;
     }
 
-    public function updateSession($sessionId, $authCode = null, $accessToken = null, $accessTokenExpire = null, $stage = 'requested')
+    public function updateSession($sessionId, $authCode = null, $accessToken = null, $refreshToken = null, $accessTokenExpire = null, $stage = 'requested')
     {
         $this->sessions[$sessionId]['auth_code'] = $authCode;
         $this->sessions[$sessionId]['access_token'] = $accessToken;
+        $this->sessions[$sessionId]['refresh_token'] = $accessToken;
         $this->sessions[$sessionId]['access_token_expire'] = $accessTokenExpire;
         $this->sessions[$sessionId]['stage'] = $stage;
 
@@ -79,6 +81,11 @@ class OAuthdb implements Database
             unset($this->sessions[$this->sessions_client_type_id[$key]]);
         }
         return true;
+    }
+
+    public function refreshToken($currentRefreshToken, $newAccessToken, $newRefreshToken, $accessTokenExpires)
+    {
+        die('not implemented refreshToken');
     }
 
     public function validateAuthCode($clientId, $redirectUri, $authCode)

@@ -4,8 +4,8 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        require 'src/OAuth2/Authentication/Server.php';
-        require 'src/OAuth2/Authentication/Database.php';
+        require_once 'src/OAuth2/Authentication/Server.php';
+        require_once 'src/OAuth2/Authentication/Database.php';
 
         $this->oauth = new Oauth2\Authentication\Server();
 
@@ -49,6 +49,12 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $expect = array(
             'client_id' =>  'test',
             'redirect_uri'  =>  'http://example.com/test',
+            'client_details'    =>  array(
+                'client_id' =>  'test',
+                'client_secret' =>  'test',
+                'redirect_uri'  =>  'http://example.com/test',
+                'name'  =>  'Test Client'
+            ),
             'response_type' =>  'code',
             'scopes'    =>  array(
                     0 => array(
@@ -82,6 +88,12 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(
             'client_id' =>  'test',
             'redirect_uri'  =>  'http://example.com/test',
+            'client_details'    =>  array(
+                'client_id' =>  'test',
+                'client_secret' =>  'test',
+                'redirect_uri'  =>  'http://example.com/test',
+                'name'  =>  'Test Client'
+            ),
             'response_type' =>  'code',
             'scopes'    =>  array(0 => array(
                 'id'    =>  1,
@@ -216,10 +228,12 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
 
         $result = $this->oauth->issueAccessToken();
 
-        $this->assertCount(3, $result);
+        $this->assertCount(5, $result);
         $this->assertArrayHasKey('access_token', $result);
         $this->assertArrayHasKey('token_type', $result);
         $this->assertArrayHasKey('expires_in', $result);
+        $this->assertArrayHasKey('expires', $result);
+        $this->assertArrayHasKey('refresh_token', $result);
     }
 
     public function test_issueAccessToken_PassedParams()
@@ -243,10 +257,12 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
 
         $result = $this->oauth->issueAccessToken($params);
 
-        $this->assertCount(3, $result);
+        $this->assertCount(5, $result);
         $this->assertArrayHasKey('access_token', $result);
         $this->assertArrayHasKey('token_type', $result);
         $this->assertArrayHasKey('expires_in', $result);
+        $this->assertArrayHasKey('expires', $result);
+        $this->assertArrayHasKey('refresh_token', $result);
     }
 
     /**
