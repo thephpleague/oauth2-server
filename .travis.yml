@@ -4,4 +4,5 @@ php:
   - 5.3
   - 5.4
 
-script: phpunit --coverage-text --configuration build/phpunit.xml
+before_script: composer install
+script: phpunit -c build/phpunit.xml

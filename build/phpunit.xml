@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" stopOnError="false" stopOnFailure="false" stopOnIncomplete="false" stopOnSkipped="false">
+<phpunit colors="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" stopOnError="false" stopOnFailure="false" stopOnIncomplete="false" stopOnSkipped="false" bootstrap="../tests/Bootstrap.php">
 	<testsuites>
 		<testsuite name="Authentication Server">
 			<directory suffix="test.php">../tests/authentication</directory>
@@ -17,7 +17,8 @@
 		</blacklist>
 	</filter>
 	<logging>
-		<log type="coverage-html" target="coverage" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="35" highLowerBound="70"/>
+		<log type="coverage-html" target="coverage" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="50" highLowerBound="90"/>
+		<log type="coverage-text" target="php://stdout" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="50" highLowerBound="90"/>
 		<log type="coverage-clover" target="logs/clover.xml"/>
 		<log type="junit" target="logs/junit.xml" logIncompleteSkipped="false"/>
 	</logging>

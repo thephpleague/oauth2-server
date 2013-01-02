@@ -4,9 +4,6 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        require_once 'src/OAuth2/Authentication/Server.php';
-        require_once 'src/OAuth2/Authentication/Database.php';
-
         $this->oauth = new Oauth2\Authentication\Server();
 
         require_once 'database_mock.php';
