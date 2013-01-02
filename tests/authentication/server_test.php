@@ -1,5 +1,7 @@
 <?php
 
+echo PHP_EOL.PHP_EOL.get_include_path().PHP_EOL.PHP_EOL;
+
 require_once 'src/OAuth2/Authentication/Server.php';
 require_once 'src/OAuth2/Authentication/Database.php';
 
@@ -13,11 +15,6 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $this->oauthdb = new OAuthdb();
         $this->assertInstanceOf('Oauth2\Authentication\Database', $this->oauthdb);
         $this->oauth->registerDbAbstractor($this->oauthdb);
-    }
-
-    public function test_ip()
-    {
-        echo PHP_EOL.PHP_EOL.get_include_path().PHP_EOL.PHP_EOL;
     }
 
     public function test_setupWithOptions()
