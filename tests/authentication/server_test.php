@@ -15,6 +15,11 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $this->oauth->registerDbAbstractor($this->oauthdb);
     }
 
+    public function test_ip()
+    {
+        echo PHP_EOL.PHP_EOL.get_include_path().PHP_EOL.PHP_EOL;
+    }
+
     public function test_setupWithOptions()
     {
         $o = new Oauth2\Authentication\Server(array(
