@@ -47,9 +47,14 @@ class Server
      * @var array
      */
     private $_grantTypes = array(
-        'authorization_code',
-        'user_credentials',
-        'refresh_token',
+        'authorization_code'    =>  false,
+        'client_credentials'    =>  false,
+        'password'  =>  false,
+        'refresh_token' =>  false,
+    );
+
+    private $_grantTypeCallbacks = array(
+        'password'  =>  null
     );
 
     /**
@@ -84,11 +89,11 @@ class Server
         'invalid_scope'             =>  'The requested scope is invalid, unknown, or malformed. Check the "%s" scope.',
         'server_error'              =>  'The authorization server encountered an unexpected condition which prevented it from fulfilling the request.',
         'temporarily_unavailable'   =>  'The authorization server is currently unable to handle the request due to a temporary overloading or maintenance of the server.',
-        'unsupported_grant_type'    =>  'The authorization grant type is not supported by the authorization server',
+        'unsupported_grant_type'    =>  'The authorization grant type "%s" is not supported by the authorization server',
         'invalid_client'            =>  'Client authentication failed',
         'invalid_grant'             =>  'The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client. Check the "%s" parameter.',
-        'invalid_credentials'       =>  'Invalid Credentials',
-        'invalid_refresh'           =>  'Invalid Refresh Token',
+        'invalid_credentials'       =>  'The user credentials were incorrect.',
+        'invalid_refresh'           =>  'The refresh token is invalid.',
     );
 
     /**
@@ -101,7 +106,7 @@ class Server
     public function __construct($options = null)
     {
         if ($options !== null) {
-            $this->options = array_merge($this->_config, $options);
+            $this->_config = array_merge($this->_config, $options);
         }
     }
 
@@ -115,6 +120,27 @@ class Server
     public function registerDbAbstractor($db)
     {
         $this->_db = $db;
+    }
+
+    /**
+     * Enable a grant type
+     *
+     * @access public
+     * @return void
+     */
+    public function enableGrantType($type, $callback = null)
+    {
+        if (isset($this->_grantTypes[$type])) {
+            $this->_grantTypes[$type] = true;
+        }
+
+        if (in_array($type, array_keys($this->_grantTypeCallbacks))) {
+            if (is_null($callback) || ! is_callable($callback)) {
+                throw new ServerException('No registered callback function for grant type `'.$type.'`');
+            }
+
+            $this->_grantTypeCallbacks[$type] = $callback;
+        }
     }
 
     /**
@@ -237,7 +263,7 @@ class Server
         );
 
         // Create the new auth code
-        $authCode = $this->newAuthCode(
+        $authCode = $this->_newAuthCode(
             $authoriseParams['client_id'],
             'user',
             $typeId,
@@ -255,7 +281,7 @@ class Server
      *
      * @return string A unique code
      */
-    private function generateCode()
+    private function _generateCode()
     {
         return sha1(uniqid(microtime()));
     }
@@ -271,53 +297,34 @@ class Server
      * @param  string $accessToken The access token (default = null)
      * @return string              An authorisation code
      */
-    private function newAuthCode($clientId, $type, $typeId, $redirectUri, $scopes = array(), $accessToken = null, $refreshToken = null)
+    private function _newAuthCode($clientId, $type, $typeId, $redirectUri, $scopes = array())
     {
-        $authCode = $this->generateCode();
+        $authCode = $this->_generateCode();
 
-        // If an access token exists then update the existing session with the
-        // new authorisation code otherwise create a new session
-        if ($accessToken !== null) {
+        // Delete any existing sessions just to be sure
+        $this->_dbCall('deleteSession', $clientId, $type, $typeId);
+
+        // Create a new session
+        $sessionId = $this->_dbCall(
+            'newSession',
+            $clientId,
+            $redirectUri,
+            $type,
+            $typeId,
+            $authCode,
+            null,
+            null,
+            'requested'
+        );
+
+        // Add the scopes
+        foreach ($scopes as $key => $scope) {
 
             $this->_dbCall(
-                'updateSession',
-                $clientId,
-                $type,
-                $typeId,
-                $authCode,
-                $accessToken,
-                $refreshToken,
-                'requested'
+                'addSessionScope',
+                $sessionId,
+                $scope['scope']
             );
-
-        } else {
-
-            // Delete any existing sessions just to be sure
-            $this->_dbCall('deleteSession', $clientId, $type, $typeId);
-
-            // Create a new session
-            $sessionId = $this->_dbCall(
-                'newSession',
-                $clientId,
-                $redirectUri,
-                $type,
-                $typeId,
-                $authCode,
-                null,
-                null,
-                'requested'
-            );
-
-            // Add the scopes
-            foreach ($scopes as $key => $scope) {
-
-                $this->_dbCall(
-                    'addSessionScope',
-                    $sessionId,
-                    $scope['scope']
-                );
-
-            }
 
         }
 
@@ -335,8 +342,6 @@ class Server
      */
     public function issueAccessToken($authParams = null)
     {
-        $params = array();
-
         if ( ! isset($authParams['grant_type']) && ! isset($_POST['grant_type'])) {
             throw new ClientException(sprintf($this->errors['invalid_request'], 'grant_type'), 0);
         }
@@ -345,33 +350,35 @@ class Server
                                     $authParams['grant_type'] :
                                     $_POST['grant_type'];
 
-        // Ensure grant type is one that is recognised
-        if ( ! in_array($params['grant_type'], $this->_grantTypes)) {
-            throw new ClientException($this->errors['unsupported_grant_type'], 7);
+        // Ensure grant type is one that is recognised and is enabled
+        if ( ! in_array($params['grant_type'], array_keys($this->_grantTypes)) || $this->_grantTypes[$params['grant_type']] !== true) {
+            throw new ClientException(sprintf($this->errors['unsupported_grant_type'], $params['grant_type']), 7);
         }
 
         switch ($params['grant_type'])
         {
-
             case 'authorization_code': // Authorization code grant
-                return $this->completeAuthCodeGrant($authParams, $params);
+                return $this->_completeAuthCodeGrant($authParams, $params);
                 break;
 
-            case 'user_credentials':
-                return $this->completeUserCredentialsGrant($authParams, $params);
-                break;
-
-            case 'refresh_token': // Refresh token
-                return $this->completeRefreshTokenGrant($authParams, $params);
+            case 'client_credentials': // Client credentials grant
+                return $this->_completeClientCredentialsGrant($authParams, $params);
                 break;
 
             case 'password': // Resource owner password credentials grant
-            case 'client_credentials': // Client credentials grant
+                return $this->_completeUserCredentialsGrant($authParams, $params);
+                break;
 
+            case 'refresh_token': // Refresh token grant
+                return $this->_completeRefreshTokenGrant($authParams, $params);
+                break;
+
+            // @codeCoverageIgnoreStart
             default: // Unsupported
                 throw new ServerException($this->errors['server_error'] . 'Tried to process an unsuppported grant type.', 5);
                 break;
         }
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -384,7 +391,7 @@ class Server
      *
      * @return array             Authorise request parameters
      */
-    private function completeAuthCodeGrant($authParams = array(), $params = array())
+    private function _completeAuthCodeGrant($authParams = array(), $params = array())
     {
         // Client ID
         if ( ! isset($authParams['client_id']) && ! isset($_POST['client_id'])) {
@@ -449,8 +456,10 @@ class Server
         // A session ID was returned so update it with an access token,
         //  remove the authorisation code, change the stage to 'granted'
 
-        $accessToken = $this->generateCode();
-        $refreshToken = $this->generateCode();
+        $accessToken = $this->_generateCode();
+        $refreshToken = ($this->_grantTypes['refresh_token']) ?
+                            $this->_generateCode() :
+                            null;
 
         $accessTokenExpires = time() + $this->_config['access_token_ttl'];
         $accessTokenExpiresIn = $this->_config['access_token_ttl'];
@@ -473,34 +482,35 @@ class Server
             $refreshToken
         );
 
-        return array(
+        $response = array(
             'access_token'  =>  $accessToken,
-            'refresh_token' =>  $refreshToken,
             'token_type'    =>  'bearer',
             'expires'       =>  $accessTokenExpires,
             'expires_in'    =>  $accessTokenExpiresIn
         );
+
+        if ($this->_grantTypes['refresh_token']) {
+            $response['refresh_token'] = $refreshToken;
+        }
+
+        return $response;
     }
 
     /**
-     * Complete the user credentials grant
+     * Complete the resource owner password credentials grant
      *
      * @access private
      * @param  array $authParams Array of parsed $_POST keys
      * @param  array $params     Generated parameters from issueAccessToken()
      * @return array             Authorise request parameters
      */
-    private function completeUserCredentialsGrant($authParams = array(), $params = array())
+    private function _completeClientCredentialsGrant($authParams = array(), $params = array())
     {
-        $params = array();
-
-        if ( ! isset($authParams['user_auth_callback'])) {
-            throw new \InvalidArgumentException('You must set a user_auth_callback when using the user_credentials grant type.');
-        }
-
         // Client ID
         if ( ! isset($authParams['client_id']) && ! isset($_POST['client_id'])) {
+            // @codeCoverageIgnoreStart
             throw new ClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
+            // @codeCoverageIgnoreEnd
         }
 
         $params['client_id'] = (isset($authParams['client_id'])) ?
@@ -509,13 +519,16 @@ class Server
 
         // Client secret
         if ( ! isset($authParams['client_secret']) && ! isset($_POST['client_secret'])) {
+            // @codeCoverageIgnoreStart
             throw new ClientException(sprintf($this->errors['invalid_request'], 'client_secret'), 0);
+            // @codeCoverageIgnoreEnd
         }
+
         $params['client_secret'] = (isset($authParams['client_secret'])) ?
                                             $authParams['client_secret'] :
                                             $_POST['client_secret'];
 
-        // Validate client ID and redirect URI
+        // Validate client ID and client secret
         $clientDetails = $this->_dbCall(
             'validateClient',
             $params['client_id'],
@@ -524,72 +537,187 @@ class Server
         );
 
         if ($clientDetails === false) {
-            throw new \Oauth2\Authentication\ClientException($this->errors['invalid_client'], 8);
+            // @codeCoverageIgnoreStart
+            throw new ClientException($this->errors['invalid_client'], 8);
+            // @codeCoverageIgnoreEnd
         }
 
-        // Check for grant
-        if ( ! isset($_POST['grant_type'])) {
-            throw new \Oauth2\Authentication\ClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
+        // Generate an access token
+        $accessToken = $this->_generateCode();
+        $refreshToken = ($this->_grantTypes['refresh_token']) ?
+                            $this->_generateCode() :
+                            null;
+
+        $accessTokenExpires = time() + $this->_config['access_token_ttl'];
+        $accessTokenExpiresIn = $this->_config['access_token_ttl'];
+
+        // Delete any existing sessions just to be sure
+        $this->_dbCall('deleteSession', $params['client_id'], 'client', $params['client_id']);
+
+        // Create a new session
+        $this->_dbCall('newSession', $params['client_id'], null, 'client', $params['client_id'], null, $accessToken, $refreshToken, $accessTokenExpires, 'granted');
+
+        $response = array(
+            'access_token'  =>  $accessToken,
+            'token_type'    =>  'bearer',
+            'expires'       =>  $accessTokenExpires,
+            'expires_in'    =>  $accessTokenExpiresIn
+        );
+
+        if ($this->_grantTypes['refresh_token']) {
+            $response['refresh_token'] = $refreshToken;
         }
 
-        $params['grant_type'] = $_POST['grant_type'];
+        return $response;
+    }
 
-        if ($params['grant_type'] == 'user_credentials') {
-            // Check if user's u+p are correct
-            $userId = call_user_func($authParams['user_auth_callback']);
-
-            if ($userId === false) {
-                throw new \Oauth2\Authentication\ClientException($this->errors['invalid_credentials'], 0);
-            }
-
-            // Generate an access token
-            $accessToken = $this->generateCode();
-            $refreshToken = $this->generateCode();
-
-            $accessTokenExpires = time() + $this->_config['access_token_ttl'];
-            $accessTokenExpiresIn = $this->_config['access_token_ttl'];
-
-            // Delete any existing sessions just to be sure
-            $this->_dbCall('deleteSession', $params['client_id'], 'user', $userId);
-
-            // Create a new session
-            $this->_dbCall('newSession', $params['client_id'], null, 'user', $userId, null, $accessToken, $refreshToken, $accessTokenExpires, 'granted');
-
-            return array(
-                'access_token'  =>  $accessToken,
-                'refresh_token' =>  $refreshToken,
-                'token_type'    =>  'bearer',
-                'expires'       =>  $accessTokenExpires,
-                'expires_in'    =>  $accessTokenExpiresIn
-            );
-
-        } else {
-            throw new \Oauth2\Authentication\ClientException($this->errors['unsupported_grant_type'], 7);
+    /**
+     * Complete the resource owner password credentials grant
+     *
+     * @access private
+     * @param  array $authParams Array of parsed $_POST keys
+     * @param  array $params     Generated parameters from issueAccessToken()
+     * @return array             Authorise request parameters
+     */
+    private function _completeUserCredentialsGrant($authParams = array(), $params = array())
+    {
+        // Client ID
+        if ( ! isset($authParams['client_id']) && ! isset($_POST['client_id'])) {
+            // @codeCoverageIgnoreStart
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
+            // @codeCoverageIgnoreEnd
         }
 
+        $params['client_id'] = (isset($authParams['client_id'])) ?
+                                        $authParams['client_id'] :
+                                        $_POST['client_id'];
+
+        // Client secret
+        if ( ! isset($authParams['client_secret']) && ! isset($_POST['client_secret'])) {
+            // @codeCoverageIgnoreStart
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'client_secret'), 0);
+            // @codeCoverageIgnoreEnd
+        }
+
+        $params['client_secret'] = (isset($authParams['client_secret'])) ?
+                                            $authParams['client_secret'] :
+                                            $_POST['client_secret'];
+
+        // Validate client ID and client secret
+        $clientDetails = $this->_dbCall(
+            'validateClient',
+            $params['client_id'],
+            $params['client_secret'],
+            null
+        );
+
+        if ($clientDetails === false) {
+            // @codeCoverageIgnoreStart
+            throw new ClientException($this->errors['invalid_client'], 8);
+            // @codeCoverageIgnoreEnd
+        }
+
+        // User's username
+        if ( ! isset($authParams['username']) && ! isset($_POST['username'])) {
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'username'), 0);
+        }
+
+        $params['username'] = (isset($authParams['username'])) ?
+                                            $authParams['username'] :
+                                            $_POST['username'];
+
+        // User's password
+        if ( ! isset($authParams['password']) && ! isset($_POST['password'])) {
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'password'), 0);
+        }
+
+        $params['password'] = (isset($authParams['password'])) ?
+                                            $authParams['password'] :
+                                            $_POST['password'];
+
+        // Check if user's username and password are correct
+        $userId = call_user_func($this->_grantTypeCallbacks['password'], $params['username'], $params['password']);
+
+        if ($userId === false) {
+            throw new \Oauth2\Authentication\ClientException($this->errors['invalid_credentials'], 0);
+        }
+
+        // Generate an access token
+        $accessToken = $this->_generateCode();
+        $refreshToken = ($this->_grantTypes['refresh_token']) ?
+                            $this->_generateCode() :
+                            null;
+
+        $accessTokenExpires = time() + $this->_config['access_token_ttl'];
+        $accessTokenExpiresIn = $this->_config['access_token_ttl'];
+
+        // Delete any existing sessions just to be sure
+        $this->_dbCall('deleteSession', $params['client_id'], 'user', $userId);
+
+        // Create a new session
+        $this->_dbCall('newSession', $params['client_id'], null, 'user', $userId, null, $accessToken, $refreshToken, $accessTokenExpires, 'granted');
+
+        $response = array(
+            'access_token'  =>  $accessToken,
+            'token_type'    =>  'bearer',
+            'expires'       =>  $accessTokenExpires,
+            'expires_in'    =>  $accessTokenExpiresIn
+        );
+
+        if ($this->_grantTypes['refresh_token']) {
+            $response['refresh_token'] = $refreshToken;
+        }
+
+        return $response;
     }
 
     /**
      * Complete the refresh token grant
      *
      * @access private
-     *
      * @param  array $authParams Array of parsed $_POST keys
      * @param  array $params     Generated parameters from issueAccessToken()
-     *
      * @return array             Authorise request parameters
      */
-    private function completeRefreshTokenGrant($authParams = array(), $params = array())
+    private function _completeRefreshTokenGrant($authParams = array(), $params = array())
     {
-        $params = array();
-
-        // Check for grant
-        if ( ! isset($_POST['grant_type'])) {
-            throw new \Oauth2\Authentication\ClientException(sprintf($this->errors['invalid_request'], 'grant_type'), 0);
+        // Client ID
+        if ( ! isset($authParams['client_id']) && ! isset($_POST['client_id'])) {
+            // @codeCoverageIgnoreStart
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
+            // @codeCoverageIgnoreEnd
         }
 
-        $params['grant_type'] = $_POST['grant_type'];
+        $params['client_id'] = (isset($authParams['client_id'])) ?
+                                        $authParams['client_id'] :
+                                        $_POST['client_id'];
 
+        // Client secret
+        if ( ! isset($authParams['client_secret']) && ! isset($_POST['client_secret'])) {
+            // @codeCoverageIgnoreStart
+            throw new ClientException(sprintf($this->errors['invalid_request'], 'client_secret'), 0);
+            // @codeCoverageIgnoreEnd
+        }
+
+        $params['client_secret'] = (isset($authParams['client_secret'])) ?
+                                            $authParams['client_secret'] :
+                                            $_POST['client_secret'];
+
+        // Validate client ID and client secret
+        $clientDetails = $this->_dbCall(
+            'validateClient',
+            $params['client_id'],
+            $params['client_secret'],
+            null
+        );
+
+        if ($clientDetails === false) {
+            // @codeCoverageIgnoreStart
+            throw new ClientException($this->errors['invalid_client'], 8);
+            // @codeCoverageIgnoreEnd
+        }
+
+        // Refresh token
         if ( ! isset($authParams['refresh_token']) && ! isset($_POST['refresh_token'])) {
             throw new ClientException(sprintf($this->errors['invalid_request'], 'refresh_token'), 0);
         }
@@ -598,34 +726,30 @@ class Server
                                         $authParams['refresh_token'] :
                                         $_POST['refresh_token'];
 
-        if ($params['grant_type'] == 'refresh_token') {
+        // Validate refresh token
+        $sessionId = $this->_dbCall('validateRefreshToken', $params['refresh_token'], $params['client_id']);
 
-            // Generate an access token
-            $accessToken = $this->generateCode();
-            $refreshToken = $this->generateCode();
-
-            $accessTokenExpires = time() + $this->_config['access_token_ttl'];
-            $accessTokenExpiresIn = $this->_config['access_token_ttl'];
-
-            // Delete any existing sessions just to be sure
-            $result = $this->_dbCall('refreshToken', $params['refresh_token'], $accessToken, $refreshToken, $accessTokenExpires);
-
-            if ( ! $result) {
-                throw new \Oauth2\Authentication\ClientException($this->errors['invalid_refresh'], 0);
-            }
-
-            return array(
-                'access_token'  =>  $accessToken,
-                'refresh_token' =>  $refreshToken,
-                'token_type'    =>  'bearer',
-                'expires'       =>  $accessTokenExpires,
-                'expires_in'    =>  $accessTokenExpiresIn
-            );
-
-        } else {
-            throw new \Oauth2\Authentication\ClientException($this->errors['unsupported_grant_type'], 7);
+        if ($sessionId === false) {
+            throw new \Oauth2\Authentication\ClientException($this->errors['invalid_refresh'], 0);
         }
 
+        // Generate new tokens
+        $accessToken = $this->_generateCode();
+        $refreshToken = $this->_generateCode();
+
+        $accessTokenExpires = time() + $this->_config['access_token_ttl'];
+        $accessTokenExpiresIn = $this->_config['access_token_ttl'];
+
+        // Update the tokens
+        $this->_dbCall('updateRefreshToken', $sessionId, $accessToken, $refreshToken, $accessTokenExpires);
+
+        return array(
+            'access_token'  =>  $accessToken,
+            'refresh_token' =>  $refreshToken,
+            'token_type'    =>  'bearer',
+            'expires'       =>  $accessTokenExpires,
+            'expires_in'    =>  $accessTokenExpiresIn
+        );
     }
 
     /**

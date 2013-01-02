@@ -67,7 +67,7 @@ class OAuthdb implements Database
     {
         $this->sessions[$sessionId]['auth_code'] = $authCode;
         $this->sessions[$sessionId]['access_token'] = $accessToken;
-        $this->sessions[$sessionId]['refresh_token'] = $accessToken;
+        $this->sessions[$sessionId]['refresh_token'] = $refreshToken;
         $this->sessions[$sessionId]['access_token_expire'] = $accessTokenExpire;
         $this->sessions[$sessionId]['stage'] = $stage;
 
@@ -147,5 +147,22 @@ class OAuthdb implements Database
     public function accessTokenScopes($accessToken)
     {
         die('not implemented accessTokenScopes');
+    }
+
+    public function validateRefreshToken($refreshToken, $clientId)
+    {
+        if ($refreshToken !== $this->sessions[0]['refresh_token'])
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function updateRefreshToken($sessionId, $newAccessToken, $newRefreshToken, $accessTokenExpires)
+    {
+        $this->sessions[$sessionId]['access_token'] = $newAccessToken;
+        $this->sessions[$sessionId]['refresh_token'] = $newRefreshToken;
+        $this->sessions[$sessionId]['access_token_expire'] = $accessTokenExpires;
     }
 }

@@ -129,6 +129,7 @@ interface Database
         $typeId
     );
 
+    public function validateRefreshToken($refreshToken, $clientId);
 
     /**
      * Update the refresh token
@@ -138,16 +139,16 @@ interface Database
      * <code>
      * UPDATE oauth_sessions SET access_token = $newAccessToken, refresh_token =
      *  $newRefreshToken, access_toke_expires = $accessTokenExpires, last_updated = UNIX_TIMESTAMP(NOW()) WHERE
-     *  refresh_token = $currentRefreshToken
+     *  id = $sessionId
      * </code>
      *
-     * @param  string $currentRefreshToken   The session's current refresh token
+     * @param  string $sessionId             The session ID
      * @param  string $newAccessToken        The new access token for this session
      * @param  string $newRefreshToken       The new refresh token for the session
      * @param  int    $accessTokenExpires    The UNIX timestamp of when the new token expires
-     * @return bool   Whether the $currentRefreshToken was valid or not.
+     * @return void
      */
-    public function refreshToken($currentRefreshToken, $newAccessToken, $newRefreshToken, $accessTokenExpires);
+    public function updateRefreshToken($sessionId, $newAccessToken, $newRefreshToken, $accessTokenExpires);
 
     /**
      * Validate that an authorisation code is valid
