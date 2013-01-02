@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../../src/OAuth2/Authentication/Server.php';
-require_once '../../../src/OAuth2/Authentication/Database.php';
+require_once 'src/OAuth2/Authentication/Server.php';
+require_once 'src/OAuth2/Authentication/Database.php';
 
 class Authentication_Server_test extends PHPUnit_Framework_TestCase
 {
