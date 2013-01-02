@@ -13,6 +13,7 @@
 			<directory suffix=".php">PEAR_INSTALL_DIR</directory>
 			<directory suffix=".php">PHP_LIBDIR</directory>
 			<directory suffix=".php">../vendor/composer</directory>
+			<directory suffix=".php">../tests</directory>
 		</blacklist>
 	</filter>
 	<logging>
