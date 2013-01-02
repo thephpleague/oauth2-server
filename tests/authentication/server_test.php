@@ -1,6 +1,10 @@
 <?php
 
-echo PHP_EOL.PHP_EOL.get_include_path().PHP_EOL.PHP_EOL;
+echo PHP_EOL.PHP_EOL.'DEBUG:'.PHP_EOL.PHP_EOL;
+echo 'getcwd: ' . getcwd() .PHP_EOL;
+echo 'include path: ' . get_include_path().PHP_EOL;
+echo '__FILE__: ' . __FILE__ . PHP_EOL;
+echo '__DIR__: ' . __DIR__ . PHP_EOL;
 
 require_once 'src/OAuth2/Authentication/Server.php';
 require_once 'src/OAuth2/Authentication/Database.php';
