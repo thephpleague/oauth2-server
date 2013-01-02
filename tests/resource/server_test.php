@@ -1,12 +1,12 @@
 <?php
 
+require_once 'src/OAuth2/Resource/Server.php';
+require_once 'src/OAuth2/Resource/Database.php';
+
 class Resource_Server_test extends PHPUnit_Framework_TestCase {
 
     function setUp()
     {
-        require_once 'src/OAuth2/Resource/Server.php';
-        require_once 'src/OAuth2/Resource/Database.php';
-
         require_once('database_mock.php');
         $this->server = new Oauth2\Resource\Server();
         $this->db = new ResourceDB();
