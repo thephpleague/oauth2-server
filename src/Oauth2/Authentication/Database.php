@@ -56,18 +56,19 @@ interface Database
      *
      * <code>
      * INSERT INTO oauth_sessions (client_id, redirect_uri, owner_type,
-     *  owner_id, auth_code, access_token, stage, first_requested, last_updated)
-     *  VALUES ($clientId, $redirectUri, $type, $typeId, $authCode,
-     *  $accessToken, $stage, UNIX_TIMESTAMP(NOW()), UNIX_TIMESTAMP(NOW()))
+     * owner_id, auth_code, access_token, refresh_token, stage, first_requested,
+     * last_updated) VALUES ($clientId, $redirectUri, $type, $typeId, $authCode,
+     * $accessToken, $stage, UNIX_TIMESTAMP(NOW()), UNIX_TIMESTAMP(NOW()))
      * </code>
      *
-     * @param  string $clientId    The client ID
-     * @param  string $redirectUri The redirect URI
-     * @param  string $type        The session owner's type (default = "user")
-     * @param  string $typeId      The session owner's ID (default = "null")
-     * @param  string $authCode    The authorisation code (default = "null")
-     * @param  string $accessToken The access token (default = "null")
-     * @param  string $stage       The stage of the session (default ="request")
+     * @param  string $clientId     The client ID
+     * @param  string $redirectUri  The redirect URI
+     * @param  string $type         The session owner's type (default = "user")
+     * @param  string $typeId       The session owner's ID (default = "null")
+     * @param  string $authCode     The authorisation code (default = "null")
+     * @param  string $accessToken  The access token (default = "null")
+     * @param  string $refreshToken The refresh token (default = "null")
+     * @param  string $stage        The stage of the session (default ="request")
      * @return  int The session ID
      */
     public function newSession(
@@ -77,6 +78,7 @@ interface Database
         $typeId = null,
         $authCode = null,
         $accessToken = null,
+        $refreshToken = null,
         $accessTokenExpire = null,
         $stage = 'requested'
     );
@@ -92,16 +94,18 @@ interface Database
      *  id = $sessionId
      * </code>
      *
-     * @param  string $sessionId   The session ID
-     * @param  string $authCode    The authorisation code (default = "null")
-     * @param  string $accessToken The access token (default = "null")
-     * @param  string $stage       The stage of the session (default ="request")
+     * @param  string $sessionId    The session ID
+     * @param  string $authCode     The authorisation code (default = "null")
+     * @param  string $accessToken  The access token (default = "null")
+     * @param  string $refreshToken The refresh token (default = "null")
+     * @param  string $stage        The stage of the session (default ="request")
      * @return  void
      */
     public function updateSession(
         $sessionId,
         $authCode = null,
         $accessToken = null,
+        $refreshToken = null,
         $accessTokenExpire = null,
         $stage = 'requested'
     );
@@ -124,6 +128,27 @@ interface Database
         $type,
         $typeId
     );
+
+    public function validateRefreshToken($refreshToken, $clientId);
+
+    /**
+     * Update the refresh token
+     *
+     * Database query:
+     *
+     * <code>
+     * UPDATE oauth_sessions SET access_token = $newAccessToken, refresh_token =
+     *  $newRefreshToken, access_toke_expires = $accessTokenExpires, last_updated = UNIX_TIMESTAMP(NOW()) WHERE
+     *  id = $sessionId
+     * </code>
+     *
+     * @param  string $sessionId             The session ID
+     * @param  string $newAccessToken        The new access token for this session
+     * @param  string $newRefreshToken       The new refresh token for the session
+     * @param  int    $accessTokenExpires    The UNIX timestamp of when the new token expires
+     * @return void
+     */
+    public function updateRefreshToken($sessionId, $newAccessToken, $newRefreshToken, $accessTokenExpires);
 
     /**
      * Validate that an authorisation code is valid

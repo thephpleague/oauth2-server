@@ -8,8 +8,8 @@ The framework is provided as a Composer package which can be installed by adding
 
 ```javascript
 {
-	"require": {  
-		"lncd\Oauth2": "*"  
+	"require": {
+		"lncd\Oauth2": "*"
 	}
 }
 ```
@@ -22,7 +22,12 @@ Check out the [wiki](https://github.com/lncd/OAuth2/wiki)
 
 ### Authentication Server
 
-The authentication server is a flexible class that supports the standard authorization code grant.
+The authentication server is a flexible class that supports the following grants:
+
+* authentication code
+* refresh token
+* client credentials
+* password (user credentials)
 
 ### Resource Server
 

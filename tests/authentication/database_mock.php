@@ -4,151 +4,165 @@ use Oauth2\Authentication\Database;
 
 class OAuthdb implements Database
 {
-	private $sessions = array();
-	private $sessions_client_type_id = array();
-	private $sessions_code = array();
-	private $session_scopes = array();
+    private $sessions = array();
+    private $sessions_client_type_id = array();
+    private $sessions_code = array();
+    private $session_scopes = array();
 
-	private $clients = array(0 => array(
-		'client_id'	=>	'test',
-		'client_secret'	=>	'test',
-		'redirect_uri'	=>	'http://example.com/test',
-		'name'	=>	'Test Client'
-	));
+    private $clients = array(0 => array(
+        'client_id' =>  'test',
+        'client_secret' =>  'test',
+        'redirect_uri'  =>  'http://example.com/test',
+        'name'  =>  'Test Client'
+    ));
 
-	private $scopes = array('test' => array(
-		'id'	=>	1,
-		'scope'	=>	'test',
-		'name'	=>	'test',
-		'description'	=>	'test'
-	));
+    private $scopes = array('test' => array(
+        'id'    =>  1,
+        'scope' =>  'test',
+        'name'  =>  'test',
+        'description'   =>  'test'
+    ));
 
-	public function validateClient($clientId, $clientSecret = null, $redirectUri = null)
-	{
-		if ($clientId !== $this->clients[0]['client_id'])
-		{
-			return false;
-		}
+    public function validateClient($clientId, $clientSecret = null, $redirectUri = null)
+    {
+        if ($clientId !== $this->clients[0]['client_id']) {
+            return false;
+        }
 
-		if ($clientSecret !== null && $clientSecret !== $this->clients[0]['client_secret'])
-		{
-			return false;
-		}
+        if ($clientSecret !== null && $clientSecret !== $this->clients[0]['client_secret']) {
+            return false;
+        }
 
-		if ($redirectUri !== null && $redirectUri !== $this->clients[0]['redirect_uri'])
-		{
-			return false;
-		}
+        if ($redirectUri !== null && $redirectUri !== $this->clients[0]['redirect_uri']) {
+            return false;
+        }
 
-		return $this->clients[0];
-	}
+        return $this->clients[0];
+    }
 
-	public function newSession($clientId, $redirectUri, $type = 'user', $typeId = null, $authCode = null, $accessToken = null, $accessTokenExpire = null, $stage = 'requested')
-	{
-		$id = count($this->sessions);
+    public function newSession($clientId, $redirectUri, $type = 'user', $typeId = null, $authCode = null, $accessToken = null, $refreshToken = null, $accessTokenExpire = null, $stage = 'requested')
+    {
+        $id = count($this->sessions);
 
-		$this->sessions[$id] = array(
-			'id'	=>	$id,
-			'client_id'	=>	$clientId,
-			'redirect_uri'	=>	$redirectUri,
-			'owner_type'	=>	$type,
-			'owner_id'	=>	$typeId,
-			'auth_code'	=>	$authCode,
-			'access_token'	=>	$accessToken,
-			'access_token_expire'	=>	$accessTokenExpire,
-			'stage'	=>	$stage
-		);
+        $this->sessions[$id] = array(
+            'id'    =>  $id,
+            'client_id' =>  $clientId,
+            'redirect_uri'  =>  $redirectUri,
+            'owner_type'    =>  $type,
+            'owner_id'  =>  $typeId,
+            'auth_code' =>  $authCode,
+            'access_token'  =>  $accessToken,
+            'refresh_token' =>  $refreshToken,
+            'access_token_expire'   =>  $accessTokenExpire,
+            'stage' =>  $stage
+        );
 
-		$this->sessions_client_type_id[$clientId . ':' . $type . ':' . $typeId] = $id;
-		$this->sessions_code[$clientId . ':' . $redirectUri . ':' . $authCode] = $id;
+        $this->sessions_client_type_id[$clientId . ':' . $type . ':' . $typeId] = $id;
+        $this->sessions_code[$clientId . ':' . $redirectUri . ':' . $authCode] = $id;
 
-		return $id;
-	}
+        return $id;
+    }
 
-	public function updateSession($sessionId, $authCode = null, $accessToken = null, $accessTokenExpire = null, $stage = 'requested')
-	{
-		$this->sessions[$sessionId]['auth_code'] = $authCode;
-		$this->sessions[$sessionId]['access_token'] = $accessToken;
-		$this->sessions[$sessionId]['access_token_expire'] = $accessTokenExpire;
-		$this->sessions[$sessionId]['stage'] = $stage;
+    public function updateSession($sessionId, $authCode = null, $accessToken = null, $refreshToken = null, $accessTokenExpire = null, $stage = 'requested')
+    {
+        $this->sessions[$sessionId]['auth_code'] = $authCode;
+        $this->sessions[$sessionId]['access_token'] = $accessToken;
+        $this->sessions[$sessionId]['refresh_token'] = $refreshToken;
+        $this->sessions[$sessionId]['access_token_expire'] = $accessTokenExpire;
+        $this->sessions[$sessionId]['stage'] = $stage;
 
-		return true;
-	}
+        return true;
+    }
 
-	public function deleteSession($clientId, $type, $typeId)
-	{
-		$key = $clientId . ':' . $type . ':' . $typeId;
-		if (isset($this->sessions_client_type_id[$key]))
-		{
-			unset($this->sessions[$this->sessions_client_type_id[$key]]);
-		}
-		return true;
-	}
+    public function deleteSession($clientId, $type, $typeId)
+    {
+        $key = $clientId . ':' . $type . ':' . $typeId;
+        if (isset($this->sessions_client_type_id[$key])) {
+            unset($this->sessions[$this->sessions_client_type_id[$key]]);
+        }
+        return true;
+    }
 
-	public function validateAuthCode($clientId, $redirectUri, $authCode)
-	{
-		$key = $clientId . ':' . $redirectUri . ':' . $authCode;
+    public function refreshToken($currentRefreshToken, $newAccessToken, $newRefreshToken, $accessTokenExpires)
+    {
+        die('not implemented refreshToken');
+    }
 
-		if (isset($this->sessions_code[$key]))
-		{
-			return $this->sessions[$this->sessions_code[$key]];
-		}
+    public function validateAuthCode($clientId, $redirectUri, $authCode)
+    {
+        $key = $clientId . ':' . $redirectUri . ':' . $authCode;
 
-		return false;
-	}
+        if (isset($this->sessions_code[$key])) {
+            return $this->sessions[$this->sessions_code[$key]];
+        }
 
-	public function hasSession($type, $typeId, $clientId)
-	{
-		die('not implemented hasSession');
-	}
+        return false;
+    }
 
-	public function getAccessToken($sessionId)
-	{
-		die('not implemented getAccessToken');
-	}
+    public function hasSession($type, $typeId, $clientId)
+    {
+        die('not implemented hasSession');
+    }
 
-	public function removeAuthCode($sessionId)
-	{
-		die('not implemented removeAuthCode');
-	}
+    public function getAccessToken($sessionId)
+    {
+        die('not implemented getAccessToken');
+    }
 
-	public function setAccessToken(
-		$sessionId,
-		$accessToken
-	)
-	{
-		die('not implemented setAccessToken');
-	}
+    public function removeAuthCode($sessionId)
+    {
+        die('not implemented removeAuthCode');
+    }
 
-	public function addSessionScope($sessionId, $scope)
-	{
-		if ( ! isset($this->session_scopes[$sessionId]))
-		{
-			$this->session_scopes[$sessionId] = array();
-		}
+    public function setAccessToken($sessionId, $accessToken)
+    {
+        die('not implemented setAccessToken');
+    }
 
-		$this->session_scopes[$sessionId][] = $scope;
+    public function addSessionScope($sessionId, $scope)
+    {
+        if ( ! isset($this->session_scopes[$sessionId])) {
+            $this->session_scopes[$sessionId] = array();
+        }
 
-		return true;
-	}
+        $this->session_scopes[$sessionId][] = $scope;
 
-	public function getScope($scope)
-	{
-		if ( ! isset($this->scopes[$scope]))
-		{
-			return false;
-		}
+        return true;
+    }
 
-		return $this->scopes[$scope];
-	}
+    public function getScope($scope)
+    {
+        if ( ! isset($this->scopes[$scope])) {
+            return false;
+        }
 
-	public function updateSessionScopeAccessToken($sessionId, $accessToken)
-	{
-		return true;
-	}
+        return $this->scopes[$scope];
+    }
 
-	public function accessTokenScopes($accessToken)
-	{
-		die('not implemented accessTokenScopes');
-	}
+    public function updateSessionScopeAccessToken($sessionId, $accessToken)
+    {
+        return true;
+    }
+
+    public function accessTokenScopes($accessToken)
+    {
+        die('not implemented accessTokenScopes');
+    }
+
+    public function validateRefreshToken($refreshToken, $clientId)
+    {
+        if ($refreshToken !== $this->sessions[0]['refresh_token'])
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function updateRefreshToken($sessionId, $newAccessToken, $newRefreshToken, $accessTokenExpires)
+    {
+        $this->sessions[$sessionId]['access_token'] = $newAccessToken;
+        $this->sessions[$sessionId]['refresh_token'] = $newRefreshToken;
+        $this->sessions[$sessionId]['access_token_expire'] = $accessTokenExpires;
+    }
 }

@@ -21,11 +21,12 @@ CREATE TABLE `client_endpoints` (
 CREATE TABLE `oauth_sessions` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `client_id` varchar(40) NOT NULL DEFAULT '',
-  `redirect_uri` varchar(250) NOT NULL DEFAULT '',
+  `redirect_uri` varchar(250) DEFAULT '',
   `owner_type` enum('user','client') NOT NULL DEFAULT 'user',
   `owner_id` varchar(255) DEFAULT NULL,
   `auth_code` varchar(40) DEFAULT '',
   `access_token` varchar(40) DEFAULT '',
+  `refresh_token` varchar(40) NOT NULL,
   `access_token_expires` int(10) DEFAULT NULL,
   `stage` enum('requested','granted') NOT NULL DEFAULT 'requested',
   `first_requested` int(10) unsigned NOT NULL,
