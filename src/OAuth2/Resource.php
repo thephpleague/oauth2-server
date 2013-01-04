@@ -3,8 +3,8 @@
 namespace OAuth2;
 
 use OutOfBoundsException;
-use Storage\SessionInterface;
-use Storage\SessionScopeInterface;
+use OAuth2\Storage\SessionInterface;
+use OAuth2\Storage\SessionScopeInterface;
 
 class Resource
 {
@@ -29,17 +29,35 @@ class Resource
      *
      * @param  SessionInterface  The Session Storage Object
      * @param  SessionScopeInterface  The Session Scope Storage Object
-     * @param  RequestInterface  The Request Object
      */
-    public function __construct(SessionInterface $session, SessionScopeInterface $session_scope, RequestInterface $request = null)
+    public function __construct(SessionInterface $session, SessionScopeInterface $session_scope)
     {
         $this->storages['session'] = $session;
         $this->storages['session_scope'] = $session_scope;
+    }
 
-        if (is_null($request)) {
-            $request = Request::buildFromGlobals();
-        }
+    /**
+     * Sets the Request Object
+     *
+     * @param  RequestInterface The Request Object
+     */
+    public function setRequest(RequestInterface $request)
+    {
         $this->request = $request;
+    }
+
+    /**
+     * Gets the Request object.  It will create one from the globals if one is not set.
+     *
+     * @return  RequestInterface
+     */
+    public function getRequest()
+    {
+        if ($this->request === null) {
+            $this->request = Request::buildFromGlobals();
+        }
+
+        return $this->request;
     }
 
     /**
@@ -91,13 +109,19 @@ class Resource
         return false;
     }
 
+    /**
+     * Reads in the Access Token from the headers.
+     *
+     * @return string
+     * @throws MissingAccessTokenException
+     */
     protected function determineAccessToken()
     {
-        if ($header = $this->request->header('Authorization')) {
+        if ($header = $this->getRequest()->header('Authorization')) {
             $access_token = trim(str_replace('Bearer', '', $header));
         } else {
-            $method = $this->request->server('REQUEST_METHOD');
-            $access_token = $this->request->{$method}($this->tokenKey);
+            $method = $this->getRequest()->server('REQUEST_METHOD');
+            $access_token = $this->getRequest()->{$method}($this->tokenKey);
         }
 
         if (empty($access_token)) {

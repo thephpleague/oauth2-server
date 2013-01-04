@@ -2,7 +2,7 @@
 
 namespace OAuth2;
 
-class MissingAccessTokenException
+class MissingAccessTokenException extends \Exception
 {
-    
+
 }
