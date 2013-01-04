@@ -35,7 +35,7 @@
 	],
 	"autoload": {
 		"psr-0": {
-			"Oauth2": "src/"
+			"OAuth2": "src/"
 		}
 	},
 	"suggest": {
