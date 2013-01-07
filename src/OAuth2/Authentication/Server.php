@@ -48,7 +48,7 @@ class Server
      */
     private $_grantTypes    =   array(
         'authorization_code',
-        'user_credentials',
+        'password',
         'refresh_token',
     );
 
@@ -379,7 +379,7 @@ class Server
                 return $this->completeAuthCodeGrant($authParams, $params);
                 break;
 
-            case 'user_credentials':
+            case 'password':
                 return $this->completeUserCredentialsGrant($authParams, $params);
                 break;
 
@@ -542,7 +542,7 @@ class Server
         $params = array();
 
         if ( ! isset($authParams['user_auth_callback'])) {
-            throw new \InvalidArgumentException('You must set a user_auth_callback when using the user_credentials grant type.');
+            throw new \InvalidArgumentException('You must set a user_auth_callback when using the password grant type.');
         }
 
         // Client ID
@@ -582,7 +582,7 @@ class Server
             $params['grant_type'] = $_POST['grant_type'];
         }
 
-        if ($params['grant_type'] == 'user_credentials')
+        if ($params['grant_type'] == 'password')
         {
             // Check if user's u+p are correct
             $userId = call_user_func($authParams['user_auth_callback']);
