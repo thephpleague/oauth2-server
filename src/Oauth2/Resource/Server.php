@@ -148,7 +148,7 @@ class Server
 
             if (isset($headers['Authorization'])) {
 
-                $rawToken = trim(str_replace('Bearer', '', $headers['Authorization']));
+                $rawToken = base64_decode(str_replace('Bearer ', '', trim($headers['Authorization'])));
 
                 if ( ! empty($rawToken)) {
                     $accessToken = $rawToken;
