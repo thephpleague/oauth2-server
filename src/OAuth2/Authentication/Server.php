@@ -639,7 +639,7 @@ class Server
         $userId = call_user_func($this->_grantTypeCallbacks['password'], $params['username'], $params['password']);
 
         if ($userId === false) {
-            throw new \Oauth2\Authentication\ClientException($this->errors['invalid_credentials'], 0);
+            throw new \OAuth2\Authentication\ClientException($this->errors['invalid_credentials'], 0);
         }
 
         // Generate an access token
@@ -730,7 +730,7 @@ class Server
         $sessionId = $this->_dbCall('validateRefreshToken', $params['refresh_token'], $params['client_id']);
 
         if ($sessionId === false) {
-            throw new \Oauth2\Authentication\ClientException($this->errors['invalid_refresh'], 0);
+            throw new \OAuth2\Authentication\ClientException($this->errors['invalid_refresh'], 0);
         }
 
         // Generate new tokens
@@ -778,7 +778,7 @@ class Server
         }
 
         if ( ! $this->_db instanceof Database) {
-            throw new ServerException('Registered database abstractor is not an instance of Oauth2\Authentication\Database');
+            throw new ServerException('Registered database abstractor is not an instance of OAuth2\Authentication\Database');
         }
 
         $args = func_get_args();

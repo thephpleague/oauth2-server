@@ -9,7 +9,7 @@
  * @license    http://philsturgeon.co.uk/code/dbad-license
  */
 
-class OAuth2_Provider_Github extends Oauth2\Client\IDP
+class OAuth2_Provider_Github extends OAuth2\Client\IDP
 {
 	public function urlAuthorize()
 	{

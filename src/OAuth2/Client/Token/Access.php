@@ -1,6 +1,6 @@
 <?php
 
-namespace Oauth2\Client\Token;
+namespace OAuth2\Client\Token;
 
 /**
  * OAuth2 Token
@@ -11,7 +11,7 @@ namespace Oauth2\Client\Token;
  * @copyright  (c) 2011 HappyNinjas Ltd
  */
 
-class Access extends \Oauth2\Client\Token
+class Access extends \OAuth2\Client\Token
 {
 	/**
 	 * @var  string  accessToken

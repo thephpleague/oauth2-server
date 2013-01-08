@@ -1,6 +1,6 @@
 <?php
 
-namespace Oauth2\Client;
+namespace OAuth2\Client;
 
 abstract class Token
 {
@@ -16,7 +16,7 @@ abstract class Token
 	{
 		include_once 'Token/'.ucfirst(strtolower($name)).'.php';
 
-		$class = 'Oauth2\Client\Token\\'.ucfirst($name);
+		$class = 'OAuth2\Client\Token\\'.ucfirst($name);
 
 		return new $class($options);
 	}

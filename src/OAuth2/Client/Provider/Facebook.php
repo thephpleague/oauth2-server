@@ -9,7 +9,7 @@
  * @license    http://philsturgeon.co.uk/code/dbad-license
  */
 
-class Facebook extends Oauth2\Client\IDP
+class Facebook extends OAuth2\Client\IDP
 {
 	protected $scope = array('offline_access', 'email', 'read_stream');
 
@@ -23,7 +23,7 @@ class Facebook extends Oauth2\Client\IDP
 		return 'https://graph.facebook.com/oauth/access_token';
 	}
 
-	public function getUserInfo(Oauth2\Token\Access $token)
+	public function getUserInfo(OAuth2\Token\Access $token)
 	{
 		$url = 'https://graph.facebook.com/me?'.http_build_query(array(
 			'access_token' => $token->access_token,

@@ -8,7 +8,7 @@
  * @copyright  (c) 2011 HappyNinjas Ltd
  */
 
-class Authorize extends \Oauth2\Client\Token
+class Authorize extends \OAuth2\Client\Token
 {
 	/**
 	 * @var  string  code

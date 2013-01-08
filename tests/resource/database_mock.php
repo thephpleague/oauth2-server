@@ -1,6 +1,6 @@
 <?php
 
-use Oauth2\Resource\Database;
+use OAuth2\Resource\Database;
 
 class ResourceDB implements Database
 {

@@ -1,14 +1,14 @@
 <?php
 
-class Blooie extends Oauth2\Client\IDP
-{  
+class Blooie extends OAuth2\Client\IDP
+{
 	public $scope = array('user.profile', 'user.picture');
 
 	public $method = 'POST';
 
 	public function urlAuthorize()
 	{
-		return 'https://bloo.ie/oauth';	
+		return 'https://bloo.ie/oauth';
 	}
 
 	public function urlAccessToken()
@@ -16,7 +16,7 @@ class Blooie extends Oauth2\Client\IDP
 		return 'https://bloo.ie/oauth/access_token';
 	}
 
-	public function getUserInfo(Oauth2\Token\Access $token)
+	public function getUserInfo(OAuth2\Token\Access $token)
 	{
 		$url = 'https://graph.facebook.com/me?'.http_build_query(array(
 			'access_token' => $token->access_token,

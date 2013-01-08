@@ -1,6 +1,6 @@
 <?php
 
-use Oauth2\Authentication\Database;
+use OAuth2\Authentication\Database;
 
 class OAuthdb implements Database
 {

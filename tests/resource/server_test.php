@@ -5,10 +5,10 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase {
     function setUp()
     {
         require_once('database_mock.php');
-        $this->server = new Oauth2\Resource\Server();
+        $this->server = new OAuth2\Resource\Server();
         $this->db = new ResourceDB();
 
-        $this->assertInstanceOf('Oauth2\Resource\Database', $this->db);
+        $this->assertInstanceOf('OAuth2\Resource\Database', $this->db);
         $this->server->registerDbAbstractor($this->db);
     }
 
@@ -72,7 +72,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException        \Oauth2\Resource\ClientException
+     * @expectedException        \OAuth2\Resource\ClientException
      * @expectedExceptionMessage An access token was not presented with the request
      */
     function test_init_missingToken()
@@ -81,7 +81,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException        \Oauth2\Resource\ClientException
+     * @expectedException        \OAuth2\Resource\ClientException
      * @expectedExceptionMessage The access token is not registered with the resource server
      */
     function test_init_wrongToken()
