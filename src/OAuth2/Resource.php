@@ -61,6 +61,26 @@ class Resource
     }
 
     /**
+     * Gets the Owner ID.
+     *
+     * @return  int
+     */
+    public function getOwnerId()
+    {
+        return $this->ownerId;
+    }
+
+    /**
+     * Gets the Owner Type.
+     *
+     * @return  string
+     */
+    public function getOwnerType()
+    {
+        return $this->ownerId;
+    }
+
+    /**
      * Checks if the Access Token is valid or not.
      *
      * @return bool
@@ -113,7 +133,7 @@ class Resource
      * Reads in the Access Token from the headers.
      *
      * @return string
-     * @throws MissingAccessTokenException
+     * @throws Exception\MissingAccessTokenException
      */
     protected function determineAccessToken()
     {
@@ -125,7 +145,7 @@ class Resource
         }
 
         if (empty($access_token)) {
-            throw new MissingAccessTokenException('Access Token is Missing');
+            throw new Exception\MissingAccessTokenException('Access Token is Missing');
         }
 
         return $access_token;
