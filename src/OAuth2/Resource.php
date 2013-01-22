@@ -81,6 +81,16 @@ class Resource
     }
 
     /**
+     * Gets the Access Token.
+     *
+     * @return  string
+     */
+    public function getAccessToken()
+    {
+        return $this->accessToken;
+    }
+
+    /**
      * Checks if the Access Token is valid or not.
      *
      * @return bool
