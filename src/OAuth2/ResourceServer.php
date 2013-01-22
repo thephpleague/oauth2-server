@@ -6,7 +6,7 @@ use OutOfBoundsException;
 use OAuth2\Storage\SessionInterface;
 use OAuth2\Storage\SessionScopeInterface;
 
-class Resource
+class ResourceServer
 {
     protected $accessToken = null;
 

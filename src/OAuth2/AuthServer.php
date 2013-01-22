@@ -2,7 +2,7 @@
 
 namespace OAuth2;
 
-class Server
+class AuthServer
 {
     protected $scopeDelimeter = ',';
 
