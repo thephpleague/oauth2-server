@@ -80,7 +80,7 @@ class AuthServer
         }
         $this->grantTypes[$identifier] = $grantType;
 
-        if (! is_null($grantType->getResponseType())) {
+        if ( ! is_null($grantType->getResponseType())) {
             $this->responseTypes[] = $grantType->getResponseType();
         }
     }
