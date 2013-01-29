@@ -143,7 +143,78 @@ class AuthServer
      */
     public function checkClientAuthoriseParams($authParams = null)
     {
+        $params = array();
 
+        // Client ID
+        $params['client_id'] = (isset($authParams['client_id'])) ?
+                                    $authParams['client_id'] :
+                                    $this->getRequest()->get('client_id');
+
+        if (is_null($params['client_id'])) {
+            throw new Exception\ClientException(sprintf($this->exceptionMessages['invalid_request'], 'client_id'), 0);
+        }
+
+        // Redirect URI
+        $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ?
+                                        $authParams['redirect_uri'] :
+                                        $this->getRequest()->get('redirect_uri');
+
+        if (is_null($params['redirect_uri'])) {
+            throw new Exception\ClientException(sprintf($this->exceptionMessages['invalid_request'], 'redirect_uri'), 0);
+        }
+
+        // Validate client ID and redirect URI
+        $clientDetails = $this->getStorage('client')->get($params['client_id'], null, $params['redirect_uri']);
+
+        if ($clientDetails === false) {
+            throw new Exception\ClientException($this->exceptionMessages['invalid_client'], 8);
+        }
+
+        $params['client_details'] = $clientDetails;
+
+        // Response type
+       $params['response_type'] = (isset($authParams['response_type'])) ?
+                                        $authParams['response_type'] :
+                                        $this->getRequest()->get('response_type');
+
+        if (is_null($params['response_type'])) {
+            throw new Exception\ClientException(sprintf($this->exceptionMessages['invalid_request'], 'response_type'), 0);
+        }
+
+        // Ensure response type is one that is recognised
+        if ( ! in_array($params['response_type'], $this->responseTypes)) {
+            throw new Exception\ClientException($this->exceptionMessages['unsupported_response_type'], 3);
+        }
+
+        // Get and validate scopes
+        $scopes = (isset($authParams['scope'])) ?
+                        $authParams['scope'] :
+                        $this->getRequest()->get('scope', '');
+
+        $scopes = explode($this->_config['scope_delimeter'], $scopes);
+
+        for ($i = 0; $i < count($scopes); $i++) {
+            $scopes[$i] = trim($scopes[$i]);
+            if ($scopes[$i] === '') unset($scopes[$i]); // Remove any junk scopes
+        }
+
+        if (count($scopes) === 0) {
+            throw new Exception\ClientException(sprintf($this->exceptionMessages['invalid_request'], 'scope'), 0);
+        }
+
+        $params['scopes'] = array();
+
+        foreach ($scopes as $scope) {
+            $scopeDetails = $this->getStorage('scope')->get($scope);
+
+            if ($scopeDetails === false) {
+                throw new Exception\ClientException(sprintf($this->exceptionMessages['invalid_scope'], $scope), 4);
+            }
+
+            $params['scopes'][] = $scopeDetails;
+        }
+
+        return $params;
     }
 
     /**
@@ -177,7 +248,7 @@ class AuthServer
         $grantType = $this->getRequest()->post('grant_type');
 
         if (is_null($grantType)) {
-            throw new Exception
+            throw new Exception;
         }
     }
 
