@@ -4,7 +4,7 @@ namespace OAuth2\Util;
 
 class SecureKey
 {
-    public static function make($len = 42)
+    public static function make($len = 40)
     {
         // We generate twice as many bytes here because we want to ensure we have
         // enough after we base64 encode it to get the length we need because we
