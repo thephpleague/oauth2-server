@@ -7,4 +7,6 @@ interface GrantTypeInterface
     public function getIdentifier();
 
     public function getResponseType();
+
+    public function completeFlow();
 }
