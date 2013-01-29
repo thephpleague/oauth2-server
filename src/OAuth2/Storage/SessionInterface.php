@@ -7,7 +7,7 @@ interface SessionInterface
 	/**
      * Create a new OAuth session
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * INSERT INTO oauth_sessions (client_id, redirect_uri, owner_type,
@@ -26,7 +26,7 @@ interface SessionInterface
      * @param  string $stage        The stage of the session (default ="request")
      * @return  int The session ID
      */
-    public function new(
+    public function create(
         $clientId,
         $redirectUri,
         $type = 'user',
@@ -41,7 +41,7 @@ interface SessionInterface
     /**
      * Update an OAuth session
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * UPDATE oauth_sessions SET auth_code = $authCode, access_token =
@@ -87,7 +87,7 @@ interface SessionInterface
     /**
      * Return the session ID for a given session owner and client combination
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * SELECT id FROM oauth_sessions WHERE client_id = $clientId
@@ -109,7 +109,7 @@ interface SessionInterface
     /**
      * Validate that an authorisation code is valid
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * SELECT id FROM oauth_sessions WHERE client_id = $clientID AND
@@ -150,7 +150,7 @@ interface SessionInterface
     /**
      * Removes an authorisation code associated with a session
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * UPDATE oauth_sessions SET auth_code = NULL WHERE id = $sessionId
@@ -164,7 +164,7 @@ interface SessionInterface
     /**
      * Sets a sessions access token
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * UPDATE oauth_sessions SET access_token = $accessToken WHERE id =
@@ -185,7 +185,7 @@ interface SessionInterface
     /**
      * Return the access token for a given session
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * SELECT access_token FROM oauth_sessions WHERE id = $sessionId
@@ -202,7 +202,7 @@ interface SessionInterface
     /**
      * Update the refresh token
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * UPDATE oauth_sessions SET access_token = $newAccessToken, refresh_token =
@@ -221,26 +221,23 @@ interface SessionInterface
     /**
      * Associates a session with a scope
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
-     * INSERT INTO oauth_session_scopes (session_id, scope) VALUE ($sessionId,
-     *  $scope)
+     * INSERT INTO oauth_session_scopes (session_id, scope_id) VALUE ($sessionId,
+     *  $scopeId)
      * </code>
      *
      * @param int    $sessionId The session ID
-     * @param string $scope     The scope
+     * @param string $scope     The scope ID
      * @return void
      */
-    public function associateScope(
-        $sessionId,
-        $scope
-    );
+    public function associateScope($sessionId, $scopeId);
 
     /**
      * Return the scopes associated with an access token
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * SELECT scopes.scope, scopes.name, scopes.description FROM
