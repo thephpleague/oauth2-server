@@ -268,13 +268,13 @@ class AuthServer
             throw new Exception\ClientException(sprintf($this->errors['unsupported_grant_type'], $params['grant_type']), 7);
         }
 
-    protected function getCurrentGrantType()
-    {
-        $grantType = $this->getRequest()->post('grant_type');
+        // Complete the flow
+        return $this->getCurrentGrantType($params['grant_type'])->completeFlow($authParams, $params);
+    }
 
-        if (is_null($grantType)) {
-            throw new Exception;
-        }
+    protected function getCurrentGrantType($grantType)
+    {
+        return $this->grantTypes[$grantType];
     }
 
 }
