@@ -2,6 +2,10 @@
 
 namespace OAuth2;
 
+use OAuth2\Storage\SessionInterface;
+use OAuth2\Storage\ClientInterface;
+use OAuth2\Storage\ScopeInterface;
+
 class AuthServer
 {
     protected $scopeDelimeter = ',';
@@ -18,9 +22,14 @@ class AuthServer
 
     protected $request = null;
 
-    public function __construct($storage)
-    {
 
+    public function __construct(ClientInterface $client, SessionInterface $session, ScopeInterface $scope)
+    {
+        $this->storages = array(
+            'client'    =>  $client,
+            'session'   =>  $session,
+            'scope' =>  $scope
+        );
     }
 
     public function addGrantType(GrantTypeInterface $grant_type, $identifier = null)
@@ -73,6 +82,11 @@ class AuthServer
         }
 
         return $this->request;
+    }
+
+    public function getStorage($obj)
+    {
+        return $this->storages[$obj];
     }
 
     /**
