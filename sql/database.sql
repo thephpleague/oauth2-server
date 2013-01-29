@@ -49,7 +49,7 @@ CREATE TABLE `scopes` (
 CREATE TABLE `oauth_session_scopes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `session_id` int(11) unsigned NOT NULL,
-  `scope` varchar(255) NOT NULL DEFAULT '',
+  `scope_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `session_id` (`session_id`),
   KEY `scope` (`scope`),
