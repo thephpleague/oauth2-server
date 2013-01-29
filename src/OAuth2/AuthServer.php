@@ -2,7 +2,7 @@
 
 namespace OAuth2;
 
-use OAuth2\Util;
+use OAuth2\Util\SecureKey;
 use OAuth2\Storage\SessionInterface;
 use OAuth2\Storage\ClientInterface;
 use OAuth2\Storage\ScopeInterface;
