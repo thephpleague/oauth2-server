@@ -12,9 +12,7 @@ class AuthServer
 
     protected $expiresIn = 3600;
 
-    protected $responseTypes = array(
-        'code'
-    );
+    protected $responseTypes = array();
 
     protected $storages = array();
 
@@ -32,12 +30,16 @@ class AuthServer
         );
     }
 
-    public function addGrantType(GrantTypeInterface $grant_type, $identifier = null)
+    public function addGrantType(GrantTypeInterface $grantType, $identifier = null)
     {
         if (is_null($identifier)) {
-            $identifier = $grant_type->getIdentifier();
+            $identifier = $grantType->getIdentifier();
         }
-        $this->grantTypes[$identifier] = $grant_type;
+        $this->grantTypes[$identifier] = $grantType;
+
+        if (! is_null($grantType->getResponseType())) {
+            $this->responseTypes[] = $grantType->getResponseType();
+        }
     }
 
     public function getScopeDelimeter()
