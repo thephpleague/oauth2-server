@@ -255,9 +255,18 @@ class AuthServer
      */
     public function issueAccessToken($authParams = null)
     {
+        $params['grant_type'] = (isset($authParams['grant_type'])) ?
+                                    $authParams['grant_type'] :
+                                    $this->getRequest()->post('grant_type');
 
-    }
+        if (is_null($params['grant_type'])) {
+            throw new Exception\ClientException(sprintf($this->errors['invalid_request'], 'grant_type'), 0);
+        }
 
+        // Ensure grant type is one that is recognised and is enabled
+        if ( ! in_array($params['grant_type'], array_keys($this->grantTypes))) {
+            throw new Exception\ClientException(sprintf($this->errors['unsupported_grant_type'], $params['grant_type']), 7);
+        }
 
     protected function getCurrentGrantType()
     {
