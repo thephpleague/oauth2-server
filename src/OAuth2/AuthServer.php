@@ -136,13 +136,13 @@ class AuthServer
     }
 
     /**
-     * Check client authorise parameters
+     * Check authorise parameters
      *
      * @access public
      * @param  array $authParams Optional array of parsed $_GET keys
      * @return array             Authorise request parameters
      */
-    public function checkClientAuthoriseParams($authParams = null)
+    public function checkAuthoriseParams($authParams = null)
     {
         $params = array();
 
