@@ -28,6 +28,41 @@ class AuthServer
 
     protected $request = null;
 
+    /**
+     * Exception error codes
+     * @var array
+     */
+    protected $exceptionCodes = array(
+        0   =>  'invalid_request',
+        1   =>  'unauthorized_client',
+        2   =>  'access_denied',
+        3   =>  'unsupported_response_type',
+        4   =>  'invalid_scope',
+        5   =>  'server_error',
+        6   =>  'temporarily_unavailable',
+        7   =>  'unsupported_grant_type',
+        8   =>  'invalid_client',
+        9   =>  'invalid_grant'
+    );
+
+    /**
+     * Exception error messages
+     * @var array
+     */
+    protected $exceptionMessages = array(
+        'invalid_request'           =>  'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "%s" parameter.',
+        'unauthorized_client'       =>  'The client is not authorized to request an access token using this method.',
+        'access_denied'             =>  'The resource owner or authorization server denied the request.',
+        'unsupported_response_type' =>  'The authorization server does not support obtaining an access token using this method.',
+        'invalid_scope'             =>  'The requested scope is invalid, unknown, or malformed. Check the "%s" scope.',
+        'server_error'              =>  'The authorization server encountered an unexpected condition which prevented it from fulfilling the request.',
+        'temporarily_unavailable'   =>  'The authorization server is currently unable to handle the request due to a temporary overloading or maintenance of the server.',
+        'unsupported_grant_type'    =>  'The authorization grant type "%s" is not supported by the authorization server',
+        'invalid_client'            =>  'Client authentication failed',
+        'invalid_grant'             =>  'The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client. Check the "%s" parameter.',
+        'invalid_credentials'       =>  'The user credentials were incorrect.',
+        'invalid_refresh'           =>  'The refresh token is invalid.',
+    );
 
     public function __construct(ClientInterface $client, SessionInterface $session, ScopeInterface $scope)
     {
