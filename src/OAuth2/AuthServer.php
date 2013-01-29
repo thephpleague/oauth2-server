@@ -2,6 +2,7 @@
 
 namespace OAuth2;
 
+use OAuth2\Util;
 use OAuth2\Storage\SessionInterface;
 use OAuth2\Storage\ClientInterface;
 use OAuth2\Storage\ScopeInterface;
@@ -227,7 +228,22 @@ class AuthServer
      */
     public function newAuthoriseRequest($type, $typeId, $authoriseParams)
     {
+        // Generate an auth code
+        $authCode = SecureKey::make();
 
+        // Remove any old sessions the user might have
+        $this->getStorage('session')->delete($authoriseParams['client_id'], $type, $typeId);
+
+        // Create a new session
+        $sessionId = $this->getStorage('session')->create($authoriseParams['client_id'], $authoriseParams['redirect_uri'], $type, $typeId, $authCode);
+
+        // Associate scopes with the new session
+        foreach ($authoriseParams['scopes'] as $scope)
+        {
+            $this->getStorage('session')->associateScope($sessionId, $scope['id']);
+        }
+
+        return $authCode;
     }
 
     /**
