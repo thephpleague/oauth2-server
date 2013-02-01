@@ -85,7 +85,7 @@ class AuthServer
         if (is_null($identifier)) {
             $identifier = $grantType->getIdentifier();
         }
-        $this->grantTypes[$identifier] = $grantType;
+        self::$grantTypes[$identifier] = $grantType;
 
         if ( ! is_null($grantType->getResponseType())) {
             $this->responseTypes[] = $grantType->getResponseType();
@@ -275,7 +275,7 @@ class AuthServer
         }
 
         // Ensure grant type is one that is recognised and is enabled
-        if ( ! in_array($authParams['grant_type'], array_keys($this->grantTypes))) {
+        if ( ! in_array($authParams['grant_type'], array_keys(self::$grantTypes))) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $authParams['grant_type']), 7);
         }
 
@@ -285,7 +285,7 @@ class AuthServer
 
     protected function getCurrentGrantType($grantType)
     {
-        return $this->grantTypes[$grantType];
+        return self::$grantTypes[$grantType];
     }
 
 }
