@@ -55,7 +55,7 @@ class AuthCode implements GrantTypeInterface {
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = AuthServer::getStorage('client')->get($authParams['client_id'], null, $authParams['redirect_uri']);
+        $clientDetails = AuthServer::getStorage('client')->get($authParams['client_id'], $authParams['client_secret'], $authParams['redirect_uri']);
 
         if ($clientDetails === false) {
             throw new Exception\ClientException(AuthServer::getExceptionMessage('invalid_client'), 8);
