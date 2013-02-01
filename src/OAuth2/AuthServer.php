@@ -28,7 +28,7 @@ class AuthServer
 
     protected $grantTypes = array();
 
-    protected $request = null;
+    static protected $request = null;
 
     /**
      * Exception error codes
@@ -132,13 +132,13 @@ class AuthServer
      *
      * @return  RequestInterface
      */
-    public function getRequest()
+    public static function getRequest()
     {
-        if ($this->request === null) {
-            $this->request = Request::buildFromGlobals();
+        if (self::$request === null) {
+            self::$request = Request::buildFromGlobals();
         }
 
-        return $this->request;
+        return self::$request;
     }
 
     public static function getStorage($obj)
@@ -160,7 +160,7 @@ class AuthServer
         // Client ID
         $authParams['client_id'] = (isset($inputParams['client_id'])) ?
                                     $inputParams['client_id'] :
-                                    $this->getRequest()->get('client_id');
+                                    self::getRequest()->get('client_id');
 
         if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'client_id'), 0);
@@ -169,7 +169,7 @@ class AuthServer
         // Redirect URI
         $authParams['redirect_uri'] = (isset($inputParams['redirect_uri'])) ?
                                         $inputParams['redirect_uri'] :
-                                        $this->getRequest()->get('redirect_uri');
+                                        self::getRequest()->get('redirect_uri');
 
         if (is_null($authParams['redirect_uri'])) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'redirect_uri'), 0);
@@ -187,7 +187,7 @@ class AuthServer
         // Response type
        $authParams['response_type'] = (isset($inputParams['response_type'])) ?
                                         $inputParams['response_type'] :
-                                        $this->getRequest()->get('response_type');
+                                        self::getRequest()->get('response_type');
 
         if (is_null($authParams['response_type'])) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'response_type'), 0);
@@ -201,7 +201,7 @@ class AuthServer
         // Get and validate scopes
         $scopes = (isset($inputParams['scope'])) ?
                         $inputParams['scope'] :
-                        $this->getRequest()->get('scope', '');
+                        self::getRequest()->get('scope', '');
 
         $scopes = explode($this->scopeDelimeter, $scopes);
 
@@ -268,7 +268,7 @@ class AuthServer
     {
         $authParams['grant_type'] = (isset($inputParams['grant_type'])) ?
                                     $inputParams['grant_type'] :
-                                    $this->getRequest()->post('grant_type');
+                                    self::getRequest()->post('grant_type');
 
         if (is_null($authParams['grant_type'])) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'grant_type'), 0);
@@ -280,7 +280,7 @@ class AuthServer
         }
 
         // Complete the flow
-        return $this->getCurrentGrantType($authParams['grant_type'])->completeFlow($inputParams, $authParams, $this->request);
+        return $this->getCurrentGrantType($authParams['grant_type'])->completeFlow($inputParams, $authParams);
     }
 
     protected function getCurrentGrantType($grantType)
