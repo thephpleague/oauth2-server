@@ -83,9 +83,7 @@ class AuthCode implements GrantTypeInterface {
         //  remove the authorisation code, change the stage to 'granted'
 
         $accessToken = SecureKey::make();
-        $refreshToken = (AuthServer::hasGrantType('refresh_token')) ?
-                            SecureKey::make() :
-                            null;
+        $refreshToken = (AuthServer::hasGrantType('refresh_token')) ? SecureKey::make() : null;
 
         $accessTokenExpires = time() + AuthServer::getExpiresIn();
         $accessTokenExpiresIn = AuthServer::getExpiresIn();
