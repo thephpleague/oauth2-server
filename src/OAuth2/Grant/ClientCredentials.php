@@ -65,7 +65,7 @@ class ClientCredentials implements GrantTypeInterface {
         AuthServer::getStorage('session')->delete($authParams['client_id'], 'client', $authParams['client_id']);
 
         // Create a new session
-        AuthServer::getStorage('session')->newSession(
+        AuthServer::getStorage('session')->create(
             $authParams['client_id'],
             null,
             'client',
