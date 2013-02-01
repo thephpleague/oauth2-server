@@ -20,7 +20,7 @@ class AuthServer
      */
     protected $scopeDelimeter = ',';
 
-    protected $expiresIn = 3600;
+    static protected $expiresIn = 3600;
 
     protected $responseTypes = array();
 
@@ -109,7 +109,7 @@ class AuthServer
 
     public static function getExpiresIn()
     {
-        return $this->expiresIn;
+        return self::$expiresIn;
     }
 
     public function setExpiresIn($expiresIn)
