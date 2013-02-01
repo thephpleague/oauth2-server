@@ -62,14 +62,14 @@ class ClientCredentials implements GrantTypeInterface {
         $accessTokenExpiresIn = AuthServer::getExpiresIn();
 
         // Delete any existing sessions just to be sure
-        AuthServer::getStorage('session')->delete($params['client_id'], 'client', $params['client_id']);
+        AuthServer::getStorage('session')->delete($authParams['client_id'], 'client', $authParams['client_id']);
 
         // Create a new session
         AuthServer::getStorage('session')->newSession(
-            $params['client_id'],
+            $authParams['client_id'],
             null,
             'client',
-            $params['client_id'],
+            $authParams['client_id'],
             null,
             $accessToken,
             $refreshToken,
