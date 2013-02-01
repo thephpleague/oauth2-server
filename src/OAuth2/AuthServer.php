@@ -26,7 +26,7 @@ class AuthServer
 
     static protected $storages = array();
 
-    protected $grantTypes = array();
+    static protected $grantTypes = array();
 
     static protected $request = null;
 
@@ -94,7 +94,7 @@ class AuthServer
 
     public static function hasGrantType($identifier)
     {
-        return (array_key_exists($identifier, $this->grantTypes));
+        return (array_key_exists($identifier, self::$grantTypes));
     }
 
     public function getScopeDelimeter()
