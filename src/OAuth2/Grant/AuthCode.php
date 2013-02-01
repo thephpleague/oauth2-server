@@ -25,12 +25,12 @@ class AuthCode implements GrantTypeInterface {
         return $this->responseType;
     }
 
-    public function completeFlow($inputParams = null, $authParams = array(), Request $request)
+    public function completeFlow($inputParams = null, $authParams = array())
     {
         // Client ID
         $authParams['client_id'] = (isset($inputParams['client_id'])) ?
                                     $inputParams['client_id'] :
-                                    $request->post('client_id');
+                                    AuthServer::getRequest()->post('client_id');
 
         if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_id'), 0);
@@ -39,7 +39,7 @@ class AuthCode implements GrantTypeInterface {
         // Client secret
         $authParams['client_secret'] = (isset($inputParams['client_secret'])) ?
                                     $inputParams['client_secret'] :
-                                    $request->post('client_secret');
+                                    AuthServer::getRequest()->post('client_secret');
 
         if (is_null($authParams['client_secret'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_secret'), 0);
@@ -48,7 +48,7 @@ class AuthCode implements GrantTypeInterface {
         // Redirect URI
         $authParams['redirect_uri'] = (isset($inputParams['redirect_uri'])) ?
                                         $inputParams['redirect_uri'] :
-                                        $request->post('redirect_uri');
+                                        AuthServer::getRequest()->post('redirect_uri');
 
         if (is_null($authParams['redirect_uri'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'redirect_uri'), 0);
@@ -66,7 +66,7 @@ class AuthCode implements GrantTypeInterface {
         // The authorization code
         $authParams['code'] = (isset($inputParams['code'])) ?
                                 $inputParams['code'] :
-                                $request->post('code');
+                                AuthServer::getRequest()->post('code');
 
         if (is_null($authParams['code'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'code'), 0);

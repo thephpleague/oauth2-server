@@ -16,5 +16,5 @@ interface GrantTypeInterface
 
     public function getResponseType();
 
-    public function completeFlow($inputParams = null, $authParams = array(), Request $request);
+    public function completeFlow($inputParams = null, $authParams = array());
 }
