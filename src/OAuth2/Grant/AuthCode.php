@@ -1,12 +1,18 @@
 <?php
 
-namespace OAuth2;
+namespace OAuth2\Grant;
 
+use OAuth2\Request;
+use OAuth2\AuthServer;
 use OAuth2\Exception;
+use OAuth2\Util\SecureKey;
+use OAuth2\Storage\SessionInterface;
+use OAuth2\Storage\ClientInterface;
+use OAuth2\Storage\ScopeInterface;
 
 class AuthCode implements GrantTypeInterface {
 
-    protected $identifier = 'AuthCode';
+    protected $identifier = 'authorization_code';
     protected $responseType = 'code';
 
     public function getIdentifier()
@@ -19,96 +25,78 @@ class AuthCode implements GrantTypeInterface {
         return $this->responseType;
     }
 
-    public function completeFlow()
+    public function completeFlow($inputParams = null, $authParams = array(), Request $request)
     {
-        /*
         // Client ID
-        if ( ! isset($authParams['client_id']) && ! isset($_POST['client_id'])) {
-            throw new ClientException(sprintf($this->errors['invalid_request'], 'client_id'), 0);
-        }
+        $authParams['client_id'] = (isset($inputParams['client_id'])) ?
+                                    $inputParams['client_id'] :
+                                    $request->post('client_id');
 
-        $params['client_id'] = (isset($authParams['client_id'])) ?
-                                    $authParams['client_id'] :
-                                    $_POST['client_id'];
+        if (is_null($authParams['client_id'])) {
+            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_id'), 0);
+        }
 
         // Client secret
-        if ( ! isset($authParams['client_secret']) && ! isset($_POST['client_secret'])) {
-            throw new ClientException(sprintf($this->errors['invalid_request'], 'client_secret'), 0);
-        }
+        $authParams['client_secret'] = (isset($inputParams['client_secret'])) ?
+                                    $inputParams['client_secret'] :
+                                    $request->post('client_secret');
 
-        $params['client_secret'] = (isset($authParams['client_secret'])) ?
-                                        $authParams['client_secret'] :
-                                        $_POST['client_secret'];
+        if (is_null($authParams['client_secret'])) {
+            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_secret'), 0);
+        }
 
         // Redirect URI
-        if ( ! isset($authParams['redirect_uri']) && ! isset($_POST['redirect_uri'])) {
-            throw new ClientException(sprintf($this->errors['invalid_request'], 'redirect_uri'), 0);
-        }
+        $authParams['redirect_uri'] = (isset($inputParams['redirect_uri'])) ?
+                                        $inputParams['redirect_uri'] :
+                                        $request->post('redirect_uri');
 
-        $params['redirect_uri'] = (isset($authParams['redirect_uri'])) ?
-                                        $authParams['redirect_uri'] :
-                                        $_POST['redirect_uri'];
+        if (is_null($authParams['redirect_uri'])) {
+            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'redirect_uri'), 0);
+        }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->_dbCall(
-            'validateClient',
-            $params['client_id'],
-            $params['client_secret'],
-            $params['redirect_uri']
-        );
+        $clientDetails = AuthServer::getStorage('client')->get($authParams['client_id'], null, $authParams['redirect_uri']);
 
         if ($clientDetails === false) {
-            throw new ClientException($this->errors['invalid_client'], 8);
+            throw new Exception\ClientException(AuthServer::getExceptionMessage('invalid_client'), 8);
         }
+
+        $authParams['client_details'] = $clientDetails;
 
         // The authorization code
-        if ( ! isset($authParams['code']) && ! isset($_POST['code'])) {
-            throw new ClientException(sprintf($this->errors['invalid_request'], 'code'), 0);
+        $authParams['code'] = (isset($inputParams['code'])) ?
+                                $inputParams['code'] :
+                                $request->post('code');
+
+        if (is_null($authParams['code'])) {
+            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'code'), 0);
         }
 
-        $params['code'] = (isset($authParams['code'])) ?
-                                    $authParams['code'] :
-                                    $_POST['code'];
-
         // Verify the authorization code matches the client_id and the request_uri
-        $session = $this->_dbCall(
-            'validateAuthCode',
-            $params['client_id'],
-            $params['redirect_uri'],
-            $params['code']
-        );
+        $session = AuthServer::getStorage('session')->validateAuthCode($authParams['client_id'], $authParams['redirect_uri'], $authParams['code']);
 
         if ( ! $session) {
-            throw new ClientException(sprintf($this->errors['invalid_grant'], 'code'), 9);
+            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_grant'), 'code'), 9);
         }
 
         // A session ID was returned so update it with an access token,
         //  remove the authorisation code, change the stage to 'granted'
 
-        $accessToken = $this->_generateCode();
-        $refreshToken = ($this->_grantTypes['refresh_token']) ?
-                            $this->_generateCode() :
+        $accessToken = SecureKey::make();
+        $refreshToken = (AuthServer::hasGrantType('refresh_token')) ?
+                            SecureKey::make() :
                             null;
 
-        $accessTokenExpires = time() + $this->_config['access_token_ttl'];
-        $accessTokenExpiresIn = $this->_config['access_token_ttl'];
+        $accessTokenExpires = time() + AuthServer::getExpiresIn();
+        $accessTokenExpiresIn = AuthServer::getExpiresIn();
 
-        $this->_dbCall(
-            'updateSession',
+        AuthServer::getStorage('session')->update(
             $session['id'],
             null,
             $accessToken,
             $refreshToken,
             $accessTokenExpires,
             'granted'
-        );
-
-        // Update the session's scopes to reference the access token
-        $this->_dbCall(
-            'updateSessionScopeAccessToken',
-            $session['id'],
-            $accessToken,
-            $refreshToken
         );
 
         $response = array(
@@ -118,13 +106,11 @@ class AuthCode implements GrantTypeInterface {
             'expires_in'    =>  $accessTokenExpiresIn
         );
 
-        if ($this->_grantTypes['refresh_token']) {
+        if (AuthServer::hasGrantType('refresh_token')) {
             $response['refresh_token'] = $refreshToken;
         }
 
         return $response;
-
-        */
     }
 
 }
