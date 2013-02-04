@@ -2,10 +2,10 @@
 <phpunit colors="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" stopOnError="false" stopOnFailure="false" stopOnIncomplete="false" stopOnSkipped="false" bootstrap="../tests/Bootstrap.php">
 	<testsuites>
 		<testsuite name="Authentication Server">
-			<directory suffix="test.php">../tests/authentication</directory>
+			<directory suffix="Test.php">../tests/authentication</directory>
 		</testsuite>
-		<testsuite name="Resource Server">
-			<directory suffix="test.php">../tests/resource</directory>
+		<testsuite name="Utility Methods">
+			<directory suffix="Test.php">../tests/util</directory>
 		</testsuite>
 	</testsuites>
 	<filter>
@@ -13,7 +13,9 @@
 			<directory suffix=".php">PEAR_INSTALL_DIR</directory>
 			<directory suffix=".php">PHP_LIBDIR</directory>
 			<directory suffix=".php">../vendor/composer</directory>
+			<directory suffix=".php">../vendor/mockery</directory>
 			<directory suffix=".php">../tests</directory>
+			<directory suffix=".php">../testing</directory>
 		</blacklist>
 	</filter>
 	<logging>
