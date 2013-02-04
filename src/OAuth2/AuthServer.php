@@ -124,7 +124,7 @@ class AuthServer
      */
     public function setRequest(RequestInterface $request)
     {
-        $this->request = $request;
+        self::$request = $request;
     }
 
     /**
