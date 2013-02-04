@@ -13,7 +13,7 @@ class SecureKey
 
         // We want to stop execution if the key fails because, well, that is bad.
         if ($bytes === false || $strong === false) {
-            throw new Exception('Error Generating Key');
+            throw new \Exception('Error Generating Key');
         }
 
         return substr(str_replace(array('/', '+', '='), '', base64_encode($bytes)), 0, $len);
