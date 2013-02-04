@@ -13,21 +13,6 @@ use OAuth2\Storage\ScopeInterface;
 interface GrantTypeInterface
 {
 	/**
-	 * The grant type identifier
-	 * @var string
-	 */
-	protected $identifier = '';
-
-	/**
-	 * The response type
-	 *
-	 * This is not used for most grant types
-	 *
-	 * @var null|string
-	 */
-	protected $responseType = null;
-
-	/**
 	 * Returns the grant identifier (used to validate grant_type in OAuth2\AuthServer\issueAccessToken())
 	 * @return string
 	 */
