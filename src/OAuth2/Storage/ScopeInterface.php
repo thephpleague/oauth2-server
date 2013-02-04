@@ -28,5 +28,5 @@ interface ScopeInterface
      * @param  string     $scope The scope
      * @return bool|array If the scope doesn't exist return false
      */
-    public function get($scope);
+    public function getScope($scope);
 }

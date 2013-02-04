@@ -43,5 +43,5 @@ interface ClientInterface
 	 * @param  string     $redirectUri  The client's redirect URI (default = "null")
 	 * @return bool|array               Returns false if the validation fails, array on success
 	 */
-    public function get($clientId = null, $clientSecret = null, $redirectUri = null);
+    public function getClient($clientId = null, $clientSecret = null, $redirectUri = null);
 }
