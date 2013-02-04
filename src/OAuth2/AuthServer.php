@@ -135,8 +135,11 @@ class AuthServer
     public static function getRequest()
     {
         if (self::$request === null) {
+            // @codeCoverageIgnoreStart
             self::$request = Request::buildFromGlobals();
+
         }
+        // @codeCoverageIgnoreEnd
 
         return self::$request;
     }
