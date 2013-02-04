@@ -176,7 +176,7 @@ class AuthServer
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = self::getStorage('client')->get($authParams['client_id'], null, $authParams['redirect_uri']);
+        $clientDetails = self::getStorage('client')->getClient($authParams['client_id'], null, $authParams['redirect_uri']);
 
         if ($clientDetails === false) {
             throw new Exception\ClientException(self::$exceptionMessages['invalid_client'], 8);
@@ -217,7 +217,7 @@ class AuthServer
         $authParams['scopes'] = array();
 
         foreach ($scopes as $scope) {
-            $scopeDetails = self::getStorage('scope')->get($scope);
+            $scopeDetails = self::getStorage('scope')->getScope($scope);
 
             if ($scopeDetails === false) {
                 throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_scope'], $scope), 4);
