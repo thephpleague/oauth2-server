@@ -88,7 +88,7 @@ class AuthCode implements GrantTypeInterface {
         $accessTokenExpires = time() + AuthServer::getExpiresIn();
         $accessTokenExpiresIn = AuthServer::getExpiresIn();
 
-        AuthServer::getStorage('session')->update(
+        AuthServer::getStorage('session')->updateSession(
             $session['id'],
             null,
             $accessToken,

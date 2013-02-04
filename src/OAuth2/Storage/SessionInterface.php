@@ -26,7 +26,7 @@ interface SessionInterface
      * @param  string $stage        The stage of the session (default ="request")
      * @return  int The session ID
      */
-    public function create(
+    public function createSession(
         $clientId,
         $redirectUri,
         $type = 'user',
@@ -56,7 +56,7 @@ interface SessionInterface
      * @param  string $stage        The stage of the session (default ="request")
      * @return  void
      */
-    public function update(
+    public function updateSession(
         $sessionId,
         $authCode = null,
         $accessToken = null,
@@ -78,7 +78,7 @@ interface SessionInterface
      * @param  string $typeId   The session owner's ID
      * @return  void
      */
-    public function delete(
+    public function deleteSession(
         $clientId,
         $type,
         $typeId
@@ -100,7 +100,7 @@ interface SessionInterface
      * @return string|null           Return the session ID as an integer if
      *  found otherwise returns false
      */
-    public function exists(
+    public function sessionExists(
         $type,
         $typeId,
         $clientId

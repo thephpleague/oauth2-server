@@ -243,10 +243,10 @@ class AuthServer
         $authCode = SecureKey::make();
 
         // Remove any old sessions the user might have
-        self::getStorage('session')->delete($authParams['client_id'], $type, $typeId);
+        self::getStorage('session')->deleteSession($authParams['client_id'], $type, $typeId);
 
         // Create a new session
-        $sessionId = self::getStorage('session')->create($authParams['client_id'], $authParams['redirect_uri'], $type, $typeId, $authCode);
+        $sessionId = self::getStorage('session')->createSession($authParams['client_id'], $authParams['redirect_uri'], $type, $typeId, $authCode);
 
         // Associate scopes with the new session
         foreach ($authParams['scopes'] as $scope)
