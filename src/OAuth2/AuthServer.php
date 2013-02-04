@@ -114,7 +114,7 @@ class AuthServer
 
     public function setExpiresIn($expiresIn)
     {
-        $this->expiresIn = $expiresIn;
+        self::$expiresIn = $expiresIn;
     }
 
     /**
