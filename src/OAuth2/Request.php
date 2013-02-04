@@ -67,8 +67,8 @@ class Request implements RequestInterface
     {
         $headers = array();
         foreach ($this->server() as $name => $value) {
-            if (substr($name, 0, 5) == 'HTTP_') {
-                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+            if (substr($name, 0, 5) === 'HTTP_') {
+                $name = str_replace(' ', '-', strtolower(str_replace('_', ' ', substr($name, 5))));
                 $headers[$name] = $value;
             }
         }
