@@ -280,10 +280,10 @@ class AuthServer
         }
 
         // Complete the flow
-        return $this->getCurrentGrantType($authParams['grant_type'])->completeFlow($inputParams, $authParams);
+        return $this->getGrantType($authParams['grant_type'])->completeFlow($inputParams, $authParams);
     }
 
-    protected function getCurrentGrantType($grantType)
+    protected function getGrantType($grantType)
     {
         return self::$grantTypes[$grantType];
     }
