@@ -12,9 +12,50 @@ use OAuth2\Storage\ScopeInterface;
 
 interface GrantTypeInterface
 {
+	/**
+	 * The grant type identifier
+	 * @var string
+	 */
+	protected $identifier = '';
+
+	/**
+	 * The response type
+	 *
+	 * This is not used for most grant types
+	 *
+	 * @var null|string
+	 */
+	protected $responseType = null;
+
+	/**
+	 * Returns the grant identifier (used to validate grant_type in OAuth2\AuthServer\issueAccessToken())
+	 * @return string
+	 */
     public function getIdentifier();
 
+    /**
+     * Returns the response type (used to validate response_type in OAuth2\AuthServer\checkAuthoriseParams())
+     * @return null|string
+     */
     public function getResponseType();
 
+    /**
+     * Complete the grant flow
+     *
+     * Example response:
+     * <code>
+     * 	array(
+     *  	'access_token'  =>  (string),	// The access token
+     *      'refresh_token' =>  (string),	// The refresh token (only set if the refresh token grant is enabled)
+     *      'token_type'    =>  'bearer',	// Almost always "bearer" (exceptions: JWT, SAML)
+     *      'expires'       =>  (int),		// The timestamp of when the access token will expire
+     *      'expires_in'    =>  (int)		// The number of seconds before the access token will expire
+     *  )
+     * </code>
+     *
+     * @param  null|array $inputParams Null unless the input parameters have been manually set
+     * @param  array      $authParams  The authorisation paramaters that have been set so far in the request
+     * @return array                   An array of parameters to be passed back to the client
+     */
     public function completeFlow($inputParams = null, $authParams = array());
 }
