@@ -6,7 +6,7 @@ class Request_test extends PHPUnit_Framework_TestCase
 
 	function setUp()
 	{
-		$this->request = new OAuth2\Request(
+		$this->request = new OAuth2\Util\Request(
 			array('foo' => 'bar'),
 			array('foo' => 'bar'),
 			array('foo' => 'bar'),
@@ -17,10 +17,10 @@ class Request_test extends PHPUnit_Framework_TestCase
 
 	function test_buildFromIndex()
 	{
-		$r = new OAuth2\Request();
+		$r = new OAuth2\Util\Request();
 		$r->buildFromGlobals();
 
-		$this->assertTrue($r instanceof OAuth2\Request);
+		$this->assertTrue($r instanceof OAuth2\Util\Request);
 	}
 
 	function test_get()
@@ -55,8 +55,8 @@ class Request_test extends PHPUnit_Framework_TestCase
 
 	function test_header()
 	{
-		$this->assertEquals('foobar.com', $this->request->header('host'));
-		$this->assertEquals(array('host' => 'foobar.com'), $this->request->header());
+		$this->assertEquals('foobar.com', $this->request->header('Host'));
+		$this->assertEquals(array('Host' => 'foobar.com'), $this->request->header());
 	}
 
 	/**
