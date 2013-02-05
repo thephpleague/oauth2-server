@@ -46,7 +46,7 @@ class RefreshToken implements GrantTypeInterface {
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = AuthServer::getStorage('client')->get($authParams['client_id'], $authParams['client_secret']);
+        $clientDetails = AuthServer::getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret']);
 
         if ($clientDetails === false) {
             throw new Exception\ClientException(AuthServer::getExceptionMessage('invalid_client'), 8);
@@ -65,8 +65,8 @@ class RefreshToken implements GrantTypeInterface {
 
         // Validate refresh token
         $sessionId = AuthServer::getStorage('client')->validateRefreshToken(
-            $params['refresh_token'],
-            $params['client_id']
+            $authParams['refresh_token'],
+            $authParams['client_id']
         );
 
         if ($sessionId === false) {
