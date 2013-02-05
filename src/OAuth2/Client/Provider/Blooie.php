@@ -1,29 +1,22 @@
 <?php
-/**
- * Facebook OAuth2 Provider
- *
- * @package    CodeIgniter/OAuth2
- * @category   Provider
- * @author     Phil Sturgeon
- * @copyright  (c) 2012 HappyNinjas Ltd
- * @license    http://philsturgeon.co.uk/code/dbad-license
- */
 
-class Facebook extends Oauth2\Client\IDP
+class Blooie extends OAuth2\Client\IDP
 {
-	protected $scope = array('offline_access', 'email', 'read_stream');
+	public $scope = array('user.profile', 'user.picture');
+
+	public $method = 'POST';
 
 	public function urlAuthorize()
 	{
-		return 'https://www.facebook.com/dialog/oauth';
+		return 'https://bloo.ie/oauth';
 	}
 
 	public function urlAccessToken()
 	{
-		return 'https://graph.facebook.com/oauth/access_token';
+		return 'https://bloo.ie/oauth/access_token';
 	}
 
-	public function getUserInfo(Oauth2\Token\Access $token)
+	public function getUserInfo(OAuth2\Token\Access $token)
 	{
 		$url = 'https://graph.facebook.com/me?'.http_build_query(array(
 			'access_token' => $token->access_token,
@@ -33,7 +26,7 @@ class Facebook extends Oauth2\Client\IDP
 
 		return array(
 			'uid' => $user->id,
-			'nickname' => isset($user->username) ? $user->username : null,
+			'nickname' => $user->username,
 			'name' => $user->name,
 			'first_name' => $user->first_name,
 			'last_name' => $user->last_name,

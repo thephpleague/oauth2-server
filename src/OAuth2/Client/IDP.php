@@ -100,9 +100,9 @@ abstract class IDP {
 
     abstract public function urlAccessToken();
 
-    abstract public function urlUserDetails(\Oauth2\Client\Token\Access $token);
+    abstract public function urlUserDetails(\OAuth2\Client\Token\Access $token);
 
-    abstract public function userDetails($response, \Oauth2\Client\Token\Access $token);
+    abstract public function userDetails($response, \OAuth2\Client\Token\Access $token);
 
     public function authorize($options = array())
     {
@@ -191,24 +191,24 @@ abstract class IDP {
 
         if (isset($result['error']) && ! empty($result['error'])) {
 
-            throw new \Oauth2\Client\IDPException($result);
+            throw new \OAuth2\Client\IDPException($result);
 
         }
 
         switch ($params['grant_type']) {
 
             case 'authorization_code':
-                return \Oauth2\Client\Token::factory('access', $result);
+                return \OAuth2\Client\Token::factory('access', $result);
             break;
 
             case 'refresh_token':
-                return \Oauth2\Client\Token::factory('refresh', $result);
+                return \OAuth2\Client\Token::factory('refresh', $result);
             break;
 
         }
     }
 
-    public function getUserDetails(\Oauth2\Client\Token\Access $token)
+    public function getUserDetails(\OAuth2\Client\Token\Access $token)
     {
         $url = $this->urlUserDetails($token);
 
@@ -223,7 +223,7 @@ abstract class IDP {
         catch (\Guzzle\Http\Exception\BadResponseException $e)
         {
             $raw_response = explode("\n", $e->getResponse());
-            throw new \Oauth2\Client\IDPException(end($raw_response));
+            throw new \OAuth2\Client\IDPException(end($raw_response));
         }
     }
 

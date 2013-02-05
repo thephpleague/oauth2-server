@@ -9,8 +9,8 @@
  * @license    http://philsturgeon.co.uk/code/dbad-license
  */
 
-class Foursquare extends Oauth2\Client\IDP
-{  
+class Foursquare extends OAuth2\Client\IDP
+{
 	public $method = 'POST';
 
 	public function urlAuthorize()
@@ -23,7 +23,7 @@ class Foursquare extends Oauth2\Client\IDP
 		return 'https://foursquare.com/oauth2/access_token';
 	}
 
-	public function getUserInfo(Oauth2\Token\Access $token)
+	public function getUserInfo(OAuth2\Token\Access $token)
 	{
 		$url = 'https://api.foursquare.com/v2/users/self?'.http_build_query(array(
 			'oauth_token' => $token->access_token,

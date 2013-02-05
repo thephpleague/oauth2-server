@@ -49,12 +49,10 @@ CREATE TABLE `scopes` (
 CREATE TABLE `oauth_session_scopes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `session_id` int(11) unsigned NOT NULL,
-  `access_token` varchar(40) NOT NULL DEFAULT '',
-  `scope` varchar(255) NOT NULL DEFAULT '',
+  `scope_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `session_id` (`session_id`),
-  KEY `access_token` (`access_token`),
-  KEY `scope` (`scope`),
-  CONSTRAINT `oauth_session_scopes_ibfk_3` FOREIGN KEY (`scope`) REFERENCES `scopes` (`scope`) ON DELETE CASCADE ON UPDATE CASCADE,
+  KEY `scope_id` (`scope_id`),
+  CONSTRAINT `oauth_session_scopes_ibfk_5` FOREIGN KEY (`scope_id`) REFERENCES `scopes` (`id`) ON DELETE CASCADE,
   CONSTRAINT `oauth_session_scopes_ibfk_4` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

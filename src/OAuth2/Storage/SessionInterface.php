@@ -1,58 +1,13 @@
 <?php
 
-namespace Oauth2\Authentication;
+namespace OAuth2\Storage;
 
-interface Database
+interface SessionInterface
 {
-    /**
-     * Validate a client
-     *
-     * Database query:
-     *
-     * <code>
-     * # Client ID + redirect URI
-     * SELECT clients.id FROM clients LEFT JOIN client_endpoints ON
-     *  client_endpoints.client_id = clients.id WHERE clients.id = $clientId AND
-     *  client_endpoints.redirect_uri = $redirectUri
-     *
-     * # Client ID + client secret
-     * SELECT clients.id FROM clients  WHERE clients.id = $clientId AND
-     *  clients.secret = $clientSecret
-     *
-     * # Client ID + client secret + redirect URI
-     * SELECT clients.id FROM clients LEFT JOIN client_endpoints ON
-     *  client_endpoints.client_id = clients.id WHERE clients.id = $clientId AND
-     *  clients.secret = $clientSecret AND client_endpoints.redirect_uri =
-     *  $redirectUri
-     * </code>
-     *
-     * Response:
-     *
-     * <code>
-     * Array
-     * (
-     *     [client_id] => (string) The client ID
-     *     [client secret] => (string) The client secret
-     *     [redirect_uri] => (string) The redirect URI used in this request
-     *     [name] => (string) The name of the client
-     * )
-     * </code>
-     *
-     * @param  string $clientId       The client's ID
-     * @param  string $clientSecret The client's secret (default = "null")
-     * @param  string $redirectUri   The client's redirect URI (default = "null")
-     * @return  bool|array               Returns false if the validation fails, array on success
-     */
-    public function validateClient(
-        $clientId,
-        $clientSecret = null,
-        $redirectUri = null
-    );
-
-    /**
+	/**
      * Create a new OAuth session
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * INSERT INTO oauth_sessions (client_id, redirect_uri, owner_type,
@@ -71,7 +26,7 @@ interface Database
      * @param  string $stage        The stage of the session (default ="request")
      * @return  int The session ID
      */
-    public function newSession(
+    public function createSession(
         $clientId,
         $redirectUri,
         $type = 'user',
@@ -86,7 +41,7 @@ interface Database
     /**
      * Update an OAuth session
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * UPDATE oauth_sessions SET auth_code = $authCode, access_token =
@@ -129,31 +84,32 @@ interface Database
         $typeId
     );
 
-    public function validateRefreshToken($refreshToken, $clientId);
-
     /**
-     * Update the refresh token
+     * Return the session ID for a given session owner and client combination
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
-     * UPDATE oauth_sessions SET access_token = $newAccessToken, refresh_token =
-     *  $newRefreshToken, access_toke_expires = $accessTokenExpires, last_updated = UNIX_TIMESTAMP(NOW()) WHERE
-     *  id = $sessionId
+     * SELECT id FROM oauth_sessions WHERE client_id = $clientId
+     *  AND owner_type = $type AND owner_id = $typeId
      * </code>
      *
-     * @param  string $sessionId             The session ID
-     * @param  string $newAccessToken        The new access token for this session
-     * @param  string $newRefreshToken       The new refresh token for the session
-     * @param  int    $accessTokenExpires    The UNIX timestamp of when the new token expires
-     * @return void
+     * @param  string      $type     The session owner's type
+     * @param  string      $typeId   The session owner's ID
+     * @param  string      $clientId The client ID
+     * @return string|null           Return the session ID as an integer if
+     *  found otherwise returns false
      */
-    public function updateRefreshToken($sessionId, $newAccessToken, $newRefreshToken, $accessTokenExpires);
+    public function sessionExists(
+        $type,
+        $typeId,
+        $clientId
+    );
 
     /**
      * Validate that an authorisation code is valid
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * SELECT id FROM oauth_sessions WHERE client_id = $clientID AND
@@ -192,46 +148,9 @@ interface Database
     );
 
     /**
-     * Return the session ID for a given session owner and client combination
-     *
-     * Database query:
-     *
-     * <code>
-     * SELECT id FROM oauth_sessions WHERE client_id = $clientId
-     *  AND owner_type = $type AND owner_id = $typeId
-     * </code>
-     *
-     * @param  string      $type     The session owner's type
-     * @param  string      $typeId   The session owner's ID
-     * @param  string      $clientId The client ID
-     * @return string|null           Return the session ID as an integer if
-     *  found otherwise returns false
-     */
-    public function hasSession(
-        $type,
-        $typeId,
-        $clientId
-    );
-
-    /**
-     * Return the access token for a given session
-     *
-     * Database query:
-     *
-     * <code>
-     * SELECT access_token FROM oauth_sessions WHERE id = $sessionId
-     * </code>
-     *
-     * @param  int         $sessionId The OAuth session ID
-     * @return string|null            Returns the access token as a string if
-     *  found otherwise returns null
-     */
-    public function getAccessToken($sessionId);
-
-    /**
      * Removes an authorisation code associated with a session
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * UPDATE oauth_sessions SET auth_code = NULL WHERE id = $sessionId
@@ -245,7 +164,7 @@ interface Database
     /**
      * Sets a sessions access token
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * UPDATE oauth_sessions SET access_token = $accessToken WHERE id =
@@ -261,74 +180,64 @@ interface Database
         $accessToken
     );
 
+    public function validateAccessToken($accessToken);
+
+    /**
+     * Return the access token for a given session
+     *
+     * Example SQL query:
+     *
+     * <code>
+     * SELECT access_token FROM oauth_sessions WHERE id = $sessionId
+     * </code>
+     *
+     * @param  int         $sessionId The OAuth session ID
+     * @return string|null            Returns the access token as a string if
+     *  found otherwise returns null
+     */
+    public function getAccessToken($sessionId);
+
+    public function validateRefreshToken($refreshToken, $clientId);
+
+    /**
+     * Update the refresh token
+     *
+     * Example SQL query:
+     *
+     * <code>
+     * UPDATE oauth_sessions SET access_token = $newAccessToken, refresh_token =
+     *  $newRefreshToken, access_toke_expires = $accessTokenExpires, last_updated = UNIX_TIMESTAMP(NOW()) WHERE
+     *  id = $sessionId
+     * </code>
+     *
+     * @param  string $sessionId             The session ID
+     * @param  string $newAccessToken        The new access token for this session
+     * @param  string $newRefreshToken       The new refresh token for the session
+     * @param  int    $accessTokenExpires    The UNIX timestamp of when the new token expires
+     * @return void
+     */
+    public function updateRefreshToken($sessionId, $newAccessToken, $newRefreshToken, $accessTokenExpires);
+
     /**
      * Associates a session with a scope
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
-     * INSERT INTO oauth_session_scopes (session_id, scope) VALUE ($sessionId,
-     *  $scope)
+     * INSERT INTO oauth_session_scopes (session_id, scope_id) VALUE ($sessionId,
+     *  $scopeId)
      * </code>
      *
      * @param int    $sessionId The session ID
-     * @param string $scope     The scope
+     * @param string $scope     The scope ID
      * @return void
      */
-    public function addSessionScope(
-        $sessionId,
-        $scope
-    );
-
-    /**
-     * Return information about a scope
-     *
-     * Database query:
-     *
-     * <code>
-     * SELECT * FROM scopes WHERE scope = $scope
-     * </code>
-     *
-     * Response:
-     *
-     * <code>
-     * Array
-     * (
-     *     [id] => (int) The scope's ID
-     *     [scope] => (string) The scope itself
-     *     [name] => (string) The scope's name
-     *     [description] => (string) The scope's description
-     * )
-     * </code>
-     *
-     * @param  string $scope The scope
-     * @return array
-     */
-    public function getScope($scope);
-
-    /**
-     * Associate a session's scopes with an access token
-     *
-     * Database query:
-     *
-     * <code>
-     * UPDATE oauth_session_scopes SET access_token = $accessToken WHERE
-     *  session_id = $sessionId
-     * </code>
-     *
-     * @param  int    $sessionId   The session ID
-     * @param  string $accessToken The access token
-     * @return void
-     */
-    public function updateSessionScopeAccessToken(
-        $sessionId,
-        $accessToken
-    );
+    public function associateScope($sessionId, $scopeId);
 
     /**
      * Return the scopes associated with an access token
      *
-     * Database query:
+     * Example SQL query:
      *
      * <code>
      * SELECT scopes.scope, scopes.name, scopes.description FROM
@@ -353,5 +262,5 @@ interface Database
      * @param  string $accessToken The access token
      * @return array
      */
-    public function accessTokenScopes($accessToken);
+    public function getScopes($accessToken);
 }

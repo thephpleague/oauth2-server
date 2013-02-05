@@ -5,11 +5,11 @@
 	"homepage": "https://github.com/lncd/OAuth2",
 	"license": "MIT",
 	"require": {
-		"php": ">=5.3.0",
-		"guzzle/guzzle": "*"
+		"php": ">=5.3.0"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "*"
+		"phpunit/phpunit": "*",
+        "mockery/mockery": ">=0.7.2"
 	},
 	"repositories": [
 		{
@@ -35,10 +35,8 @@
 	],
 	"autoload": {
 		"psr-0": {
-			"Oauth2": "src/"
+			"OAuth2": "src/"
 		}
 	},
-	"suggest": {
-		"lncd/oauth2-facebook": "Adds support for Facebook as an IDP"
-	}
+	"suggest": {}
 }
