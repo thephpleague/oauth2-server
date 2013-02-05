@@ -101,7 +101,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
     public function test_setRequest()
     {
         $a = $this->returnDefault();
-        $request = new \OAuth2\Request();
+        $request = new OAuth2\Util\Request();
         $a->setRequest($request);
 
         $reflector = new ReflectionClass($a);
@@ -109,17 +109,17 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $requestProperty->setAccessible(true);
         $v = $requestProperty->getValue();
 
-        $this->assertTrue($v instanceof OAuth2\RequestInterface);
+        $this->assertTrue($v instanceof OAuth2\Util\RequestInterface);
     }
 
     public function test_getRequest()
     {
         $a = $this->returnDefault();
-        $request = new OAuth2\Request();
+        $request = new OAuth2\Util\Request();
         $a->setRequest($request);
         $v = $a::getRequest();
 
-        $this->assertTrue($v instanceof OAuth2\RequestInterface);
+        $this->assertTrue($v instanceof OAuth2\Util\RequestInterface);
     }
 
     public function test_getStorage()
@@ -327,7 +327,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $_GET['response_type'] = 'code';
         $_GET['scope'] = 'foo';
 
-        $request = new OAuth2\Request($_GET);
+        $request = new OAuth2\Util\Request($_GET);
         $a->setRequest($request);
 
         $v = $a->checkAuthoriseParams();
@@ -581,7 +581,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $_POST['redirect_uri'] = 'http://foo/redirect';
         $_POST['code'] = 'foobar';
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken();
@@ -617,7 +617,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $_POST['redirect_uri'] = 'http://foo/redirect';
         $_POST['code'] = 'foobar';
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken();
@@ -641,7 +641,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\RefreshToken());
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -658,7 +658,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\RefreshToken());
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -678,7 +678,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\RefreshToken());
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -699,7 +699,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\RefreshToken());
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -722,7 +722,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\RefreshToken());
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -756,7 +756,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $_POST['client_secret'] = 5678;
         $_POST['refresh_token'] = 'abcdef';
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken();
@@ -815,7 +815,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials());
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -832,7 +832,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials());
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -852,7 +852,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials());
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -920,7 +920,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $_POST['client_id'] = 1234;
         $_POST['client_secret'] = 5678;
 
-        $request = new OAuth2\Request(array(), $_POST);
+        $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken();

@@ -2,6 +2,7 @@
 
 namespace OAuth2;
 
+use OAuth2\Util\Request;
 use OAuth2\Util\SecureKey;
 use OAuth2\Storage\SessionInterface;
 use OAuth2\Storage\ClientInterface;
@@ -122,7 +123,7 @@ class AuthServer
      *
      * @param  RequestInterface The Request Object
      */
-    public function setRequest(RequestInterface $request)
+    public function setRequest(Util\RequestInterface $request)
     {
         self::$request = $request;
     }
