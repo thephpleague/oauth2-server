@@ -46,7 +46,7 @@ class ClientCredentials implements GrantTypeInterface {
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = AuthServer::getStorage('client')->get($authParams['client_id'], $authParams['client_secret']);
+        $clientDetails = AuthServer::getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret']);
 
         if ($clientDetails === false) {
             throw new Exception\ClientException(AuthServer::getExceptionMessage('invalid_client'), 8);
