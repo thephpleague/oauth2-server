@@ -5,6 +5,7 @@ namespace OAuth2;
 use OutOfBoundsException;
 use OAuth2\Storage\SessionInterface;
 use OAuth2\Storage\SessionScopeInterface;
+use OAuth2\Util\RequestInterface;
 
 class ResourceServer
 {
@@ -30,10 +31,9 @@ class ResourceServer
      * @param  SessionInterface  The Session Storage Object
      * @param  SessionScopeInterface  The Session Scope Storage Object
      */
-    public function __construct(SessionInterface $session, SessionScopeInterface $session_scope)
+    public function __construct(SessionInterface $session)
     {
         $this->storages['session'] = $session;
-        $this->storages['session_scope'] = $session_scope;
     }
 
     /**
@@ -54,10 +54,22 @@ class ResourceServer
     public function getRequest()
     {
         if ($this->request === null) {
+            // @codeCoverageIgnoreStart
             $this->request = Request::buildFromGlobals();
         }
+        // @codeCoverageIgnoreEnd
 
         return $this->request;
+    }
+
+    public function getTokenKey()
+    {
+        return $this->tokenKey;
+    }
+
+    public function setTokenKey($key)
+    {
+        $this->tokenKey = $key;
     }
 
     /**
@@ -77,7 +89,7 @@ class ResourceServer
      */
     public function getOwnerType()
     {
-        return $this->ownerId;
+        return $this->ownerType;
     }
 
     /**
@@ -110,7 +122,7 @@ class ResourceServer
         $this->ownerType = $result['owner_type'];
         $this->ownerId = $result['owner_id'];
 
-        $this->sessionScopes = $this->storages['session_scope']->getScopes($this->sessionId);
+        $this->sessionScopes = $this->storages['session']->getScopes($this->sessionId);
 
         return true;
     }
