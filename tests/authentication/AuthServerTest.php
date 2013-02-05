@@ -54,7 +54,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
     {
         $a = $this->returnDefault();
         $grant = M::mock('OAuth2\Grant\GrantTypeInterface');
-        $grant->shouldReceive('getResponseType')->times(2)->andReturn('test');
+        $grant->shouldReceive('getResponseType')->andReturn('test');
         $a->addGrantType($grant, 'test');
 
         $this->assertTrue(OAuth2\AuthServer::hasGrantType('test'));
@@ -64,8 +64,8 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
     {
         $a = $this->returnDefault();
         $grant = M::mock('OAuth2\Grant\GrantTypeInterface');
-        $grant->shouldReceive('getIdentifier')->times(1)->andReturn('test');
-        $grant->shouldReceive('getResponseType')->times(2)->andReturn('test');
+        $grant->shouldReceive('getIdentifier')->andReturn('test');
+        $grant->shouldReceive('getResponseType')->andReturn('test');
         $a->addGrantType($grant);
 
         $this->assertTrue(OAuth2\AuthServer::hasGrantType('test'));
@@ -156,7 +156,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
      */
     public function test_checkAuthoriseParams_badClient()
     {
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(false);
+        $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
         $a->checkAuthoriseParams(array(
@@ -171,7 +171,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
      */
     public function test_checkAuthoriseParams_missingResponseType()
     {
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(array(
+        $this->client->shouldReceive('getClient')->andReturn(array(
             'client_id' =>  1234,
             'client_secret' =>  5678,
             'redirect_uri'  =>  'http://foo/redirect',
@@ -191,7 +191,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
      */
     public function test_checkAuthoriseParams_badResponseType()
     {
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(array(
+        $this->client->shouldReceive('getClient')->andReturn(array(
             'client_id' =>  1234,
             'client_secret' =>  5678,
             'redirect_uri'  =>  'http://foo/redirect',
@@ -212,7 +212,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
      */
     public function test_checkAuthoriseParams_missingScopes()
     {
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(array(
+        $this->client->shouldReceive('getClient')->andReturn(array(
             'client_id' =>  1234,
             'client_secret' =>  5678,
             'redirect_uri'  =>  'http://foo/redirect',
@@ -236,14 +236,14 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
      */
     public function test_checkAuthoriseParams_badScopes()
     {
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(array(
+        $this->client->shouldReceive('getClient')->andReturn(array(
             'client_id' =>  1234,
             'client_secret' =>  5678,
             'redirect_uri'  =>  'http://foo/redirect',
             'name'  =>  'Example Client'
         ));
 
-        $this->scope->shouldReceive('getScope')->times(1)->andReturn(false);
+        $this->scope->shouldReceive('getScope')->andReturn(false);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\AuthCode());
@@ -261,14 +261,14 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\AuthCode());
 
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(array(
+        $this->client->shouldReceive('getClient')->andReturn(array(
             'client_id' =>  1234,
             'client_secret' =>  5678,
             'redirect_uri'  =>  'http://foo/redirect',
             'name'  =>  'Example Client'
         ));
 
-        $this->scope->shouldReceive('getScope')->times(1)->andReturn(array(
+        $this->scope->shouldReceive('getScope')->andReturn(array(
             'id'    =>  1,
             'scope' =>  'foo',
             'name'  =>  'Foo Name',
@@ -305,14 +305,14 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
 
     public function test_checkAuthoriseParams()
     {
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(array(
+        $this->client->shouldReceive('getClient')->andReturn(array(
             'client_id' =>  1234,
             'client_secret' =>  5678,
             'redirect_uri'  =>  'http://foo/redirect',
             'name'  =>  'Example Client'
         ));
 
-        $this->scope->shouldReceive('getScope')->times(1)->andReturn(array(
+        $this->scope->shouldReceive('getScope')->andReturn(array(
             'id'    =>  1,
             'scope' =>  'foo',
             'name'  =>  'Foo Name',
@@ -355,9 +355,9 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
 
     function test_newAuthoriseRequest()
     {
-        $this->session->shouldReceive('deleteSession')->times(1)->andReturn(null);
-        $this->session->shouldReceive('createSession')->times(1)->andReturn(1);
-        $this->session->shouldReceive('associateScope')->times(1)->andReturn(null);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
 
@@ -475,7 +475,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
      */
     public function test_issueAccessToken_badClient()
     {
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(false);
+        $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\AuthCode());
@@ -494,7 +494,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
      */
     public function test_issueAccessToken_missingCode()
     {
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(array());
+        $this->client->shouldReceive('getClient')->andReturn(array());
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\AuthCode());
@@ -513,8 +513,8 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
      */
     public function test_issueAccessToken_badCode()
     {
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(array());
-        $this->session->shouldReceive('validateAuthCode')->times(1)->andReturn(false);
+        $this->client->shouldReceive('getClient')->andReturn(array());
+        $this->session->shouldReceive('validateAuthCode')->andReturn(false);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\AuthCode());
@@ -530,7 +530,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
 
     public function test_issueAccessToken_passedInput()
     {
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(array(
+        $this->client->shouldReceive('getClient')->andReturn(array(
             'client_id' =>  1234,
             'client_secret' =>  5678,
             'redirect_uri'  =>  'http://foo/redirect',
@@ -562,7 +562,7 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
 
     public function test_issueAccessToken()
     {
-        $this->client->shouldReceive('getClient')->times(1)->andReturn(array(
+        $this->client->shouldReceive('getClient')->andReturn(array(
             'client_id' =>  1234,
             'client_secret' =>  5678,
             'redirect_uri'  =>  'http://foo/redirect',
@@ -590,6 +590,217 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('token_type', $v);
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
+
+        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+    }
+
+    public function test_issueAccessToken_with_refresh_token()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('updateSession')->andReturn(null);
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+
+        $_POST['grant_type'] = 'authorization_code';
+        $_POST['client_id'] = 1234;
+        $_POST['client_secret'] = 5678;
+        $_POST['redirect_uri'] = 'http://foo/redirect';
+        $_POST['code'] = 'foobar';
+
+        $request = new OAuth2\Request(array(), $_POST);
+        $a->setRequest($request);
+
+        $v = $a->issueAccessToken();
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
+        $this->assertArrayHasKey('refresh_token', $v);
+
+        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+    }
+
+    /**
+     * @expectedException        OAuth2\Exception\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_issueAccessToken_refreshTokenGrant_missingClientId()
+    {
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+
+        $request = new OAuth2\Request(array(), $_POST);
+        $a->setRequest($request);
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'refresh_token'
+        ));
+    }
+
+    /**
+     * @expectedException        OAuth2\Exception\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_issueAccessToken_refreshTokenGrant_missingClientSecret()
+    {
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+
+        $request = new OAuth2\Request(array(), $_POST);
+        $a->setRequest($request);
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'refresh_token',
+            'client_id' =>  1234
+        ));
+    }
+
+    /**
+     * @expectedException        OAuth2\Exception\ClientException
+     * @expectedExceptionCode    8
+     */
+    public function test_issueAccessToken_refreshTokenGrant_badClient()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(false);
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+
+        $request = new OAuth2\Request(array(), $_POST);
+        $a->setRequest($request);
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'refresh_token',
+            'client_id' =>  1234,
+            'client_secret' =>  5678
+        ));
+    }
+
+    /**
+     * @expectedException        OAuth2\Exception\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_issueAccessToken_refreshTokenGrant_missingRefreshToken()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array());
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+
+        $request = new OAuth2\Request(array(), $_POST);
+        $a->setRequest($request);
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'refresh_token',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            //'refresh_token' =>
+        ));
+    }
+
+    /**
+     * @expectedException        OAuth2\Exception\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_issueAccessToken_refreshTokenGrant_badRefreshToken()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array());
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(false);
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+
+        $request = new OAuth2\Request(array(), $_POST);
+        $a->setRequest($request);
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'refresh_token',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'refresh_token' =>  'abcdef'
+        ));
+    }
+
+    public function test_issueAccessToken_refreshTokenGrant_passedInput()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('updateSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+
+        $_POST['grant_type'] = 'refresh_token';
+        $_POST['client_id'] = 1234;
+        $_POST['client_secret'] = 5678;
+        $_POST['refresh_token'] = 'abcdef';
+
+        $request = new OAuth2\Request(array(), $_POST);
+        $a->setRequest($request);
+
+        $v = $a->issueAccessToken();
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
+        $this->assertArrayHasKey('refresh_token', $v);
+
+        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+    }
+
+    public function test_issueAccessToken_refreshTokenGrant()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('updateSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'refresh_token',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'refresh_token'  =>  'abcdef',
+        ));
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
+        $this->assertArrayHasKey('refresh_token', $v);
 
         $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
         $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
