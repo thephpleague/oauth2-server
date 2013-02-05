@@ -4,6 +4,9 @@
 		<testsuite name="Authentication Server">
 			<directory suffix="Test.php">../tests/authentication</directory>
 		</testsuite>
+		<testsuite name="Resource Server">
+			<directory suffix="Test.php">../tests/resource</directory>
+		</testsuite>
 		<testsuite name="Utility Methods">
 			<directory suffix="Test.php">../tests/util</directory>
 		</testsuite>
