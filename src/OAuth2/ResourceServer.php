@@ -115,7 +115,7 @@ class ResourceServer
         $result = $this->storages['session']->validateAccessToken($access_token);
 
         if ( ! $result) {
-            return false;
+            throw new Exception\InvalidAccessTokenException('Access token is not valid');
         }
 
         $this->accessToken = $access_token;

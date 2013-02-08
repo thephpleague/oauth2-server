@@ -60,7 +60,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        OAuth2\Exception\InvalidAccessTokenException
+     * @expectedException OAuth2\Exception\InvalidAccessTokenException
      */
     public function test_determineAccessToken_missingToken()
     {
@@ -119,6 +119,9 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
 	    $this->assertEquals('abcdef', $result);
     }
 
+    /**
+     * @expectedException OAuth2\Exception\InvalidAccessTokenException
+     */
     public function test_isValid_notValid()
     {
     	$this->session->shouldReceive('validateAccessToken')->andReturn(false);
@@ -133,7 +136,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $s = $this->returnDefault();
         $s->setRequest($request);
 
-    	$this->assertFalse($s->isValid());
+        $s->isValid();
     }
 
     public function test_isValid_valid()
