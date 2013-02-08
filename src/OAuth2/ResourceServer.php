@@ -168,7 +168,7 @@ class ResourceServer
         }
 
         if (empty($access_token)) {
-            throw new Exception\MissingAccessTokenException('Access Token is Missing');
+            throw new Exception\InvalidAccessTokenException('Access token is missing');
         }
 
         return $access_token;

@@ -4,15 +4,11 @@ use \Mockery as m;
 
 class Resource_Server_test extends PHPUnit_Framework_TestCase
 {
-	private $client;
 	private $session;
-    private $scope;
 
 	public function setUp()
 	{
-		$this->client = M::mock('OAuth2\Storage\ClientInterface');
         $this->session = M::mock('OAuth2\Storage\SessionInterface');
-        //$this->scope = M::mock('OAuth2\Storage\ScopeInterface');
 	}
 
 	private function returnDefault()
@@ -64,7 +60,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        OAuth2\Exception\MissingAccessTokenException
+     * @expectedException        OAuth2\Exception\InvalidAccessTokenException
      */
     public function test_determineAccessToken_missingToken()
     {
@@ -83,13 +79,19 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
 
     public function test_determineAccessToken_fromHeader()
     {
-    	$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer abcdef';
-   		$request = new OAuth2\Util\Request(array(), array(), array(), array(), $_SERVER);
+        $request = new OAuth2\Util\Request();
 
-    	$s = $this->returnDefault();
-    	$s->setRequest($request);
+        $requestReflector = new ReflectionClass($request);
+        $param = $requestReflector->getProperty('headers');
+        $param->setAccessible(true);
+        $param->setValue($request, array(
+            'Authorization' =>  'Bearer YWJjZGVm'
+        ));
+        $s = $this->returnDefault();
+        $s->setRequest($request);
 
     	$reflector = new ReflectionClass($s);
+
 	    $method = $reflector->getMethod('determineAccessToken');
 	    $method->setAccessible(true);
 
@@ -121,11 +123,15 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     {
     	$this->session->shouldReceive('validateAccessToken')->andReturn(false);
 
-    	$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer abcdef';
-   		$request = new OAuth2\Util\Request(array(), array(), array(), array(), $_SERVER);
-
-    	$s = $this->returnDefault();
-    	$s->setRequest($request);
+    	$request = new OAuth2\Util\Request();
+        $requestReflector = new ReflectionClass($request);
+        $param = $requestReflector->getProperty('headers');
+        $param->setAccessible(true);
+        $param->setValue($request, array(
+            'Authorization' =>  'Bearer YWJjZGVm'
+        ));
+        $s = $this->returnDefault();
+        $s->setRequest($request);
 
     	$this->assertFalse($s->isValid());
     }
@@ -139,11 +145,15 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     	));
     	$this->session->shouldReceive('getScopes')->andReturn(array('foo', 'bar'));
 
-    	$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer abcdef';
-   		$request = new OAuth2\Util\Request(array(), array(), array(), array(), $_SERVER);
-
-    	$s = $this->returnDefault();
-    	$s->setRequest($request);
+   		$request = new OAuth2\Util\Request();
+        $requestReflector = new ReflectionClass($request);
+        $param = $requestReflector->getProperty('headers');
+        $param->setAccessible(true);
+        $param->setValue($request, array(
+            'Authorization' =>  'Bearer YWJjZGVm'
+        ));
+        $s = $this->returnDefault();
+        $s->setRequest($request);
 
     	$this->assertTrue($s->isValid());
     	$this->assertEquals(123, $s->getOwnerId());

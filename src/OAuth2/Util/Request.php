@@ -66,8 +66,10 @@ class Request implements RequestInterface
     protected function readHeaders()
     {
         if (function_exists('getallheaders')) {
+            // @codeCoverageIgnoreStart
             $headers = getallheaders();
         } else {
+            // @codeCoverageIgnoreEnd
             $headers = array();
             foreach ($this->server() as $name => $value) {
                 if (substr($name, 0, 5) == 'HTTP_') {
