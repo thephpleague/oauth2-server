@@ -31,13 +31,13 @@ class Password implements GrantTypeInterface {
         $this->callback = $callback;
     }
 
-    protected function getVerifyCredentialsCallback($username, $password)
+    protected function getVerifyCredentialsCallback()
     {
         if (is_null($this->callback) || ! is_callable($this->callback)) {
             throw new Exception\InvalidGrantTypeException('Null or non-callable callback set');
         }
 
-        return call_user_func($this->callback, $username, $password);
+        return $this->callback;
     }
 
     public function completeFlow($inputParams = null, $authParams = array())
@@ -88,7 +88,7 @@ class Password implements GrantTypeInterface {
         }
 
         // Check if user's username and password are correct
-        $userId = call_user_func($this->getVerifyCredentialsCallback, $params['username'], $params['password']);
+        $userId = call_user_func($this->getVerifyCredentialsCallback(), $authParams['username'], $authParams['password']);
 
         if ($userId === false) {
             throw new Exception\ClientException(AuthServer::getExceptionMessage('invalid_credentials'), 0);
