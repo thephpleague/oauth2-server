@@ -85,28 +85,6 @@ interface SessionInterface
     );
 
     /**
-     * Return the session ID for a given session owner and client combination
-     *
-     * Example SQL query:
-     *
-     * <code>
-     * SELECT id FROM oauth_sessions WHERE client_id = $clientId
-     *  AND owner_type = $type AND owner_id = $typeId
-     * </code>
-     *
-     * @param  string      $type     The session owner's type
-     * @param  string      $typeId   The session owner's ID
-     * @param  string      $clientId The client ID
-     * @return string|null           Return the session ID as an integer if
-     *  found otherwise returns false
-     */
-    public function sessionExists(
-        $type,
-        $typeId,
-        $clientId
-    );
-
-    /**
      * Validate that an authorisation code is valid
      *
      * Example SQL query:
@@ -145,39 +123,6 @@ interface SessionInterface
         $clientId,
         $redirectUri,
         $authCode
-    );
-
-    /**
-     * Removes an authorisation code associated with a session
-     *
-     * Example SQL query:
-     *
-     * <code>
-     * UPDATE oauth_sessions SET auth_code = NULL WHERE id = $sessionId
-     * </code>
-     *
-     * @param  int    $sessionId The OAuth session ID
-     * @return void
-     */
-    public function removeAuthCode($sessionId);
-
-    /**
-     * Sets a sessions access token
-     *
-     * Example SQL query:
-     *
-     * <code>
-     * UPDATE oauth_sessions SET access_token = $accessToken WHERE id =
-     *  $sessionId
-     * </code>
-     *
-     * @param int    $sessionId   The OAuth session ID
-     * @param string $accessToken The access token
-     * @return void
-     */
-    public function setAccessToken(
-        $sessionId,
-        $accessToken
     );
 
     public function validateAccessToken($accessToken);
