@@ -1,4 +1,13 @@
 <?php
+/**
+ * OAuth 2.0 Resource Server
+ *
+ * @package     lncd/oauth2
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) 2013 University of Lincoln
+ * @license     http://mit-license.org/
+ * @link        http://github.com/lncd/oauth2
+ */
 
 namespace OAuth2;
 
@@ -8,29 +17,63 @@ use OAuth2\Storage\SessionScopeInterface;
 use OAuth2\Util\RequestInterface;
 use OAuth2\Util\Request;
 
+/**
+ * OAuth 2.0 Resource Server
+ */
 class ResourceServer
 {
+    /**
+     * The access token
+     * @var string
+     */
     protected $accessToken = null;
 
+    /**
+     * The session ID
+     * @var string
+     */
     protected $sessionId = null;
 
+    /**
+     * The type of the owner of the access token
+     * @var string
+     */
     protected $ownerType = null;
 
+    /**
+     * The ID of the owner of the access token
+     * @var string
+     */
     protected $ownerId = null;
 
+    /**
+     * The scopes associated with the access token
+     * @var array
+     */
     protected $sessionScopes = array();
 
+    /**
+     * The client, scope and session storage classes
+     * @var array
+     */
     protected $storages = array();
 
+    /**
+     * The request object
+     * @var Util\RequestInterface
+     */
     protected $request = null;
 
+    /**
+     * The query string key which is used by clients to present the access token (default: oauth_token)
+     * @var string
+     */
     protected $tokenKey = 'oauth_token';
 
     /**
      * Sets up the Resource
      *
-     * @param  SessionInterface  The Session Storage Object
-     * @param  SessionScopeInterface  The Session Scope Storage Object
+     * @param SessionInterface  The Session Storage Object
      */
     public function __construct(SessionInterface $session)
     {
@@ -50,7 +93,7 @@ class ResourceServer
     /**
      * Gets the Request object.  It will create one from the globals if one is not set.
      *
-     * @return  RequestInterface
+     * @return Util\RequestInterface
      */
     public function getRequest()
     {
@@ -63,20 +106,30 @@ class ResourceServer
         return $this->request;
     }
 
+    /**
+     * Returns the query string key for the access token.
+     *
+     * @return string
+     */
     public function getTokenKey()
     {
         return $this->tokenKey;
     }
 
+    /**
+     * Sets the query string key for the access token.
+     *
+     * @param $key The new query string key
+     */
     public function setTokenKey($key)
     {
         $this->tokenKey = $key;
     }
 
     /**
-     * Gets the Owner ID.
+     * Gets the access token owner ID.
      *
-     * @return  int
+     * @return string
      */
     public function getOwnerId()
     {
@@ -84,9 +137,9 @@ class ResourceServer
     }
 
     /**
-     * Gets the Owner Type.
+     * Gets the owner type.
      *
-     * @return  string
+     * @return string
      */
     public function getOwnerType()
     {
@@ -94,9 +147,9 @@ class ResourceServer
     }
 
     /**
-     * Gets the Access Token.
+     * Gets the access token.
      *
-     * @return  string
+     * @return string
      */
     public function getAccessToken()
     {
@@ -104,8 +157,9 @@ class ResourceServer
     }
 
     /**
-     * Checks if the Access Token is valid or not.
+     * Checks if the access token is valid or not.
      *
+     * @throws Exception\InvalidAccessTokenException Thrown if the presented access token is not valid
      * @return bool
      */
     public function isValid()
@@ -129,9 +183,10 @@ class ResourceServer
     }
 
     /**
-     * Checks if the current session has the given scope(s).
+     * Checks if the presented access token has the given scope(s).
      *
-     * @param   array
+     * @param array|string  An array of scopes or a single scope as a string
+     * @return bool         Returns bool if all scopes are found, false if any fail
      */
     public function hasScope($scopes)
     {
@@ -153,10 +208,10 @@ class ResourceServer
     }
 
     /**
-     * Reads in the Access Token from the headers.
+     * Reads in the access token from the headers.
      *
+     * @throws Exception\MissingAccessTokenException  Thrown if there is no access token presented
      * @return string
-     * @throws Exception\MissingAccessTokenException
      */
     protected function determineAccessToken()
     {

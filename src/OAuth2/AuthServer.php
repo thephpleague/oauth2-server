@@ -1,4 +1,13 @@
 <?php
+/**
+ * OAuth 2.0 Authentication Server
+ *
+ * @package     lncd/oauth2
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) 2013 University of Lincoln
+ * @license     http://mit-license.org/
+ * @link        http://github.com/lncd/oauth2
+ */
 
 namespace OAuth2;
 
@@ -9,6 +18,9 @@ use OAuth2\Storage\ClientInterface;
 use OAuth2\Storage\ScopeInterface;
 use OAuth2\Grant\GrantTypeInterface;
 
+/**
+ * OAuth 2.0 authentication server class
+ */
 class AuthServer
 {
     /**
@@ -21,14 +33,34 @@ class AuthServer
      */
     protected $scopeDelimeter = ',';
 
+    /**
+     * The TTL (time to live) of an access token in seconds (default: 3600)
+     * @var integer
+     */
     static protected $expiresIn = 3600;
 
+    /**
+     * The registered grant response types
+     * @var array
+     */
     protected $responseTypes = array();
 
+    /**
+     * The client, scope and session storage classes
+     * @var array
+     */
     static protected $storages = array();
 
+    /**
+     * The registered grant types
+     * @var array
+     */
     static protected $grantTypes = array();
 
+    /**
+     * The request object
+     * @var Util\RequestInterface
+     */
     static protected $request = null;
 
     /**
@@ -67,11 +99,24 @@ class AuthServer
         'invalid_refresh'           =>  'The refresh token is invalid.',
     );
 
+    /**
+     * Get an exception message
+     *
+     * @param  string $error The error message key
+     * @return string        The error message
+     */
     public static function getExceptionMessage($error = '')
     {
         return self::$exceptionMessages[$error];
     }
 
+    /**
+     * Create a new OAuth2 authentication server
+     *
+     * @param ClientInterface  $client  A class which inherits from Storage/ClientInterface
+     * @param SessionInterface $session A class which inherits from Storage/SessionInterface
+     * @param ScopeInterface   $scope   A class which inherits from Storage/ScopeInterface
+     */
     public function __construct(ClientInterface $client, SessionInterface $session, ScopeInterface $scope)
     {
         self::$storages = array(
@@ -81,6 +126,11 @@ class AuthServer
         );
     }
 
+    /**
+     * Enable support for a grant
+     * @param GrantTypeInterface $grantType  A grant class which conforms to Interface/GrantTypeInterface
+     * @param null|string        $identifier An identifier for the grant (autodetected if not passed)
+     */
     public function addGrantType(GrantTypeInterface $grantType, $identifier = null)
     {
         if (is_null($identifier)) {
@@ -93,26 +143,49 @@ class AuthServer
         }
     }
 
+    /**
+     * Check if a grant type has been enabled
+     * @param  string  $identifier The grant type identifier
+     * @return boolean             Returns "true" if enabled, "false" if not
+     */
     public static function hasGrantType($identifier)
     {
         return (array_key_exists($identifier, self::$grantTypes));
     }
 
+    /**
+     * Get the scope delimeter
+     *
+     * @return string The scope delimiter (default: ",")
+     */
     public function getScopeDelimeter()
     {
         return $this->scopeDelimeter;
     }
 
-    public function setScopeDelimeter($scope_delimeter)
+    /**
+     * Set the scope delimiter
+     *
+     * @param string $scopeDelimeter
+     */
+    public function setScopeDelimeter($scopeDelimeter)
     {
-        $this->scopeDelimeter = $scope_delimeter;
+        $this->scopeDelimeter = $scopeDelimeter;
     }
 
+    /**
+     * Get the TTL for an access token
+     * @return int The TTL
+     */
     public static function getExpiresIn()
     {
         return self::$expiresIn;
     }
 
+    /**
+     * Set the TTL for an access token
+     * @param int $expiresIn The new TTL
+     */
     public function setExpiresIn($expiresIn)
     {
         self::$expiresIn = $expiresIn;
@@ -121,7 +194,7 @@ class AuthServer
     /**
      * Sets the Request Object
      *
-     * @param  RequestInterface The Request Object
+     * @param Util\RequestInterface The Request Object
      */
     public function setRequest(Util\RequestInterface $request)
     {
@@ -131,7 +204,7 @@ class AuthServer
     /**
      * Gets the Request object.  It will create one from the globals if one is not set.
      *
-     * @return  RequestInterface
+     * @return Util\RequestInterface
      */
     public static function getRequest()
     {
@@ -145,6 +218,11 @@ class AuthServer
         return self::$request;
     }
 
+    /**
+     * Return a storage class
+     * @param  string $obj The class required
+     * @return Storage\ClientInterface|Storage\ScopeInterface|Storage\SessionInterface
+     */
     public static function getStorage($obj)
     {
         return self::$storages[$obj];
@@ -153,8 +231,8 @@ class AuthServer
     /**
      * Check authorise parameters
      *
-     * @access public
      * @param  array $inputParams Optional array of parsed $_GET keys
+     * @throws \OAuth2\Exception\ClientException
      * @return array             Authorise request parameters
      */
     public function checkAuthoriseParams($inputParams = array())
@@ -236,10 +314,10 @@ class AuthServer
     /**
      * Parse a new authorise request
      *
-     * @param  string $type            The session owner's type
-     * @param  string $typeId          The session owner's ID
-     * @param  array  $authoriseParams The authorise request $_GET parameters
-     * @return string                  An authorisation code
+     * @param  string $type        The session owner's type
+     * @param  string $typeId      The session owner's ID
+     * @param  array  $authParams  The authorise request $_GET parameters
+     * @return string              An authorisation code
      */
     public function newAuthoriseRequest($type, $typeId, $authParams = array())
     {
@@ -264,7 +342,6 @@ class AuthServer
     /**
      * Issue an access token
      *
-     * @access public
      * @param  array $inputParams Optional array of parsed $_POST keys
      * @return array             Authorise request parameters
      */
@@ -287,6 +364,11 @@ class AuthServer
         return $this->getGrantType($authParams['grant_type'])->completeFlow($inputParams, $authParams);
     }
 
+    /**
+     * Return a grant type class
+     * @param  string $grantType The grant type identifer
+     * @return class
+     */
     protected function getGrantType($grantType)
     {
         return self::$grantTypes[$grantType];
