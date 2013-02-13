@@ -1,4 +1,13 @@
 <?php
+/**
+ * OAuth 2.0 Auth code grant
+ *
+ * @package     lncd/oauth2
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) 2013 University of Lincoln
+ * @license     http://mit-license.org/
+ * @link        http://github.com/lncd/oauth2
+ */
 
 namespace OAuth2\Grant;
 
@@ -10,42 +19,60 @@ use OAuth2\Storage\SessionInterface;
 use OAuth2\Storage\ClientInterface;
 use OAuth2\Storage\ScopeInterface;
 
+/**
+ * Client credentials grant class
+ */
 class ClientCredentials implements GrantTypeInterface {
 
+    /**
+     * Grant identifier
+     * @var string
+     */
     protected $identifier = 'client_credentials';
+
+    /**
+     * Response type
+     * @var string
+     */
     protected $responseType = null;
 
+    /**
+     * Return the identifier
+     * @return string
+     */
     public function getIdentifier()
     {
         return $this->identifier;
     }
 
+    /**
+     * Return the response type
+     * @return string
+     */
     public function getResponseType()
     {
         return $this->responseType;
     }
 
-    public function completeFlow($inputParams = null, $authParams = array())
+    /**
+     * Complete the client credentials grant
+     * @param  null|array $inputParams
+     * @return array
+     */
+    public function completeFlow($inputParams = null)
     {
-        // Client ID
-        $authParams['client_id'] = (isset($inputParams['client_id'])) ?
-                                    $inputParams['client_id'] :
-                                    AuthServer::getRequest()->post('client_id');
+         // Get the required params
+        $authParams = AuthServer::getParam(array('client_id', 'client_secret'), 'post', $inputParams);
 
         if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_id'), 0);
         }
 
-        // Client secret
-        $authParams['client_secret'] = (isset($inputParams['client_secret'])) ?
-                                    $inputParams['client_secret'] :
-                                    AuthServer::getRequest()->post('client_secret');
-
         if (is_null($authParams['client_secret'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_secret'), 0);
         }
 
-        // Validate client ID and redirect URI
+        // Validate client ID and client secret
         $clientDetails = AuthServer::getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret']);
 
         if ($clientDetails === false) {

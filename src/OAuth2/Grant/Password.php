@@ -1,4 +1,13 @@
 <?php
+/**
+ * OAuth 2.0 Password grant
+ *
+ * @package     lncd/oauth2
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) 2013 University of Lincoln
+ * @license     http://mit-license.org/
+ * @link        http://github.com/lncd/oauth2
+ */
 
 namespace OAuth2\Grant;
 
@@ -10,27 +19,60 @@ use OAuth2\Storage\SessionInterface;
 use OAuth2\Storage\ClientInterface;
 use OAuth2\Storage\ScopeInterface;
 
+/**
+ * Password grant class
+ */
 class Password implements GrantTypeInterface {
 
+    /**
+     * Grant identifier
+     * @var string
+     */
     protected $identifier = 'password';
+
+    /**
+     * Response type
+     * @var string
+     */
     protected $responseType = null;
+
+    /**
+     * Callback to authenticate a user's name and password
+     * @var function
+     */
     protected $callback = null;
 
+    /**
+     * Return the identifier
+     * @return string
+     */
     public function getIdentifier()
     {
         return $this->identifier;
     }
 
+    /**
+     * Return the response type
+     * @return string
+     */
     public function getResponseType()
     {
         return $this->responseType;
     }
 
+    /**
+     * Set the callback to verify a user's username and password
+     * @param function $callback The callback function
+     */
     public function setVerifyCredentialsCallback($callback)
     {
         $this->callback = $callback;
     }
 
+    /**
+     * Return the callback function
+     * @return function
+     */
     protected function getVerifyCredentialsCallback()
     {
         if (is_null($this->callback) || ! is_callable($this->callback)) {
@@ -40,21 +82,19 @@ class Password implements GrantTypeInterface {
         return $this->callback;
     }
 
-    public function completeFlow($inputParams = null, $authParams = array())
+    /**
+     * Complete the password grant
+     * @param  null|array $inputParams
+     * @return array
+     */
+    public function completeFlow($inputParams = null)
     {
-        // Client ID
-        $authParams['client_id'] = (isset($inputParams['client_id'])) ?
-                                    $inputParams['client_id'] :
-                                    AuthServer::getRequest()->post('client_id');
+        // Get the required params
+        $authParams = AuthServer::getParam(array('client_id', 'client_secret', 'username', 'password'), 'post', $inputParams);
 
         if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_id'), 0);
         }
-
-        // Client secret
-        $authParams['client_secret'] = (isset($inputParams['client_secret'])) ?
-                                    $inputParams['client_secret'] :
-                                    AuthServer::getRequest()->post('client_secret');
 
         if (is_null($authParams['client_secret'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_secret'), 0);
@@ -69,19 +109,9 @@ class Password implements GrantTypeInterface {
 
         $authParams['client_details'] = $clientDetails;
 
-        // User's username
-        $authParams['username'] = (isset($inputParams['username'])) ?
-                                $inputParams['username'] :
-                                AuthServer::getRequest()->post('username');
-
         if (is_null($authParams['username'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'username'), 0);
         }
-
-        // User's password
-        $authParams['password'] = (isset($inputParams['password'])) ?
-                                $inputParams['password'] :
-                                AuthServer::getRequest()->post('password');
 
         if (is_null($authParams['password'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'password'), 0);

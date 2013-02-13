@@ -27,25 +27,18 @@ class RefreshToken implements GrantTypeInterface {
 
     public function completeFlow($inputParams = null, $authParams = array())
     {
-        // Client ID
-        $authParams['client_id'] = (isset($inputParams['client_id'])) ?
-                                    $inputParams['client_id'] :
-                                    AuthServer::getRequest()->post('client_id');
+        // Get the required params
+        $authParams = AuthServer::getParam(array('client_id', 'client_secret', 'refresh_token'), 'post', $inputParams);
 
         if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_id'), 0);
         }
 
-        // Client secret
-        $authParams['client_secret'] = (isset($inputParams['client_secret'])) ?
-                                    $inputParams['client_secret'] :
-                                    AuthServer::getRequest()->post('client_secret');
-
         if (is_null($authParams['client_secret'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_secret'), 0);
         }
 
-        // Validate client ID and redirect URI
+        // Validate client ID and client secret
         $clientDetails = AuthServer::getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret']);
 
         if ($clientDetails === false) {
@@ -53,11 +46,6 @@ class RefreshToken implements GrantTypeInterface {
         }
 
         $authParams['client_details'] = $clientDetails;
-
-        // Refresh token
-        $authParams['refresh_token'] = (isset($inputParams['refresh_token'])) ?
-                                    $inputParams['refresh_token'] :
-                                    AuthServer::getRequest()->post('refresh_token');
 
         if (is_null($authParams['refresh_token'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'refresh_token'), 0);
