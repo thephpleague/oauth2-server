@@ -37,6 +37,8 @@ CREATE TABLE `oauth_sessions` (
   `refresh_token` varchar(40) DEFAULT '',
   `access_token_expires` int(10) DEFAULT NULL,
   `stage` enum('requested','granted') NOT NULL DEFAULT 'requested',
+  `first_requested` int(10) unsigned NOT NULL,
+  `last_updated` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `client_id` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
