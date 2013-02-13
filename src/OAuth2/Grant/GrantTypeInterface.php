@@ -42,5 +42,5 @@ interface GrantTypeInterface
      * @param  array      $authParams  The authorisation paramaters that have been set so far in the request
      * @return array                   An array of parameters to be passed back to the client
      */
-    public function completeFlow($inputParams = null, $authParams = array());
+    public function completeFlow($inputParams = null);
 }

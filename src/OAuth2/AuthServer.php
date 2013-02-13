@@ -374,4 +374,24 @@ class AuthServer
         return self::$grantTypes[$grantType];
     }
 
+    /**
+     * Get a parameter from passed input parameters or the Request class
+     * @param  string|array $param Requried parameter
+     * @param  string $method      Get/put/post/delete
+     * @param  array  $inputParams Passed input parameters
+     * @return mixed               'Null' if parameter is missing
+     */
+    public static function getParam($param = '', $method = 'get', $inputParams = array())
+    {
+        if (is_string($param)) {
+            return (isset($inputParams[$param])) ? $inputParams['client_id'] : self::getRequest()->{$method}($param);
+        } else {
+            $response = array();
+            foreach ($param as $p) {
+                $response[$p] = self::getParam($p, $method, $inputParams);
+            }
+            return $response;
+        }
+    }
+
 }
