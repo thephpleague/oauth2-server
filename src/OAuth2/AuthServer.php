@@ -347,21 +347,21 @@ class AuthServer
      */
     public function issueAccessToken($inputParams = array())
     {
-        $authParams['grant_type'] = (isset($inputParams['grant_type'])) ?
+        $grantType = (isset($inputParams['grant_type'])) ?
                                     $inputParams['grant_type'] :
                                     self::getRequest()->post('grant_type');
 
-        if (is_null($authParams['grant_type'])) {
+        if (is_null($grantType)) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'grant_type'), 0);
         }
 
         // Ensure grant type is one that is recognised and is enabled
-        if ( ! in_array($authParams['grant_type'], array_keys(self::$grantTypes))) {
-            throw new Exception\ClientException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $authParams['grant_type']), 7);
+        if ( ! in_array($grantType, array_keys(self::$grantTypes))) {
+            throw new Exception\ClientException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $grantType), 7);
         }
 
         // Complete the flow
-        return $this->getGrantType($authParams['grant_type'])->completeFlow($inputParams, $authParams);
+        return $this->getGrantType($grantType)->completeFlow($inputParams);
     }
 
     /**
