@@ -1,4 +1,13 @@
 <?php
+/**
+ * OAuth 2.0 Grant type interface
+ *
+ * @package     lncd/oauth2
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) 2013 University of Lincoln
+ * @license     http://mit-license.org/
+ * @link        http://github.com/lncd/oauth2
+ */
 
 namespace OAuth2\Grant;
 
@@ -39,7 +48,6 @@ interface GrantTypeInterface
      * </code>
      *
      * @param  null|array $inputParams Null unless the input parameters have been manually set
-     * @param  array      $authParams  The authorisation paramaters that have been set so far in the request
      * @return array                   An array of parameters to be passed back to the client
      */
     public function completeFlow($inputParams = null);

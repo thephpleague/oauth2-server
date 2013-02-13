@@ -1,4 +1,13 @@
 <?php
+/**
+ * OAuth 2.0 Auth code grant
+ *
+ * @package     lncd/oauth2
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) 2013 University of Lincoln
+ * @license     http://mit-license.org/
+ * @link        http://github.com/lncd/oauth2
+ */
 
 namespace OAuth2\Grant;
 
@@ -10,26 +19,52 @@ use OAuth2\Storage\SessionInterface;
 use OAuth2\Storage\ClientInterface;
 use OAuth2\Storage\ScopeInterface;
 
+/**
+ * Auth code grant class
+ */
 class AuthCode implements GrantTypeInterface {
 
+    /**
+     * Grant identifier
+     * @var string
+     */
     protected $identifier = 'authorization_code';
+
+    /**
+     * Response type
+     * @var string
+     */
     protected $responseType = 'code';
 
+    /**
+     * Return the identifier
+     * @return string
+     */
     public function getIdentifier()
     {
         return $this->identifier;
     }
 
+    /**
+     * Return the response type
+     * @return string
+     */
     public function getResponseType()
     {
         return $this->responseType;
     }
 
+    /**
+     * Complete the auth code grant
+     * @param  null|array $inputParams
+     * @return array
+     */
     public function completeFlow($inputParams = null)
     {
+        // Get the required params
         $authParams = AuthServer::getParam(array('client_id', 'client_secret', 'redirect_uri', 'code'), 'post', $inputParams);
 
-         if (is_null($authParams['client_id'])) {
+        if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_id'), 0);
         }
 
