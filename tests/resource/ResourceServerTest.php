@@ -43,20 +43,20 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     public function test_getTokenKey()
     {
         $s = $this->returnDefault();
-        $this->assertEquals('oauth_token', $s->getTokenKey());
+        $this->assertEquals('access_token', $s->getTokenKey());
     }
 
     public function test_setTokenKey()
     {
         $s = $this->returnDefault();
-       	$s->setTokenKey('access_token');
+       	$s->setTokenKey('oauth_token');
 
         $reflector = new ReflectionClass($s);
         $requestProperty = $reflector->getProperty('tokenKey');
         $requestProperty->setAccessible(true);
         $v = $requestProperty->getValue($s);
 
-        $this->assertEquals('access_token', $v);
+        $this->assertEquals('oauth_token', $v);
     }
 
     /**

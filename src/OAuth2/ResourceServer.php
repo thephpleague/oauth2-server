@@ -65,10 +65,10 @@ class ResourceServer
     protected $request = null;
 
     /**
-     * The query string key which is used by clients to present the access token (default: oauth_token)
+     * The query string key which is used by clients to present the access token (default: access_token)
      * @var string
      */
-    protected $tokenKey = 'oauth_token';
+    protected $tokenKey = 'access_token';
 
     /**
      * Sets up the Resource
