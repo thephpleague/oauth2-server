@@ -1,9 +1,26 @@
 <?php
+/**
+ * OAuth 2.0 Secure key generator
+ *
+ * @package     lncd/oauth2
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) 2013 University of Lincoln
+ * @license     http://mit-license.org/
+ * @link        http://github.com/lncd/oauth2
+ */
 
 namespace OAuth2\Util;
 
+/**
+ * SecureKey class
+ */
 class SecureKey
 {
+    /**
+     * Generate a new unique code
+     * @param  integer $len Length of the generated code
+     * @return string
+     */
     public static function make($len = 40)
     {
         // We generate twice as many bytes here because we want to ensure we have

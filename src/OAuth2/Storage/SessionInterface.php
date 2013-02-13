@@ -1,4 +1,13 @@
 <?php
+/**
+ * OAuth 2.0 Session storage interface
+ *
+ * @package     lncd/oauth2
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) 2013 University of Lincoln
+ * @license     http://mit-license.org/
+ * @link        http://github.com/lncd/oauth2
+ */
 
 namespace OAuth2\Storage;
 
@@ -16,15 +25,16 @@ interface SessionInterface
      * $accessToken, $stage, UNIX_TIMESTAMP(NOW()), UNIX_TIMESTAMP(NOW()))
      * </code>
      *
-     * @param  string $clientId     The client ID
-     * @param  string $redirectUri  The redirect URI
-     * @param  string $type         The session owner's type (default = "user")
-     * @param  string $typeId       The session owner's ID (default = "null")
-     * @param  string $authCode     The authorisation code (default = "null")
-     * @param  string $accessToken  The access token (default = "null")
-     * @param  string $refreshToken The refresh token (default = "null")
-     * @param  string $stage        The stage of the session (default ="request")
-     * @return  int The session ID
+     * @param  string $clientId          The client ID
+     * @param  string $redirectUri       The redirect URI
+     * @param  string $type              The session owner's type (default = "user")
+     * @param  string $typeId            The session owner's ID (default = "null")
+     * @param  string $authCode          The authorisation code (default = "null")
+     * @param  string $accessToken       The access token (default = "null")
+     * @param  string $refreshToken      The refresh token (default = "null")
+     * @param  int    $accessTokenExpire The expiry time of an access token as a unix timestamp
+     * @param  string $stage             The stage of the session (default ="request")
+     * @return int                       The session ID
      */
     public function createSession(
         $clientId,
@@ -49,11 +59,12 @@ interface SessionInterface
      *  id = $sessionId
      * </code>
      *
-     * @param  string $sessionId    The session ID
-     * @param  string $authCode     The authorisation code (default = "null")
-     * @param  string $accessToken  The access token (default = "null")
-     * @param  string $refreshToken The refresh token (default = "null")
-     * @param  string $stage        The stage of the session (default ="request")
+     * @param  string $sessionId         The session ID
+     * @param  string $authCode          The authorisation code (default = "null")
+     * @param  string $accessToken       The access token (default = "null")
+     * @param  string $refreshToken      The refresh token (default = "null")
+     * @param  int    $accessTokenExpire The expiry time of an access token as a unix timestamp
+     * @param  string $stage             The stage of the session (default ="request")
      * @return  void
      */
     public function updateSession(
@@ -125,6 +136,29 @@ interface SessionInterface
         $authCode
     );
 
+    /**
+     * Validate an access token
+     *
+     * Example SQL query:
+     *
+     * <code>
+     * SELECT id, owner_id, owner_type FROM oauth_sessions WHERE access_token = $accessToken
+     * </code>
+     *
+     * Response:
+     *
+     * <code>
+     * Array
+     * (
+     *     [id] => (int) The session ID
+     *     [owner_type] => (string) The owner type
+     *     [owner_id] => (string) The owner ID
+     * )
+     * </code>
+     *
+     * @param  [type] $accessToken [description]
+     * @return [type]              [description]
+     */
     public function validateAccessToken($accessToken);
 
     /**
@@ -142,6 +176,12 @@ interface SessionInterface
      */
     public function getAccessToken($sessionId);
 
+    /**
+     * Validate a refresh token
+     * @param  string $refreshToken The refresh token
+     * @param  string $clientId     The client ID
+     * @return int                  The session ID
+     */
     public function validateRefreshToken($refreshToken, $clientId);
 
     /**
@@ -174,7 +214,7 @@ interface SessionInterface
      * </code>
      *
      * @param int    $sessionId The session ID
-     * @param string $scope     The scope ID
+     * @param string $scopeId   The scope ID
      * @return void
      */
     public function associateScope($sessionId, $scopeId);
