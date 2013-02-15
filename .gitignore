@@ -4,3 +4,5 @@
 /build/logs/
 /build/coverage/
 test
+/docs/
+/testing/
