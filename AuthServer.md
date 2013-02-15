@@ -247,7 +247,4 @@ public function action_access_token()
 	header('Content-type: application/json');
 	echo json_encode($response);
 }
-	header('Content-type: application/json');
-	echo json_encode($response);
-}
 ```
