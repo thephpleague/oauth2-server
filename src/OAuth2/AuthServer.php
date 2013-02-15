@@ -67,7 +67,7 @@ class AuthServer
      * Exception error codes
      * @var array
      */
-    protected $exceptionCodes = array(
+    protected static $exceptionCodes = array(
         0   =>  'invalid_request',
         1   =>  'unauthorized_client',
         2   =>  'access_denied',
@@ -108,6 +108,17 @@ class AuthServer
     public static function getExceptionMessage($error = '')
     {
         return self::$exceptionMessages[$error];
+    }
+
+    /**
+     * Get an exception code
+     *
+     * @param  integer $code The exception code
+     * @return string        The exception code type
+     */
+    public static function getExceptionType($code = 0)
+    {
+        return self::$exceptionCodes[$code];
     }
 
     /**

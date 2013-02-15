@@ -45,6 +45,11 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
         $this->assertEquals($v['access_denied'], $m);
     }
 
+    public function test_getExceptionCode()
+    {
+        $this->assertEquals('access_denied', OAuth2\AuthServer::getExceptionType(2));
+    }
+
     public function test_hasGrantType()
     {
         $this->assertFalse(OAuth2\AuthServer::hasGrantType('test'));
