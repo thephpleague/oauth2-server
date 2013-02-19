@@ -20,19 +20,17 @@ interface ClientInterface
 	 *
 	 * <code>
 	 * # Client ID + redirect URI
-	 * SELECT clients.id FROM clients LEFT JOIN client_endpoints ON
-	 *  client_endpoints.client_id = clients.id WHERE clients.id = $clientId AND
-	 *  client_endpoints.redirect_uri = $redirectUri
+	 * SELECT oauth_clients.id FROM oauth_clients LEFT JOIN client_endpoints ON client_endpoints.client_id
+	 *  = oauth_clients.id WHERE oauth_clients.id = $clientId AND client_endpoints.redirect_uri = $redirectUri
 	 *
 	 * # Client ID + client secret
-	 * SELECT clients.id FROM clients  WHERE clients.id = $clientId AND
-	 *  clients.secret = $clientSecret
+	 * SELECT oauth_clients.id FROM oauth_clients  WHERE oauth_clients.id = $clientId AND
+	 *  oauth_clients.secret = $clientSecret
 	 *
 	 * # Client ID + client secret + redirect URI
-	 * SELECT clients.id FROM clients LEFT JOIN client_endpoints ON
-	 *  client_endpoints.client_id = clients.id WHERE clients.id = $clientId AND
-	 *  clients.secret = $clientSecret AND client_endpoints.redirect_uri =
-	 *  $redirectUri
+	 * SELECT oauth_clients.id FROM oauth_clients LEFT JOIN client_endpoints ON client_endpoints.client_id
+	 *  = oauth_clients.id WHERE oauth_clients.id = $clientId AND oauth_clients.secret = $clientSecret
+	 *  AND client_endpoints.redirect_uri = $redirectUri
 	 * </code>
 	 *
 	 * Response:

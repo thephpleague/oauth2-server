@@ -304,7 +304,8 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
                     'name'  =>  'Foo Name',
                     'description'   =>  'Foo Name Description'
                 )
-            )
+            ),
+            'scope' =>  'foo'
         ), $v);
     }
 
@@ -354,7 +355,8 @@ class Authentication_Server_test extends PHPUnit_Framework_TestCase
                     'name'  =>  'Foo Name',
                     'description'   =>  'Foo Name Description'
                 )
-            )
+            ),
+            'scope' =>  'foo'
         ), $v);
     }
 

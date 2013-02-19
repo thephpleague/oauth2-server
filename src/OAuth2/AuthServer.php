@@ -248,21 +248,12 @@ class AuthServer
      */
     public function checkAuthoriseParams($inputParams = array())
     {
-        $authParams = array();
-
-        // Client ID
-        $authParams['client_id'] = (isset($inputParams['client_id'])) ?
-                                    $inputParams['client_id'] :
-                                    self::getRequest()->get('client_id');
+        // Auth params
+        $authParams = self::getParam(array('client_id', 'redirect_uri', 'response_type', 'scope'), 'get', $inputParams);
 
         if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'client_id'), 0);
         }
-
-        // Redirect URI
-        $authParams['redirect_uri'] = (isset($inputParams['redirect_uri'])) ?
-                                        $inputParams['redirect_uri'] :
-                                        self::getRequest()->get('redirect_uri');
 
         if (is_null($authParams['redirect_uri'])) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'redirect_uri'), 0);
@@ -277,11 +268,6 @@ class AuthServer
 
         $authParams['client_details'] = $clientDetails;
 
-        // Response type
-       $authParams['response_type'] = (isset($inputParams['response_type'])) ?
-                                        $inputParams['response_type'] :
-                                        self::getRequest()->get('response_type');
-
         if (is_null($authParams['response_type'])) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'response_type'), 0);
         }
@@ -291,12 +277,8 @@ class AuthServer
             throw new Exception\ClientException(self::$exceptionMessages['unsupported_response_type'], 3);
         }
 
-        // Get and validate scopes
-        $scopes = (isset($inputParams['scope'])) ?
-                        $inputParams['scope'] :
-                        self::getRequest()->get('scope', '');
-
-        $scopes = explode($this->scopeDelimeter, $scopes);
+        // Validate scopes
+        $scopes = explode($this->scopeDelimeter, $authParams['scope']);
 
         for ($i = 0; $i < count($scopes); $i++) {
             $scopes[$i] = trim($scopes[$i]);
@@ -358,9 +340,7 @@ class AuthServer
      */
     public function issueAccessToken($inputParams = array())
     {
-        $grantType = (isset($inputParams['grant_type'])) ?
-                                    $inputParams['grant_type'] :
-                                    self::getRequest()->post('grant_type');
+        $grantType = self::getParam('grant_type', 'post', $inputParams);
 
         if (is_null($grantType)) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'grant_type'), 0);
@@ -395,7 +375,7 @@ class AuthServer
     public static function getParam($param = '', $method = 'get', $inputParams = array())
     {
         if (is_string($param)) {
-            return (isset($inputParams[$param])) ? $inputParams['client_id'] : self::getRequest()->{$method}($param);
+            return (isset($inputParams[$param])) ? $inputParams[$param] : self::getRequest()->{$method}($param);
         } else {
             $response = array();
             foreach ($param as $p) {
