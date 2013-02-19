@@ -19,7 +19,7 @@ interface ScopeInterface
      * Example SQL query:
      *
      * <code>
-     * SELECT * FROM scopes WHERE scope = $scope
+     * SELECT * FROM oauth_scopes WHERE scope = $scope
      * </code>
      *
      * Response:

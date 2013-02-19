@@ -225,9 +225,10 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * SELECT scopes.scope, scopes.name, scopes.description FROM
-     * oauth_session_scopes JOIN scopes ON oauth_session_scopes.scope =
-     *  scopes.scope WHERE access_token = $accessToken
+     * SELECT oauth_scopes.scope, oauth_scopes.name, oauth_scopes.description
+     *  FROM oauth_session_scopes JOIN oauth_scopes ON
+     *  oauth_session_scopes.scope = oauth_scopes.scope
+     *  WHERE access_token = $accessToken
      * </code>
      *
      * Response:
