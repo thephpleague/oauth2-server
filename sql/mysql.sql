@@ -1,12 +1,3 @@
-CREATE TABLE `oauth_client_endpoints` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `client_id` varchar(40) NOT NULL DEFAULT '',
-  `redirect_uri` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `client_id` (`client_id`),
-  CONSTRAINT `oauth_client_endpoints_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `oauth_clients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE `oauth_clients` (
   `id` varchar(40) NOT NULL DEFAULT '',
   `secret` varchar(40) NOT NULL DEFAULT '',
@@ -15,15 +6,13 @@ CREATE TABLE `oauth_clients` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `oauth_session_scopes` (
+CREATE TABLE `oauth_client_endpoints` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `session_id` int(11) unsigned NOT NULL,
-  `scope_id` int(11) unsigned NOT NULL,
+  `client_id` varchar(40) NOT NULL DEFAULT '',
+  `redirect_uri` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `session_id` (`session_id`),
-  KEY `scope_id` (`scope_id`),
-  CONSTRAINT `oauth_session_scopes_ibfk_5` FOREIGN KEY (`scope_id`) REFERENCES `oauth_scopes` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `oauth_session_scopes_ibfk_4` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE
+  KEY `client_id` (`client_id`),
+  CONSTRAINT `oauth_client_endpoints_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `oauth_clients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_sessions` (
@@ -50,4 +39,15 @@ CREATE TABLE `oauth_scopes` (
   `description` varchar(255) DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `scope` (`scope`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `oauth_session_scopes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `session_id` int(11) unsigned NOT NULL,
+  `scope_id` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `session_id` (`session_id`),
+  KEY `scope_id` (`scope_id`),
+  CONSTRAINT `oauth_session_scopes_ibfk_5` FOREIGN KEY (`scope_id`) REFERENCES `oauth_scopes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `oauth_session_scopes_ibfk_4` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
