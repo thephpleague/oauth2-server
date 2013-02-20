@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" stopOnError="false" stopOnFailure="false" stopOnIncomplete="false" stopOnSkipped="false" bootstrap="../tests/Bootstrap.php">
 	<testsuites>
-		<testsuite name="Authentication Server">
-			<directory suffix="Test.php">../tests/authentication</directory>
+		<testsuite name="Authorization Server">
+			<directory suffix="Test.php">../tests/authorization</directory>
 		</testsuite>
 		<testsuite name="Resource Server">
 			<directory suffix="Test.php">../tests/resource</directory>
