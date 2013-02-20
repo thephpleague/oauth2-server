@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 Authentication Server
+ * OAuth 2.0 Authorization Server
  *
  * @package     lncd/oauth2
  * @author      Alex Bilbie <hello@alexbilbie.com>
@@ -19,7 +19,7 @@ use OAuth2\Storage\ScopeInterface;
 use OAuth2\Grant\GrantTypeInterface;
 
 /**
- * OAuth 2.0 authentication server class
+ * OAuth 2.0 authorization server class
  */
 class AuthServer
 {
@@ -122,7 +122,7 @@ class AuthServer
     }
 
     /**
-     * Create a new OAuth2 authentication server
+     * Create a new OAuth2 authorization server
      *
      * @param ClientInterface  $client  A class which inherits from Storage/ClientInterface
      * @param SessionInterface $session A class which inherits from Storage/SessionInterface

@@ -2,7 +2,7 @@
 
 use \Mockery as m;
 
-class Authentication_Server_test extends PHPUnit_Framework_TestCase
+class Authorization_Server_test extends PHPUnit_Framework_TestCase
 {
     private $client;
     private $session;

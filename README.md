@@ -1,6 +1,6 @@
 # PHP OAuth Framework
 
-The goal of this project is to develop a standards compliant [OAuth 2](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authentication server and resource server.
+The goal of this project is to develop a standards compliant [OAuth 2](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authorization server and resource server.
 
 ## Package Installation
 
@@ -20,11 +20,11 @@ The library features 100% unit test code coverage. To run the tests yourself run
 
 ## Current Features
 
-### Authentication Server
+### Authorization Server
 
-The authentication server is a flexible class and following core specification grants are implemented:
+The authorization server is a flexible class and following core specification grants are implemented:
 
-* authentication code ([section 4.1](http://tools.ietf.org/html/rfc6749#section-4.1))
+* authorization code ([section 4.1](http://tools.ietf.org/html/rfc6749#section-4.1))
 * refresh token ([section 6](http://tools.ietf.org/html/rfc6749#section-6))
 * client credentials ([section 2.3.1](http://tools.ietf.org/html/rfc6749#section-2.3.1))
 * password (user credentials) ([section 4.3](http://tools.ietf.org/html/rfc6749#section-4.3))
@@ -35,7 +35,7 @@ The resource server allows you to secure your API endpoints by checking for a va
 
 ## Future Goals
 
-### Authentication Server
+### Authorization Server
 
 * Support for [JSON web tokens](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-json-web-token/).
 * Support for [SAML assertions](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-saml2-bearer/).
