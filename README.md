@@ -9,7 +9,7 @@ The framework is provided as a Composer package which can be installed by adding
 ```javascript
 {
 	"require": {
-		"lncd\OAuth2": "*"
+		"lncd/OAuth2": "*"
 	}
 }
 ```
