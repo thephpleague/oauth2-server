@@ -227,8 +227,8 @@ interface SessionInterface
      * <code>
      * SELECT oauth_scopes.scope, oauth_scopes.name, oauth_scopes.description
      *  FROM oauth_session_scopes JOIN oauth_scopes ON
-     *  oauth_session_scopes.scope = oauth_scopes.scope
-     *  WHERE access_token = $accessToken
+     *  oauth_session_scopes.scope_id = oauth_scopes.id WHERE
+     *  session_id = $sessionId
      * </code>
      *
      * Response:
@@ -245,8 +245,8 @@ interface SessionInterface
      * )
      * </code>
      *
-     * @param  string $accessToken The access token
+     * @param  int   $sessionId The session ID
      * @return array
      */
-    public function getScopes($accessToken);
+    public function getScopes($sessionId);
 }
