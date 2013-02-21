@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.4 (released 2013-02-21)
+## 1.0.5 (released 2013-02-21)
 
 * Fixed the SQL example for SessionInterface::getScopes()
 

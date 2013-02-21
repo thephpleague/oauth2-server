@@ -225,8 +225,7 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * SELECT oauth_scopes.scope, oauth_scopes.name, oauth_scopes.description
-     *  FROM oauth_session_scopes JOIN oauth_scopes ON
+     * SELECT oauth_scopes.scope FROM oauth_session_scopes JOIN oauth_scopes ON
      *  oauth_session_scopes.scope_id = oauth_scopes.id WHERE
      *  session_id = $sessionId
      * </code>
@@ -236,12 +235,11 @@ interface SessionInterface
      * <code>
      * Array
      * (
-     *     [0] => Array
-     *         (
-     *             [scope] => (string) The scope
-     *             [name] => (string) The scope's name
-     *             [description] => (string) The scope's description
-     *         )
+     *     [0] => (string) The scope
+     *     [1] => (string) The scope
+     *     [2] => (string) The scope
+     *     ...
+     *     ...
      * )
      * </code>
      *
