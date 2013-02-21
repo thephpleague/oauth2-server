@@ -1,7 +1,7 @@
 {
 	"name": "lncd/oauth2",
 	"description": "OAuth 2.0 Framework",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"homepage": "https://github.com/lncd/OAuth2",
 	"license": "MIT",
 	"require": {

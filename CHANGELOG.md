@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4 (released 2013-02-21)
+
+* Fixed the SQL example for SessionInterface::getScopes()
+
 ## 1.0.3 (released 2013-02-20)
 
 * Changed all instances of the "authentication server" to "authorization server"
