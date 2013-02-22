@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.6 (released 2013-02-)
+
+* Added links to tutorials in the README
+* Added missing `state` parameter request to the `checkAuthoriseParams()` method.
+
 ## 1.0.5 (released 2013-02-21)
 
 * Fixed the SQL example for SessionInterface::getScopes()
