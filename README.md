@@ -29,9 +29,13 @@ The authorization server is a flexible class and following core specification gr
 * client credentials ([section 2.3.1](http://tools.ietf.org/html/rfc6749#section-2.3.1))
 * password (user credentials) ([section 4.3](http://tools.ietf.org/html/rfc6749#section-4.3))
 
+A tutorial on how to use the authorization server can be found at [http://alexbilbie.com/2013/02/developing-an-oauth2-authorization-server/](http://alexbilbie.com/2013/02/developing-an-oauth2-authorization-server/).
+
 ### Resource Server
 
 The resource server allows you to secure your API endpoints by checking for a valid OAuth access token in the request and ensuring the token has the correct permission to access resources.
+
+A tutorial on how to use the resource server can be found at [http://alexbilbie.com/2013/02/securing-your-api-with-oauth-2/](http://alexbilbie.com/2013/02/securing-your-api-with-oauth-2/).
 
 ## Future Goals
 
