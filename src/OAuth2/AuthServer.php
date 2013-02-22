@@ -249,7 +249,7 @@ class AuthServer
     public function checkAuthoriseParams($inputParams = array())
     {
         // Auth params
-        $authParams = self::getParam(array('client_id', 'redirect_uri', 'response_type', 'scope'), 'get', $inputParams);
+        $authParams = self::getParam(array('client_id', 'redirect_uri', 'response_type', 'scope', 'state'), 'get', $inputParams);
 
         if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'client_id'), 0);
