@@ -284,7 +284,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
             'client_id' =>  1234,
             'redirect_uri'  =>  'http://foo/redirect',
             'response_type' =>  'code',
-            'scope' =>  'foo'
+            'scope' =>  'foo',
+            'state' =>  'xyz'
         ));
 
         $this->assertEquals(array(
@@ -305,7 +306,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
                     'description'   =>  'Foo Name Description'
                 )
             ),
-            'scope' =>  'foo'
+            'scope' =>  'foo',
+            'state' =>  'xyz'
         ), $v);
     }
 
@@ -332,6 +334,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $_GET['redirect_uri'] = 'http://foo/redirect';
         $_GET['response_type'] = 'code';
         $_GET['scope'] = 'foo';
+        $_GET['state'] = 'xyz';
 
         $request = new OAuth2\Util\Request($_GET);
         $a->setRequest($request);
@@ -356,7 +359,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
                     'description'   =>  'Foo Name Description'
                 )
             ),
-            'scope' =>  'foo'
+            'scope' =>  'foo',
+            'state' =>  'xyz'
         ), $v);
     }
 
