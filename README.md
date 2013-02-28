@@ -31,6 +31,8 @@ The authorization server is a flexible class and following core specification gr
 
 A tutorial on how to use the authorization server can be found at [http://alexbilbie.com/2013/02/developing-an-oauth2-authorization-server/](http://alexbilbie.com/2013/02/developing-an-oauth2-authorization-server/).
 
+An overview of the different OAuth 2.0 grants can be found at [http://alexbilbie.com/2013/02/a-guide-to-oauth-2-grants/](http://alexbilbie.com/2013/02/a-guide-to-oauth-2-grants/).
+
 ### Resource Server
 
 The resource server allows you to secure your API endpoints by checking for a valid OAuth access token in the request and ensuring the token has the correct permission to access resources.
