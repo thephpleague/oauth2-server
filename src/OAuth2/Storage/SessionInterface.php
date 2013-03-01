@@ -105,25 +105,6 @@ interface SessionInterface
      *  redirect_uri = $redirectUri AND auth_code = $authCode
      * </code>
      *
-     * Response:
-     *
-     * <code>
-     * Array
-     * (
-     *     [id] => (int) The session ID
-     *     [client_id] => (string) The client ID
-     *     [redirect_uri] => (string) The redirect URI
-     *     [owner_type] => (string) The session owner type
-     *     [owner_id] => (string) The session owner's ID
-     *     [auth_code] => (string) The authorisation code
-     *     [stage] => (string) The session's stage
-     *     [first_requested] => (int) Unix timestamp of the time the session was
-     *      first generated
-     *     [last_updated] => (int) Unix timestamp of the time the session was
-     *      last updated
-     * )
-     * </code>
-     *
      * @param  string     $clientId    The client ID
      * @param  string     $redirectUri The redirect URI
      * @param  string     $authCode    The authorisation code
