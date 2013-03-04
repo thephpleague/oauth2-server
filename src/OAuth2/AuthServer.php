@@ -58,6 +58,12 @@ class AuthServer
     static protected $grantTypes = array();
 
     /**
+     * Require the "scope" parameter to be in checkAuthoriseParams()
+     * @var boolean
+     */
+    protected $requireScopes = true;
+
+    /**
      * The request object
      * @var Util\RequestInterface
      */
@@ -162,6 +168,16 @@ class AuthServer
     public static function hasGrantType($identifier)
     {
         return (array_key_exists($identifier, self::$grantTypes));
+    }
+
+    /**
+     * Require the "scope" paremter in checkAuthoriseParams()
+     * @param  boolean $require
+     * @return void
+     */
+    public function requireScopes($require = true)
+    {
+        $this->requireScopes = $require;
     }
 
     /**
@@ -285,7 +301,7 @@ class AuthServer
             if ($scopes[$i] === '') unset($scopes[$i]); // Remove any junk scopes
         }
 
-        if (count($scopes) === 0) {
+        if ($this->requireScopes === true && count($scopes) === 0) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'scope'), 0);
         }
 
