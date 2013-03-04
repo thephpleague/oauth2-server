@@ -61,7 +61,13 @@ class AuthServer
      * Require the "scope" parameter to be in checkAuthoriseParams()
      * @var boolean
      */
-    protected $requireScopes = true;
+    protected $requireScopeParam = true;
+
+    /**
+     * Require the "state" parameter to be in checkAuthoriseParams()
+     * @var boolean
+     */
+    protected $requireStateParam = false;
 
     /**
      * The request object
@@ -175,9 +181,19 @@ class AuthServer
      * @param  boolean $require
      * @return void
      */
-    public function requireScopes($require = true)
+    public function requireScopeParam($require = true)
     {
-        $this->requireScopes = $require;
+        $this->requireScopeParam = $require;
+    }
+
+    /**
+     * Require the "state" paremter in checkAuthoriseParams()
+     * @param  boolean $require
+     * @return void
+     */
+    public function requireStateParam($require = false)
+    {
+        $this->requireStateParam = $require;
     }
 
     /**
@@ -275,6 +291,10 @@ class AuthServer
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'redirect_uri'), 0);
         }
 
+        if ($this->requireStateParam === true && is_null($authParams['redirect_uri'])) {
+            throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'redirect_uri'), 0);
+        }
+
         // Validate client ID and redirect URI
         $clientDetails = self::getStorage('client')->getClient($authParams['client_id'], null, $authParams['redirect_uri']);
 
@@ -301,7 +321,7 @@ class AuthServer
             if ($scopes[$i] === '') unset($scopes[$i]); // Remove any junk scopes
         }
 
-        if ($this->requireScopes === true && count($scopes) === 0) {
+        if ($this->requireScopeParam === true && count($scopes) === 0) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'scope'), 0);
         }
 
