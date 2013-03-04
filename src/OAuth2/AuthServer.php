@@ -64,6 +64,12 @@ class AuthServer
     protected $requireScopeParam = true;
 
     /**
+     * Default scope to be used if none is provided and requireScopeParam is false
+     * @var string
+     */
+    protected $defaultScope = null;
+
+    /**
      * Require the "state" parameter to be in checkAuthoriseParams()
      * @var boolean
      */
@@ -184,6 +190,15 @@ class AuthServer
     public function requireScopeParam($require = true)
     {
         $this->requireScopeParam = $require;
+    }
+
+    /**
+     * Default scope to be used if none is provided and requireScopeParam is false
+     * @var string
+     */
+    public function defaultScope($default = null)
+    {
+        $this->defaultScope = $default;
     }
 
     /**
@@ -323,6 +338,8 @@ class AuthServer
 
         if ($this->requireScopeParam === true && count($scopes) === 0) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'scope'), 0);
+        } elseif (count($scopes) === 0 && $this->defaultScope) {
+            $scopes = array($this->defaultScope);
         }
 
         $authParams['scopes'] = array();
