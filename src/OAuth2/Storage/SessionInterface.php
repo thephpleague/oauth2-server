@@ -182,7 +182,12 @@ interface SessionInterface
      * @param  int    $accessTokenExpires    The UNIX timestamp of when the new token expires
      * @return void
      */
-    public function updateRefreshToken($sessionId, $newAccessToken, $newRefreshToken, $accessTokenExpires);
+    public function updateRefreshToken(
+        $sessionId,
+        $newAccessToken,
+        $newRefreshToken,
+        $accessTokenExpires
+    );
 
     /**
      * Associates a session with a scope
