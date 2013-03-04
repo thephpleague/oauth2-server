@@ -1,6 +1,11 @@
 # Changelog
 
-## 1.0.6 (released 2013-02-)
+## 1.0.7 (released 2013-03-04)
+
+* Added method `requireStateParam()`
+* Added method `requireScopeParam()`
+
+## 1.0.6 (released 2013-02-22)
 
 * Added links to tutorials in the README
 * Added missing `state` parameter request to the `checkAuthoriseParams()` method.
@@ -24,4 +29,4 @@
 
 ## 1.0.0 (released 2013-02-15)
 
-* First release
+* First major release
