@@ -89,6 +89,32 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertEquals(';', $a->getScopeDelimeter());
     }
 
+    public function test_requireScopeParam()
+    {
+        $a = $this->returnDefault();
+        $a->requireScopeParam(false);
+
+        $reflector = new ReflectionClass($a);
+        $requestProperty = $reflector->getProperty('requireScopeParam');
+        $requestProperty->setAccessible(true);
+        $v = $requestProperty->getValue($a);
+
+        $this->assertFalse($v);
+    }
+
+    public function test_requireStateParam()
+    {
+        $a = $this->returnDefault();
+        $a->requireStateParam(true);
+
+        $reflector = new ReflectionClass($a);
+        $requestProperty = $reflector->getProperty('requireStateParam');
+        $requestProperty->setAccessible(true);
+        $v = $requestProperty->getValue($a);
+
+        $this->assertTrue($v);
+    }
+
     public function test_getExpiresIn()
     {
         $a = $this->returnDefault();

@@ -58,6 +58,18 @@ class AuthServer
     static protected $grantTypes = array();
 
     /**
+     * Require the "scope" parameter to be in checkAuthoriseParams()
+     * @var boolean
+     */
+    protected $requireScopeParam = true;
+
+    /**
+     * Require the "state" parameter to be in checkAuthoriseParams()
+     * @var boolean
+     */
+    protected $requireStateParam = false;
+
+    /**
      * The request object
      * @var Util\RequestInterface
      */
@@ -165,6 +177,26 @@ class AuthServer
     }
 
     /**
+     * Require the "scope" paremter in checkAuthoriseParams()
+     * @param  boolean $require
+     * @return void
+     */
+    public function requireScopeParam($require = true)
+    {
+        $this->requireScopeParam = $require;
+    }
+
+    /**
+     * Require the "state" paremter in checkAuthoriseParams()
+     * @param  boolean $require
+     * @return void
+     */
+    public function requireStateParam($require = false)
+    {
+        $this->requireStateParam = $require;
+    }
+
+    /**
      * Get the scope delimeter
      *
      * @return string The scope delimiter (default: ",")
@@ -259,6 +291,10 @@ class AuthServer
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'redirect_uri'), 0);
         }
 
+        if ($this->requireStateParam === true && is_null($authParams['redirect_uri'])) {
+            throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'redirect_uri'), 0);
+        }
+
         // Validate client ID and redirect URI
         $clientDetails = self::getStorage('client')->getClient($authParams['client_id'], null, $authParams['redirect_uri']);
 
@@ -285,7 +321,7 @@ class AuthServer
             if ($scopes[$i] === '') unset($scopes[$i]); // Remove any junk scopes
         }
 
-        if (count($scopes) === 0) {
+        if ($this->requireScopeParam === true && count($scopes) === 0) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'scope'), 0);
         }
 
