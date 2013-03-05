@@ -216,7 +216,7 @@ class ResourceServer
     protected function determineAccessToken()
     {
         if ($header = $this->getRequest()->header('Authorization')) {
-            $access_token = base64_decode(trim(str_replace('Bearer', '', $header)));
+            $access_token = trim(str_replace('Bearer', '', $header));
         } else {
             $method = $this->getRequest()->server('REQUEST_METHOD');
             $access_token = $this->getRequest()->{$method}($this->tokenKey);
