@@ -102,6 +102,19 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertFalse($v);
     }
 
+    public function test_defaultScope()
+    {
+        $a = $this->returnDefault();
+        $a->defaultScope('test.default');
+
+        $reflector = new ReflectionClass($a);
+        $requestProperty = $reflector->getProperty('defaultScope');
+        $requestProperty->setAccessible(true);
+        $v = $requestProperty->getValue($a);
+
+        $this->assertEquals('test.default', $v);
+    }
+
     public function test_requireStateParam()
     {
         $a = $this->returnDefault();
