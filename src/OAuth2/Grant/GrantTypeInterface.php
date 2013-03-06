@@ -21,10 +21,17 @@ use OAuth2\Storage\ScopeInterface;
 
 interface GrantTypeInterface
 {
-	/**
-	 * Returns the grant identifier (used to validate grant_type in OAuth2\AuthServer\issueAccessToken())
-	 * @return string
-	 */
+    /**
+     * Constructor
+     * @param AuthServer $authServer AuthServer instance
+     * @return void
+     */
+    public function __construct(AuthServer $authServer);
+
+    /**
+     * Returns the grant identifier (used to validate grant_type in OAuth2\AuthServer\issueAccessToken())
+     * @return string
+     */
     public function getIdentifier();
 
     /**

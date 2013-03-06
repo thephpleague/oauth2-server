@@ -27,7 +27,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_clientCredentialsGrant_missingClientId()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\ClientCredentials());
+        $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -44,7 +44,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_clientCredentialsGrant_missingClientPassword()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\ClientCredentials());
+        $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -64,7 +64,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\ClientCredentials());
+        $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -93,7 +93,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\ClientCredentials());
+        $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'client_credentials',
@@ -106,8 +106,8 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
     function test_issueAccessToken_clientCredentialsGrant()
@@ -127,7 +127,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\ClientCredentials());
+        $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
 
         $_POST['grant_type'] = 'client_credentials';
         $_POST['client_id'] = 1234;
@@ -143,8 +143,8 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
     function test_issueAccessToken_clientCredentialsGrant_withRefreshToken()
@@ -164,8 +164,8 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\ClientCredentials());
-        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+        $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
+        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
 
         $_POST['grant_type'] = 'client_credentials';
         $_POST['client_id'] = 1234;
@@ -182,8 +182,8 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
         $this->assertArrayHasKey('refresh_token', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
 }

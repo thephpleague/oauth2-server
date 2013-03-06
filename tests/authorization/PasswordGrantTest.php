@@ -27,7 +27,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_passwordGrant_missingClientId()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\Password());
+        $a->addGrantType(new OAuth2\Grant\Password($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -44,7 +44,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_passwordGrant_missingClientPassword()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\Password());
+        $a->addGrantType(new OAuth2\Grant\Password($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -64,7 +64,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\Password());
+        $a->addGrantType(new OAuth2\Grant\Password($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -98,7 +98,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = null;
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -134,7 +134,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return false; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -168,7 +168,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return false; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -203,7 +203,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return false; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -235,7 +235,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -252,8 +252,8 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
     function test_issueAccessToken_passwordGrant()
@@ -275,7 +275,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -295,8 +295,8 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
     function test_issueAccessToken_passwordGrant_withRefreshToken()
@@ -318,10 +318,10 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
-        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
 
         $_POST['grant_type'] = 'password';
         $_POST['client_id'] = 1234;
@@ -340,8 +340,8 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
         $this->assertArrayHasKey('refresh_token', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
 }

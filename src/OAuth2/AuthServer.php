@@ -37,7 +37,7 @@ class AuthServer
      * The TTL (time to live) of an access token in seconds (default: 3600)
      * @var integer
      */
-    static protected $expiresIn = 3600;
+    protected $expiresIn = 3600;
 
     /**
      * The registered grant response types
@@ -49,13 +49,13 @@ class AuthServer
      * The client, scope and session storage classes
      * @var array
      */
-    static protected $storages = array();
+    protected $storages = array();
 
     /**
      * The registered grant types
      * @var array
      */
-    static protected $grantTypes = array();
+    protected $grantTypes = array();
 
     /**
      * Require the "scope" parameter to be in checkAuthoriseParams()
@@ -73,7 +73,7 @@ class AuthServer
      * The request object
      * @var Util\RequestInterface
      */
-    static protected $request = null;
+    protected $request = null;
 
     /**
      * Exception error codes
@@ -96,7 +96,7 @@ class AuthServer
      * Exception error messages
      * @var array
      */
-    static protected $exceptionMessages = array(
+    protected static $exceptionMessages = array(
         'invalid_request'           =>  'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "%s" parameter.',
         'unauthorized_client'       =>  'The client is not authorized to request an access token using this method.',
         'access_denied'             =>  'The resource owner or authorization server denied the request.',
@@ -142,7 +142,7 @@ class AuthServer
      */
     public function __construct(ClientInterface $client, SessionInterface $session, ScopeInterface $scope)
     {
-        self::$storages = array(
+        $this->storages = array(
             'client'    =>  $client,
             'session'   =>  $session,
             'scope' =>  $scope
@@ -159,7 +159,7 @@ class AuthServer
         if (is_null($identifier)) {
             $identifier = $grantType->getIdentifier();
         }
-        self::$grantTypes[$identifier] = $grantType;
+        $this->grantTypes[$identifier] = $grantType;
 
         if ( ! is_null($grantType->getResponseType())) {
             $this->responseTypes[] = $grantType->getResponseType();
@@ -171,9 +171,9 @@ class AuthServer
      * @param  string  $identifier The grant type identifier
      * @return boolean             Returns "true" if enabled, "false" if not
      */
-    public static function hasGrantType($identifier)
+    public function hasGrantType($identifier)
     {
-        return (array_key_exists($identifier, self::$grantTypes));
+        return (array_key_exists($identifier, $this->grantTypes));
     }
 
     /**
@@ -220,9 +220,9 @@ class AuthServer
      * Get the TTL for an access token
      * @return int The TTL
      */
-    public static function getExpiresIn()
+    public function getExpiresIn()
     {
-        return self::$expiresIn;
+        return $this->expiresIn;
     }
 
     /**
@@ -231,7 +231,7 @@ class AuthServer
      */
     public function setExpiresIn($expiresIn)
     {
-        self::$expiresIn = $expiresIn;
+        $this->expiresIn = $expiresIn;
     }
 
     /**
@@ -241,7 +241,7 @@ class AuthServer
      */
     public function setRequest(Util\RequestInterface $request)
     {
-        self::$request = $request;
+        $this->request = $request;
     }
 
     /**
@@ -249,16 +249,16 @@ class AuthServer
      *
      * @return Util\RequestInterface
      */
-    public static function getRequest()
+    public function getRequest()
     {
-        if (self::$request === null) {
+        if ($this->request === null) {
             // @codeCoverageIgnoreStart
-            self::$request = Request::buildFromGlobals();
+            $this->request = Request::buildFromGlobals();
 
         }
         // @codeCoverageIgnoreEnd
 
-        return self::$request;
+        return $this->request;
     }
 
     /**
@@ -266,9 +266,9 @@ class AuthServer
      * @param  string $obj The class required
      * @return Storage\ClientInterface|Storage\ScopeInterface|Storage\SessionInterface
      */
-    public static function getStorage($obj)
+    public function getStorage($obj)
     {
-        return self::$storages[$obj];
+        return $this->storages[$obj];
     }
 
     /**
@@ -281,7 +281,7 @@ class AuthServer
     public function checkAuthoriseParams($inputParams = array())
     {
         // Auth params
-        $authParams = self::getParam(array('client_id', 'redirect_uri', 'response_type', 'scope', 'state'), 'get', $inputParams);
+        $authParams = $this->getParam(array('client_id', 'redirect_uri', 'response_type', 'scope', 'state'), 'get', $inputParams);
 
         if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'client_id'), 0);
@@ -383,7 +383,7 @@ class AuthServer
         }
 
         // Ensure grant type is one that is recognised and is enabled
-        if ( ! in_array($grantType, array_keys(self::$grantTypes))) {
+        if ( ! in_array($grantType, array_keys($this->grantTypes))) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $grantType), 7);
         }
 
@@ -398,7 +398,7 @@ class AuthServer
      */
     protected function getGrantType($grantType)
     {
-        return self::$grantTypes[$grantType];
+        return $this->grantTypes[$grantType];
     }
 
     /**
@@ -408,14 +408,14 @@ class AuthServer
      * @param  array  $inputParams Passed input parameters
      * @return mixed               'Null' if parameter is missing
      */
-    public static function getParam($param = '', $method = 'get', $inputParams = array())
+    public function getParam($param = '', $method = 'get', $inputParams = array())
     {
         if (is_string($param)) {
             return (isset($inputParams[$param])) ? $inputParams[$param] : self::getRequest()->{$method}($param);
         } else {
             $response = array();
             foreach ($param as $p) {
-                $response[$p] = self::getParam($p, $method, $inputParams);
+                $response[$p] = $this->getParam($p, $method, $inputParams);
             }
             return $response;
         }

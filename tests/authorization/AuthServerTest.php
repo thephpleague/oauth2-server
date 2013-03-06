@@ -52,7 +52,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
 
     public function test_hasGrantType()
     {
-        $this->assertFalse(OAuth2\AuthServer::hasGrantType('test'));
+        $a = $this->returnDefault();
+        $this->assertFalse($a->hasGrantType('test'));
     }
 
     public function test_addGrantType()
@@ -62,7 +63,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $grant->shouldReceive('getResponseType')->andReturn('test');
         $a->addGrantType($grant, 'test');
 
-        $this->assertTrue(OAuth2\AuthServer::hasGrantType('test'));
+        $this->assertTrue($a->hasGrantType('test'));
     }
 
     public function test_addGrantType_noIdentifier()
@@ -73,7 +74,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $grant->shouldReceive('getResponseType')->andReturn('test');
         $a->addGrantType($grant);
 
-        $this->assertTrue(OAuth2\AuthServer::hasGrantType('test'));
+        $this->assertTrue($a->hasGrantType('test'));
     }
 
     public function test_getScopeDelimeter()
@@ -119,7 +120,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     {
         $a = $this->returnDefault();
         $a->setExpiresIn(7200);
-        $this->assertEquals(7200, $a::getExpiresIn());
+        $this->assertEquals(7200, $a->getExpiresIn());
     }
 
     public function test_setExpiresIn()
@@ -138,7 +139,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $reflector = new ReflectionClass($a);
         $requestProperty = $reflector->getProperty('request');
         $requestProperty->setAccessible(true);
-        $v = $requestProperty->getValue();
+        $v = $requestProperty->getValue($a);
 
         $this->assertTrue($v instanceof OAuth2\Util\RequestInterface);
     }
@@ -148,7 +149,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $request = new OAuth2\Util\Request();
         $a->setRequest($request);
-        $v = $a::getRequest();
+        $v = $a->getRequest();
 
         $this->assertTrue($v instanceof OAuth2\Util\RequestInterface);
     }
@@ -251,7 +252,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         ));
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $a->checkAuthoriseParams(array(
             'client_id' =>  1234,
@@ -277,7 +278,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->scope->shouldReceive('getScope')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $a->checkAuthoriseParams(array(
             'client_id' =>  1234,
@@ -290,7 +291,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_checkAuthoriseParams_passedInput()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $this->client->shouldReceive('getClient')->andReturn(array(
             'client_id' =>  1234,
@@ -354,7 +355,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         ));
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $_GET['client_id'] = 1234;
         $_GET['redirect_uri'] = 'http://foo/redirect';
@@ -426,7 +427,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_getGrantType()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $reflector = new ReflectionClass($a);
         $method = $reflector->getMethod('getGrantType');
@@ -444,7 +445,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_missingGrantType()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $v = $a->issueAccessToken();
     }
@@ -456,7 +457,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_badGrantType()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $v = $a->issueAccessToken(array('grant_type' => 'foo'));
     }
@@ -468,7 +469,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_missingClientId()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code'
@@ -482,7 +483,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_missingClientSecret()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -497,7 +498,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_missingRedirectUri()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -515,7 +516,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -534,7 +535,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(array());
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -554,7 +555,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('validateAuthCode')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -578,7 +579,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('updateSession')->andReturn(null);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -593,8 +594,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
     public function test_issueAccessToken()
@@ -610,7 +611,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('updateSession')->andReturn(null);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
 
         $_POST['grant_type'] = 'authorization_code';
         $_POST['client_id'] = 1234;
@@ -628,8 +629,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
     public function tearDown() {

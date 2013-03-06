@@ -37,6 +37,22 @@ class AuthCode implements GrantTypeInterface {
     protected $responseType = 'code';
 
     /**
+     * AuthServer instance
+     * @var AuthServer
+     */
+    protected $authServer = null;
+
+    /**
+     * Constructor
+     * @param AuthServer $authServer AuthServer instance
+     * @return void
+     */
+    public function __construct(AuthServer $authServer)
+    {
+        $this->authServer = $authServer;
+    }
+
+    /**
      * Return the identifier
      * @return string
      */
@@ -62,51 +78,51 @@ class AuthCode implements GrantTypeInterface {
     public function completeFlow($inputParams = null)
     {
         // Get the required params
-        $authParams = AuthServer::getParam(array('client_id', 'client_secret', 'redirect_uri', 'code'), 'post', $inputParams);
+        $authParams = $this->authServer->getParam(array('client_id', 'client_secret', 'redirect_uri', 'code'), 'post', $inputParams);
 
         if (is_null($authParams['client_id'])) {
-            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_id'), 0);
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'client_id'), 0);
         }
 
         if (is_null($authParams['client_secret'])) {
-            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_secret'), 0);
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'client_secret'), 0);
         }
 
         if (is_null($authParams['redirect_uri'])) {
-            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'redirect_uri'), 0);
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'redirect_uri'), 0);
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = AuthServer::getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret'], $authParams['redirect_uri']);
+        $clientDetails = $this->authServer->getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret'], $authParams['redirect_uri']);
 
         if ($clientDetails === false) {
-            throw new Exception\ClientException(AuthServer::getExceptionMessage('invalid_client'), 8);
+            throw new Exception\ClientException($this->authServer->getExceptionMessage('invalid_client'), 8);
         }
 
         $authParams['client_details'] = $clientDetails;
 
         // Validate the authorization code
         if (is_null($authParams['code'])) {
-            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'code'), 0);
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'code'), 0);
         }
 
         // Verify the authorization code matches the client_id and the request_uri
-        $session = AuthServer::getStorage('session')->validateAuthCode($authParams['client_id'], $authParams['redirect_uri'], $authParams['code']);
+        $session = $this->authServer->getStorage('session')->validateAuthCode($authParams['client_id'], $authParams['redirect_uri'], $authParams['code']);
 
         if ( ! $session) {
-            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_grant'), 'code'), 9);
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_grant'), 'code'), 9);
         }
 
         // A session ID was returned so update it with an access token,
         //  remove the authorisation code, change the stage to 'granted'
 
         $accessToken = SecureKey::make();
-        $refreshToken = (AuthServer::hasGrantType('refresh_token')) ? SecureKey::make() : null;
+        $refreshToken = ($this->authServer->hasGrantType('refresh_token')) ? SecureKey::make() : null;
 
-        $accessTokenExpires = time() + AuthServer::getExpiresIn();
-        $accessTokenExpiresIn = AuthServer::getExpiresIn();
+        $accessTokenExpires = time() + $this->authServer->getExpiresIn();
+        $accessTokenExpiresIn = $this->authServer->getExpiresIn();
 
-        AuthServer::getStorage('session')->updateSession(
+        $this->authServer->getStorage('session')->updateSession(
             $session['id'],
             null,
             $accessToken,
@@ -122,7 +138,7 @@ class AuthCode implements GrantTypeInterface {
             'expires_in'    =>  $accessTokenExpiresIn
         );
 
-        if (AuthServer::hasGrantType('refresh_token')) {
+        if ($this->authServer->hasGrantType('refresh_token')) {
             $response['refresh_token'] = $refreshToken;
         }
 
