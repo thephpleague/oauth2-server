@@ -140,6 +140,27 @@ class Password implements GrantTypeInterface {
             throw new Exception\ClientException($this->authServer->getExceptionMessage('invalid_credentials'), 0);
         }
 
+        // Validate any scopes that are in the request
+        $scope = $this->authServer->getParam('scope', 'post', $inputParams, '');
+        $scopes = explode($this->authServer->getScopeDelimeter(), $scope);
+
+        for ($i = 0; $i < count($scopes); $i++) {
+            $scopes[$i] = trim($scopes[$i]);
+            if ($scopes[$i] === '') unset($scopes[$i]); // Remove any junk scopes
+        }
+
+        $authParams['scopes'] = array();
+
+        foreach ($scopes as $scope) {
+            $scopeDetails = $this->authServer->getStorage('scope')->getScope($scope);
+
+            if ($scopeDetails === false) {
+                throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_scope'], $scope), 4);
+            }
+
+            $authParams['scopes'][] = $scopeDetails;
+        }
+
         // Generate an access token
         $accessToken = SecureKey::make();
         $refreshToken = ($this->authServer->hasGrantType('refresh_token')) ? SecureKey::make() : null;
@@ -151,7 +172,7 @@ class Password implements GrantTypeInterface {
         $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], 'user', $userId);
 
         // Create a new session
-        $this->authServer->getStorage('session')->createSession(
+        $sessionId = $this->authServer->getStorage('session')->createSession(
             $authParams['client_id'],
             null,
             'user',
@@ -162,6 +183,12 @@ class Password implements GrantTypeInterface {
             $accessTokenExpires,
             'granted'
         );
+
+        // Associate scopes with the new session
+        foreach ($authParams['scopes'] as $scope)
+        {
+            $this->authServer->getStorage('session')->associateScope($sessionId, $scope['id']);
+        }
 
         $response = array(
             'access_token'  =>  $accessToken,

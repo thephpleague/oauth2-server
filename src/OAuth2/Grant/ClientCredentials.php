@@ -78,7 +78,7 @@ class ClientCredentials implements GrantTypeInterface {
     public function completeFlow($inputParams = null)
     {
          // Get the required params
-        $authParams = $this->authServer->getParam(array('client_id', 'client_secret', 'scope'), 'post', $inputParams);
+        $authParams = $this->authServer->getParam(array('client_id', 'client_secret'), 'post', $inputParams);
 
         if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_id'), 0);
@@ -97,6 +97,27 @@ class ClientCredentials implements GrantTypeInterface {
 
         $authParams['client_details'] = $clientDetails;
 
+        // Validate any scopes that are in the request
+        $scope = $this->authServer->getParam('scope', 'post', $inputParams, '');
+        $scopes = explode($this->authServer->getScopeDelimeter(), $scope);
+
+        for ($i = 0; $i < count($scopes); $i++) {
+            $scopes[$i] = trim($scopes[$i]);
+            if ($scopes[$i] === '') unset($scopes[$i]); // Remove any junk scopes
+        }
+
+        $authParams['scopes'] = array();
+
+        foreach ($scopes as $scope) {
+            $scopeDetails = $this->authServer->getStorage('scope')->getScope($scope);
+
+            if ($scopeDetails === false) {
+                throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_scope'], $scope), 4);
+            }
+
+            $authParams['scopes'][] = $scopeDetails;
+        }
+
         // Generate an access token
         $accessToken = SecureKey::make();
         $refreshToken = ($this->authServer->hasGrantType('refresh_token')) ? SecureKey::make() : null;
@@ -108,7 +129,7 @@ class ClientCredentials implements GrantTypeInterface {
         $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], 'client', $authParams['client_id']);
 
         // Create a new session
-        $this->authServer->getStorage('session')->createSession(
+        $sessionId = $this->authServer->getStorage('session')->createSession(
             $authParams['client_id'],
             null,
             'client',
@@ -119,6 +140,12 @@ class ClientCredentials implements GrantTypeInterface {
             $accessTokenExpires,
             'granted'
         );
+
+        // Associate scopes with the new session
+        foreach ($authParams['scopes'] as $scope)
+        {
+            $this->authServer->getStorage('session')->associateScope($sessionId, $scope['id']);
+        }
 
         $response = array(
             'access_token'  =>  $accessToken,
