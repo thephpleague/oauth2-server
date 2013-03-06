@@ -6,3 +6,5 @@
 test
 /docs/
 /testing/
+logs/
+coverage/
