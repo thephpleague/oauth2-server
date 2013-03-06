@@ -396,7 +396,7 @@ class AuthServer
      * @param  string $grantType The grant type identifer
      * @return class
      */
-    protected function getGrantType($grantType)
+    public function getGrantType($grantType)
     {
         return $this->grantTypes[$grantType];
     }
