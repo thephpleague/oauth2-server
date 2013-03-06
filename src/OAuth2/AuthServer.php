@@ -296,7 +296,7 @@ class AuthServer
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = self::getStorage('client')->getClient($authParams['client_id'], null, $authParams['redirect_uri']);
+        $clientDetails = $this->getStorage('client')->getClient($authParams['client_id'], null, $authParams['redirect_uri']);
 
         if ($clientDetails === false) {
             throw new Exception\ClientException(self::$exceptionMessages['invalid_client'], 8);
@@ -328,7 +328,7 @@ class AuthServer
         $authParams['scopes'] = array();
 
         foreach ($scopes as $scope) {
-            $scopeDetails = self::getStorage('scope')->getScope($scope);
+            $scopeDetails = $this->getStorage('scope')->getScope($scope);
 
             if ($scopeDetails === false) {
                 throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_scope'], $scope), 4);
@@ -354,15 +354,15 @@ class AuthServer
         $authCode = SecureKey::make();
 
         // Remove any old sessions the user might have
-        self::getStorage('session')->deleteSession($authParams['client_id'], $type, $typeId);
+        $this->getStorage('session')->deleteSession($authParams['client_id'], $type, $typeId);
 
         // Create a new session
-        $sessionId = self::getStorage('session')->createSession($authParams['client_id'], $authParams['redirect_uri'], $type, $typeId, $authCode);
+        $sessionId = $this->getStorage('session')->createSession($authParams['client_id'], $authParams['redirect_uri'], $type, $typeId, $authCode);
 
         // Associate scopes with the new session
         foreach ($authParams['scopes'] as $scope)
         {
-            self::getStorage('session')->associateScope($sessionId, $scope['id']);
+            $this->getStorage('session')->associateScope($sessionId, $scope['id']);
         }
 
         return $authCode;
