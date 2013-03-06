@@ -408,10 +408,10 @@ class AuthServer
      * @param  array  $inputParams Passed input parameters
      * @return mixed               'Null' if parameter is missing
      */
-    public function getParam($param = '', $method = 'get', $inputParams = array())
+    public function getParam($param = '', $method = 'get', $inputParams = array(), $default = null)
     {
         if (is_string($param)) {
-            return (isset($inputParams[$param])) ? $inputParams[$param] : self::getRequest()->{$method}($param);
+            return (isset($inputParams[$param])) ? $inputParams[$param] : $this->getRequest()->{$method}($param, $default);
         } else {
             $response = array();
             foreach ($param as $p) {
