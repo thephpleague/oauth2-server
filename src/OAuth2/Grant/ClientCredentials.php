@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 Auth code grant
+ * OAuth 2.0 Client credentials grant
  *
  * @package     lncd/oauth2
  * @author      Alex Bilbie <hello@alexbilbie.com>
