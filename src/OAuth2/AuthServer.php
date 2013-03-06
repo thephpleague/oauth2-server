@@ -376,7 +376,7 @@ class AuthServer
      */
     public function issueAccessToken($inputParams = array())
     {
-        $grantType = self::getParam('grant_type', 'post', $inputParams);
+        $grantType = $this->getParam('grant_type', 'post', $inputParams);
 
         if (is_null($grantType)) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'grant_type'), 0);
