@@ -291,8 +291,8 @@ class AuthServer
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'redirect_uri'), 0);
         }
 
-        if ($this->requireStateParam === true && is_null($authParams['redirect_uri'])) {
-            throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'redirect_uri'), 0);
+        if ($this->requireStateParam === true && is_null($authParams['state'])) {
+            throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'state'), 0);
         }
 
         // Validate client ID and redirect URI
