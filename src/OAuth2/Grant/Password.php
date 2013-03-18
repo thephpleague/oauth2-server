@@ -120,7 +120,7 @@ class Password implements GrantTypeInterface {
         // Check if user's username and password are correct
         $userId = call_user_func($this->getVerifyCredentialsCallback(), $authParams['username'], $authParams['password']);
 
-        if ($userId === false) {
+        if ($userId === false || $userId === null) {
             throw new Exception\ClientException(AuthServer::getExceptionMessage('invalid_credentials'), 0);
         }
 
