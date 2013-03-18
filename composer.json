@@ -1,7 +1,7 @@
 {
 	"name": "lncd/oauth2",
 	"description": "A lightweight and powerful OAuth 2.0 authorization and resource server library with support for all the core specification grants",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"homepage": "https://github.com/lncd/OAuth2",
 	"license": "MIT",
 	"require": {

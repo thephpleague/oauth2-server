@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.8 (released 2013-03-18)
+
+* Fixed check for required state parameter
+* Fixed check that user's credentials are correct in Password grant
+
 ## 1.0.7 (released 2013-03-04)
 
 * Added method `requireStateParam()`
