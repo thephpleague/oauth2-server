@@ -403,7 +403,7 @@ class AuthServer
 
     /**
      * Get a parameter from passed input parameters or the Request class
-     * @param  string|array $param Requried parameter
+     * @param  string|array $param Required parameter
      * @param  string $method      Get/put/post/delete
      * @param  array  $inputParams Passed input parameters
      * @return mixed               'Null' if parameter is missing
