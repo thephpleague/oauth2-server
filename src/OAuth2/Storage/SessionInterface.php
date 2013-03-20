@@ -108,7 +108,7 @@ interface SessionInterface
      * @param  string     $clientId    The client ID
      * @param  string     $redirectUri The redirect URI
      * @param  string     $authCode    The authorisation code
-     * @return  int|bool   Returns the session ID if the auth code
+     * @return array|bool Returns an array with the session ID in the 'id' key if the auth code
      *  is valid otherwise returns false
      */
     public function validateAuthCode(
@@ -137,8 +137,8 @@ interface SessionInterface
      * )
      * </code>
      *
-     * @param  [type] $accessToken [description]
-     * @return [type]              [description]
+     * @param  string     $accessToken  The access token
+     * @return bool|array               Returns false if the validation fails, array on success
      */
     public function validateAccessToken($accessToken);
 
@@ -161,7 +161,7 @@ interface SessionInterface
      * Validate a refresh token
      * @param  string $refreshToken The refresh token
      * @param  string $clientId     The client ID
-     * @return int                  The session ID
+     * @return bool|int             The session ID, or false on failure
      */
     public function validateRefreshToken($refreshToken, $clientId);
 
