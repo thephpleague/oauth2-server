@@ -108,7 +108,7 @@ interface SessionInterface
      * @param  string     $clientId    The client ID
      * @param  string     $redirectUri The redirect URI
      * @param  string     $authCode    The authorisation code
-     * @return  int|bool   Returns the session ID if the auth code
+     * @return array|bool Returns an array with the session ID in the 'id' key if the auth code
      *  is valid otherwise returns false
      */
     public function validateAuthCode(
