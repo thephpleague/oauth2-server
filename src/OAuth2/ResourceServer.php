@@ -13,7 +13,6 @@ namespace OAuth2;
 
 use OutOfBoundsException;
 use OAuth2\Storage\SessionInterface;
-use OAuth2\Storage\SessionScopeInterface;
 use OAuth2\Util\RequestInterface;
 use OAuth2\Util\Request;
 
