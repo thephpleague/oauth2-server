@@ -103,10 +103,10 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertFalse($v);
     }
 
-    public function test_defaultScope()
+    public function test_setDefaultScope()
     {
         $a = $this->returnDefault();
-        $a->defaultScope('test.default');
+        $a->setDefaultScope('test.default');
 
         $reflector = new ReflectionClass($a);
         $requestProperty = $reflector->getProperty('defaultScope');
@@ -114,6 +114,13 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $v = $requestProperty->getValue($a);
 
         $this->assertEquals('test.default', $v);
+    }
+
+    public function test_getDefaultScope()
+    {
+        $a = $this->returnDefault();
+        $a->setDefaultScope('test.default');
+        $this->assertEquals('test.default', $a->getDefaultScope());
     }
 
     public function test_requireStateParam()
@@ -197,6 +204,20 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException        OAuth2\Exception\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_checkAuthoriseParams_noRequiredState()
+    {
+        $a = $this->returnDefault();
+        $a->requireStateParam(true);
+        $a->checkAuthoriseParams(array(
+            'client_id' =>  1234,
+            'redirect_uri'  =>  'http://foo/redirect'
+        ));
+    }
+
+    /**
+     * @expectedException        OAuth2\Exception\ClientException
      * @expectedExceptionCode    8
      */
     public function test_checkAuthoriseParams_badClient()
@@ -273,6 +294,37 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
             'response_type' =>  'code',
             'scope' =>  ''
         ));
+    }
+
+    public function test_checkAuthoriseParams_defaultScope()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->scope->shouldReceive('getScope')->andReturn(array(
+            'id'    =>  1,
+            'scope' =>  'foo',
+            'name'  =>  'Foo Name',
+            'description'   =>  'Foo Name Description'
+        ));
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
+        $a->setDefaultScope('test.scope');
+        $a->requireScopeParam(false);
+
+        $params = $a->checkAuthoriseParams(array(
+            'client_id' =>  1234,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'response_type' =>  'code',
+            'scope'    =>  ''
+        ));
+
+        $this->assertArrayHasKey('scopes', $params);
     }
 
     /**
