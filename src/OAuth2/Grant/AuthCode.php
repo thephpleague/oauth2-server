@@ -93,8 +93,7 @@ class AuthCode implements GrantTypeInterface {
         }
 
         // Validate client ID and redirect URI
-        $clientDetails = $this->authServer->getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret'], $authParams['redirect_uri']);
-        $clientDetails = AuthServer::getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret'], $authParams['redirect_uri'], $this->identifier);
+        $clientDetails = $this->authServer->getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret'], $authParams['redirect_uri'], $this->identifier);
 
 
         if ($clientDetails === false) {
