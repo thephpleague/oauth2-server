@@ -196,7 +196,7 @@ class AuthServer
      * Default scope to be used if none is provided and requireScopeParam is false
      * @var string
      */
-    public function defaultScope($default = null)
+    public function setDefaultScope($default = null)
     {
         $this->defaultScope = $default;
     }
