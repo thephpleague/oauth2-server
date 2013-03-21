@@ -193,6 +193,15 @@ class AuthServer
     }
 
     /**
+     * Is the scope parameter required?
+     * @return bool
+     */
+    public function scopeParamRequired()
+    {
+        return $this->requireScopeParam;
+    }
+
+    /**
      * Default scope to be used if none is provided and requireScopeParam is false
      * @var string
      */
