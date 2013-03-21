@@ -211,6 +211,15 @@ class AuthServer
     }
 
     /**
+     * Default scope to be used if none is provided and requireScopeParam is false
+     * @return string|null
+     */
+    public function getDefaultScope()
+    {
+        return $this->defaultScope;
+    }
+
+    /**
      * Require the "state" paremter in checkAuthoriseParams()
      * @param  boolean $require
      * @return void
