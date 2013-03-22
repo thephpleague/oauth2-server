@@ -76,6 +76,139 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         ));
     }
 
+    /**
+     * @expectedException        OAuth2\Exception\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_issueAccessToken_clientCredentialsGrant_missingScopes()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
+        $a->requireScopeParam(true);
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'client_credentials',
+            'client_id' =>  1234,
+            'client_secret' =>  5678
+        ));
+    }
+
+    public function test_issueAccessToken_clientCredentialsGrant_defaultScope()
+    {
+        $this->scope->shouldReceive('getScope')->andReturn(array(
+            'id'    =>  1,
+            'scope' =>  'foo',
+            'name'  =>  'Foo Name',
+            'description'   =>  'Foo Name Description'
+        ));
+
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
+        $a->requireScopeParam(false);
+        $a->setDefaultScope('foobar');
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'client_credentials',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'scope' =>  ''
+        ));
+    }
+
+    /**
+     * @expectedException        OAuth2\Exception\ClientException
+     * @expectedExceptionCode    4
+     */
+    public function test_issueAccessToken_clientCredentialsGrant_badScope()
+    {
+        $this->scope->shouldReceive('getScope')->andReturn(false);
+
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'client_credentials',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'scope' =>  'blah'
+        ));
+    }
+
+    public function test_issueAccessToken_clientCredentialsGrant_goodScope()
+    {
+        $this->scope->shouldReceive('getScope')->andReturn(array(
+            'id'    =>  1,
+            'scope' =>  'foo',
+            'name'  =>  'Foo Name',
+            'description'   =>  'Foo Name Description'
+        ));
+
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'client_credentials',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'scope' =>  'blah'
+        ));
+    }
+
     function test_issueAccessToken_clientCredentialsGrant_passedInput()
     {
         $this->client->shouldReceive('getClient')->andReturn(array(
@@ -94,11 +227,12 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
+        $a->requireScopeParam(false);
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'client_credentials',
             'client_id' =>  1234,
-            'client_secret' =>  5678
+            'client_secret' =>  5678,
         ));
 
         $this->assertArrayHasKey('access_token', $v);
@@ -128,6 +262,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
+        $a->requireScopeParam(false);
 
         $_POST['grant_type'] = 'client_credentials';
         $_POST['client_id'] = 1234;
@@ -166,6 +301,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
         $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
+        $a->requireScopeParam(false);
 
         $_POST['grant_type'] = 'client_credentials';
         $_POST['client_id'] = 1234;
