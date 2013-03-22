@@ -85,7 +85,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $param = $requestReflector->getProperty('headers');
         $param->setAccessible(true);
         $param->setValue($request, array(
-            'Authorization' =>  'Bearer YWJjZGVm'
+            'Authorization' =>  'Bearer abcdef'
         ));
         $s = $this->returnDefault();
         $s->setRequest($request);
@@ -131,7 +131,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $param = $requestReflector->getProperty('headers');
         $param->setAccessible(true);
         $param->setValue($request, array(
-            'Authorization' =>  'Bearer YWJjZGVm'
+            'Authorization' =>  'Bearer abcdef'
         ));
         $s = $this->returnDefault();
         $s->setRequest($request);
@@ -153,7 +153,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $param = $requestReflector->getProperty('headers');
         $param->setAccessible(true);
         $param->setValue($request, array(
-            'Authorization' =>  'Bearer YWJjZGVm'
+            'Authorization' =>  'Bearer abcdef'
         ));
         $s = $this->returnDefault();
         $s->setRequest($request);
