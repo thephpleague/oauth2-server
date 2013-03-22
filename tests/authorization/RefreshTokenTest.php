@@ -142,7 +142,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_refreshTokenGrant_badRefreshToken()
     {
         $this->client->shouldReceive('getClient')->andReturn(array());
-        $this->client->shouldReceive('validateRefreshToken')->andReturn(false);
+        $this->session->shouldReceive('validateRefreshToken')->andReturn(false);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
@@ -167,8 +167,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
             'name'  =>  'Example Client'
         ));
 
-        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
-
+        $this->session->shouldReceive('validateRefreshToken')->andReturn(1);
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('updateSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
@@ -205,7 +204,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
             'name'  =>  'Example Client'
         ));
 
-        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateRefreshToken')->andReturn(1);
 
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('updateSession')->andReturn(null);
