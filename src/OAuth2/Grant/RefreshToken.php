@@ -102,7 +102,7 @@ class RefreshToken implements GrantTypeInterface {
         }
 
         // Validate refresh token
-        $sessionId = $this->authServer->getStorage('client')->validateRefreshToken(
+        $sessionId = $this->authServer->getStorage('session')->validateRefreshToken(
             $authParams['refresh_token'],
             $authParams['client_id']
         );
