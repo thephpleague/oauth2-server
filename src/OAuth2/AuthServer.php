@@ -118,6 +118,85 @@ class AuthServer
     );
 
     /**
+     * Exception error HTTP status codes
+     * @var array
+     * 
+     * RFC 6749, section 4.1.2.1.:
+     * No 503 status code for 'temporarily_unavailable', because 
+     * "a 503 Service Unavailable HTTP status code cannot be
+     * returned to the client via an HTTP redirect"
+     */
+    protected static $exceptionHttpStatusCodes = array(
+        'invalid_request'           =>  400,
+        'unauthorized_client'       =>  400,
+        'access_denied'             =>  401,
+        'unsupported_response_type' =>  400,
+        'invalid_scope'             =>  400,
+        'server_error'              =>  500,
+        'temporarily_unavailable'   =>  400,
+        'unsupported_grant_type'    =>  400,
+        'invalid_client'            =>  401,
+        'invalid_grant'             =>  400,
+        'invalid_credentials'       =>  400,
+        'invalid_refresh'           =>  400,
+    );
+    
+    /**
+     * Get all headers that have to be send with the error response
+     *
+     * @param  string $error The error message key
+     * @return array         Array with header values
+     */
+    public static function getExceptionHttpHeaders($error)
+    {
+        $headers = array();
+        switch (self::$exceptionHttpStatusCodes[$error]) {
+            case 401:
+                $headers[] = 'HTTP/1.1 401 Unauthorized';
+                break;
+            case 500:
+                $headers[] = 'HTTP/1.1 500 Internal Server Error';
+                break;
+            case 501:
+                $headers[] = 'HTTP/1.1 501 Not Implemented';
+                break;
+            case 400:
+            default:
+                $headers[] = 'HTTP/1.1 400 Bad Request';
+        }
+        
+        // Add "WWW-Authenticate" header
+        //
+        // RFC 6749, section 5.2.: 
+        // "If the client attempted to authenticate via the 'Authorization'
+        // request header field, the authorization server MUST
+        // respond with an HTTP 401 (Unauthorized) status code and
+        // include the "WWW-Authenticate" response header field
+        // matching the authentication scheme used by the client.
+        if ($error === 'invalid_client') {
+            $auth_scheme = null;
+            $request = new Request();
+            if ($request->server('PHP_AUTH_USER') !== null) {
+                $auth_scheme = 'Basic';
+            } else {
+                $auth_header = $request->header('Authorization');
+                if ($auth_header !== null) {
+                    if (strpos($auth_header, 'Bearer') === 0) {
+                        $auth_scheme = 'Bearer';
+                    } elseif (strpos($auth_header, 'Basic') === 0) {
+                        $auth_scheme = 'Basic';
+                    }
+                }
+            }
+            if ($auth_scheme !== null) {
+                $headers[] = "WWW-Authenticate: $auth_scheme realm=\"\"";
+            }
+        }
+        
+        return $headers;
+    }
+
+    /**
      * Get an exception message
      *
      * @param  string $error The error message key
