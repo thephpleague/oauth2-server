@@ -126,7 +126,6 @@ class ClientCredentials implements GrantTypeInterface {
 
         // Generate an access token
         $accessToken = SecureKey::make();
-        $refreshToken = ($this->authServer->hasGrantType('refresh_token')) ? SecureKey::make() : null;
 
         $accessTokenExpires = time() + $this->authServer->getExpiresIn();
         $accessTokenExpiresIn = $this->authServer->getExpiresIn();
@@ -142,7 +141,7 @@ class ClientCredentials implements GrantTypeInterface {
             $authParams['client_id'],
             null,
             $accessToken,
-            $refreshToken,
+            null,
             $accessTokenExpires,
             'granted'
         );
@@ -159,10 +158,6 @@ class ClientCredentials implements GrantTypeInterface {
             'expires'       =>  $accessTokenExpires,
             'expires_in'    =>  $accessTokenExpiresIn
         );
-
-        if ($this->authServer->hasGrantType('refresh_token')) {
-            $response['refresh_token'] = $refreshToken;
-        }
 
         return $response;
     }
