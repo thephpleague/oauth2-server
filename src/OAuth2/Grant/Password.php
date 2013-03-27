@@ -116,8 +116,8 @@ class Password implements GrantTypeInterface {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'client_secret'), 0);
         }
 
-        // Validate client ID and redirect URI
-        $clientDetails = $this->authServer->getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret']);
+        // Validate client credentials
+        $clientDetails = $this->authServer->getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret'], null, $this->identifier);
 
         if ($clientDetails === false) {
             throw new Exception\ClientException($this->authServer->getExceptionMessage('invalid_client'), 8);

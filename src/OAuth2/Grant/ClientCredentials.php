@@ -89,7 +89,7 @@ class ClientCredentials implements GrantTypeInterface {
         }
 
         // Validate client ID and client secret
-        $clientDetails = $this->authServer->getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret']);
+        $clientDetails = $this->authServer->getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret'], null, $this->identifier);
 
         if ($clientDetails === false) {
             throw new Exception\ClientException(AuthServer::getExceptionMessage('invalid_client'), 8);
