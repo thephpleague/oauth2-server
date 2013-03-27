@@ -50,6 +50,14 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertEquals('access_denied', OAuth2\AuthServer::getExceptionType(2));
     }
 
+    public function test_getExceptionHttpHeaders()
+    {
+        $this->assertEquals(array('HTTP/1.1 401 Unauthorized'), OAuth2\AuthServer::getExceptionHttpHeaders('access_denied'));
+        $this->assertEquals(array('HTTP/1.1 500 Internal Server Error'), OAuth2\AuthServer::getExceptionHttpHeaders('server_error'));
+        $this->assertEquals(array('HTTP/1.1 501 Not Implemented'), OAuth2\AuthServer::getExceptionHttpHeaders('unsupported_grant_type'));
+        $this->assertEquals(array('HTTP/1.1 400 Bad Request'), OAuth2\AuthServer::getExceptionHttpHeaders('invalid_refresh'));
+    }
+
     public function test_hasGrantType()
     {
         $a = $this->returnDefault();
