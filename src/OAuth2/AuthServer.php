@@ -120,9 +120,9 @@ class AuthServer
     /**
      * Exception error HTTP status codes
      * @var array
-     * 
+     *
      * RFC 6749, section 4.1.2.1.:
-     * No 503 status code for 'temporarily_unavailable', because 
+     * No 503 status code for 'temporarily_unavailable', because
      * "a 503 Service Unavailable HTTP status code cannot be
      * returned to the client via an HTTP redirect"
      */
@@ -134,13 +134,13 @@ class AuthServer
         'invalid_scope'             =>  400,
         'server_error'              =>  500,
         'temporarily_unavailable'   =>  400,
-        'unsupported_grant_type'    =>  400,
+        'unsupported_grant_type'    =>  501,
         'invalid_client'            =>  401,
         'invalid_grant'             =>  400,
         'invalid_credentials'       =>  400,
         'invalid_refresh'           =>  400,
     );
-    
+
     /**
      * Get all headers that have to be send with the error response
      *
@@ -164,35 +164,37 @@ class AuthServer
             default:
                 $headers[] = 'HTTP/1.1 400 Bad Request';
         }
-        
+
         // Add "WWW-Authenticate" header
         //
-        // RFC 6749, section 5.2.: 
+        // RFC 6749, section 5.2.:
         // "If the client attempted to authenticate via the 'Authorization'
         // request header field, the authorization server MUST
         // respond with an HTTP 401 (Unauthorized) status code and
         // include the "WWW-Authenticate" response header field
         // matching the authentication scheme used by the client.
+        // @codeCoverageIgnoreStart
         if ($error === 'invalid_client') {
-            $auth_scheme = null;
+            $authScheme = null;
             $request = new Request();
             if ($request->server('PHP_AUTH_USER') !== null) {
-                $auth_scheme = 'Basic';
+                $authScheme = 'Basic';
             } else {
-                $auth_header = $request->header('Authorization');
-                if ($auth_header !== null) {
-                    if (strpos($auth_header, 'Bearer') === 0) {
-                        $auth_scheme = 'Bearer';
-                    } elseif (strpos($auth_header, 'Basic') === 0) {
-                        $auth_scheme = 'Basic';
+                $authHeader = $request->header('Authorization');
+                if ($authHeader !== null) {
+                    if (strpos($authHeader, 'Bearer') === 0) {
+                        $authScheme = 'Bearer';
+                    } elseif (strpos($authHeader, 'Basic') === 0) {
+                        $authScheme = 'Basic';
                     }
                 }
             }
-            if ($auth_scheme !== null) {
-                $headers[] = "WWW-Authenticate: $auth_scheme realm=\"\"";
+            if ($authScheme !== null) {
+                $headers[] = 'WWW-Authenticate: '.$authScheme.' realm=""';
             }
         }
-        
+        // @codeCoverageIgnoreEnd
+
         return $headers;
     }
 
