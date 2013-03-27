@@ -48,7 +48,8 @@ interface ClientInterface
 	 * @param  string     $clientId     The client's ID
 	 * @param  string     $clientSecret The client's secret (default = "null")
 	 * @param  string     $redirectUri  The client's redirect URI (default = "null")
+	 * @param  string     $grantType    The grant type used by client (default = "null")
 	 * @return bool|array               Returns false if the validation fails, array on success
 	 */
-    public function getClient($clientId = null, $clientSecret = null, $redirectUri = null);
+    public function getClient($clientId = null, $clientSecret = null, $redirectUri = null, $grantType = null);
 }
