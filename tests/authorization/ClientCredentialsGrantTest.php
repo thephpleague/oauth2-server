@@ -300,7 +300,6 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
-        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
         $a->requireScopeParam(false);
 
         $_POST['grant_type'] = 'client_credentials';
@@ -316,7 +315,6 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('token_type', $v);
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
-        $this->assertArrayHasKey('refresh_token', $v);
 
         $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
         $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
