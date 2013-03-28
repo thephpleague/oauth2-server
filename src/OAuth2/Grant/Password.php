@@ -158,7 +158,7 @@ class Password implements GrantTypeInterface {
         $authParams['scopes'] = array();
 
         foreach ($scopes as $scope) {
-            $scopeDetails = $this->authServer->getStorage('scope')->getScope($scope);
+            $scopeDetails = $this->authServer->getStorage('scope')->getScope($scope, $authParams['client_id'], $this->identifier);
 
             if ($scopeDetails === false) {
                 throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_scope'), $scope), 4);
