@@ -90,7 +90,7 @@ class AuthCode implements GrantTypeInterface {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'redirect_uri'), 0);
         }
 
-        if ($this->authServer->scopeParamRequired() === true && is_null($authParams['state'])) {
+        if ($this->authServer->stateParamRequired() === true && is_null($authParams['state'])) {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'state'), 0);
         }
 

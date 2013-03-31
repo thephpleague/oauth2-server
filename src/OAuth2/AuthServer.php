@@ -311,6 +311,16 @@ class AuthServer
      * @param  boolean $require
      * @return void
      */
+    public function stateParamRequired()
+    {
+        return $this->requireStateParam;
+    }
+
+    /**
+     * Require the "state" paremter in checkAuthoriseParams()
+     * @param  boolean $require
+     * @return void
+     */
     public function requireStateParam($require = false)
     {
         $this->requireStateParam = $require;
