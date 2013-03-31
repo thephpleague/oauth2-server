@@ -265,7 +265,6 @@ class AuthServer
 
     public function getResponseTypes()
     {
-        die(var_dump($this->responseTypes));
         return $this->responseTypes;
     }
 
