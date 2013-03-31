@@ -263,6 +263,12 @@ class AuthServer
         return (array_key_exists($identifier, $this->grantTypes));
     }
 
+    public function getResponseTypes()
+    {
+        die(var_dump($this->responseTypes));
+        return $this->responseTypes;
+    }
+
     /**
      * Require the "scope" paremter in checkAuthoriseParams()
      * @param  boolean $require
