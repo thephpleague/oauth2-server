@@ -71,6 +71,105 @@ class AuthCode implements GrantTypeInterface {
     }
 
     /**
+     * Check authorise parameters
+     *
+     * @param  array $inputParams Optional array of parsed $_GET keys
+     * @throws \OAuth2\Exception\ClientException
+     * @return array             Authorise request parameters
+     */
+    public function checkAuthoriseParams($inputParams = array())
+    {
+        // Auth params
+        $authParams = $this->authServer->getParam(array('client_id', 'redirect_uri', 'response_type', 'scope', 'state'), 'get', $inputParams);
+
+        if (is_null($authParams['client_id'])) {
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'client_id'), 0);
+        }
+
+        if (is_null($authParams['redirect_uri'])) {
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'redirect_uri'), 0);
+        }
+
+        if ($this->authServer->scopeParamRequired() === true && is_null($authParams['state'])) {
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'state'), 0);
+        }
+
+        // Validate client ID and redirect URI
+        $clientDetails = $this->authServer->getStorage('client')->getClient($authParams['client_id'], null, $authParams['redirect_uri']);
+
+        if ($clientDetails === false) {
+            throw new Exception\ClientException($this->authServer->getExceptionMessage('invalid_client'), 8);
+        }
+
+        $authParams['client_details'] = $clientDetails;
+
+        if (is_null($authParams['response_type'])) {
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'response_type'), 0);
+        }
+
+        // Ensure response type is one that is recognised
+        if ( ! in_array($authParams['response_type'], $this->authServer->getResponseTypes())) {
+            throw new Exception\ClientException($this->authServer->getExceptionMessage('unsupported_response_type'), 3);
+        }
+
+        // Validate scopes
+        $scopes = explode($this->authServer->getScopeDelimeter(), $authParams['scope']);
+
+        for ($i = 0; $i < count($scopes); $i++) {
+            $scopes[$i] = trim($scopes[$i]);
+            if ($scopes[$i] === '') unset($scopes[$i]); // Remove any junk scopes
+        }
+
+        if ($this->authServer->scopeParamRequired() === true && count($scopes) === 0) {
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'scope'), 0);
+        } elseif (count($scopes) === 0 && $this->authServer->getDefaultScope()) {
+            $scopes = array($this->authServer->getDefaultScope());
+        }
+
+        $authParams['scopes'] = array();
+
+        foreach ($scopes as $scope) {
+            $scopeDetails = $this->authServer->getStorage('scope')->getScope($scope, $authParams['client_id'], $this->identifier);
+
+            if ($scopeDetails === false) {
+                throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_scope'), $scope), 4);
+            }
+
+            $authParams['scopes'][] = $scopeDetails;
+        }
+
+        return $authParams;
+    }
+
+    /**
+     * Parse a new authorise request
+     *
+     * @param  string $type        The session owner's type
+     * @param  string $typeId      The session owner's ID
+     * @param  array  $authParams  The authorise request $_GET parameters
+     * @return string              An authorisation code
+     */
+    public function newAuthoriseRequest($type, $typeId, $authParams = array())
+    {
+        // Generate an auth code
+        $authCode = SecureKey::make();
+
+        // Remove any old sessions the user might have
+        $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], $type, $typeId);
+
+        // Create a new session
+        $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], $authParams['redirect_uri'], $type, $typeId, $authCode);
+
+        // Associate scopes with the new session
+        foreach ($authParams['scopes'] as $scope)
+        {
+            $this->authServer->getStorage('session')->associateScope($sessionId, $scope['id']);
+        }
+
+        return $authCode;
+    }
+
+    /**
      * Complete the auth code grant
      * @param  null|array $inputParams
      * @return array
