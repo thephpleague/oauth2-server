@@ -22,7 +22,7 @@ interface SessionInterface
      * INSERT INTO oauth_sessions (client_id, redirect_uri, owner_type,
      * owner_id, auth_code, access_token, refresh_token, stage, first_requested,
      * last_updated) VALUES ($clientId, $redirectUri, $type, $typeId, $authCode,
-     * $accessToken, $stage, UNIX_TIMESTAMP(NOW()), UNIX_TIMESTAMP(NOW()))
+     * $accessToken, $refreshToken, $stage, UNIX_TIMESTAMP(NOW()), UNIX_TIMESTAMP(NOW()))
      * </code>
      *
      * @param  string $clientId          The client ID
