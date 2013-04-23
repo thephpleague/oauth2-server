@@ -35,7 +35,7 @@ CREATE TABLE `oauth_session_access_token` (
   UNIQUE KEY `u_oaseacto_acto_seid` (`access_token`,`session_id`),
   KEY `f_oaseto_seid` (`session_id`),
   CONSTRAINT `f_oaseto_seid` FOREIGN KEY (`session_id`) REFERENCES `oauth_session` (`session_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=INNODB DEFAULT CHARSET=latin1;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_authcode` (
   `session_id` INT(10) UNSIGNED NOT NULL,
@@ -46,21 +46,21 @@ CREATE TABLE `oauth_session_authcode` (
   KEY `f_oaseau_setoid` (`session_token_id`),
   CONSTRAINT `f_oaseau_seid` FOREIGN KEY (`session_id`) REFERENCES `oauth_session` (`session_id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `f_oaseau_setoid` FOREIGN KEY (`session_token_id`) REFERENCES `oauth_session_access_token` (`session_token_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=INNODB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_redirect` (
   `session_id` INT(10) UNSIGNED NOT NULL,
   `redirect_uri` VARCHAR(255) CHARACTER SET utf8 NOT NULL DEFAULT '',
   PRIMARY KEY (`session_id`),
   CONSTRAINT `f_oasere_seid` FOREIGN KEY (`session_id`) REFERENCES `oauth_session` (`session_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=INNODB DEFAULT CHARSET=latin1;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_refresh_token` (
   `session_token_id` INT(10) UNSIGNED NOT NULL,
   `refresh_token` CHAR(40) CHARACTER SET utf8 NOT NULL DEFAULT '',
   PRIMARY KEY (`session_token_id`),
   CONSTRAINT `f_oasetore_setoid` FOREIGN KEY (`session_token_id`) REFERENCES `oauth_session_access_token` (`session_token_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=INNODB DEFAULT CHARSET=latin1;
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_scopes` (
   `scope_id` SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
