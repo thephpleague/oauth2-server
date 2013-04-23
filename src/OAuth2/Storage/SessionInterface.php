@@ -33,7 +33,6 @@ interface SessionInterface
      * @param  string $accessToken       The access token (default = "null")
      * @param  string $refreshToken      The refresh token (default = "null")
      * @param  int    $accessTokenExpire The expiry time of an access token as a unix timestamp
-     * @param  string $stage             The stage of the session (default ="request")
      * @return int                       The session ID
      */
     public function createSession(
@@ -44,8 +43,7 @@ interface SessionInterface
         $authCode = null,
         $accessToken = null,
         $refreshToken = null,
-        $accessTokenExpire = null,
-        $stage = 'requested'
+        $accessTokenExpire = null
     );
 
     /**
