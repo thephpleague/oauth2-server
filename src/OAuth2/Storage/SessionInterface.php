@@ -70,8 +70,7 @@ interface SessionInterface
         $authCode = null,
         $accessToken = null,
         $refreshToken = null,
-        $accessTokenExpire = null,
-        $stage = 'requested'
+        $accessTokenExpire = null
     );
 
     /**
