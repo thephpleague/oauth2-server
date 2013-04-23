@@ -38,14 +38,11 @@ CREATE TABLE `oauth_session_access_token` (
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_authcode` (
-  `session_id` INT(10) UNSIGNED NOT NULL,
-  `session_token_id` INT(10) UNSIGNED DEFAULT NULL,
-  `auth_code` CHAR(40) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `auth_code_expires` INT(10) UNSIGNED NOT NULL,
+  `session_id` int(10) unsigned NOT NULL,
+  `auth_code` char(40) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `auth_code_expires` int(10) unsigned NOT NULL,
   PRIMARY KEY (`session_id`),
-  KEY `f_oaseau_setoid` (`session_token_id`),
-  CONSTRAINT `f_oaseau_seid` FOREIGN KEY (`session_id`) REFERENCES `oauth_session` (`session_id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `f_oaseau_setoid` FOREIGN KEY (`session_token_id`) REFERENCES `oauth_session_access_token` (`session_token_id`) ON DELETE CASCADE ON UPDATE NO ACTION
+  CONSTRAINT `f_oaseau_seid` FOREIGN KEY (`session_id`) REFERENCES `oauth_session` (`session_id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_redirect` (
