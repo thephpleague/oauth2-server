@@ -228,12 +228,14 @@ class AuthCode implements GrantTypeInterface {
         $accessTokenExpires = time() + $this->authServer->getExpiresIn();
         $accessTokenExpiresIn = $this->authServer->getExpiresIn();
 
+        $this->authServer->getStorage('session')->deleteAuthCode($session['id']);
 
         $accessTokenId = $this->authServer->getStorage('session')->updateSession($session['id'], array(
             'access_token'  =>  $accessToken,
             'access_token_expire'  =>  $accessTokenExpires,
             'refresh_token'  =>  $refreshToken
         ));
+
         // Associate scopes with the access token
         if ( ! is_null($session['scope_ids'])) {
             $scopeIds = explode(',', $session['scope_ids']);
