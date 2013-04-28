@@ -157,11 +157,11 @@ class AuthCode implements GrantTypeInterface {
         // Remove any old sessions the user might have
         $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], $type, $typeId);
 
-
-        // Associate scopes with the new session
+        // List of scopes IDs
+        $scopeIds = array();
         foreach ($authParams['scopes'] as $scope)
         {
-            $this->authServer->getStorage('session')->associateScope($sessionId, $scope['id']);
+            $scopeIds[] = $scope['id'];
         }
 
         // Create a new session
@@ -237,6 +237,14 @@ class AuthCode implements GrantTypeInterface {
             $accessTokenExpires,
             'granted'
         );
+        // Associate scopes with the access token
+        if ( ! is_null($session['scope_ids'])) {
+            $scopeIds = explode(',', $session['scope_ids']);
+
+            foreach ($scopeIds as $scopeId) {
+                $this->authServer->getStorage('session')->associateScope($accessTokenId, $scopeId);
+            }
+        }
 
         $response = array(
             'access_token'  =>  $accessToken,
