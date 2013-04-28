@@ -220,8 +220,7 @@ class AuthCode implements GrantTypeInterface {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_grant'), 'code'), 9);
         }
 
-        // A session ID was returned so update it with an access token,
-        //  remove the authorisation code, change the stage to 'granted'
+        // A session ID was returned so update it with an access token and remove the authorisation code
 
         $accessToken = SecureKey::make();
         $refreshToken = ($this->authServer->hasGrantType('refresh_token')) ? SecureKey::make() : null;
