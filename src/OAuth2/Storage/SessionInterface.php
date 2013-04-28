@@ -19,32 +19,19 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * INSERT INTO oauth_sessions (client_id, redirect_uri, owner_type,
-     * owner_id, auth_code, access_token, refresh_token, stage, first_requested,
-     * last_updated) VALUES ($clientId, $redirectUri, $type, $typeId, $authCode,
-     * $accessToken, $stage, UNIX_TIMESTAMP(NOW()), UNIX_TIMESTAMP(NOW()))
+     * INSERT INTO oauth_sessions (client_id, owner_type,  owner_id) VALUES ($clientId, $type, $typeId)
+     *
+     * INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires) VALUE
+     *  ($sessionId, $authCode, $authCodeExpires)
+     *
+     * INSERT INTO oauth_session_access_tokens (session_id, access_token, access_token_expires) VALUE
+     *  ($sessionId, $accessToken, $accessTokenExpire)
      * </code>
      *
-     * @param  string $clientId          The client ID
-     * @param  string $redirectUri       The redirect URI
-     * @param  string $type              The session owner's type (default = "user")
-     * @param  string $typeId            The session owner's ID (default = "null")
-     * @param  string $authCode          The authorisation code (default = "null")
-     * @param  string $accessToken       The access token (default = "null")
-     * @param  string $refreshToken      The refresh token (default = "null")
-     * @param  int    $accessTokenExpire The expiry time of an access token as a unix timestamp
-     * @return int                       The session ID
+     * @param  array $params Session parameters
+     * @return int           The session ID
      */
-    public function createSession(
-        $clientId,
-        $redirectUri,
-        $type = 'user',
-        $typeId = null,
-        $authCode = null,
-        $accessToken = null,
-        $refreshToken = null,
-        $accessTokenExpire = null
-    );
+    public function createSession($params = array());
 
     /**
      * Update an OAuth session
@@ -57,21 +44,10 @@ interface SessionInterface
      *  id = $sessionId
      * </code>
      *
-     * @param  string $sessionId         The session ID
-     * @param  string $authCode          The authorisation code (default = "null")
-     * @param  string $accessToken       The access token (default = "null")
-     * @param  string $refreshToken      The refresh token (default = "null")
-     * @param  int    $accessTokenExpire The expiry time of an access token as a unix timestamp
-     * @param  string $stage             The stage of the session (default ="request")
-     * @return  void
+     * @param  array $sessionId The session ID
+     * @return int              ID of the access token
      */
-    public function updateSession(
-        $sessionId,
-        $authCode = null,
-        $accessToken = null,
-        $refreshToken = null,
-        $accessTokenExpire = null
-    );
+    public function updateSession($sessionId, $params = array());
 
     /**
      * Delete an OAuth session
@@ -86,11 +62,7 @@ interface SessionInterface
      * @param  string $typeId   The session owner's ID
      * @return  void
      */
-    public function deleteSession(
-        $clientId,
-        $type,
-        $typeId
-    );
+    public function deleteSession($clientId, $type, $typeId);
 
     /**
      * Validate that an authorisation code is valid
@@ -98,8 +70,12 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * SELECT id FROM oauth_sessions WHERE client_id = $clientID AND
-     *  redirect_uri = $redirectUri AND auth_code = $authCode
+     * SELECT oauth_sessions.id FROM oauth_sessions JOIN oauth_session_authcodes ON
+     *  oauth_session_authcodes.`session_id` = oauth_sessions.id JOIN oauth_session_redirects ON
+     *  oauth_session_redirects.`session_id` = oauth_sessions.id WHERE oauth_sessions.client_id = $clientId
+     *  AND oauth_session_authcodes.`auth_code` = $authCode AND
+     *  `oauth_session_authcodes`.`auth_code_expires` >= UNIX_TIMESTAMP(NOW()) AND
+     *  `oauth_session_redirects`.`redirect_uri` = $redirectUri
      * </code>
      *
      * @param  string     $clientId    The client ID
@@ -108,11 +84,7 @@ interface SessionInterface
      * @return array|bool Returns an array with the session ID in the 'id' key if the auth code
      *  is valid otherwise returns false
      */
-    public function validateAuthCode(
-        $clientId,
-        $redirectUri,
-        $authCode
-    );
+    public function validateAuthCode($clientId, $redirectUri, $authCode);
 
     /**
      * Validate an access token
@@ -179,12 +151,7 @@ interface SessionInterface
      * @param  int    $accessTokenExpires    The UNIX timestamp of when the new token expires
      * @return void
      */
-    public function updateRefreshToken(
-        $sessionId,
-        $newAccessToken,
-        $newRefreshToken,
-        $accessTokenExpires
-    );
+    public function updateRefreshToken($sessionId, $newAccessToken, $newRefreshToken, $accessTokenExpires);
 
     /**
      * Associates a session with a scope
@@ -192,15 +159,14 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * INSERT INTO oauth_session_scopes (session_id, scope_id) VALUE ($sessionId,
-     *  $scopeId)
+     * INSERT INTO oauth_session_scopes (session_id, scope_id) VALUE ($sessionId, $scopeId)
      * </code>
      *
      * @param int    $sessionId The session ID
      * @param string $scopeId   The scope ID
      * @return void
      */
-    public function associateScope($sessionId, $scopeId);
+    public function associateScope($accessTokenId, $scopeId);
 
     /**
      * Return the scopes associated with an access token
