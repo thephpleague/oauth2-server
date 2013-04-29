@@ -137,7 +137,7 @@ class ClientCredentials implements GrantTypeInterface {
         $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], 'client', $authParams['client_id']);
 
         // Add the access token
-        $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($sessionId, $accessToken);
+        $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($sessionId, $accessToken, $accessTokenExpires);
 
         // Associate scopes with the new session
         foreach ($authParams['scopes'] as $scope)
