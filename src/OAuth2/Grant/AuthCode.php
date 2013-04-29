@@ -222,18 +222,14 @@ class AuthCode implements GrantTypeInterface {
         // A session ID was returned so update it with an access token and remove the authorisation code
 
         $accessToken = SecureKey::make();
-        $refreshToken = ($this->authServer->hasGrantType('refresh_token')) ? SecureKey::make() : null;
-
         $accessTokenExpires = time() + $this->authServer->getExpiresIn();
         $accessTokenExpiresIn = $this->authServer->getExpiresIn();
 
-        $this->authServer->getStorage('session')->deleteAuthCode($session['id']);
+        // Remove the auth code
+        $this->authServer->getStorage('session')->removeAuthCode($session['id']);
 
-        $accessTokenId = $this->authServer->getStorage('session')->updateSession($session['id'], array(
-            'access_token'  =>  $accessToken,
-            'access_token_expire'  =>  $accessTokenExpires,
-            'refresh_token'  =>  $refreshToken
-        ));
+        // Create an access token
+        $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($session['id'], $accessToken, $accessTokenExpires));
 
         // Associate scopes with the access token
         if ( ! is_null($session['scope_ids'])) {
@@ -251,7 +247,10 @@ class AuthCode implements GrantTypeInterface {
             'expires_in'    =>  $accessTokenExpiresIn
         );
 
+        // Associate a refresh token if set
         if ($this->authServer->hasGrantType('refresh_token')) {
+            $refreshToken = SecureKey::make();
+            $this->authServer->getStorage('session')->associateRefreshToken($accessTokenId, $refreshToken);
             $response['refresh_token'] = $refreshToken;
         }
 
