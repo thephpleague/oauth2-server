@@ -165,14 +165,13 @@ class AuthCode implements GrantTypeInterface {
         }
 
         // Create a new session
-        $sessionId = $this->authServer->getStorage('session')->createSession(array(
-            'client_id' =>  $authParams['client_id'],
-            'owner_type'  =>  $type,
-            'owner_id'  =>  $typeId,
-            'redirect_uri'  =>$authParams['redirect_uri'],
-            'auth_code' =>  $authCode,
-            'scope_ids' =>  implode(',', $scopeIds)
-        ));
+        $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], $type, $typeId);
+
+        // Associate a redirect URI
+        $this->authServer->getStorage('session')->associateRedirectUri($sessionId, $authParams['redirect_uri']);
+
+        // Associate the auth code
+        $this->authServer->getStorage('session')->associateAuthCode($sessionId, $authCode, time()+600, implode(',', $scopeIds));
 
         return $authCode;
     }
