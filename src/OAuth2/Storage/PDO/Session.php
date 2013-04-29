@@ -113,6 +113,8 @@ class Session implements SessionInterface
      */
     public function associateRefreshToken($accessTokenId, $refreshToken)
     {
+        $db = \ezcDbInstance::get();
+
         $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token) VALUE (:accessTokenId, :refreshToken)');
         $stmt->bindValue(':accessTokenId', $accessTokenId);
         $stmt->bindValue(':refreshToken', $refreshToken);
@@ -126,7 +128,7 @@ class Session implements SessionInterface
      */
     public function removeRefreshToken($sessionId)
     {
-
+        throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
     }
 
     /**
