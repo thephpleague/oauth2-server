@@ -229,7 +229,7 @@ class AuthCode implements GrantTypeInterface {
         $this->authServer->getStorage('session')->removeAuthCode($session['id']);
 
         // Create an access token
-        $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($session['id'], $accessToken, $accessTokenExpires));
+        $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($session['id'], $accessToken, $accessTokenExpires);
 
         // Associate scopes with the access token
         if ( ! is_null($session['scope_ids'])) {
