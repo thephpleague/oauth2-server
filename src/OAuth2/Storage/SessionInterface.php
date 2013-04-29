@@ -126,10 +126,9 @@ interface SessionInterface
     public function associateScope(int $accessTokenId, int $scopeId);
 
     /**
-     * Get a session's associated scopes
-     * @param  int    $accessTokenId The ID of the access token
-     * @param  int    $scopeId       The ID of the scope]
+     * Get all associated access tokens for an access token
+     * @param  string $accessToken The access token
      * @return array
      */
-    public function getScopes(int $accessTokenId, int $scopeId);
+    public function getScopes(string $accessToken);
 }
