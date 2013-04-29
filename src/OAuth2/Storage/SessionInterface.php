@@ -20,7 +20,7 @@ interface SessionInterface
      * @param  string $ownerId   The ID of the session owner (e.g. "123")
      * @return int               The session ID
      */
-	public function createSession(string $clientId, string $ownerType, string $ownerId);
+    public function createSession($clientId, $ownerType, $ownerId);
 
     /**
      * Delete a session
@@ -29,7 +29,7 @@ interface SessionInterface
      * @param  string $ownerId   The ID of the session owner (e.g. "123")
      * @return void
      */
-    public function deleteSession(string $clientId, string $ownerType, string $ownerId);
+    public function deleteSession($clientId, $ownerType, $ownerId);
 
     /**
      * Associate a redirect URI with a session
@@ -37,14 +37,14 @@ interface SessionInterface
      * @param  string $redirectUri The redirect URI
      * @return void
      */
-    public function associateRedirectUri(int $sessionId, string $redirectUri);
+    public function associateRedirectUri($sessionId, $redirectUri);
 
     /**
      * Remove an associated redirect URI
      * @param  int    $sessionId The session ID
      * @return void
      */
-    public function removeRedirectUri(int $sessionId);
+    public function removeRedirectUri($sessionId);
 
     /**
      * Associate an access token with a session
@@ -53,14 +53,14 @@ interface SessionInterface
      * @param  int    $expireTime  Unix timestamp of the access token expiry time
      * @return void
      */
-    public function associateAccessToken(int $sessionId, string $accessToken, int $expireTime);
+    public function associateAccessToken($sessionId, $accessToken, $expireTime);
 
     /**
      * Remove an associated access token from a session
      * @param  int    $sessionId   The session ID
      * @return void
      */
-    public function removeAccessToken(int $sessionId);
+    public function removeAccessToken($sessionId);
 
     /**
      * Associate a refresh token with a session
@@ -68,14 +68,14 @@ interface SessionInterface
      * @param  string $refreshToken  The refresh token
      * @return void
      */
-    public function associateRefreshToken(int $accessTokenId, string $refreshToken);
+    public function associateRefreshToken($accessTokenId, $refreshToken);
 
     /**
      * Remove an associated refresh token from a session
      * @param  int    $sessionId   The session ID
      * @return void
      */
-    public function removeRefreshToken(int $sessionId);
+    public function removeRefreshToken($sessionId);
 
     /**
      * Assocate an authorization code with a session
@@ -85,14 +85,14 @@ interface SessionInterface
      * @param  string $scopeIds   Comma seperated list of scope IDs to be later associated (default = null)
      * @return void
      */
-    public function associateAuthCode(int $sessionId, string $authCode, int $expireTime, string $scopeIds = null);
+    public function associateAuthCode($sessionId, $authCode, $expireTime, $scopeIds = null);
 
     /**
      * Remove an associated authorization token from a session
      * @param  int    $sessionId   The session ID
      * @return void
      */
-    public function removeAuthCode(int $sessionId);
+    public function removeAuthCode($sessionId);
 
     /**
      * Validate an authorization code
@@ -101,21 +101,21 @@ interface SessionInterface
      * @param  string $authCode    The authorization code
      * @return void
      */
-    public function validateAuthCode(string $clientId, string $redirectUri, string $authCode);
+    public function validateAuthCode($clientId, $redirectUri, $authCode);
 
     /**
      * Validate an access token
      * @param  string $accessToken [description]
      * @return void
      */
-    public function validateAccessToken(string $accessToken);
+    public function validateAccessToken($accessToken);
 
     /**
      * Validate a refresh token
      * @param  string $accessToken The access token
      * @return void
      */
-    public function validateRefreshToken(string $accessToken);
+    public function validateRefreshToken($accessToken);
 
     /**
      * Associate a scope with an access token
@@ -123,12 +123,12 @@ interface SessionInterface
      * @param  int    $scopeId       The ID of the scope
      * @return void
      */
-    public function associateScope(int $accessTokenId, int $scopeId);
+    public function associateScope($accessTokenId, $scopeId);
 
     /**
      * Get all associated access tokens for an access token
      * @param  string $accessToken The access token
      * @return array
      */
-    public function getScopes(string $accessToken);
+    public function getScopes($accessToken);
 }

@@ -13,7 +13,7 @@ class Session implements SessionInterface
      * @param  string $ownerId   The ID of the session owner (e.g. "123")
      * @return int               The session ID
      */
-    public function createSession(string $clientId, string $ownerType, string $ownerId)
+    public function createSession($clientId, $ownerType, $ownerId)
     {
         $db = \ezcDbInstance::get();
 
@@ -33,7 +33,7 @@ class Session implements SessionInterface
      * @param  string $ownerId   The ID of the session owner (e.g. "123")
      * @return void
      */
-    public function deleteSession(string $clientId, string $ownerType, string $ownerId)
+    public function deleteSession($clientId, $ownerType, $ownerId)
     {
         $db = \ezcDbInstance::get();
 
@@ -50,7 +50,7 @@ class Session implements SessionInterface
      * @param  string $redirectUri The redirect URI
      * @return void
      */
-    public function associateRedirectUri(int $sessionId, string $redirectUri)
+    public function associateRedirectUri($sessionId, $redirectUri)
     {
         $stmt = $db->prepare('INSERT INTO oauth_session_redirects (session_id, redirect_uri) VALUE (:sessionId, :redirectUri)');
         $stmt->bindValue(':sessionId', $sessionId);
@@ -63,7 +63,7 @@ class Session implements SessionInterface
      * @param  int    $sessionId The session ID
      * @return void
      */
-    public function removeRedirectUri(int $sessionId)
+    public function removeRedirectUri($sessionId)
     {
         throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
     }
@@ -75,7 +75,7 @@ class Session implements SessionInterface
      * @param  int    $expireTime  Unix timestamp of the access token expiry time
      * @return void
      */
-    public function associateAccessToken(int $sessionId, string $accessToken, int $expireTime)
+    public function associateAccessToken($sessionId, $accessToken, $expireTime)
     {
         $stmt = $db->prepare('INSERT INTO oauth_session_access_tokens (session_id, access_token, access_token_expires) VALUE (:sessionId, :accessToken, :accessTokenExpire)');
         $stmt->bindValue(':sessionId', $sessionId);
@@ -91,7 +91,7 @@ class Session implements SessionInterface
      * @param  int    $sessionId   The session ID
      * @return void
      */
-    public function removeAccessToken(int $sessionId)
+    public function removeAccessToken($sessionId)
     {
         $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token) VALUE (:accessTokenId, :refreshToken)');
         $stmt->bindValue(':accessTokenId', $accessTokenId);
@@ -102,10 +102,10 @@ class Session implements SessionInterface
     /**
      * Associate a refresh token with a session
      * @param  int    $accessTokenId The access token ID
-     * @param  string $refreshToken  The refresh token
+     * @param  $refreshToken  The refresh token
      * @return void
      */
-    public function associateRefreshToken(int $accessTokenId, string $refreshToken)
+    public function associateRefreshToken($accessTokenId, $refreshToken)
     {
         $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token) VALUE (:accessTokenId, :refreshToken)');
         $stmt->bindValue(':accessTokenId', $accessTokenId);
@@ -118,7 +118,7 @@ class Session implements SessionInterface
      * @param  int    $sessionId   The session ID
      * @return void
      */
-    public function removeRefreshToken(int $sessionId)
+    public function removeRefreshToken($sessionId)
     {
 
     }
@@ -131,7 +131,7 @@ class Session implements SessionInterface
      * @param  string $scopeIds   Comma seperated list of scope IDs to be later associated (default = null)
      * @return void
      */
-    public function associateAuthCode(int $sessionId, string $authCode, int $expireTime, string $scopeIds = null)
+    public function associateAuthCode($sessionId, $authCode, $expireTime, $scopeIds = null)
     {
         $stmt = $db->prepare('INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires, scope_ids) VALUE (:sessionId, :authCode, :authCodeExpires, :scopeIds)');
         $stmt->bindValue(':sessionId', $sessionId);
@@ -146,7 +146,7 @@ class Session implements SessionInterface
      * @param  int    $sessionId   The session ID
      * @return void
      */
-    public function removeAuthCode(int $sessionId)
+    public function removeAuthCode($sessionId)
     {
         $db = \ezcDbInstance::get();
 
@@ -162,7 +162,7 @@ class Session implements SessionInterface
      * @param  string $authCode    The authorization code
      * @return void
      */
-    public function validateAuthCode(string $clientId, string $redirectUri, string $authCode)
+    public function validateAuthCode($clientId, $redirectUri, $authCode)
     {
         $db = \ezcDbInstance::get();
 
@@ -183,7 +183,7 @@ class Session implements SessionInterface
      * @param  string $accessToken [description]
      * @return void
      */
-    public function validateAccessToken(string $accessToken)
+    public function validateAccessToken($accessToken)
     {
         throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
     }
@@ -193,7 +193,7 @@ class Session implements SessionInterface
      * @param  string $accessToken The access token
      * @return void
      */
-    public function validateRefreshToken(string $accessToken)
+    public function validateRefreshToken($accessToken)
     {
         throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
     }
@@ -204,7 +204,7 @@ class Session implements SessionInterface
      * @param  int    $scopeId       The ID of the scope
      * @return void
      */
-    public function associateScope(int $accessTokenId, int $scopeId)
+    public function associateScope($accessTokenId, $scopeId)
     {
         $db = \ezcDbInstance::get();
 
@@ -219,7 +219,7 @@ class Session implements SessionInterface
      * @param  string $accessToken The access token
      * @return array
      */
-    public function getScopes(string $accessToken)
+    public function getScopes($accessToken)
     {
         throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
     }
