@@ -6,90 +6,163 @@ use OAuth2\Storage\SessionInterface;
 
 class Session implements SessionInterface
 {
-    public function createSession($params = array())
+    /**
+     * Create a new session
+     * @param  string $clientId  The client ID
+     * @param  string $ownerType The type of the session owner (e.g. "user")
+     * @param  string $ownerId   The ID of the session owner (e.g. "123")
+     * @return int               The session ID
+     */
+    public function createSession(string $clientId, string $ownerType, string $ownerId)
     {
         $db = \ezcDbInstance::get();
 
         $stmt = $db->prepare('INSERT INTO oauth_sessions (client_id, owner_type,  owner_id) VALUE (:clientId, :ownerType, :ownerId)');
-        $stmt->bindValue(':clientId', $params['client_id']);
-        $stmt->bindValue(':ownerType', $params['owner_type']);
-        $stmt->bindValue(':ownerId', $params['owner_id']);
+        $stmt->bindValue(':clientId', $clientId);
+        $stmt->bindValue(':ownerType', $ownerType);
+        $stmt->bindValue(':ownerId', $ownerId);
         $stmt->execute();
 
-        $sessionId = $db->lastInsertId();
-
-        if (isset($params['redirect_uri'])) {
-            $stmt = $db->prepare('INSERT INTO oauth_session_redirects (session_id, redirect_uri) VALUE (:sessionId, :redirectUri)');
-            $stmt->bindValue(':sessionId', $sessionId);
-            $stmt->bindValue(':redirectUri', $params['redirect_uri']);
-            $stmt->execute();
-        }
-
-        if (isset($params['auth_code'])) {
-            $stmt = $db->prepare('INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires, scope_ids) VALUE (:sessionId, :authCode, :authCodeExpires, :scopeIds)');
-            $stmt->bindValue(':sessionId', $sessionId);
-            $stmt->bindValue(':authCode', $params['auth_code']);
-            $stmt->bindValue(':authCodeExpires', time() + 600);
-            $stmt->bindValue(':scopeIds', isset($params['scope_ids']) ? $params['scope_ids'] : null);
-            $stmt->execute();
-        }
-
-        if (isset($params['access_token'])) {
-            $stmt = $db->prepare('INSERT INTO oauth_session_access_tokens (session_id, access_token, access_token_expires) VALUE (:sessionId, :accessToken, :accessTokenExpire)');
-            $stmt->bindValue(':sessionId', $sessionId);
-            $stmt->bindValue(':accessToken', $params['access_token']);
-            $stmt->bindValue(':accessTokenExpire', $params['access_token_expire']);
-            $stmt->execute();
-
-            $accessTokenId = $db->lastInsertId();
-
-            if (isset($params['refresh_token']) && $params['refresh_token'] !== null) {
-                $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token) VALUE (:accessTokenId, :refreshToken)');
-                $stmt->bindValue(':accessTokenId', $accessTokenId);
-                $stmt->bindValue(':refreshToken', $params['refresh_token']);
-                $stmt->execute();
-            }
-        }
-
-        return $sessionId;
+        return $db->lastInsertId();
     }
 
-    public function updateSession($sessionId, $params = array())
-    {
-        $db = \ezcDbInstance::get();
-
-        if (isset($params['access_token'])) {
-            $stmt = $db->prepare('INSERT INTO oauth_session_access_tokens (session_id, access_token, access_token_expires) VALUE (:sessionId, :accessToken, :accessTokenExpire)');
-            $stmt->bindValue(':sessionId', $sessionId);
-            $stmt->bindValue(':accessToken', $params['access_token']);
-            $stmt->bindValue(':accessTokenExpire', $params['access_token_expire']);
-            $stmt->execute();
-
-            $accessTokenId = $db->lastInsertId();
-
-            if (isset($params['refresh_token']) && $params['refresh_token'] !== null) {
-                $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token) VALUE (:accessTokenId, :refreshToken)');
-                $stmt->bindValue(':accessTokenId', $accessTokenId);
-                $stmt->bindValue(':refreshToken', $params['refresh_token']);
-                $stmt->execute();
-            }
-
-            return $accessTokenId;
-        }
-    }
-
-    public function deleteSession($clientId, $type, $typeId)
+    /**
+     * Delete a session
+     * @param  string $clientId  The client ID
+     * @param  string $ownerType The type of the session owner (e.g. "user")
+     * @param  string $ownerId   The ID of the session owner (e.g. "123")
+     * @return void
+     */
+    public function deleteSession(string $clientId, string $ownerType, string $ownerId)
     {
         $db = \ezcDbInstance::get();
 
         $stmt = $db->prepare('DELETE FROM oauth_sessions WHERE client_id = :clientId AND owner_type = :type AND owner_id = :typeId');
         $stmt->bindValue(':clientId', $clientId);
-        $stmt->bindValue(':type', $type);
-        $stmt->bindValue(':typeId', $typeId);
+        $stmt->bindValue(':type', $ownerType);
+        $stmt->bindValue(':typeId', $ownerId);
         $stmt->execute();
     }
 
-    public function validateAuthCode($clientId, $redirectUri, $authCode)
+    /**
+     * Associate a redirect URI with a session
+     * @param  int    $sessionId   The session ID
+     * @param  string $redirectUri The redirect URI
+     * @return void
+     */
+    public function associateRedirectUri(int $sessionId, string $redirectUri)
+    {
+        $stmt = $db->prepare('INSERT INTO oauth_session_redirects (session_id, redirect_uri) VALUE (:sessionId, :redirectUri)');
+        $stmt->bindValue(':sessionId', $sessionId);
+        $stmt->bindValue(':redirectUri', $redirectUri);
+        $stmt->execute();
+    }
+
+    /**
+     * Remove an associated redirect URI
+     * @param  int    $sessionId The session ID
+     * @return void
+     */
+    public function removeRedirectUri(int $sessionId)
+    {
+        throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
+    }
+
+    /**
+     * Associate an access token with a session
+     * @param  int    $sessionId   The session ID
+     * @param  string $accessToken The access token
+     * @param  int    $expireTime  Unix timestamp of the access token expiry time
+     * @return void
+     */
+    public function associateAccessToken(int $sessionId, string $accessToken, int $expireTime)
+    {
+        $stmt = $db->prepare('INSERT INTO oauth_session_access_tokens (session_id, access_token, access_token_expires) VALUE (:sessionId, :accessToken, :accessTokenExpire)');
+        $stmt->bindValue(':sessionId', $sessionId);
+        $stmt->bindValue(':accessToken', $accessToken);
+        $stmt->bindValue(':accessTokenExpire', $expireTime);
+        $stmt->execute();
+
+        return $db->lastInsertId();
+    }
+
+    /**
+     * Remove an associated access token from a session
+     * @param  int    $sessionId   The session ID
+     * @return void
+     */
+    public function removeAccessToken(int $sessionId)
+    {
+        $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token) VALUE (:accessTokenId, :refreshToken)');
+        $stmt->bindValue(':accessTokenId', $accessTokenId);
+        $stmt->bindValue(':refreshToken', $params['refresh_token']);
+        $stmt->execute();
+    }
+
+    /**
+     * Associate a refresh token with a session
+     * @param  int    $accessTokenId The access token ID
+     * @param  string $refreshToken  The refresh token
+     * @return void
+     */
+    public function associateRefreshToken(int $accessTokenId, string $refreshToken)
+    {
+        $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token) VALUE (:accessTokenId, :refreshToken)');
+        $stmt->bindValue(':accessTokenId', $accessTokenId);
+        $stmt->bindValue(':refreshToken', $refreshToken);
+        $stmt->execute();
+    }
+
+    /**
+     * Remove an associated refresh token from a session
+     * @param  int    $sessionId   The session ID
+     * @return void
+     */
+    public function removeRefreshToken(int $sessionId)
+    {
+
+    }
+
+    /**
+     * Assocate an authorization code with a session
+     * @param  int    $sessionId  The session ID
+     * @param  string $authCode   The authorization code
+     * @param  int    $expireTime Unix timestamp of the access token expiry time
+     * @param  string $scopeIds   Comma seperated list of scope IDs to be later associated (default = null)
+     * @return void
+     */
+    public function associateAuthCode(int $sessionId, string $authCode, int $expireTime, string $scopeIds = null)
+    {
+        $stmt = $db->prepare('INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires, scope_ids) VALUE (:sessionId, :authCode, :authCodeExpires, :scopeIds)');
+        $stmt->bindValue(':sessionId', $sessionId);
+        $stmt->bindValue(':authCode', $authCode);
+        $stmt->bindValue(':authCodeExpires', $expireTime);
+        $stmt->bindValue(':scopeIds', $scopeIds);
+        $stmt->execute();
+    }
+
+    /**
+     * Remove an associated authorization token from a session
+     * @param  int    $sessionId   The session ID
+     * @return void
+     */
+    public function removeAuthCode(int $sessionId)
+    {
+        $db = \ezcDbInstance::get();
+
+        $stmt = $db->prepare('DELETE FROM oauth_session_authcodes WHERE session_id = :sessionId');
+        $stmt->bindValue(':sessionId', $sessionId);
+        $stmt->execute();
+    }
+
+    /**
+     * Validate an authorization code
+     * @param  string $clientId    The client ID
+     * @param  string $redirectUri The redirect URI
+     * @param  string $authCode    The authorization code
+     * @return void
+     */
+    public function validateAuthCode(string $clientId, string $redirectUri, string $authCode)
     {
         $db = \ezcDbInstance::get();
 
@@ -105,36 +178,33 @@ class Session implements SessionInterface
         return ($result === false) ? false : (array) $result;
     }
 
-    public function deleteAuthCode($sessionId)
+    /**
+     * Validate an access token
+     * @param  string $accessToken [description]
+     * @return void
+     */
+    public function validateAccessToken(string $accessToken)
     {
-        $db = \ezcDbInstance::get();
-
-        $stmt = $db->prepare('DELETE FROM oauth_session_authcodes WHERE session_id = :sessionId');
-        $stmt->bindValue(':sessionId', $sessionId);
-        $stmt->execute();
+        throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
     }
 
-    public function validateAccessToken($accessToken)
+    /**
+     * Validate a refresh token
+     * @param  string $accessToken The access token
+     * @return void
+     */
+    public function validateRefreshToken(string $accessToken)
     {
-        throw new \Exception('Not implemented '.debug_backtrace()[0]['function']);
+        throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
     }
 
-    public function getAccessToken($sessionId)
-    {
-        throw new \Exception('Not implemented '.debug_backtrace()[0]['function']);
-    }
-
-    public function validateRefreshToken($refreshToken, $clientId)
-    {
-        throw new \Exception('Not implemented '.debug_backtrace()[0]['function']);
-    }
-
-    public function updateRefreshToken($sessionId, $newAccessToken, $newRefreshToken, $accessTokenExpires)
-    {
-        throw new \Exception('Not implemented '.debug_backtrace()[0]['function']);
-    }
-
-    public function associateScope($accessTokenId, $scopeId)
+    /**
+     * Associate a scope with an access token
+     * @param  int    $accessTokenId The ID of the access token
+     * @param  int    $scopeId       The ID of the scope
+     * @return void
+     */
+    public function associateScope(int $accessTokenId, int $scopeId)
     {
         $db = \ezcDbInstance::get();
 
@@ -144,8 +214,13 @@ class Session implements SessionInterface
         $stmt->execute();
     }
 
-    public function getScopes($sessionId)
+    /**
+     * Get all associated access tokens for an access token
+     * @param  string $accessToken The access token
+     * @return array
+     */
+    public function getScopes(string $accessToken)
     {
-        throw new \Exception('Not implemented '.debug_backtrace()[0]['function']);
+        throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
     }
 }
