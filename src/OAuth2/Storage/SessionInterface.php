@@ -64,11 +64,11 @@ interface SessionInterface
 
     /**
      * Associate a refresh token with a session
-     * @param  int    $sessionId    The session ID
-     * @param  string $refreshToken The refresh token
+     * @param  int    $accessTokenId The access token ID
+     * @param  string $refreshToken  The refresh token
      * @return void
      */
-    public function associateRefreshToken(int $sessionId, string $refreshToken);
+    public function associateRefreshToken(int $accessTokenId, string $refreshToken);
 
     /**
      * Remove an associated refresh token from a session
