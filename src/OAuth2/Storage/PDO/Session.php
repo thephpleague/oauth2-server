@@ -52,6 +52,8 @@ class Session implements SessionInterface
      */
     public function associateRedirectUri($sessionId, $redirectUri)
     {
+        $db = \ezcDbInstance::get();
+
         $stmt = $db->prepare('INSERT INTO oauth_session_redirects (session_id, redirect_uri) VALUE (:sessionId, :redirectUri)');
         $stmt->bindValue(':sessionId', $sessionId);
         $stmt->bindValue(':redirectUri', $redirectUri);
@@ -77,6 +79,8 @@ class Session implements SessionInterface
      */
     public function associateAccessToken($sessionId, $accessToken, $expireTime)
     {
+        $db = \ezcDbInstance::get();
+
         $stmt = $db->prepare('INSERT INTO oauth_session_access_tokens (session_id, access_token, access_token_expires) VALUE (:sessionId, :accessToken, :accessTokenExpire)');
         $stmt->bindValue(':sessionId', $sessionId);
         $stmt->bindValue(':accessToken', $accessToken);
@@ -93,6 +97,8 @@ class Session implements SessionInterface
      */
     public function removeAccessToken($sessionId)
     {
+        $db = \ezcDbInstance::get();
+
         $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token) VALUE (:accessTokenId, :refreshToken)');
         $stmt->bindValue(':accessTokenId', $accessTokenId);
         $stmt->bindValue(':refreshToken', $params['refresh_token']);
@@ -133,6 +139,8 @@ class Session implements SessionInterface
      */
     public function associateAuthCode($sessionId, $authCode, $expireTime, $scopeIds = null)
     {
+        $db = \ezcDbInstance::get();
+
         $stmt = $db->prepare('INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires, scope_ids) VALUE (:sessionId, :authCode, :authCodeExpires, :scopeIds)');
         $stmt->bindValue(':sessionId', $sessionId);
         $stmt->bindValue(':authCode', $authCode);
