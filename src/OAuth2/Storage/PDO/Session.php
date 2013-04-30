@@ -108,7 +108,7 @@ class Session implements SessionInterface
     /**
      * Associate a refresh token with a session
      * @param  int    $accessTokenId The access token ID
-     * @param  $refreshToken  The refresh token
+     * @param  string $refreshToken  The refresh token
      * @return void
      */
     public function associateRefreshToken($accessTokenId, $refreshToken)
