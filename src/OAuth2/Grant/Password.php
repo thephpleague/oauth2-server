@@ -178,22 +178,15 @@ class Password implements GrantTypeInterface {
         $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], 'user', $userId);
 
         // Create a new session
-        $sessionId = $this->authServer->getStorage('session')->createSession(
-            $authParams['client_id'],
-            null,
-            'user',
-            $userId,
-            null,
-            $accessToken,
-            $refreshToken,
-            $accessTokenExpires,
-            'granted'
-        );
+        $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], 'user', $userId);
 
-        // Associate scopes with the new session
+        // Associate an access token with the session
+        $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($sessionId, $accessToken, $accessTokenExpires);
+
+        // Associate scopes with the access token
         foreach ($authParams['scopes'] as $scope)
         {
-            $this->authServer->getStorage('session')->associateScope($sessionId, $scope['id']);
+            $this->authServer->getStorage('session')->associateScope($accessTokenId, $scope['id']);
         }
 
         $response = array(
@@ -203,7 +196,10 @@ class Password implements GrantTypeInterface {
             'expires_in'    =>  $accessTokenExpiresIn
         );
 
+        // Associate a refresh token if set
         if ($this->authServer->hasGrantType('refresh_token')) {
+            $refreshToken = SecureKey::make();
+            $this->authServer->getStorage('session')->associateRefreshToken($accessTokenId, $refreshToken);
             $response['refresh_token'] = $refreshToken;
         }
 
