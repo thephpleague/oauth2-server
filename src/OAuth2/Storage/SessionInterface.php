@@ -112,10 +112,17 @@ interface SessionInterface
 
     /**
      * Validate a refresh token
-     * @param  string $accessToken The access token
+     * @param  string $refreshToken The access token
      * @return void
      */
-    public function validateRefreshToken($accessToken);
+    public function validateRefreshToken($refreshToken);
+
+    /**
+     * Get an access token by ID
+     * @param  int    $accessTokenId The access token ID
+     * @return array
+     */
+    public function getAccessToken($accessTokenId);
 
     /**
      * Associate a scope with an access token
