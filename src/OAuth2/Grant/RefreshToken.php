@@ -102,23 +102,31 @@ class RefreshToken implements GrantTypeInterface {
         }
 
         // Validate refresh token
-        $sessionId = $this->authServer->getStorage('session')->validateRefreshToken(
-            $authParams['refresh_token'],
-            $authParams['client_id']
-        );
+        $accessTokenId = $this->authServer->getStorage('session')->validateRefreshToken($authParams['refresh_token']);
 
-        if ($sessionId === false) {
+        if ($accessTokenId === false) {
             throw new Exception\ClientException($this->authServer->getExceptionMessage('invalid_refresh'), 0);
         }
 
-        // Generate new tokens
-        $accessToken = SecureKey::make();
-        $refreshToken = ($this->authServer->hasGrantType('refresh_token')) ? SecureKey::make() : null;
+        // Get the existing access token
+        $accessTokenDetails = $this->authServer->getStorage('session')->getAccessToken($accessTokenId);
 
+        // Get the scopes for the existing access token
+        $scopes = $this->authServer->getStorage('session')->getScopes($accessTokenDetails['access_token']);
+
+        // Generate new tokens and associate them to the session
+        $accessToken = SecureKey::make();
         $accessTokenExpires = time() + $this->authServer->getExpiresIn();
         $accessTokenExpiresIn = $this->authServer->getExpiresIn();
+        $refreshToken = SecureKey::make();
 
-        $this->authServer->getStorage('session')->updateRefreshToken($sessionId, $accessToken, $refreshToken, $accessTokenExpires);
+        $newAccessTokenId = $this->authServer->getStorage('session')->associateAccessToken($accessTokenDetails['session_id'], $accessToken, $accessTokenExpires);
+
+        foreach ($scopes as $scope) {
+            $this->authServer->getStorage('session')->associateScope($newAccessTokenId, $scope['id']);
+        }
+
+        $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken);
 
         return array(
             'access_token'  =>  $accessToken,
