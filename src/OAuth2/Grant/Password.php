@@ -169,8 +169,6 @@ class Password implements GrantTypeInterface {
 
         // Generate an access token
         $accessToken = SecureKey::make();
-        $refreshToken = ($this->authServer->hasGrantType('refresh_token')) ? SecureKey::make() : null;
-
         $accessTokenExpires = time() + $this->authServer->getExpiresIn();
         $accessTokenExpiresIn = $this->authServer->getExpiresIn();
 
