@@ -273,8 +273,8 @@ class Session implements SessionInterface
 
         $stmt = $db->prepare('SELECT oauth_scopes.* FROM oauth_session_token_scopes JOIN oauth_session_access_tokens ON oauth_session_access_tokens.`id` = `oauth_session_token_scopes`.`session_access_token_id` JOIN oauth_scopes ON oauth_scopes.id = `oauth_session_token_scopes`.`scope_id` WHERE access_token = :accessToken');
         $stmt->bindValue(':accessToken', $accessToken);
+        $stmt->execute();
 
-        $result = $stmt->fetchObject();
-        return ($result === false) ? array() : (array) $result;
+        return $stmt->fetchAll();
     }
 }
