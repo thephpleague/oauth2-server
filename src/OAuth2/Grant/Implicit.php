@@ -77,40 +77,31 @@ class Implict implements GrantTypeInterface {
      */
     public function completeFlow($authParams = null)
     {
-            // Remove any old sessions the user might have
-            $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], 'user', $authParams['user_id']);
+        // Remove any old sessions the user might have
+        $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], 'user', $authParams['user_id']);
 
-            // Generate a new access token
-            $accessToken = SecureKey::make();
+        // Generate a new access token
+        $accessToken = SecureKey::make();
 
-            // Compute expiry time
-            $accessTokenExpires = time() + $this->authServer->getExpiresIn();
+        // Compute expiry time
+        $accessTokenExpires = time() + $this->authServer->getExpiresIn();
 
-            // Create a new session
-            $sessionId = $this->authServer->getStorage('session')->createSession(
-                $authParams['client_id'],
-                $authParams['redirect_uri'],
-                'user',
-                $authParams['user_id'],
-                null,
-                $accessToken,
-                null,
-                $accessTokenExpires,
-                'granted'
-            );
+        // Create a new session
+        $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], 'user', $authParams['user_id']);
 
-            // Associate scopes with the new session
-            foreach ($authParams['scopes'] as $scope)
-            {
-                $this->authServer->getStorage('session')->associateScope($sessionId, $scope['id']);
-            }
+        // Create an access token
+        $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($sessionId, $accessToken, $accessTokenExpires);
 
-            $response = array(
-                'access_token'  =>  $accessToken
-            );
-
-            return $response;
+        // Associate scopes with the access token
+        foreach ($authParams['scopes'] as $scope) {
+            $this->authServer->getStorage('session')->associateScope($accessTokenId, $scope['id']);
         }
+
+        $response = array(
+            'access_token'  =>  $accessToken
+        );
+
+        return $response;
     }
 
 }
