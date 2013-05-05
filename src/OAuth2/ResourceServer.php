@@ -172,7 +172,8 @@ class ResourceServer
         }
 
         $this->accessToken = $accessToken;
-        $this->sessionId = $result['id'];
+        $this->sessionId = $result['session_id'];
+        $this->clientId = $result['client_id'];
         $this->ownerType = $result['owner_type'];
         $this->ownerId = $result['owner_id'];
 
