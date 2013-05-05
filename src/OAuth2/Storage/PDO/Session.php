@@ -209,7 +209,7 @@ class Session implements SessionInterface
     {
         $db = \ezcDbInstance::get();
 
-        $stmt = $db->prepare('SELECT session_access_token_id FROM `oauth_session_access_tokens` WHERE
+        $stmt = $db->prepare('SELECT session_id FROM `oauth_session_access_tokens` WHERE
          access_token = :accessToken AND access_token_expires <= ' . time());
         $stmt->bindValue(':accessToken', $accessToken);
         $stmt->execute();
