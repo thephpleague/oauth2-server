@@ -202,12 +202,20 @@ class Session implements SessionInterface
 
     /**
      * Validate an access token
-     * @param  string $accessToken [description]
+     * @param  string $accessToken The access token to be validated
      * @return void
      */
     public function validateAccessToken($accessToken)
     {
-        throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
+        $db = \ezcDbInstance::get();
+
+        $stmt = $db->prepare('SELECT session_access_token_id FROM `oauth_session_access_tokens` WHERE
+         access_token = :accessToken AND access_token_expires <= ' . time());
+        $stmt->bindValue(':accessToken', $accessToken);
+        $stmt->execute();
+
+        $result = $stmt->fetchObject();
+        return ($result === false) ? false : $result->session_access_token_id;
     }
 
     /**
