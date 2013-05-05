@@ -64,16 +64,6 @@ class Session implements SessionInterface
     }
 
     /**
-     * Remove an associated redirect URI
-     * @param  int    $sessionId The session ID
-     * @return void
-     */
-    public function removeRedirectUri($sessionId)
-    {
-        throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
-    }
-
-    /**
      * Associate an access token with a session
      * @param  int    $sessionId   The session ID
      * @param  string $accessToken The access token
@@ -125,16 +115,6 @@ class Session implements SessionInterface
         $stmt->bindValue(':accessTokenId', $accessTokenId);
         $stmt->bindValue(':refreshToken', $refreshToken);
         $stmt->execute();
-    }
-
-    /**
-     * Remove an associated refresh token from a session
-     * @param  int    $sessionId   The session ID
-     * @return void
-     */
-    public function removeRefreshToken($sessionId)
-    {
-        throw new \Exception('Not implemented - ' . debug_backtrace()[0]['function']);
     }
 
     /**

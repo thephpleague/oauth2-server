@@ -40,13 +40,6 @@ interface SessionInterface
     public function associateRedirectUri($sessionId, $redirectUri);
 
     /**
-     * Remove an associated redirect URI
-     * @param  int    $sessionId The session ID
-     * @return void
-     */
-    public function removeRedirectUri($sessionId);
-
-    /**
      * Associate an access token with a session
      * @param  int    $sessionId   The session ID
      * @param  string $accessToken The access token
@@ -69,13 +62,6 @@ interface SessionInterface
      * @return void
      */
     public function associateRefreshToken($accessTokenId, $refreshToken);
-
-    /**
-     * Remove an associated refresh token from a session
-     * @param  int    $sessionId   The session ID
-     * @return void
-     */
-    public function removeRefreshToken($sessionId);
 
     /**
      * Assocate an authorization code with a session
