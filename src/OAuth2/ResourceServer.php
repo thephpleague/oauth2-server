@@ -177,7 +177,7 @@ class ResourceServer
         $this->ownerType = $result['owner_type'];
         $this->ownerId = $result['owner_id'];
 
-        $this->sessionScopes = $this->storages['session']->getScopes($this->sessionId);
+        $this->sessionScopes = $this->storages['session']->getScopes($this->accessToken);
 
         return true;
     }
