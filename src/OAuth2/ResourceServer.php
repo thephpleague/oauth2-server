@@ -183,6 +183,15 @@ class ResourceServer
     }
 
     /**
+     * Get the session scopes
+     * @return [type] [description]
+     */
+    public function getScopes()
+    {
+        return $this->sessionScopes;
+    }
+
+    /**
      * Checks if the presented access token has the given scope(s).
      *
      * @param array|string  An array of scopes or a single scope as a string
