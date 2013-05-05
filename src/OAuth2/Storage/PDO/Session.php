@@ -215,7 +215,7 @@ class Session implements SessionInterface
         $stmt->execute();
 
         $result = $stmt->fetchObject();
-        return ($result === false) ? false : $result->session_access_token_id;
+        return ($result === false) ? false : $result->session_id;
     }
 
     /**
