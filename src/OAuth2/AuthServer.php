@@ -430,8 +430,12 @@ class AuthServer
      */
     public function getGrantType($grantType)
     {
-        return $this->grantTypes[$grantType];
-    }
+        if (isset($this->grantTypes[$grantType])) {
+            return $this->grantTypes[$grantType];
+        }
+
+        throw new Exception\InvalidGrantTypeException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $grantType), 9);
+        }
 
     /**
      * Get a parameter from passed input parameters or the Request class
