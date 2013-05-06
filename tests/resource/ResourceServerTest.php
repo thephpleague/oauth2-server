@@ -59,6 +59,12 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $this->assertEquals('oauth_token', $v);
     }
 
+    public function test_getScopes()
+    {
+        $s = $this->returnDefault();
+        $this->assertEquals(array(), $s->getScopes());
+    }
+
     /**
      * @expectedException OAuth2\Exception\InvalidAccessTokenException
      */
@@ -85,7 +91,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $param = $requestReflector->getProperty('headers');
         $param->setAccessible(true);
         $param->setValue($request, array(
-            'Authorization' =>  'Bearer YWJjZGVm'
+            'Authorization' =>  'Bearer abcdef'
         ));
         $s = $this->returnDefault();
         $s->setRequest($request);
@@ -131,7 +137,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $param = $requestReflector->getProperty('headers');
         $param->setAccessible(true);
         $param->setValue($request, array(
-            'Authorization' =>  'Bearer YWJjZGVm'
+            'Authorization' =>  'Bearer abcdef'
         ));
         $s = $this->returnDefault();
         $s->setRequest($request);
@@ -142,19 +148,25 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     public function test_isValid_valid()
     {
     	$this->session->shouldReceive('validateAccessToken')->andReturn(array(
-    		'id'	=>	1,
-    		'owner_type'	=>	'user',
-    		'owner_id'	=>	123
+    		'session_id'  =>	1,
+    		'owner_type'  =>	'user',
+    		'owner_id'    =>	123,
+            'client_id' =>  'testapp'
     	));
-    	$this->session->shouldReceive('getScopes')->andReturn(array('foo', 'bar'));
+
+    	$this->session->shouldReceive('getScopes')->andReturn(array(
+            array('key' =>  'foo'),
+            array('key' =>  'bar')
+        ));
 
    		$request = new OAuth2\Util\Request();
         $requestReflector = new ReflectionClass($request);
         $param = $requestReflector->getProperty('headers');
         $param->setAccessible(true);
         $param->setValue($request, array(
-            'Authorization' =>  'Bearer YWJjZGVm'
+            'Authorization' =>  'Bearer abcdef'
         ));
+
         $s = $this->returnDefault();
         $s->setRequest($request);
 

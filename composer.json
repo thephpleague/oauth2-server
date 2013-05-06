@@ -1,20 +1,20 @@
 {
-	"name": "lncd/oauth2",
-	"description": "A lightweight and powerful OAuth 2.0 authorization and resource server library with support for all the core specification grants",
-	"version": "1.0.8",
-	"homepage": "https://github.com/lncd/OAuth2",
+	"name": "league/oauth2server",
+	"description": "A lightweight and powerful OAuth 2.0 authorization and resource server library with support for all the core specification grants. This library will allow you to secure your API with OAuth and allow your applications users to approve apps that want to access their data from your API.",
+	"version": "2.0",
+	"homepage": "https://github.com/php-leop/oauth2-server",
 	"license": "MIT",
 	"require": {
-		"php": ">=5.3.0"
+		"php": ">=5.3.0",
+		"zetacomponents/database": "dev-master"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "*",
-        "mockery/mockery": ">=0.7.2"
+		"mockery/mockery": ">=0.7.2"
 	},
 	"repositories": [
 		{
 			"type": "git",
-			"url": "https://github.com/lncd/OAuth2"
+			"url": "https://github.com/php-leop/oauth2-server"
 		}
 	],
 	"keywords": [
@@ -34,6 +34,9 @@
 			"role": "Developer"
 		}
 	],
+	"replace": {
+		"lncd/oauth2": "*"
+	},
 	"autoload": {
 		"psr-0": {
 			"OAuth2": "src/"

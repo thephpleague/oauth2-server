@@ -9,7 +9,7 @@ The framework is provided as a Composer package which can be installed by adding
 ```javascript
 {
 	"require": {
-		"lncd/OAuth2": "*"
+		"league/oauth2server": "2.*"
 	}
 }
 ```
@@ -51,11 +51,8 @@ A tutorial on how to use the resource server to secure an API server can be foun
 
 ---
 
-This code will be developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which has been funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.
+The initial code was developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which was funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.
 
-This code was principally developed by [Alex Bilbie](http://alexbilbie.com/) ([Twitter](https://twitter.com/alexbilbie)|[Github](https://github.com/alexbilbie)).
+This code is principally developed by [Alex Bilbie](http://alexbilbie.com/) ([Twitter](https://twitter.com/alexbilbie)|[Github](https://github.com/alexbilbie)).
 
-Valuable contribtions have been made by the following:
-
-* [Dan Horrigan](http://dandoescode.com) ([Twitter](https://twitter.com/dandoescode)|[Github](https://github.com/dandoescode))
-* [Nick Jackson](http://nickjackson.me) ([Twitter](https://twitter.com/jacksonj04)|[Github](https://github.com/jacksonj04))
+A list of contributors can be found at [https://github.com/php-loep/oauth2-server/contributors](https://github.com/php-loep/oauth2-server/contributors).

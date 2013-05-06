@@ -27,7 +27,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_passwordGrant_missingClientId()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\Password());
+        $a->addGrantType(new OAuth2\Grant\Password($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -44,7 +44,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_passwordGrant_missingClientPassword()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\Password());
+        $a->addGrantType(new OAuth2\Grant\Password($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -64,7 +64,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\Password());
+        $a->addGrantType(new OAuth2\Grant\Password($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -98,7 +98,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = null;
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -134,7 +134,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return false; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -168,7 +168,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return false; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -203,7 +203,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return false; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -213,6 +213,164 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
             'client_secret' =>  5678,
             'username'  => 'foo',
             'password'  => 'bar'
+        ));
+    }
+
+    /**
+     * @expectedException        OAuth2\Exception\ClientException
+     * @expectedExceptionCode    4
+     */
+    public function test_issueAccessToken_passwordGrant_badScopes()
+    {
+        $this->scope->shouldReceive('getScope')->andReturn(false);
+
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+
+        $testCredentials = function($u, $p) { return 1; };
+
+        $a = $this->returnDefault();
+        $pgrant = new OAuth2\Grant\Password($a);
+        $pgrant->setVerifyCredentialsCallback($testCredentials);
+        $a->addGrantType($pgrant);
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'password',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'username'  =>  'foo',
+            'password'  =>  'bar',
+            'scope' =>  'blah'
+        ));
+    }
+
+    /**
+     * @expectedException        OAuth2\Exception\ClientException
+     * @expectedExceptionCode    0
+     */
+    public function test_issueAccessToken_passwordGrant_missingScopes()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+
+        $testCredentials = function($u, $p) { return 1; };
+
+        $a = $this->returnDefault();
+        $pgrant = new OAuth2\Grant\Password($a);
+        $pgrant->setVerifyCredentialsCallback($testCredentials);
+        $a->addGrantType($pgrant);
+        $a->requireScopeParam(true);
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'password',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'username'  =>  'foo',
+            'password'  =>  'bar'
+        ));
+    }
+
+    public function test_issueAccessToken_passwordGrant_defaultScope()
+    {
+        $this->scope->shouldReceive('getScope')->andReturn(array(
+            'id'    =>  1,
+            'scope' =>  'foo',
+            'name'  =>  'Foo Name',
+            'description'   =>  'Foo Name Description'
+        ));
+
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+
+        $testCredentials = function($u, $p) { return 1; };
+
+        $a = $this->returnDefault();
+        $pgrant = new OAuth2\Grant\Password($a);
+        $pgrant->setVerifyCredentialsCallback($testCredentials);
+        $a->addGrantType($pgrant);
+        $a->requireScopeParam(false);
+        $a->setDefaultScope('foobar');
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'password',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'username'  =>  'foo',
+            'password'  =>  'bar',
+            'scope' =>  ''
+        ));
+    }
+
+    public function test_issueAccessToken_passwordGrant_goodScope()
+    {
+        $this->scope->shouldReceive('getScope')->andReturn(array(
+            'id'    =>  1,
+            'scope' =>  'foo',
+            'name'  =>  'Foo Name',
+            'description'   =>  'Foo Name Description'
+        ));
+
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+
+        $testCredentials = function($u, $p) { return 1; };
+
+        $a = $this->returnDefault();
+        $pgrant = new OAuth2\Grant\Password($a);
+        $pgrant->setVerifyCredentialsCallback($testCredentials);
+        $a->addGrantType($pgrant);
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'password',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'username'  =>  'foo',
+            'password'  =>  'bar',
+            'scope' =>  'blah'
         ));
     }
 
@@ -231,13 +389,15 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
+        $a->requireScopeParam(false);
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'password',
@@ -252,8 +412,8 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
     function test_issueAccessToken_passwordGrant()
@@ -271,13 +431,15 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
+        $a->requireScopeParam(false);
 
         $_POST['grant_type'] = 'password';
         $_POST['client_id'] = 1234;
@@ -295,8 +457,8 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
     function test_issueAccessToken_passwordGrant_withRefreshToken()
@@ -309,19 +471,21 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         ));
 
         $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
-
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('associateRefreshToken')->andReturn(null);
 
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new OAuth2\Grant\Password();
+        $pgrant = new OAuth2\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
-        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
+        $a->requireScopeParam(false);
 
         $_POST['grant_type'] = 'password';
         $_POST['client_id'] = 1234;
@@ -340,8 +504,8 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
         $this->assertArrayHasKey('refresh_token', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
 }

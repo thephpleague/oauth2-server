@@ -31,10 +31,13 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
 
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('updateSession')->andReturn(null);
+        $this->session->shouldReceive('removeAuthCode')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('associateRefreshToken')->andReturn(1);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\AuthCode());
-        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+        $a->addGrantType(new OAuth2\Grant\AuthCode($a));
+        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
 
         $_POST['grant_type'] = 'authorization_code';
         $_POST['client_id'] = 1234;
@@ -53,8 +56,8 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
         $this->assertArrayHasKey('refresh_token', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
     /**
@@ -64,7 +67,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_refreshTokenGrant_missingClientId()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -81,7 +84,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_refreshTokenGrant_missingClientSecret()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -101,7 +104,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -122,7 +125,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(array());
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -142,10 +145,10 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_refreshTokenGrant_badRefreshToken()
     {
         $this->client->shouldReceive('getClient')->andReturn(array());
-        $this->client->shouldReceive('validateRefreshToken')->andReturn(false);
+        $this->session->shouldReceive('validateRefreshToken')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
 
         $request = new OAuth2\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -167,14 +170,17 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
             'name'  =>  'Example Client'
         ));
 
-        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
-
+        $this->session->shouldReceive('validateRefreshToken')->andReturn(1);
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('updateSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('associateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('getAccessToken')->andReturn(null);
+        $this->session->shouldReceive('getScopes')->andReturn(array());
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
 
         $_POST['grant_type'] = 'refresh_token';
         $_POST['client_id'] = 1234;
@@ -192,8 +198,8 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
         $this->assertArrayHasKey('refresh_token', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
     public function test_issueAccessToken_refreshTokenGrant()
@@ -205,14 +211,18 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
             'name'  =>  'Example Client'
         ));
 
-        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
-
+        $this->session->shouldReceive('validateRefreshToken')->andReturn(1);
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('updateSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('getAccessToken')->andReturn(null);
+        $this->session->shouldReceive('getScopes')->andReturn(array('id'    =>  1));
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('associateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new OAuth2\Grant\RefreshToken());
+        $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'refresh_token',
@@ -227,7 +237,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
         $this->assertArrayHasKey('refresh_token', $v);
 
-        $this->assertEquals($a::getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a::getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 }

@@ -13,7 +13,6 @@ namespace OAuth2;
 
 use OutOfBoundsException;
 use OAuth2\Storage\SessionInterface;
-use OAuth2\Storage\SessionScopeInterface;
 use OAuth2\Util\RequestInterface;
 use OAuth2\Util\Request;
 
@@ -164,22 +163,35 @@ class ResourceServer
      */
     public function isValid()
     {
-        $access_token = $this->determineAccessToken();
+        $accessToken = $this->determineAccessToken();
 
-        $result = $this->storages['session']->validateAccessToken($access_token);
+        $result = $this->storages['session']->validateAccessToken($accessToken);
 
         if ( ! $result) {
             throw new Exception\InvalidAccessTokenException('Access token is not valid');
         }
 
-        $this->accessToken = $access_token;
-        $this->sessionId = $result['id'];
+        $this->accessToken = $accessToken;
+        $this->sessionId = $result['session_id'];
+        $this->clientId = $result['client_id'];
         $this->ownerType = $result['owner_type'];
         $this->ownerId = $result['owner_id'];
 
-        $this->sessionScopes = $this->storages['session']->getScopes($this->sessionId);
+        $sessionScopes = $this->storages['session']->getScopes($this->accessToken);
+        foreach ($sessionScopes as $scope) {
+            $this->sessionScopes[] = $scope['key'];
+        }
 
         return true;
+    }
+
+    /**
+     * Get the session scopes
+     * @return [type] [description]
+     */
+    public function getScopes()
+    {
+        return $this->sessionScopes;
     }
 
     /**
@@ -216,17 +228,17 @@ class ResourceServer
     protected function determineAccessToken()
     {
         if ($header = $this->getRequest()->header('Authorization')) {
-            $access_token = base64_decode(trim(str_replace('Bearer', '', $header)));
+            $accessToken = trim(str_replace('Bearer', '', $header));
         } else {
             $method = $this->getRequest()->server('REQUEST_METHOD');
-            $access_token = $this->getRequest()->{$method}($this->tokenKey);
+            $accessToken = $this->getRequest()->{$method}($this->tokenKey);
         }
 
-        if (empty($access_token)) {
+        if (empty($accessToken)) {
             throw new Exception\InvalidAccessTokenException('Access token is missing');
         }
 
-        return $access_token;
+        return $accessToken;
     }
 
 }
