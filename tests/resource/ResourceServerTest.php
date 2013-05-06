@@ -142,11 +142,16 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     public function test_isValid_valid()
     {
     	$this->session->shouldReceive('validateAccessToken')->andReturn(array(
-    		'id'	=>	1,
-    		'owner_type'	=>	'user',
-    		'owner_id'	=>	123
+    		'session_id'  =>	1,
+    		'owner_type'  =>	'user',
+    		'owner_id'    =>	123,
+            'client_id' =>  'testapp'
     	));
-    	$this->session->shouldReceive('getScopes')->andReturn(array('foo', 'bar'));
+
+    	$this->session->shouldReceive('getScopes')->andReturn(array(
+            array('key' =>  'foo'),
+            array('key' =>  'bar')
+        ));
 
    		$request = new OAuth2\Util\Request();
         $requestReflector = new ReflectionClass($request);
@@ -155,6 +160,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $param->setValue($request, array(
             'Authorization' =>  'Bearer abcdef'
         ));
+
         $s = $this->returnDefault();
         $s->setRequest($request);
 
