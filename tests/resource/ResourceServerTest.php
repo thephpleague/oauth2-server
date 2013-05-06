@@ -141,11 +141,13 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
 
     public function test_isValid_valid()
     {
-    	$this->session->shouldReceive('validateAccessToken')->andReturn(array(
+    	$sessionData = array(
     		'id'	=>	1,
     		'owner_type'	=>	'user',
     		'owner_id'	=>	123
-    	));
+    	);
+    	
+    	$this->session->shouldReceive('validateAccessToken')->andReturn($sessionData);
     	$this->session->shouldReceive('getScopes')->andReturn(array('foo', 'bar'));
 
    		$request = new OAuth2\Util\Request();
@@ -162,6 +164,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     	$this->assertEquals(123, $s->getOwnerId());
     	$this->assertEquals('user', $s->getOwnerType());
     	$this->assertEquals('abcdef', $s->getAccessToken());
+    	$this->assertEquals($sessionData, $s->getSessionData());
     	$this->assertTrue($s->hasScope('foo'));
     	$this->assertTrue($s->hasScope('bar'));
     	$this->assertTrue($s->hasScope(array('foo', 'bar')));

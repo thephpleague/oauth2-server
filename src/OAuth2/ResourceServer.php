@@ -47,10 +47,10 @@ class ResourceServer
     protected $ownerId = null;
     
     /**
-     * The ID of the client application associated with the access token
-     * @var string
+     * The an array of all data contained in the session
+     * @var array
      */
-    protected $clientId = null;
+    protected $sessionData = null;
 
     /**
      * The scopes associated with the access token
@@ -157,9 +157,9 @@ class ResourceServer
      * Gets the client id.
      * @return string
      */
-    public function getClientId()
+    public function getSessionData()
     {
-    	return $this->clientId;
+    	return $this->sessionData;
     }
 
     /**
@@ -192,7 +192,7 @@ class ResourceServer
         $this->sessionId = $result['id'];
         $this->ownerType = $result['owner_type'];
         $this->ownerId = $result['owner_id'];
-        $this->clientId = $result['client_id'];
+        $this->sessionData = $result;
 
         $this->sessionScopes = $this->storages['session']->getScopes($this->sessionId);
 
