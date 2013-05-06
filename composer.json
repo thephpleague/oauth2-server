@@ -14,7 +14,7 @@
 	"repositories": [
 		{
 			"type": "git",
-			"url": "https://github.com/php-leop/oauth2-server"
+			"url": "https://github.com/php-loep/oauth2-server.git"
 		}
 	],
 	"keywords": [
