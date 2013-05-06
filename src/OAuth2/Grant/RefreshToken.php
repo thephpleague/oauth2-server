@@ -43,6 +43,12 @@ class RefreshToken implements GrantTypeInterface {
     protected $authServer = null;
 
     /**
+     * Access token expires in override
+     * @var int
+     */
+    protected $expiresIn = null;
+
+    /**
      * Constructor
      * @param AuthServer $authServer AuthServer instance
      * @return void
@@ -68,6 +74,16 @@ class RefreshToken implements GrantTypeInterface {
     public function getResponseType()
     {
         return $this->responseType;
+    }
+
+    /**
+     * Override the default access token expire time
+     * @param int $expiresIn
+     * @return void
+     */
+    public function setExpiresIn($expiresIn)
+    {
+        $this->expiresIn = $expiresIn;
     }
 
     /**
@@ -116,8 +132,8 @@ class RefreshToken implements GrantTypeInterface {
 
         // Generate new tokens and associate them to the session
         $accessToken = SecureKey::make();
-        $accessTokenExpires = time() + $this->authServer->getExpiresIn();
-        $accessTokenExpiresIn = $this->authServer->getExpiresIn();
+        $accessTokenExpiresIn = ($this->expiresIn !== null) ? $this->expiresIn : $this->authServer->getExpiresIn();
+        $accessTokenExpires = time() + $accessTokenExpiresIn;
         $refreshToken = SecureKey::make();
 
         $newAccessTokenId = $this->authServer->getStorage('session')->associateAccessToken($accessTokenDetails['session_id'], $accessToken, $accessTokenExpires);

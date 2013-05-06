@@ -43,6 +43,12 @@ class ClientCredentials implements GrantTypeInterface {
     protected $authServer = null;
 
     /**
+     * Access token expires in override
+     * @var int
+     */
+    protected $expiresIn = null;
+
+    /**
      * Constructor
      * @param AuthServer $authServer AuthServer instance
      * @return void
@@ -68,6 +74,16 @@ class ClientCredentials implements GrantTypeInterface {
     public function getResponseType()
     {
         return $this->responseType;
+    }
+
+    /**
+     * Override the default access token expire time
+     * @param int $expiresIn
+     * @return void
+     */
+    public function setExpiresIn($expiresIn)
+    {
+        $this->expiresIn = $expiresIn;
     }
 
     /**
@@ -126,9 +142,8 @@ class ClientCredentials implements GrantTypeInterface {
 
         // Generate an access token
         $accessToken = SecureKey::make();
-
-        $accessTokenExpires = time() + $this->authServer->getExpiresIn();
-        $accessTokenExpiresIn = $this->authServer->getExpiresIn();
+        $accessTokenExpiresIn = ($this->expiresIn !== null) ? $this->expiresIn : $this->authServer->getExpiresIn();
+        $accessTokenExpires = time() + $accessTokenExpiresIn;
 
         // Delete any existing sessions just to be sure
         $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], 'client', $authParams['client_id']);

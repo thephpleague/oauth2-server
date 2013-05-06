@@ -43,6 +43,12 @@ class AuthCode implements GrantTypeInterface {
     protected $authServer = null;
 
     /**
+     * Access token expires in override
+     * @var int
+     */
+    protected $expiresIn = null;
+
+    /**
      * Constructor
      * @param AuthServer $authServer AuthServer instance
      * @return void
@@ -68,6 +74,16 @@ class AuthCode implements GrantTypeInterface {
     public function getResponseType()
     {
         return $this->responseType;
+    }
+
+    /**
+     * Override the default access token expire time
+     * @param int $expiresIn
+     * @return void
+     */
+    public function setExpiresIn($expiresIn)
+    {
+        $this->expiresIn = $expiresIn;
     }
 
     /**
@@ -222,8 +238,8 @@ class AuthCode implements GrantTypeInterface {
         // A session ID was returned so update it with an access token and remove the authorisation code
 
         $accessToken = SecureKey::make();
-        $accessTokenExpires = time() + $this->authServer->getExpiresIn();
-        $accessTokenExpiresIn = $this->authServer->getExpiresIn();
+        $accessTokenExpiresIn = ($this->expiresIn !== null) ? $this->expiresIn : $this->authServer->getExpiresIn();
+        $accessTokenExpires = time() + $accessTokenExpiresIn;
 
         // Remove the auth code
         $this->authServer->getStorage('session')->removeAuthCode($session['id']);
