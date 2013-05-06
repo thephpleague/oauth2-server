@@ -7,3 +7,5 @@ test
 /docs/
 /testing/
 /.project
+/.buildpath
+/cache.properties
