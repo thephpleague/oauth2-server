@@ -47,7 +47,7 @@ class ResourceServer
     protected $ownerId = null;
     
     /**
-     * The an array of all data contained in the session
+     * An array of all data contained in the session
      * @var array
      */
     protected $sessionData = null;
