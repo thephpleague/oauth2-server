@@ -240,4 +240,47 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
         $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
+
+    public function test_issueAccessToken_refreshTokenGrant_customExpiresIn()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->session->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('updateSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('getAccessToken')->andReturn(null);
+        $this->session->shouldReceive('getScopes')->andReturn(array('id'    =>  1));
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('associateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
+
+        $a = $this->returnDefault();
+        $grant = new OAuth2\Grant\RefreshToken($a);
+        $grant->setExpiresIn(30);
+        $a->addGrantType($grant);
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'refresh_token',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'refresh_token'  =>  'abcdef',
+        ));
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
+        $this->assertArrayHasKey('refresh_token', $v);
+
+        $this->assertNotEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertNotEquals(time()+$a->getExpiresIn(), $v['expires']);
+        $this->assertEquals(30, $v['expires_in']);
+        $this->assertEquals(time()+30, $v['expires']);
+    }
 }

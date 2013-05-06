@@ -413,6 +413,47 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
+    public function test_issueAccessToken_customExpiresIn()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('updateSession')->andReturn(null);
+        $this->session->shouldReceive('removeAuthCode')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+
+        $a = $this->returnDefault();
+        $grant = new OAuth2\Grant\AuthCode($a);
+        $grant->setExpiresIn(30);
+        $a->addGrantType($grant);
+
+        $_POST['grant_type'] = 'authorization_code';
+        $_POST['client_id'] = 1234;
+        $_POST['client_secret'] = 5678;
+        $_POST['redirect_uri'] = 'http://foo/redirect';
+        $_POST['code'] = 'foobar';
+
+        $request = new OAuth2\Util\Request(array(), $_POST);
+        $a->setRequest($request);
+
+        $v = $a->issueAccessToken();
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
+
+        $this->assertNotEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertNotEquals(time()+$a->getExpiresIn(), $v['expires']);
+        $this->assertEquals(30, $v['expires_in']);
+        $this->assertEquals(time()+30, $v['expires']);
+    }
+
     public function test_issueAccessToken_HTTP_auth()
     {
         $this->client->shouldReceive('getClient')->andReturn(array(

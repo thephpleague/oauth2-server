@@ -461,6 +461,54 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
     }
 
+    function test_issueAccessToken_passwordGrant_customExpiresIn()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+
+        $testCredentials = function($u, $p) { return 1; };
+
+        $a = $this->returnDefault();
+        $pgrant = new OAuth2\Grant\Password($a);
+        $pgrant->setVerifyCredentialsCallback($testCredentials);
+        $pgrant->setExpiresIn(30);
+        $a->addGrantType($pgrant);
+        $a->requireScopeParam(false);
+
+        $_POST['grant_type'] = 'password';
+        $_POST['client_id'] = 1234;
+        $_POST['client_secret'] = 5678;
+        $_POST['username'] = 'foo';
+        $_POST['password'] = 'bar';
+
+        $request = new OAuth2\Util\Request(array(), $_POST);
+        $a->setRequest($request);
+
+        $v = $a->issueAccessToken();
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
+
+        $this->assertNotEquals($a->getExpiresIn(), $v['expires_in']);
+        $this->assertNotEquals(time()+$a->getExpiresIn(), $v['expires']);
+        $this->assertEquals(30, $v['expires_in']);
+        $this->assertEquals(time()+30, $v['expires']);
+    }
+
     function test_issueAccessToken_passwordGrant_withRefreshToken()
     {
         $this->client->shouldReceive('getClient')->andReturn(array(
