@@ -211,6 +211,16 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException        OAuth2\Exception\InvalidGrantTypeException
+     * @expectedExceptionCode    9
+     */
+    public function test_getGrantType_fail()
+    {
+        $a = $this->returnDefault();
+        $a->getGrantType('blah');
+    }
+
+    /**
      * @expectedException        OAuth2\Exception\ClientException
      * @expectedExceptionCode    0
      */
