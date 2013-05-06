@@ -59,6 +59,12 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $this->assertEquals('oauth_token', $v);
     }
 
+    public function test_getScopes()
+    {
+        $s = $this->returnDefault();
+        $this->assertEquals(array(), $s->getScopes());
+    }
+
     /**
      * @expectedException OAuth2\Exception\InvalidAccessTokenException
      */

@@ -325,6 +325,8 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('associateScope')->andReturn(null);
+        $this->session->shouldReceive('associateRedirectUri')->andReturn(null);
+        $this->session->shouldReceive('associateAuthCode')->andReturn(null);
 
         $a = $this->returnDefault();
         $g = new OAuth2\Grant\AuthCode($a);

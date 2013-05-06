@@ -312,6 +312,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
         $this->session->shouldReceive('associateScope')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $testCredentials = function($u, $p) { return 1; };
 
@@ -354,6 +355,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
         $this->session->shouldReceive('associateScope')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $testCredentials = function($u, $p) { return 1; };
 
@@ -387,6 +389,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $testCredentials = function($u, $p) { return 1; };
 
@@ -428,6 +431,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $testCredentials = function($u, $p) { return 1; };
 
@@ -467,11 +471,12 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         ));
 
         $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
-
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('associateRefreshToken')->andReturn(null);
 
         $testCredentials = function($u, $p) { return 1; };
 

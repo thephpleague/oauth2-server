@@ -93,7 +93,6 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
-        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
@@ -110,7 +109,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
     {
         $this->scope->shouldReceive('getScope')->andReturn(array(
             'id'    =>  1,
-            'scope' =>  'foo',
+            'key' =>  'foo',
             'name'  =>  'Foo Name',
             'description'   =>  'Foo Name Description'
         ));
@@ -126,8 +125,8 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
-        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
         $this->session->shouldReceive('associateScope')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
@@ -161,7 +160,6 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
-        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
         $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
@@ -179,7 +177,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
     {
         $this->scope->shouldReceive('getScope')->andReturn(array(
             'id'    =>  1,
-            'scope' =>  'foo',
+            'key' =>  'foo',
             'name'  =>  'Foo Name',
             'description'   =>  'Foo Name Description'
         ));
@@ -195,8 +193,8 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
-        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
         $this->session->shouldReceive('associateScope')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
@@ -223,7 +221,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
-        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
@@ -258,7 +256,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
-        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));
@@ -296,7 +294,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('deleteSession')->andReturn(null);
-        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\ClientCredentials($a));

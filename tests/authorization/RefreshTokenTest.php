@@ -31,6 +31,9 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
 
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('updateSession')->andReturn(null);
+        $this->session->shouldReceive('removeAuthCode')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('associateRefreshToken')->andReturn(1);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\AuthCode($a));
@@ -171,6 +174,10 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('updateSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('associateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('getAccessToken')->andReturn(null);
+        $this->session->shouldReceive('getScopes')->andReturn(array());
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\RefreshToken($a));
@@ -205,10 +212,14 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         ));
 
         $this->session->shouldReceive('validateRefreshToken')->andReturn(1);
-
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('updateSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('getAccessToken')->andReturn(null);
+        $this->session->shouldReceive('getScopes')->andReturn(array('id'    =>  1));
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('associateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\RefreshToken($a));

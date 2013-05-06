@@ -347,8 +347,14 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
             'name'  =>  'Example Client'
         ));
 
-        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(array(
+            'id'    =>  1,
+            'scope_ids' =>  '1'
+        ));
         $this->session->shouldReceive('updateSession')->andReturn(null);
+        $this->session->shouldReceive('removeAuthCode')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\AuthCode($a));
@@ -381,6 +387,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
 
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('updateSession')->andReturn(null);
+        $this->session->shouldReceive('removeAuthCode')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\AuthCode($a));
@@ -416,6 +424,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
 
         $this->session->shouldReceive('validateAuthCode')->andReturn(1);
         $this->session->shouldReceive('updateSession')->andReturn(null);
+        $this->session->shouldReceive('removeAuthCode')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
         $a->addGrantType(new OAuth2\Grant\AuthCode($a));
