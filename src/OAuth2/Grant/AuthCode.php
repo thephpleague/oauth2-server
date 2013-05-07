@@ -49,6 +49,12 @@ class AuthCode implements GrantTypeInterface {
     protected $accessTokenTTL = null;
 
     /**
+     * The TTL of the auth token
+     * @var integer
+     */
+    protected $authTokenTTL = 600;
+
+    /**
      * Constructor
      * @param AuthServer $authServer AuthServer instance
      * @return void
@@ -84,6 +90,16 @@ class AuthCode implements GrantTypeInterface {
     public function setAccessTokenTTL($accessTokenTTL)
     {
         $this->accessTokenTTL = $accessTokenTTL;
+    }
+
+    /**
+     * Override the default access token expire time
+     * @param int $authTokenTTL
+     * @return void
+     */
+    public function setAuthTokenTTL($authTokenTTL)
+    {
+        $this->authTokenTTL = $authTokenTTL;
     }
 
     /**
@@ -187,7 +203,7 @@ class AuthCode implements GrantTypeInterface {
         $this->authServer->getStorage('session')->associateRedirectUri($sessionId, $authParams['redirect_uri']);
 
         // Associate the auth code
-        $this->authServer->getStorage('session')->associateAuthCode($sessionId, $authCode, time()+600, implode(',', $scopeIds));
+        $this->authServer->getStorage('session')->associateAuthCode($sessionId, $authCode, time() + $this->authTokenTTL, implode(',', $scopeIds));
 
         return $authCode;
     }
