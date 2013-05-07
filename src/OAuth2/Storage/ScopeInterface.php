@@ -34,8 +34,9 @@ interface ScopeInterface
      * )
      * </code>
      *
-     * @param  string     $scope The scope
+     * @param  string     $scope    The scope
+     * @param  string     $clientId The client ID
      * @return bool|array If the scope doesn't exist return false
      */
-    public function getScope($scope);
+    public function getScope($scope, $clientId = null, $grantType = null);
 }

@@ -37,7 +37,7 @@ class AuthServer
      * The TTL (time to live) of an access token in seconds (default: 3600)
      * @var integer
      */
-    static protected $expiresIn = 3600;
+    protected $expiresIn = 3600;
 
     /**
      * The registered grant response types
@@ -49,19 +49,25 @@ class AuthServer
      * The client, scope and session storage classes
      * @var array
      */
-    static protected $storages = array();
+    protected $storages = array();
 
     /**
      * The registered grant types
      * @var array
      */
-    static protected $grantTypes = array();
+    protected $grantTypes = array();
 
     /**
      * Require the "scope" parameter to be in checkAuthoriseParams()
      * @var boolean
      */
     protected $requireScopeParam = true;
+
+    /**
+     * Default scope to be used if none is provided and requireScopeParam is false
+     * @var string
+     */
+    protected $defaultScope = null;
 
     /**
      * Require the "state" parameter to be in checkAuthoriseParams()
@@ -73,7 +79,7 @@ class AuthServer
      * The request object
      * @var Util\RequestInterface
      */
-    static protected $request = null;
+    protected $request = null;
 
     /**
      * Exception error codes
@@ -96,7 +102,7 @@ class AuthServer
      * Exception error messages
      * @var array
      */
-    static protected $exceptionMessages = array(
+    protected static $exceptionMessages = array(
         'invalid_request'           =>  'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "%s" parameter.',
         'unauthorized_client'       =>  'The client is not authorized to request an access token using this method.',
         'access_denied'             =>  'The resource owner or authorization server denied the request.',
@@ -110,6 +116,87 @@ class AuthServer
         'invalid_credentials'       =>  'The user credentials were incorrect.',
         'invalid_refresh'           =>  'The refresh token is invalid.',
     );
+
+    /**
+     * Exception error HTTP status codes
+     * @var array
+     *
+     * RFC 6749, section 4.1.2.1.:
+     * No 503 status code for 'temporarily_unavailable', because
+     * "a 503 Service Unavailable HTTP status code cannot be
+     * returned to the client via an HTTP redirect"
+     */
+    protected static $exceptionHttpStatusCodes = array(
+        'invalid_request'           =>  400,
+        'unauthorized_client'       =>  400,
+        'access_denied'             =>  401,
+        'unsupported_response_type' =>  400,
+        'invalid_scope'             =>  400,
+        'server_error'              =>  500,
+        'temporarily_unavailable'   =>  400,
+        'unsupported_grant_type'    =>  501,
+        'invalid_client'            =>  401,
+        'invalid_grant'             =>  400,
+        'invalid_credentials'       =>  400,
+        'invalid_refresh'           =>  400,
+    );
+
+    /**
+     * Get all headers that have to be send with the error response
+     *
+     * @param  string $error The error message key
+     * @return array         Array with header values
+     */
+    public static function getExceptionHttpHeaders($error)
+    {
+        $headers = array();
+        switch (self::$exceptionHttpStatusCodes[$error]) {
+            case 401:
+                $headers[] = 'HTTP/1.1 401 Unauthorized';
+                break;
+            case 500:
+                $headers[] = 'HTTP/1.1 500 Internal Server Error';
+                break;
+            case 501:
+                $headers[] = 'HTTP/1.1 501 Not Implemented';
+                break;
+            case 400:
+            default:
+                $headers[] = 'HTTP/1.1 400 Bad Request';
+        }
+
+        // Add "WWW-Authenticate" header
+        //
+        // RFC 6749, section 5.2.:
+        // "If the client attempted to authenticate via the 'Authorization'
+        // request header field, the authorization server MUST
+        // respond with an HTTP 401 (Unauthorized) status code and
+        // include the "WWW-Authenticate" response header field
+        // matching the authentication scheme used by the client.
+        // @codeCoverageIgnoreStart
+        if ($error === 'invalid_client') {
+            $authScheme = null;
+            $request = new Request();
+            if ($request->server('PHP_AUTH_USER') !== null) {
+                $authScheme = 'Basic';
+            } else {
+                $authHeader = $request->header('Authorization');
+                if ($authHeader !== null) {
+                    if (strpos($authHeader, 'Bearer') === 0) {
+                        $authScheme = 'Bearer';
+                    } elseif (strpos($authHeader, 'Basic') === 0) {
+                        $authScheme = 'Basic';
+                    }
+                }
+            }
+            if ($authScheme !== null) {
+                $headers[] = 'WWW-Authenticate: '.$authScheme.' realm=""';
+            }
+        }
+        // @codeCoverageIgnoreEnd
+
+        return $headers;
+    }
 
     /**
      * Get an exception message
@@ -142,7 +229,7 @@ class AuthServer
      */
     public function __construct(ClientInterface $client, SessionInterface $session, ScopeInterface $scope)
     {
-        self::$storages = array(
+        $this->storages = array(
             'client'    =>  $client,
             'session'   =>  $session,
             'scope' =>  $scope
@@ -159,7 +246,7 @@ class AuthServer
         if (is_null($identifier)) {
             $identifier = $grantType->getIdentifier();
         }
-        self::$grantTypes[$identifier] = $grantType;
+        $this->grantTypes[$identifier] = $grantType;
 
         if ( ! is_null($grantType->getResponseType())) {
             $this->responseTypes[] = $grantType->getResponseType();
@@ -171,9 +258,14 @@ class AuthServer
      * @param  string  $identifier The grant type identifier
      * @return boolean             Returns "true" if enabled, "false" if not
      */
-    public static function hasGrantType($identifier)
+    public function hasGrantType($identifier)
     {
-        return (array_key_exists($identifier, self::$grantTypes));
+        return (array_key_exists($identifier, $this->grantTypes));
+    }
+
+    public function getResponseTypes()
+    {
+        return $this->responseTypes;
     }
 
     /**
@@ -184,6 +276,43 @@ class AuthServer
     public function requireScopeParam($require = true)
     {
         $this->requireScopeParam = $require;
+    }
+
+    /**
+     * Is the scope parameter required?
+     * @return bool
+     */
+    public function scopeParamRequired()
+    {
+        return $this->requireScopeParam;
+    }
+
+    /**
+     * Default scope to be used if none is provided and requireScopeParam is false
+     * @var string
+     */
+    public function setDefaultScope($default = null)
+    {
+        $this->defaultScope = $default;
+    }
+
+    /**
+     * Default scope to be used if none is provided and requireScopeParam is false
+     * @return string|null
+     */
+    public function getDefaultScope()
+    {
+        return $this->defaultScope;
+    }
+
+    /**
+     * Require the "state" paremter in checkAuthoriseParams()
+     * @param  boolean $require
+     * @return void
+     */
+    public function stateParamRequired()
+    {
+        return $this->requireStateParam;
     }
 
     /**
@@ -220,9 +349,9 @@ class AuthServer
      * Get the TTL for an access token
      * @return int The TTL
      */
-    public static function getExpiresIn()
+    public function getExpiresIn()
     {
-        return self::$expiresIn;
+        return $this->expiresIn;
     }
 
     /**
@@ -231,7 +360,7 @@ class AuthServer
      */
     public function setExpiresIn($expiresIn)
     {
-        self::$expiresIn = $expiresIn;
+        $this->expiresIn = $expiresIn;
     }
 
     /**
@@ -241,7 +370,7 @@ class AuthServer
      */
     public function setRequest(Util\RequestInterface $request)
     {
-        self::$request = $request;
+        $this->request = $request;
     }
 
     /**
@@ -249,16 +378,16 @@ class AuthServer
      *
      * @return Util\RequestInterface
      */
-    public static function getRequest()
+    public function getRequest()
     {
-        if (self::$request === null) {
+        if ($this->request === null) {
             // @codeCoverageIgnoreStart
-            self::$request = Request::buildFromGlobals();
+            $this->request = Request::buildFromGlobals();
 
         }
         // @codeCoverageIgnoreEnd
 
-        return self::$request;
+        return $this->request;
     }
 
     /**
@@ -266,106 +395,9 @@ class AuthServer
      * @param  string $obj The class required
      * @return Storage\ClientInterface|Storage\ScopeInterface|Storage\SessionInterface
      */
-    public static function getStorage($obj)
+    public function getStorage($obj)
     {
-        return self::$storages[$obj];
-    }
-
-    /**
-     * Check authorise parameters
-     *
-     * @param  array $inputParams Optional array of parsed $_GET keys
-     * @throws \OAuth2\Exception\ClientException
-     * @return array             Authorise request parameters
-     */
-    public function checkAuthoriseParams($inputParams = array())
-    {
-        // Auth params
-        $authParams = self::getParam(array('client_id', 'redirect_uri', 'response_type', 'scope', 'state'), 'get', $inputParams);
-
-        if (is_null($authParams['client_id'])) {
-            throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'client_id'), 0);
-        }
-
-        if (is_null($authParams['redirect_uri'])) {
-            throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'redirect_uri'), 0);
-        }
-
-        if ($this->requireStateParam === true && is_null($authParams['state'])) {
-            throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'state'), 0);
-        }
-
-        // Validate client ID and redirect URI
-        $clientDetails = self::getStorage('client')->getClient($authParams['client_id'], null, $authParams['redirect_uri']);
-
-        if ($clientDetails === false) {
-            throw new Exception\ClientException(self::$exceptionMessages['invalid_client'], 8);
-        }
-
-        $authParams['client_details'] = $clientDetails;
-
-        if (is_null($authParams['response_type'])) {
-            throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'response_type'), 0);
-        }
-
-        // Ensure response type is one that is recognised
-        if ( ! in_array($authParams['response_type'], $this->responseTypes)) {
-            throw new Exception\ClientException(self::$exceptionMessages['unsupported_response_type'], 3);
-        }
-
-        // Validate scopes
-        $scopes = explode($this->scopeDelimeter, $authParams['scope']);
-
-        for ($i = 0; $i < count($scopes); $i++) {
-            $scopes[$i] = trim($scopes[$i]);
-            if ($scopes[$i] === '') unset($scopes[$i]); // Remove any junk scopes
-        }
-
-        if ($this->requireScopeParam === true && count($scopes) === 0) {
-            throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'scope'), 0);
-        }
-
-        $authParams['scopes'] = array();
-
-        foreach ($scopes as $scope) {
-            $scopeDetails = self::getStorage('scope')->getScope($scope);
-
-            if ($scopeDetails === false) {
-                throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_scope'], $scope), 4);
-            }
-
-            $authParams['scopes'][] = $scopeDetails;
-        }
-
-        return $authParams;
-    }
-
-    /**
-     * Parse a new authorise request
-     *
-     * @param  string $type        The session owner's type
-     * @param  string $typeId      The session owner's ID
-     * @param  array  $authParams  The authorise request $_GET parameters
-     * @return string              An authorisation code
-     */
-    public function newAuthoriseRequest($type, $typeId, $authParams = array())
-    {
-        // Generate an auth code
-        $authCode = SecureKey::make();
-
-        // Remove any old sessions the user might have
-        self::getStorage('session')->deleteSession($authParams['client_id'], $type, $typeId);
-
-        // Create a new session
-        $sessionId = self::getStorage('session')->createSession($authParams['client_id'], $authParams['redirect_uri'], $type, $typeId, $authCode);
-
-        // Associate scopes with the new session
-        foreach ($authParams['scopes'] as $scope)
-        {
-            self::getStorage('session')->associateScope($sessionId, $scope['id']);
-        }
-
-        return $authCode;
+        return $this->storages[$obj];
     }
 
     /**
@@ -376,14 +408,14 @@ class AuthServer
      */
     public function issueAccessToken($inputParams = array())
     {
-        $grantType = self::getParam('grant_type', 'post', $inputParams);
+        $grantType = $this->getParam('grant_type', 'post', $inputParams);
 
         if (is_null($grantType)) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'grant_type'), 0);
         }
 
         // Ensure grant type is one that is recognised and is enabled
-        if ( ! in_array($grantType, array_keys(self::$grantTypes))) {
+        if ( ! in_array($grantType, array_keys($this->grantTypes))) {
             throw new Exception\ClientException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $grantType), 7);
         }
 
@@ -396,26 +428,38 @@ class AuthServer
      * @param  string $grantType The grant type identifer
      * @return class
      */
-    protected function getGrantType($grantType)
+    public function getGrantType($grantType)
     {
-        return self::$grantTypes[$grantType];
-    }
+        if (isset($this->grantTypes[$grantType])) {
+            return $this->grantTypes[$grantType];
+        }
+
+        throw new Exception\InvalidGrantTypeException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $grantType), 9);
+        }
 
     /**
      * Get a parameter from passed input parameters or the Request class
-     * @param  string|array $param Requried parameter
+     * @param  string|array $param Required parameter
      * @param  string $method      Get/put/post/delete
      * @param  array  $inputParams Passed input parameters
      * @return mixed               'Null' if parameter is missing
      */
-    public static function getParam($param = '', $method = 'get', $inputParams = array())
+    public function getParam($param = '', $method = 'get', $inputParams = array(), $default = null)
     {
         if (is_string($param)) {
-            return (isset($inputParams[$param])) ? $inputParams[$param] : self::getRequest()->{$method}($param);
+            if (isset($inputParams[$param])) {
+                return $inputParams[$param];
+            } elseif ($param === 'client_id' && ! is_null($client_id = $this->getRequest()->server('PHP_AUTH_USER'))) {
+                return $client_id;
+            } elseif ($param === 'client_secret' && ! is_null($client_secret = $this->getRequest()->server('PHP_AUTH_PW'))) {
+                return $client_secret;
+            } else {
+                return $this->getRequest()->{$method}($param, $default);
+            }
         } else {
             $response = array();
             foreach ($param as $p) {
-                $response[$p] = self::getParam($p, $method, $inputParams);
+                $response[$p] = $this->getParam($p, $method, $inputParams);
             }
             return $response;
         }
