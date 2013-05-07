@@ -174,6 +174,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     	$this->assertEquals(123, $s->getOwnerId());
     	$this->assertEquals('user', $s->getOwnerType());
     	$this->assertEquals('abcdef', $s->getAccessToken());
+    	$this->assertEquals('testapp', $s->getClientId());
     	$this->assertTrue($s->hasScope('foo'));
     	$this->assertTrue($s->hasScope('bar'));
     	$this->assertTrue($s->hasScope(array('foo', 'bar')));
