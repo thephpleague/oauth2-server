@@ -46,7 +46,7 @@ class RefreshToken implements GrantTypeInterface {
      * Access token expires in override
      * @var int
      */
-    protected $expiresIn = null;
+    protected $accessTokenTTL = null;
 
     /**
      * Constructor
@@ -78,12 +78,12 @@ class RefreshToken implements GrantTypeInterface {
 
     /**
      * Override the default access token expire time
-     * @param int $expiresIn
+     * @param int $accessTokenTTL
      * @return void
      */
-    public function setExpiresIn($expiresIn)
+    public function setAccessTokenTTL($accessTokenTTL)
     {
-        $this->expiresIn = $expiresIn;
+        $this->accessTokenTTL = $accessTokenTTL;
     }
 
     /**
@@ -132,7 +132,7 @@ class RefreshToken implements GrantTypeInterface {
 
         // Generate new tokens and associate them to the session
         $accessToken = SecureKey::make();
-        $accessTokenExpiresIn = ($this->expiresIn !== null) ? $this->expiresIn : $this->authServer->getExpiresIn();
+        $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getExpiresIn();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
         $refreshToken = SecureKey::make();
 

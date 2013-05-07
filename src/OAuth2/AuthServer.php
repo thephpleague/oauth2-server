@@ -356,11 +356,11 @@ class AuthServer
 
     /**
      * Set the TTL for an access token
-     * @param int $expiresIn The new TTL
+     * @param int $accessTokenTTL The new TTL
      */
-    public function setExpiresIn($expiresIn)
+    public function setAcessTokenTTL($accessTokenTTL)
     {
-        $this->expiresIn = $expiresIn;
+        $this->accessTokenTTL = $accessTokenTTL;
     }
 
     /**
