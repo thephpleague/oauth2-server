@@ -8,18 +8,18 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-        $this->session = M::mock('League\OAuth2\Storage\SessionInterface');
+        $this->session = M::mock('League\OAuth2\Server\Storage\SessionInterface');
 	}
 
 	private function returnDefault()
 	{
-		return new League\OAuth2\ResourceServer($this->session);
+		return new League\OAuth2\Server\Resource($this->session);
 	}
 
 	public function test_setRequest()
     {
         $s = $this->returnDefault();
-        $request = new League\OAuth2\Util\Request();
+        $request = new League\OAuth2\Server\Util\Request();
         $s->setRequest($request);
 
         $reflector = new ReflectionClass($s);
@@ -27,17 +27,17 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $requestProperty->setAccessible(true);
         $v = $requestProperty->getValue($s);
 
-        $this->assertTrue($v instanceof League\OAuth2\Util\RequestInterface);
+        $this->assertTrue($v instanceof League\OAuth2\Server\Util\RequestInterface);
     }
 
     public function test_getRequest()
     {
         $s = $this->returnDefault();
-        $request = new League\OAuth2\Util\Request();
+        $request = new League\OAuth2\Server\Util\Request();
         $s->setRequest($request);
         $v = $s->getRequest();
 
-        $this->assertTrue($v instanceof League\OAuth2\Util\RequestInterface);
+        $this->assertTrue($v instanceof League\OAuth2\Server\Util\RequestInterface);
     }
 
     public function test_getTokenKey()
@@ -66,12 +66,12 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException League\OAuth2\Exception\InvalidAccessTokenException
+     * @expectedException League\OAuth2\Server\Exception\InvalidAccessTokenException
      */
     public function test_determineAccessToken_missingToken()
     {
     	$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer';
-   		$request = new League\OAuth2\Util\Request(array(), array(), array(), array(), $_SERVER);
+   		$request = new League\OAuth2\Server\Util\Request(array(), array(), array(), array(), $_SERVER);
 
     	$s = $this->returnDefault();
     	$s->setRequest($request);
@@ -85,7 +85,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
 
     public function test_determineAccessToken_fromHeader()
     {
-        $request = new League\OAuth2\Util\Request();
+        $request = new League\OAuth2\Server\Util\Request();
 
         $requestReflector = new ReflectionClass($request);
         $param = $requestReflector->getProperty('headers');
@@ -113,7 +113,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     	$_GET[$s->getTokenKey()] = 'abcdef';
     	$_SERVER['REQUEST_METHOD'] = 'get';
 
-   		$request = new League\OAuth2\Util\Request($_GET, array(), array(), array(), $_SERVER);
+   		$request = new League\OAuth2\Server\Util\Request($_GET, array(), array(), array(), $_SERVER);
     	$s->setRequest($request);
 
     	$reflector = new ReflectionClass($s);
@@ -126,13 +126,13 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException League\OAuth2\Exception\InvalidAccessTokenException
+     * @expectedException League\OAuth2\Server\Exception\InvalidAccessTokenException
      */
     public function test_isValid_notValid()
     {
     	$this->session->shouldReceive('validateAccessToken')->andReturn(false);
 
-    	$request = new League\OAuth2\Util\Request();
+    	$request = new League\OAuth2\Server\Util\Request();
         $requestReflector = new ReflectionClass($request);
         $param = $requestReflector->getProperty('headers');
         $param->setAccessible(true);
@@ -159,7 +159,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
             array('key' =>  'bar')
         ));
 
-   		$request = new League\OAuth2\Util\Request();
+   		$request = new League\OAuth2\Server\Util\Request();
         $requestReflector = new ReflectionClass($request);
         $param = $requestReflector->getProperty('headers');
         $param->setAccessible(true);

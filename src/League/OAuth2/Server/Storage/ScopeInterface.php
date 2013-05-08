@@ -9,7 +9,7 @@
  * @link        http://github.com/php-loep/oauth2-server
  */
 
-namespace League\OAuth2\Storage;
+namespace League\OAuth2\Server\Storage;
 
 interface ScopeInterface
 {

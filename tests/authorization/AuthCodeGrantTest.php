@@ -10,20 +10,20 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->client = M::mock('League\OAuth2\Storage\ClientInterface');
-        $this->session = M::mock('League\OAuth2\Storage\SessionInterface');
-        $this->scope = M::mock('League\OAuth2\Storage\ScopeInterface');
+        $this->client = M::mock('League\OAuth2\Server\Storage\ClientInterface');
+        $this->session = M::mock('League\OAuth2\Server\Storage\SessionInterface');
+        $this->scope = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
     }
 
     private function returnDefault()
     {
-        return new League\OAuth2\AuthServer($this->client, $this->session, $this->scope);
+        return new League\OAuth2\Server\Authorization($this->client, $this->session, $this->scope);
     }
 
     public function test_setAuthTokenTTL()
     {
         $a = $this->returnDefault();
-        $grant = new League\OAuth2\Grant\AuthCode($a);
+        $grant = new League\OAuth2\Server\Grant\AuthCode($a);
         $grant->setAuthTokenTTL(30);
 
         $reflector = new ReflectionClass($grant);
@@ -35,25 +35,25 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_checkAuthoriseParams_noClientId()
     {
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
         $g->checkAuthoriseParams();
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_checkAuthoriseParams_noRedirectUri()
     {
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
         $g->checkAuthoriseParams(array(
             'client_id' =>  1234
@@ -61,13 +61,13 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_checkAuthoriseParams_noRequiredState()
     {
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
         $a->requireStateParam(true);
         $g->checkAuthoriseParams(array(
@@ -78,7 +78,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
 
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    8
      */
     public function test_checkAuthoriseParams_badClient()
@@ -86,7 +86,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
         $g->checkAuthoriseParams(array(
             'client_id' =>  1234,
@@ -95,7 +95,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_checkAuthoriseParams_missingResponseType()
@@ -108,7 +108,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         ));
 
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
         $g->checkAuthoriseParams(array(
             'client_id' =>  1234,
@@ -117,7 +117,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    3
      */
     public function test_checkAuthoriseParams_badResponseType()
@@ -130,7 +130,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         ));
 
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
         $g->checkAuthoriseParams(array(
             'client_id' =>  1234,
@@ -140,7 +140,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_checkAuthoriseParams_missingScopes()
@@ -153,9 +153,9 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         ));
 
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
-        $a->addGrantType(new League\OAuth2\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
 
         $g->checkAuthoriseParams(array(
             'client_id' =>  1234,
@@ -182,9 +182,9 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         ));
 
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
-        $a->addGrantType(new League\OAuth2\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
         $a->setDefaultScope('test.scope');
         $a->requireScopeParam(false);
 
@@ -199,7 +199,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    4
      */
     public function test_checkAuthoriseParams_badScopes()
@@ -214,9 +214,9 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         $this->scope->shouldReceive('getScope')->andReturn(false);
 
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
-        $a->addGrantType(new League\OAuth2\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
 
         $g->checkAuthoriseParams(array(
             'client_id' =>  1234,
@@ -229,9 +229,9 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
     public function test_checkAuthoriseParams_passedInput()
     {
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
-        $a->addGrantType(new League\OAuth2\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
 
         $this->client->shouldReceive('getClient')->andReturn(array(
             'client_id' =>  1234,
@@ -295,9 +295,9 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         ));
 
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
-        $a->addGrantType(new League\OAuth2\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
 
         $_GET['client_id'] = 1234;
         $_GET['redirect_uri'] = 'http://foo/redirect';
@@ -305,7 +305,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         $_GET['scope'] = 'foo';
         $_GET['state'] = 'xyz';
 
-        $request = new League\OAuth2\Util\Request($_GET);
+        $request = new League\OAuth2\Server\Util\Request($_GET);
         $a->setRequest($request);
 
         $v = $g->checkAuthoriseParams();
@@ -343,7 +343,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateAuthCode')->andReturn(null);
 
         $a = $this->returnDefault();
-        $g = new League\OAuth2\Grant\AuthCode($a);
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
 
         $params = array(

@@ -9,15 +9,15 @@
  * @link        http://github.com/php-loep/oauth2-server
  */
 
-namespace League\OAuth2\Grant;
+namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Request;
-use League\OAuth2\AuthServer;
-use League\OAuth2\Exception;
-use League\OAuth2\Util\SecureKey;
-use League\OAuth2\Storage\SessionInterface;
-use League\OAuth2\Storage\ClientInterface;
-use League\OAuth2\Storage\ScopeInterface;
+use League\OAuth2\Server\Request;
+use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\Exception;
+use League\OAuth2\Server\Util\SecureKey;
+use League\OAuth2\Server\Storage\SessionInterface;
+use League\OAuth2\Server\Storage\ClientInterface;
+use League\OAuth2\Server\Storage\ScopeInterface;
 
 /**
  * Client credentials grant class
@@ -53,7 +53,7 @@ class ClientCredentials implements GrantTypeInterface {
      * @param AuthServer $authServer AuthServer instance
      * @return void
      */
-    public function __construct(AuthServer $authServer)
+    public function __construct(Authorization $authServer)
     {
         $this->authServer = $authServer;
     }
@@ -97,18 +97,18 @@ class ClientCredentials implements GrantTypeInterface {
         $authParams = $this->authServer->getParam(array('client_id', 'client_secret'), 'post', $inputParams);
 
         if (is_null($authParams['client_id'])) {
-            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_id'), 0);
+            throw new Exception\ClientException(sprintf(Authorization::getExceptionMessage('invalid_request'), 'client_id'), 0);
         }
 
         if (is_null($authParams['client_secret'])) {
-            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_secret'), 0);
+            throw new Exception\ClientException(sprintf(Authorization::getExceptionMessage('invalid_request'), 'client_secret'), 0);
         }
 
         // Validate client ID and client secret
         $clientDetails = $this->authServer->getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret'], null, $this->identifier);
 
         if ($clientDetails === false) {
-            throw new Exception\ClientException(AuthServer::getExceptionMessage('invalid_client'), 8);
+            throw new Exception\ClientException(Authorization::getExceptionMessage('invalid_client'), 8);
         }
 
         $authParams['client_details'] = $clientDetails;

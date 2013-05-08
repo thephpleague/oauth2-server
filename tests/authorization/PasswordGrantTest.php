@@ -10,26 +10,26 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->client = M::mock('League\OAuth2\Storage\ClientInterface');
-        $this->session = M::mock('League\OAuth2\Storage\SessionInterface');
-        $this->scope = M::mock('League\OAuth2\Storage\ScopeInterface');
+        $this->client = M::mock('League\OAuth2\Server\Storage\ClientInterface');
+        $this->session = M::mock('League\OAuth2\Server\Storage\SessionInterface');
+        $this->scope = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
     }
 
     private function returnDefault()
     {
-        return new League\OAuth2\AuthServer($this->client, $this->session, $this->scope);
+        return new League\OAuth2\Server\Authorization($this->client, $this->session, $this->scope);
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_issueAccessToken_passwordGrant_missingClientId()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Grant\Password($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\Password($a));
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -38,15 +38,15 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_issueAccessToken_passwordGrant_missingClientPassword()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Grant\Password($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\Password($a));
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -56,7 +56,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    8
      */
     public function test_issueAccessToken_passwordGrant_badClient()
@@ -64,9 +64,9 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Grant\Password($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\Password($a));
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -77,7 +77,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\InvalidGrantTypeException
+     * @expectedException        League\OAuth2\Server\Exception\InvalidGrantTypeException
      */
     function test_issueAccessToken_passwordGrant_invalidCallback()
     {
@@ -98,7 +98,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = null;
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -112,7 +112,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     function test_issueAccessToken_passwordGrant_missingUsername()
@@ -134,7 +134,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return false; };
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -146,7 +146,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     function test_issueAccessToken_passwordGrant_missingPassword()
@@ -168,7 +168,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return false; };
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -181,7 +181,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     function test_issueAccessToken_passwordGrant_badCredentials()
@@ -203,7 +203,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return false; };
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -217,7 +217,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    4
      */
     public function test_issueAccessToken_passwordGrant_badScopes()
@@ -240,7 +240,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -255,7 +255,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_issueAccessToken_passwordGrant_missingScopes()
@@ -276,7 +276,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
         $a->requireScopeParam(true);
@@ -317,7 +317,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
         $a->requireScopeParam(false);
@@ -360,7 +360,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
@@ -394,7 +394,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
         $a->requireScopeParam(false);
@@ -436,7 +436,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
         $a->requireScopeParam(false);
@@ -447,7 +447,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $_POST['username'] = 'foo';
         $_POST['password'] = 'bar';
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken();
@@ -481,7 +481,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $pgrant->setAccessTokenTTL(30);
         $a->addGrantType($pgrant);
@@ -493,7 +493,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $_POST['username'] = 'foo';
         $_POST['password'] = 'bar';
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken();
@@ -529,10 +529,10 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $testCredentials = function($u, $p) { return 1; };
 
         $a = $this->returnDefault();
-        $pgrant = new League\OAuth2\Grant\Password($a);
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
-        $a->addGrantType(new League\OAuth2\Grant\RefreshToken($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\RefreshToken($a));
         $a->requireScopeParam(false);
 
         $_POST['grant_type'] = 'password';
@@ -541,7 +541,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $_POST['username'] = 'foo';
         $_POST['password'] = 'bar';
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken();

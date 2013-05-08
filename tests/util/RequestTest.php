@@ -6,7 +6,7 @@ class Request_test extends PHPUnit_Framework_TestCase
 
 	function setUp()
 	{
-		$this->request = new League\OAuth2\Util\Request(
+		$this->request = new League\OAuth2\Server\Util\Request(
 			array('foo' => 'bar'),
 			array('foo' => 'bar'),
 			array('foo' => 'bar'),
@@ -17,10 +17,10 @@ class Request_test extends PHPUnit_Framework_TestCase
 
 	function test_buildFromIndex()
 	{
-		$r = new League\OAuth2\Util\Request();
+		$r = new League\OAuth2\Server\Util\Request();
 		$r->buildFromGlobals();
 
-		$this->assertTrue($r instanceof League\OAuth2\Util\Request);
+		$this->assertTrue($r instanceof League\OAuth2\Server\Util\Request);
 	}
 
 	function test_get()

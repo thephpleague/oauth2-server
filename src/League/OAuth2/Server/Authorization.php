@@ -9,19 +9,19 @@
  * @link        http://github.com/php-loep/oauth2-server
  */
 
-namespace League\OAuth2;
+namespace League\OAuth2\Server;
 
-use League\OAuth2\Util\Request;
-use League\OAuth2\Util\SecureKey;
-use League\OAuth2\Storage\SessionInterface;
-use League\OAuth2\Storage\ClientInterface;
-use League\OAuth2\Storage\ScopeInterface;
-use League\OAuth2\Grant\GrantTypeInterface;
+use League\OAuth2\Server\Util\Request;
+use League\OAuth2\Server\Util\SecureKey;
+use League\OAuth2\Server\Storage\SessionInterface;
+use League\OAuth2\Server\Storage\ClientInterface;
+use League\OAuth2\Server\Storage\ScopeInterface;
+use League\OAuth2\Server\Grant\GrantTypeInterface;
 
 /**
  * OAuth 2.0 authorization server class
  */
-class AuthServer
+class Authorization
 {
     /**
      * The delimeter between scopes specified in the scope query string parameter

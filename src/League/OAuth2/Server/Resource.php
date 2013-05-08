@@ -9,17 +9,17 @@
  * @link        http://github.com/php-loep/oauth2-server
  */
 
-namespace League\OAuth2;
+namespace League\OAuth2\Server;
 
 use OutOfBoundsException;
-use League\OAuth2\Storage\SessionInterface;
-use League\OAuth2\Util\RequestInterface;
-use League\OAuth2\Util\Request;
+use League\OAuth2\Server\Storage\SessionInterface;
+use League\OAuth2\Server\Util\RequestInterface;
+use League\OAuth2\Server\Util\Request;
 
 /**
  * OAuth 2.0 Resource Server
  */
-class ResourceServer
+class Resource
 {
     /**
      * The access token

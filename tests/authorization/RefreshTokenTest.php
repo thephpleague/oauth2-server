@@ -10,20 +10,20 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->client = M::mock('League\OAuth2\Storage\ClientInterface');
-        $this->session = M::mock('League\OAuth2\Storage\SessionInterface');
-        $this->scope = M::mock('League\OAuth2\Storage\ScopeInterface');
+        $this->client = M::mock('League\OAuth2\Server\Storage\ClientInterface');
+        $this->session = M::mock('League\OAuth2\Server\Storage\SessionInterface');
+        $this->scope = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
     }
 
     private function returnDefault()
     {
-        return new League\OAuth2\AuthServer($this->client, $this->session, $this->scope);
+        return new League\OAuth2\Server\Authorization($this->client, $this->session, $this->scope);
     }
 
     public function test_setRefreshTokenTTL()
     {
         $a = $this->returnDefault();
-        $rt = new League\OAuth2\Grant\RefreshToken($a);
+        $rt = new League\OAuth2\Server\Grant\RefreshToken($a);
         $rt->setRefreshTokenTTL(30);
         $this->assertEquals(30, $rt->getRefreshTokenTTL());
     }
@@ -44,8 +44,8 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateRefreshToken')->andReturn(1);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Grant\AuthCode($a));
-        $a->addGrantType(new League\OAuth2\Grant\RefreshToken($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\RefreshToken($a));
 
         $_POST['grant_type'] = 'authorization_code';
         $_POST['client_id'] = 1234;
@@ -53,7 +53,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $_POST['redirect_uri'] = 'http://foo/redirect';
         $_POST['code'] = 'foobar';
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken();
@@ -69,15 +69,15 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_issueAccessToken_refreshTokenGrant_missingClientId()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Grant\RefreshToken($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\RefreshToken($a));
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -86,15 +86,15 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_issueAccessToken_refreshTokenGrant_missingClientSecret()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Grant\RefreshToken($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\RefreshToken($a));
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -104,7 +104,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    8
      */
     public function test_issueAccessToken_refreshTokenGrant_badClient()
@@ -112,9 +112,9 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Grant\RefreshToken($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\RefreshToken($a));
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -125,7 +125,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_issueAccessToken_refreshTokenGrant_missingRefreshToken()
@@ -133,9 +133,9 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(array());
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Grant\RefreshToken($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\RefreshToken($a));
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -147,7 +147,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException        League\OAuth2\Exception\ClientException
+     * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    0
      */
     public function test_issueAccessToken_refreshTokenGrant_badRefreshToken()
@@ -156,9 +156,9 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('validateRefreshToken')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Grant\RefreshToken($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\RefreshToken($a));
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken(array(
@@ -188,14 +188,14 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('getScopes')->andReturn(array());
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Grant\RefreshToken($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\RefreshToken($a));
 
         $_POST['grant_type'] = 'refresh_token';
         $_POST['client_id'] = 1234;
         $_POST['client_secret'] = 5678;
         $_POST['refresh_token'] = 'abcdef';
 
-        $request = new League\OAuth2\Util\Request(array(), $_POST);
+        $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
         $v = $a->issueAccessToken();
@@ -230,7 +230,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Grant\RefreshToken($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\RefreshToken($a));
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'refresh_token',
@@ -269,7 +269,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
-        $grant = new League\OAuth2\Grant\RefreshToken($a);
+        $grant = new League\OAuth2\Server\Grant\RefreshToken($a);
         $grant->setAccessTokenTTL(30);
         $a->addGrantType($grant);
 
