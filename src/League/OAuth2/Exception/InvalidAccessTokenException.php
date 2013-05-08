@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 Invalid Grant Type Exception
+ * OAuth 2.0 Invalid Access Token Exception
  *
  * @package     lncd/oauth2
  * @author      Alex Bilbie <hello@alexbilbie.com>
@@ -9,12 +9,12 @@
  * @link        http://github.com/lncd/oauth2
  */
 
-namespace OAuth2\Exception;
+namespace League\OAuth2\Exception;
 
 /**
- * InvalidGrantTypeException Exception
+ * InvalidAccessToken Exception
  */
-class InvalidGrantTypeException extends OAuth2Exception
+class InvalidAccessTokenException extends OAuth2Exception
 {
 
 }

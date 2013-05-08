@@ -9,7 +9,7 @@
  * @link        http://github.com/lncd/oauth2
  */
 
-namespace OAuth2\Exception;
+namespace League\OAuth2\Exception;
 
 /**
  * ClientException Exception

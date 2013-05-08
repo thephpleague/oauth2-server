@@ -1,8 +1,8 @@
 <?php
 
-namespace OAuth2\Storage\PDO;
+namespace League\OAuth2\Storage\PDO;
 
-use OAuth2\Storage\SessionInterface;
+use League\OAuth2\Storage\SessionInterface;
 
 class Session implements SessionInterface
 {

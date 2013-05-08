@@ -1,6 +1,6 @@
 <?php
 
-namespace OAuth2\Util;
+namespace League\OAuth2\Util;
 
 interface RequestInterface
 {

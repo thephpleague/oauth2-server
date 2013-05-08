@@ -1,6 +1,6 @@
 <?php
 
-namespace OAuth2\Storage\PDO;
+namespace League\OAuth2\Storage\PDO;
 
 class Db
 {

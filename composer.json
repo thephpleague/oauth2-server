@@ -39,7 +39,7 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"OAuth2": "src/"
+			"League\\OAuth2": "src/"
 		}
 	},
 	"suggest": {}

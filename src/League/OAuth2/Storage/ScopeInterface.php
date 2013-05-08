@@ -9,7 +9,7 @@
  * @link        http://github.com/lncd/oauth2
  */
 
-namespace OAuth2\Storage;
+namespace League\OAuth2\Storage;
 
 interface ScopeInterface
 {

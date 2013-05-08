@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 Client credentials grant
+ * OAuth 2.0 Password grant
  *
  * @package     lncd/oauth2
  * @author      Alex Bilbie <hello@alexbilbie.com>
@@ -9,32 +9,38 @@
  * @link        http://github.com/lncd/oauth2
  */
 
-namespace OAuth2\Grant;
+namespace League\OAuth2\Grant;
 
-use OAuth2\Request;
-use OAuth2\AuthServer;
-use OAuth2\Exception;
-use OAuth2\Util\SecureKey;
-use OAuth2\Storage\SessionInterface;
-use OAuth2\Storage\ClientInterface;
-use OAuth2\Storage\ScopeInterface;
+use League\OAuth2\Request;
+use League\OAuth2\AuthServer;
+use League\OAuth2\Exception;
+use League\OAuth2\Util\SecureKey;
+use League\OAuth2\Storage\SessionInterface;
+use League\OAuth2\Storage\ClientInterface;
+use League\OAuth2\Storage\ScopeInterface;
 
 /**
- * Client credentials grant class
+ * Password grant class
  */
-class ClientCredentials implements GrantTypeInterface {
+class Password implements GrantTypeInterface {
 
     /**
      * Grant identifier
      * @var string
      */
-    protected $identifier = 'client_credentials';
+    protected $identifier = 'password';
 
     /**
      * Response type
      * @var string
      */
     protected $responseType = null;
+
+    /**
+     * Callback to authenticate a user's name and password
+     * @var function
+     */
+    protected $callback = null;
 
     /**
      * AuthServer instance
@@ -87,31 +93,68 @@ class ClientCredentials implements GrantTypeInterface {
     }
 
     /**
-     * Complete the client credentials grant
+     * Set the callback to verify a user's username and password
+     * @param function $callback The callback function
+     */
+    public function setVerifyCredentialsCallback($callback)
+    {
+        $this->callback = $callback;
+    }
+
+    /**
+     * Return the callback function
+     * @return function
+     */
+    protected function getVerifyCredentialsCallback()
+    {
+        if (is_null($this->callback) || ! is_callable($this->callback)) {
+            throw new Exception\InvalidGrantTypeException('Null or non-callable callback set');
+        }
+
+        return $this->callback;
+    }
+
+    /**
+     * Complete the password grant
      * @param  null|array $inputParams
      * @return array
      */
     public function completeFlow($inputParams = null)
     {
-         // Get the required params
-        $authParams = $this->authServer->getParam(array('client_id', 'client_secret'), 'post', $inputParams);
+        // Get the required params
+        $authParams = $this->authServer->getParam(array('client_id', 'client_secret', 'username', 'password'), 'post', $inputParams);
 
         if (is_null($authParams['client_id'])) {
-            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_id'), 0);
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'client_id'), 0);
         }
 
         if (is_null($authParams['client_secret'])) {
-            throw new Exception\ClientException(sprintf(AuthServer::getExceptionMessage('invalid_request'), 'client_secret'), 0);
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'client_secret'), 0);
         }
 
-        // Validate client ID and client secret
+        // Validate client credentials
         $clientDetails = $this->authServer->getStorage('client')->getClient($authParams['client_id'], $authParams['client_secret'], null, $this->identifier);
 
         if ($clientDetails === false) {
-            throw new Exception\ClientException(AuthServer::getExceptionMessage('invalid_client'), 8);
+            throw new Exception\ClientException($this->authServer->getExceptionMessage('invalid_client'), 8);
         }
 
         $authParams['client_details'] = $clientDetails;
+
+        if (is_null($authParams['username'])) {
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'username'), 0);
+        }
+
+        if (is_null($authParams['password'])) {
+            throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'password'), 0);
+        }
+
+        // Check if user's username and password are correct
+        $userId = call_user_func($this->getVerifyCredentialsCallback(), $authParams['username'], $authParams['password']);
+
+        if ($userId === false) {
+            throw new Exception\ClientException($this->authServer->getExceptionMessage('invalid_credentials'), 0);
+        }
 
         // Validate any scopes that are in the request
         $scope = $this->authServer->getParam('scope', 'post', $inputParams, '');
@@ -146,17 +189,16 @@ class ClientCredentials implements GrantTypeInterface {
         $accessTokenExpires = time() + $accessTokenExpiresIn;
 
         // Delete any existing sessions just to be sure
-        $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], 'client', $authParams['client_id']);
+        $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], 'user', $userId);
 
         // Create a new session
-        $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], 'client', $authParams['client_id']);
+        $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], 'user', $userId);
 
-        // Add the access token
+        // Associate an access token with the session
         $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($sessionId, $accessToken, $accessTokenExpires);
 
-        // Associate scopes with the new session
-        foreach ($authParams['scopes'] as $scope)
-        {
+        // Associate scopes with the access token
+        foreach ($authParams['scopes'] as $scope) {
             $this->authServer->getStorage('session')->associateScope($accessTokenId, $scope['id']);
         }
 
@@ -166,6 +208,14 @@ class ClientCredentials implements GrantTypeInterface {
             'expires'       =>  $accessTokenExpires,
             'expires_in'    =>  $accessTokenExpiresIn
         );
+
+        // Associate a refresh token if set
+        if ($this->authServer->hasGrantType('refresh_token')) {
+            $refreshToken = SecureKey::make();
+            $refreshTokenTTL = time() + $this->authServer->getGrantType('refresh_token')->getRefreshTokenTTL();
+            $this->authServer->getStorage('session')->associateRefreshToken($accessTokenId, $refreshToken, $refreshTokenTTL);
+            $response['refresh_token'] = $refreshToken;
+        }
 
         return $response;
     }

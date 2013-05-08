@@ -1,8 +1,8 @@
 <?php
 
-namespace OAuth2\Storage\PDO;
+namespace League\OAuth2\Storage\PDO;
 
-use OAuth2\Storage\ScopeInterface;
+use League\OAuth2\Storage\ScopeInterface;
 
 class Scope implements ScopeInterface
 {

@@ -9,14 +9,14 @@
  * @link        http://github.com/lncd/oauth2
  */
 
-namespace OAuth2;
+namespace League\OAuth2;
 
-use OAuth2\Util\Request;
-use OAuth2\Util\SecureKey;
-use OAuth2\Storage\SessionInterface;
-use OAuth2\Storage\ClientInterface;
-use OAuth2\Storage\ScopeInterface;
-use OAuth2\Grant\GrantTypeInterface;
+use League\OAuth2\Util\Request;
+use League\OAuth2\Util\SecureKey;
+use League\OAuth2\Storage\SessionInterface;
+use League\OAuth2\Storage\ClientInterface;
+use League\OAuth2\Storage\ScopeInterface;
+use League\OAuth2\Grant\GrantTypeInterface;
 
 /**
  * OAuth 2.0 authorization server class

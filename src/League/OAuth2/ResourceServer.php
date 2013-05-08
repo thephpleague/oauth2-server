@@ -9,12 +9,12 @@
  * @link        http://github.com/lncd/oauth2
  */
 
-namespace OAuth2;
+namespace League\OAuth2;
 
 use OutOfBoundsException;
-use OAuth2\Storage\SessionInterface;
-use OAuth2\Util\RequestInterface;
-use OAuth2\Util\Request;
+use League\OAuth2\Storage\SessionInterface;
+use League\OAuth2\Util\RequestInterface;
+use League\OAuth2\Util\Request;
 
 /**
  * OAuth 2.0 Resource Server
