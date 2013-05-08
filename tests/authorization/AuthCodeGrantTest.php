@@ -20,6 +20,20 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         return new OAuth2\AuthServer($this->client, $this->session, $this->scope);
     }
 
+    public function test_setAuthTokenTTL()
+    {
+        $a = $this->returnDefault();
+        $grant = new OAuth2\Grant\AuthCode($a);
+        $grant->setAuthTokenTTL(30);
+
+        $reflector = new ReflectionClass($grant);
+        $requestProperty = $reflector->getProperty('authTokenTTL');
+        $requestProperty->setAccessible(true);
+        $v = $requestProperty->getValue($grant);
+
+        $this->assertEquals(30, $v);
+    }
+
     /**
      * @expectedException        OAuth2\Exception\ClientException
      * @expectedExceptionCode    0
