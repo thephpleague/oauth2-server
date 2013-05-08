@@ -49,6 +49,12 @@ class RefreshToken implements GrantTypeInterface {
     protected $accessTokenTTL = null;
 
     /**
+     * Refresh token TTL
+     * @var integer
+     */
+    protected $refreshTokenTTL = 604800;
+
+    /**
      * Constructor
      * @param AuthServer $authServer AuthServer instance
      * @return void
@@ -84,6 +90,25 @@ class RefreshToken implements GrantTypeInterface {
     public function setAccessTokenTTL($accessTokenTTL)
     {
         $this->accessTokenTTL = $accessTokenTTL;
+    }
+
+    /**
+     * Set the TTL of the refresh token
+     * @param int $refreshTokenTTL
+     * @return void
+     */
+    public function setRefreshTokenTTL($refreshTokenTTL)
+    {
+        $this->refreshTokenTTL = $refreshTokenTTL;
+    }
+
+    /**
+     * Get the TTL of the refresh token
+     * @return int
+     */
+    public function getRefreshTokenTTL()
+    {
+        return $this->refreshTokenTTL;
     }
 
     /**
@@ -135,6 +160,7 @@ class RefreshToken implements GrantTypeInterface {
         $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getExpiresIn();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
         $refreshToken = SecureKey::make();
+        $refreshTokenExpires = time() + $this->getRefreshTokenTTL();
 
         $newAccessTokenId = $this->authServer->getStorage('session')->associateAccessToken($accessTokenDetails['session_id'], $accessToken, $accessTokenExpires);
 
@@ -142,7 +168,7 @@ class RefreshToken implements GrantTypeInterface {
             $this->authServer->getStorage('session')->associateScope($newAccessTokenId, $scope['id']);
         }
 
-        $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken);
+        $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken, $refreshTokenExpires);
 
         return array(
             'access_token'  =>  $accessToken,

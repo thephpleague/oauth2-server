@@ -282,7 +282,8 @@ class AuthCode implements GrantTypeInterface {
         // Associate a refresh token if set
         if ($this->authServer->hasGrantType('refresh_token')) {
             $refreshToken = SecureKey::make();
-            $this->authServer->getStorage('session')->associateRefreshToken($accessTokenId, $refreshToken);
+            $refreshTokenTTL = time() + $this->authServer->getGrantType('refresh_token')->getRefreshTokenTTL();
+            $this->authServer->getStorage('session')->associateRefreshToken($accessTokenId, $refreshToken, $refreshTokenTTL);
             $response['refresh_token'] = $refreshToken;
         }
 

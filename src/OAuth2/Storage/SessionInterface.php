@@ -59,9 +59,10 @@ interface SessionInterface
      * Associate a refresh token with a session
      * @param  int    $accessTokenId The access token ID
      * @param  string $refreshToken  The refresh token
+     * @param  int    $expireTime    Unix timestamp of the refresh token expiry time
      * @return void
      */
-    public function associateRefreshToken($accessTokenId, $refreshToken);
+    public function associateRefreshToken($accessTokenId, $refreshToken, $expireTime);
 
     /**
      * Assocate an authorization code with a session
