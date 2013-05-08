@@ -2,11 +2,11 @@
 /**
  * OAuth 2.0 Refresh token grant
  *
- * @package     lncd/oauth2
+ * @package     php-loep/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) 2013 University of Lincoln
+ * @copyright   Copyright (c) 2013 PHP League of Extraordinary Packages
  * @license     http://mit-license.org/
- * @link        http://github.com/lncd/oauth2
+ * @link        http://github.com/php-leop/oauth2-server
  */
 
 namespace League\OAuth2\Grant;
