@@ -4,3 +4,7 @@
 /build/coverage
 /docs
 /testing
+/.project
+/.buildpath
+/cache.properties
+/build

@@ -44,6 +44,12 @@ class ResourceServer
      * @var string
      */
     protected $ownerId = null;
+    
+    /**
+     * The ID of the client application associated with the access token
+     * @var string
+     */
+    protected $clientId = null;
 
     /**
      * The scopes associated with the access token
@@ -144,6 +150,16 @@ class ResourceServer
     {
         return $this->ownerType;
     }
+    
+
+    /**
+     * Gets the client id.
+     * @return string
+     */
+    public function getClientId()
+    {
+    	return $this->clientId;
+    }
 
     /**
      * Gets the access token.
@@ -240,5 +256,4 @@ class ResourceServer
 
         return $accessToken;
     }
-
 }
