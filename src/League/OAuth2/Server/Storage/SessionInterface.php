@@ -49,13 +49,6 @@ interface SessionInterface
     public function associateAccessToken($sessionId, $accessToken, $expireTime);
 
     /**
-     * Remove an associated access token from a session
-     * @param  int    $sessionId   The session ID
-     * @return void
-     */
-    public function removeAccessToken($sessionId);
-
-    /**
      * Associate a refresh token with a session
      * @param  int    $accessTokenId The access token ID
      * @param  string $refreshToken  The refresh token

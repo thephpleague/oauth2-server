@@ -85,22 +85,6 @@ class Session implements SessionInterface
     }
 
     /**
-     * Remove an associated access token from a session
-     * @param  int    $sessionId   The session ID
-     * @return void
-     */
-    public function removeAccessToken($sessionId)
-    {
-        $db = \ezcDbInstance::get();
-
-        $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token) VALUE
-         (:accessTokenId, :refreshToken)');
-        $stmt->bindValue(':accessTokenId', $accessTokenId);
-        $stmt->bindValue(':refreshToken', $params['refresh_token']);
-        $stmt->execute();
-    }
-
-    /**
      * Associate a refresh token with a session
      * @param  int    $accessTokenId The access token ID
      * @param  string $refreshToken  The refresh token
