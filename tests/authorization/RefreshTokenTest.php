@@ -20,6 +20,14 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         return new OAuth2\AuthServer($this->client, $this->session, $this->scope);
     }
 
+    public function test_setRefreshTokenTTL()
+    {
+        $a = $this->returnDefault();
+        $rt = new OAuth2\Grant\RefreshToken($a);
+        $rt->setRefreshTokenTTL(30);
+        $this->assertEquals(30, $rt->getRefreshTokenTTL());
+    }
+
     public function test_issueAccessToken_with_refresh_token()
     {
         $this->client->shouldReceive('getClient')->andReturn(array(
