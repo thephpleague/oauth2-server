@@ -426,7 +426,7 @@ class Authorization
     /**
      * Return a grant type class
      * @param  string $grantType The grant type identifer
-     * @return class
+     * @return Grant\AuthCode|Grant\ClientCredentials|Grant\Implict|Grant\Password|Grant\RefreshToken
      */
     public function getGrantType($grantType)
     {
