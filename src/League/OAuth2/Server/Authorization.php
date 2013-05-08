@@ -449,10 +449,10 @@ class Authorization
         if (is_string($param)) {
             if (isset($inputParams[$param])) {
                 return $inputParams[$param];
-            } elseif ($param === 'client_id' && ! is_null($client_id = $this->getRequest()->server('PHP_AUTH_USER'))) {
-                return $client_id;
-            } elseif ($param === 'client_secret' && ! is_null($client_secret = $this->getRequest()->server('PHP_AUTH_PW'))) {
-                return $client_secret;
+            } elseif ($param === 'client_id' && ! is_null($clientId = $this->getRequest()->server('PHP_AUTH_USER'))) {
+                return $clientId;
+            } elseif ($param === 'client_secret' && ! is_null($clientSecret = $this->getRequest()->server('PHP_AUTH_PW'))) {
+                return $clientSecret;
             } else {
                 return $this->getRequest()->{$method}($param, $default);
             }
