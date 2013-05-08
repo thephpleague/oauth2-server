@@ -55,6 +55,7 @@ CREATE TABLE `oauth_session_redirects` (
 CREATE TABLE `oauth_session_refresh_tokens` (
   `session_access_token_id` int(10) unsigned NOT NULL,
   `refresh_token` char(40) NOT NULL DEFAULT '',
+  `refresh_token_expires` int(10) unsigned NOT NULL,
   PRIMARY KEY (`session_access_token_id`),
   CONSTRAINT `f_oasetore_setoid` FOREIGN KEY (`session_access_token_id`) REFERENCES `oauth_session_access_tokens` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
