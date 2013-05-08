@@ -68,6 +68,6 @@ class Request_test extends PHPUnit_Framework_TestCase
 		$method = $reflector->getMethod('getPropertyValue');
 		$method->setAccessible(true);
 
-		$result = $method->invoke($this->request, 'blah');
+		$method->invoke($this->request, 'blah');
 	}
 }

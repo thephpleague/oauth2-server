@@ -32,7 +32,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'client_credentials'
         ));
     }
@@ -49,7 +49,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'client_credentials',
             'client_id' =>  1234
         ));
@@ -69,7 +69,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'client_credentials',
             'client_id' =>  1234,
             'client_secret' =>  5678
@@ -98,7 +98,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
         $a->requireScopeParam(true);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'client_credentials',
             'client_id' =>  1234,
             'client_secret' =>  5678
@@ -139,6 +139,11 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
             'client_secret' =>  5678,
             'scope' =>  ''
         ));
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
     }
 
     /**
@@ -165,7 +170,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'client_credentials',
             'client_id' =>  1234,
             'client_secret' =>  5678,
@@ -205,6 +210,11 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
             'client_secret' =>  5678,
             'scope' =>  'blah'
         ));
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
     }
 
     function test_issueAccessToken_clientCredentialsGrant_passedInput()

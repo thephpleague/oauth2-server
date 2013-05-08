@@ -80,7 +80,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
 	    $method = $reflector->getMethod('determineAccessToken');
 	    $method->setAccessible(true);
 
-	    $result = $method->invoke($s);
+	    $method->invoke($s);
     }
 
     public function test_determineAccessToken_fromHeader()

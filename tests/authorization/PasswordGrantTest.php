@@ -32,7 +32,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'password'
         ));
     }
@@ -49,7 +49,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'password',
             'client_id' =>  1234
         ));
@@ -69,7 +69,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'password',
             'client_id' =>  1234,
             'client_secret' =>  5678
@@ -102,7 +102,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'password',
             'client_id' =>  1234,
             'client_secret' =>  5678,
@@ -131,14 +131,14 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
 
-        $testCredentials = function($u, $p) { return false; };
+        $testCredentials = function() { return false; };
 
         $a = $this->returnDefault();
         $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'password',
             'client_id' =>  1234,
             'client_secret' =>  5678
@@ -165,14 +165,14 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
 
-        $testCredentials = function($u, $p) { return false; };
+        $testCredentials = function() { return false; };
 
         $a = $this->returnDefault();
         $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'password',
             'client_id' =>  1234,
             'client_secret' =>  5678,
@@ -200,14 +200,14 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
 
-        $testCredentials = function($u, $p) { return false; };
+        $testCredentials = function() { return false; };
 
         $a = $this->returnDefault();
         $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'password',
             'client_id' =>  1234,
             'client_secret' =>  5678,
@@ -237,14 +237,14 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
 
-        $testCredentials = function($u, $p) { return 1; };
+        $testCredentials = function() { return 1; };
 
         $a = $this->returnDefault();
         $pgrant = new League\OAuth2\Server\Grant\Password($a);
         $pgrant->setVerifyCredentialsCallback($testCredentials);
         $a->addGrantType($pgrant);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'password',
             'client_id' =>  1234,
             'client_secret' =>  5678,
@@ -273,7 +273,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('deleteSession')->andReturn(null);
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
 
-        $testCredentials = function($u, $p) { return 1; };
+        $testCredentials = function() { return 1; };
 
         $a = $this->returnDefault();
         $pgrant = new League\OAuth2\Server\Grant\Password($a);
@@ -281,7 +281,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $a->addGrantType($pgrant);
         $a->requireScopeParam(true);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'password',
             'client_id' =>  1234,
             'client_secret' =>  5678,
@@ -314,7 +314,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateScope')->andReturn(null);
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
-        $testCredentials = function($u, $p) { return 1; };
+        $testCredentials = function() { return 1; };
 
         $a = $this->returnDefault();
         $pgrant = new League\OAuth2\Server\Grant\Password($a);
@@ -331,6 +331,11 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
             'password'  =>  'bar',
             'scope' =>  ''
         ));
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
     }
 
     public function test_issueAccessToken_passwordGrant_goodScope()
@@ -357,7 +362,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateScope')->andReturn(null);
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
-        $testCredentials = function($u, $p) { return 1; };
+        $testCredentials = function() { return 1; };
 
         $a = $this->returnDefault();
         $pgrant = new League\OAuth2\Server\Grant\Password($a);
@@ -372,6 +377,11 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
             'password'  =>  'bar',
             'scope' =>  'blah'
         ));
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
     }
 
     function test_issueAccessToken_passwordGrant_passedInput()
@@ -391,7 +401,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
-        $testCredentials = function($u, $p) { return 1; };
+        $testCredentials = function() { return 1; };
 
         $a = $this->returnDefault();
         $pgrant = new League\OAuth2\Server\Grant\Password($a);
@@ -433,7 +443,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
-        $testCredentials = function($u, $p) { return 1; };
+        $testCredentials = function() { return 1; };
 
         $a = $this->returnDefault();
         $pgrant = new League\OAuth2\Server\Grant\Password($a);
@@ -478,7 +488,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
-        $testCredentials = function($u, $p) { return 1; };
+        $testCredentials = function() { return 1; };
 
         $a = $this->returnDefault();
         $pgrant = new League\OAuth2\Server\Grant\Password($a);
@@ -526,7 +536,7 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
         $this->session->shouldReceive('associateRefreshToken')->andReturn(null);
 
-        $testCredentials = function($u, $p) { return 1; };
+        $testCredentials = function() { return 1; };
 
         $a = $this->returnDefault();
         $pgrant = new League\OAuth2\Server\Grant\Password($a);

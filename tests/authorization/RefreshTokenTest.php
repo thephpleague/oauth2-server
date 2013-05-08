@@ -80,7 +80,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'refresh_token'
         ));
     }
@@ -97,7 +97,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'refresh_token',
             'client_id' =>  1234
         ));
@@ -117,7 +117,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'refresh_token',
             'client_id' =>  1234,
             'client_secret' =>  5678
@@ -138,11 +138,10 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'refresh_token',
             'client_id' =>  1234,
-            'client_secret' =>  5678,
-            //'refresh_token' =>
+            'client_secret' =>  5678
         ));
     }
 
@@ -161,7 +160,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
 
-        $v = $a->issueAccessToken(array(
+        $a->issueAccessToken(array(
             'grant_type'    =>  'refresh_token',
             'client_id' =>  1234,
             'client_secret' =>  5678,
