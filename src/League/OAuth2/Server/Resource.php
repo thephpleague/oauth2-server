@@ -70,6 +70,12 @@ class Resource
     protected $tokenKey = 'access_token';
 
     /**
+     * The client ID
+     * @var string
+     */
+    protected $clientId = null;
+
+    /**
      * Sets up the Resource
      *
      * @param SessionInterface  The Session Storage Object
@@ -187,7 +193,7 @@ class Resource
 
     /**
      * Get the session scopes
-     * @return [type] [description]
+     * @return array
      */
     public function getScopes()
     {
