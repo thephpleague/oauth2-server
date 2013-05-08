@@ -84,7 +84,7 @@ class Implict implements GrantTypeInterface {
         $accessToken = SecureKey::make();
 
         // Compute expiry time
-        $accessTokenExpires = time() + $this->authServer->getExpiresIn();
+        $accessTokenExpires = time() + $this->authServer->getAccessTokenTTL();
 
         // Create a new session
         $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], 'user', $authParams['user_id']);

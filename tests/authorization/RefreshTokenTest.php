@@ -56,8 +56,8 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
         $this->assertArrayHasKey('refresh_token', $v);
 
-        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     /**
@@ -198,8 +198,8 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
         $this->assertArrayHasKey('refresh_token', $v);
 
-        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     public function test_issueAccessToken_refreshTokenGrant()
@@ -237,8 +237,8 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
         $this->assertArrayHasKey('refresh_token', $v);
 
-        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     public function test_issueAccessToken_refreshTokenGrant_customExpiresIn()
@@ -262,7 +262,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
 
         $a = $this->returnDefault();
         $grant = new OAuth2\Grant\RefreshToken($a);
-        $grant->setExpiresIn(30);
+        $grant->setAccessTokenTTL(30);
         $a->addGrantType($grant);
 
         $v = $a->issueAccessToken(array(
@@ -278,8 +278,8 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
         $this->assertArrayHasKey('refresh_token', $v);
 
-        $this->assertNotEquals($a->getExpiresIn(), $v['expires_in']);
-        $this->assertNotEquals(time()+$a->getExpiresIn(), $v['expires']);
+        $this->assertNotEquals($a->getAccessTokenTTL(), $v['expires_in']);
+        $this->assertNotEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
         $this->assertEquals(30, $v['expires_in']);
         $this->assertEquals(time()+30, $v['expires']);
     }

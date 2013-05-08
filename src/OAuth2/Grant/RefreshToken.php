@@ -157,7 +157,7 @@ class RefreshToken implements GrantTypeInterface {
 
         // Generate new tokens and associate them to the session
         $accessToken = SecureKey::make();
-        $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getExpiresIn();
+        $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getAccessTokenTTL();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
         $refreshToken = SecureKey::make();
         $refreshTokenExpires = time() + $this->getRefreshTokenTTL();

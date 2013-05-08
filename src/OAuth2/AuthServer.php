@@ -37,7 +37,7 @@ class AuthServer
      * The TTL (time to live) of an access token in seconds (default: 3600)
      * @var integer
      */
-    protected $expiresIn = 3600;
+    protected $accessTokenTTL = 3600;
 
     /**
      * The registered grant response types
@@ -349,16 +349,16 @@ class AuthServer
      * Get the TTL for an access token
      * @return int The TTL
      */
-    public function getExpiresIn()
+    public function getAccessTokenTTL()
     {
-        return $this->expiresIn;
+        return $this->accessTokenTTL;
     }
 
     /**
      * Set the TTL for an access token
      * @param int $accessTokenTTL The new TTL
      */
-    public function setAcessTokenTTL($accessTokenTTL)
+    public function setAccessTokenTTL($accessTokenTTL)
     {
         $this->accessTokenTTL = $accessTokenTTL;
     }

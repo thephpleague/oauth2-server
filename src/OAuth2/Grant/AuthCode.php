@@ -254,7 +254,7 @@ class AuthCode implements GrantTypeInterface {
         // A session ID was returned so update it with an access token and remove the authorisation code
 
         $accessToken = SecureKey::make();
-        $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getExpiresIn();
+        $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getAccessTokenTTL();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
 
         // Remove the auth code

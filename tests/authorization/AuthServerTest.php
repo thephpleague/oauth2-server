@@ -152,14 +152,14 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertTrue($v);
     }
 
-    public function test_getExpiresIn()
+    public function test_getAccessTokenTTL()
     {
         $a = $this->returnDefault();
-        $a->setExpiresIn(7200);
-        $this->assertEquals(7200, $a->getExpiresIn());
+        $a->setAccessTokenTTL(7200);
+        $this->assertEquals(7200, $a->getAccessTokenTTL());
     }
 
-    public function test_setExpiresIn()
+    public function test_setAccessTokenTTL()
     {
         $a = $this->returnDefault();
         $a->setScopeDelimeter(';');
@@ -382,8 +382,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     public function test_issueAccessToken()
@@ -419,8 +419,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     public function test_issueAccessToken_customExpiresIn()
@@ -439,7 +439,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
 
         $a = $this->returnDefault();
         $grant = new OAuth2\Grant\AuthCode($a);
-        $grant->setExpiresIn(30);
+        $grant->setAccessTokenTTL(30);
         $a->addGrantType($grant);
 
         $_POST['grant_type'] = 'authorization_code';
@@ -458,8 +458,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertNotEquals($a->getExpiresIn(), $v['expires_in']);
-        $this->assertNotEquals(time()+$a->getExpiresIn(), $v['expires']);
+        $this->assertNotEquals($a->getAccessTokenTTL(), $v['expires_in']);
+        $this->assertNotEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
         $this->assertEquals(30, $v['expires_in']);
         $this->assertEquals(time()+30, $v['expires']);
     }
@@ -497,8 +497,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
 
-        $this->assertEquals($a->getExpiresIn(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getExpiresIn(), $v['expires']);
+        $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     public function tearDown() {

@@ -185,7 +185,7 @@ class Password implements GrantTypeInterface {
 
         // Generate an access token
         $accessToken = SecureKey::make();
-        $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getExpiresIn();
+        $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getAccessTokenTTL();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
 
         // Delete any existing sessions just to be sure
