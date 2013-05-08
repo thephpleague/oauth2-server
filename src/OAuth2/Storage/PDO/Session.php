@@ -104,16 +104,18 @@ class Session implements SessionInterface
      * Associate a refresh token with a session
      * @param  int    $accessTokenId The access token ID
      * @param  string $refreshToken  The refresh token
+     * @param  int    $expireTime    Unix timestamp of the refresh token expiry time
      * @return void
      */
-    public function associateRefreshToken($accessTokenId, $refreshToken)
+    public function associateRefreshToken($accessTokenId, $refreshToken, $expireTime)
     {
         $db = \ezcDbInstance::get();
 
-        $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token) VALUE
-         (:accessTokenId, :refreshToken)');
+        $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token, refresh_token_expires) VALUE
+         (:accessTokenId, :refreshToken, :expireTime)');
         $stmt->bindValue(':accessTokenId', $accessTokenId);
         $stmt->bindValue(':refreshToken', $refreshToken);
+        $stmt->bindValue(':expireTime', $expireTime);
         $stmt->execute();
     }
 
@@ -207,7 +209,7 @@ class Session implements SessionInterface
         $db = \ezcDbInstance::get();
 
         $stmt = $db->prepare('SELECT session_access_token_id FROM `oauth_session_refresh_tokens` WHERE
-         refresh_token = :refreshToken');
+         refresh_token = :refreshToken AND refresh_token_expires >= ' . time());
         $stmt->bindValue(':refreshToken', $refreshToken);
         $stmt->execute();
 
