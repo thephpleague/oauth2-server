@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.0 (released 2013-05-06)
+
+**If you're upgrading from v1.0.8 there are lots of breaking changes**
+
+* Rewrote the session storage interface from scratch so methods are more obvious
+* Included a PDO driver which implements the storage interfaces so the library is more "get up and go"
+* Further normalised the database structure so all sessions no longer contain infomation related to authorization grant (which may or may not be enabled)
+* A session can have multiple associated access tokens
+* Induvidual grants can have custom expire times for access tokens
+* Authorization codes now have a TTL of 10 minutes by default (can be manually set)
+* Refresh tokens now have a TTL of one week by default (can be manually set)
+* The client credentials grant will no longer gives out refresh tokens as per the specification
+
 ## 1.0.8 (released 2013-03-18)
 
 * Fixed check for required state parameter
