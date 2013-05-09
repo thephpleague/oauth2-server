@@ -74,10 +74,10 @@ CREATE TABLE `oauth_scopes` (
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_token_scopes` (
-  `session_token_scope_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `session_access_token_id` int(10) unsigned DEFAULT NULL,
   `scope_id` smallint(5) unsigned NOT NULL,
-  PRIMARY KEY (`session_token_scope_id`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `u_setosc_setoid_scid` (`session_access_token_id`,`scope_id`),
   KEY `f_oasetosc_scid` (`scope_id`),
   CONSTRAINT `f_oasetosc_scid` FOREIGN KEY (`scope_id`) REFERENCES `oauth_scopes` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
