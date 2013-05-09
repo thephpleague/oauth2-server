@@ -53,5 +53,5 @@ interface ClientInterface
      * @param  string     $grantType    The grant type used in the request
      * @return bool|array               Returns false if the validation fails, array on success
      */
-    public function getClient($clientId = null, $clientSecret = null, $redirectUri = null, $grantType = null);
+    public function getClient($clientId, $clientSecret = null, $redirectUri = null, $grantType);
 }

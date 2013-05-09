@@ -6,7 +6,7 @@ use League\OAuth2\Server\Storage\ClientInterface;
 
 class Client implements ClientInterface
 {
-    public function getClient($clientId = null, $clientSecret = null, $redirectUri = null, $grantType = null)
+    public function getClient($clientId, $clientSecret = null, $redirectUri = null, $grantType)
     {
         $db = \ezcDbInstance::get();
 
