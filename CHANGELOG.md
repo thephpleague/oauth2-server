@@ -1,6 +1,22 @@
 # Changelog
 
-## 2.0.0 (released 2013-05-06)
+## 2.0.4 (released 2013-05-09)
+
+* Renamed primary key in oauth_client_endpoints table
+* Adding missing column to oauth_session_authcodes
+* SECURITY FIX: A refresh token should be bound to a client ID
+
+## 2.0.3 (released 2013-05-08)
+
+* Fixed a link to code in composer.json
+
+## 2.0.2 (released 2013-05-08)
+
+* Updated README with wiki guides
+* Removed `null` as default parameters in some methods in the storage interfaces
+* Fixed license copyright
+
+## 2.0.0 (released 2013-05-08)
 
 **If you're upgrading from v1.0.8 there are lots of breaking changes**
 
