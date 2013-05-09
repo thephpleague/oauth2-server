@@ -29,7 +29,7 @@ CREATE TABLE `oauth_sessions` (
 CREATE TABLE `oauth_session_access_tokens` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `session_id` int(10) unsigned NOT NULL,
-  `access_token` char(40) NOT NULL DEFAULT '',
+  `access_token` char(40) NOT NULL,
   `access_token_expires` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `u_oaseacto_acto_seid` (`access_token`,`session_id`),
@@ -39,7 +39,7 @@ CREATE TABLE `oauth_session_access_tokens` (
 
 CREATE TABLE `oauth_session_authcodes` (
   `session_id` int(10) unsigned NOT NULL,
-  `auth_code` char(40) NOT NULL DEFAULT '',
+  `auth_code` char(40) NOT NULL,
   `auth_code_expires` int(10) unsigned NOT NULL,
   `scope_ids` char(255) DEFAULT NULL,
   PRIMARY KEY (`session_id`),
@@ -48,16 +48,16 @@ CREATE TABLE `oauth_session_authcodes` (
 
 CREATE TABLE `oauth_session_redirects` (
   `session_id` int(10) unsigned NOT NULL,
-  `redirect_uri` varchar(255) NOT NULL DEFAULT '',
+  `redirect_uri` varchar(255) NOT NULL,
   PRIMARY KEY (`session_id`),
   CONSTRAINT `f_oasere_seid` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_refresh_tokens` (
   `session_access_token_id` int(10) unsigned NOT NULL,
-  `refresh_token` char(40) NOT NULL DEFAULT '',
+  `refresh_token` char(40) NOT NULL,
   `refresh_token_expires` int(10) unsigned NOT NULL,
-  `client_id` char(40) NOT NULL DEFAULT '',
+  `client_id` char(40) NOT NULL,
   PRIMARY KEY (`session_access_token_id`),
   KEY `client_id` (`client_id`),
   CONSTRAINT `oauth_session_refresh_tokens_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `oauth_clients` (`id`) ON DELETE CASCADE,
@@ -74,10 +74,10 @@ CREATE TABLE `oauth_scopes` (
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_token_scopes` (
-  `session_token_scope_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `session_access_token_id` int(10) unsigned DEFAULT NULL,
   `scope_id` smallint(5) unsigned NOT NULL,
-  PRIMARY KEY (`session_token_scope_id`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `u_setosc_setoid_scid` (`session_access_token_id`,`scope_id`),
   KEY `f_oasetosc_scid` (`scope_id`),
   CONSTRAINT `f_oasetosc_scid` FOREIGN KEY (`scope_id`) REFERENCES `oauth_scopes` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
