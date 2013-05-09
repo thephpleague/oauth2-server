@@ -10,7 +10,7 @@ class Scope implements ScopeInterface
     {
         $db = \ezcDbInstance::get();
 
-        $stmt = $db->prepare('SELECT * FROM oauth_scopes WHERE oauth_scopes.key = :scope');
+        $stmt = $db->prepare('SELECT * FROM oauth_scopes WHERE oauth_scopes.scope = :scope');
         $stmt->bindValue(':scope', $scope);
         $stmt->execute();
 
@@ -22,7 +22,7 @@ class Scope implements ScopeInterface
 
         return array(
             'id' =>  $row->id,
-            'scope' =>  $row->key,
+            'scope' =>  $row->scope,
             'name'  =>  $row->name,
             'description'  =>  $row->description
         );

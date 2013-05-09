@@ -65,13 +65,13 @@ CREATE TABLE `oauth_session_refresh_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_scopes` (
-  `id` SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `key` VARCHAR(255) NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
-  `description` VARCHAR(255) DEFAULT NULL,
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `scope` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `u_oasc_sc` (`key`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8;
+  UNIQUE KEY `u_oasc_sc` (`scope_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_token_scopes` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
