@@ -2,7 +2,7 @@
 	"name": "league/oauth2-server",
 	"description": "A lightweight and powerful OAuth 2.0 authorization and resource server library with support for all the core specification grants. This library will allow you to secure your API with OAuth and allow your applications users to approve apps that want to access their data from your API.",
 	"version": "2.0.2",
-	"homepage": "https://github.com/php-leop/oauth2-server",
+	"homepage": "https://github.com/php-loep/oauth2-server",
 	"license": "MIT",
 	"require": {
 		"php": ">=5.3.0",
