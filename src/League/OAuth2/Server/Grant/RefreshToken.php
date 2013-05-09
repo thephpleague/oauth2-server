@@ -186,7 +186,7 @@ class RefreshToken implements GrantTypeInterface {
             }
 
             // Check that there aren't any new scopes being included
-            $existingScopes = [];
+            $existingScopes = array();
             foreach ($scopes as $s) {
                 $existingScopes[] = $s['scope'];
             }
