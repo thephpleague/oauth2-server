@@ -91,9 +91,10 @@ interface SessionInterface
      * @param  int    $accessTokenId The access token ID
      * @param  string $refreshToken  The refresh token
      * @param  int    $expireTime    Unix timestamp of the refresh token expiry time
+     * @param  string $clientId      The client ID
      * @return void
      */
-    public function associateRefreshToken($accessTokenId, $refreshToken, $expireTime);
+    public function associateRefreshToken($accessTokenId, $refreshToken, $expireTime, $clientId);
 
     /**
      * Assocate an authorization code with a session
@@ -191,13 +192,14 @@ interface SessionInterface
      *
      * <code>
      * SELECT session_access_token_id FROM `oauth_session_refresh_tokens` WHERE refresh_token = :refreshToken
-     *  AND refresh_token_expires >= UNIX_TIMESTAMP(NOW())
+     *  AND refresh_token_expires >= UNIX_TIMESTAMP(NOW()) AND client_id = :clientId
      * </code>
      *
      * @param  string   $refreshToken The access token
+     * @param  string   $clientId     The client ID
      * @return int|bool               The ID of the access token the refresh token is linked to (or false if invalid)
      */
-    public function validateRefreshToken($refreshToken);
+    public function validateRefreshToken($refreshToken, $clientId);
 
     /**
      * Get an access token by ID

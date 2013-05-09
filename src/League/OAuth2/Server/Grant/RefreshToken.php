@@ -143,7 +143,7 @@ class RefreshToken implements GrantTypeInterface {
         }
 
         // Validate refresh token
-        $accessTokenId = $this->authServer->getStorage('session')->validateRefreshToken($authParams['refresh_token']);
+        $accessTokenId = $this->authServer->getStorage('session')->validateRefreshToken($authParams['refresh_token'], $authParams['client_id']);
 
         if ($accessTokenId === false) {
             throw new Exception\ClientException($this->authServer->getExceptionMessage('invalid_refresh'), 0);
@@ -168,7 +168,7 @@ class RefreshToken implements GrantTypeInterface {
             $this->authServer->getStorage('session')->associateScope($newAccessTokenId, $scope['id']);
         }
 
-        $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken, $refreshTokenExpires);
+        $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken, $refreshTokenExpires, $authParams['client_id']);
 
         return array(
             'access_token'  =>  $accessToken,

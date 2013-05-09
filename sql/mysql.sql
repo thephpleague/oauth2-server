@@ -8,13 +8,13 @@ CREATE TABLE `oauth_clients` (
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_client_endpoints` (
-  `endpoint_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `client_id` CHAR(40) NOT NULL,
-  `redirect_uri` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`endpoint_id`),
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `client_id` char(40) NOT NULL,
+  `redirect_uri` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `i_oaclen_clid` (`client_id`),
   CONSTRAINT `f_oaclen_clid` FOREIGN KEY (`client_id`) REFERENCES `oauth_clients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=INNODB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_sessions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -41,6 +41,7 @@ CREATE TABLE `oauth_session_authcodes` (
   `session_id` int(10) unsigned NOT NULL,
   `auth_code` char(40) NOT NULL DEFAULT '',
   `auth_code_expires` int(10) unsigned NOT NULL,
+  `scope_ids` char(255) DEFAULT NULL,
   PRIMARY KEY (`session_id`),
   CONSTRAINT `f_oaseau_seid` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -56,7 +57,10 @@ CREATE TABLE `oauth_session_refresh_tokens` (
   `session_access_token_id` int(10) unsigned NOT NULL,
   `refresh_token` char(40) NOT NULL DEFAULT '',
   `refresh_token_expires` int(10) unsigned NOT NULL,
+  `client_id` char(40) NOT NULL DEFAULT '',
   PRIMARY KEY (`session_access_token_id`),
+  KEY `client_id` (`client_id`),
+  CONSTRAINT `oauth_session_refresh_tokens_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `oauth_clients` (`id`) ON DELETE CASCADE,
   CONSTRAINT `f_oasetore_setoid` FOREIGN KEY (`session_access_token_id`) REFERENCES `oauth_session_access_tokens` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

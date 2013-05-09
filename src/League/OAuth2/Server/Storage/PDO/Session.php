@@ -6,13 +6,6 @@ use League\OAuth2\Server\Storage\SessionInterface;
 
 class Session implements SessionInterface
 {
-    /**
-     * Create a new session
-     * @param  string $clientId  The client ID
-     * @param  string $ownerType The type of the session owner (e.g. "user")
-     * @param  string $ownerId   The ID of the session owner (e.g. "123")
-     * @return int               The session ID
-     */
     public function createSession($clientId, $ownerType, $ownerId)
     {
         $db = \ezcDbInstance::get();
@@ -27,13 +20,6 @@ class Session implements SessionInterface
         return $db->lastInsertId();
     }
 
-    /**
-     * Delete a session
-     * @param  string $clientId  The client ID
-     * @param  string $ownerType The type of the session owner (e.g. "user")
-     * @param  string $ownerId   The ID of the session owner (e.g. "123")
-     * @return void
-     */
     public function deleteSession($clientId, $ownerType, $ownerId)
     {
         $db = \ezcDbInstance::get();
@@ -46,12 +32,6 @@ class Session implements SessionInterface
         $stmt->execute();
     }
 
-    /**
-     * Associate a redirect URI with a session
-     * @param  int    $sessionId   The session ID
-     * @param  string $redirectUri The redirect URI
-     * @return void
-     */
     public function associateRedirectUri($sessionId, $redirectUri)
     {
         $db = \ezcDbInstance::get();
@@ -63,13 +43,6 @@ class Session implements SessionInterface
         $stmt->execute();
     }
 
-    /**
-     * Associate an access token with a session
-     * @param  int    $sessionId   The session ID
-     * @param  string $accessToken The access token
-     * @param  int    $expireTime  Unix timestamp of the access token expiry time
-     * @return void
-     */
     public function associateAccessToken($sessionId, $accessToken, $expireTime)
     {
         $db = \ezcDbInstance::get();
@@ -84,33 +57,19 @@ class Session implements SessionInterface
         return $db->lastInsertId();
     }
 
-    /**
-     * Associate a refresh token with a session
-     * @param  int    $accessTokenId The access token ID
-     * @param  string $refreshToken  The refresh token
-     * @param  int    $expireTime    Unix timestamp of the refresh token expiry time
-     * @return void
-     */
-    public function associateRefreshToken($accessTokenId, $refreshToken, $expireTime)
+    public function associateRefreshToken($accessTokenId, $refreshToken, $expireTime, $clientId)
     {
         $db = \ezcDbInstance::get();
 
-        $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token, refresh_token_expires) VALUE
-         (:accessTokenId, :refreshToken, :expireTime)');
+        $stmt = $db->prepare('INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token, refresh_token_expires, client_id) VALUE
+         (:accessTokenId, :refreshToken, :expireTime, :clientId)');
         $stmt->bindValue(':accessTokenId', $accessTokenId);
         $stmt->bindValue(':refreshToken', $refreshToken);
         $stmt->bindValue(':expireTime', $expireTime);
+        $stmt->bindValue(':clientId', $clientId);
         $stmt->execute();
     }
 
-    /**
-     * Assocate an authorization code with a session
-     * @param  int    $sessionId  The session ID
-     * @param  string $authCode   The authorization code
-     * @param  int    $expireTime Unix timestamp of the access token expiry time
-     * @param  string $scopeIds   Comma seperated list of scope IDs to be later associated (default = null)
-     * @return void
-     */
     public function associateAuthCode($sessionId, $authCode, $expireTime, $scopeIds = null)
     {
         $db = \ezcDbInstance::get();
@@ -124,11 +83,6 @@ class Session implements SessionInterface
         $stmt->execute();
     }
 
-    /**
-     * Remove an associated authorization token from a session
-     * @param  int    $sessionId   The session ID
-     * @return void
-     */
     public function removeAuthCode($sessionId)
     {
         $db = \ezcDbInstance::get();
@@ -138,13 +92,6 @@ class Session implements SessionInterface
         $stmt->execute();
     }
 
-    /**
-     * Validate an authorization code
-     * @param  string $clientId    The client ID
-     * @param  string $redirectUri The redirect URI
-     * @param  string $authCode    The authorization code
-     * @return void
-     */
     public function validateAuthCode($clientId, $redirectUri, $authCode)
     {
         $db = \ezcDbInstance::get();
@@ -166,11 +113,6 @@ class Session implements SessionInterface
         return ($result === false) ? false : (array) $result;
     }
 
-    /**
-     * Validate an access token
-     * @param  string $accessToken The access token to be validated
-     * @return void
-     */
     public function validateAccessToken($accessToken)
     {
         $db = \ezcDbInstance::get();
@@ -183,29 +125,20 @@ class Session implements SessionInterface
         return ($result === false) ? false : (array) $result;
     }
 
-    /**
-     * Validate a refresh token
-     * @param  string $refreshToken The access token
-     * @return void
-     */
-    public function validateRefreshToken($refreshToken)
+    public function validateRefreshToken($refreshToken, $clientId)
     {
         $db = \ezcDbInstance::get();
 
         $stmt = $db->prepare('SELECT session_access_token_id FROM `oauth_session_refresh_tokens` WHERE
-         refresh_token = :refreshToken AND refresh_token_expires >= ' . time());
+         refresh_token = :refreshToken AND client_id = :clientId AND refresh_token_expires >= ' . time());
         $stmt->bindValue(':refreshToken', $refreshToken);
+        $stmt->bindValue(':clientId', $clientId);
         $stmt->execute();
 
         $result = $stmt->fetchObject();
         return ($result === false) ? false : $result->session_access_token_id;
     }
 
-    /**
-     * Get an access token by ID
-     * @param  int    $accessTokenId The access token ID
-     * @return array
-     */
     public function getAccessToken($accessTokenId)
     {
         $db = \ezcDbInstance::get();
@@ -218,12 +151,6 @@ class Session implements SessionInterface
         return ($result === false) ? false : (array) $result;
     }
 
-    /**
-     * Associate a scope with an access token
-     * @param  int    $accessTokenId The ID of the access token
-     * @param  int    $scopeId       The ID of the scope
-     * @return void
-     */
     public function associateScope($accessTokenId, $scopeId)
     {
         $db = \ezcDbInstance::get();
@@ -235,11 +162,6 @@ class Session implements SessionInterface
         $stmt->execute();
     }
 
-    /**
-     * Get all associated access tokens for an access token
-     * @param  string $accessToken The access token
-     * @return array
-     */
     public function getScopes($accessToken)
     {
         $db = \ezcDbInstance::get();
