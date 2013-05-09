@@ -162,6 +162,15 @@ class Resource
     }
 
     /**
+     * Gets the client ID that created the session
+     * @return string
+     */
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    /**
      * Checks if the access token is valid or not.
      *
      * @throws Exception\InvalidAccessTokenException Thrown if the presented access token is not valid
