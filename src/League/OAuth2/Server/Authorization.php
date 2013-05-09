@@ -59,10 +59,10 @@ class Authorization
      * Require the "scope" parameter to be in checkAuthoriseParams()
      * @var boolean
      */
-    protected $requireScopeParam = true;
+    protected $requireScopeParam = false;
 
     /**
-     * Default scope to be used if none is provided and requireScopeParam is false
+     * Default scope to be used if none is provided
      * @var string
      */
     protected $defaultScope = null;
@@ -271,7 +271,7 @@ class Authorization
      * @param  boolean $require
      * @return void
      */
-    public function requireScopeParam($require = true)
+    public function requireScopeParam($require = false)
     {
         $this->requireScopeParam = $require;
     }

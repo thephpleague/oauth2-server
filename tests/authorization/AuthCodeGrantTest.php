@@ -156,6 +156,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
         $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->requireScopeParam(true);
 
         $g->checkAuthoriseParams(array(
             'client_id' =>  1234,
