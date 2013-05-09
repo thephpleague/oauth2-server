@@ -43,11 +43,13 @@ Custom grants can be created easily by implementing an interface. Check out a gu
 
 If you are using MySQL and want to very quickly implement the library then all of the storage interfaces have been implemented with PDO classes. Check out the guide here [https://github.com/php-loep/oauth2-server/wiki/Using-the-PDO-storage-classes](https://github.com/php-loep/oauth2-server/wiki/Using-the-PDO-storage-classes).
 
-## Tutorials
+## Tutorials and documentation
 
-A tutorial on how to use the authorization server can be found at [http://alexbilbie.com/2013/02/developing-an-oauth2-authorization-server/](http://alexbilbie.com/2013/02/developing-an-oauth2-authorization-server/).
+The wiki has lots of guides on how to use this library, check it out - [https://github.com/php-loep/oauth2-server/wiki](https://github.com/php-loep/oauth2-server/wiki).
 
-A tutorial on how to use the resource server to secure an API server can be found at [http://alexbilbie.com/2013/02/securing-your-api-with-oauth-2/](http://alexbilbie.com/2013/02/securing-your-api-with-oauth-2/).
+A tutorial on how to use the authorization server can be found on the wiki - (https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server)[https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server].
+
+A tutorial on how to use the resource server to secure an API server can be found at [https://github.com/php-loep/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0](https://github.com/php-loep/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0).
 
 ## Future Goals
 
