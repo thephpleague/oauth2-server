@@ -193,9 +193,6 @@ class Password implements GrantTypeInterface {
         $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getAccessTokenTTL();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
 
-        // Delete any existing sessions just to be sure
-        $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], 'user', $userId);
-
         // Create a new session
         $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], 'user', $userId);
 
