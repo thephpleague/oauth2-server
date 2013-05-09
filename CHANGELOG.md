@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.5 (released 2013-05-09)
+
+* Fixed `oauth_session_token_scopes` table primary key
+* Removed `DEFAULT ''` that has slipped into some tables
+* Fixed docblock for `SessionInterface::associateRefreshToken()`
+
 ## 2.0.4 (released 2013-05-09)
 
 * Renamed primary key in oauth_client_endpoints table
