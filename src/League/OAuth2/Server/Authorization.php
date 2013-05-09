@@ -62,8 +62,8 @@ class Authorization
     protected $requireScopeParam = false;
 
     /**
-     * Default scope to be used if none is provided
-     * @var string
+     * Default scope(s) to be used if none is provided
+     * @var string|array
      */
     protected $defaultScope = null;
 
@@ -287,7 +287,7 @@ class Authorization
 
     /**
      * Default scope to be used if none is provided and requireScopeParam is false
-     * @var string
+     * @var string|array
      */
     public function setDefaultScope($default = null)
     {

@@ -168,8 +168,12 @@ class Password implements GrantTypeInterface {
 
         if ($this->authServer->scopeParamRequired() === true && $this->authServer->getDefaultScope() === null && count($scopes) === 0) {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'scope'), 0);
-        } elseif (count($scopes) === 0 && $this->authServer->getDefaultScope()) {
-            $scopes = array($this->authServer->getDefaultScope());
+        } elseif (count($scopes) === 0 && $this->authServer->getDefaultScope() !== null) {
+            if (is_array($this->authServer->getDefaultScope())) {
+                $scopes = $this->authServer->getDefaultScope();
+            } else {
+                $scopes = array($this->authServer->getDefaultScope());
+            }
         }
 
         $authParams['scopes'] = array();

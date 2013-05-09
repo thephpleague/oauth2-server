@@ -338,6 +338,54 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
     }
 
+    public function test_issueAccessToken_passwordGrant_defaultScopeArray()
+    {
+        $this->scope->shouldReceive('getScope')->andReturn(array(
+            'id'    =>  1,
+            'scope' =>  'foo',
+            'name'  =>  'Foo Name',
+            'description'   =>  'Foo Name Description'
+        ));
+
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+
+        $testCredentials = function() { return 1; };
+
+        $a = $this->returnDefault();
+        $pgrant = new League\OAuth2\Server\Grant\Password($a);
+        $pgrant->setVerifyCredentialsCallback($testCredentials);
+        $a->addGrantType($pgrant);
+        $a->requireScopeParam(false);
+        $a->setDefaultScope(array('foobar', 'barfoo'));
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'password',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'username'  =>  'foo',
+            'password'  =>  'bar',
+            'scope' =>  ''
+        ));
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
+    }
+
     public function test_issueAccessToken_passwordGrant_goodScope()
     {
         $this->scope->shouldReceive('getScope')->andReturn(array(

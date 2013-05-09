@@ -146,6 +146,47 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
     }
 
+    public function test_issueAccessToken_clientCredentialsGrant_defaultScopeArray()
+    {
+        $this->scope->shouldReceive('getScope')->andReturn(array(
+            'id'    =>  1,
+            'key' =>  'foo',
+            'name'  =>  'Foo Name',
+            'description'   =>  'Foo Name Description'
+        ));
+
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->client->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('createSession')->andReturn(1);
+        $this->session->shouldReceive('deleteSession')->andReturn(null);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+
+        $a = $this->returnDefault();
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->requireScopeParam(false);
+        $a->setDefaultScope(array('foobar', 'barfoo'));
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'client_credentials',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'scope' =>  ''
+        ));
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
+    }
+
     /**
      * @expectedException        League\OAuth2\Server\Exception\ClientException
      * @expectedExceptionCode    4
