@@ -26,12 +26,10 @@ class Authorization
     /**
      * The delimeter between scopes specified in the scope query string parameter
      *
-     * The OAuth 2 specification states it should be a space but that is stupid
-     * and everyone excepted Google use a comma instead.
-     *
+     * The OAuth 2 specification states it should be a space but most use a comma
      * @var string
      */
-    protected $scopeDelimeter = ',';
+    protected $scopeDelimeter = ' ';
 
     /**
      * The TTL (time to live) of an access token in seconds (default: 3600)
