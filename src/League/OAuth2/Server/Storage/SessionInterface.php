@@ -84,8 +84,8 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * oauth_session_refresh_tokens (session_access_token_id, refresh_token, refresh_token_expires)
-     *  VALUE (:accessTokenId, :refreshToken, :expireTime)
+     * INSERT INTO oauth_session_refresh_tokens (session_access_token_id, refresh_token, refresh_token_expires,
+     *  client_id) VALUE (:accessTokenId, :refreshToken, :expireTime, :clientId)
      * </code>
      *
      * @param  int    $accessTokenId The access token ID
