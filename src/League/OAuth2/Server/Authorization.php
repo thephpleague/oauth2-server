@@ -338,7 +338,7 @@ class Authorization
      *
      * @param string $scopeDelimeter
      */
-    public function setScopeDelimeter($scopeDelimeter)
+    public function setScopeDelimeter($scopeDelimeter = ' ')
     {
         $this->scopeDelimeter = $scopeDelimeter;
     }
@@ -356,7 +356,7 @@ class Authorization
      * Set the TTL for an access token
      * @param int $accessTokenTTL The new TTL
      */
-    public function setAccessTokenTTL($accessTokenTTL)
+    public function setAccessTokenTTL($accessTokenTTL = 3600)
     {
         $this->accessTokenTTL = $accessTokenTTL;
     }
