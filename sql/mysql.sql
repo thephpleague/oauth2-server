@@ -8,13 +8,13 @@ CREATE TABLE `oauth_clients` (
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_client_endpoints` (
-  `endpoint_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `client_id` CHAR(40) NOT NULL,
-  `redirect_uri` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`endpoint_id`),
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `client_id` char(40) NOT NULL,
+  `redirect_uri` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `i_oaclen_clid` (`client_id`),
   CONSTRAINT `f_oaclen_clid` FOREIGN KEY (`client_id`) REFERENCES `oauth_clients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=INNODB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_sessions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
