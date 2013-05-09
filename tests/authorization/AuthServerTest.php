@@ -88,14 +88,14 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_getScopeDelimeter()
     {
         $a = $this->returnDefault();
-        $this->assertEquals(',', $a->getScopeDelimeter());
+        $this->assertEquals(' ', $a->getScopeDelimeter());
     }
 
     public function test_setScopeDelimeter()
     {
         $a = $this->returnDefault();
-        $a->setScopeDelimeter(';');
-        $this->assertEquals(';', $a->getScopeDelimeter());
+        $a->setScopeDelimeter(',');
+        $this->assertEquals(',', $a->getScopeDelimeter());
     }
 
     public function test_requireScopeParam()
