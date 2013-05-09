@@ -19,7 +19,7 @@ interface ScopeInterface
      * Example SQL query:
      *
      * <code>
-     * SELECT * FROM oauth_scopes WHERE scope = $scope
+     * SELECT * FROM oauth_scopes WHERE oauth_scopes.key = :scope
      * </code>
      *
      * Response:
@@ -28,14 +28,15 @@ interface ScopeInterface
      * Array
      * (
      *     [id] => (int) The scope's ID
-     *     [scope] => (string) The scope itself
+     *     [key] => (string) The scope itself
      *     [name] => (string) The scope's name
      *     [description] => (string) The scope's description
      * )
      * </code>
      *
-     * @param  string     $scope    The scope
-     * @param  string     $clientId The client ID
+     * @param  string     $scope     The scope
+     * @param  string     $clientId  The client ID
+     * @param  string     $grantType The grant type used in the request
      * @return bool|array If the scope doesn't exist return false
      */
     public function getScope($scope, $clientId = null, $grantType = null);
