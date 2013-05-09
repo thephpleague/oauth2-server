@@ -43,7 +43,9 @@ Custom grants can be created easily by implementing an interface. Check out a gu
 
 If you are using MySQL and want to very quickly implement the library then all of the storage interfaces have been implemented with PDO classes. Check out the guide here [https://github.com/php-loep/oauth2-server/wiki/Using-the-PDO-storage-classes](https://github.com/php-loep/oauth2-server/wiki/Using-the-PDO-storage-classes).
 
-## Tutorials
+## Tutorials and documentation
+
+The wiki has lots of guides on how to use this library, check it out - [https://github.com/php-loep/oauth2-server/wiki](https://github.com/php-loep/oauth2-server/wiki).
 
 A tutorial on how to use the authorization server can be found on the wiki - (https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server)[https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server].
 
