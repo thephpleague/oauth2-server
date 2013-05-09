@@ -29,7 +29,7 @@ The authorization server is a flexible class and the following core specificatio
 * client credentials ([section 2.3.1](http://tools.ietf.org/html/rfc6749#section-2.3.1))
 * password (user credentials) ([section 4.3](http://tools.ietf.org/html/rfc6749#section-4.3))
 
-An overview of the different OAuth 2.0 grants can be found at [http://alexbilbie.com/2013/02/a-guide-to-oauth-2-grants/](http://alexbilbie.com/2013/02/a-guide-to-oauth-2-grants/).
+An overview of the different OAuth 2.0 grants can be found in the wiki [https://github.com/php-loep/oauth2-server/wiki/Which-OAuth-2.0-grant-should-I-use%3F](https://github.com/php-loep/oauth2-server/wiki/Which-OAuth-2.0-grant-should-I-use%3F).
 
 ### Resource Server
 
