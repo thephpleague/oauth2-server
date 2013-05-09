@@ -122,7 +122,7 @@ class ClientCredentials implements GrantTypeInterface {
             if ($scopes[$i] === '') unset($scopes[$i]); // Remove any junk scopes
         }
 
-        if ($this->authServer->scopeParamRequired() === true && count($scopes) === 0) {
+        if ($this->authServer->scopeParamRequired() === true && $this->authServer->getDefaultScope() === null && count($scopes) === 0) {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'scope'), 0);
         } elseif (count($scopes) === 0 && $this->authServer->getDefaultScope()) {
             $scopes = array($this->authServer->getDefaultScope());
