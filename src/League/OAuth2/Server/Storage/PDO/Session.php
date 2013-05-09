@@ -125,6 +125,15 @@ class Session implements SessionInterface
         return ($result === false) ? false : (array) $result;
     }
 
+    public function removeRefreshToken($refreshToken)
+    {
+        $db = \ezcDbInstance::get();
+
+        $stmt = $db->prepare('DELETE FROM `oauth_session_refresh_tokens` WHERE refresh_token = :refreshToken');
+        $stmt->bindValue(':refreshToken', $refreshToken);
+        $stmt->execute();
+    }
+
     public function validateRefreshToken($refreshToken, $clientId)
     {
         $db = \ezcDbInstance::get();

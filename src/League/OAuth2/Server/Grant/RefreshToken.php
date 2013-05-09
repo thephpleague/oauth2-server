@@ -119,7 +119,7 @@ class RefreshToken implements GrantTypeInterface {
     public function completeFlow($inputParams = null)
     {
         // Get the required params
-        $authParams = $this->authServer->getParam(array('client_id', 'client_secret', 'refresh_token'), 'post', $inputParams);
+        $authParams = $this->authServer->getParam(array('client_id', 'client_secret', 'refresh_token', 'scope'), 'post', $inputParams);
 
         if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'client_id'), 0);
@@ -159,15 +159,50 @@ class RefreshToken implements GrantTypeInterface {
         $accessToken = SecureKey::make();
         $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getAccessTokenTTL();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
+
+        // Generate a new refresh token
         $refreshToken = SecureKey::make();
         $refreshTokenExpires = time() + $this->getRefreshTokenTTL();
 
+        // Revoke the old refresh token
+        $this->authServer->getStorage('session')->removeRefreshToken($authParams['refresh_token']);
+
+        // Associate the new access token with the session
         $newAccessTokenId = $this->authServer->getStorage('session')->associateAccessToken($accessTokenDetails['session_id'], $accessToken, $accessTokenExpires);
 
-        foreach ($scopes as $scope) {
-            $this->authServer->getStorage('session')->associateScope($newAccessTokenId, $scope['id']);
+        // There isn't a request for reduced scopes so assign the original ones
+        if ( ! isset($authParams['scope'])) {
+            foreach ($scopes as $scope) {
+                $this->authServer->getStorage('session')->associateScope($newAccessTokenId, $scope['id']);
+            }
+        } else {
+
+            // The request is asking for reduced scopes
+            $reqestedScopes = explode($this->authServer->getScopeDelimeter(), $authParams['scope']);
+
+            for ($i = 0; $i < count($reqestedScopes); $i++) {
+                $reqestedScopes[$i] = trim($reqestedScopes[$i]);
+                if ($reqestedScopes[$i] === '') unset($reqestedScopes[$i]); // Remove any junk scopes
+            }
+
+            // Check that there aren't any new scopes being included
+            $existingScopes = [];
+            foreach ($scopes as $s) {
+                $existingScopes[] = $s['scope'];
+            }
+
+            foreach ($reqestedScopes as $reqScope) {
+                if ( ! in_array($reqScope, $existingScopes)) {
+                    throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'scope'), 0);
+                }
+
+                // Associate with the new access token
+                $scopeDetails = $this->authServer->getStorage('scope')->getScope($reqScope, $authParams['client_id'], $this->identifier);
+                $this->authServer->getStorage('session')->associateScope($newAccessTokenId, $scopeDetails['id']);
+            }
         }
 
+        // Associate the new refresh token with the new access token
         $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken, $refreshTokenExpires, $authParams['client_id']);
 
         return array(

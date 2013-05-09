@@ -186,6 +186,20 @@ interface SessionInterface
     public function validateAccessToken($accessToken);
 
     /**
+     * Removes a refresh token
+     *
+     * Example SQL query:
+     *
+     * <code>
+     * DELETE FROM `oauth_session_refresh_tokens` WHERE refresh_token = :refreshToken
+     * </code>
+     *
+     * @param  string $refreshToken The refresh token to be removed
+     * @return void
+     */
+    public function removeRefreshToken($refreshToken);
+
+    /**
      * Validate a refresh token
      *
      * Example SQL query:
