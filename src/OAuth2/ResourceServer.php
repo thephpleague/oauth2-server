@@ -216,7 +216,22 @@ class ResourceServer
     protected function determineAccessToken()
     {
         if ($header = $this->getRequest()->header('Authorization')) {
-            $access_token = base64_decode(trim(str_replace('Bearer', '', $header)));
+            // Check for special case, because cURL sometimes does an 
+            // internal second request and doubles the authorization header,
+            // which always resulted in an error.
+            // 
+            // 1st request: Authorization: Bearer XXX
+            // 2nd request: Authorization: Bearer XXX, Bearer XXX
+            if (strpos($header, ',') !== false) {
+                $accessTokens = array();
+                foreach (explode(',', $header) as $header_part) {
+                    $accessTokens[] = trim(preg_replace('/^(?:\s+)?Bearer\s+/', '', $header_part));
+                }
+                // take always the first one
+                $accessToken = $accessTokens[0];
+            } else {
+                $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s+/', '', $header));
+            }
         } else {
             $method = $this->getRequest()->server('REQUEST_METHOD');
             $access_token = $this->getRequest()->{$method}($this->tokenKey);
