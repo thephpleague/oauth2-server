@@ -133,18 +133,27 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * SELECT oauth_sessions.id FROM oauth_sessions
+     * SELECT oauth_sessions.id, oauth_session_authcodes.scope_ids FROM oauth_sessions
      *  JOIN oauth_session_authcodes ON oauth_session_authcodes.`session_id` = oauth_sessions.id
-     *  JOIN oauth_session_redirects ON oauth_session_redirects.`session_id` = oauth_sessions.id
-     *  WHERE oauth_sessions.client_id = :clientId AND oauth_session_authcodes.`auth_code` = :authCode
+     *  JOIN oauth_session_redirects ON oauth_session_redirects.`session_id` = oauth_sessions.id WHERE
+     * oauth_sessions.client_id = :clientId AND oauth_session_authcodes.`auth_code` = :authCode
      *  AND `oauth_session_authcodes`.`auth_code_expires` >= :time AND
      *  `oauth_session_redirects`.`redirect_uri` = :redirectUri
+     * </code>
+     *
+     * Expected response:
+     *
+     * <code>
+     * array(
+     *     'id' =>  (int), // the session ID
+     *     'scope_ids'  =>  (string)
+     * )
      * </code>
      *
      * @param  string     $clientId    The client ID
      * @param  string     $redirectUri The redirect URI
      * @param  string     $authCode    The authorization code
-     * @return int|bool                False if invalid or the session ID
+     * @return array|bool              False if invalid or array as above
      */
     public function validateAuthCode($clientId, $redirectUri, $authCode);
 
