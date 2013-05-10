@@ -254,6 +254,36 @@ interface SessionInterface
      * @return void
      */
     public function associateAuthCodeScope($sessionId, $scopeId);
+
+    /**
+     * Get the scopes associated with an auth code
+     *
+     * Example SQL query:
+     *
+     * <code>
+     * SELECT scope_id FROM `oauth_session_authcode_scopes` WHERE session_id = :sessionId
+     * </code>
+     *
+     * Expected response:
+     *
+     * <code>
+     * array(
+     *     array(
+     *         'scope_id' => (int)
+     *     ),
+     *     array(
+     *         'scope_id' => (int)
+     *     ),
+     *     ...
+     * )
+     * </code>
+     *
+     * @param  int $sessionId The session ID
+     * @return array
+     */
+    public function getAuthCodeScopes($sessionId);
+
+    /**
      * Associate a scope with an access token
      *
      * Example SQL query:
