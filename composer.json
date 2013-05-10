@@ -5,8 +5,7 @@
 	"homepage": "https://github.com/php-loep/oauth2-server",
 	"license": "MIT",
 	"require": {
-		"php": ">=5.3.0",
-		"zetacomponents/database": "dev-master"
+		"php": ">=5.3.0"
 	},
 	"require-dev": {
 		"mockery/mockery": ">=0.7.2"
@@ -43,5 +42,7 @@
 			"League\\OAuth2\\Server": "src/"
 		}
 	},
-	"suggest": {}
+	"suggest": {
+		"zetacomponents/database": "Allows use of the build in PDO storage classes"
+	}
 }
