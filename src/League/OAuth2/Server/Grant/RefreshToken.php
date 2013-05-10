@@ -55,6 +55,12 @@ class RefreshToken implements GrantTypeInterface {
     protected $refreshTokenTTL = 604800;
 
     /**
+     * Rotate refresh tokens
+     * @var boolean
+     */
+    protected $rotateRefreshTokens = false;
+
+    /**
      * Constructor
      * @param Authorization $authServer Authorization server instance
      * @return void
@@ -109,6 +115,16 @@ class RefreshToken implements GrantTypeInterface {
     public function getRefreshTokenTTL()
     {
         return $this->refreshTokenTTL;
+    }
+
+    /**
+     * When a new access is token, expire the refresh token used and issue a new one.
+     * @param  boolean $rotateRefreshTokens Set to true to enable (default = false)
+     * @return void
+     */
+    public function rotateRefreshTokens($rotateRefreshTokens = false)
+    {
+        $this->rotateRefreshTokens = $rotateRefreshTokens
     }
 
     /**
