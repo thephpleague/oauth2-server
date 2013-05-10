@@ -124,7 +124,7 @@ class RefreshToken implements GrantTypeInterface {
      */
     public function rotateRefreshTokens($rotateRefreshTokens = false)
     {
-        $this->rotateRefreshTokens = $rotateRefreshTokens
+        $this->rotateRefreshTokens = $rotateRefreshTokens;
     }
 
     /**
