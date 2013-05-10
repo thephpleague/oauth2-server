@@ -241,6 +241,19 @@ interface SessionInterface
     public function getAccessToken($accessTokenId);
 
     /**
+     * Associate scopes with an auth code (bound to the session)
+     *
+     * Example SQL query:
+     *
+     * <code>
+     * INSERT INTO `oauth_session_authcode_scopes` (`session_id`, `scope_id`) VALUES (:sessionId, :scopeId)
+     * </code>
+     *
+     * @param  int $sessionId The session ID
+     * @param  int $scopeId   The scope ID
+     * @return void
+     */
+    public function associateAuthCodeScope($sessionId, $scopeId);
      * Associate a scope with an access token
      *
      * Example SQL query:
