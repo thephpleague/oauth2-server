@@ -70,17 +70,18 @@ class Session implements SessionInterface
         $stmt->execute();
     }
 
-    public function associateAuthCode($sessionId, $authCode, $expireTime, $scopeIds = null)
+    public function associateAuthCode($sessionId, $authCode, $expireTime)
     {
         $db = \ezcDbInstance::get();
 
-        $stmt = $db->prepare('INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires, scope_ids)
-         VALUE (:sessionId, :authCode, :authCodeExpires, :scopeIds)');
+        $stmt = $db->prepare('INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires)
+         VALUE (:sessionId, :authCode, :authCodeExpires)');
         $stmt->bindValue(':sessionId', $sessionId);
         $stmt->bindValue(':authCode', $authCode);
         $stmt->bindValue(':authCodeExpires', $expireTime);
-        $stmt->bindValue(':scopeIds', $scopeIds);
         $stmt->execute();
+
+        return $db->lastInsertId();
     }
 
     public function removeAuthCode($sessionId)
