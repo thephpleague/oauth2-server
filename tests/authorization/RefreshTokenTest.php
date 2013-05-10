@@ -204,7 +204,6 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('token_type', $v);
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
-        $this->assertArrayHasKey('refresh_token', $v);
 
         $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
         $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
@@ -232,6 +231,48 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
 
         $a = $this->returnDefault();
         $a->addGrantType(new League\OAuth2\Server\Grant\RefreshToken($a));
+
+        $v = $a->issueAccessToken(array(
+            'grant_type'    =>  'refresh_token',
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'refresh_token'  =>  'abcdef',
+        ));
+
+        $this->assertArrayHasKey('access_token', $v);
+        $this->assertArrayHasKey('token_type', $v);
+        $this->assertArrayHasKey('expires', $v);
+        $this->assertArrayHasKey('expires_in', $v);
+
+        $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
+        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
+    }
+
+    public function test_issueAccessToken_refreshTokenGrant_rotateTokens()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->session->shouldReceive('validateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('validateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('updateSession')->andReturn(null);
+        $this->session->shouldReceive('updateRefreshToken')->andReturn(null);
+        $this->session->shouldReceive('getAccessToken')->andReturn(null);
+        $this->session->shouldReceive('getScopes')->andReturn(array('id'    =>  1));
+        $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('associateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('removeRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
+
+        $a = $this->returnDefault();
+
+        $rt = new League\OAuth2\Server\Grant\RefreshToken($a);
+        $rt->rotateRefreshTokens(true);
+        $a->addGrantType($rt);
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'refresh_token',
@@ -286,7 +327,6 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('token_type', $v);
         $this->assertArrayHasKey('expires', $v);
         $this->assertArrayHasKey('expires_in', $v);
-        $this->assertArrayHasKey('refresh_token', $v);
 
         $this->assertNotEquals($a->getAccessTokenTTL(), $v['expires_in']);
         $this->assertNotEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
@@ -318,6 +358,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $grant = new League\OAuth2\Server\Grant\RefreshToken($a);
         $grant->setAccessTokenTTL(30);
+        $grant->rotateRefreshTokens(true);
         $a->addGrantType($grant);
 
         $v = $a->issueAccessToken(array(
@@ -368,6 +409,7 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $grant = new League\OAuth2\Server\Grant\RefreshToken($a);
         $grant->setAccessTokenTTL(30);
+        $grant->rotateRefreshTokens(true);
         $a->addGrantType($grant);
 
         $a->issueAccessToken(array(
