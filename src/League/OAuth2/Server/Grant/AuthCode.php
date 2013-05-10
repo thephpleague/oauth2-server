@@ -193,13 +193,6 @@ class AuthCode implements GrantTypeInterface {
         // Remove any old sessions the user might have
         $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], $type, $typeId);
 
-        // List of scopes IDs
-        $scopeIds = array();
-        foreach ($authParams['scopes'] as $scope)
-        {
-            $scopeIds[] = $scope['id'];
-        }
-
         // Create a new session
         $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], $type, $typeId);
 
@@ -207,7 +200,12 @@ class AuthCode implements GrantTypeInterface {
         $this->authServer->getStorage('session')->associateRedirectUri($sessionId, $authParams['redirect_uri']);
 
         // Associate the auth code
-        $this->authServer->getStorage('session')->associateAuthCode($sessionId, $authCode, time() + $this->authTokenTTL, implode(',', $scopeIds));
+        $authCodeId = $this->authServer->getStorage('session')->associateAuthCode($sessionId, $authCode, time() + $this->authTokenTTL, implode(',', $scopeIds));
+
+        // Associate the scopes to the auth code
+        foreach ($authParams['scopes'] as $scope) {
+            $this->authServer->getStorage('session')->associateAuthCodeScope($authCodeId, $scope['id']);
+        }
 
         return $authCode;
     }

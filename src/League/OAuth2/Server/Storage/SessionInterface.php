@@ -102,17 +102,16 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires, scope_ids)
-     *  VALUE (:sessionId, :authCode, :authCodeExpires, :scopeIds)
+     * INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires)
+     *  VALUE (:sessionId, :authCode, :authCodeExpires)
      * </code>
      *
      * @param  int    $sessionId  The session ID
      * @param  string $authCode   The authorization code
      * @param  int    $expireTime Unix timestamp of the access token expiry time
-     * @param  string $scopeIds   Comma seperated list of scope IDs to be later associated (default = null)
-     * @return void
+     * @return int                The auth code ID
      */
-    public function associateAuthCode($sessionId, $authCode, $expireTime, $scopeIds = null);
+    public function associateAuthCode($sessionId, $authCode, $expireTime);
 
     /**
      * Remove an associated authorization token from a session
