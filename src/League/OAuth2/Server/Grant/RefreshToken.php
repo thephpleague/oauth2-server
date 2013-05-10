@@ -176,24 +176,32 @@ class RefreshToken implements GrantTypeInterface {
         $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getAccessTokenTTL();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
 
-        // Generate a new refresh token
-        $refreshToken = SecureKey::make();
-        $refreshTokenExpires = time() + $this->getRefreshTokenTTL();
-
-        // Revoke the old refresh token
-        $this->authServer->getStorage('session')->removeRefreshToken($authParams['refresh_token']);
-
         // Associate the new access token with the session
         $newAccessTokenId = $this->authServer->getStorage('session')->associateAccessToken($accessTokenDetails['session_id'], $accessToken, $accessTokenExpires);
 
-        // There isn't a request for reduced scopes so assign the original ones
+        if ($this->rotateRefreshTokens === true) {
+
+            // Generate a new refresh token
+            $refreshToken = SecureKey::make();
+            $refreshTokenExpires = time() + $this->getRefreshTokenTTL();
+
+            // Revoke the old refresh token
+            $this->authServer->getStorage('session')->removeRefreshToken($authParams['refresh_token']);
+
+            // Associate the new refresh token with the new access token
+            $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken, $refreshTokenExpires, $authParams['client_id']);
+        }
+
+        // There isn't a request for reduced scopes so assign the original ones (or we're not rotating scopes)
         if ( ! isset($authParams['scope'])) {
+
             foreach ($scopes as $scope) {
                 $this->authServer->getStorage('session')->associateScope($newAccessTokenId, $scope['id']);
             }
-        } else {
 
-            // The request is asking for reduced scopes
+        } elseif ( isset($authParams['scope']) && $this->rotateRefreshTokens === true) {
+
+            // The request is asking for reduced scopes and rotate tokens is enabled
             $reqestedScopes = explode($this->authServer->getScopeDelimeter(), $authParams['scope']);
 
             for ($i = 0; $i < count($reqestedScopes); $i++) {
@@ -218,16 +226,18 @@ class RefreshToken implements GrantTypeInterface {
             }
         }
 
-        // Associate the new refresh token with the new access token
-        $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken, $refreshTokenExpires, $authParams['client_id']);
-
-        return array(
+        $response = array(
             'access_token'  =>  $accessToken,
-            'refresh_token' =>  $refreshToken,
             'token_type'    =>  'bearer',
             'expires'       =>  $accessTokenExpires,
             'expires_in'    =>  $accessTokenExpiresIn
         );
+
+        if ($this->rotateRefreshTokens === true) {
+            $response['refresh_token'] = $refreshToken;
+        }
+
+        return $response;
     }
 
 }
