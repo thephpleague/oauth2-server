@@ -250,15 +250,12 @@ class Resource
             // 1st request: Authorization: Bearer XXX
             // 2nd request: Authorization: Bearer XXX, Bearer XXX
             if (strpos($header, ',') !== false) {
-                $accessTokens = array();
-                foreach (explode(',', $header) as $header_part) {
-                    $accessTokens[] = trim(preg_replace('/^(?:\s+)?Bearer\s+/', '', $header_part));
-                }
-                // take always the first one
-                $accessToken = $accessTokens[0];
+                $headerPart = explode(',', $header);
+                $accessToken = preg_replace('/^(?:\s+)?Bearer(\s{1})/', '', $headerPart[0]);
             } else {
-                $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s+/', '', $header));
+                $accessToken = preg_replace('/^(?:\s+)?Bearer(\s{1})/', '', $header);
             }
+            $accessToken = ($accessToken === 'Bearer') ? '' : $accessToken;
         } else {
             $method = $this->getRequest()->server('REQUEST_METHOD');
             $accessToken = $this->getRequest()->{$method}($this->tokenKey);

@@ -83,6 +83,24 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
 	    $method->invoke($s);
     }
 
+    /**
+     * @expectedException League\OAuth2\Server\Exception\InvalidAccessTokenException
+     */
+    public function test_determineAccessToken_brokenCurlRequest()
+    {
+        $_SERVER['HTTP_AUTHORIZATION'] = 'Bearer, Bearer abcdef';
+        $request = new League\OAuth2\Server\Util\Request(array(), array(), array(), array(), $_SERVER);
+
+        $s = $this->returnDefault();
+        $s->setRequest($request);
+
+        $reflector = new ReflectionClass($s);
+        $method = $reflector->getMethod('determineAccessToken');
+        $method->setAccessible(true);
+
+        $method->invoke($s);
+    }
+
     public function test_determineAccessToken_fromHeader()
     {
         $request = new League\OAuth2\Server\Util\Request();
@@ -104,6 +122,29 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
 	    $result = $method->invoke($s);
 
 	    $this->assertEquals('abcdef', $result);
+    }
+
+    public function test_determineAccessToken_fromBrokenCurlHeader()
+    {
+        $request = new League\OAuth2\Server\Util\Request();
+
+        $requestReflector = new ReflectionClass($request);
+        $param = $requestReflector->getProperty('headers');
+        $param->setAccessible(true);
+        $param->setValue($request, array(
+            'Authorization' =>  'Bearer abcdef, Bearer abcdef'
+        ));
+        $s = $this->returnDefault();
+        $s->setRequest($request);
+
+        $reflector = new ReflectionClass($s);
+
+        $method = $reflector->getMethod('determineAccessToken');
+        $method->setAccessible(true);
+
+        $result = $method->invoke($s);
+
+        $this->assertEquals('abcdef', $result);
     }
 
     public function test_determineAccessToken_fromMethod()
