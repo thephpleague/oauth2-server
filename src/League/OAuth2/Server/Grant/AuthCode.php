@@ -247,23 +247,24 @@ class AuthCode implements GrantTypeInterface {
         }
 
         // Verify the authorization code matches the client_id and the request_uri
-        $session = $this->authServer->getStorage('session')->validateAuthCode($authParams['client_id'], $authParams['redirect_uri'], $authParams['code']);
+        $authCodeDetails = $this->authServer->getStorage('session')->validateAuthCode($authParams['client_id'], $authParams['redirect_uri'], $authParams['code']);
 
-        if ( ! $session) {
+        if ( ! $authCodeDetails) {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_grant'), 'code'), 9);
         }
 
         // A session ID was returned so update it with an access token and remove the authorisation code
 
+        // A session ID was returned so update it with an access token and remove the authorisation code
         $accessToken = SecureKey::make();
         $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getAccessTokenTTL();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
 
         // Remove the auth code
-        $this->authServer->getStorage('session')->removeAuthCode($session['id']);
+        $this->authServer->getStorage('session')->removeAuthCode($authCodeDetails['session_id']);
 
         // Create an access token
-        $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($session['id'], $accessToken, $accessTokenExpires);
+        $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($authCodeDetails['session_id'], $accessToken, $accessTokenExpires);
 
         // Associate scopes with the access token
         if ( ! is_null($session['scope_ids'])) {
