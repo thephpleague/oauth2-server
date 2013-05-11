@@ -260,7 +260,7 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * SELECT scope_id FROM `oauth_session_authcode_scopes` WHERE session_id = :sessionId
+     * SELECT scope_id FROM `oauth_session_authcode_scopes` WHERE oauth_session_authcode_id = :authCodeId
      * </code>
      *
      * Expected response:
@@ -277,10 +277,10 @@ interface SessionInterface
      * )
      * </code>
      *
-     * @param  int $sessionId The session ID
+     * @param  int   $oauthSessionAuthCodeId The session ID
      * @return array
      */
-    public function getAuthCodeScopes($sessionId);
+    public function getAuthCodeScopes($oauthSessionAuthCodeId);
 
     /**
      * Associate a scope with an access token
