@@ -156,6 +156,7 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         $g = new League\OAuth2\Server\Grant\AuthCode($a);
         $a->addGrantType($g);
         $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->requireScopeParam(true);
 
         $g->checkAuthoriseParams(array(
             'client_id' =>  1234,
@@ -196,6 +197,41 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         ));
 
         $this->assertArrayHasKey('scopes', $params);
+        $this->assertEquals(1, count($params['scopes']));
+    }
+
+    public function test_checkAuthoriseParams_defaultScopeArray()
+    {
+        $this->client->shouldReceive('getClient')->andReturn(array(
+            'client_id' =>  1234,
+            'client_secret' =>  5678,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'name'  =>  'Example Client'
+        ));
+
+        $this->scope->shouldReceive('getScope')->andReturn(array(
+            'id'    =>  1,
+            'scope' =>  'foo',
+            'name'  =>  'Foo Name',
+            'description'   =>  'Foo Name Description'
+        ));
+
+        $a = $this->returnDefault();
+        $g = new League\OAuth2\Server\Grant\AuthCode($a);
+        $a->addGrantType($g);
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->setDefaultScope(array('test.scope', 'test.scope2'));
+        $a->requireScopeParam(false);
+
+        $params = $g->checkAuthoriseParams(array(
+            'client_id' =>  1234,
+            'redirect_uri'  =>  'http://foo/redirect',
+            'response_type' =>  'code',
+            'scope'    =>  ''
+        ));
+
+        $this->assertArrayHasKey('scopes', $params);
+        $this->assertEquals(2, count($params['scopes']));
     }
 
     /**
@@ -340,7 +376,8 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('createSession')->andReturn(1);
         $this->session->shouldReceive('associateScope')->andReturn(null);
         $this->session->shouldReceive('associateRedirectUri')->andReturn(null);
-        $this->session->shouldReceive('associateAuthCode')->andReturn(null);
+        $this->session->shouldReceive('associateAuthCode')->andReturn(1);
+        $this->session->shouldReceive('associateAuthCodeScope')->andReturn(null);
 
         $a = $this->returnDefault();
         $g = new League\OAuth2\Server\Grant\AuthCode($a);

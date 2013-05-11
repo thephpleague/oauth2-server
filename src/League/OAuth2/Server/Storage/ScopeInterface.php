@@ -19,7 +19,7 @@ interface ScopeInterface
      * Example SQL query:
      *
      * <code>
-     * SELECT * FROM oauth_scopes WHERE oauth_scopes.key = :scope
+     * SELECT * FROM oauth_scopes WHERE scope = :scope
      * </code>
      *
      * Response:
@@ -28,7 +28,7 @@ interface ScopeInterface
      * Array
      * (
      *     [id] => (int) The scope's ID
-     *     [key] => (string) The scope itself
+     *     [scope] => (string) The scope itself
      *     [name] => (string) The scope's name
      *     [description] => (string) The scope's description
      * )

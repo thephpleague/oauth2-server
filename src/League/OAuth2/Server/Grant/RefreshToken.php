@@ -55,6 +55,12 @@ class RefreshToken implements GrantTypeInterface {
     protected $refreshTokenTTL = 604800;
 
     /**
+     * Rotate refresh tokens
+     * @var boolean
+     */
+    protected $rotateRefreshTokens = false;
+
+    /**
      * Constructor
      * @param Authorization $authServer Authorization server instance
      * @return void
@@ -112,6 +118,16 @@ class RefreshToken implements GrantTypeInterface {
     }
 
     /**
+     * When a new access is token, expire the refresh token used and issue a new one.
+     * @param  boolean $rotateRefreshTokens Set to true to enable (default = false)
+     * @return void
+     */
+    public function rotateRefreshTokens($rotateRefreshTokens = false)
+    {
+        $this->rotateRefreshTokens = $rotateRefreshTokens;
+    }
+
+    /**
      * Complete the refresh token grant
      * @param  null|array $inputParams
      * @return array
@@ -119,7 +135,7 @@ class RefreshToken implements GrantTypeInterface {
     public function completeFlow($inputParams = null)
     {
         // Get the required params
-        $authParams = $this->authServer->getParam(array('client_id', 'client_secret', 'refresh_token'), 'post', $inputParams);
+        $authParams = $this->authServer->getParam(array('client_id', 'client_secret', 'refresh_token', 'scope'), 'post', $inputParams);
 
         if (is_null($authParams['client_id'])) {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'client_id'), 0);
@@ -159,24 +175,69 @@ class RefreshToken implements GrantTypeInterface {
         $accessToken = SecureKey::make();
         $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getAccessTokenTTL();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
-        $refreshToken = SecureKey::make();
-        $refreshTokenExpires = time() + $this->getRefreshTokenTTL();
 
+        // Associate the new access token with the session
         $newAccessTokenId = $this->authServer->getStorage('session')->associateAccessToken($accessTokenDetails['session_id'], $accessToken, $accessTokenExpires);
 
-        foreach ($scopes as $scope) {
-            $this->authServer->getStorage('session')->associateScope($newAccessTokenId, $scope['id']);
+        if ($this->rotateRefreshTokens === true) {
+
+            // Generate a new refresh token
+            $refreshToken = SecureKey::make();
+            $refreshTokenExpires = time() + $this->getRefreshTokenTTL();
+
+            // Revoke the old refresh token
+            $this->authServer->getStorage('session')->removeRefreshToken($authParams['refresh_token']);
+
+            // Associate the new refresh token with the new access token
+            $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken, $refreshTokenExpires, $authParams['client_id']);
         }
 
-        $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken, $refreshTokenExpires, $authParams['client_id']);
+        // There isn't a request for reduced scopes so assign the original ones (or we're not rotating scopes)
+        if ( ! isset($authParams['scope'])) {
 
-        return array(
+            foreach ($scopes as $scope) {
+                $this->authServer->getStorage('session')->associateScope($newAccessTokenId, $scope['id']);
+            }
+
+        } elseif ( isset($authParams['scope']) && $this->rotateRefreshTokens === true) {
+
+            // The request is asking for reduced scopes and rotate tokens is enabled
+            $reqestedScopes = explode($this->authServer->getScopeDelimeter(), $authParams['scope']);
+
+            for ($i = 0; $i < count($reqestedScopes); $i++) {
+                $reqestedScopes[$i] = trim($reqestedScopes[$i]);
+                if ($reqestedScopes[$i] === '') unset($reqestedScopes[$i]); // Remove any junk scopes
+            }
+
+            // Check that there aren't any new scopes being included
+            $existingScopes = array();
+            foreach ($scopes as $s) {
+                $existingScopes[] = $s['scope'];
+            }
+
+            foreach ($reqestedScopes as $reqScope) {
+                if ( ! in_array($reqScope, $existingScopes)) {
+                    throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'scope'), 0);
+                }
+
+                // Associate with the new access token
+                $scopeDetails = $this->authServer->getStorage('scope')->getScope($reqScope, $authParams['client_id'], $this->identifier);
+                $this->authServer->getStorage('session')->associateScope($newAccessTokenId, $scopeDetails['id']);
+            }
+        }
+
+        $response = array(
             'access_token'  =>  $accessToken,
-            'refresh_token' =>  $refreshToken,
             'token_type'    =>  'bearer',
             'expires'       =>  $accessTokenExpires,
             'expires_in'    =>  $accessTokenExpiresIn
         );
+
+        if ($this->rotateRefreshTokens === true) {
+            $response['refresh_token'] = $refreshToken;
+        }
+
+        return $response;
     }
 
 }

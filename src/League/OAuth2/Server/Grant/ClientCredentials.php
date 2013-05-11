@@ -122,10 +122,14 @@ class ClientCredentials implements GrantTypeInterface {
             if ($scopes[$i] === '') unset($scopes[$i]); // Remove any junk scopes
         }
 
-        if ($this->authServer->scopeParamRequired() === true && count($scopes) === 0) {
+        if ($this->authServer->scopeParamRequired() === true && $this->authServer->getDefaultScope() === null && count($scopes) === 0) {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_request'), 'scope'), 0);
-        } elseif (count($scopes) === 0 && $this->authServer->getDefaultScope()) {
-            $scopes = array($this->authServer->getDefaultScope());
+        } elseif (count($scopes) === 0 && $this->authServer->getDefaultScope() !== null) {
+            if (is_array($this->authServer->getDefaultScope())) {
+                $scopes = $this->authServer->getDefaultScope();
+            } else {
+                $scopes = array($this->authServer->getDefaultScope());
+            }
         }
 
         $authParams['scopes'] = array();
@@ -144,9 +148,6 @@ class ClientCredentials implements GrantTypeInterface {
         $accessToken = SecureKey::make();
         $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getAccessTokenTTL();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
-
-        // Delete any existing sessions just to be sure
-        $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], 'client', $authParams['client_id']);
 
         // Create a new session
         $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], 'client', $authParams['client_id']);

@@ -358,13 +358,14 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         ));
 
         $this->session->shouldReceive('validateAuthCode')->andReturn(array(
-            'id'    =>  1,
-            'scope_ids' =>  '1'
+            'session_id'    =>  1,
+            'authcode_id' =>  1
         ));
         $this->session->shouldReceive('updateSession')->andReturn(null);
         $this->session->shouldReceive('removeAuthCode')->andReturn(null);
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
         $this->session->shouldReceive('associateScope')->andReturn(null);
+        $this->session->shouldReceive('getAuthCodeScopes')->andReturn(array('scope_id' => 1));
 
         $a = $this->returnDefault();
         $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
@@ -399,6 +400,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('updateSession')->andReturn(null);
         $this->session->shouldReceive('removeAuthCode')->andReturn(null);
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('getAuthCodeScopes')->andReturn(array('scope_id' => 1));
+        $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
         $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
@@ -436,6 +439,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('updateSession')->andReturn(null);
         $this->session->shouldReceive('removeAuthCode')->andReturn(null);
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('getAuthCodeScopes')->andReturn(array('scope_id' => 1));
+        $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
         $grant = new League\OAuth2\Server\Grant\AuthCode($a);
@@ -477,6 +482,8 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('updateSession')->andReturn(null);
         $this->session->shouldReceive('removeAuthCode')->andReturn(null);
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
+        $this->session->shouldReceive('getAuthCodeScopes')->andReturn(array('scope_id' => 1));
+        $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
         $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
