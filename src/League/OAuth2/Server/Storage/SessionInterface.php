@@ -94,7 +94,7 @@ interface SessionInterface
      * @param  string $clientId      The client ID
      * @return void
      */
-    public function associateRefreshToken($accessTokenId, $refreshToken, $expireTime, $clientId);
+    public function associateRefreshToken($accessTokenId, $refreshToken, $expireTime);
 
     /**
      * Assocate an authorization code with a session
