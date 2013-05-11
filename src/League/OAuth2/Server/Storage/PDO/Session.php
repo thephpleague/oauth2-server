@@ -97,12 +97,12 @@ class Session implements SessionInterface
     {
         $db = \ezcDbInstance::get();
 
-        $stmt = $db->prepare('SELECT oauth_sessions.id, oauth_session_authcodes.scope_ids FROM oauth_sessions JOIN
-         oauth_session_authcodes ON oauth_session_authcodes.`session_id` = oauth_sessions.id JOIN
-          oauth_session_redirects ON oauth_session_redirects.`session_id` = oauth_sessions.id WHERE
-           oauth_sessions.client_id = :clientId AND oauth_session_authcodes.`auth_code` = :authCode AND
-            `oauth_session_authcodes`.`auth_code_expires` >= :time AND `oauth_session_redirects`.`redirect_uri`
-             = :redirectUri');
+        $stmt = $db->prepare('SELECT oauth_sessions.id AS session_id, oauth_session_authcodes.id AS authcode_id
+         FROM oauth_sessions JOIN oauth_session_authcodes ON oauth_session_authcodes.`session_id`
+          = oauth_sessions.id JOIN oauth_session_redirects ON oauth_session_redirects.`session_id`
+          = oauth_sessions.id WHERE oauth_sessions.client_id = :clientId AND oauth_session_authcodes.`auth_code`
+          = :authCode AND  `oauth_session_authcodes`.`auth_code_expires` >= :time AND
+           `oauth_session_redirects`.`redirect_uri` = :redirectUri');
         $stmt->bindValue(':clientId', $clientId);
         $stmt->bindValue(':redirectUri', $redirectUri);
         $stmt->bindValue(':authCode', $authCode);
