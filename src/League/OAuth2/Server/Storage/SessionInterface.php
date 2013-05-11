@@ -245,14 +245,15 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * INSERT INTO `oauth_session_authcode_scopes` (`session_id`, `scope_id`) VALUES (:sessionId, :scopeId)
+     * INSERT INTO `oauth_session_authcode_scopes` (`oauth_session_authcode_id`, `scope_id`) VALUES
+     *  (:authCodeId, :scopeId)
      * </code>
      *
-     * @param  int $sessionId The session ID
-     * @param  int $scopeId   The scope ID
+     * @param  int $authCodeId The auth code ID
+     * @param  int $scopeId    The scope ID
      * @return void
      */
-    public function associateAuthCodeScope($sessionId, $scopeId);
+    public function associateAuthCodeScope($authCodeId, $scopeId);
 
     /**
      * Get the scopes associated with an auth code

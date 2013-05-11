@@ -161,12 +161,12 @@ class Session implements SessionInterface
         return ($result === false) ? false : (array) $result;
     }
 
-    public function associateAuthCodeScope($sessionId, $scopeId)
+    public function associateAuthCodeScope($authCodeId, $scopeId)
     {
         $db = \ezcDbInstance::get();
 
-        $stmt = $db->prepare('INSERT INTO `oauth_session_authcode_scopes` (`session_id`, `scope_id`) VALUES (:sessionId, :scopeId)');
-        $stmt->bindValue(':sessionId', $sessionId);
+        $stmt = $db->prepare('INSERT INTO `oauth_session_authcode_scopes` (`oauth_session_authcode_id`, `scope_id`) VALUES (:authCodeId, :scopeId)');
+        $stmt->bindValue(':authCodeId', $authCodeId);
         $stmt->bindValue(':scopeId', $scopeId);
         $stmt->execute();
     }
