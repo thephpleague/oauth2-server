@@ -193,13 +193,6 @@ class AuthCode implements GrantTypeInterface {
         // Remove any old sessions the user might have
         $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], $type, $typeId);
 
-        // List of scopes IDs
-        $scopeIds = array();
-        foreach ($authParams['scopes'] as $scope)
-        {
-            $scopeIds[] = $scope['id'];
-        }
-
         // Create a new session
         $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], $type, $typeId);
 
@@ -207,7 +200,12 @@ class AuthCode implements GrantTypeInterface {
         $this->authServer->getStorage('session')->associateRedirectUri($sessionId, $authParams['redirect_uri']);
 
         // Associate the auth code
-        $this->authServer->getStorage('session')->associateAuthCode($sessionId, $authCode, time() + $this->authTokenTTL, implode(',', $scopeIds));
+        $authCodeId = $this->authServer->getStorage('session')->associateAuthCode($sessionId, $authCode, time() + $this->authTokenTTL);
+
+        // Associate the scopes to the auth code
+        foreach ($authParams['scopes'] as $scope) {
+            $this->authServer->getStorage('session')->associateAuthCodeScope($authCodeId, $scope['id']);
+        }
 
         return $authCode;
     }
@@ -249,30 +247,30 @@ class AuthCode implements GrantTypeInterface {
         }
 
         // Verify the authorization code matches the client_id and the request_uri
-        $session = $this->authServer->getStorage('session')->validateAuthCode($authParams['client_id'], $authParams['redirect_uri'], $authParams['code']);
+        $authCodeDetails = $this->authServer->getStorage('session')->validateAuthCode($authParams['client_id'], $authParams['redirect_uri'], $authParams['code']);
 
-        if ( ! $session) {
+        if ( ! $authCodeDetails) {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_grant'), 'code'), 9);
         }
 
-        // A session ID was returned so update it with an access token and remove the authorisation code
+        // Get any associated scopes
+        $scopes = $this->authServer->getStorage('session')->getAuthCodeScopes($authCodeDetails['authcode_id']);
 
+        // A session ID was returned so update it with an access token and remove the authorisation code
         $accessToken = SecureKey::make();
         $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getAccessTokenTTL();
         $accessTokenExpires = time() + $accessTokenExpiresIn;
 
         // Remove the auth code
-        $this->authServer->getStorage('session')->removeAuthCode($session['id']);
+        $this->authServer->getStorage('session')->removeAuthCode($authCodeDetails['session_id']);
 
         // Create an access token
-        $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($session['id'], $accessToken, $accessTokenExpires);
+        $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($authCodeDetails['session_id'], $accessToken, $accessTokenExpires);
 
         // Associate scopes with the access token
-        if ( ! is_null($session['scope_ids'])) {
-            $scopeIds = explode(',', $session['scope_ids']);
-
-            foreach ($scopeIds as $scopeId) {
-                $this->authServer->getStorage('session')->associateScope($accessTokenId, $scopeId);
+        if (count($scopes) > 0) {
+            foreach ($scopes as $scope) {
+                $this->authServer->getStorage('session')->associateScope($accessTokenId, $scope['scope_id']);
             }
         }
 

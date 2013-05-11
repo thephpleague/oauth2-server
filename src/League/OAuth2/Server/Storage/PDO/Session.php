@@ -70,17 +70,18 @@ class Session implements SessionInterface
         $stmt->execute();
     }
 
-    public function associateAuthCode($sessionId, $authCode, $expireTime, $scopeIds = null)
+    public function associateAuthCode($sessionId, $authCode, $expireTime)
     {
         $db = \ezcDbInstance::get();
 
-        $stmt = $db->prepare('INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires, scope_ids)
-         VALUE (:sessionId, :authCode, :authCodeExpires, :scopeIds)');
+        $stmt = $db->prepare('INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires)
+         VALUE (:sessionId, :authCode, :authCodeExpires)');
         $stmt->bindValue(':sessionId', $sessionId);
         $stmt->bindValue(':authCode', $authCode);
         $stmt->bindValue(':authCodeExpires', $expireTime);
-        $stmt->bindValue(':scopeIds', $scopeIds);
         $stmt->execute();
+
+        return $db->lastInsertId();
     }
 
     public function removeAuthCode($sessionId)
@@ -96,12 +97,12 @@ class Session implements SessionInterface
     {
         $db = \ezcDbInstance::get();
 
-        $stmt = $db->prepare('SELECT oauth_sessions.id, oauth_session_authcodes.scope_ids FROM oauth_sessions JOIN
-         oauth_session_authcodes ON oauth_session_authcodes.`session_id` = oauth_sessions.id JOIN
-          oauth_session_redirects ON oauth_session_redirects.`session_id` = oauth_sessions.id WHERE
-           oauth_sessions.client_id = :clientId AND oauth_session_authcodes.`auth_code` = :authCode AND
-            `oauth_session_authcodes`.`auth_code_expires` >= :time AND `oauth_session_redirects`.`redirect_uri`
-             = :redirectUri');
+        $stmt = $db->prepare('SELECT oauth_sessions.id AS session_id, oauth_session_authcodes.id AS authcode_id
+         FROM oauth_sessions JOIN oauth_session_authcodes ON oauth_session_authcodes.`session_id`
+          = oauth_sessions.id JOIN oauth_session_redirects ON oauth_session_redirects.`session_id`
+          = oauth_sessions.id WHERE oauth_sessions.client_id = :clientId AND oauth_session_authcodes.`auth_code`
+          = :authCode AND  `oauth_session_authcodes`.`auth_code_expires` >= :time AND
+           `oauth_session_redirects`.`redirect_uri` = :redirectUri');
         $stmt->bindValue(':clientId', $clientId);
         $stmt->bindValue(':redirectUri', $redirectUri);
         $stmt->bindValue(':authCode', $authCode);
@@ -158,6 +159,27 @@ class Session implements SessionInterface
 
         $result = $stmt->fetchObject();
         return ($result === false) ? false : (array) $result;
+    }
+
+    public function associateAuthCodeScope($authCodeId, $scopeId)
+    {
+        $db = \ezcDbInstance::get();
+
+        $stmt = $db->prepare('INSERT INTO `oauth_session_authcode_scopes` (`oauth_session_authcode_id`, `scope_id`) VALUES (:authCodeId, :scopeId)');
+        $stmt->bindValue(':authCodeId', $authCodeId);
+        $stmt->bindValue(':scopeId', $scopeId);
+        $stmt->execute();
+    }
+
+    public function getAuthCodeScopes($oauthSessionAuthCodeId)
+    {
+        $db = \ezcDbInstance::get();
+
+        $stmt = $db->prepare('SELECT scope_id FROM `oauth_session_authcode_scopes` WHERE oauth_session_authcode_id = :authCodeId');
+        $stmt->bindValue(':authCodeId', $oauthSessionAuthCodeId);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 
     public function associateScope($accessTokenId, $scopeId)

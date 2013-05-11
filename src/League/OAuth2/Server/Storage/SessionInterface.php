@@ -102,17 +102,16 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires, scope_ids)
-     *  VALUE (:sessionId, :authCode, :authCodeExpires, :scopeIds)
+     * INSERT INTO oauth_session_authcodes (session_id, auth_code, auth_code_expires)
+     *  VALUE (:sessionId, :authCode, :authCodeExpires)
      * </code>
      *
      * @param  int    $sessionId  The session ID
      * @param  string $authCode   The authorization code
      * @param  int    $expireTime Unix timestamp of the access token expiry time
-     * @param  string $scopeIds   Comma seperated list of scope IDs to be later associated (default = null)
-     * @return void
+     * @return int                The auth code ID
      */
-    public function associateAuthCode($sessionId, $authCode, $expireTime, $scopeIds = null);
+    public function associateAuthCode($sessionId, $authCode, $expireTime);
 
     /**
      * Remove an associated authorization token from a session
@@ -134,7 +133,7 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * SELECT oauth_sessions.id, oauth_session_authcodes.scope_ids FROM oauth_sessions
+     * SELECT oauth_sessions.id AS session_id, oauth_session_authcodes.id AS authcode_id FROM oauth_sessions
      *  JOIN oauth_session_authcodes ON oauth_session_authcodes.`session_id` = oauth_sessions.id
      *  JOIN oauth_session_redirects ON oauth_session_redirects.`session_id` = oauth_sessions.id WHERE
      * oauth_sessions.client_id = :clientId AND oauth_session_authcodes.`auth_code` = :authCode
@@ -146,8 +145,8 @@ interface SessionInterface
      *
      * <code>
      * array(
-     *     'id' =>  (int), // the session ID
-     *     'scope_ids'  =>  (string)
+     *     'session_id' =>  (int)
+     *     'authcode_id'  =>  (int)
      * )
      * </code>
      *
@@ -239,6 +238,50 @@ interface SessionInterface
      * @return array
      */
     public function getAccessToken($accessTokenId);
+
+    /**
+     * Associate scopes with an auth code (bound to the session)
+     *
+     * Example SQL query:
+     *
+     * <code>
+     * INSERT INTO `oauth_session_authcode_scopes` (`oauth_session_authcode_id`, `scope_id`) VALUES
+     *  (:authCodeId, :scopeId)
+     * </code>
+     *
+     * @param  int $authCodeId The auth code ID
+     * @param  int $scopeId    The scope ID
+     * @return void
+     */
+    public function associateAuthCodeScope($authCodeId, $scopeId);
+
+    /**
+     * Get the scopes associated with an auth code
+     *
+     * Example SQL query:
+     *
+     * <code>
+     * SELECT scope_id FROM `oauth_session_authcode_scopes` WHERE oauth_session_authcode_id = :authCodeId
+     * </code>
+     *
+     * Expected response:
+     *
+     * <code>
+     * array(
+     *     array(
+     *         'scope_id' => (int)
+     *     ),
+     *     array(
+     *         'scope_id' => (int)
+     *     ),
+     *     ...
+     * )
+     * </code>
+     *
+     * @param  int   $oauthSessionAuthCodeId The session ID
+     * @return array
+     */
+    public function getAuthCodeScopes($oauthSessionAuthCodeId);
 
     /**
      * Associate a scope with an access token

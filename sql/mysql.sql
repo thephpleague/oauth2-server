@@ -38,12 +38,13 @@ CREATE TABLE `oauth_session_access_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_authcodes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `session_id` int(10) unsigned NOT NULL,
   `auth_code` char(40) NOT NULL,
   `auth_code_expires` int(10) unsigned NOT NULL,
-  `scope_ids` char(255) DEFAULT NULL,
-  PRIMARY KEY (`session_id`),
-  CONSTRAINT `f_oaseau_seid` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+  PRIMARY KEY (`id`),
+  KEY `session_id` (`session_id`),
+  CONSTRAINT `oauth_session_authcodes_ibfk_1` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_redirects` (
@@ -70,7 +71,7 @@ CREATE TABLE `oauth_scopes` (
   `name` varchar(255) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `u_oasc_sc` (`scope_key`)
+  UNIQUE KEY `u_oasc_sc` (`scope`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_token_scopes` (
@@ -82,4 +83,13 @@ CREATE TABLE `oauth_session_token_scopes` (
   KEY `f_oasetosc_scid` (`scope_id`),
   CONSTRAINT `f_oasetosc_scid` FOREIGN KEY (`scope_id`) REFERENCES `oauth_scopes` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `f_oasetosc_setoid` FOREIGN KEY (`session_access_token_id`) REFERENCES `oauth_session_access_tokens` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `oauth_session_authcode_scopes` (
+  `oauth_session_authcode_id` int(10) unsigned NOT NULL,
+  `scope_id` smallint(5) unsigned NOT NULL,
+  KEY `oauth_session_authcode_id` (`oauth_session_authcode_id`),
+  KEY `scope_id` (`scope_id`),
+  CONSTRAINT `oauth_session_authcode_scopes_ibfk_2` FOREIGN KEY (`scope_id`) REFERENCES `oauth_scopes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `oauth_session_authcode_scopes_ibfk_1` FOREIGN KEY (`oauth_session_authcode_id`) REFERENCES `oauth_session_authcodes` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
