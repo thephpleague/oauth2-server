@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.1 (released 2013-05-10)
+
+* Moved zetacomponents/database to "suggest" in composer.json. If you rely on this feature you now need to include " zetacomponents/database" into "require" key in your own composer.json. (Issue #51)
+* New method in Refresh grant called `rotateRefreshTokens()`. Pass in `true` to issue a new refresh token each time an access token is refreshed. This parameter needs to be set to true in order to request reduced scopes with the new access token. (Issue #47)
+* Rename `key` column in oauth_scopes table to `scope` as `key` is a reserved SQL word. (Issue #45)
+* The `scope` parameter is no longer required by default as per the RFC. (Issue #43)
+* You can now set multiple default scopes by passing an array into `setDefaultScope()`. (Issue #42)
+* The password and client credentials grants now allow for multiple sessions per user. (Issue #32)
+* Scopes associated to authorization codes are not held in their own table (Issue #44)
+* Database schema updates.
+
 ## 2.0.5 (released 2013-05-09)
 
 * Fixed `oauth_session_token_scopes` table primary key
