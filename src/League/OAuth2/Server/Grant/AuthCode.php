@@ -253,7 +253,8 @@ class AuthCode implements GrantTypeInterface {
             throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_grant'), 'code'), 9);
         }
 
-        // A session ID was returned so update it with an access token and remove the authorisation code
+        // Get any associated scopes
+        $scopes = $this->authServer->getStorage('session')->getAuthCodeScopes($authCodeDetails['authcode_id']);
 
         // A session ID was returned so update it with an access token and remove the authorisation code
         $accessToken = SecureKey::make();
@@ -267,11 +268,9 @@ class AuthCode implements GrantTypeInterface {
         $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($authCodeDetails['session_id'], $accessToken, $accessTokenExpires);
 
         // Associate scopes with the access token
-        if ( ! is_null($session['scope_ids'])) {
-            $scopeIds = explode(',', $session['scope_ids']);
-
-            foreach ($scopeIds as $scopeId) {
-                $this->authServer->getStorage('session')->associateScope($accessTokenId, $scopeId);
+        if (count($scopes) > 0) {
+            foreach ($scopes as $scope) {
+                $this->authServer->getStorage('session')->associateScope($accessTokenId, $scope['scope_id']);
             }
         }
 
