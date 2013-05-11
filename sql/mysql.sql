@@ -70,7 +70,7 @@ CREATE TABLE `oauth_scopes` (
   `name` varchar(255) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `u_oasc_sc` (`scope_key`)
+  UNIQUE KEY `u_oasc_sc` (`scope`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_token_scopes` (
