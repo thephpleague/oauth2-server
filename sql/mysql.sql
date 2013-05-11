@@ -42,7 +42,9 @@ CREATE TABLE `oauth_session_authcodes` (
   `session_id` int(10) unsigned NOT NULL,
   `auth_code` char(40) NOT NULL,
   `auth_code_expires` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `session_id` (`session_id`),
+  CONSTRAINT `oauth_session_authcodes_ibfk_1` FOREIGN KEY (`session_id`) REFERENCES `oauth_sessions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_session_redirects` (
