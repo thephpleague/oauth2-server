@@ -171,6 +171,17 @@ class Session implements SessionInterface
         $stmt->execute();
     }
 
+    public function getAuthCodeScopes($oauthSessionAuthCodeId)
+    {
+        $db = \ezcDbInstance::get();
+
+        $stmt = $db->prepare('SELECT scope_id FROM `oauth_session_authcode_scopes` WHERE oauth_session_authcode_id = :authCodeId');
+        $stmt->bindValue(':authCodeId', $oauthSessionAuthCodeId);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
     public function associateScope($accessTokenId, $scopeId)
     {
         $db = \ezcDbInstance::get();
