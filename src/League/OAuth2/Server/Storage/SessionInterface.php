@@ -133,7 +133,7 @@ interface SessionInterface
      * Example SQL query:
      *
      * <code>
-     * SELECT oauth_sessions.id, oauth_session_authcodes.scope_ids FROM oauth_sessions
+     * SELECT oauth_sessions.id AS session_id, oauth_session_authcodes.id AS authcode_id FROM oauth_sessions
      *  JOIN oauth_session_authcodes ON oauth_session_authcodes.`session_id` = oauth_sessions.id
      *  JOIN oauth_session_redirects ON oauth_session_redirects.`session_id` = oauth_sessions.id WHERE
      * oauth_sessions.client_id = :clientId AND oauth_session_authcodes.`auth_code` = :authCode
@@ -145,8 +145,8 @@ interface SessionInterface
      *
      * <code>
      * array(
-     *     'id' =>  (int), // the session ID
-     *     'scope_ids'  =>  (string)
+     *     'session_id' =>  (int)
+     *     'authcode_id'  =>  (int)
      * )
      * </code>
      *
