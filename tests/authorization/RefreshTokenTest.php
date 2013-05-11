@@ -42,6 +42,8 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('removeAuthCode')->andReturn(null);
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
         $this->session->shouldReceive('associateRefreshToken')->andReturn(1);
+        $this->session->shouldReceive('associateScope')->andReturn(null);
+        $this->session->shouldReceive('getAuthCodeScopes')->andReturn(array('scope_id' => 1));
 
         $a = $this->returnDefault();
         $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
