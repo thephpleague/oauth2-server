@@ -251,9 +251,9 @@ class Resource
             // 2nd request: Authorization: Bearer XXX, Bearer XXX
             if (strpos($header, ',') !== false) {
                 $headerPart = explode(',', $header);
-                $accessToken = preg_replace('/^(?:\s+)?Bearer(\s{1})/', '', $headerPart[0]);
+                $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $headerPart[0]));
             } else {
-                $accessToken = preg_replace('/^(?:\s+)?Bearer(\s{1})/', '', $header);
+                $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
             }
             $accessToken = ($accessToken === 'Bearer') ? '' : $accessToken;
         } else {
