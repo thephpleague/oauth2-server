@@ -11,7 +11,7 @@ class Client implements ClientInterface
         $db = \ezcDbInstance::get();
 
         if ( ! is_null($redirectUri) && is_null($clientSecret)) {
-            $stmt = $db->prepare('SELECT oauth_clients.id, oauth_clients.secret, oauth_client_endpoints.redirect_uri, oauth_clients.name FROM oauth_clients LEFT JOIN oauth_client_endpoints ON oauth_client_endpoints.client_id = oauth_clients.id WHERE oauth_clients.id = :clientId AND oauth_client_endpoints.redirect_uri = :redirectUri');
+            $stmt = $db->prepare('SELECT oauth_clients.id, oauth_clients.secret, oauth_client_endpoints.redirect_uri, oauth_clients.name FROM oauth_clients JOIN oauth_client_endpoints ON oauth_client_endpoints.client_id = oauth_clients.id WHERE oauth_clients.id = :clientId AND oauth_client_endpoints.redirect_uri = :redirectUri');
             $stmt->bindValue(':redirectUri', $redirectUri);
         }
 
@@ -21,7 +21,7 @@ class Client implements ClientInterface
         }
 
         elseif ( ! is_null($clientSecret) && ! is_null($redirectUri)) {
-            $stmt = $db->prepare('SELECT oauth_clients.id, oauth_clients.secret, oauth_client_endpoints.redirect_uri, oauth_clients.name FROM oauth_clients LEFT JOIN oauth_client_endpoints ON oauth_client_endpoints.client_id = oauth_clients.id WHERE oauth_clients.id = :clientId AND oauth_clients.secret = :clientSecret AND oauth_client_endpoints.redirect_uri = :redirectUri');
+            $stmt = $db->prepare('SELECT oauth_clients.id, oauth_clients.secret, oauth_client_endpoints.redirect_uri, oauth_clients.name FROM oauth_clients JOIN oauth_client_endpoints ON oauth_client_endpoints.client_id = oauth_clients.id WHERE oauth_clients.id = :clientId AND oauth_clients.secret = :clientSecret AND oauth_client_endpoints.redirect_uri = :redirectUri');
             $stmt->bindValue(':redirectUri', $redirectUri);
             $stmt->bindValue(':clientSecret', $clientSecret);
         }
