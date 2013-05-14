@@ -1,5 +1,7 @@
 <?php
 
+namespace League\OAuth2\Server\Storage\Fluent;
+
 use \League\OAuth2\Server\Storage\ScopeInterface;
 
 class Scope implements ScopeInterface {
