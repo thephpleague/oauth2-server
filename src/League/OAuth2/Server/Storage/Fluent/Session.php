@@ -4,13 +4,6 @@ use \League\OAuth2\Server\Storage\SessionInterface;
 
 class Session implements SessionInterface
 {
-    /**
-     * Create a new session
-     * @param  string $clientId  The client ID
-     * @param  string $ownerType The type of the session owner (e.g. "user")
-     * @param  string $ownerId   The ID of the session owner (e.g. "123")
-     * @return int               The session ID
-     */
     public function createSession($clientId, $ownerType, $ownerId)
     {
         return DB::table('oauth_sessions')->insertGetId([
@@ -20,13 +13,6 @@ class Session implements SessionInterface
         ]);
     }
 
-    /**
-     * Delete a session
-     * @param  string $clientId  The client ID
-     * @param  string $ownerType The type of the session owner (e.g. "user")
-     * @param  string $ownerId   The ID of the session owner (e.g. "123")
-     * @return void
-     */
     public function deleteSession($clientId, $ownerType, $ownerId)
     {
         DB::table('oauth_sessions')
@@ -36,12 +22,6 @@ class Session implements SessionInterface
             ->delete();
     }
 
-    /**
-     * Associate a redirect URI with a session
-     * @param  int    $sessionId   The session ID
-     * @param  string $redirectUri The redirect URI
-     * @return void
-     */
     public function associateRedirectUri($sessionId, $redirectUri)
     {
         DB::table('oauth_session_redirects')->insert([
@@ -50,13 +30,6 @@ class Session implements SessionInterface
         ]);
     }
 
-    /**
-     * Associate an access token with a session
-     * @param  int    $sessionId   The session ID
-     * @param  string $accessToken The access token
-     * @param  int    $expireTime  Unix timestamp of the access token expiry time
-     * @return int
-     */
     public function associateAccessToken($sessionId, $accessToken, $expireTime)
     {
         return DB::table('oauth_session_access_tokens')->insertGetId([
@@ -66,12 +39,6 @@ class Session implements SessionInterface
         ]);
     }
 
-    /**
-     * Associate a refresh token with a session
-     * @param  int    $accessTokenId The access token ID
-     * @param  string $refreshToken  The refresh token
-     * @return void
-     */
     public function associateRefreshToken($accessTokenId, $refreshToken, $expireTime, $clientId)
     {
         DB::table('oauth_session_refresh_tokens')->insert([
@@ -82,14 +49,6 @@ class Session implements SessionInterface
         ]);
     }
 
-    /**
-     * Assocate an authorization code with a session
-     * @param  int    $sessionId  The session ID
-     * @param  string $authCode   The authorization code
-     * @param  int    $expireTime Unix timestamp of the access token expiry time
-     * @param  string $scopeIds   Comma seperated list of scope IDs to be later associated (default = null)
-     * @return void
-     */
     public function associateAuthCode($sessionId, $authCode, $expireTime, $scopeIds = null)
     {
         DB::table('oauth_session_authcodes')->insert([
@@ -100,11 +59,6 @@ class Session implements SessionInterface
         ]);
     }
 
-    /**
-     * Remove an associated authorization token from a session
-     * @param  int    $sessionId   The session ID
-     * @return void
-     */
     public function removeAuthCode($sessionId)
     {
         DB::table('oauth_session_authcodes')
@@ -112,13 +66,6 @@ class Session implements SessionInterface
             ->delete();
     }
 
-    /**
-     * Validate an authorization code
-     * @param  string $clientId    The client ID
-     * @param  string $redirectUri The redirect URI
-     * @param  string $authCode    The authorization code
-     * @return void
-     */
     public function validateAuthCode($clientId, $redirectUri, $authCode)
     {
         $result = DB::table('oauth_sessions')
@@ -134,11 +81,6 @@ class Session implements SessionInterface
         return (is_null($result)) ? false : (array) $result;
     }
 
-    /**
-     * Validate an access token
-     * @param  string $accessToken The access token to be validated
-     * @return void
-     */
     public function validateAccessToken($accessToken)
     {
         $result = DB::table('oauth_session_access_tokens')
@@ -150,11 +92,6 @@ class Session implements SessionInterface
         return (is_null($result)) ? false : (array) $result;
     }
 
-    /**
-     * Validate a refresh token
-     * @param  string $refreshToken The access token
-     * @return void
-     */
     public function validateRefreshToken($refreshToken, $clientId)
     {
         $result = DB::table('oauth_session_refresh_tokens')
@@ -166,11 +103,6 @@ class Session implements SessionInterface
         return (is_null($result)) ? false : $result->session_access_token_id;
     }
 
-    /**
-     * Get an access token by ID
-     * @param  int    $accessTokenId The access token ID
-     * @return array
-     */
     public function getAccessToken($accessTokenId)
     {
         $result = DB::table('oauth_session_access_tokens')
@@ -180,13 +112,7 @@ class Session implements SessionInterface
         return (is_null($result)) ? false : (array) $result;
     }
 
-    /**
-     * Associate a scope with an access token
-     * @param  int    $accessTokenId The ID of the access token
-     * @param  int    $scopeId       The ID of the scope
-     * @return void
-     */
-    public function associateScope($accessTokenId, $scopeId) 
+    public function associateScope($accessTokenId, $scopeId)
     {
         DB::table('oauth_session_token_scopes')->insert([
             'session_access_token_id'   => $accessTokenId,
@@ -194,11 +120,6 @@ class Session implements SessionInterface
         ]);
     }
 
-    /**
-     * Get all associated access tokens for an access token
-     * @param  string $accessToken The access token
-     * @return array
-     */
     public function getScopes($accessToken)
     {
         return DB::table('oauth_session_token_scopes')
