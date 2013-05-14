@@ -6,11 +6,11 @@ class Session implements SessionInterface
 {
     public function createSession($clientId, $ownerType, $ownerId)
     {
-        return DB::table('oauth_sessions')->insertGetId([
+        return DB::table('oauth_sessions')->insertGetId(array(
             'client_id'         => $clientId,
             'owner_type'        => $ownerType,
             'owner_id'          => $ownerId
-        ]);
+        ));
     }
 
     public function deleteSession($clientId, $ownerType, $ownerId)
@@ -24,39 +24,39 @@ class Session implements SessionInterface
 
     public function associateRedirectUri($sessionId, $redirectUri)
     {
-        DB::table('oauth_session_redirects')->insert([
+        DB::table('oauth_session_redirects')->insert(array(
             'session_id'    => $sessionId,
             'redirect_uri'  => $redirectUri,
-        ]);
+        ));
     }
 
     public function associateAccessToken($sessionId, $accessToken, $expireTime)
     {
-        return DB::table('oauth_session_access_tokens')->insertGetId([
+        return DB::table('oauth_session_access_tokens')->insertGetId(array(
             'session_id'            => $sessionId,
             'access_token'          => $accessToken,
             'access_token_expires'  => $expireTime,
-        ]);
+        ));
     }
 
     public function associateRefreshToken($accessTokenId, $refreshToken, $expireTime, $clientId)
     {
-        DB::table('oauth_session_refresh_tokens')->insert([
+        DB::table('oauth_session_refresh_tokens')->insert(array(
             'session_access_token_id'  => $accessTokenId,
             'refresh_token'            => $refreshToken,
             'refresh_token_expires'    => $expireTime,
             'client_id'                => $clientId,
-        ]);
+        ));
     }
 
     public function associateAuthCode($sessionId, $authCode, $expireTime, $scopeIds = null)
     {
-        DB::table('oauth_session_authcodes')->insert([
+        DB::table('oauth_session_authcodes')->insert(array(
             'session_id'        => $sessionId,
             'auth_code'         => $authCode,
             'auth_code_expires' => $expireTime,
             'scope_ids'         => $scopeIds,
-        ]);
+        ));
     }
 
     public function removeAuthCode($sessionId)
@@ -114,10 +114,10 @@ class Session implements SessionInterface
 
     public function associateScope($accessTokenId, $scopeId)
     {
-        DB::table('oauth_session_token_scopes')->insert([
+        DB::table('oauth_session_token_scopes')->insert(array(
             'session_access_token_id'   => $accessTokenId,
             'scope_id'                  => $scopeId,
-        ]);
+        ));
     }
 
     public function getScopes($accessToken)
