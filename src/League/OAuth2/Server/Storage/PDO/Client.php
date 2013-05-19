@@ -39,7 +39,7 @@ class Client implements ClientInterface
             'client_id' =>  $row->id,
             'client_secret' =>  $row->secret,
             'redirect_uri'  =>  (isset($row->redirect_uri)) ? $row->redirect_uri : null,
-			'auto_approve' => $row->auto_approve,
+	    'auto_approve' => $row->auto_approve,
             'name'  =>  $row->name
         );
     }
