@@ -194,7 +194,7 @@ class Resource
 
         $sessionScopes = $this->storages['session']->getScopes($this->accessToken);
         foreach ($sessionScopes as $scope) {
-            $this->sessionScopes[] = $scope['key'];
+            $this->sessionScopes[] = $scope['scope'];
         }
 
         return true;
