@@ -196,8 +196,8 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     	));
 
     	$this->session->shouldReceive('getScopes')->andReturn(array(
-            array('key' =>  'foo'),
-            array('key' =>  'bar')
+            array('scope' =>  'foo'),
+            array('scope' =>  'bar')
         ));
 
    		$request = new League\OAuth2\Server\Util\Request();
