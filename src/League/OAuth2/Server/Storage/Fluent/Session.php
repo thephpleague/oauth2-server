@@ -2,6 +2,7 @@
 
 namespace League\OAuth2\Server\Storage\Fluent;
 
+use \Illuminate\Support\Facades\DB as DB;
 use \League\OAuth2\Server\Storage\SessionInterface;
 
 class Session implements SessionInterface
