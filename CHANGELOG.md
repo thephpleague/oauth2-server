@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.1 (released 2013-06-02)
+
+* Added conditional `isValid()` flag to check for Authorization header only (thanks @alexmcroberts)
+* Fixed semantic meaning of `requireScopeParam()` and `requireStateParam()` by changing their default value to true
+* Updated some duff docblocks
+* Corrected array key call in Resource.php (Issue #63)
+
 ## 2.1 (released 2013-05-10)
 
 * Moved zetacomponents/database to "suggest" in composer.json. If you rely on this feature you now need to include " zetacomponents/database" into "require" key in your own composer.json. (Issue #51)

@@ -271,7 +271,7 @@ class Authorization
      * @param  boolean $require
      * @return void
      */
-    public function requireScopeParam($require = false)
+    public function requireScopeParam($require = true)
     {
         $this->requireScopeParam = $require;
     }
@@ -318,7 +318,7 @@ class Authorization
      * @param  boolean $require
      * @return void
      */
-    public function requireStateParam($require = false)
+    public function requireStateParam($require = true)
     {
         $this->requireStateParam = $require;
     }
