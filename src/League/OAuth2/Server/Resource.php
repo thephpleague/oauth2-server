@@ -173,12 +173,13 @@ class Resource
     /**
      * Checks if the access token is valid or not.
      *
+     * @param $headersOnly Limit Access Token to Authorization header only
      * @throws Exception\InvalidAccessTokenException Thrown if the presented access token is not valid
      * @return bool
      */
-    public function isValid()
+    public function isValid($headersOnly = false)
     {
-        $accessToken = $this->determineAccessToken();
+        $accessToken = $this->determineAccessToken($headersOnly);
 
         $result = $this->storages['session']->validateAccessToken($accessToken);
 
@@ -237,10 +238,11 @@ class Resource
     /**
      * Reads in the access token from the headers.
      *
+     * @param $headersOnly Limit Access Token to Authorization header only
      * @throws Exception\MissingAccessTokenException  Thrown if there is no access token presented
      * @return string
      */
-    protected function determineAccessToken()
+    protected function determineAccessToken($headersOnly = false)
     {
         if ($header = $this->getRequest()->header('Authorization')) {
             // Check for special case, because cURL sometimes does an
@@ -256,7 +258,7 @@ class Resource
                 $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
             }
             $accessToken = ($accessToken === 'Bearer') ? '' : $accessToken;
-        } else {
+        } elseif ($headersOnly === false) {
             $method = $this->getRequest()->server('REQUEST_METHOD');
             $accessToken = $this->getRequest()->{$method}($this->tokenKey);
         }
