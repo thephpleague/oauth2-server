@@ -43,6 +43,7 @@
 		}
 	},
 	"suggest": {
-		"zetacomponents/database": "Allows use of the build in PDO storage classes"
+		"zetacomponents/database": "A PDO implementation of the storage classes",
+		"doctrine/dbal": "A Doctrine/DBAL implementation of the storage classes"
 	}
 }
