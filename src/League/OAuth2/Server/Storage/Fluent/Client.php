@@ -2,6 +2,7 @@
 
 namespace League\OAuth2\Server\Storage\Fluent;
 
+use \Illuminate\Support\Facades\DB as DB;
 use \League\OAuth2\Server\Storage\ClientInterface;
 
 class Client implements ClientInterface {
@@ -14,16 +15,12 @@ class Client implements ClientInterface {
                 ->where('oauth_clients.id', $clientId)
                 ->where('oauth_client_endpoints.redirect_uri', $redirectUri)
                 ->first();
-        }
-
-        elseif ( ! is_null($clientSecret) && is_null($redirectUri)) {
+        } elseif ( ! is_null($clientSecret) && is_null($redirectUri)) {
             $result = DB::table('oauth_clients')
                 ->where('id', $clientId)
                 ->where('secret', $clientSecret)
                 ->first();
-        }
-
-        elseif ( ! is_null($clientSecret) && ! is_null($redirectUri)) {
+        } elseif ( ! is_null($clientSecret) && ! is_null($redirectUri)) {
             $result = DB::table('oauth_clients')
                 ->join('oauth_client_endpoints', 'oauth_clients.id', '=', 'oauth_client_endpoints.client_id')
                 ->where('oauth_clients.id', $clientId)
