@@ -130,4 +130,27 @@ class Session implements SessionInterface {
                 ->where('access_token', $accessToken)
                 ->get();
     }
+
+    public function associateAuthCodeScope($authCodeId, $scopeId)
+    {
+        DB::table('oauth_session_authcode_scopes')->insert(array(
+            'oauth_session_authcode_id' => $authCodeId,
+            'scope_id'                  => $scopeId
+        ));
+    }
+
+    public function getAuthCodeScopes($oauthSessionAuthCodeId)
+    {
+        return DB::table('oauth_session_authcode_scopes')
+                ->where('oauth_session_authcode_id', '=', $oauthSessionAuthCodeId)
+                ->get();
+    }
+
+    public function removeRefreshToken($refreshToken)
+    {
+        DB::table('oauth_session_refresh_tokens')
+            ->where('refresh_token', '=', $refreshToken)
+            ->delete();
+    }
+
 }
