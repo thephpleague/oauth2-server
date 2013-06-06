@@ -315,7 +315,8 @@ interface SessionInterface
      * <code>
      * array (
      *     array(
-     *         'key'    =>  (string),
+     *         'id'     =>  (int),
+     *         'scope'  =>  (string),
      *         'name'   =>  (string),
      *         'description'    =>  (string)
      *     ),
