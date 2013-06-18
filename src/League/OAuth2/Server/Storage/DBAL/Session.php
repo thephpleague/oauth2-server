@@ -150,7 +150,7 @@ class Session implements SessionInterface
 
     public function getAuthCodeScopes($oauthSessionAuthCodeId)
     {
-        $stmt = $db->prepare('SELECT scope_id FROM `oauth_session_authcode_scopes` WHERE oauth_session_authcode_id = :authCodeId');
+        $stmt = $this->db->prepare('SELECT scope_id FROM `oauth_session_authcode_scopes` WHERE oauth_session_authcode_id = :authCodeId');
         $stmt->bindValue(':authCodeId', $oauthSessionAuthCodeId);
         $stmt->execute();
 
