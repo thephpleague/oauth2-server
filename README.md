@@ -1,6 +1,6 @@
-# The League of Extraordinary Packages presents: PHP OAuth 2.0 Server
+# PHP OAuth 2.0 Server
 
-The goal of this project is to develop a standards compliant [OAuth 2.0](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authorization server and resource server.
+A standards compliant [OAuth 2.0](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authorization server and resource server written in PHP.
 
 ## Package Installation
 
@@ -62,6 +62,37 @@ A tutorial on how to use the resource server to secure an API server can be foun
 
 The initial code was developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which was funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.
 
-This code is principally developed and maintained by [@alexbilbie](https://twitter.com/alexbilbie).
+This code is principally developed and maintained by [@alexbilbie](https://twitter.com/).
 
-A list of contributors can be found at [https://github.com/php-loep/oauth2-server/contributors](https://github.com/php-loep/oauth2-server/contributors).
+
+Credits
+-------
+
+* [Alex Bilbie](https://github.com/alexbilbie)
+* [Dan Horrigan](https://github.com/dandoescode)
+* [Nick Jackson](https://github.com/jacksonj04)
+* [Michael Gooden](https://github.com/MichaelGooden)
+* [Phil Sturgeon] (https://github.com/philsturgeon)
+* [All contributors](https://github.com/php-loep/oauth2-server/contributors)
+
+Changelog
+---------
+
+[See the changelog file](https://github.com/php-loep/oauth2-server/blob/master/CHANGELOG.md)
+
+Contributing
+------------
+
+Please see [CONTRIBUTING](https://github.com/php-loep/oauth2-server/blob/master/CONTRIBUTING.md) for details.
+
+Support
+-------
+
+Bugs and feature request are tracked on [GitHub](https://github.com/php-loep/oauth2-server/issues)
+
+
+License
+-------
+
+oauth2-server is released under the MIT License. See the bundled
+[LICENSE](https://github.com/php-loep/oauth2-server/blob/master/LICENSE) file for details.
