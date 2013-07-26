@@ -14,6 +14,17 @@ The framework is provided as a Composer package which can be installed by adding
 }
 ```
 
+#### Master branch
+
+Latest stable version - [![Latest Stable Version](https://poser.pugx.org/league/oauth2-server/v/stable.png)](https://packagist.org/packages/league/oauth2-server)  
+Code coverage - [![Coverage Status](https://coveralls.io/repos/php-loep/oauth2-server/badge.png?branch=master)](https://coveralls.io/r/php-loep/oauth2-server?branch=master)  
+Downloads - [![Total Downloads](https://poser.pugx.org/league/oauth2-server/downloads.png)](https://packagist.org/packages/league/oauth2-server)
+
+#### Develop branch
+
+Latest unstable version - [![Latest Unstable Version](https://poser.pugx.org/league/oauth2-server/v/unstable.png)](https://packagist.org/packages/league/oauth2-server)  
+Code coverage - [![Coverage Status](https://coveralls.io/repos/php-loep/oauth2-server/badge.png?branch=develop)](https://coveralls.io/r/php-loep/oauth2-server?branch=develop)  
+
 ---
 
 The library features 100% unit test code coverage. To run the tests yourself run `phpunit` from the project root.
