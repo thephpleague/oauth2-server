@@ -47,7 +47,7 @@ If you are using MySQL and want to very quickly implement the library then all o
 
 The wiki has lots of guides on how to use this library, check it out - [https://github.com/php-loep/oauth2-server/wiki](https://github.com/php-loep/oauth2-server/wiki).
 
-A tutorial on how to use the authorization server can be found on the wiki - (https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server)[https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server].
+A tutorial on how to use the authorization server can be found at [https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server](https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server).
 
 A tutorial on how to use the resource server to secure an API server can be found at [https://github.com/php-loep/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0](https://github.com/php-loep/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0).
 
