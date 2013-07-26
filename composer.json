@@ -9,7 +9,7 @@
 	},
 	"require-dev": {
 		"mockery/mockery": ">=0.7.2",
-		"league/phpunit-coverage-listener": "~1.0"
+		"league/phpunit-coverage-listener": "dev-master"
 	},
 	"repositories": [
 		{
