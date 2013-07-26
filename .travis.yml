@@ -5,7 +5,5 @@ php:
   - 5.4
 
 before_script: composer install --dev
-script: phpunit
 
-after_script:
- - php vendor/bin/coveralls -v
+script: phpunit --configuration phpunit.xml.dist
