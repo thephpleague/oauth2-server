@@ -215,7 +215,7 @@ class Password implements GrantTypeInterface {
         if ($this->authServer->hasGrantType('refresh_token')) {
             $refreshToken = SecureKey::make();
             $refreshTokenTTL = time() + $this->authServer->getGrantType('refresh_token')->getRefreshTokenTTL();
-            $this->authServer->getStorage('session')->associateRefreshToken($accessTokenId, $refreshToken, $refreshTokenTTL, $authParams['client_id']);
+            $this->authServer->getStorage('session')->associateRefreshToken($accessTokenId, $refreshToken, $refreshTokenTTL);
             $response['refresh_token'] = $refreshToken;
         }
 

@@ -189,7 +189,7 @@ class RefreshToken implements GrantTypeInterface {
             $this->authServer->getStorage('session')->removeRefreshToken($authParams['refresh_token']);
 
             // Associate the new refresh token with the new access token
-            $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken, $refreshTokenExpires, $authParams['client_id']);
+            $this->authServer->getStorage('session')->associateRefreshToken($newAccessTokenId, $refreshToken, $refreshTokenExpires);
         }
 
         // There isn't a request for reduced scopes so assign the original ones (or we're not rotating scopes)
@@ -239,5 +239,4 @@ class RefreshToken implements GrantTypeInterface {
 
         return $response;
     }
-
 }
