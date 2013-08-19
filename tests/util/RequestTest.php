@@ -59,6 +59,20 @@ class Request_test extends PHPUnit_Framework_TestCase
 		$this->assertEquals(array('Host' => 'foobar.com'), $this->request->header());
 	}
 
+	function test_canonical_header()
+	{
+		$request = new League\OAuth2\Server\Util\Request(
+			array('foo' => 'bar'),
+			array('foo' => 'bar'),
+			array('foo' => 'bar'),
+			array('foo' => 'bar'),
+			array('HTTP_HOST' => 'foobar.com'),
+			array('authorization' => 'Bearer ajdfkljadslfjasdlkj')
+		);
+
+		$this->assertEquals('Bearer ajdfkljadslfjasdlkj', $request->header('Authorization'));
+	}
+
 	/**
 	 * @expectedException InvalidArgumentException
 	 */
