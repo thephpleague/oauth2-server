@@ -11,7 +11,7 @@ class Client implements ClientInterface
         $db = \ezcDbInstance::get();
 
         if ( ! is_null($redirectUri) && is_null($clientSecret)) {
-            $stmt = $db->prepare('SELECT oauth_clients.id, oauth_clients.secret, oauth_client_endpoints.redirect_uri, oauth_clients.name FROM oauth_clients LEFT JOIN oauth_client_endpoints ON oauth_client_endpoints.client_id = oauth_clients.id WHERE oauth_clients.id = :clientId AND oauth_client_endpoints.redirect_uri = :redirectUri');
+            $stmt = $db->prepare('SELECT oauth_clients.id, oauth_clients.secret, oauth_client_endpoints.redirect_uri, oauth_clients.name, oauth_clients.auto_approve FROM oauth_clients LEFT JOIN oauth_client_endpoints ON oauth_client_endpoints.client_id = oauth_clients.id WHERE oauth_clients.id = :clientId AND oauth_client_endpoints.redirect_uri = :redirectUri');
             $stmt->bindValue(':redirectUri', $redirectUri);
         }
 
@@ -39,7 +39,8 @@ class Client implements ClientInterface
             'client_id' =>  $row->id,
             'client_secret' =>  $row->secret,
             'redirect_uri'  =>  (isset($row->redirect_uri)) ? $row->redirect_uri : null,
-            'name'  =>  $row->name
+            'name'  =>  $row->name,
+            'auto_approve' => (isset($row->auto_approve)) ? $row->auto_approve : null
         );
     }
 }
