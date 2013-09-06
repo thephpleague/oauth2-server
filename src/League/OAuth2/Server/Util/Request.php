@@ -39,6 +39,8 @@ class Request implements RequestInterface
 
         if (empty($headers)) {
             $this->headers = $this->readHeaders();
+        } else {
+            $this->headers = $this->normalizeHeaders($headers);
         }
     }
 
@@ -88,7 +90,7 @@ class Request implements RequestInterface
             }
         }
 
-        return $headers;
+        return $this->normalizeHeaders($headers);
    }
 
     protected function getPropertyValue($property, $index = null, $default = null)
@@ -105,5 +107,40 @@ class Request implements RequestInterface
         }
 
         return $this->{$property}[$index];
+    }
+
+    /**
+     * Takes all of the headers and normalizes them in a canonical form.
+     *
+     * @param  array  $headers The request headers.
+     * @return array           An arry of headers with the header name normalized
+     */
+    protected function normalizeHeaders(array $headers)
+    {
+        $normalized = array();
+        foreach ($headers as $key => $value) {
+            $normalized[$this->normalizeKey($key)] = $value;
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Transform header name into canonical form
+     *
+     * Taken from the Slim codebase...
+     *
+     * @param  string $key
+     * @return string
+     */
+    protected function normalizeKey($key)
+    {
+        $key = strtolower($key);
+        $key = str_replace(array('-', '_'), ' ', $key);
+        $key = preg_replace('#^http #', '', $key);
+        $key = ucwords($key);
+        $key = str_replace(' ', '-', $key);
+
+        return $key;
     }
 }
