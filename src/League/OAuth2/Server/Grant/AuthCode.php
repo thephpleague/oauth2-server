@@ -276,7 +276,7 @@ class AuthCode implements GrantTypeInterface {
 
         $response = array(
             'access_token'  =>  $accessToken,
-            'token_type'    =>  'bearer',
+            'token_type'    =>  'Bearer',
             'expires'       =>  $accessTokenExpires,
             'expires_in'    =>  $accessTokenExpiresIn
         );
