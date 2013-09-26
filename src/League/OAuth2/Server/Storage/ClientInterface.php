@@ -20,19 +20,21 @@ interface ClientInterface
      *
      * <code>
      * # Client ID + redirect URI
-     * SELECT oauth_clients.id, oauth_clients.secret, oauth_client_endpoints.redirect_uri, oauth_clients.name
+     * SELECT oauth_clients.id, oauth_clients.secret, oauth_client_endpoints.redirect_uri, oauth_clients.name,
+     * oauth_clients.auto_approve
      *  FROM oauth_clients LEFT JOIN oauth_client_endpoints ON oauth_client_endpoints.client_id = oauth_clients.id
      *  WHERE oauth_clients.id = :clientId AND oauth_client_endpoints.redirect_uri = :redirectUri
      *
      * # Client ID + client secret
-     * SELECT oauth_clients.id, oauth_clients.secret, oauth_clients.name FROM oauth_clients WHERE
-     *  oauth_clients.id = :clientId AND oauth_clients.secret = :clientSecret
+     * SELECT oauth_clients.id, oauth_clients.secret, oauth_clients.name, oauth_clients.auto_approve FROM oauth_clients 
+     * WHERE oauth_clients.id = :clientId AND oauth_clients.secret = :clientSecret
      *
      * # Client ID + client secret + redirect URI
-     * SELECT oauth_clients.id, oauth_clients.secret, oauth_client_endpoints.redirect_uri, oauth_clients.name FROM
-     *  oauth_clients LEFT JOIN oauth_client_endpoints ON oauth_client_endpoints.client_id = oauth_clients.id
-     *  WHERE oauth_clients.id = :clientId AND oauth_clients.secret = :clientSecret AND
-     *  oauth_client_endpoints.redirect_uri = :redirectUri
+     * SELECT oauth_clients.id, oauth_clients.secret, oauth_client_endpoints.redirect_uri, oauth_clients.name,
+     * oauth_clients.auto_approve FROM oauth_clients LEFT JOIN oauth_client_endpoints 
+     * ON oauth_client_endpoints.client_id = oauth_clients.id
+     * WHERE oauth_clients.id = :clientId AND oauth_clients.secret = :clientSecret AND
+     * oauth_client_endpoints.redirect_uri = :redirectUri
      * </code>
      *
      * Response:
@@ -44,6 +46,7 @@ interface ClientInterface
      *     [client secret] => (string) The client secret
      *     [redirect_uri] => (string) The redirect URI used in this request
      *     [name] => (string) The name of the client
+     *     [auto_approve] => (bool) Whether the client should auto approve
      * )
      * </code>
      *
