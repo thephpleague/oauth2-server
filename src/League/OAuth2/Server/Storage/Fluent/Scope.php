@@ -7,11 +7,10 @@ use \League\OAuth2\Server\Storage\ScopeInterface;
 
 class Scope implements ScopeInterface {
 
-    public function getScope($scope, $clientId = null, $grantType = null)
-    {
-         $result = DB::table('oauth_scopes')
-                    ->where('key', $scope)
-                    ->first();
+    public function getScope($scope, $clientId = null, $grantType = null) {
+        $result = DB::table('oauth_scopes')
+                ->where('scope', $scope)
+                ->first();
 
         if (is_null($result)) {
             return false;
@@ -19,9 +18,10 @@ class Scope implements ScopeInterface {
 
         return array(
             'id'          => $result->id,
-            'scope'       => $result->key,
+            'scope'       => $result->scope,
             'name'        => $result->name,
             'description' => $result->description
         );
     }
+
 }
