@@ -43,6 +43,12 @@ class Implicit implements GrantTypeInterface {
     protected $authServer = null;
 
     /**
+     * Access token expires in override
+     * @var int
+     */
+    protected $accessTokenTTL = null;
+
+    /**
      * Constructor
      * @param Authorization $authServer Authorization server instance
      * @return void
@@ -71,6 +77,16 @@ class Implicit implements GrantTypeInterface {
     }
 
     /**
+     * Override the default access token expire time
+     * @param int $accessTokenTTL
+     * @return void
+     */
+    public function setAccessTokenTTL($accessTokenTTL)
+    {
+        $this->accessTokenTTL = $accessTokenTTL;
+    }
+
+    /**
      * Complete the client credentials grant
      * @param  null|array $inputParams
      * @return array
@@ -84,7 +100,8 @@ class Implicit implements GrantTypeInterface {
         $accessToken = SecureKey::make();
 
         // Compute expiry time
-        $accessTokenExpires = time() + $this->authServer->getAccessTokenTTL();
+        $accessTokenExpiresIn = ($this->accessTokenTTL !== null) ? $this->accessTokenTTL : $this->authServer->getAccessTokenTTL();
+        $accessTokenExpires = time() + $accessTokenExpiresIn;
 
         // Create a new session
         $sessionId = $this->authServer->getStorage('session')->createSession($authParams['client_id'], 'user', $authParams['user_id']);
@@ -98,7 +115,10 @@ class Implicit implements GrantTypeInterface {
         }
 
         $response = array(
-            'access_token'  =>  $accessToken
+            'access_token'  =>  $accessToken,
+            'token_type'    =>  'Bearer',
+            'expires'       =>  $accessTokenExpires,
+            'expires_in'    =>  $accessTokenExpiresIn,
         );
 
         return $response;
