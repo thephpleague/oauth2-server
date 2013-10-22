@@ -244,7 +244,7 @@ class Resource
      */
     protected function determineAccessToken($headersOnly = false)
     {
-        if ($header = $this->getRequest()->header('Authorization')) {
+        if ($header = $this->getRequest()->header('authorization')) {
             // Check for special case, because cURL sometimes does an
             // internal second request and doubles the authorization header,
             // which always resulted in an error.
