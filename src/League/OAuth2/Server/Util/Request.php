@@ -100,10 +100,10 @@ class Request implements RequestInterface
             return $this->{$property};
         }
 
-        if ( ! array_key_exists($index, $this->{$property})) {
+        if ( ! array_key_exists(strtolower($index), $this->{$property})) {
             return $default;
         }
 
-        return $this->{$property}[$index];
+        return $this->{$property}[strtolower($index)];
     }
 }
