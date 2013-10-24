@@ -77,6 +77,7 @@ class Request implements RequestInterface
         if (function_exists('getallheaders')) {
             // @codeCoverageIgnoreStart
             $headers = getallheaders();
+            $headers = array_change_key_case($headers);
         } else {
             // @codeCoverageIgnoreEnd
             $headers = array();
