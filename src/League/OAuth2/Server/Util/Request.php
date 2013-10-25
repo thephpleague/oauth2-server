@@ -77,7 +77,6 @@ class Request implements RequestInterface
         if (function_exists('getallheaders')) {
             // @codeCoverageIgnoreStart
             $headers = getallheaders();
-            $headers = array_change_key_case($headers);
         } else {
             // @codeCoverageIgnoreEnd
             $headers = array();
@@ -101,10 +100,13 @@ class Request implements RequestInterface
             return $this->{$property};
         }
 
-        if ( ! array_key_exists(strtolower($index), $this->{$property})) {
+        $array_lowcase=array_change_key_case($this->{$property});
+        $index_lowcase=strtolower($index);
+
+        if ( ! array_key_exists($index_lowcase, $array_lowcase)) {
             return $default;
         }
 
-        return $this->{$property}[strtolower($index)];
+        return $array_lowcase[$index_lowcase];
     }
 }
