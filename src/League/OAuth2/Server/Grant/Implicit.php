@@ -22,7 +22,7 @@ use League\OAuth2\Server\Storage\ScopeInterface;
 /**
  * Client credentials grant class
  */
-class Implict implements GrantTypeInterface {
+class Implicit implements GrantTypeInterface {
 
     /**
      * Grant identifier
