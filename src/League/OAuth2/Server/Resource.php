@@ -93,6 +93,7 @@ class Resource
     public function setRequest(RequestInterface $request)
     {
         $this->request = $request;
+        return $this;
     }
 
     /**
@@ -129,6 +130,7 @@ class Resource
     public function setTokenKey($key)
     {
         $this->tokenKey = $key;
+        return $this;
     }
 
     /**
