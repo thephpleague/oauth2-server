@@ -102,11 +102,14 @@ class Request implements RequestInterface
             return $this->{$property};
         }
 
-        if ( ! array_key_exists($index, $this->{$property})) {
+        $array_lowcase=array_change_key_case($this->{$property});
+        $index_lowcase=strtolower($index);
+
+        if ( ! array_key_exists($index_lowcase, $array_lowcase)) {
             return $default;
         }
 
-        return $this->{$property}[$index];
+        return $array_lowcase[$index_lowcase];
     }
 
     /**
