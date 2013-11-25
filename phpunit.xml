@@ -21,7 +21,7 @@
 		</blacklist>
 	</filter>
 	<logging>
-		<log type="coverage-text" target="php://stdout" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="50" highLowerBound="100"/>
-        <log type="coverage-html" target="tests/coverage" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="50" highLowerBound="100"/>
+		<log type="coverage-text" target="php://stdout" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="60" highLowerBound="99"/>
+        <log type="coverage-html" target="tests/coverage" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="60" highLowerBound="99"/>
 	</logging>
 </phpunit>
