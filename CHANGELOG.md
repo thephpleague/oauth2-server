@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.0 (released 2013-11-29)
+
+* Fixed spelling of Implicit grant class (Issue #84)
+* Travis CI now tests for PHP 5.5
+* Fixes for checking headers for resource server (Issues #79 and #)
+* The word "bearer" now has a capital "B" in JSON output to match OAuth 2.0 spec
+* All grants no longer remove old sessions by default
+* All grants now support custom access token TTL (Issue #92)
+* All methods which didn't before return a value now return `$this` to support method chaining
+* Removed the build in DB providers - these will be put in their own repos to remove baggage in the main repository
+* Removed support for PHP 5.3 because this library now uses traits and will use other modern PHP features going forward
+
 ## 2.1.1 (released 2013-06-02)
 
 * Added conditional `isValid()` flag to check for Authorization header only (thanks @alexmcroberts)
