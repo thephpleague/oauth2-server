@@ -24,7 +24,10 @@
 		"authorization",
 		"authentication",
 		"resource",
-		"api"
+		"api",
+		"auth",
+		"protect",
+		"secure"
 	],
 	"authors": [
 		{
