@@ -24,6 +24,8 @@ use League\OAuth2\Server\Storage\ScopeInterface;
  */
 class ClientCredentials implements GrantTypeInterface {
 
+    use GrantTrait;
+
     /**
      * Grant identifier
      * @var string
