@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.1 (released 2013-12-02)
+
+* Forgot to tell TravisCI from testing PHP 5.3
+
+
 ## 3.0 (released 2013-12-02)
 
 * Fixed spelling of Implicit grant class (Issue #84)
