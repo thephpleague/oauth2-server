@@ -24,6 +24,8 @@ use League\OAuth2\Server\Storage\ScopeInterface;
  */
 class AuthCode implements GrantTypeInterface {
 
+    use GrantTrait;
+
     /**
      * Grant identifier
      * @var string
@@ -62,34 +64,6 @@ class AuthCode implements GrantTypeInterface {
     public function __construct(Authorization $authServer)
     {
         $this->authServer = $authServer;
-    }
-
-    /**
-     * Return the identifier
-     * @return string
-     */
-    public function getIdentifier()
-    {
-        return $this->identifier;
-    }
-
-    /**
-     * Return the response type
-     * @return string
-     */
-    public function getResponseType()
-    {
-        return $this->responseType;
-    }
-
-    /**
-     * Override the default access token expire time
-     * @param int $accessTokenTTL
-     * @return void
-     */
-    public function setAccessTokenTTL($accessTokenTTL)
-    {
-        $this->accessTokenTTL = $accessTokenTTL;
     }
 
     /**
@@ -276,7 +250,7 @@ class AuthCode implements GrantTypeInterface {
 
         $response = array(
             'access_token'  =>  $accessToken,
-            'token_type'    =>  'bearer',
+            'token_type'    =>  'Bearer',
             'expires'       =>  $accessTokenExpires,
             'expires_in'    =>  $accessTokenExpiresIn
         );

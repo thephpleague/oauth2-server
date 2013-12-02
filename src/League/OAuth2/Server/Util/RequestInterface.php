@@ -14,10 +14,6 @@ namespace League\OAuth2\Server\Util;
 interface RequestInterface
 {
 
-    public static function buildFromGlobals();
-
-    public function __construct(array $get = array(), array $post = array(), array $cookies = array(), array $files = array(), array $server = array(), $headers = array());
-
     public function get($index = null);
 
     public function post($index = null);

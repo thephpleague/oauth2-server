@@ -14,6 +14,17 @@ The framework is provided as a Composer package which can be installed by adding
 }
 ```
 
+#### Master branch
+
+Latest stable version - [![Latest Stable Version](https://poser.pugx.org/league/oauth2-server/v/stable.png)](https://packagist.org/packages/league/oauth2-server)
+Code coverage - [![Coverage Status](https://coveralls.io/repos/php-loep/oauth2-server/badge.png?branch=master)](https://coveralls.io/r/php-loep/oauth2-server?branch=master)
+Downloads - [![Total Downloads](https://poser.pugx.org/league/oauth2-server/downloads.png)](https://packagist.org/packages/league/oauth2-server)
+
+#### Develop branch
+
+Latest unstable version - [![Latest Unstable Version](https://poser.pugx.org/league/oauth2-server/v/unstable.png)](https://packagist.org/packages/league/oauth2-server)
+Code coverage - [![Coverage Status](https://coveralls.io/repos/php-loep/oauth2-server/badge.png?branch=develop)](https://coveralls.io/r/php-loep/oauth2-server?branch=develop)
+
 ---
 
 The library features 100% unit test code coverage. To run the tests yourself run `phpunit` from the project root.
@@ -47,52 +58,36 @@ If you are using MySQL and want to very quickly implement the library then all o
 
 The wiki has lots of guides on how to use this library, check it out - [https://github.com/php-loep/oauth2-server/wiki](https://github.com/php-loep/oauth2-server/wiki).
 
-A tutorial on how to use the authorization server can be found at [https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server](https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server).
+A simple tutorial on how to use the authorization server can be found at [https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server](https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server).
 
-A tutorial on how to use the resource server to secure an API server can be found at [https://github.com/php-loep/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0](https://github.com/php-loep/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0).
+A simple tutorial on how to use the resource server to secure an API server can be found at [https://github.com/php-loep/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0](https://github.com/php-loep/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0).
 
-## Future Goals
+## Changelog
 
-### Authorization Server
+[See the project releases page](https://github.com/php-loep/oauth2-server/releases)
 
-* Support for [JSON web tokens](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-json-web-token/).
-* Support for [SAML assertions](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-saml2-bearer/).
-
----
-
-The initial code was developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which was funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.
-
-This code is principally developed and maintained by [@alexbilbie](https://twitter.com/).
-
-
-Credits
--------
-
-* [Alex Bilbie](https://github.com/alexbilbie)
-* [Dan Horrigan](https://github.com/dandoescode)
-* [Nick Jackson](https://github.com/jacksonj04)
-* [Michael Gooden](https://github.com/MichaelGooden)
-* [Phil Sturgeon] (https://github.com/philsturgeon)
-* [All contributors](https://github.com/php-loep/oauth2-server/contributors)
-
-Changelog
----------
-
-[See the changelog file](https://github.com/php-loep/oauth2-server/blob/master/CHANGELOG.md)
-
-Contributing
-------------
+## Contributing
 
 Please see [CONTRIBUTING](https://github.com/php-loep/oauth2-server/blob/master/CONTRIBUTING.md) for details.
 
-Support
--------
+## Support
 
 Bugs and feature request are tracked on [GitHub](https://github.com/php-loep/oauth2-server/issues)
 
+## License
 
-License
--------
+This package is released under the MIT License. See the bundled [LICENSE](https://github.com/php-loep/oauth2-server/blob/master/LICENSE) file for details.
 
-oauth2-server is released under the MIT License. See the bundled
-[LICENSE](https://github.com/php-loep/oauth2-server/blob/master/LICENSE) file for details.
+## Credits
+
+This code is principally developed and maintained by [Alex Bilbie](https://twitter.com/alexbilbie).
+
+Special thanks to:
+
+* [Dan Horrigan](https://github.com/dandoescode)
+* [Nick Jackson](https://github.com/jacksonj04)
+* [Michael Gooden](https://github.com/MichaelGooden)
+* [Phil Sturgeon](https://github.com/philsturgeon)
+* [and all the other contributors](https://github.com/php-loep/oauth2-server/contributors)
+
+The initial code was developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which was funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.

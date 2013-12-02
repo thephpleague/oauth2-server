@@ -24,6 +24,8 @@ use League\OAuth2\Server\Storage\ScopeInterface;
  */
 class ClientCredentials implements GrantTypeInterface {
 
+    use GrantTrait;
+
     /**
      * Grant identifier
      * @var string
@@ -163,7 +165,7 @@ class ClientCredentials implements GrantTypeInterface {
 
         $response = array(
             'access_token'  =>  $accessToken,
-            'token_type'    =>  'bearer',
+            'token_type'    =>  'Bearer',
             'expires'       =>  $accessTokenExpires,
             'expires_in'    =>  $accessTokenExpiresIn
         );

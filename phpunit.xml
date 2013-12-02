@@ -15,17 +15,13 @@
 		<blacklist>
 			<directory suffix=".php">PEAR_INSTALL_DIR</directory>
 			<directory suffix=".php">PHP_LIBDIR</directory>
-			<directory suffix=".php">vendor/composer</directory>
-			<directory suffix=".php">vendor/mockery</directory>
-			<directory suffix=".php">vendor/phpunit</directory>
+			<directory suffix=".php">vendor</directory>
 			<directory suffix=".php">tests</directory>
 			<directory suffix=".php">testing</directory>
 		</blacklist>
 	</filter>
 	<logging>
-		<log type="coverage-html" target="build/coverage" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="50" highLowerBound="90"/>
-		<log type="coverage-text" target="php://stdout" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="50" highLowerBound="90"/>
-		<log type="coverage-clover" target="build/logs/clover.xml"/>
-		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false"/>
+		<log type="coverage-text" target="php://stdout" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="60" highLowerBound="99"/>
+        <log type="coverage-html" target="tests/coverage" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="60" highLowerBound="99"/>
 	</logging>
 </phpunit>
