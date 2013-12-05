@@ -47,10 +47,6 @@ The resource server allows you to secure your API endpoints by checking for a va
 
 Custom grants can be created easily by implementing an interface. Check out a guide here [https://github.com/php-loep/oauth2-server/wiki/Creating-custom-grants](https://github.com/php-loep/oauth2-server/wiki/Creating-custom-grants).
 
-### PDO driver
-
-If you are using MySQL and want to very quickly implement the library then all of the storage interfaces have been implemented with PDO classes. Check out the guide here [https://github.com/php-loep/oauth2-server/wiki/Using-the-PDO-storage-classes](https://github.com/php-loep/oauth2-server/wiki/Using-the-PDO-storage-classes).
-
 ## Tutorials and documentation
 
 The wiki has lots of guides on how to use this library, check it out - [https://github.com/php-loep/oauth2-server/wiki](https://github.com/php-loep/oauth2-server/wiki).
