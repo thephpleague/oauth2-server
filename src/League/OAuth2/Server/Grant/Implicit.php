@@ -51,16 +51,6 @@ class Implicit implements GrantTypeInterface {
     protected $accessTokenTTL = null;
 
     /**
-     * Constructor
-     * @param Authorization $authServer Authorization server instance
-     * @return void
-     */
-    public function __construct(Authorization $authServer)
-    {
-        $this->authServer = $authServer;
-    }
-
-    /**
      * Complete the client credentials grant
      * @param  null|array $inputParams
      * @return array

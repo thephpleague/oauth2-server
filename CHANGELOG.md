@@ -1,9 +1,13 @@
 # Changelog
 
+## 3.1 (released 2013-12-05)
+
+* No longer necessary to inject the authorisation server into a grant, the server will inject itself
+* Added test for 1419ba8cdcf18dd034c8db9f7de86a2594b68605
+
 ## 3.0.1 (released 2013-12-02)
 
 * Forgot to tell TravisCI from testing PHP 5.3
-
 
 ## 3.0 (released 2013-12-02)
 

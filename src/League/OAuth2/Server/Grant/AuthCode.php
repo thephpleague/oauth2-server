@@ -57,16 +57,6 @@ class AuthCode implements GrantTypeInterface {
     protected $authTokenTTL = 600;
 
     /**
-     * Constructor
-     * @param Authorization $authServer Authorization server instance
-     * @return void
-     */
-    public function __construct(Authorization $authServer)
-    {
-        $this->authServer = $authServer;
-    }
-
-    /**
      * Override the default access token expire time
      * @param int $authTokenTTL
      * @return void
