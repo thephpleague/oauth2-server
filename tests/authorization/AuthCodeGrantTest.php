@@ -29,6 +29,13 @@ class Auth_Code_Grant_Test extends PHPUnit_Framework_TestCase
         $grant = new League\OAuth2\Server\Grant\AuthCode($a);
     }
 
+    public function test_setIdentifier()
+    {
+        $grant = new League\OAuth2\Server\Grant\AuthCode();
+        $grant->setIdentifier('foobar');
+        $this->assertEquals($grant->getIdentifier(), 'foobar');
+    }
+
     public function test_setAuthTokenTTL()
     {
         $a = $this->returnDefault();
