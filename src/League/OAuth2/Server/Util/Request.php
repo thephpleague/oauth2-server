@@ -119,7 +119,7 @@ class Request implements RequestInterface
     {
         $normalized = array();
         foreach ($headers as $key => $value) {
-            $normalized[$this->normalizeKey($key)] = $value;
+            $normalized[ucfirst($this->normalizeKey($key))] = $value;
         }
 
         return $normalized;
