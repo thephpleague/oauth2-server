@@ -244,6 +244,10 @@ class Authorization
         if (is_null($identifier)) {
             $identifier = $grantType->getIdentifier();
         }
+
+        // Inject server into grant
+        $grantType->setAuthorizationServer($this);
+
         $this->grantTypes[$identifier] = $grantType;
 
         if ( ! is_null($grantType->getResponseType())) {

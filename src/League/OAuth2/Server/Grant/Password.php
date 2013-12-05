@@ -57,16 +57,6 @@ class Password implements GrantTypeInterface {
     protected $accessTokenTTL = null;
 
     /**
-     * Constructor
-     * @param Authorization $authServer Authorization server instance
-     * @return void
-     */
-    public function __construct(Authorization $authServer)
-    {
-        $this->authServer = $authServer;
-    }
-
-    /**
      * Set the callback to verify a user's username and password
      * @param callable $callback The callback function
      * @return void

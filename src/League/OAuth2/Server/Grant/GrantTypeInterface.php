@@ -23,10 +23,9 @@ interface GrantTypeInterface
 {
     /**
      * Constructor
-     * @param Authorization $authServer Authorization server instance
      * @return void
      */
-    public function __construct(Authorization $authServer);
+    public function __construct(Authorization $authServer = null);
 
     /**
      * Complete the grant flow
