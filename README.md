@@ -1,4 +1,7 @@
-# PHP OAuth 2.0 Server
+# league\oauth2-server
+
+[![Latest Stable Version](https://poser.pugx.org/league/oauth2-server/v/stable.png)](https://packagist.org/packages/league/oauth2-server) [![Coverage Status](https://coveralls.io/repos/php-loep/oauth2-server/badge.png?branch=master)](https://coveralls.io/r/php-loep/oauth2-server?branch=master) [![Total Downloads](https://poser.pugx.org/league/oauth2-server/downloads.png)](https://packagist.org/packages/league/oauth2-server) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/php-loep/oauth2-server/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
 
 A standards compliant [OAuth 2.0](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authorization server and resource server written in PHP.
 
@@ -9,21 +12,15 @@ The framework is provided as a Composer package which can be installed by adding
 ```javascript
 {
 	"require": {
-		"league/oauth2-server": "2.*"
+		"league/oauth2-server": "3.*"
 	}
 }
 ```
 
-#### Master branch
+### Framework Integrations
 
-Latest stable version - [![Latest Stable Version](https://poser.pugx.org/league/oauth2-server/v/stable.png)](https://packagist.org/packages/league/oauth2-server)
-Code coverage - [![Coverage Status](https://coveralls.io/repos/php-loep/oauth2-server/badge.png?branch=master)](https://coveralls.io/r/php-loep/oauth2-server?branch=master)
-Downloads - [![Total Downloads](https://poser.pugx.org/league/oauth2-server/downloads.png)](https://packagist.org/packages/league/oauth2-server)
-
-#### Develop branch
-
-Latest unstable version - [![Latest Unstable Version](https://poser.pugx.org/league/oauth2-server/v/unstable.png)](https://packagist.org/packages/league/oauth2-server)
-Code coverage - [![Coverage Status](https://coveralls.io/repos/php-loep/oauth2-server/badge.png?branch=develop)](https://coveralls.io/r/php-loep/oauth2-server?branch=develop)
+* [Laravel 4 service provider](https://packagist.org/packages/lucadegasperi/oauth2-server-laravel) by @lucadegasperi
+* [Laravel 4 Eloquent implementation](https://github.com/ScubaClick/scubaclick-oauth2) by @ScubaClick (under development)
 
 ---
 
