@@ -41,6 +41,17 @@ trait GrantTrait {
     }
 
     /**
+     * Return the identifier
+     * @param string $identifier
+     * @return self
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+        return $this;
+    }
+
+    /**
      * Return the response type
      * @return string
      */
