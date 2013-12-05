@@ -27,7 +27,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_clientCredentialsGrant_missingClientId()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials());
 
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -44,7 +44,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_clientCredentialsGrant_missingClientPassword()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials());
 
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -64,7 +64,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials());
 
         $request = new League\OAuth2\Server\Util\Request(array(), $_POST);
         $a->setRequest($request);
@@ -95,7 +95,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('deleteSession')->andReturn(null);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials());
         $a->requireScopeParam(true);
 
         $a->issueAccessToken(array(
@@ -129,7 +129,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials());
         $a->requireScopeParam(false);
         $a->setDefaultScope('foobar');
 
@@ -170,7 +170,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials());
         $a->requireScopeParam(false);
         $a->setDefaultScope(array('foobar', 'barfoo'));
 
@@ -209,7 +209,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials());
 
         $a->issueAccessToken(array(
             'grant_type'    =>  'client_credentials',
@@ -243,7 +243,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials());
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'client_credentials',
@@ -275,7 +275,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials());
         $a->requireScopeParam(false);
 
         $v = $a->issueAccessToken(array(
@@ -310,7 +310,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials());
         $a->requireScopeParam(false);
 
         $_POST['grant_type'] = 'client_credentials';
@@ -348,7 +348,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
-        $grant = new League\OAuth2\Server\Grant\ClientCredentials($a);
+        $grant = new League\OAuth2\Server\Grant\ClientCredentials();
         $grant->setAccessTokenTTL(30);
         $a->addGrantType($grant);
         $a->requireScopeParam(false);
@@ -390,7 +390,7 @@ class Client_Credentials_Grant_Test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateAccessToken')->andReturn(1);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\ClientCredentials());
         $a->requireScopeParam(false);
 
         $_POST['grant_type'] = 'client_credentials';

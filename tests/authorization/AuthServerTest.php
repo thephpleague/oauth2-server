@@ -69,6 +69,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $a = $this->returnDefault();
         $grant = M::mock('League\OAuth2\Server\Grant\GrantTypeInterface');
         $grant->shouldReceive('getResponseType')->andReturn('test');
+        $grant->shouldReceive('setAuthorizationServer')->andReturn($grant);
         $a->addGrantType($grant, 'test');
 
         $this->assertTrue($a->hasGrantType('test'));
@@ -80,6 +81,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $grant = M::mock('League\OAuth2\Server\Grant\GrantTypeInterface');
         $grant->shouldReceive('getIdentifier')->andReturn('test');
         $grant->shouldReceive('getResponseType')->andReturn('test');
+        $grant->shouldReceive('setAuthorizationServer')->andReturn($grant);
         $a->addGrantType($grant);
 
         $this->assertTrue($a->hasGrantType('test'));
@@ -199,7 +201,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_getGrantType()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $reflector = new ReflectionClass($a);
         $method = $reflector->getMethod('getGrantType');
@@ -227,7 +229,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_missingGrantType()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $a->issueAccessToken();
     }
@@ -239,7 +241,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_badGrantType()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $a->issueAccessToken(array('grant_type' => 'foo'));
     }
@@ -251,7 +253,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_missingClientId()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code'
@@ -265,7 +267,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_missingClientSecret()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -280,7 +282,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
     public function test_issueAccessToken_missingRedirectUri()
     {
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -298,7 +300,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -317,7 +319,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->client->shouldReceive('getClient')->andReturn(array());
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -337,7 +339,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('validateAuthCode')->andReturn(false);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -368,7 +370,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('getAuthCodeScopes')->andReturn(array('scope_id' => 1));
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $v = $a->issueAccessToken(array(
             'grant_type'    =>  'authorization_code',
@@ -404,7 +406,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $_POST['grant_type'] = 'authorization_code';
         $_POST['client_id'] = 1234;
@@ -443,7 +445,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
-        $grant = new League\OAuth2\Server\Grant\AuthCode($a);
+        $grant = new League\OAuth2\Server\Grant\AuthCode();
         $grant->setAccessTokenTTL(30);
         $a->addGrantType($grant);
 
@@ -486,7 +488,7 @@ class Authorization_Server_test extends PHPUnit_Framework_TestCase
         $this->session->shouldReceive('associateScope')->andReturn(null);
 
         $a = $this->returnDefault();
-        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode($a));
+        $a->addGrantType(new League\OAuth2\Server\Grant\AuthCode());
 
         $_POST['grant_type'] = 'authorization_code';
         $_SERVER['PHP_AUTH_USER'] = 1234;
