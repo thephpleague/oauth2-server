@@ -63,16 +63,6 @@ class RefreshToken implements GrantTypeInterface {
     protected $rotateRefreshTokens = false;
 
     /**
-     * Constructor
-     * @param Authorization $authServer Authorization server instance
-     * @return void
-     */
-    public function __construct(Authorization $authServer)
-    {
-        $this->authServer = $authServer;
-    }
-
-    /**
      * Set the TTL of the refresh token
      * @param int $refreshTokenTTL
      * @return void
