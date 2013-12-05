@@ -1,6 +1,10 @@
 # Changelog
 
-## 3.1 (released 2013-12-05)
+## 3.1.1 (released 2013-12-05)
+
+* Normalize headers when `getallheaders()` is available (Issues #108 and #114)
+
+## 3.1.0 (released 2013-12-05)
 
 * No longer necessary to inject the authorisation server into a grant, the server will inject itself
 * Added test for 1419ba8cdcf18dd034c8db9f7de86a2594b68605
@@ -9,7 +13,7 @@
 
 * Forgot to tell TravisCI from testing PHP 5.3
 
-## 3.0 (released 2013-12-02)
+## 3.0.0 (released 2013-12-02)
 
 * Fixed spelling of Implicit grant class (Issue #84)
 * Travis CI now tests for PHP 5.5
