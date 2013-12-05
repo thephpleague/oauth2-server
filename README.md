@@ -91,3 +91,6 @@ Special thanks to:
 * [and all the other contributors](https://github.com/php-loep/oauth2-server/contributors)
 
 The initial code was developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which was funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/php-loep/oauth2-server/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
