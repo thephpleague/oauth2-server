@@ -471,7 +471,6 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
 
         $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     function test_issueAccessToken_passwordGrant()
@@ -516,7 +515,6 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
 
         $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     function test_issueAccessToken_passwordGrant_customExpiresIn()
@@ -611,7 +609,5 @@ class Password_Grant_Test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('refresh_token', $v);
 
         $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
-
 }
