@@ -208,7 +208,7 @@ interface SessionInterface
      *  AND refresh_token_expires >= UNIX_TIMESTAMP(NOW()) AND client_id = :clientId
      * </code>
      *
-     * @param  string   $refreshToken The access token
+     * @param  string   $refreshToken The refresh token
      * @param  string   $clientId     The client ID
      * @return int|bool               The ID of the access token the refresh token is linked to (or false if invalid)
      */
