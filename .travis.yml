@@ -6,3 +6,8 @@ php:
 
 before_script: composer install --prefer-source
 script: phpunit --configuration phpunit.xml.dist
+
+cache:
+  bundler: true
+  directories:
+    - vendor
