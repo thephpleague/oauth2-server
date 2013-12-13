@@ -190,7 +190,7 @@ class Resource
         }
 
         $this->accessToken = $accessToken;
-        $this->sessionId = $result['session_id'];
+        $this->sessionId = $result['id'];
         $this->clientId = $result['client_id'];
         $this->ownerType = $result['owner_type'];
         $this->ownerId = $result['owner_id'];
