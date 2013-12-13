@@ -189,7 +189,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     public function test_isValid_valid()
     {
     	$this->session->shouldReceive('validateAccessToken')->andReturn(array(
-    		'session_id'  =>	1,
+    		'id'  	      =>	1,
     		'owner_type'  =>	'user',
     		'owner_id'    =>	123,
             'client_id' =>  'testapp'
