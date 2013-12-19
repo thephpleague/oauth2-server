@@ -26,6 +26,11 @@ The framework is provided as a Composer package which can be installed by adding
 
 The library features 100% unit test code coverage. To run the tests yourself run `phpunit` from the project root.
 
+Master branch - [![Build Status](https://travis-ci.org/php-loep/oauth2-server.png?branch=master)](https://travis-ci.org/php-loep/oauth2-server)
+
+Develop branch - [![Build Status](https://travis-ci.org/php-loep/oauth2-server.png?branch=develop)](https://travis-ci.org/php-loep/oauth2-server)
+
+
 ## Current Features
 
 ### Authorization Server
