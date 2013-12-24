@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server;
 
-use OutOfBoundsException;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
@@ -114,10 +113,14 @@ class Resource
     /**
      * Gets the Request object. It will create one from the globals if one is not set.
      *
-     * @return Symfony\Component\HttpFoundation\Request
+     * @return \Symfony\Component\HttpFoundation\Request
      */
     public function getRequest()
     {
+        if ($this->request = null) {
+            return Symfony\Component\HttpFoundation\Request::createFromGlobals();
+        }
+
         return $this->request;
     }
 
@@ -217,7 +220,6 @@ class Resource
 
         $this->accessToken = $accessToken;
 
-
         // Set the session
         $sessionResult = $this->sessionStorage->getSession($tokenResult['session_id']);
         if ($sessionResult === null) {
@@ -300,7 +302,6 @@ class Resource
             }
             $accessToken = ($accessToken === 'Bearer') ? '' : $accessToken;
         } elseif ($headersOnly === false) {
-            $method = $this->getRequest()->server->get('REQUEST_METHOD');
             $accessToken = $this->getRequest()->request->get($this->tokenKey);
         }
 
