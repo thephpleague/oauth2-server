@@ -11,12 +11,18 @@
 
 namespace League\OAuth2\Server;
 
-use League\OAuth2\Server\Util\Request;
 use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\ClientInterface;
-use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
+use League\OAuth2\Server\Exception\ClientException;
+use League\OAuth2\Server\Exception\ServerException;
+use League\OAuth2\Server\Exception\InvalidGrantTypeException;
+use League\OAuth2\Server\Storage\ClientInterface;
+use League\OAuth2\Server\Storage\AccessTokenInterface;
+use League\OAuth2\Server\Storage\AuthCodeInterface;
+use League\OAuth2\Server\Storage\RefreshTokenInterface;
+use League\OAuth2\Server\Storage\SessionInterface;
+use League\OAuth2\Server\Storage\ScopeInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * OAuth 2.0 authorization server class
@@ -25,7 +31,6 @@ class Authorization
 {
     /**
      * The delimeter between scopes specified in the scope query string parameter
-     *
      * The OAuth 2 specification states it should be a space but most use a comma
      * @var string
      */
@@ -118,7 +123,6 @@ class Authorization
     /**
      * Exception error HTTP status codes
      * @var array
-     *
      * RFC 6749, section 4.1.2.1.:
      * No 503 status code for 'temporarily_unavailable', because
      * "a 503 Service Unavailable HTTP status code cannot be
@@ -141,7 +145,6 @@ class Authorization
 
     /**
      * Get all headers that have to be send with the error response
-     *
      * @param  string $error The error message key
      * @return array         Array with header values
      */
@@ -198,7 +201,6 @@ class Authorization
 
     /**
      * Get an exception message
-     *
      * @param  string $error The error message key
      * @return string        The error message
      */
@@ -209,7 +211,6 @@ class Authorization
 
     /**
      * Get an exception code
-     *
      * @param  integer $code The exception code
      * @return string        The exception code type
      */
@@ -220,24 +221,47 @@ class Authorization
 
     /**
      * Create a new OAuth2 authorization server
-     *
-     * @param ClientInterface  $client  A class which inherits from Storage/ClientInterface
-     * @param SessionInterface $session A class which inherits from Storage/SessionInterface
-     * @param ScopeInterface   $scope   A class which inherits from Storage/ScopeInterface
      */
-    public function __construct(ClientInterface $client, SessionInterface $session, ScopeInterface $scope)
+    public function __construct()
     {
-        $this->storages = array(
-            'client'    =>  $client,
-            'session'   =>  $session,
-            'scope' =>  $scope
-        );
+        $this->storages = [];
+    }
+
+    public function setClientStorage(ClientInterface $client)
+    {
+        $this->storages['client'] = $client;
+    }
+
+    public function setSessionStorage(SessionInterface $session)
+    {
+        $this->storages['session'] = $session;
+    }
+
+    public function setAccessTokenStorage(AccessTokenInterface $accessToken)
+    {
+        $this->storages['access_token'] = $accessToken;
+    }
+
+    public function setRefreshTokenStorage(RefreshTokenInterface $refreshToken)
+    {
+        $this->storages['refresh_token'] = $refreshToken;
+    }
+
+    public function setAuthCodeStorage(AuthCodeInterface $authCode)
+    {
+        $this->storages['auth_code'] = $authCode;
+    }
+
+    public function setScopeStorage(ScopeInterface $scope)
+    {
+        $this->storages['scope'] = $scope;
     }
 
     /**
      * Enable support for a grant
      * @param GrantTypeInterface $grantType  A grant class which conforms to Interface/GrantTypeInterface
      * @param null|string        $identifier An identifier for the grant (autodetected if not passed)
+     * @return self
      */
     public function addGrantType(GrantTypeInterface $grantType, $identifier = null)
     {
@@ -253,12 +277,14 @@ class Authorization
         if ( ! is_null($grantType->getResponseType())) {
             $this->responseTypes[] = $grantType->getResponseType();
         }
+
+        return $this;
     }
 
     /**
      * Check if a grant type has been enabled
      * @param  string  $identifier The grant type identifier
-     * @return boolean             Returns "true" if enabled, "false" if not
+     * @return boolean Returns "true" if enabled, "false" if not
      */
     public function hasGrantType($identifier)
     {
@@ -267,7 +293,6 @@ class Authorization
 
     /**
      * Returns response types
-     *
      * @return array
      */
     public function getResponseTypes()
@@ -278,11 +303,12 @@ class Authorization
     /**
      * Require the "scope" paremter in checkAuthoriseParams()
      * @param  boolean $require
-     * @return void
+     * @return self
      */
     public function requireScopeParam($require = true)
     {
         $this->requireScopeParam = $require;
+        return $this;
     }
 
     /**
@@ -296,7 +322,7 @@ class Authorization
 
     /**
      * Default scope to be used if none is provided and requireScopeParam is false
-     * @param string|array $default
+     * @param self
      */
     public function setDefaultScope($default = null)
     {
@@ -336,7 +362,6 @@ class Authorization
 
     /**
      * Get the scope delimeter
-     *
      * @return string The scope delimiter (default: ",")
      */
     public function getScopeDelimeter()
@@ -346,7 +371,6 @@ class Authorization
 
     /**
      * Set the scope delimiter
-     *
      * @param string $scopeDelimeter
      */
     public function setScopeDelimeter($scopeDelimeter = ' ')
@@ -376,27 +400,24 @@ class Authorization
 
     /**
      * Sets the Request Object
-     *
-     * @param Util\RequestInterface The Request Object
+     * @param \Symfony\Component\HttpFoundation\Request The Request Object
+     * @return self
      */
-    public function setRequest(Util\RequestInterface $request)
+    public function setRequest(Request $request)
     {
         $this->request = $request;
         return $this;
     }
 
     /**
-     * Gets the Request object.  It will create one from the globals if one is not set.
-     *
-     * @return Util\RequestInterface
+     * Gets the Request object. It will create one from the globals if one is not set.
+     * @return \Symfony\Component\HttpFoundation\Request
      */
     public function getRequest()
     {
         if ($this->request === null) {
-            // @codeCoverageIgnoreStart
-            $this->request = Request::buildFromGlobals();
+            $this->request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
         }
-        // @codeCoverageIgnoreEnd
 
         return $this->request;
     }
@@ -408,26 +429,28 @@ class Authorization
      */
     public function getStorage($obj)
     {
+        if (!isset($this->storages[$obj])) {
+            throw new ServerException('The `'.$obj.'` storage interface has not been registered with the authorization
+                server');
+        }
         return $this->storages[$obj];
     }
 
     /**
      * Issue an access token
-     *
      * @param  array $inputParams Optional array of parsed $_POST keys
-     * @return array             Authorise request parameters
+     * @return array Authorise request parameters
      */
     public function issueAccessToken($inputParams = array())
     {
-        $grantType = $this->getParam('grant_type', 'post', $inputParams);
-
+        $grantType = $this->getRequest()->request->get('grant_type');
         if (is_null($grantType)) {
-            throw new Exception\ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'grant_type'), 0);
+            throw new ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'grant_type'), 0);
         }
 
         // Ensure grant type is one that is recognised and is enabled
         if ( ! in_array($grantType, array_keys($this->grantTypes))) {
-            throw new Exception\ClientException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $grantType), 7);
+            throw new ClientException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $grantType), 7);
         }
 
         // Complete the flow
@@ -445,35 +468,6 @@ class Authorization
             return $this->grantTypes[$grantType];
         }
 
-        throw new Exception\InvalidGrantTypeException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $grantType), 9);
-        }
-
-    /**
-     * Get a parameter from passed input parameters or the Request class
-     * @param  string|array $param Required parameter
-     * @param  string $method      Get/put/post/delete
-     * @param  array  $inputParams Passed input parameters
-     * @return mixed               'Null' if parameter is missing
-     */
-    public function getParam($param = '', $method = 'get', $inputParams = array(), $default = null)
-    {
-        if (is_string($param)) {
-            if (isset($inputParams[$param])) {
-                return $inputParams[$param];
-            } elseif ($param === 'client_id' && ! is_null($clientId = $this->getRequest()->server('PHP_AUTH_USER'))) {
-                return $clientId;
-            } elseif ($param === 'client_secret' && ! is_null($clientSecret = $this->getRequest()->server('PHP_AUTH_PW'))) {
-                return $clientSecret;
-            } else {
-                return $this->getRequest()->{$method}($param, $default);
-            }
-        } else {
-            $response = array();
-            foreach ($param as $p) {
-                $response[$p] = $this->getParam($p, $method, $inputParams);
-            }
-            return $response;
-        }
+        throw new InvalidGrantTypeException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $grantType), 9);
     }
-
 }
