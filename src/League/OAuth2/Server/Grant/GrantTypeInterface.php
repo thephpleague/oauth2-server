@@ -23,9 +23,10 @@ interface GrantTypeInterface
 {
     /**
      * Constructor
+     *
      * @return void
      */
-    public function __construct(Authorization $authServer = null);
+    public function __construct();
 
     /**
      * Complete the grant flow
@@ -41,8 +42,7 @@ interface GrantTypeInterface
      *  )
      * </code>
      *
-     * @param  null|array $inputParams Null unless the input parameters have been manually set
      * @return array                   An array of parameters to be passed back to the client
      */
-    public function completeFlow($inputParams = null);
+    public function completeFlow();
 }
