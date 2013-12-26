@@ -46,19 +46,19 @@ class Authorization
      * The registered grant response types
      * @var array
      */
-    protected $responseTypes = array();
+    protected $responseTypes = [];
 
     /**
      * The client, scope and session storage classes
      * @var array
      */
-    protected $storages = array();
+    protected $storages = [];
 
     /**
      * The registered grant types
      * @var array
      */
-    protected $grantTypes = array();
+    protected $grantTypes = [];
 
     /**
      * Require the "scope" parameter to be in checkAuthoriseParams()
@@ -88,7 +88,7 @@ class Authorization
      * Exception error codes
      * @var array
      */
-    protected static $exceptionCodes = array(
+    protected static $exceptionCodes = [
         0   =>  'invalid_request',
         1   =>  'unauthorized_client',
         2   =>  'access_denied',
@@ -99,13 +99,13 @@ class Authorization
         7   =>  'unsupported_grant_type',
         8   =>  'invalid_client',
         9   =>  'invalid_grant'
-    );
+    ];
 
     /**
      * Exception error messages
      * @var array
      */
-    protected static $exceptionMessages = array(
+    protected static $exceptionMessages = [
         'invalid_request'           =>  'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "%s" parameter.',
         'unauthorized_client'       =>  'The client is not authorized to request an access token using this method.',
         'access_denied'             =>  'The resource owner or authorization server denied the request.',
@@ -118,7 +118,7 @@ class Authorization
         'invalid_grant'             =>  'The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client. Check the "%s" parameter.',
         'invalid_credentials'       =>  'The user credentials were incorrect.',
         'invalid_refresh'           =>  'The refresh token is invalid.',
-    );
+    ];
 
     /**
      * Exception error HTTP status codes
@@ -128,7 +128,7 @@ class Authorization
      * "a 503 Service Unavailable HTTP status code cannot be
      * returned to the client via an HTTP redirect"
      */
-    protected static $exceptionHttpStatusCodes = array(
+    protected static $exceptionHttpStatusCodes = [
         'invalid_request'           =>  400,
         'unauthorized_client'       =>  400,
         'access_denied'             =>  401,
@@ -150,7 +150,7 @@ class Authorization
      */
     public static function getExceptionHttpHeaders($error)
     {
-        $headers = array();
+        $headers = [];
         switch (self::$exceptionHttpStatusCodes[$error]) {
             case 401:
                 $headers[] = 'HTTP/1.1 401 Unauthorized';
@@ -221,40 +221,78 @@ class Authorization
 
     /**
      * Create a new OAuth2 authorization server
+     * @return self
      */
     public function __construct()
     {
         $this->storages = [];
+        return $this;
     }
 
+    /**
+     * Set the client storage
+     * @param ClientInterface $client
+     * @return self
+     */
     public function setClientStorage(ClientInterface $client)
     {
         $this->storages['client'] = $client;
+        return $this;
     }
 
+    /**
+     * Set the session storage
+     * @param SessionInterface $session
+     * @return self
+     */
     public function setSessionStorage(SessionInterface $session)
     {
         $this->storages['session'] = $session;
+        return $this;
     }
 
+    /**
+     * Set the access token storage
+     * @param AccessTokenInterface $accessToken
+     * @return self
+     */
     public function setAccessTokenStorage(AccessTokenInterface $accessToken)
     {
         $this->storages['access_token'] = $accessToken;
+        return $this;
     }
 
+    /**
+     * Set the refresh token storage
+     * @param RefreshTokenInteface $refreshToken
+     * @return self
+     */
     public function setRefreshTokenStorage(RefreshTokenInterface $refreshToken)
     {
         $this->storages['refresh_token'] = $refreshToken;
+        return $this;
     }
 
+    /**
+     * Set the auth code storage
+     * @param AuthCodeInterface $authCode
+     * @return self
+     */
     public function setAuthCodeStorage(AuthCodeInterface $authCode)
     {
         $this->storages['auth_code'] = $authCode;
+        return $this;
     }
 
+    /**
+     * Set the scope storage
+     * @param ScopeInterface $scope
+     * @return self
+     */
     public function setScopeStorage(ScopeInterface $scope)
     {
         $this->storages['scope'] = $scope;
+        return $this;
     }
 
     /**
@@ -441,7 +479,7 @@ class Authorization
      * @param  array $inputParams Optional array of parsed $_POST keys
      * @return array Authorise request parameters
      */
-    public function issueAccessToken($inputParams = array())
+    public function issueAccessToken($inputParams = [])
     {
         $grantType = $this->getRequest()->request->get('grant_type');
         if (is_null($grantType)) {
