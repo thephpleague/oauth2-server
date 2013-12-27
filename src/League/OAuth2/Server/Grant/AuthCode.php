@@ -22,48 +22,30 @@ use League\OAuth2\Server\Storage\ScopeInterface;
 /**
  * Auth code grant class
  */
-class AuthCode implements GrantTypeInterface {
-
-    use GrantTrait;
-
+class AuthCode extends AbstractGrantType
+{
     /**
-     * Grant identifier
-     * @var string
+     * Override constants
      */
-    protected $identifier = 'authorization_code';
-
-    /**
-     * Response type
-     * @var string
-     */
-    protected $responseType = 'code';
-
-    /**
-     * AuthServer instance
-     * @var AuthServer
-     */
-    protected $authServer = null;
-
-    /**
-     * Access token expires in override
-     * @var int
-     */
-    protected $accessTokenTTL = null;
+    const GRANT_IDENTIFIER    = 'authorization_code';
+    const GRANT_RESPONSE_TYPE = 'code';
 
     /**
      * The TTL of the auth token
+     *
      * @var integer
      */
     protected $authTokenTTL = 600;
 
     /**
      * Override the default access token expire time
-     * @param int $authTokenTTL
+     *
+     * @param  int $authTokenTTL
      * @return void
      */
     public function setAuthTokenTTL($authTokenTTL)
     {
-        $this->authTokenTTL = $authTokenTTL;
+        $this->authTokenTTL = (int) $authTokenTTL;
     }
 
     /**
@@ -149,7 +131,7 @@ class AuthCode implements GrantTypeInterface {
      * @param  array  $authParams  The authorise request $_GET parameters
      * @return string              An authorisation code
      */
-    public function newAuthoriseRequest($type, $typeId, $authParams = array())
+    public function newAuthorizeRequest($type, $typeId, $authParams = array())
     {
         // Generate an auth code
         $authCode = SecureKey::make();

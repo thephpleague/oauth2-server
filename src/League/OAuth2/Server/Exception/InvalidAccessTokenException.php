@@ -16,5 +16,4 @@ namespace League\OAuth2\Server\Exception;
  */
 class InvalidAccessTokenException extends OAuth2Exception
 {
-
 }

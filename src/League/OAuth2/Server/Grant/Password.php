@@ -11,91 +11,53 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Authorization;
-use League\OAuth2\Server\Entities\AccessToken;
-use League\OAuth2\Server\Entities\Client;
-use League\OAuth2\Server\Entities\RefreshToken;
-use League\OAuth2\Server\Entities\Session;
-use League\OAuth2\Server\Entities\Scope;
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\ClientException;
-use League\OAuth2\Server\Exception\InvalidGrantTypeException;
 use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\ClientInterface;
-use League\OAuth2\Server\Storage\ScopeInterface;
 
 /**
  * Password grant class
+ *
+ * This flow can be used to validate your own server
  */
-class Password implements GrantTypeInterface {
-
-    use GrantTrait;
-
+class Password extends AbstractGrantType
+{
     /**
-     * Grant identifier
-     * @var string
+     * Override constants
      */
-    protected $identifier = 'password';
-
-    /**
-     * Response type
-     * @var string
-     */
-    protected $responseType = null;
+    const GRANT_IDENTIFIER    = 'password';
+    const GRANT_RESPONSE_TYPE = null;
 
     /**
      * Callback to authenticate a user's name and password
-     * @var function
+     *
+     * @var callable
      */
-    protected $callback = null;
+    protected $credentialsCallback;
 
     /**
-     * AuthServer instance
-     * @var AuthServer
+     * @param AuthorizationServer $authorizationServer
+     * @param callable $callback
      */
-    protected $authServer = null;
-
-    /**
-     * Access token expires in override
-     * @var int
-     */
-    protected $accessTokenTTL = null;
-
-    /**
-     * Set the callback to verify a user's username and password
-     * @param callable $callback The callback function
-     * @return void
-     */
-    public function setVerifyCredentialsCallback(callable $callback)
+    public function __construct(AuthorizationServer $authorizationServer, callable $callback)
     {
-        $this->callback = $callback;
+        parent::__construct($authorizationServer);
+        $this->credentialsCallback = $callback;
     }
 
     /**
-     * Return the callback function
-     * @return callable
-     */
-    protected function getVerifyCredentialsCallback()
-    {
-        if (is_null($this->callback) || ! is_callable($this->callback)) {
-            throw new InvalidGrantTypeException('Null or non-callable callback set on Password grant');
-        }
-
-        return $this->callback;
-    }
-
-    /**
-     * Complete the password grant
-     * @param  null|array $inputParams
-     * @return array
+     * {@inheritDoc}
      */
     public function completeFlow($inputParams = null)
     {
+        $request = $this->authorizationServer->getRequest();
+
         // Get the required params
-        $clientId = $this->server->getRequest()->request->get('client_id', null);
+        $clientId = $request->get('client_id', null);
+
         if (is_null($clientId)) {
             throw new ClientException(
-                sprintf(Authorization::getExceptionMessage('invalid_request'), 'client_id'),
+                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_id'),
                 0
             );
         }
@@ -103,7 +65,7 @@ class Password implements GrantTypeInterface {
         $clientSecret = $this->server->getRequest()->request->get('client_secret', null);
         if (is_null($clientSecret)) {
             throw new ClientException(
-                sprintf(Authorization::getExceptionMessage('invalid_request'), 'client_secret'),
+                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_secret'),
                 0
             );
         }
@@ -117,7 +79,7 @@ class Password implements GrantTypeInterface {
         );
 
         if ($clientDetails === false) {
-            throw new ClientException(Authorization::getExceptionMessage('invalid_client'), 8);
+            throw new ClientException(AuthorizationServer::getExceptionMessage('invalid_client'), 8);
         }
 
         $client = new Client;

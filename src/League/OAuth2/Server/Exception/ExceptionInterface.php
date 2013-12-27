@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 Invalid Grant Type Exception
+ * OAuth 2.0 Client Exception
  *
  * @package     php-loep/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
@@ -12,8 +12,8 @@
 namespace League\OAuth2\Server\Exception;
 
 /**
- * InvalidGrantTypeException Exception
+ * Interface that all OAuth2 exceptions implement
  */
-class InvalidGrantTypeException extends OAuth2Exception
+interface ExceptionInterface
 {
 }

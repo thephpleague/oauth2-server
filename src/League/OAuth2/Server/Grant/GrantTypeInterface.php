@@ -11,38 +11,29 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Request;
-use League\OAuth2\Server\Authorization;
-use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\ClientInterface;
-use League\OAuth2\Server\Storage\ScopeInterface;
-
+/**
+ * Interface that all grant type must implement
+ *
+ * This library comes with pre-defined implementation for flows defined in the specification, but
+ * you can define your own
+ */
 interface GrantTypeInterface
 {
-    /**
-     * Constructor
-     *
-     * @return void
-     */
-    public function __construct();
-
     /**
      * Complete the grant flow
      *
      * Example response:
      * <code>
-     * 	array(
+     * 	[
      *  	'access_token'  =>  (string),	// The access token
      *      'refresh_token' =>  (string),	// The refresh token (only set if the refresh token grant is enabled)
      *      'token_type'    =>  'bearer',	// Almost always "bearer" (exceptions: JWT, SAML)
      *      'expires'       =>  (int),		// The timestamp of when the access token will expire
      *      'expires_in'    =>  (int)		// The number of seconds before the access token will expire
-     *  )
+     *  ]
      * </code>
      *
-     * @return array                   An array of parameters to be passed back to the client
+     * @return array An array of parameters to be passed back to the client
      */
     public function completeFlow();
 }

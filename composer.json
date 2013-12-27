@@ -10,6 +10,7 @@
 	},
 	"require-dev": {
 		"mockery/mockery": ">=0.7.2",
+    "phpunit/phpunit": "~3.7",
 		"league/phpunit-coverage-listener": "~1.0"
 	},
 	"repositories": [
@@ -46,8 +47,5 @@
 		"psr-0": {
 			"League\\OAuth2\\Server": "src/"
 		}
-	},
-	"suggest": {
-
 	}
 }

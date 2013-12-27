@@ -22,33 +22,13 @@ use League\OAuth2\Server\Storage\ScopeInterface;
 /**
  * Client credentials grant class
  */
-class Implicit implements GrantTypeInterface {
-
-    use GrantTrait;
-
+class Implicit extends AbstractGrantType
+{
     /**
-     * Grant identifier
-     * @var string
+     * Override constants
      */
-    protected $identifier = 'implicit';
-
-    /**
-     * Response type
-     * @var string
-     */
-    protected $responseType = 'token';
-
-    /**
-     * AuthServer instance
-     * @var AuthServer
-     */
-    protected $authServer = null;
-
-    /**
-     * Access token expires in override
-     * @var int
-     */
-    protected $accessTokenTTL = null;
+    const GRANT_IDENTIFIER    = 'implicit';
+    const GRANT_RESPONSE_TYPE = 'token';
 
     /**
      * Complete the client credentials grant

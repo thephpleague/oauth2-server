@@ -12,83 +12,55 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Request;
-use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\ClientInterface;
-use League\OAuth2\Server\Storage\ScopeInterface;
 
 /**
  * Referesh token grant
  */
-class RefreshToken implements GrantTypeInterface {
-
-    use GrantTrait;
-
+class RefreshToken extends AbstractGrantType
+{
     /**
-     * Grant identifier
-     * @var string
+     * Override constants
      */
-    protected $identifier = 'refresh_token';
-
-    /**
-     * Response type
-     * @var string
-     */
-    protected $responseType = null;
-
-    /**
-     * AuthServer instance
-     * @var AuthServer
-     */
-    protected $authServer = null;
-
-    /**
-     * Access token expires in override
-     * @var int
-     */
-    protected $accessTokenTTL = null;
+    const GRANT_IDENTIFIER    = 'refresh_token';
+    const GRANT_RESPONSE_TYPE = null;
 
     /**
      * Refresh token TTL
+     *
      * @var integer
      */
     protected $refreshTokenTTL = 604800;
 
     /**
      * Rotate refresh tokens
+     *
      * @var boolean
      */
     protected $rotateRefreshTokens = false;
 
     /**
      * Set the TTL of the refresh token
-     * @param int $refreshTokenTTL
+     *
+     * @param  int $refreshTokenTTL
      * @return void
      */
     public function setRefreshTokenTTL($refreshTokenTTL)
     {
-        $this->refreshTokenTTL = $refreshTokenTTL;
-    }
-
-    /**
-     * Get the TTL of the refresh token
-     * @return int
-     */
-    public function getRefreshTokenTTL()
-    {
-        return $this->refreshTokenTTL;
+        $this->refreshTokenTTL = (int) $refreshTokenTTL;
     }
 
     /**
      * When a new access is token, expire the refresh token used and issue a new one.
+     *
      * @param  boolean $rotateRefreshTokens Set to true to enable (default = false)
      * @return void
      */
-    public function rotateRefreshTokens($rotateRefreshTokens = false)
+    public function rotateRefreshTokens($rotateRefreshTokens)
     {
-        $this->rotateRefreshTokens = $rotateRefreshTokens;
+        $this->rotateRefreshTokens = (bool) $rotateRefreshTokens;
     }
 
     /**

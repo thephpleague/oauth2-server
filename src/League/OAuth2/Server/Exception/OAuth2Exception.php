@@ -11,10 +11,11 @@
 
 namespace League\OAuth2\Server\Exception;
 
+use Exception;
+
 /**
  * Exception class
  */
-class OAuth2Exception extends \Exception
+class OAuth2Exception extends Exception implements ExceptionInterface
 {
-
 }

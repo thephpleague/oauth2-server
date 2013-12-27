@@ -16,5 +16,4 @@ namespace League\OAuth2\Server\Exception;
  */
 class ServerException extends OAuth2Exception
 {
-
 }

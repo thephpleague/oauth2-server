@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * OAuth 2.0 authorization server class
  */
-class Authorization
+class AuthorizationServer
 {
     /**
      * The delimeter between scopes specified in the scope query string parameter
@@ -402,7 +402,7 @@ class Authorization
      * Get the scope delimeter
      * @return string The scope delimiter (default: ",")
      */
-    public function getScopeDelimeter()
+    public function getScopeDelimiter()
     {
         return $this->scopeDelimeter;
     }
@@ -411,7 +411,7 @@ class Authorization
      * Set the scope delimiter
      * @param string $scopeDelimeter
      */
-    public function setScopeDelimeter($scopeDelimeter = ' ')
+    public function setScopeDelimiter($scopeDelimeter = ' ')
     {
         $this->scopeDelimeter = $scopeDelimeter;
         return $this;
