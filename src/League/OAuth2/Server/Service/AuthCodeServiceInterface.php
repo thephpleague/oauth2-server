@@ -12,7 +12,14 @@
 
 namespace League\OAuth2\Server\Storage;
 
-interface RefreshTokenInterface
+/**
+ * Interface for auth code service
+ */
+interface AuthCodeServiceInterface
 {
-    public function getToken($token, $clientId);
+    /**
+     * @param  string $code
+     * @return mixed
+     */
+    public function getCode($code);
 }

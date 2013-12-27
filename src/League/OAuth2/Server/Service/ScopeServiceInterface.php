@@ -11,28 +11,13 @@
 
 namespace League\OAuth2\Server\Storage;
 
-interface ScopeInterface
+/**
+ * Interface for any scope service
+ */
+interface ScopeServiceInterface
 {
     /**
      * Return information about a scope
-     *
-     * Example SQL query:
-     *
-     * <code>
-     * SELECT * FROM oauth_scopes WHERE scope = :scope
-     * </code>
-     *
-     * Response:
-     *
-     * <code>
-     * Array
-     * (
-     *     [id] => (int) The scope's ID
-     *     [scope] => (string) The scope itself
-     *     [name] => (string) The scope's name
-     *     [description] => (string) The scope's description
-     * )
-     * </code>
      *
      * @param  string     $scope     The scope
      * @param  string     $clientId  The client ID (default = "null")

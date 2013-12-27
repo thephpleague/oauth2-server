@@ -12,15 +12,13 @@
 
 namespace League\OAuth2\Server\Storage;
 
-interface SessionInterface
+/**
+ * A session represents an authorization, and has tokens and scopes associated with it
+ */
+interface SessionServiceInterface
 {
     /**
      * Get a session
-     *
-     * Response:
-     * <code>
-     *
-     * </code>
      *
      * @param  int $sessionId
      * @return array (As described above)
@@ -30,18 +28,14 @@ interface SessionInterface
     /**
      * Get a session's scopes
      *
-     * Response:
-     * <code>
-     *
-     * </code>
-     *
      * @param  int $sessionId
-     * @return array (As described aboce)
+     * @return array (As described above)
      */
     public function getSessionScopes($sessionId);
 
     /**
      * Create a new session
+     *
      * @param  string $ownerType         Session owner's type (user, client)
      * @param  string $ownerId           Session owner's ID
      * @param  string $clientId          Client ID
@@ -52,6 +46,7 @@ interface SessionInterface
 
     /**
      * Associate a scope with a session
+     *
      * @param  int        $sessionId
      * @param  int|string $scopeId    The scopes ID might be an integer or string
      * @return void

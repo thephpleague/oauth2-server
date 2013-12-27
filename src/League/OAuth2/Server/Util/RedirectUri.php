@@ -18,6 +18,7 @@ class RedirectUri
 {
 	/**
 	 * Generate a new redirect uri
+     *
 	 * @param  string $uri            The base URI
 	 * @param  array  $params         The query string parameters
 	 * @param  string $queryDelimeter The query string delimeter (default: "?")
@@ -26,6 +27,7 @@ class RedirectUri
     public static function make($uri, $params = array(), $queryDelimeter = '?')
     {
         $uri .= (strstr($uri, $queryDelimeter) === false) ? $queryDelimeter : '&';
+
         return $uri.http_build_query($params);
     }
 }
