@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server;
 
-use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Exception\ClientException;
 use League\OAuth2\Server\Exception\ServerException;
@@ -31,78 +30,72 @@ class AuthorizationServer
 {
     /**
      * The delimeter between scopes specified in the scope query string parameter
+     *
      * The OAuth 2 specification states it should be a space but most use a comma
+     *
      * @var string
      */
     protected $scopeDelimeter = ' ';
 
     /**
      * The TTL (time to live) of an access token in seconds (default: 3600)
+     *
      * @var integer
      */
     protected $accessTokenTTL = 3600;
 
     /**
      * The registered grant response types
+     *
      * @var array
      */
     protected $responseTypes = [];
 
     /**
      * The client, scope and session storage classes
+     *
      * @var array
      */
-    protected $storages = [];
+    protected $storage = [];
 
     /**
      * The registered grant types
+     *
      * @var array
      */
     protected $grantTypes = [];
 
     /**
-     * Require the "scope" parameter to be in checkAuthoriseParams()
+     * Require the "scope" parameter to be in checkAuthorizeParams()
+     *
      * @var boolean
      */
     protected $requireScopeParam = false;
 
     /**
      * Default scope(s) to be used if none is provided
+     *
      * @var string|array
      */
     protected $defaultScope = null;
 
     /**
-     * Require the "state" parameter to be in checkAuthoriseParams()
+     * Require the "state" parameter to be in checkAuthorizeParams()
+     *
      * @var boolean
      */
     protected $requireStateParam = false;
 
     /**
      * The request object
-     * @var Util\RequestInterface
+     *
+     * @var Request
      */
     protected $request = null;
 
     /**
-     * Exception error codes
-     * @var array
-     */
-    protected static $exceptionCodes = [
-        0   =>  'invalid_request',
-        1   =>  'unauthorized_client',
-        2   =>  'access_denied',
-        3   =>  'unsupported_response_type',
-        4   =>  'invalid_scope',
-        5   =>  'server_error',
-        6   =>  'temporarily_unavailable',
-        7   =>  'unsupported_grant_type',
-        8   =>  'invalid_client',
-        9   =>  'invalid_grant'
-    ];
-
-    /**
      * Exception error messages
+     *
      * @var array
      */
     protected static $exceptionMessages = [
@@ -122,11 +115,13 @@ class AuthorizationServer
 
     /**
      * Exception error HTTP status codes
-     * @var array
+     *
      * RFC 6749, section 4.1.2.1.:
      * No 503 status code for 'temporarily_unavailable', because
      * "a 503 Service Unavailable HTTP status code cannot be
      * returned to the client via an HTTP redirect"
+     *
+     * @var array
      */
     protected static $exceptionHttpStatusCodes = [
         'invalid_request'           =>  400,
@@ -141,10 +136,11 @@ class AuthorizationServer
         'invalid_grant'             =>  400,
         'invalid_credentials'       =>  400,
         'invalid_refresh'           =>  400,
-    );
+    ];
 
     /**
-     * Get all headers that have to be send with the error response
+     * Get all headers that have to be sent with the error response
+     *
      * @param  string $error The error message key
      * @return array         Array with header values
      */
@@ -174,7 +170,6 @@ class AuthorizationServer
         // respond with an HTTP 401 (Unauthorized) status code and
         // include the "WWW-Authenticate" response header field
         // matching the authentication scheme used by the client.
-        // @codeCoverageIgnoreStart
         if ($error === 'invalid_client') {
             $authScheme = null;
             $request = new Request();
@@ -194,7 +189,6 @@ class AuthorizationServer
                 $headers[] = 'WWW-Authenticate: '.$authScheme.' realm=""';
             }
         }
-        // @codeCoverageIgnoreEnd
 
         return $headers;
     }
@@ -207,26 +201,6 @@ class AuthorizationServer
     public static function getExceptionMessage($error = '')
     {
         return self::$exceptionMessages[$error];
-    }
-
-    /**
-     * Get an exception code
-     * @param  integer $code The exception code
-     * @return string        The exception code type
-     */
-    public static function getExceptionType($code = 0)
-    {
-        return self::$exceptionCodes[$code];
-    }
-
-    /**
-     * Create a new OAuth2 authorization server
-     * @return self
-     */
-    public function __construct()
-    {
-        $this->storages = [];
-        return $this;
     }
 
     /**
@@ -438,23 +412,25 @@ class AuthorizationServer
 
     /**
      * Sets the Request Object
-     * @param \Symfony\Component\HttpFoundation\Request The Request Object
+     * @param Request The Request Object
      * @return self
      */
     public function setRequest(Request $request)
     {
         $this->request = $request;
+
         return $this;
     }
 
     /**
      * Gets the Request object. It will create one from the globals if one is not set.
-     * @return \Symfony\Component\HttpFoundation\Request
+     *
+     * @return Request
      */
     public function getRequest()
     {
         if ($this->request === null) {
-            $this->request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+            $this->request = Request::createFromGlobals();
         }
 
         return $this->request;

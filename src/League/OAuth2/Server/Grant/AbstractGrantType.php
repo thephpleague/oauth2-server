@@ -19,6 +19,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Exception\ClientException;
 use League\OAuth2\Server\Exception\RuntimeException;
 
 /**
@@ -112,38 +113,34 @@ abstract class AbstractGrantType implements GrantTypeInterface
      */
     public function validateScopes($scopes = [])
     {
-        $scopesList = explode($this->authorizationServer->getScopeDelimiter(), $scopes);
+        $scopes = explode($this->authorizationServer->getScopeDelimiter(), (array) $scopes);
+        $scopes = array_filter($scopes); // Filter any junk scopes
 
-        for ($i = 0; $i < count($scopesList); $i++) {
-            $scopesList[$i] = trim($scopesList[$i]);
-            if ($scopesList[$i] === '') unset($scopesList[$i]); // Remove any junk scopes
-        }
+        $defaultScope = $this->authorizationServer->getDefaultScope();
 
-        if (
-            $this->server->scopeParamRequired() === true &&
-            $this->server->getDefaultScope() === null &&
-            count($scopesList) === 0
-        ) {
-            throw new ClientException(sprintf($this->server->getExceptionMessage('invalid_request'), 'scope'), 0);
-        } elseif (count($scopesList) === 0 && $this->server->getDefaultScope() !== null) {
-            if (is_array($this->server->getDefaultScope())) {
-                $scopesList = $this->server->getDefaultScope();
+        if ($this->authorizationServer->scopeParamRequired() && !$defaultScope && empty($scopes)) {
+            throw new ClientException(
+                sprintf($this->authorizationServer->getExceptionMessage('invalid_request'), 'scope'), 0
+            );
+        } elseif (empty($scopes) && $defaultScope) {
+            if (is_array($defaultScope)) {
+                $scopes = $defaultScope;
             } else {
-                $scopesList = [0 => $this->server->getDefaultScope()];
+                $scopes = [$defaultScope];
             }
         }
 
-        $scopes = [];
-
-        foreach ($scopesList as $scopeItem) {
-            $scopeDetails = $this->server->getStorage('scope')->getScope(
-                $scopeItem,
+        foreach ($scopes as &$scope) {
+            $scope = $this->authorizationServer->getStorage('scope')->getScope(
+                $scope,
                 $client->getId(),
                 $this->getIdentifier()
             );
 
-            if ($scopeDetails === false) {
-                throw new ClientException(sprintf($this->server->getExceptionMessage('invalid_scope'), $scopeItem), 4);
+            if (!$scope) {
+                throw new ClientException(
+                    sprintf($this->authorizationServer->getExceptionMessage('invalid_scope'), $scope), 4
+                );
             }
 
             $scope = new Scope($this->server->getStorage('scope'));

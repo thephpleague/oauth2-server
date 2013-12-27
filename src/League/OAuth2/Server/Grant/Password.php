@@ -53,25 +53,20 @@ class Password extends AbstractGrantType
         $request = $this->authorizationServer->getRequest();
 
         // Get the required params
-        $clientId = $request->get('client_id', null);
-
-        if (is_null($clientId)) {
+        if (!$clientId = $request->query->get('client_id')) {
             throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_id'),
-                0
+                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_id'), 0
             );
         }
 
-        $clientSecret = $this->server->getRequest()->request->get('client_secret', null);
-        if (is_null($clientSecret)) {
+        if (!$clientSecret = $request->query->get('client_secret')) {
             throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_secret'),
-                0
+                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_secret'), 0
             );
         }
 
         // Validate client ID and client secret
-        $clientDetails = $this->server->getStorage('client')->getClient(
+        $client = $this->authorizationServer->getStorage('client')->getClient(
             $clientId,
             $clientSecret,
             null,
