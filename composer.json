@@ -6,7 +6,7 @@
 	"license": "MIT",
 	"require": {
 		"php": ">=5.4.0",
-		"symfony/http-foundation": "v2.4.0"
+		"symfony/http-foundation": "v2.4.*"
 	},
 	"require-dev": {
 		"mockery/mockery": ">=0.7.2",
