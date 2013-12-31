@@ -12,7 +12,7 @@ abstract class AbstractToken
      * Access token ID
      * @var string
      */
-    protected $id = null;
+    protected $token = null;
 
     /**
      * Access token storage
@@ -129,12 +129,12 @@ abstract class AbstractToken
 
     /**
      * Set access token ID
-     * @param string $id Token ID
+     * @param string $token Token ID
      * @return self
      */
-    public function setId($id = null)
+    public function setToken($token = null)
     {
-        $this->id = ($id !== null) ? $id : SecureKey::make();
+        $this->token = ($token !== null) ? $token : SecureKey::make();
         return $this;
     }
 
@@ -142,9 +142,9 @@ abstract class AbstractToken
      * Get the token ID
      * @return string
      */
-    public function getId()
+    public function getToken()
     {
-        return $this->id;
+        return $this->token;
     }
 
     /**

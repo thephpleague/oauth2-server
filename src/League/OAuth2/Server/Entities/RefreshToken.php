@@ -47,15 +47,15 @@ class RefreshToken extends AbstractToken
      */
     public function save()
     {
-        /*$this->getStorage()->createAccessToken(
-            $this->getId(),
+        $this->getStorage()->createAccessToken(
+            $this->getToken(),
             $this->getExpireTime(),
-            $this->getAccessToken()->getId()
+            $this->getAccessToken()->getToken()
         );
 
         // Associate the scope with the token
         foreach ($this->getScopes() as $scope) {
-            $this->getStorage()->associateScope($this->getId(), $scope->getId());
-        }*/
+            $this->getStorage()->associateScope($this->getToken(), $scope->getId());
+        }
     }
 }

@@ -23,14 +23,14 @@ class AccessToken extends AbstractToken
     public function save()
     {
         $this->getStorage()->createAccessToken(
-            $this->getId(),
+            $this->getToken(),
             $this->getExpireTime(),
             $this->getSession()->getId()
         );
 
         // Associate the scope with the token
         foreach ($this->getScopes() as $scope) {
-            $this->getStorage()->associateScope($this->getId(), $scope->getId());
+            $this->getStorage()->associateScope($this->getToken(), $scope->getId());
         }
 
         return $this;
