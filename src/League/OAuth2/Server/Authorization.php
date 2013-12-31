@@ -141,7 +141,7 @@ class Authorization
         'invalid_grant'             =>  400,
         'invalid_credentials'       =>  400,
         'invalid_refresh'           =>  400,
-    );
+    ];
 
     /**
      * Get all headers that have to be send with the error response
