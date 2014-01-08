@@ -2,15 +2,18 @@
 /**
  * OAuth 2.0 Client storage interface
  *
- * @package     php-loep/oauth2-server
+ * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) 2013 PHP League of Extraordinary Packages
+ * @copyright   Copyright (c) PHP League of Extraordinary Packages
  * @license     http://mit-license.org/
  * @link        http://github.com/php-loep/oauth2-server
  */
 
 namespace League\OAuth2\Server\Storage;
 
+/**
+ * Client storage interface
+ */
 interface ClientInterface
 {
     /**
@@ -38,23 +41,11 @@ interface ClientInterface
      *  oauth_client_endpoints.redirect_uri = :redirectUri
      * </code>
      *
-     * Response:
-     *
-     * <code>
-     * Array
-     * (
-     *     [id]             => (string) The client ID
-     *     [secret]         => (string) The client secret
-     *     [redirect_uri]   => (string) The redirect URI used in this request
-     *     [name]           => (string) The name of the client
-     * )
-     * </code>
-     *
      * @param  string     $clientId     The client's ID
      * @param  string     $clientSecret The client's secret (default = "null")
      * @param  string     $redirectUri  The client's redirect URI (default = "null")
      * @param  string     $grantType    The grant type used in the request (default = "null")
-     * @return bool|array               Returns false if the validation fails, array on success
+     * @return League\OAuth2\Server\Entities\Client|null
      */
     public function getClient($clientId, $clientSecret = null, $redirectUri = null, $grantType = null);
 }

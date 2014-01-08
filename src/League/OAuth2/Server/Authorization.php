@@ -2,9 +2,9 @@
 /**
  * OAuth 2.0 Authorization Server
  *
- * @package     php-loep/oauth2-server
+ * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) 2013 PHP League of Extraordinary Packages
+ * @copyright   Copyright (c) PHP League of Extraordinary Packages
  * @license     http://mit-license.org/
  * @link        http://github.com/php-loep/oauth2-server
  */
@@ -16,6 +16,7 @@ use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Exception\ClientException;
 use League\OAuth2\Server\Exception\ServerException;
 use League\OAuth2\Server\Exception\InvalidGrantTypeException;
+use League\OAuth2\Server\Storage\StorageWrapper;
 use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\AuthCodeInterface;
@@ -231,45 +232,49 @@ class Authorization
 
     /**
      * Set the client storage
-     * @param ClientInterface $client
+     * @param ClientInterface $storage
      * @return self
      */
-    public function setClientStorage(ClientInterface $client)
+    public function setClientStorage(ClientInterface $storage)
     {
-        $this->storages['client'] = $client;
+        $storage->setServer($this);
+        $this->storages['client'] = $storage;
         return $this;
     }
 
     /**
      * Set the session storage
-     * @param SessionInterface $session
+     * @param SessionInterface $storage
      * @return self
      */
-    public function setSessionStorage(SessionInterface $session)
+    public function setSessionStorage(SessionInterface $storage)
     {
-        $this->storages['session'] = $session;
+        $storage->setServer($this);
+        $this->storages['session'] = $storage;
         return $this;
     }
 
     /**
      * Set the access token storage
-     * @param AccessTokenInterface $accessToken
+     * @param AccessTokenInterface $storage
      * @return self
      */
-    public function setAccessTokenStorage(AccessTokenInterface $accessToken)
+    public function setAccessTokenStorage(AccessTokenInterface $storage)
     {
-        $this->storages['access_token'] = $accessToken;
+        $storage->setServer($this);
+        $this->storages['access_token'] = $storage;
         return $this;
     }
 
     /**
      * Set the refresh token storage
-     * @param RefreshTokenInteface $refreshToken
+     * @param RefreshTokenInteface $storage
      * @return self
      */
-    public function setRefreshTokenStorage(RefreshTokenInterface $refreshToken)
+    public function setRefreshTokenStorage(RefreshTokenInterface $storage)
     {
-        $this->storages['refresh_token'] = $refreshToken;
+        $storage->setServer($this);
+        $this->storages['refresh_token'] = $storage;
         return $this;
     }
 
@@ -280,18 +285,20 @@ class Authorization
      */
     public function setAuthCodeStorage(AuthCodeInterface $authCode)
     {
+        $storage->setServer($this);
         $this->storages['auth_code'] = $authCode;
         return $this;
     }
 
     /**
      * Set the scope storage
-     * @param ScopeInterface $scope
+     * @param ScopeInterface $storage
      * @return self
      */
-    public function setScopeStorage(ScopeInterface $scope)
+    public function setScopeStorage(ScopeInterface $storage)
     {
-        $this->storages['scope'] = $scope;
+        $storage->setServer($this);
+        $this->storages['scope'] = $storage;
         return $this;
     }
 
@@ -359,7 +366,8 @@ class Authorization
     }
 
     /**
-     * Default scope to be used if none is provided and requireScopeParam is false
+     * Default scope to be used if none is provided and requireScopeParam() is false
+     * @param string $default Name of the default scope
      * @param self
      */
     public function setDefaultScope($default = null)

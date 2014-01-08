@@ -1,30 +1,36 @@
 <?php
+/**
+ * OAuth 2.0 Refresh token entity
+ *
+ * @package     league/oauth2-server
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) PHP League of Extraordinary Packages
+ * @license     http://mit-license.org/
+ * @link        http://github.com/php-loep/oauth2-server
+ */
 
 namespace League\OAuth2\Server\Entities;
 
 use League\OAuth2\Server\Storage\SessionStorageInterface;
 use League\OAuth2\Server\Storage\RefreshTokenInterface;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Exception\InvalidAccessTokenException;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Refresh token entity class
+ */
 class RefreshToken extends AbstractToken
 {
+    /**
+     * Access token associated to refresh token
+     * @var \League\OAuth2\Server\Entities\AccessToken
+     */
     protected $accessToken;
 
     /**
-     * __construct
-     * @param RefreshTokenInterface $storage
-     * @return self
-     */
-    public function __construct(RefreshTokenInterface $storage)
-    {
-        parent::__construct($storage);
-    }
-
-    /**
      * Associate an access token
-     * @param AccessToken $accessToken
+     * @param \League\OAuth2\Server\Entities\AccessToken $accessToken
      * @return self
      */
     public function setAccessToken(AccessToken $accessToken)
@@ -43,11 +49,11 @@ class RefreshToken extends AbstractToken
     }
 
     /**
-     * (@inheritdoc)
+     * {@inheritdoc}
      */
     public function save()
     {
-        $this->getStorage()->createAccessToken(
+        $this->server->getStorage('refresh_token')->createAccessToken(
             $this->getToken(),
             $this->getExpireTime(),
             $this->getAccessToken()->getToken()
@@ -55,7 +61,7 @@ class RefreshToken extends AbstractToken
 
         // Associate the scope with the token
         foreach ($this->getScopes() as $scope) {
-            $this->getStorage()->associateScope($this->getToken(), $scope->getId());
+            $this->server->getStorage('refresh_token')->associateScope($this->getToken(), $scope->getId());
         }
     }
 }

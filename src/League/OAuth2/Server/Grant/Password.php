@@ -2,9 +2,9 @@
 /**
  * OAuth 2.0 Password grant
  *
- * @package     php-loep/oauth2-server
+ * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) 2013 PHP League of Extraordinary Packages
+ * @copyright   Copyright (c) PHP League of Extraordinary Packages
  * @license     http://mit-license.org/
  * @link        http://github.com/php-loep/oauth2-server
  */
@@ -27,10 +27,8 @@ use League\OAuth2\Server\Storage\ScopeInterface;
 /**
  * Password grant class
  */
-class Password implements GrantTypeInterface {
-
-    use GrantTrait;
-
+class Password extends AbstractGrant
+{
     /**
      * Grant identifier
      * @var string
@@ -109,22 +107,16 @@ class Password implements GrantTypeInterface {
         }
 
         // Validate client ID and client secret
-        $clientDetails = $this->server->getStorage('client')->getClient(
+        $client = $this->server->getStorage('client')->getClient(
             $clientId,
             $clientSecret,
             null,
             $this->getIdentifier()
         );
 
-        if ($clientDetails === false) {
+        if (($client instanceof Client) === false) {
             throw new ClientException(Authorization::getExceptionMessage('invalid_client'), 8);
         }
-
-        $client = new Client;
-        $client->setId($clientDetails['id']);
-        $client->setSecret($clientDetails['secret']);
-
-
 
         $username = $this->server->getRequest()->request->get('username', null);
         if (is_null($username)) {
@@ -146,7 +138,7 @@ class Password implements GrantTypeInterface {
         $userId = call_user_func($this->getVerifyCredentialsCallback(), $username, $password);
 
         if ($userId === false) {
-            throw new Exception\ClientException($this->authServer->getExceptionMessage('invalid_credentials'), 0);
+            throw new ClientException($this->server->getExceptionMessage('invalid_credentials'), 0);
         }
 
         // Validate any scopes that are in the request
@@ -154,15 +146,14 @@ class Password implements GrantTypeInterface {
         $scopes = $this->validateScopes($scopeParam);
 
         // Create a new session
-        $session = new Session($this->server->getStorage('session'));
+        $session = new Session($this->server);
         $session->setOwner('user', $userId);
         $session->associateClient($client);
 
         // Generate an access token
-        $accessToken = new AccessToken($this->server->getStorage('access_token'));
-        $accessToken->setId(SecureKey::make());
-        $accessToken->setTimestamp(time());
-        $accessToken->setTTL($this->server->getAccessTokenTTL());
+        $accessToken = new AccessToken($this->server);
+        $accessToken->setToken(SecureKey::make());
+        $accessToken->setExpireTime($this->server->getAccessTokenTTL() + time());
 
         // Associate scopes with the session and access token
         foreach ($scopes as $scope) {
@@ -171,29 +162,28 @@ class Password implements GrantTypeInterface {
         }
 
         $response = [
-            'access_token'  =>  $accessToken->getId(),
+            'access_token'  =>  $accessToken->getToken(),
             'token_type'    =>  'Bearer',
             'expires'       =>  $accessToken->getExpireTime(),
-            'expires_in'    =>  $accessToken->getTTL()
+            'expires_in'    =>  $this->server->getAccessTokenTTL()
         ];
 
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
-            $refreshToken = new RefreshToken($this->server->getStorage('refresh_token'));
-            $refreshToken->setId(SecureKey::make());
-            $refreshToken->setTimestamp(time());
-            $refreshToken->setTTL($this->server->getGrantType('refresh_token')->getRefreshTokenTTL());
-            $response['refresh_token'] = $refreshToken->getId();
+            $refreshToken = new RefreshToken($this->server);
+            $refreshToken->setToken(SecureKey::make());
+            $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
+            $response['refresh_token'] = $refreshToken->getToken();
         }
 
         // Save everything
-        $session->save();
+        $session->save($this->server->getStorage('session'));
         $accessToken->setSession($session);
-        $accessToken->save();
+        $accessToken->save($this->server->getStorage('access_token'));
 
         if ($this->server->hasGrantType('refresh_token')) {
             $refreshToken->setAccessToken($accessToken);
-            $refreshToken->save();
+            $refreshToken->save($this->server->getStorage('refresh_token'));
         }
 
         return $response;

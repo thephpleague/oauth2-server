@@ -1,71 +1,112 @@
 <?php
+/**
+ * OAuth 2.0 session entity
+ *
+ * @package     league/oauth2-server
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) PHP League of Extraordinary Packages
+ * @license     http://mit-license.org/
+ * @link        http://github.com/php-loep/oauth2-server
+ */
 
 namespace League\OAuth2\Server\Entities;
 
-use OutOfBoundsException;
 use League\OAuth2\Server\Exception\OAuth2Exception;
 use League\OAuth2\Server\Storage\SessionInterface;
+use League\OAuth2\Server\Exception\ServerException;
+use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\Resource;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Session entity grant
+ */
 class Session
 {
     /**
-     * Session ID
+     * Session identifier
      * @var string
      */
-    protected $id = null;
-
-    protected $clientId = null;
-
-    protected $ownerId = null;
-
-    protected $ownerType = null;
-
-    protected $authCode = null;
-
-    protected $accessToken = null;
-
-    protected $refreshToken = null;
+    protected $id;
 
     /**
-     * Session storage
-     * @var \League\OAuth2\Server\Storage\SessionInterface
+     * Client identifier
+     * @var string
      */
-    protected $storage = null;
+    protected $clientId;
+
+    /**
+     * Session owner identifier
+     * @var string
+     */
+    protected $ownerId;
+
+    /**
+     * Session owner type (e.g. "user")
+     * @var string
+     */
+    protected $ownerType;
+
+    /**
+     * Auth code
+     * @var \League\OAuth2\Server\Entities\AuthCode
+     */
+    protected $authCode;
+
+    /**
+     * Access token
+     * @var \League\OAuth2\Server\Entities\AccessToken
+     */
+    protected $accessToken;
+
+    /**
+     * Refresh token
+     * @var \League\OAuth2\Server\Entities\RefreshToken
+     */
+    protected $refreshToken;
 
     /**
      * Session scopes
      * @var \Symfony\Component\HttpFoundation\ParameterBag
      */
-    protected $scopes = null;
+    protected $scopes;
 
     /**
-     * Constuctor
-     * @param SessionInterface $storage
+     * Authorization or resource server
+     * @var \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource
+     */
+    protected $server;
+
+    /**
+     * __construct
+     * @param \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource $server
      * @return self
      */
-    public function __construct(SessionInterface $storage)
+    public function __construct($server)
     {
-        $this->storage = $storage;
+        if (! $server instanceof Authorization && ! $server instanceof Resource) {
+            throw new ServerException('No instance of Authorization or Resource server injected');
+        }
+
         $this->scopes = new ParameterBag();
         return $this;
     }
 
     /**
-     * Get storage
-     * @return SessionInterface
+     * Set the session identifier
+     * @param string $id
+     * @return self
      */
-    public function getStorage()
-    {
-        return $this->storage;
-    }
-
     public function setId($id)
     {
         $this->id = $id;
         return $this;
     }
 
+    /**
+     * Return the session identifier
+     * @return string
+     */
     public function getId()
     {
         return $this->id;
@@ -95,41 +136,62 @@ class Session
         return $this->scopes->has($scope);
     }
 
+    /**
+     * Return all scopes associated with the session
+     * @return array Array of \League\OAuth2\Server\Entities\Scope
+     */
     public function getScopes()
     {
-        return $this->scopes;
-    }
-
-    public function associateAccessToken(AccessToken $accessToken)
-    {
-        $this->accessToken = $accessToken;
-    }
-
-    public function associateRefreshToken(RefreshToken $refreshToken)
-    {
-        $this->refreshToken = $refreshToken;
-    }
-
-    public function associateAuthCode(AuthCode $authCode)
-    {
-        $this->authCode = $authCode;
+        return $this->scopes->all();
     }
 
     /**
-     * Associate a client
-     * @param  League\OAuth2\Server\Client $client The client
+     * Associate an access token with the session
+     * @param  \League\OAuth2\Server\Entities\AccessToken $accessToken
+     * @return self
+     */
+    public function associateAccessToken(AccessToken $accessToken)
+    {
+        $this->accessToken = $accessToken;
+        return $this;
+    }
+
+    /**
+     * Associate a refresh token with the session
+     * @param  \League\OAuth2\Server\Entities\RefreshToken $refreshToken
+     * @return self
+     */
+    public function associateRefreshToken(RefreshToken $refreshToken)
+    {
+        $this->refreshToken = $refreshToken;
+        return $this;
+    }
+
+    /**
+     * Associate an authorization code with the session
+     * @param  \League\OAuth2\Server\Entities\AuthCode $authCode
+     * @return self
+     */
+    public function associateAuthCode(AuthCode $authCode)
+    {
+        $this->authCode = $authCode;
+        return $this;
+    }
+
+    /**
+     * Associate a client with the session
+     * @param  League\OAuth2\Server\Entities\Client $client The client
      * @return self
      */
     public function associateClient(Client $client)
     {
         $this->client = $client;
-
         return $this;
     }
 
     /**
-     * Return client
-     * @return League\OAuth2\Server\Client
+     * Return the session client
+     * @return League\OAuth2\Server\Entities\Client
      */
     public function getClient()
     {
@@ -139,7 +201,7 @@ class Session
     /**
      * Set the session owner
      * @param string $type The type of the owner (e.g. user, app)
-     * @param string $id   The ID of the owner
+     * @param string $id   The identifier of the owner
      * @return self
      */
     public function setOwner($type, $id)
@@ -151,7 +213,7 @@ class Session
     }
 
     /**
-     * Return session owner ID
+     * Return session owner identifier
      * @return string
      */
     public function getOwnerId()
@@ -168,10 +230,14 @@ class Session
         return $this->ownerType;
     }
 
+    /**
+     * Save the session
+     * @return void
+     */
     public function save()
     {
-        // Save the session and get an ID
-        $id = $this->getStorage()->createSession(
+        // Save the session and get an identifier
+        $id = $this->server->getStorage('session')->createSession(
             $this->getOwnerType(),
             $this->getOwnerId(),
             $this->getClient()->getId(),
@@ -182,7 +248,7 @@ class Session
 
         // Associate the scope with the session
         foreach ($this->getScopes() as $scope) {
-            $this->getStorage()->associateScope($this->getId(), $scope->getId());
+            $this->server->getStorage('session')->associateScope($this->getId(), $scope->getId());
         }
     }
 }

@@ -2,9 +2,9 @@
 /**
  * OAuth 2.0 implicit grant
  *
- * @package     php-loep/oauth2-server
+ * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) 2013 PHP League of Extraordinary Packages
+ * @copyright   Copyright (c) PHP League of Extraordinary Packages
  * @license     http://mit-license.org/
  * @link        http://github.com/php-loep/oauth2-server
  */
@@ -52,10 +52,9 @@ class Implicit implements GrantTypeInterface {
 
     /**
      * Complete the client credentials grant
-     * @param  null|array $inputParams
      * @return array
      */
-    public function completeFlow($authParams = null)
+    public function completeFlow()
     {
         // Remove any old sessions the user might have
         $this->authServer->getStorage('session')->deleteSession($authParams['client_id'], 'user', $authParams['user_id']);

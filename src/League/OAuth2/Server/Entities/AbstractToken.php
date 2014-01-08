@@ -1,62 +1,78 @@
 <?php
+/**
+ * OAuth 2.0 Abstract token
+ *
+ * @package     league/oauth2-server
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) PHP League of Extraordinary Packages
+ * @license     http://mit-license.org/
+ * @link        http://github.com/php-loep/oauth2-server
+ */
 
 namespace League\OAuth2\Server\Entities;
 
 use League\OAuth2\Server\Storage\SessionStorageInterface;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use League\OAuth2\Server\Util\SecureKey;
+use League\OAuth2\Server\Exception\ServerException;
+use \League\OAuth2\Server\Authorization;
+use \League\OAuth2\Server\Resource;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Abstract token class
+ */
 abstract class AbstractToken
 {
     /**
      * Access token ID
      * @var string
      */
-    protected $token = null;
+    protected $token;
 
     /**
-     * Access token storage
-     * @var \League\OAuth2\Server\Storage\AccessTokenInterface
+     * Session ID
+     * @var string
      */
-    protected $storage = null;
-
-    /**
-     * Session storage
-     * @var \League\OAuth2\Server\Storage\SessionInterface
-     */
-    protected $sessionStorage = null;
+    protected $sessionId;
 
     /**
      * Associated session
      * @var \League\OAuth2\Server\Session
      */
-    protected $session = null;
+    protected $session;
 
     /**
      * Session scopes
      * @var \Symfony\Component\HttpFoundation\ParameterBag
      */
-    protected $scopes = null;
+    protected $scopes;
+
+    /**
+     * Token expire time
+     * @var int
+     */
+    protected $expireTime = 0;
+
+    /**
+     * Authorization or resource server
+     * @var \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource
+     */
+    protected $server;
 
     /**
      * __construct
-     * @param mixed $storage
+     * @param \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource $server
      * @return self
      */
-    public function __construct($storage)
+    public function __construct($server)
     {
-        $this->storage = $storage;
+        if (! $server instanceof Authorization && ! $server instanceof Resource) {
+            throw new ServerException('No instance of Authorization or Resource server injected');
+        }
+
+        $this->server = $server;
         $this->scopes = new ParameterBag();
         return $this;
-    }
-
-    /**
-     * Get storage
-     * @return AccessTokenInterface
-     */
-    public function getStorage()
-    {
-        return $this->storage;
     }
 
     /**
@@ -76,55 +92,35 @@ abstract class AbstractToken
      */
     public function getSession()
     {
-        return $this->session;
+        if ($this->session instanceof Session) {
+            return $this->session;
+        }
+
+        if ($this->sessionId !== null) {
+            $session = $this->server->getStorage('session')->getSession($this->sessionId);
+        }
+
+        throw new ServerException('No session ID set for this token');
     }
 
     /**
-     * Set token TTL
-     * @param integer $ttl TTL in seconds
+     * Set the expire time of the token
+     * @param integer $expireTime Unix time stamp
      * @return self
      */
-    public function setTTL($ttl = 0)
+    public function setExpireTime($expireTime)
     {
-        $this->ttl = $ttl;
+        $this->expireTime = $expireTime;
         return $this;
     }
 
     /**
-     * Get token TTL
-     * @return integer
-     */
-    public function getTTL()
-    {
-        return $this->ttl;
-    }
-
-    /**
-     * Set the creation timestamp
-     * @param integer $timestamp Unix timestamp
-     * @return self
-     */
-    public function setTimestamp($timestamp = 0)
-    {
-        $this->timestamp = $timestamp;
-    }
-
-    /**
-     * Get access token creation timestamp
-     * @return integer Unix timestamp
-     */
-    public function getTimestamp()
-    {
-        return $this->timestamp;
-    }
-
-    /**
-     * Return creation timestamp + TTL
+     * Return token expire time
      * @return int
      */
     public function getExpireTime()
     {
-        return $this->getTimestamp() + $this->getTTL();
+        return $this->expireTime;
     }
 
     /**
@@ -181,8 +177,14 @@ abstract class AbstractToken
     }
 
     /**
-     * Save the token to the database
-     * @return self
+     * Expire the token
+     * @return void
      */
-    abstract function save();
+    abstract public function expire();
+
+    /**
+     * Save the token
+     * @return void
+     */
+    abstract public function save();
 }

@@ -2,9 +2,9 @@
 /**
  * OAuth 2.0 Resource Server
  *
- * @package     php-loep/oauth2-server
+ * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) 2013 PHP League of Extraordinary Packages
+ * @copyright   Copyright (c) PHP League of Extraordinary Packages
  * @license     http://mit-license.org/
  * @link        http://github.com/php-loep/oauth2-server
  */
@@ -257,10 +257,8 @@ class Resource
 
     /**
      * Checks if the presented access token has the given scope(s)
-     *
-     * @param array|string  An array of scopes or a single scope as a string
-     *
-     * @return bool         Returns bool if all scopes are found, false if any fail
+     * @param array|string $scopes An array of scopes or a single scope as a string
+     * @return bool Returns bool if all scopes are found, false if any fail
      */
     public function hasScope($scopes)
     {

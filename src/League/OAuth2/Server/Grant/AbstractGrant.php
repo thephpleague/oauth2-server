@@ -1,10 +1,10 @@
 <?php
 /**
- * OAuth 2.0 Client credentials grant
+ * OAuth 2.0 Abstract grant
  *
- * @package     php-loep/oauth2-server
+ * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) 2013 PHP League of Extraordinary Packages
+ * @copyright   Copyright (c) PHP League of Extraordinary Packages
  * @license     http://mit-license.org/
  * @link        http://github.com/php-loep/oauth2-server
  */
@@ -12,16 +12,42 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\Entities\Scope;
 
-trait GrantTrait {
+/**
+ * Abstract grant class
+ */
+abstract class AbstractGrant implements GrantTypeInterface
+{
+    /**
+     * Grant identifier
+     * @var string
+     */
+    protected $identifier = '';
 
     /**
-     * Constructor
-     * @return void
+     * Response type
+     * @var string
      */
-    public function __construct()
-    {
-    }
+    protected $responseType = null;
+
+    /**
+     * Callback to authenticate a user's name and password
+     * @var function
+     */
+    protected $callback = null;
+
+    /**
+     * AuthServer instance
+     * @var AuthServer
+     */
+    protected $server = null;
+
+    /**
+     * Access token expires in override
+     * @var int
+     */
+    protected $accessTokenTTL = null;
 
     /**
      * Return the identifier
@@ -74,6 +100,12 @@ trait GrantTrait {
         return $this;
     }
 
+    /**
+     * Given a list of scopes, validate them and return an arrary of Scope entities
+     * @param string $scopeParam A string of scopes (e.g. "profile email birthday")
+     * @return array
+     * @throws ClientException If scope is invalid, or no scopes passed when required
+     */
     public function validateScopes($scopeParam = '')
     {
         $scopesList = explode($this->server->getScopeDelimeter(), $scopeParam);
@@ -100,24 +132,37 @@ trait GrantTrait {
         $scopes = [];
 
         foreach ($scopesList as $scopeItem) {
-            $scopeDetails = $this->server->getStorage('scope')->getScope(
+            $scope = $this->server->getStorage('scope')->getScope(
                 $scopeItem,
-                $client->getId(),
                 $this->getIdentifier()
             );
 
-            if ($scopeDetails === false) {
+            if (($scope instanceof Scope) === false) {
                 throw new ClientException(sprintf($this->server->getExceptionMessage('invalid_scope'), $scopeItem), 4);
             }
-
-            $scope = new Scope($this->server->getStorage('scope'));
-            $scope->setId($scopeDetails['id']);
-            $scope->setName($scopeDetails['name']);
 
             $scopes[] = $scope;
         }
 
         return $scopes;
     }
+
+    /**
+     * Complete the grant flow
+     *
+     * Example response:
+     * <pre>
+     *  array(
+     *      'access_token'  =>  (string),   // The access token
+     *      'refresh_token' =>  (string),   // The refresh token (only set if the refresh token grant is enabled)
+     *      'token_type'    =>  'bearer',   // Almost always "bearer" (exceptions: JWT, SAML)
+     *      'expires'       =>  (int),      // The timestamp of when the access token will expire
+     *      'expires_in'    =>  (int)       // The number of seconds before the access token will expire
+     *  )
+     * </pre>
+     *
+     * @return array                   An array of parameters to be passed back to the client
+     */
+    abstract public function completeFlow();
 
 }
