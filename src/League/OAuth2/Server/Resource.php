@@ -11,134 +11,78 @@
 
 namespace League\OAuth2\Server;
 
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\AccessTokenInterface;
+use League\OAuth2\Server\Storage\StorageWrapper;
 use League\OAuth2\Server\Storage\ClientInterface;
+use League\OAuth2\Server\Storage\AccessTokenInterface;
+use League\OAuth2\Server\Storage\AuthCodeInterface;
+use League\OAuth2\Server\Storage\SessionInterface;
+use League\OAuth2\Server\Storage\ScopeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * OAuth 2.0 Resource Server
  */
-class Resource
+class Resource extends AbstractServer
 {
     /**
      * The access token
-     *
      * @var League\OAuth2\Server\AccessToken
      */
-    protected $accessToken = null;
-
-    /**
-     * The session
-     *
-     * @var \League\OAuth2\Server\Session
-     */
-    protected $session = null;
-
-    /**
-     * The request object
-     *
-     * @var Util\RequestInterface
-     */
-    protected $request = null;
+    protected $accessToken;
 
     /**
      * The query string key which is used by clients to present the access token (default: access_token)
-     *
      * @var string
      */
     protected $tokenKey = 'access_token';
 
     /**
-     * The client ID
-     *
-     * @var League\OAuth2\Server\Client
-     */
-    protected $client = null;
-
-    /**
-     * Session storage
-     *
-     * @var League\OAuth2\Server\Storage\SessionInterface
-     */
-    protected $sessionStorage = null;
-
-    /**
-     * Access token storage
-     *
-     * @var League\OAuth2\Server\Storage\AccessTokenInterface
-     */
-    protected $accessTokenStorage = null;
-
-    /**
-     * Client storage
-     *
-     * @var League\OAuth2\Server\Storage\ClientInterface
-     */
-    protected $clientStorage = null;
-
-    /**
      * Initialise the resource server
-     *
-     * @param SessionInterface    $sessionStorage     [description]
-     * @param AccessTokenInteface $accessTokenStorage [description]
-     * @param ClientInterface     $clientStorage      [description]
-     *
+     * @param SessionInterface    $sessionStorage
+     * @param AccessTokenInteface $accessTokenStorage
+     * @param ClientInterface     $clientStorage
+     * @param ScopeInterface      $scopeStorage
      * @return self
      */
     public function __construct(
         SessionInterface $sessionStorage,
-        AccessTokenInteface $accessTokenStorage,
-        ClientInterface $clientStorage
+        AccessTokenInterface $accessTokenStorage,
+        ClientInterface $clientStorage,
+        ScopeInterface $scopeStorage
     ) {
-        $this->sessionStorage = $sessionStorage;
-        $this->accessTokenStorage = $accessTokenStorage;
-        $this->clientStorage = $clientStorage;
+        $this->setStorage('session', $sessionStorage);
+        $this->setStorage('access_token', $accessTokenStorage);
+        $this->setStorage('client', $clientStorage);
+        $this->setStorage('scope', $scopeStorage);
+
         return $this;
     }
 
     /**
-     * Sets the Request Object
-     *
-     * @param \Symfony\Component\HttpFoundation\Request The Request Object
-     *
+     * Set the storage
+     * @param  string $type Storage type
+     * @param mixed $storage Storage class
      * @return self
      */
-    public function setRequest(Request $request)
+    protected function setStorage($type, $storage)
     {
-        $this->request = $request;
+        $storage->setServer($this);
+        $this->storages[$type] = $storage;
         return $this;
-    }
-
-    /**
-     * Gets the Request object. It will create one from the globals if one is not set.
-     *
-     * @return \Symfony\Component\HttpFoundation\Request
-     */
-    public function getRequest()
-    {
-        if ($this->request = null) {
-            return Symfony\Component\HttpFoundation\Request::createFromGlobals();
-        }
-
-        return $this->request;
     }
 
     /**
      * Returns the query string key for the access token.
-     *
      * @return string
      */
     public function getTokenKey()
     {
-        return $this->tokenKey;
+        return $this->accessToken->getToken();
     }
 
     /**
      * Sets the query string key for the access token.
-     *
      * @param $key The new query string key
-     *
      * @return self
      */
     public function setTokenKey($key)
@@ -149,105 +93,61 @@ class Resource
 
     /**
      * Gets the access token owner ID
-     *
      * @return string
      */
     public function getOwnerId()
     {
-        return $this->session->getOwnerId();
+        return $this->accessToken->getSession()->getOwnerId();
     }
 
     /**
      * Gets the owner type
-     *
      * @return string
      */
     public function getOwnerType()
     {
-        return $this->session->getOwnerType();
+        return $this->accessToken->getSession()->getOwnerType();
     }
 
     /**
      * Gets the access token
-     *
      * @return string
      */
     public function getAccessToken()
     {
-        return $this->accessToken->getId();
+        return $this->accessToken->getToken();
     }
 
     /**
      * Gets the client ID that created the session
-     *
      * @return string
      */
     public function getClientId()
     {
-        return $this->client->getId();
+        return $this->accessToken->getSession()->getClient()->getId();
     }
 
     /**
      * Checks if the access token is valid or not
-     *
      * @param $headersOnly Limit Access Token to Authorization header only
-     *
      * @return bool
      */
     public function isValid($headersOnly = false)
     {
         try {
-            $accessToken = $this->determineAccessToken($headersOnly);
+            $accessTokenString = $this->determineAccessToken($headersOnly);
         } catch (Exception $e) {
             return false;
         }
 
         // Set the access token
-        $tokenResult = $this->accessTokenStorage->getToken($accessToken);
-        if ($tokenResult === null) {
-            return false;
-        }
+        $this->accessToken = $this->storages['access_token']->get($accessTokenString);
 
-        $accessToken = new AccessToken;
-        $accessToken->setId($token);
-        $accessToken->setTTL($tokenResult['ttl']);
-        $accessToken->setTimestamp($tokenResult['created']);
-
-        $scopes = $this->accessTokenStorage->getTokenScopes($token);
-        foreach ($scopes as $scope => $details) {
-            $accessToken->associateScope($scope, $details);
-        }
-
-        $this->accessToken = $accessToken;
-
-        // Set the session
-        $sessionResult = $this->sessionStorage->getSession($tokenResult['session_id']);
-        if ($sessionResult === null) {
-            return false;
-        }
-
-        $session = new Session();
-        $session->setOwner($sessionResult['owner_type'], $sessionResult['owner_id']);
-
-        $this->session = $session;
-
-        // Set the client
-        $clientResult = $this->clientStorage->getClient($sessionResult['client_id']);
-        if ($clientResult === null) {
-            return false;
-        }
-
-        $client = new Client();
-        $client->setCredentials($clientResult['client_id'], $clientResult['client_secret']);
-
-        $this->client = $client;
-
-        return true;
+        return ($this->accessToken instanceof AccessToken);
     }
 
     /**
      * Get the session scopes
-     *
      * @return array
      */
     public function getScopes()
@@ -262,25 +162,13 @@ class Resource
      */
     public function hasScope($scopes)
     {
-        if (is_string($scopes)) {
-            return $this->accessToken->hasScope($scopes);
-        } elseif (is_array($scopes)) {
-            foreach ($scopes as $scope) {
-                if (!$this->accessToken->hasScope($scope)) {
-                    return false;
-                }
-            }
-            return true;
-        }
+        return $this->accessToken->hasScope($scopes);
     }
 
     /**
      * Reads in the access token from the headers
-     *
      * @param $headersOnly Limit Access Token to Authorization header only
-     *
      * @throws Exception\MissingAccessTokenException  Thrown if there is no access token presented
-     *
      * @return string
      */
     public function determineAccessToken($headersOnly = false)

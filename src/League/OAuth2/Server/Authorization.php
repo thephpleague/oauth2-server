@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * OAuth 2.0 authorization server class
  */
-class Authorization
+class Authorization extends AbstractServer
 {
     /**
      * The delimeter between scopes specified in the scope query string parameter
@@ -50,12 +50,6 @@ class Authorization
     protected $responseTypes = [];
 
     /**
-     * The client, scope and session storage classes
-     * @var array
-     */
-    protected $storages = [];
-
-    /**
      * The registered grant types
      * @var array
      */
@@ -71,19 +65,13 @@ class Authorization
      * Default scope(s) to be used if none is provided
      * @var string|array
      */
-    protected $defaultScope = null;
+    protected $defaultScope;
 
     /**
      * Require the "state" parameter to be in checkAuthoriseParams()
      * @var boolean
      */
     protected $requireStateParam = false;
-
-    /**
-     * The request object
-     * @var Util\RequestInterface
-     */
-    protected $request = null;
 
     /**
      * Exception error codes
@@ -442,45 +430,6 @@ class Authorization
     {
         $this->accessTokenTTL = $accessTokenTTL;
         return $this;
-    }
-
-    /**
-     * Sets the Request Object
-     * @param \Symfony\Component\HttpFoundation\Request The Request Object
-     * @return self
-     */
-    public function setRequest(Request $request)
-    {
-        $this->request = $request;
-        return $this;
-    }
-
-    /**
-     * Gets the Request object. It will create one from the globals if one is not set.
-     * @return \Symfony\Component\HttpFoundation\Request
-     */
-    public function getRequest()
-    {
-        if ($this->request === null) {
-            $this->request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
-        }
-
-        return $this->request;
-    }
-
-    /**
-     * Return a storage class
-     * @param  string $obj The class required
-     * @return Storage\ClientInterface|Storage\ScopeInterface|Storage\SessionInterface
-     */
-    public function getStorage($obj)
-    {
-        if (!isset($this->storages[$obj])) {
-            throw new ServerException(
-                'The `'.$obj.'` storage interface has not been registered with the authorization server'
-            );
-        }
-        return $this->storages[$obj];
     }
 
     /**
