@@ -14,8 +14,7 @@ namespace League\OAuth2\Server\Entities;
 use League\OAuth2\Server\Storage\SessionStorageInterface;
 use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Exception\ServerException;
-use League\OAuth2\Server\Authorization;
-use League\OAuth2\Server\Resource;
+use League\OAuth2\Server\AbstractServer;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -55,15 +54,11 @@ abstract class AbstractToken
 
     /**
      * __construct
-     * @param \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource $server
+     * @param \League\OAuth2\Server\AbstractServer $server
      * @return self
      */
-    public function __construct($server)
+    public function __construct(AbstractServer $server)
     {
-        if (! $server instanceof Authorization && ! $server instanceof Resource) {
-            throw new ServerException('No instance of Authorization or Resource server injected');
-        }
-
         $this->server = $server;
         return $this;
     }
