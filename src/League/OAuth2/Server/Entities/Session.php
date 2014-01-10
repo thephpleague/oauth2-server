@@ -88,7 +88,7 @@ class Session
             throw new ServerException('No instance of Authorization or Resource server injected');
         }
 
-        $this->scopes = new ParameterBag();
+        $this->server = $server;
         return $this;
     }
 
@@ -117,10 +117,10 @@ class Session
      * @param \League\OAuth2\Server\Entities\Scope $scope
      * @return self
      */
-    public function associateScope($scope)
+    public function associateScope(Scope $scope)
     {
-        if (!$this->scopes->has($scope->getId())) {
-            $this->scopes->set($scope->getId(), $scope);
+        if (!isset($this->scopes[$scope->getId()])) {
+            $this->scopes[$scope->getId()] = $scope;
         }
 
         return $this;
@@ -133,7 +133,11 @@ class Session
      */
     public function hasScope($scope)
     {
-        return $this->scopes->has($scope);
+        if ($this->scopes === null) {
+            $this->getScopes();
+        }
+
+        return isset($this->scopes[$scope]);
     }
 
     /**
@@ -142,7 +146,27 @@ class Session
      */
     public function getScopes()
     {
-        return $this->scopes->all();
+        if ($this->scopes === null) {
+            $this->scopes = $this->formatScopes($this->server->getStorage('session')->getScopes($this->getId()));
+        }
+
+        return $this->scopes;
+    }
+
+    /**
+     * Format the local scopes array
+     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entities\Scope
+     * @return array
+     */
+    private function formatScopes($unformated = [])
+    {
+        $scopes = [];
+        foreach ($unformated as $scope) {
+            if ($scope instanceof Scope) {
+                $scopes[$scope->getId()] = $scope;
+            }
+        }
+        return $scopes;
     }
 
     /**
@@ -237,7 +261,7 @@ class Session
     public function save()
     {
         // Save the session and get an identifier
-        $id = $this->server->getStorage('session')->createSession(
+        $id = $this->server->getStorage('session')->create(
             $this->getOwnerType(),
             $this->getOwnerId(),
             $this->getClient()->getId(),

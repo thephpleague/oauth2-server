@@ -29,25 +29,25 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Response type
      * @var string
      */
-    protected $responseType = null;
+    protected $responseType;
 
     /**
      * Callback to authenticate a user's name and password
      * @var function
      */
-    protected $callback = null;
+    protected $callback;
 
     /**
      * AuthServer instance
      * @var AuthServer
      */
-    protected $server = null;
+    protected $server;
 
     /**
      * Access token expires in override
      * @var int
      */
-    protected $accessTokenTTL = null;
+    protected $accessTokenTTL;
 
     /**
      * Return the identifier
@@ -132,7 +132,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $scopes = [];
 
         foreach ($scopesList as $scopeItem) {
-            $scope = $this->server->getStorage('scope')->getScope(
+            $scope = $this->server->getStorage('scope')->get(
                 $scopeItem,
                 $this->getIdentifier()
             );
@@ -141,9 +141,25 @@ abstract class AbstractGrant implements GrantTypeInterface
                 throw new ClientException(sprintf($this->server->getExceptionMessage('invalid_scope'), $scopeItem), 4);
             }
 
-            $scopes[] = $scope;
+            $scopes[$scope->getId()] = $scope;
         }
 
+        return $scopes;
+    }
+
+    /**
+     * Format the local scopes array
+     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entities\Scope
+     * @return array
+     */
+    protected function formatScopes($unformated = [])
+    {
+        $scopes = [];
+        foreach ($unformated as $scope) {
+            if ($scope instanceof Scope) {
+                $scopes[$scope->getId()] = $scope;
+            }
+        }
         return $scopes;
     }
 

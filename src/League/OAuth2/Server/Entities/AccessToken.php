@@ -27,7 +27,7 @@ class AccessToken extends AbstractToken
      */
     public function save()
     {
-        $this->server->getStorage('access_token')->createAccessToken(
+        $this->server->getStorage('access_token')->create(
             $this->getToken(),
             $this->getExpireTime(),
             $this->getSession()->getId()
@@ -39,5 +39,13 @@ class AccessToken extends AbstractToken
         }
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function expire()
+    {
+        $this->server->getStorage('access_token')->delete($this->getToken());
     }
 }

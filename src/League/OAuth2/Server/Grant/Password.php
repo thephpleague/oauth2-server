@@ -39,25 +39,19 @@ class Password extends AbstractGrant
      * Response type
      * @var string
      */
-    protected $responseType = null;
+    protected $responseType;
 
     /**
      * Callback to authenticate a user's name and password
      * @var function
      */
-    protected $callback = null;
-
-    /**
-     * AuthServer instance
-     * @var AuthServer
-     */
-    protected $authServer = null;
+    protected $callback;
 
     /**
      * Access token expires in override
      * @var int
      */
-    protected $accessTokenTTL = null;
+    protected $accessTokenTTL;
 
     /**
      * Set the callback to verify a user's username and password
@@ -107,7 +101,7 @@ class Password extends AbstractGrant
         }
 
         // Validate client ID and client secret
-        $client = $this->server->getStorage('client')->getClient(
+        $client = $this->server->getStorage('client')->get(
             $clientId,
             $clientSecret,
             null,
@@ -177,13 +171,13 @@ class Password extends AbstractGrant
         }
 
         // Save everything
-        $session->save($this->server->getStorage('session'));
+        $session->save();
         $accessToken->setSession($session);
-        $accessToken->save($this->server->getStorage('access_token'));
+        $accessToken->save();
 
         if ($this->server->hasGrantType('refresh_token')) {
             $refreshToken->setAccessToken($accessToken);
-            $refreshToken->save($this->server->getStorage('refresh_token'));
+            $refreshToken->save();
         }
 
         return $response;

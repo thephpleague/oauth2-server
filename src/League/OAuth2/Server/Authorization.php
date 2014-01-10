@@ -476,18 +476,18 @@ class Authorization
     public function getStorage($obj)
     {
         if (!isset($this->storages[$obj])) {
-            throw new ServerException('The `'.$obj.'` storage interface has not been registered with the authorization
-                server');
+            throw new ServerException(
+                'The `'.$obj.'` storage interface has not been registered with the authorization server'
+            );
         }
         return $this->storages[$obj];
     }
 
     /**
      * Issue an access token
-     * @param  array $inputParams Optional array of parsed $_POST keys
      * @return array Authorise request parameters
      */
-    public function issueAccessToken($inputParams = [])
+    public function issueAccessToken()
     {
         $grantType = $this->getRequest()->request->get('grant_type');
         if (is_null($grantType)) {
@@ -500,7 +500,7 @@ class Authorization
         }
 
         // Complete the flow
-        return $this->getGrantType($grantType)->completeFlow($inputParams);
+        return $this->getGrantType($grantType)->completeFlow();
     }
 
     /**

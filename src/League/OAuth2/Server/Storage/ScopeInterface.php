@@ -29,5 +29,5 @@ interface ScopeInterface
      * @param  string     $grantType The grant type used in the request (default = "null")
      * @return bool|array If the scope doesn't exist return false
      */
-    public function getScope($scope, $grantType = null);
+    public function get($scope, $grantType = null);
 }

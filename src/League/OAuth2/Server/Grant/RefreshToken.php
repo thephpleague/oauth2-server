@@ -80,7 +80,7 @@ class RefreshToken extends AbstractGrant
         }
 
         // Validate client ID and client secret
-        $client = $this->server->getStorage('client')->getClient(
+        $client = $this->server->getStorage('client')->get(
             $clientId,
             $clientSecret,
             null,
@@ -100,7 +100,7 @@ class RefreshToken extends AbstractGrant
         }
 
         // Validate refresh token
-        $oldRefreshToken = $this->server->getStorage('refresh_token')->getToken($oldRefreshTokenParam);
+        $oldRefreshToken = $this->server->getStorage('refresh_token')->get($oldRefreshTokenParam);
 
         if (($oldRefreshToken instanceof RT) === false) {
             throw new Exception\ClientException($this->server->getExceptionMessage('invalid_refresh'), 0);
@@ -110,7 +110,7 @@ class RefreshToken extends AbstractGrant
 
         // Get the scopes for the original session
         $session = $oldAccessToken->getSession();
-        $scopes = $session->getScopes();
+        $scopes = $this->formatScopes($session->getScopes());
 
         // Get and validate any requested scopes
         $requestedScopesString = $this->server->getRequest()->request->get('scope', '');
@@ -124,14 +124,19 @@ class RefreshToken extends AbstractGrant
             //  the request doesn't include any new scopes
 
             foreach ($requestedScopes as $requestedScope) {
-                // if ()
+                if (!isset($scopes[$requestedScope->getId()])) {
+                    throw new Exception\ClientException(
+                        sprintf($this->server->getExceptionMessage('invalid_scope'), $requestedScope->getId()),
+                        0
+                    );
+                }
             }
 
             $newScopes = $requestedScopes;
         }
 
         // Generate a new access token and assign it the correct sessions
-        $newAccessToken = new AccessToken();
+        $newAccessToken = new AccessToken($this->server);
         $newAccessToken->setToken(SecureKey::make());
         $newAccessToken->setExpireTime($this->server->getAccessTokenTTL() + time());
         $newAccessToken->setSession($session);
@@ -155,7 +160,7 @@ class RefreshToken extends AbstractGrant
         $oldRefreshToken->expire($this->server->getStorage('refresh_token'));
 
         // Generate a new refresh token
-        $newRefreshToken = new RT();
+        $newRefreshToken = new RT($this->server);
         $newRefreshToken->setToken(SecureKey::make());
         $newRefreshToken->setExpireTime($this->getRefreshTokenTTL() + time());
         $newRefreshToken->setAccessToken($newAccessToken);

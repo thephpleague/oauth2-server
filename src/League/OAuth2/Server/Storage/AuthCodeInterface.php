@@ -21,5 +21,5 @@ interface AuthCodeInterface
      * @param  string $code
      * @return \League\OAuth2\Server\Entities\AuthCode
      */
-    public function getCode($code);
+    public function get($code);
 }

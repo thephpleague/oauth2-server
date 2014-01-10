@@ -11,6 +11,10 @@
 
 namespace League\OAuth2\Server\Entities;
 
+use League\OAuth2\Server\Exception\ServerException;
+use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\Resource;
+
 /**
  * Scope entity class
  */

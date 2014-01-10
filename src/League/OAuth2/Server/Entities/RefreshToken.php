@@ -45,6 +45,9 @@ class RefreshToken extends AbstractToken
      */
     public function getAccessToken()
     {
+        if (! $this->accessToken instanceof AccessToken) {
+            $this->accessToken = $this->server->getStorage('access_token')->getByRefreshToken($this->getToken());
+        }
         return $this->accessToken;
     }
 
@@ -53,7 +56,7 @@ class RefreshToken extends AbstractToken
      */
     public function save()
     {
-        $this->server->getStorage('refresh_token')->createAccessToken(
+        $this->server->getStorage('refresh_token')->create(
             $this->getToken(),
             $this->getExpireTime(),
             $this->getAccessToken()->getToken()
@@ -63,5 +66,13 @@ class RefreshToken extends AbstractToken
         foreach ($this->getScopes() as $scope) {
             $this->server->getStorage('refresh_token')->associateScope($this->getToken(), $scope->getId());
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function expire()
+    {
+        $this->server->getStorage('refresh_token')->delete($this->getToken());
     }
 }

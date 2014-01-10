@@ -21,14 +21,16 @@ interface AccessTokenInterface
      * @param  string $token The access token
      * @return \League\OAuth2\Server\Entities\AccessToken
      */
-    public function getToken($token);
+    public function get($token);
+
+    public function getByRefreshToken($refreshToken);
 
     /**
      * Get the scopes for an access token
      * @param  string $token The access token
      * @return array Array of \League\OAuth2\Server\Entities\Scope
      */
-    public function getTokenScopes($token);
+    public function getScopes($token);
 
     /**
      * Creates a new access token
@@ -37,7 +39,7 @@ interface AccessTokenInterface
      * @param  string|integer $sessionId The session ID
      * @return \League\OAuth2\Server\Entities\AccessToken
      */
-    public function createAccessToken($token, $expireTime, $sessionId);
+    public function create($token, $expireTime, $sessionId);
 
     /**
      * Associate a scope with an acess token

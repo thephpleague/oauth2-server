@@ -14,8 +14,8 @@ namespace League\OAuth2\Server\Entities;
 use League\OAuth2\Server\Storage\SessionStorageInterface;
 use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Exception\ServerException;
-use \League\OAuth2\Server\Authorization;
-use \League\OAuth2\Server\Resource;
+use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\Resource;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -28,12 +28,6 @@ abstract class AbstractToken
      * @var string
      */
     protected $token;
-
-    /**
-     * Session ID
-     * @var string
-     */
-    protected $sessionId;
 
     /**
      * Associated session
@@ -71,7 +65,6 @@ abstract class AbstractToken
         }
 
         $this->server = $server;
-        $this->scopes = new ParameterBag();
         return $this;
     }
 
@@ -96,11 +89,8 @@ abstract class AbstractToken
             return $this->session;
         }
 
-        if ($this->sessionId !== null) {
-            $session = $this->server->getStorage('session')->getSession($this->sessionId);
-        }
-
-        throw new ServerException('No session ID set for this token');
+        $this->session = $this->server->getStorage('session')->getByAccessToken($this->token);
+        return $this->session;
     }
 
     /**
@@ -148,10 +138,10 @@ abstract class AbstractToken
      * @param \League\OAuth2\Server\Entities\Scope $scope
      * @return self
      */
-    public function associateScope($scope)
+    public function associateScope(Scope $scope)
     {
-        if (!$this->scopes->has($scope->getId())) {
-            $this->scopes->set($scope->getId(), $scope);
+        if (!isset($this->scopes[$scope->getId()])) {
+            $this->scopes[$scope->getId()] = $scope;
         }
 
         return $this;
@@ -164,16 +154,42 @@ abstract class AbstractToken
      */
     public function hasScope($scope)
     {
-        return $this->scopes->has($scope);
+        if ($this->scopes === null) {
+            $this->getScopes();
+        }
+
+        return isset($this->scopes[$scope]);
     }
 
     /**
-     * Return all associated scopes
-     * @return ParameterBag
+     * Return all scopes associated with the session
+     * @return array Array of \League\OAuth2\Server\Entities\Scope
      */
     public function getScopes()
     {
+        if ($this->scopes === null) {
+            $this->scopes = $this->formatScopes(
+                $this->server->getStorage('access_token')->getScopes($this->getToken())
+            );
+        }
+
         return $this->scopes;
+    }
+
+    /**
+     * Format the local scopes array
+     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entities\Scope
+     * @return array
+     */
+    private function formatScopes($unformated = [])
+    {
+        $scopes = [];
+        foreach ($unformated as $scope) {
+            if ($scope instanceof Scope) {
+                $scopes[$scope->getId()] = $scope;
+            }
+        }
+        return $scopes;
     }
 
     /**

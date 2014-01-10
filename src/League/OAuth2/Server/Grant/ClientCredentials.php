@@ -76,7 +76,7 @@ class ClientCredentials extends AbstractGrant
         }
 
         // Validate client ID and client secret
-        $client = $this->server->getStorage('client')->getClient(
+        $client = $this->server->getStorage('client')->get(
             $clientId,
             $clientSecret,
             null,
@@ -92,12 +92,12 @@ class ClientCredentials extends AbstractGrant
         $scopes = $this->validateScopes($scopeParam);
 
         // Create a new session
-        $session = new Session();
+        $session = new Session($this->server);
         $session->setOwner('client', $client->getId());
         $session->associateClient($client);
 
         // Generate an access token
-        $accessToken = new AccessToken();
+        $accessToken = new AccessToken($this->server);
         $accessToken->setToken(SecureKey::make());
         $accessToken->setExpireTime($this->server->getAccessTokenTTL() + time());
 

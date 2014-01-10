@@ -17,25 +17,25 @@ namespace League\OAuth2\Server\Storage;
 interface SessionInterface
 {
     /**
-     * Get a session
-     *
-     * @param  int $sessionId
-     * @return array (As described above)
+     * Get a session from it's identifier
+     * @param string $sessionId
+     * @return \League\OAuth2\Server\Entities\Session
      */
-    public function getSession($sessionId);
+    public function get($sessionId);
+
+    /**
+     * Get a session from an access token
+     * @param  string $accessToken The access token
+     * @return \League\OAuth2\Server\Entities\Session
+     */
+    public function getByAccessToken($accessToken);
 
     /**
      * Get a session's scopes
-     *
-     * Response:
-     * <code>
-     *
-     * </code>
-     *
-     * @param  int $sessionId
-     * @return array (As described aboce)
+     * @param  integer $sessionId
+     * @return array Array of \League\OAuth2\Server\Entities\Scope
      */
-    public function getSessionScopes($sessionId);
+    public function getScopes($sessionId);
 
     /**
      * Create a new session
@@ -43,14 +43,14 @@ interface SessionInterface
      * @param  string $ownerId           Session owner's ID
      * @param  string $clientId          Client ID
      * @param  string $clientRedirectUri Client redirect URI (default = null)
-     * @return int    Session ID
+     * @return integer The session's ID
      */
-    public function createSession($ownerType, $ownerId, $clientId, $clientRedirectUri = null);
+    public function create($ownerType, $ownerId, $clientId, $clientRedirectUri = null);
 
     /**
      * Associate a scope with a session
-     * @param  int        $sessionId
-     * @param  int|string $scopeId    The scopes ID might be an integer or string
+     * @param  integer $sessionId
+     * @param  string  $scopeId    The scopes ID might be an integer or string
      * @return void
      */
     public function associateScope($sessionId, $scopeId);

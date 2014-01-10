@@ -21,7 +21,7 @@ interface RefreshTokenInterface
      * @param  string $token
      * @return \League\OAuth2\Server\Entities\RefreshToken
      */
-    public function getToken($token);
+    public function get($token);
 
     /**
      * Create a new refresh token_name
@@ -30,7 +30,7 @@ interface RefreshTokenInterface
      * @param  string $accessToken
      * @return \League\OAuth2\Server\Entities\RefreshToken
      */
-    public function createRefreshToken($token, $expireTime, $accessToken);
+    public function create($token, $expireTime, $accessToken);
 
     /**
      * Delete the refresh token
