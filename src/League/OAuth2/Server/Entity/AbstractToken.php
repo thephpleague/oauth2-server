@@ -9,7 +9,7 @@
  * @link        http://github.com/php-loep/oauth2-server
  */
 
-namespace League\OAuth2\Server\Entities;
+namespace League\OAuth2\Server\Entity;
 
 use League\OAuth2\Server\Storage\SessionStorageInterface;
 use League\OAuth2\Server\Util\SecureKey;
@@ -130,7 +130,7 @@ abstract class AbstractToken
 
     /**
      * Associate a scope
-     * @param \League\OAuth2\Server\Entities\Scope $scope
+     * @param \League\OAuth2\Server\Entity\Scope $scope
      * @return self
      */
     public function associateScope(Scope $scope)
@@ -158,7 +158,7 @@ abstract class AbstractToken
 
     /**
      * Return all scopes associated with the session
-     * @return array Array of \League\OAuth2\Server\Entities\Scope
+     * @return array Array of \League\OAuth2\Server\Entity\Scope
      */
     public function getScopes()
     {
@@ -173,7 +173,7 @@ abstract class AbstractToken
 
     /**
      * Format the local scopes array
-     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entities\Scope
+     * @param  array $unformated Array of \League\OAuth2\Server\Entity\Scope
      * @return array
      */
     private function formatScopes($unformated = [])

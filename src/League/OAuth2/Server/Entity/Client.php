@@ -9,7 +9,7 @@
  * @link        http://github.com/php-loep/oauth2-server
  */
 
-namespace League\OAuth2\Server\Entities;
+namespace League\OAuth2\Server\Entity;
 
 use League\OAuth2\Server\Exception\ServerException;
 use League\OAuth2\Server\AbstractServer;
@@ -45,7 +45,7 @@ class Client
 
     /**
      * Authorization or resource server
-     * @var \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource
+     * @var \League\OAuth2\Server\AbstractServer
      */
     protected $server;
 

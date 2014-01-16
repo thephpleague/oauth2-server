@@ -9,7 +9,7 @@
  * @link        http://github.com/php-loep/oauth2-server
  */
 
-namespace League\OAuth2\Server\Entities;
+namespace League\OAuth2\Server\Entity;
 
 use League\OAuth2\Server\Storage\SessionStorageInterface;
 use League\OAuth2\Server\Storage\RefreshTokenInterface;
@@ -24,13 +24,13 @@ class RefreshToken extends AbstractToken
 {
     /**
      * Access token associated to refresh token
-     * @var \League\OAuth2\Server\Entities\AccessToken
+     * @var \League\OAuth2\Server\Entity\AccessToken
      */
     protected $accessToken;
 
     /**
      * Associate an access token
-     * @param \League\OAuth2\Server\Entities\AccessToken $accessToken
+     * @param \League\OAuth2\Server\Entity\AccessToken $accessToken
      * @return self
      */
     public function setAccessToken(AccessToken $accessToken)

@@ -9,7 +9,7 @@
  * @link        http://github.com/php-loep/oauth2-server
  */
 
-namespace League\OAuth2\Server\Entities;
+namespace League\OAuth2\Server\Entity;
 
 use League\OAuth2\Server\Exception\OAuth2Exception;
 use League\OAuth2\Server\Storage\SessionInterface;
@@ -32,7 +32,7 @@ class Session
      * Client identifier
      * @var string
      */
-    protected $clientId;
+    protected $client;
 
     /**
      * Session owner identifier
@@ -48,19 +48,19 @@ class Session
 
     /**
      * Auth code
-     * @var \League\OAuth2\Server\Entities\AuthCode
+     * @var \League\OAuth2\Server\Entity\AuthCode
      */
     protected $authCode;
 
     /**
      * Access token
-     * @var \League\OAuth2\Server\Entities\AccessToken
+     * @var \League\OAuth2\Server\Entity\AccessToken
      */
     protected $accessToken;
 
     /**
      * Refresh token
-     * @var \League\OAuth2\Server\Entities\RefreshToken
+     * @var \League\OAuth2\Server\Entity\RefreshToken
      */
     protected $refreshToken;
 
@@ -109,7 +109,7 @@ class Session
 
     /**
      * Associate a scope
-     * @param \League\OAuth2\Server\Entities\Scope $scope
+     * @param \League\OAuth2\Server\Entity\Scope $scope
      * @return self
      */
     public function associateScope(Scope $scope)
@@ -137,7 +137,7 @@ class Session
 
     /**
      * Return all scopes associated with the session
-     * @return array Array of \League\OAuth2\Server\Entities\Scope
+     * @return array Array of \League\OAuth2\Server\Entity\Scope
      */
     public function getScopes()
     {
@@ -150,7 +150,7 @@ class Session
 
     /**
      * Format the local scopes array
-     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entities\Scope
+     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entity\Scope
      * @return array
      */
     private function formatScopes($unformated = [])
@@ -166,7 +166,7 @@ class Session
 
     /**
      * Associate an access token with the session
-     * @param  \League\OAuth2\Server\Entities\AccessToken $accessToken
+     * @param  \League\OAuth2\Server\Entity\AccessToken $accessToken
      * @return self
      */
     public function associateAccessToken(AccessToken $accessToken)
@@ -177,7 +177,7 @@ class Session
 
     /**
      * Associate a refresh token with the session
-     * @param  \League\OAuth2\Server\Entities\RefreshToken $refreshToken
+     * @param  \League\OAuth2\Server\Entity\RefreshToken $refreshToken
      * @return self
      */
     public function associateRefreshToken(RefreshToken $refreshToken)
@@ -188,7 +188,7 @@ class Session
 
     /**
      * Associate an authorization code with the session
-     * @param  \League\OAuth2\Server\Entities\AuthCode $authCode
+     * @param  \League\OAuth2\Server\Entity\AuthCode $authCode
      * @return self
      */
     public function associateAuthCode(AuthCode $authCode)
@@ -199,7 +199,7 @@ class Session
 
     /**
      * Associate a client with the session
-     * @param  League\OAuth2\Server\Entities\Client $client The client
+     * @param  League\OAuth2\Server\Entity\Client $client The client
      * @return self
      */
     public function associateClient(Client $client)
@@ -210,10 +210,15 @@ class Session
 
     /**
      * Return the session client
-     * @return League\OAuth2\Server\Entities\Client
+     * @return League\OAuth2\Server\Entity\Client
      */
     public function getClient()
     {
+        if ($this->client instanceof Client) {
+            return $this->client;
+        }
+
+        $this->client = $this->server->getStorage('client')->getBySession($this->getId());
         return $this->client;
     }
 
