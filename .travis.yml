@@ -9,7 +9,11 @@ matrix:
   allow_failures:
     - php: hhvm
 
-before_script: composer install --prefer-source
+before_script:
+    - composer self-update
+    - composer --version
+    - composer install --prefer-source
+
 script: phpunit --configuration phpunit.xml.dist
 
 cache:
