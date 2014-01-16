@@ -13,19 +13,15 @@ class RefreshTokenTests extends \PHPUnit_Framework_TestCase
 {
     function testSetAccessToken()
     {
-        $reader = function & ($object, $property) {
-            $value = & \Closure::bind(function & () use ($property) {
-                return $this->$property;
-            }, $object, $object)->__invoke();
-
-            return $value;
-        };
-
         $server = M::mock('League\OAuth2\Server\AbstractServer');
         $entity = new RefreshToken($server);
         $entity->setAccessToken((new AccessToken($server)));
 
-        $this->assertTrue($reader($entity, 'accessToken') instanceof AccessToken);
+        $reflector = new \ReflectionClass($entity);
+        $accessTokenProperty = $reflector->getProperty('accessToken');
+        $accessTokenProperty->setAccessible(true);
+
+        $this->assertTrue($accessTokenProperty->getValue($entity) instanceof AccessToken);
     }
 
     function testSave()

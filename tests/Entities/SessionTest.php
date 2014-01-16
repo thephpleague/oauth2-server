@@ -25,21 +25,20 @@ class SessionTests extends \PHPUnit_Framework_TestCase
         $entity->associateScope((new Scope($server))->setId('foo'));
         // $entity->associateAuthCode((new AuthCode($server)));
 
-        $reader = function & ($object, $property) {
-            $value = & \Closure::bind(function & () use ($property) {
-                return $this->$property;
-            }, $object, $object)->__invoke();
-
-            return $value;
-        };
-
         $this->assertEquals('foobar', $entity->getId());
         $this->assertEquals('user', $entity->getOwnerType());
         $this->assertEquals(123, $entity->getOwnerId());
-        $this->assertTrue($reader($entity, 'accessToken') instanceof AccessToken);
-        $this->assertTrue($reader($entity, 'refreshToken') instanceof RefreshToken);
         $this->assertTrue($entity->getClient() instanceof Client);
         $this->assertTrue($entity->hasScope('foo'));
+
+        $reflector = new \ReflectionClass($entity);
+        $accessTokenProperty = $reflector->getProperty('accessToken');
+        $accessTokenProperty->setAccessible(true);
+        $refreshTokenProperty = $reflector->getProperty('refreshToken');
+        $refreshTokenProperty->setAccessible(true);
+
+        $this->assertTrue($accessTokenProperty->getValue($entity) instanceof AccessToken);
+        $this->assertTrue($refreshTokenProperty->getValue($entity) instanceof RefreshToken);
         // $this->assertTrue($reader($entity, 'authCode') instanceof AuthCode);
     }
 
