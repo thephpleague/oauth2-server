@@ -17,6 +17,7 @@ use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\AuthCodeInterface;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
+use League\OAuth2\Server\Entity\AccessToken;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -28,7 +29,7 @@ class Resource extends AbstractServer
      * The access token
      * @var League\OAuth2\Server\AccessToken
      */
-    protected $accessToken;
+    public $accessToken;
 
     /**
      * The query string key which is used by clients to present the access token (default: access_token)
@@ -77,7 +78,7 @@ class Resource extends AbstractServer
      */
     public function getTokenKey()
     {
-        return $this->accessToken->getToken();
+        return $this->tokenKey;
     }
 
     /**
@@ -136,13 +137,12 @@ class Resource extends AbstractServer
     {
         try {
             $accessTokenString = $this->determineAccessToken($headersOnly);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
 
         // Set the access token
         $this->accessToken = $this->storages['access_token']->get($accessTokenString);
-
         return ($this->accessToken instanceof AccessToken);
     }
 
@@ -162,7 +162,18 @@ class Resource extends AbstractServer
      */
     public function hasScope($scopes)
     {
-        return $this->accessToken->hasScope($scopes);
+        if (is_string($scopes)) {
+            return $this->accessToken->hasScope($scopes);
+        }
+
+        if (is_array($scopes)) {
+            foreach ($scopes as $scope) {
+                if (!$this->accessToken->hasScope($scope)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

@@ -12,7 +12,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Authorization;
-use League\OAuth2\Server\Entities\Scope;
+use League\OAuth2\Server\Entity\Scope;
 
 /**
  * Abstract grant class
@@ -149,7 +149,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Format the local scopes array
-     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entities\Scope
+     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entity\Scope
      * @return array
      */
     protected function formatScopes($unformated = [])

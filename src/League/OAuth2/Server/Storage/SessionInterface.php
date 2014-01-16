@@ -19,21 +19,21 @@ interface SessionInterface
     /**
      * Get a session from it's identifier
      * @param string $sessionId
-     * @return \League\OAuth2\Server\Entities\Session
+     * @return \League\OAuth2\Server\Entity\Session
      */
     public function get($sessionId);
 
     /**
      * Get a session from an access token
      * @param  string $accessToken The access token
-     * @return \League\OAuth2\Server\Entities\Session
+     * @return \League\OAuth2\Server\Entity\Session
      */
     public function getByAccessToken($accessToken);
 
     /**
      * Get a session's scopes
      * @param  integer $sessionId
-     * @return array Array of \League\OAuth2\Server\Entities\Scope
+     * @return array Array of \League\OAuth2\Server\Entity\Scope
      */
     public function getScopes($sessionId);
 

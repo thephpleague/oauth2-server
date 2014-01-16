@@ -22,7 +22,7 @@ interface ClientInterface
      * @param  string     $clientSecret The client's secret (default = "null")
      * @param  string     $redirectUri  The client's redirect URI (default = "null")
      * @param  string     $grantType    The grant type used in the request (default = "null")
-     * @return League\OAuth2\Server\Entities\Client|null
+     * @return League\OAuth2\Server\Entity\Client|null
      */
     public function get($clientId, $clientSecret = null, $redirectUri = null, $grantType = null);
 }

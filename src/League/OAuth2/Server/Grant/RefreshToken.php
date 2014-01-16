@@ -18,9 +18,9 @@ use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
-use League\OAuth2\Server\Entities\RefreshToken as RT;
-use League\OAuth2\Server\Entities\AccessToken;
-use League\OAuth2\Server\Entities\Session;
+use League\OAuth2\Server\Entity\RefreshToken as RT;
+use League\OAuth2\Server\Entity\AccessToken;
+use League\OAuth2\Server\Entity\Session;
 use League\OAuth2\Server\Exception\ClientException;
 
 /**

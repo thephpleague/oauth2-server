@@ -12,10 +12,10 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Authorization;
-use League\OAuth2\Server\Entities\AccessToken;
-use League\OAuth2\Server\Entities\Client;
-use League\OAuth2\Server\Entities\Session;
-use League\OAuth2\Server\Entities\Scope;
+use League\OAuth2\Server\Entity\AccessToken;
+use League\OAuth2\Server\Entity\Client;
+use League\OAuth2\Server\Entity\Session;
+use League\OAuth2\Server\Entity\Scope;
 use League\OAuth2\Server\Exception\ClientException;
 use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Storage\SessionInterface;

@@ -19,7 +19,7 @@ interface AccessTokenInterface
     /**
      * Get an instance of Entites\AccessToken
      * @param  string $token The access token
-     * @return \League\OAuth2\Server\Entities\AccessToken
+     * @return \League\OAuth2\Server\Entity\AccessToken
      */
     public function get($token);
 
@@ -28,7 +28,7 @@ interface AccessTokenInterface
     /**
      * Get the scopes for an access token
      * @param  string $token The access token
-     * @return array Array of \League\OAuth2\Server\Entities\Scope
+     * @return array Array of \League\OAuth2\Server\Entity\Scope
      */
     public function getScopes($token);
 
@@ -37,7 +37,7 @@ interface AccessTokenInterface
      * @param  string $token The access token
      * @param  integer $expireTime The expire time expressed as a unix timestamp
      * @param  string|integer $sessionId The session ID
-     * @return \League\OAuth2\Server\Entities\AccessToken
+     * @return \League\OAuth2\Server\Entity\AccessToken
      */
     public function create($token, $expireTime, $sessionId);
 

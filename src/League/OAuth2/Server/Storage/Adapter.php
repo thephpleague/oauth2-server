@@ -18,13 +18,13 @@ class Adapter
 {
     /**
      * Server
-     * @var \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource $server
+     * @var \League\OAuth2\Server\AbstractServer $server
      */
     protected $server;
 
     /**
      * Set the server
-     * @param \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource $server
+     * @param \League\OAuth2\Server\AbstractServer $server
      */
     public function setServer($server)
     {
@@ -34,7 +34,7 @@ class Adapter
 
     /**
      * Return the server
-     * @return \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource
+     * @return \League\OAuth2\Server\AbstractServer
      */
     protected function getServer()
     {

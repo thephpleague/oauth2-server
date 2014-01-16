@@ -11,6 +11,7 @@
 
 namespace League\OAuth2\Server;
 
+use League\OAuth2\Server\Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -64,8 +65,8 @@ abstract class AbstractServer
     public function getStorage($obj)
     {
         if (!isset($this->storages[$obj])) {
-            throw new ServerException(
-                'The `'.$obj.'` storage interface has not been registered with the authorization server'
+            throw new Exception\ServerException(
+                'The `'.$obj.'` storage interface has not been registered with the server'
             );
         }
         return $this->storages[$obj];
