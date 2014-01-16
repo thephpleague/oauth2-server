@@ -10,7 +10,8 @@
 	},
 	"require-dev": {
 		"league/phpunit-coverage-listener": "~1.0",
-        "phpdocumentor/phpdocumentor": "2.*"
+        "phpdocumentor/phpdocumentor": "2.*",
+        "mockery/mockery": "0.8"
 	},
 	"repositories": [
 		{
@@ -44,8 +45,11 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"League\\OAuth2\\Server": "src/"
-		}
+            "League\\OAuth2\\Server": "src/"
+		},
+        "psr-4": {
+            "LeagueTests\\": "tests/"
+        }
 	},
 	"suggest": {
 
