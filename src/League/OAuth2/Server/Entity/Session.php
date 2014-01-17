@@ -156,9 +156,11 @@ class Session
     private function formatScopes($unformated = [])
     {
         $scopes = [];
-        foreach ($unformated as $scope) {
-            if ($scope instanceof Scope) {
-                $scopes[$scope->getId()] = $scope;
+        if (is_array($unformated)) {
+            foreach ($unformated as $scope) {
+                if ($scope instanceof Scope) {
+                    $scopes[$scope->getId()] = $scope;
+                }
             }
         }
         return $scopes;
