@@ -13,6 +13,7 @@ namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Authorization;
 use League\OAuth2\Server\Entity\Scope;
+use League\OAuth2\Server\Exception\ClientException;
 
 /**
  * Abstract grant class
