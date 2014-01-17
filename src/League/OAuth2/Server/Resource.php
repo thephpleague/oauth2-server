@@ -29,7 +29,7 @@ class Resource extends AbstractServer
      * The access token
      * @var League\OAuth2\Server\AccessToken
      */
-    public $accessToken;
+    protected $accessToken;
 
     /**
      * The query string key which is used by clients to present the access token (default: access_token)
