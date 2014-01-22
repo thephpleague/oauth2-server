@@ -37,7 +37,7 @@
 		}
 	],
 	"replace": {
-		"lncd/oauth2": "*",
+		"lncd/oauth2": "*"
 	},
 	"autoload": {
 		"psr-0": {
