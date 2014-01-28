@@ -217,6 +217,17 @@ class Authorization
     {
         return self::$exceptionCodes[$code];
     }
+    
+    /**
+     * Get an exception HTTP status code
+     *
+     * @param  integer $code The exception code
+     * @return string        The exception HTTP status code
+     */
+    public static function getExceptionHTTPCode($type)
+    {
+        return self::$exceptionHttpStatusCodes[$type];
+    }
 
     /**
      * Create a new OAuth2 authorization server
