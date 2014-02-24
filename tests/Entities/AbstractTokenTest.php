@@ -5,7 +5,7 @@ namespace LeagueTests\Entities;
 use LeagueTests\Stubs\StubAbstractToken;
 use League\OAuth2\Server\Entity\Session;
 use League\OAuth2\Server\Entity\Scope;
-use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\AuthorizationServer as Authorization;
 use \Mockery as M;
 
 class AbstractTokenTests extends \PHPUnit_Framework_TestCase

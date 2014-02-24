@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entity\Scope;
 use League\OAuth2\Server\Exception\ClientException;
 
@@ -92,10 +92,10 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Inject the authorization server into the grant
-     * @param Authorization $server The authorization server instance
+     * @param AuthorizationServer $server The authorization server instance
      * @return  self
      */
-    public function setAuthorizationServer(Authorization $server)
+    public function setAuthorizationServer(AuthorizationServer $server)
     {
         $this->server = $server;
         return $this;

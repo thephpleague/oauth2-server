@@ -8,7 +8,7 @@ use League\OAuth2\Server\Entity\Client;
 use League\OAuth2\Server\Entity\RefreshToken;
 use League\OAuth2\Server\Entity\Session;
 use League\OAuth2\Server\Entity\Scope;
-use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\AuthorizationServer as Authorization;
 use \Mockery as M;
 
 class SessionTests extends \PHPUnit_Framework_TestCase

@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * OAuth 2.0 authorization server class
  */
-class Authorization extends AbstractServer
+class AuthorizationServer extends AbstractServer
 {
     /**
      * The delimeter between scopes specified in the scope query string parameter

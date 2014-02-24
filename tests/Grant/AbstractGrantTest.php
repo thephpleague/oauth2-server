@@ -4,7 +4,7 @@ namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\Grant;
 use League\OAuth2\Server\Entity\Scope;
-use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\ClientException;
 use LeagueTests\Stubs\StubAbstractGrant;
 use Mockery as M;
@@ -13,7 +13,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 {
     function testSetGet()
     {
-        $server = new Authorization;
+        $server = new AuthorizationServer;
 
         $grant = new StubAbstractGrant;
         $grant->setIdentifier('foobar');
@@ -23,7 +23,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foobar', $grant->getIdentifier());
         $this->assertEquals('foobar', $grant->getResponseType());
         $this->assertEquals(300, $grant->getAccessTokenTTL());
-        $this->assertTrue($grant->getAuthorizationServer() instanceof Authorization);
+        $this->assertTrue($grant->getAuthorizationServer() instanceof AuthorizationServer);
     }
 
     public function testFormatScopes()
@@ -50,7 +50,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateScopes()
     {
-        $server = new Authorization;
+        $server = new AuthorizationServer;
 
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
@@ -79,7 +79,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
 
-        $server = new Authorization;
+        $server = new AuthorizationServer;
         $server->requireScopeParam(true);
         $server->setScopeStorage($scopeStorage);
 
@@ -97,7 +97,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $scopeStorage->shouldReceive('setServer');
         $scopeStorage->shouldReceive('get')->andReturn(null);
 
-        $server = new Authorization;
+        $server = new AuthorizationServer;
         $server->setScopeStorage($scopeStorage);
 
         $grant = new StubAbstractGrant;
@@ -108,7 +108,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateScopesDefaultScope()
     {
-        $server = new Authorization;
+        $server = new AuthorizationServer;
 
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
@@ -129,7 +129,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateScopesDefaultScopeArray()
     {
-        $server = new Authorization;
+        $server = new AuthorizationServer;
 
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
