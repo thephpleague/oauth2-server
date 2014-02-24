@@ -9,12 +9,12 @@
 	},
 	"require-dev": {
 		"league/phpunit-coverage-listener": "~1.0",
-        "mockery/mockery": "0.8"
+        	"mockery/mockery": "0.8"
 	},
 	"repositories": [
 		{
 			"type": "git",
-			"url": "https://github.com/php-loep/oauth2-server.git"
+			"url": "https://github.com/thephpleague/oauth2-server.git"
 		}
 	],
 	"keywords": [
