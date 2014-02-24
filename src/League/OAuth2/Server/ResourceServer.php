@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * OAuth 2.0 Resource Server
  */
-class Resource extends AbstractServer
+class ResourceServer extends AbstractServer
 {
     /**
      * The access token

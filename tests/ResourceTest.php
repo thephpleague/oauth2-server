@@ -2,7 +2,7 @@
 
 namespace LeagueTests;
 
-use League\OAuth2\Server\Resource;
+use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Entity\AccessToken;
 use League\OAuth2\Server\Entity\Session;
@@ -10,7 +10,7 @@ use League\OAuth2\Server\Entity\Client;
 use League\OAuth2\Server\Entity\Scope;
 use \Mockery as M;
 
-class ResourceTests extends \PHPUnit_Framework_TestCase
+class ResourceServerTests extends \PHPUnit_Framework_TestCase
 {
     private function returnDefault()
     {
@@ -23,7 +23,7 @@ class ResourceTests extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
 
-        $server = new Resource(
+        $server = new ResourceServer(
             $sessionStorage,
             $accessTokenStorage,
             $clientStorage,
@@ -44,7 +44,7 @@ class ResourceTests extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
 
-        $server = new Resource(
+        $server = new ResourceServer(
             $sessionStorage,
             $accessTokenStorage,
             $clientStorage,
@@ -69,7 +69,7 @@ class ResourceTests extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
 
-        $server = new Resource(
+        $server = new ResourceServer(
             $sessionStorage,
             $accessTokenStorage,
             $clientStorage,
@@ -106,7 +106,7 @@ class ResourceTests extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
 
-        $server = new Resource(
+        $server = new ResourceServer(
             $sessionStorage,
             $accessTokenStorage,
             $clientStorage,
@@ -141,7 +141,7 @@ class ResourceTests extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
 
-        $server = new Resource(
+        $server = new ResourceServer(
             $sessionStorage,
             $accessTokenStorage,
             $clientStorage,
@@ -165,7 +165,7 @@ class ResourceTests extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
 
-        $server = new Resource(
+        $server = new ResourceServer(
             $sessionStorage,
             $accessTokenStorage,
             $clientStorage,
