@@ -2,7 +2,7 @@
 
 namespace LeagueTests;
 
-use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
 use \Mockery as M;
@@ -11,9 +11,9 @@ class AuthorizationTests extends \PHPUnit_Framework_TestCase
 {
     public function testGetExceptionMessage()
     {
-        $m = Authorization::getExceptionMessage('access_denied');
+        $m = AuthorizationServer::getExceptionMessage('access_denied');
 
-        $reflector = new \ReflectionClass('League\OAuth2\Server\Authorization');
+        $reflector = new \ReflectionClass('League\OAuth2\Server\AuthorizationServer');
         $exceptionMessages = $reflector->getProperty('exceptionMessages');
         $exceptionMessages->setAccessible(true);
         $v = $exceptionMessages->getValue();
@@ -23,20 +23,20 @@ class AuthorizationTests extends \PHPUnit_Framework_TestCase
 
     public function testGetExceptionCode()
     {
-        $this->assertEquals('access_denied', Authorization::getExceptionType(2));
+        $this->assertEquals('access_denied', AuthorizationServer::getExceptionType(2));
     }
 
     public function testGetExceptionHttpHeaders()
     {
-        $this->assertEquals(array('HTTP/1.1 401 Unauthorized'), Authorization::getExceptionHttpHeaders('access_denied'));
-        $this->assertEquals(array('HTTP/1.1 500 Internal Server Error'), Authorization::getExceptionHttpHeaders('server_error'));
-        $this->assertEquals(array('HTTP/1.1 501 Not Implemented'), Authorization::getExceptionHttpHeaders('unsupported_grant_type'));
-        $this->assertEquals(array('HTTP/1.1 400 Bad Request'), Authorization::getExceptionHttpHeaders('invalid_refresh'));
+        $this->assertEquals(array('HTTP/1.1 401 Unauthorized'), AuthorizationServer::getExceptionHttpHeaders('access_denied'));
+        $this->assertEquals(array('HTTP/1.1 500 Internal Server Error'), AuthorizationServer::getExceptionHttpHeaders('server_error'));
+        $this->assertEquals(array('HTTP/1.1 501 Not Implemented'), AuthorizationServer::getExceptionHttpHeaders('unsupported_grant_type'));
+        $this->assertEquals(array('HTTP/1.1 400 Bad Request'), AuthorizationServer::getExceptionHttpHeaders('invalid_refresh'));
     }
 
     public function testSetGet()
     {
-        $server = new Authorization;
+        $server = new AuthorizationServer;
         $server->requireScopeParam(true);
         $server->requireStateParam(true);
         $server->setDefaultScope('foobar');
@@ -68,7 +68,7 @@ class AuthorizationTests extends \PHPUnit_Framework_TestCase
     public function testInvalidGrantType()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidGrantTypeException');
-        $server = new Authorization;
+        $server = new AuthorizationServer;
         $server->getGrantType('foobar');
     }
 
@@ -82,7 +82,7 @@ class AuthorizationTests extends \PHPUnit_Framework_TestCase
 
         $_POST['grant_type'] = 'foobar';
 
-        $server = new Authorization;
+        $server = new AuthorizationServer;
         $server->addGrantType($grant);
 
         $this->assertTrue($server->issueAccessToken());
@@ -91,7 +91,7 @@ class AuthorizationTests extends \PHPUnit_Framework_TestCase
     public function testIssueAccessTokenEmptyGrantType()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
-        $server = new Authorization;
+        $server = new AuthorizationServer;
         $this->assertTrue($server->issueAccessToken());
     }
 
@@ -101,7 +101,7 @@ class AuthorizationTests extends \PHPUnit_Framework_TestCase
 
         $_POST['grant_type'] = 'foobar';
 
-        $server = new Authorization;
+        $server = new AuthorizationServer;
         $this->assertTrue($server->issueAccessToken());
     }
 }
