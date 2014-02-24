@@ -51,9 +51,16 @@ class ResourceServer extends AbstractServer
         ClientInterface $clientStorage,
         ScopeInterface $scopeStorage
     ) {
+        $sessionStorage->setServer($this);
         $this->setStorage('session', $sessionStorage);
+
+        $accessTokenStorage->setServer($this);
         $this->setStorage('access_token', $accessTokenStorage);
+
+        $clientStorage->setServer($this);
         $this->setStorage('client', $clientStorage);
+
+        $scopeStorage->setServer($this);
         $this->setStorage('scope', $scopeStorage);
 
         return $this;
