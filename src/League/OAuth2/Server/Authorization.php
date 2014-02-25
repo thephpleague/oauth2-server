@@ -140,6 +140,17 @@ class Authorization
     );
 
     /**
+     * Get error HTTP status codes that have to be send with the error response
+     *
+     * @param  string $error The error message key
+     * @return integer       integer with error HTTP status codes
+     */
+    public function getExceptionHttpStatusCode($error)
+    {
+        return self::$exceptionHttpStatusCodes[$error];
+    }
+
+    /**
      * Get all headers that have to be send with the error response
      *
      * @param  string $error The error message key
