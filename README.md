@@ -1,6 +1,6 @@
 # PHP OAuth 2.0 Server
 
-[![Latest Stable Version](https://poser.pugx.org/league/oauth2-server/v/stable.png)](https://packagist.org/packages/league/oauth2-server) [![Coverage Status](https://coveralls.io/repos/php-loep/oauth2-server/badge.png?branch=master)](https://coveralls.io/r/php-loep/oauth2-server?branch=master) [![Total Downloads](https://poser.pugx.org/league/oauth2-server/downloads.png)](https://packagist.org/packages/league/oauth2-server) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/php-loep/oauth2-server/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![Latest Stable Version](https://poser.pugx.org/league/oauth2-server/v/stable.png)](https://packagist.org/packages/league/oauth2-server) [![Coverage Status](https://coveralls.io/repos/thephpleague/oauth2-server/badge.png?branch=master)](https://coveralls.io/r/thephpleague/oauth2-server?branch=master) [![Total Downloads](https://poser.pugx.org/league/oauth2-server/downloads.png)](https://packagist.org/packages/league/oauth2-server) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/thephpleague/oauth2-server/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 
 A standards compliant [OAuth 2.0](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authorization server and resource server written in PHP.
@@ -42,7 +42,7 @@ The authorization server is a flexible class and the following core specificatio
 * client credentials ([section 2.3.1](http://tools.ietf.org/html/rfc6749#section-2.3.1))
 * password (user credentials) ([section 4.3](http://tools.ietf.org/html/rfc6749#section-4.3))
 
-An [overview of the different OAuth 2.0 grants](https://github.com/php-loep/oauth2-server/wiki/Which-OAuth-2.0-grant-should-I-use%3F) can be found in the [wiki].
+An [overview of the different OAuth 2.0 grants](https://github.com/thephpleague/oauth2-server/wiki/Which-OAuth-2.0-grant-should-I-use%3F) can be found in the [wiki].
 
 ### Resource Server
 
@@ -50,7 +50,7 @@ The resource server allows you to secure your API endpoints by checking for a va
 
 ### Custom grants
 
-Custom grants can be created easily by implementing an interface. Check out the [custom grant guide](https://github.com/php-loep/oauth2-server/wiki/Creating-custom-grants).
+Custom grants can be created easily by implementing an interface. Check out the [custom grant guide](https://github.com/thephpleague/oauth2-server/wiki/Creating-custom-grants).
 
 ## Tutorials and Documentation
 
@@ -60,25 +60,25 @@ Custom grants can be created easily by implementing an interface. Check out the 
 
 * **[Securing your API with OAuth 2.0]** - A simple tutorial on how to use the resource server to secure an API server.
 
-[Wiki]: https://github.com/php-loep/oauth2-server/wiki
-[Securing your API with OAuth 2.0]: https://github.com/php-loep/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0
-[Developing an OAuth-2.0 Authorization Server]: https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server
+[Wiki]: https://github.com/thephpleague/oauth2-server/wiki
+[Securing your API with OAuth 2.0]: https://github.com/thephpleague/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0
+[Developing an OAuth-2.0 Authorization Server]: https://github.com/thephpleague/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server
 
 ## Changelog
 
-[See the project releases page](https://github.com/php-loep/oauth2-server/releases)
+[See the project releases page](https://github.com/thephpleague/oauth2-server/releases)
 
 ## Contributing
 
-Please see [CONTRIBUTING](https://github.com/php-loep/oauth2-server/blob/master/CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](https://github.com/thephpleague/oauth2-server/blob/master/CONTRIBUTING.md) for details.
 
 ## Support
 
-Bugs and feature request are tracked on [GitHub](https://github.com/php-loep/oauth2-server/issues)
+Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague/oauth2-server/issues)
 
 ## License
 
-This package is released under the MIT License. See the bundled [LICENSE](https://github.com/php-loep/oauth2-server/blob/master/LICENSE) file for details.
+This package is released under the MIT License. See the bundled [LICENSE](https://github.com/thephpleague/oauth2-server/blob/master/LICENSE) file for details.
 
 ## Credits
 
@@ -90,7 +90,7 @@ Special thanks to:
 * [Nick Jackson](https://github.com/jacksonj04)
 * [Michael Gooden](https://github.com/MichaelGooden)
 * [Phil Sturgeon](https://github.com/philsturgeon)
-* [and all the other contributors](https://github.com/php-loep/oauth2-server/contributors)
+* [and all the other contributors](https://github.com/thephpleague/oauth2-server/contributors)
 
 The initial code was developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which was funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.
 
