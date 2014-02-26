@@ -185,7 +185,7 @@ class Resource
 
         $result = $this->storages['session']->validateAccessToken($accessToken);
 
-        if ( ! $result) {
+        if (! $result) {
             throw new Exception\InvalidAccessTokenException('Access token is not valid');
         }
 
@@ -227,7 +227,7 @@ class Resource
             return false;
         } elseif (is_array($scopes)) {
             foreach ($scopes as $scope) {
-                if ( ! in_array($scope, $this->sessionScopes)) {
+                if (! in_array($scope, $this->sessionScopes)) {
                     return false;
                 }
             }
@@ -246,7 +246,15 @@ class Resource
      */
     public function determineAccessToken($headersOnly = false)
     {
-        if ($header = $this->getRequest()->header('Authorization')) {
+        // Try to get it directly from a header
+        if (! $header = $this->getRequest()->header('Authorization')) {
+
+            // Failing that try getting it from a server variable
+            $header = $this->getRequest()->server('HTTP_AUTHORIZATION');
+        }
+
+        // One of them worked
+        if ($header) {
             // Check for special case, because cURL sometimes does an
             // internal second request and doubles the authorization header,
             // which always resulted in an error.
@@ -271,5 +279,4 @@ class Resource
 
         return $accessToken;
     }
-
 }
