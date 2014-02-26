@@ -67,7 +67,6 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('refresh_token', $v);
 
         $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     /**
@@ -208,7 +207,6 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
 
         $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     public function test_issueAccessToken_refreshTokenGrant()
@@ -247,7 +245,6 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('expires_in', $v);
 
         $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     public function test_issueAccessToken_refreshTokenGrant_rotateTokens()
@@ -290,7 +287,6 @@ class Refresh_Token_test extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('refresh_token', $v);
 
         $this->assertEquals($a->getAccessTokenTTL(), $v['expires_in']);
-        $this->assertEquals(time()+$a->getAccessTokenTTL(), $v['expires']);
     }
 
     public function test_issueAccessToken_refreshTokenGrant_customExpiresIn()
