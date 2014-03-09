@@ -271,10 +271,10 @@ class AuthorizationServer extends AbstractServer
      * @param AuthCodeInterface $authCode
      * @return self
      */
-    public function setAuthCodeStorage(AuthCodeInterface $authCode)
+    public function setAuthCodeStorage(AuthCodeInterface $storage)
     {
         $storage->setServer($this);
-        $this->storages['auth_code'] = $authCode;
+        $this->storages['auth_code'] = $storage;
         return $this;
     }
 
