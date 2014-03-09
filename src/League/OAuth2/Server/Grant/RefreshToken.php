@@ -12,7 +12,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Request;
-use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Storage\SessionInterface;
@@ -88,7 +88,7 @@ class RefreshToken extends AbstractGrant
         );
 
         if ($client === null) {
-            throw new ClientException(Authorization::getExceptionMessage('invalid_client'), 8);
+            throw new ClientException(AuthorizationServer::getExceptionMessage('invalid_client'), 8);
         }
 
         $oldRefreshTokenParam = $this->server->getRequest()->request->get('refresh_token', null);
@@ -122,7 +122,6 @@ class RefreshToken extends AbstractGrant
         } else {
             // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
             //  the request doesn't include any new scopes
-
             foreach ($requestedScopes as $requestedScope) {
                 if (!isset($scopes[$requestedScope->getId()])) {
                     throw new Exception\ClientException(

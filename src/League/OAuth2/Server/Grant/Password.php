@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Authorization;
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entity\AccessToken;
 use League\OAuth2\Server\Entity\Client;
 use League\OAuth2\Server\Entity\RefreshToken;
@@ -87,7 +87,7 @@ class Password extends AbstractGrant
         $clientId = $this->server->getRequest()->request->get('client_id', null);
         if (is_null($clientId)) {
             throw new ClientException(
-                sprintf(Authorization::getExceptionMessage('invalid_request'), 'client_id'),
+                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_id'),
                 0
             );
         }
@@ -95,7 +95,7 @@ class Password extends AbstractGrant
         $clientSecret = $this->server->getRequest()->request->get('client_secret', null);
         if (is_null($clientSecret)) {
             throw new ClientException(
-                sprintf(Authorization::getExceptionMessage('invalid_request'), 'client_secret'),
+                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_secret'),
                 0
             );
         }
@@ -109,13 +109,13 @@ class Password extends AbstractGrant
         );
 
         if (($client instanceof Client) === false) {
-            throw new ClientException(Authorization::getExceptionMessage('invalid_client'), 8);
+            throw new ClientException(AuthorizationServer::getExceptionMessage('invalid_client'), 8);
         }
 
         $username = $this->server->getRequest()->request->get('username', null);
         if (is_null($username)) {
             throw new ClientException(
-                sprintf(Authorization::getExceptionMessage('invalid_request'), 'username'),
+                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'username'),
                 0
             );
         }
@@ -123,7 +123,7 @@ class Password extends AbstractGrant
         $password = $this->server->getRequest()->request->get('password', null);
         if (is_null($password)) {
             throw new ClientException(
-                sprintf(Authorization::getExceptionMessage('invalid_request'), 'password'),
+                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'password'),
                 0
             );
         }
