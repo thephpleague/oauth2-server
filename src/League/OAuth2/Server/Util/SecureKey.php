@@ -4,7 +4,7 @@
  *
  * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) PHP League of Extraordinary Packages
+ * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
  * @link        http://github.com/php-loep/oauth2-server
  */
