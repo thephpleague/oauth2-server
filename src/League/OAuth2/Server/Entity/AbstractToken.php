@@ -176,7 +176,7 @@ abstract class AbstractToken
      * @param  array $unformated Array of \League\OAuth2\Server\Entity\Scope
      * @return array
      */
-    private function formatScopes($unformated = [])
+    protected function formatScopes($unformated = [])
     {
         $scopes = [];
         foreach ($unformated as $scope) {
