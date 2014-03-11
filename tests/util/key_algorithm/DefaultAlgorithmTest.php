@@ -6,8 +6,6 @@
  * Time: 12:31 PM
  */
 
-use League\OAuth2\Server\Util\KeyAlgorithm\DefaultAlgorithm;
-
 class Default_Algorithm_test extends PHPUnit_Framework_TestCase
 {
     public function test_make()
