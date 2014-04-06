@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.2 (released 2014-04-16)
+
+* Added the ability to change the algorithm that is used to generate the token strings (Issue #151)
+
+## 3.1.2 (released 2014-02-26)
+
+* Support Authorization being an environment variable. [See more](http://fortrabbit.com/docs/essentials/quirks-and-constraints#authorization-header)
+
 ## 3.1.1 (released 2013-12-05)
 
 * Normalize headers when `getallheaders()` is available (Issues #108 and #114)
