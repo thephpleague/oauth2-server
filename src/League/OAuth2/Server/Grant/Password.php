@@ -14,7 +14,7 @@ namespace League\OAuth2\Server\Grant;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entity\AccessToken;
 use League\OAuth2\Server\Entity\Client;
-use League\OAuth2\Server\Entity\RefreshToken;
+use League\OAuth2\Server\Entity\RefreshToken as RT;
 use League\OAuth2\Server\Entity\Session;
 use League\OAuth2\Server\Entity\Scope;
 use League\OAuth2\Server\Exception\ClientException;
@@ -164,7 +164,7 @@ class Password extends AbstractGrant
 
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
-            $refreshToken = new RefreshToken($this->server);
+            $refreshToken = new RT($this->server);
             $refreshToken->setToken(SecureKey::make());
             $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
             $response['refresh_token'] = $refreshToken->getToken();
