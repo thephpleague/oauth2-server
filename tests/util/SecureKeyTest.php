@@ -2,19 +2,36 @@
 
 namespace LeagueTests\Util;
 
-use League\OAuth2\Server\Util\SecureKey;
+use \League\OAuth2\Server\Util\SecureKey;
 use \Mockery as M;
 
 class SecureKeyTest extends \PHPUnit_Framework_TestCase
 {
-	function testMake()
-	{
-		$v1 = SecureKey::make();
-		$v2 = SecureKey::make();
-		$v3 = SecureKey::make(50);
+	function testGenerate()
+    {
+        $v1 = SecureKey::generate();
+        $v2 = SecureKey::generate();
+        $v3 = SecureKey::generate(50);
 
-		$this->assertEquals(40, strlen($v1));
-		$this->assertTrue($v1 !== $v2);
-		$this->assertEquals(50, strlen($v3));
-	}
+        $this->assertEquals(40, strlen($v1));
+        $this->assertTrue($v1 !== $v2);
+        $this->assertEquals(50, strlen($v3));
+    }
+
+    public function testGenerateWithDifferentAlgorithm()
+    {
+        $algorithm = $this->getMock('League\OAuth2\Server\Util\KeyAlgorithm\KeyAlgorithmInterface');
+
+        $result = 'dasdsdsaads';
+        $algorithm
+            ->expects($this->once())
+            ->method('generate')
+            ->with(11)
+            ->will($this->returnValue($result))
+        ;
+
+        SecureKey::setAlgorithm($algorithm);
+        $this->assertSame($algorithm, SecureKey::getAlgorithm());
+        $this->assertEquals($result, SecureKey::generate(11));
+    }
 }
