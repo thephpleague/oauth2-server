@@ -14,7 +14,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 {
     function testCompleteFlowMissingClientId()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "client_id" parameter.');
 
         $_POST['grant_type'] = 'password';
 
@@ -28,7 +28,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 
     function testCompleteFlowMissingClientSecret()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "client_secret" parameter.');
 
         $_POST = [
             'grant_type' => 'password',
@@ -44,7 +44,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 
     function testCompleteFlowInvalidClient()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'Client authentication failed');
 
         $_POST = [
             'grant_type' => 'password',
@@ -67,7 +67,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 
     function testNoUsername()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "username" parameter.');
 
         $_POST = [
             'grant_type' => 'password',
@@ -109,7 +109,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 
     function testNoPassword()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "password" parameter.');
 
         $_POST = [
             'grant_type' => 'password',
@@ -152,7 +152,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 
     function testNoCallable()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidGrantTypeException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidGrantTypeException', 'Null or non-callable callback set on Password grant');
 
         $_POST = [
             'grant_type' => 'password',
@@ -196,12 +196,14 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 
     function testCompleteFlowInvalidScope()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The requested scope is invalid, unknown, or malformed. Check the "foo" scope.');
 
         $_POST = [
             'grant_type' => 'password',
             'client_id' =>  'testapp',
             'client_secret' =>  'foobar',
+            'username'  =>  'foo',
+            'password'  =>  'foobar',
             'scope' => 'foo'
         ];
 
@@ -242,7 +244,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 
     function testCompleteFlowNoScopes()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "scope" parameter.');
 
         $_POST = [
             'grant_type' => 'password',
@@ -291,7 +293,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 
     function testCompleteFlowInvalidCredentials()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The user credentials were incorrect.');
 
         $_POST = [
             'grant_type' => 'password',

@@ -27,7 +27,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
     function testCompleteFlowMissingClientId()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "client_id" parameter.');
 
         $_POST['grant_type'] = 'refresh_token';
 
@@ -40,7 +40,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
     function testCompleteFlowMissingClientSecret()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "client_secret" parameter.');
 
         $_POST = [
             'grant_type' => 'refresh_token',
@@ -56,7 +56,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
     function testCompleteFlowInvalidClient()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'Client authentication failed');
 
         $_POST = [
             'grant_type' => 'refresh_token',
@@ -79,7 +79,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
     function testCompleteFlowMissingRefreshToken()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "refresh_token" parameter.');
 
         $_POST = [
             'grant_type'    => 'refresh_token',
@@ -113,7 +113,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
     function testCompleteFlowInvalidRefreshToken()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The refresh token is invalid.');
 
         $_POST = [
             'grant_type'    => 'refresh_token',
@@ -352,7 +352,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
         $server->addGrantType($grant);
 
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The requested scope is invalid, unknown, or malformed. Check the "blah" scope.');
 
         $server->issueAccessToken();
     }
