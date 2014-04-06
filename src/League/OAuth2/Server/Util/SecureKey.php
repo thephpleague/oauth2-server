@@ -11,11 +11,16 @@
 
 namespace League\OAuth2\Server\Util;
 
+use League\OAuth2\Server\Util\KeyAlgorithm\DefaultAlgorithm;
+use League\OAuth2\Server\Util\KeyAlgorithm\KeyAlgorithmInterface;
+
 /**
  * SecureKey class
  */
 class SecureKey
 {
+    protected static $algorithm;
+
     /**
      * Generate a new unique code
      * @param  integer $len Length of the generated code
@@ -23,18 +28,27 @@ class SecureKey
      */
     public static function make($len = 40)
     {
-        // We generate twice as many bytes here because we want to ensure we have
-        // enough after we base64 encode it to get the length we need because we
-        // take out the "/", "+", and "=" characters.
-        $bytes = openssl_random_pseudo_bytes($len * 2, $strong);
+        return self::getAlgorithm()->make($len);
+    }
 
-        // We want to stop execution if the key fails because, well, that is bad.
-        if ($bytes === false || $strong === false) {
-            // @codeCoverageIgnoreStart
-            throw new \Exception('Error Generating Key');
-            // @codeCoverageIgnoreEnd
+    /**
+     * @param KeyAlgorithmInterface $algorithm
+     */
+    public static function setAlgorithm(KeyAlgorithmInterface $algorithm)
+    {
+        self::$algorithm = $algorithm;
+    }
+
+    /**
+     * @return KeyAlgorithmInterface
+     */
+    public static function getAlgorithm()
+    {
+        if (!self::$algorithm) {
+
+            self::$algorithm = new DefaultAlgorithm();
         }
 
-        return substr(str_replace(array('/', '+', '='), '', base64_encode($bytes)), 0, $len);
+        return self::$algorithm;
     }
 }
