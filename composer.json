@@ -42,10 +42,8 @@
 		"league/oauth2server": "*"
 	},
 	"autoload": {
-		"psr-0": {
-            "League\\OAuth2\\Server": "src/"
-		},
         "psr-4": {
+            "League\\OAuth2\\Server\\": "src/",
             "LeagueTests\\": "tests/"
         }
 	},
