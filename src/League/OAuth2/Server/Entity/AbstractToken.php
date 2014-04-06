@@ -173,13 +173,13 @@ abstract class AbstractToken
 
     /**
      * Format the local scopes array
-     * @param  array $unformated Array of \League\OAuth2\Server\Entity\Scope
+     * @param  array $unformatted Array of \League\OAuth2\Server\Entity\Scope
      * @return array
      */
-    protected function formatScopes($unformated = [])
+    protected function formatScopes($unformatted = [])
     {
         $scopes = [];
-        foreach ($unformated as $scope) {
+        foreach ($unformatted as $scope) {
             if ($scope instanceof Scope) {
                 $scopes[$scope->getId()] = $scope;
             }
