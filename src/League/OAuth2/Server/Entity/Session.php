@@ -189,17 +189,6 @@ class Session
     }
 
     /**
-     * Associate an authorization code with the session
-     * @param  \League\OAuth2\Server\Entity\AuthCode $authCode
-     * @return self
-     */
-    public function associateAuthCode(AuthCode $authCode)
-    {
-        $this->authCode = $authCode;
-        return $this;
-    }
-
-    /**
      * Associate a client with the session
      * @param  League\OAuth2\Server\Entity\Client $client The client
      * @return self
