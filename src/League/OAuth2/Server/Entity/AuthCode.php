@@ -23,6 +23,48 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class AuthCode extends AbstractToken
 {
     /**
+     * Redirect URI
+     * @var string
+     */
+    protected $redirectUri = '';
+
+    /**
+     * Set the redirect URI for the authorization request
+     * @param string $redirectUri
+     * @return  self
+     */
+    public function setRedirectUri($redirectUri)
+    {
+        $this->redirectUri = $redirectUri;
+        return $this;
+    }
+
+    /**
+     * Get the redirect URI
+     * @return  string
+     */
+    public function getRedirectUri()
+    {
+        return $this->redirectUri;
+    }
+
+    /**
+     * [generateRedirectUri description]
+     * @param  string $state          The state parameter if set by the client
+     * @param  string $queryDelimeter The query delimiter ('?' for auth code grant, '#' for implicit grant)
+     * @return string
+     */
+    public function generateRedirectUri($state = null, $queryDelimeter = '?')
+    {
+        $uri = $this->getRedirectUri();
+        $uri .= (strstr($this->getRedirectUri(), $queryDelimeter) === false) ? $queryDelimeter : '&';
+        return $uri.http_build_query([
+            'code'  =>  $this->getToken(),
+            'state' =>  $state
+        ]);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getSession()
