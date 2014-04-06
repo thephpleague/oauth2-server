@@ -12,4 +12,21 @@ class Secure_Key_test extends PHPUnit_Framework_TestCase
 		$this->assertTrue($v1 !== $v2);
 		$this->assertEquals(50, strlen($v3));
 	}
+
+    public function test_make_with_different_algorithm()
+    {
+        $algorithm = $this->getMock('League\OAuth2\Server\Util\KeyAlgorithm\KeyAlgorithmInterface');
+
+        $result = 'dasdsdsaads';
+        $algorithm
+            ->expects($this->once())
+            ->method('make')
+            ->with(11)
+            ->will($this->returnValue($result))
+        ;
+
+        League\OAuth2\Server\Util\SecureKey::setAlgorithm($algorithm);
+        $this->assertSame($algorithm, League\OAuth2\Server\Util\SecureKey::getAlgorithm());
+        $this->assertEquals($result, League\OAuth2\Server\Util\SecureKey::make(11));
+    }
 }
