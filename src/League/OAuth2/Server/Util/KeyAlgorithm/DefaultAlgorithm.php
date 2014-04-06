@@ -1,9 +1,12 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: jderay
- * Date: 3/11/14
- * Time: 12:22 PM
+ * OAuth 2.0 Secure key default algorithm
+ *
+ * @package     php-loep/oauth2-server
+ * @author      Alex Bilbie <hello@alexbilbie.com>
+ * @copyright   Copyright (c) 2013 PHP League of Extraordinary Packages
+ * @license     http://mit-license.org/
+ * @link        http://github.com/php-loep/oauth2-server
  */
 
 namespace League\OAuth2\Server\Util\KeyAlgorithm;
