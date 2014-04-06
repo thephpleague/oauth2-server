@@ -115,7 +115,7 @@ abstract class AbstractToken
      */
     public function setToken($token = null)
     {
-        $this->token = ($token !== null) ? $token : SecureKey::make();
+        $this->token = ($token !== null) ? $token : SecureKey::generate();
         return $this;
     }
 

@@ -98,7 +98,7 @@ class ClientCredentials extends AbstractGrant
 
         // Generate an access token
         $accessToken = new AccessToken($this->server);
-        $accessToken->setToken(SecureKey::make());
+        $accessToken->setToken(SecureKey::generate());
         $accessToken->setExpireTime($this->server->getAccessTokenTTL() + time());
 
         // Associate scopes with the session and access token

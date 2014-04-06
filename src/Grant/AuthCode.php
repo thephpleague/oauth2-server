@@ -163,7 +163,7 @@ class AuthCode extends AbstractGrant
 
         // Create a new auth code
         $authCode = new AC($this->server);
-        $authCode->setToken(SecureKey::make());
+        $authCode->setToken(SecureKey::generate());
         $authCode->setRedirectUri($authParams['redirect_uri']);
 
         foreach ($authParams['scopes'] as $scope) {
@@ -250,7 +250,7 @@ class AuthCode extends AbstractGrant
 
         // Generate the access token
         $accessToken = new AccessToken($this->server);
-        $accessToken->setToken(SecureKey::make());
+        $accessToken->setToken(SecureKey::generate());
         $accessToken->setExpireTime($this->server->getAccessTokenTTL() + time());
 
         foreach ($authCodeScopes as $authCodeScope) {
@@ -267,7 +267,7 @@ class AuthCode extends AbstractGrant
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
             $refreshToken = new RefreshToken($this->server);
-            $refreshToken->setToken(SecureKey::make());
+            $refreshToken->setToken(SecureKey::generate());
             $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
             $response['refresh_token'] = $refreshToken->getToken();
         }
