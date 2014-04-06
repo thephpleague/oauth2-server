@@ -19,9 +19,13 @@
 	],
 	"keywords": [
 		"oauth",
-		"oauth2",
+        "oauth2",
+        "oauth 2",
+		"oauth 2.0",
 		"server",
-		"authorization",
+        "auth",
+        "authorization",
+		"authorisation",
 		"authentication",
 		"resource",
 		"api",
@@ -46,8 +50,5 @@
             "League\\OAuth2\\Server\\": "src/",
             "LeagueTests\\": "tests/"
         }
-	},
-	"suggest": {
-
 	}
 }
