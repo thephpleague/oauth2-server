@@ -74,6 +74,15 @@ class Resource
      * @var string
      */
     protected $clientId = null;
+    
+    /**
+     * The messages response
+     * @var array
+     */
+    protected $msg = array(
+        'invalidToken'  => 'Access token is not valid',
+        'missingToken'  => 'Access token is missing'
+    );
 
     /**
      * Sets up the Resource
@@ -186,7 +195,7 @@ class Resource
         $result = $this->storages['session']->validateAccessToken($accessToken);
 
         if (! $result) {
-            throw new Exception\InvalidAccessTokenException('Access token is not valid');
+            throw new Exception\InvalidAccessTokenException($this->msg['invalidToken']);
         }
 
         $this->accessToken = $accessToken;
@@ -236,6 +245,25 @@ class Resource
 
         return false;
     }
+    
+    /**
+     * Set the nessage.
+     *
+     * @param array|string
+     * @return object
+     */
+    public function setMsg($key, $val = null)
+    {
+        if(is_array($key) && count($key) > 0) {
+            foreach($key as $mk => $msg) {
+                $this->msg[$mk] = $msg;
+            }
+        } elseif($val) {
+            $this->msg[$key] = $val;
+        }
+        
+        return $this;
+    }
 
     /**
      * Reads in the access token from the headers.
@@ -274,7 +302,7 @@ class Resource
         }
 
         if (empty($accessToken)) {
-            throw new Exception\InvalidAccessTokenException('Access token is missing');
+            throw new Exception\InvalidAccessTokenException($this->msg['missingToken']);
         }
 
         return $accessToken;
