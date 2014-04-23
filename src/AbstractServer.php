@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server;
 
+use League\OAuth2\Server\Exception;
+use League\OAuth2\Server\TokenType\TokenTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -31,6 +33,12 @@ abstract class AbstractServer
      * @var array
      */
     protected $storages = [];
+
+    /**
+     * Token type
+     * @var TokenTypeInterface
+     */
+    protected $tokenType;
 
     /**
      * Sets the Request Object
@@ -71,5 +79,24 @@ abstract class AbstractServer
         }
 
         return $this->storages[$obj];
+    }
+
+    /**
+     * Set the access token type
+     * @param  TokenTypeInterface $tokenType The token type
+     * @return void
+     */
+    public function setTokenType(TokenTypeInterface $tokenType)
+    {
+        $this->tokenType = $tokenType;
+    }
+
+    /**
+     * Get the access token type
+     * @return TokenTypeInterface
+     */
+    public function getTokenType()
+    {
+        return $this->tokenType;
     }
 }

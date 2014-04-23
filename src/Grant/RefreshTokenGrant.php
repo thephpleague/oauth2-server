@@ -131,12 +131,9 @@ class RefreshTokenGrant extends AbstractGrant
         $oldAccessToken->expire($this->server->getStorage('access_token'));
         $newAccessToken->save($this->server->getStorage('access_token'));
 
-        $response = [
-            'access_token'  =>  $newAccessToken->getToken(),
-            'token_type'    =>  'Bearer',
-            'expires'       =>  $newAccessToken->getExpireTime(),
-            'expires_in'    =>  $this->server->getAccessTokenTTL()
-        ];
+        $this->server->getTokenType()->set('access_token', $accessToken->getToken());
+        $this->server->getTokenType()->set('expires', $accessToken->getExpireTime());
+        $this->server->getTokenType()->set('expires_in', $this->server->getAccessTokenTTL());
 
         // Expire the old refresh token
         $oldRefreshToken->expire($this->server->getStorage('refresh_token'));
@@ -148,8 +145,8 @@ class RefreshTokenGrant extends AbstractGrant
         $newRefreshToken->setAccessToken($newAccessToken);
         $newRefreshToken->save($this->server->getStorage('refresh_token'));
 
-        $response['refresh_token'] = $newRefreshToken->getToken();
+        $this->server->getTokenType()->set('refresh_token', $refreshToken->getToken());
 
-        return $response;
+        return $this->server->getTokenType()->generateResponse();
     }
 }

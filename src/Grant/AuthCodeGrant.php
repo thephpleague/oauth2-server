@@ -218,19 +218,16 @@ class AuthCodeGrant extends AbstractGrant
             $session->associateScope($authCodeScope);
         }
 
-        $response = [
-            'access_token'  =>  $accessToken->getToken(),
-            'token_type'    =>  'Bearer',
-            'expires'       =>  $accessToken->getExpireTime(),
-            'expires_in'    =>  $this->server->getAccessTokenTTL()
-        ];
+        $this->server->getTokenType()->set('access_token', $accessToken->getToken());
+        $this->server->getTokenType()->set('expires', $accessToken->getExpireTime());
+        $this->server->getTokenType()->set('expires_in', $this->server->getAccessTokenTTL());
 
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
             $refreshToken = new RefreshTokenEntity($this->server);
             $refreshToken->setToken(SecureKey::generate());
             $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
-            $response['refresh_token'] = $refreshToken->getToken();
+            $this->server->getTokenType()->set('refresh_token', $refreshToken->getToken());
         }
 
         // Expire the auth code
@@ -246,6 +243,6 @@ class AuthCodeGrant extends AbstractGrant
             $refreshToken->save();
         }
 
-        return $response;
+        return $this->server->getTokenType()->generateResponse();
     }
 }
