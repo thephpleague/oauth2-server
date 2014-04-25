@@ -65,7 +65,7 @@ abstract class AbstractServer
     public function getStorage($obj)
     {
         if (!isset($this->storages[$obj])) {
-            throw new Exception\ServerException(
+            throw new Exception\ServerErrorException(
                 'The `'.$obj.'` storage interface has not been registered with the server'
             );
         }
