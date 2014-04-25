@@ -24,7 +24,6 @@ use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
-use League\OAuth2\Server\Exception\ClientException;
 
 /**
  * Auth code grant class
@@ -82,42 +81,27 @@ class AuthCode extends AbstractGrant
         // Get required params
         $clientId = $this->server->getRequest()->request->get('client_id', null);
         if (is_null($clientId)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_id'),
-                0
-            );
+            throw new Exception\InvalidRequestException('client_id');
         }
 
         $redirectUri = $this->server->getRequest()->request->get('redirect_uri', null);
         if (is_null($redirectUri)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'redirect_uri'),
-                0
-            );
+            throw new Exception\InvalidRequestException('redirect_uri');
         }
 
         $state = $this->server->getRequest()->request->get('state', null);
         if ($this->server->stateParamRequired() === true && is_null($state)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'state'),
-                0
-            );
+            throw new Exception\InvalidRequestException('state');
         }
 
         $responseType = $this->server->getRequest()->request->get('response_type', null);
         if (is_null($responseType)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'response_type'),
-                0
-            );
+            throw new Exception\InvalidRequestException('response_type');
         }
 
         // Ensure response type is one that is recognised
         if ( ! in_array($responseType, $this->server->getResponseTypes())) {
-            throw new ClientException(
-                $this->server->getExceptionMessage('unsupported_response_type'),
-                3
-            );
+            throw new Exception\UnsupportedResponseTypeException();
         }
 
         // Validate client ID and redirect URI
@@ -129,7 +113,7 @@ class AuthCode extends AbstractGrant
         );
 
         if (($client instanceof Client) === false) {
-            throw new ClientException(AuthorizationServer::getExceptionMessage('invalid_client'), 8);
+            throw new Exception\InvalidClientException();
         }
 
         // Validate any scopes that are in the request
@@ -186,26 +170,17 @@ class AuthCode extends AbstractGrant
         // Get the required params
         $clientId = $this->server->getRequest()->request->get('client_id', null);
         if (is_null($clientId)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_id'),
-                0
-            );
+            throw new Exception\InvalidRequestException('client_id');
         }
 
         $clientSecret = $this->server->getRequest()->request->get('client_secret', null);
         if (is_null($clientSecret)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_secret'),
-                0
-            );
+            throw new Exception\InvalidRequestException('client_secret');
         }
 
         $redirectUri = $this->server->getRequest()->request->get('redirect_uri', null);
         if (is_null($redirectUri)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'redirect_uri'),
-                0
-            );
+            throw new Exception\InvalidRequestException('redirect_uri');
         }
 
         // Validate client ID and client secret
@@ -217,32 +192,23 @@ class AuthCode extends AbstractGrant
         );
 
         if (($client instanceof Client) === false) {
-            throw new ClientException(AuthorizationServer::getExceptionMessage('invalid_client'), 8);
+            throw new Exception\InvalidClientException();
         }
 
         // Validate the auth code
         $authCode = $this->server->getRequest()->request->get('code', null);
         if (is_null($authCode)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'code'),
-                0
-            );
+            throw new Exception\InvalidRequestException('code');
         }
 
         $code = $this->server->getStorage('auth_code')->get($authCode);
         if (($code instanceof AC) === false) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'code'),
-                9
-            );
+            throw new Exception\InvalidRequestException('code');
         }
 
         // Check redirect URI presented matches redirect URI originally used in authorise request
         if ($code->getRedirectUri() !== $redirectUri) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'redirect_uri'),
-                9
-            );
+            throw new Exception\InvalidRequestException('redirect_uri');
         }
 
         $session = $code->getSession();

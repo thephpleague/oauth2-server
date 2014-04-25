@@ -13,7 +13,7 @@ namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entity\Scope;
-use League\OAuth2\Server\Exception\ClientException;
+use League\OAuth2\Server\Exception;
 
 /**
  * Abstract grant class
@@ -121,7 +121,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             $this->server->getDefaultScope() === null &&
             count($scopesList) === 0
         ) {
-            throw new ClientException(sprintf($this->server->getExceptionMessage('invalid_request'), 'scope'), 0);
+            throw new Exception\InvalidRequestException('scope');
         } elseif (count($scopesList) === 0 && $this->server->getDefaultScope() !== null) {
             if (is_array($this->server->getDefaultScope())) {
                 $scopesList = $this->server->getDefaultScope();
@@ -139,7 +139,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             );
 
             if (($scope instanceof Scope) === false) {
-                throw new ClientException(sprintf($this->server->getExceptionMessage('invalid_scope'), $scopeItem), 4);
+                throw new Exception\InvalidScopeException($scopeItem);
             }
 
             $scopes[$scope->getId()] = $scope;
