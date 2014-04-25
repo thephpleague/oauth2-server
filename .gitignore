@@ -3,3 +3,5 @@
 /tests/coverage
 /docs
 /testing
+/examples/relational/vendor
+/examples/relational/config/oauth2.sqlite3
