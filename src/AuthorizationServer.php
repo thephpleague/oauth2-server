@@ -13,9 +13,7 @@ namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
-use League\OAuth2\Server\Exception\ClientException;
-use League\OAuth2\Server\Exception\ServerException;
-use League\OAuth2\Server\Exception\InvalidGrantTypeException;
+use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Storage\StorageWrapper;
 use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
@@ -305,12 +303,12 @@ class AuthorizationServer extends AbstractServer
     {
         $grantType = $this->getRequest()->request->get('grant_type');
         if (is_null($grantType)) {
-            throw new ClientException(sprintf(self::$exceptionMessages['invalid_request'], 'grant_type'), 0);
+            throw new Exception\InvalidRequestException('grant_type');
         }
 
         // Ensure grant type is one that is recognised and is enabled
         if ( ! in_array($grantType, array_keys($this->grantTypes))) {
-            throw new ClientException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $grantType), 7);
+            throw new Exception\UnsupportedGrantTypeException($grantType);
         }
 
         // Complete the flow
@@ -320,7 +318,7 @@ class AuthorizationServer extends AbstractServer
     /**
      * Return a grant type class
      * @param  string $grantType The grant type identifer
-     * @return Grant\AuthCode|Grant\ClientCredentials|Grant\Implict|Grant\Password|Grant\RefreshToken
+     * @return Grant\GrantTypeInterface
      */
     public function getGrantType($grantType)
     {
@@ -328,6 +326,6 @@ class AuthorizationServer extends AbstractServer
             return $this->grantTypes[$grantType];
         }
 
-        throw new InvalidGrantTypeException(sprintf(self::$exceptionMessages['unsupported_grant_type'], $grantType), 9);
+        throw new Exception\InvalidGrantException($grantType);
     }
 }
