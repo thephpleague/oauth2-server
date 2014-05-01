@@ -29,8 +29,8 @@ class InvalidCredentialsException extends OAuthException
     /**
      * {@inheritdoc}
      */
-    public function __construct($parameter)
+    public function __construct()
     {
-        parent::__construct('The user credentials were incorrect..');
+        parent::__construct('The user credentials were incorrect.');
     }
 }

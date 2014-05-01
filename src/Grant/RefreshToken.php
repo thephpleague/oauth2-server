@@ -21,7 +21,6 @@ use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Entity\RefreshToken as RT;
 use League\OAuth2\Server\Entity\AccessToken;
 use League\OAuth2\Server\Entity\Session;
-use League\OAuth2\Server\Exception\ClientException;
 
 /**
  * Referesh token grant
@@ -65,18 +64,12 @@ class RefreshToken extends AbstractGrant
     {
         $clientId = $this->server->getRequest()->request->get('client_id', null);
         if (is_null($clientId)) {
-            throw new Exception\ClientException(
-                sprintf($this->server->getExceptionMessage('invalid_request'), 'client_id'),
-                0
-            );
+            throw new Exception\InvalidRequestException('client_id');
         }
 
         $clientSecret = $this->server->getRequest()->request->get('client_secret', null);
         if (is_null($clientSecret)) {
-            throw new Exception\ClientException(
-                sprintf($this->server->getExceptionMessage('invalid_request'), 'client_secret'),
-                0
-            );
+            throw new Exception\InvalidRequestException('client_secret');
         }
 
         // Validate client ID and client secret
@@ -88,22 +81,19 @@ class RefreshToken extends AbstractGrant
         );
 
         if ($client === null) {
-            throw new ClientException(AuthorizationServer::getExceptionMessage('invalid_client'), 8);
+            throw new Exception\InvalidClientException();
         }
 
         $oldRefreshTokenParam = $this->server->getRequest()->request->get('refresh_token', null);
         if ($oldRefreshTokenParam === null) {
-            throw new Exception\ClientException(
-                sprintf($this->server->getExceptionMessage('invalid_request'), 'refresh_token'),
-                0
-            );
+            throw new Exception\InvalidRequestException('refresh_token');
         }
 
         // Validate refresh token
         $oldRefreshToken = $this->server->getStorage('refresh_token')->get($oldRefreshTokenParam);
 
         if (($oldRefreshToken instanceof RT) === false) {
-            throw new Exception\ClientException($this->server->getExceptionMessage('invalid_refresh'), 0);
+            throw new Exception\InvalidRefreshException();
         }
 
         $oldAccessToken = $oldRefreshToken->getAccessToken();
@@ -124,10 +114,7 @@ class RefreshToken extends AbstractGrant
             //  the request doesn't include any new scopes
             foreach ($requestedScopes as $requestedScope) {
                 if (!isset($scopes[$requestedScope->getId()])) {
-                    throw new Exception\ClientException(
-                        sprintf($this->server->getExceptionMessage('invalid_scope'), $requestedScope->getId()),
-                        0
-                    );
+                    throw new Exception\InvalidScopeException($requestedScope->getId());
                 }
             }
 

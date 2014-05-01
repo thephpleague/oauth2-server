@@ -16,7 +16,7 @@ use League\OAuth2\Server\Entity\AccessToken;
 use League\OAuth2\Server\Entity\Client;
 use League\OAuth2\Server\Entity\Session;
 use League\OAuth2\Server\Entity\Scope;
-use League\OAuth2\Server\Exception\ClientException;
+use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
@@ -61,18 +61,12 @@ class ClientCredentials extends AbstractGrant
          // Get the required params
         $clientId = $this->server->getRequest()->request->get('client_id', null);
         if (is_null($clientId)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_id'),
-                0
-            );
+            throw new Exception\InvalidRequestException('client_id');
         }
 
         $clientSecret = $this->server->getRequest()->request->get('client_secret', null);
         if (is_null($clientSecret)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_secret'),
-                0
-            );
+            throw new Exception\InvalidRequestException('client_secret');
         }
 
         // Validate client ID and client secret
@@ -84,7 +78,7 @@ class ClientCredentials extends AbstractGrant
         );
 
         if (($client instanceof Client) === false) {
-            throw new ClientException(AuthorizationServer::getExceptionMessage('invalid_client'), 8);
+            throw new Exception\InvalidClientException();
         }
 
         // Validate any scopes that are in the request

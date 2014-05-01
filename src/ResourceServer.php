@@ -210,7 +210,7 @@ class ResourceServer extends AbstractServer
         }
 
         if (empty($accessToken)) {
-            throw new Exception\InvalidAccessTokenException('Access token is missing');
+            throw new Exception\InvalidRequestException('access token');
         }
 
         return $accessToken;

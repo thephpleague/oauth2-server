@@ -29,7 +29,7 @@ class InvalidClientException extends OAuthException
     /**
      * {@inheritdoc}
      */
-    public function __construct($parameter)
+    public function __construct()
     {
         parent::__construct('Client authentication failed.');
     }

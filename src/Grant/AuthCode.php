@@ -101,7 +101,7 @@ class AuthCode extends AbstractGrant
 
         // Ensure response type is one that is recognised
         if ( ! in_array($responseType, $this->server->getResponseTypes())) {
-            throw new Exception\UnsupportedResponseTypeException();
+            throw new Exception\UnsupportedResponseTypeException($responseType);
         }
 
         // Validate client ID and redirect URI

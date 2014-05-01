@@ -17,8 +17,7 @@ use League\OAuth2\Server\Entity\Client;
 use League\OAuth2\Server\Entity\RefreshToken as RT;
 use League\OAuth2\Server\Entity\Session;
 use League\OAuth2\Server\Entity\Scope;
-use League\OAuth2\Server\Exception\ClientException;
-use League\OAuth2\Server\Exception\InvalidGrantTypeException;
+use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
@@ -70,7 +69,7 @@ class Password extends AbstractGrant
     protected function getVerifyCredentialsCallback()
     {
         if (is_null($this->callback) || ! is_callable($this->callback)) {
-            throw new InvalidGrantTypeException('Null or non-callable callback set on Password grant');
+            throw new Exception\ServerErrorException('Null or non-callable callback set on Password grant');
         }
 
         return $this->callback;
@@ -86,18 +85,12 @@ class Password extends AbstractGrant
         // Get the required params
         $clientId = $this->server->getRequest()->request->get('client_id', null);
         if (is_null($clientId)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_id'),
-                0
-            );
+            throw new Exception\InvalidRequestException('client_id');
         }
 
         $clientSecret = $this->server->getRequest()->request->get('client_secret', null);
         if (is_null($clientSecret)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'client_secret'),
-                0
-            );
+            throw new Exception\InvalidRequestException('client_secret');
         }
 
         // Validate client ID and client secret
@@ -109,30 +102,24 @@ class Password extends AbstractGrant
         );
 
         if (($client instanceof Client) === false) {
-            throw new ClientException(AuthorizationServer::getExceptionMessage('invalid_client'), 8);
+            throw new Exception\InvalidClientException();
         }
 
         $username = $this->server->getRequest()->request->get('username', null);
         if (is_null($username)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'username'),
-                0
-            );
+            throw new Exception\InvalidRequestException('username');
         }
 
         $password = $this->server->getRequest()->request->get('password', null);
         if (is_null($password)) {
-            throw new ClientException(
-                sprintf(AuthorizationServer::getExceptionMessage('invalid_request'), 'password'),
-                0
-            );
+            throw new Exception\InvalidRequestException('password');
         }
 
         // Check if user's username and password are correct
         $userId = call_user_func($this->getVerifyCredentialsCallback(), $username, $password);
 
         if ($userId === false) {
-            throw new ClientException($this->server->getExceptionMessage('invalid_credentials'), 0);
+            throw new Exception\InvalidCredentialsException();
         }
 
         // Validate any scopes that are in the request
