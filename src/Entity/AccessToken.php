@@ -35,7 +35,7 @@ class AccessToken extends AbstractToken
 
         // Associate the scope with the token
         foreach ($this->getScopes() as $scope) {
-            $this->server->getStorage('access_token')->associateScope($this->getToken(), $scope->getId());
+            $this->server->getStorage('access_token')->associateScope($this, $scope);
         }
 
         return $this;
@@ -46,6 +46,6 @@ class AccessToken extends AbstractToken
      */
     public function expire()
     {
-        $this->server->getStorage('access_token')->delete($this->getToken());
+        $this->server->getStorage('access_token')->delete($this);
     }
 }

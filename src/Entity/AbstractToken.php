@@ -164,7 +164,7 @@ abstract class AbstractToken
     {
         if ($this->scopes === null) {
             $this->scopes = $this->formatScopes(
-                $this->server->getStorage('access_token')->getScopes($this->getToken())
+                $this->server->getStorage('access_token')->getScopes($this)
             );
         }
 

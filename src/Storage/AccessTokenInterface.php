@@ -11,26 +11,37 @@
 
 namespace League\OAuth2\Server\Storage;
 
+use League\OAuth2\Server\Entity\AccessToken;
+use League\OAuth2\Server\Entity\AbstractToken;
+use League\OAuth2\Server\Entity\RefreshToken;
+use League\OAuth2\Server\Entity\AuthCode;
+use League\OAuth2\Server\Entity\Scope;
+
 /**
  * Access token interface
  */
 interface AccessTokenInterface
 {
     /**
-     * Get an instance of Entites\AccessToken
+     * Get an instance of Entity\AccessToken
      * @param  string $token The access token
      * @return \League\OAuth2\Server\Entity\AccessToken
      */
     public function get($token);
 
-    public function getByRefreshToken($refreshToken);
+    /**
+     * Get the access token associated with an access token
+     * @param \League\OAuth2\Server\Entity\RefreshToken $refreshToken
+     * @return \League\OAuth2\Server\Entity\AccessToken
+     */
+    public function getByRefreshToken(RefreshToken $refreshToken);
 
     /**
      * Get the scopes for an access token
-     * @param  string $token The access token
+     * @param  \League\OAuth2\Server\Entity\AbstractToken $token The access token
      * @return array Array of \League\OAuth2\Server\Entity\Scope
      */
-    public function getScopes($token);
+    public function getScopes(AbstractToken $token);
 
     /**
      * Creates a new access token
@@ -43,16 +54,16 @@ interface AccessTokenInterface
 
     /**
      * Associate a scope with an acess token
-     * @param  string $token The access token
-     * @param  string $scope The scope
+     * @param  \League\OAuth2\Server\Entity\AbstractToken $token The access token
+     * @param  \League\OAuth2\Server\Entity\Scope $scope The scope
      * @return void
      */
-    public function associateScope($token, $scope);
+    public function associateScope(AbstractToken $token, Scope $scope);
 
     /**
      * Delete an access token
-     * @param  string $token The access token to delete
+     * @param  \League\OAuth2\Server\Entity\AbstractToken $token The access token to delete
      * @return void
      */
-    public function delete($token);
+    public function delete(AbstractToken $token);
 }
