@@ -192,18 +192,7 @@ class ResourceServer extends AbstractServer
     public function determineAccessToken($headersOnly = false)
     {
         if ($header = $this->getRequest()->headers->get('Authorization')) {
-            // Check for special case, because cURL sometimes does an
-            // internal second request and doubles the authorization header,
-            // which always resulted in an error.
-            //
-            // 1st request: Authorization: Bearer XXX
-            // 2nd request: Authorization: Bearer XXX, Bearer XXX
-            if (strpos($header, ',') !== false) {
-                $headerPart = explode(',', $header);
-                $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $headerPart[0]));
-            } else {
-                $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
-            }
+            $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
             $accessToken = ($accessToken === 'Bearer') ? '' : $accessToken;
         } elseif ($headersOnly === false) {
             $accessToken = $this->getRequest()->request->get($this->tokenKey);
