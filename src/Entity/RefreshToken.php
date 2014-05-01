@@ -46,7 +46,7 @@ class RefreshToken extends AbstractToken
     public function getAccessToken()
     {
         if (! $this->accessToken instanceof AccessToken) {
-            $this->accessToken = $this->server->getStorage('access_token')->getByRefreshToken($this->getToken());
+            $this->accessToken = $this->server->getStorage('access_token')->getByRefreshToken($this);
         }
         return $this->accessToken;
     }
