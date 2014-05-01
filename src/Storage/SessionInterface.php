@@ -25,10 +25,17 @@ interface SessionInterface
 
     /**
      * Get a session from an access token
-     * @param  string $accessToken The access token
+     * @param  \League\OAuth2\Server\Entity\AccessToken $accessToken The access token
      * @return \League\OAuth2\Server\Entity\Session
      */
     public function getByAccessToken($accessToken);
+
+    /**
+     * Get a session from an auth code
+     * @param  \League\OAuth2\Server\Entity\AuthCode $authCode The auth code
+     * @return \League\OAuth2\Server\Entity\Session
+     */
+    public function getByAuthCode($authCode);
 
     /**
      * Get a session's scopes
