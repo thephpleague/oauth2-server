@@ -140,7 +140,7 @@ class ResourceServer extends AbstractServer
      * @param $headersOnly Limit Access Token to Authorization header only
      * @return bool
      */
-    public function isValid($headersOnly = true, $accessToken = null)
+    public function isValidRequest($headersOnly = true, $accessToken = null)
     {
         try {
             $accessTokenString = ($accessToken !== null) ? $accessToken : $this->determineAccessToken($headersOnly, $accessToken);
