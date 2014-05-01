@@ -10,7 +10,7 @@ use League\OAuth2\Server\Entity\Client;
 use League\OAuth2\Server\Entity\Scope;
 use \Mockery as M;
 
-class ResourceServerTests extends \PHPUnit_Framework_TestCase
+class ResourceServerTest extends \PHPUnit_Framework_TestCase
 {
     private function returnDefault()
     {
@@ -54,7 +54,7 @@ class ResourceServerTests extends \PHPUnit_Framework_TestCase
 
     public function testDetermineAccessTokenMissingToken()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidAccessTokenException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('setServer');
@@ -89,43 +89,6 @@ class ResourceServerTests extends \PHPUnit_Framework_TestCase
         $method->invoke($server);
     }
 
-    public function testDetermineAccessTokenBrokenCurlRequest()
-    {
-        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidAccessTokenException');
-
-        $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
-        $sessionStorage->shouldReceive('setServer');
-
-        $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');
-        $accessTokenStorage->shouldReceive('setServer');
-        $accessTokenStorage->shouldReceive('get')->andReturn(false);
-
-        $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
-        $clientStorage->shouldReceive('setServer');
-
-        $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
-        $scopeStorage->shouldReceive('setServer');
-
-        $server = new ResourceServer(
-            $sessionStorage,
-            $accessTokenStorage,
-            $clientStorage,
-            $scopeStorage
-        );
-
-        $request = new \Symfony\Component\HttpFoundation\Request();
-        $request->headers = new \Symfony\Component\HttpFoundation\ParameterBag([
-            'Authorization' =>  'Bearer, Bearer abcdef'
-        ]);
-        $server->setRequest($request);
-
-        $reflector = new \ReflectionClass($server);
-        $method = $reflector->getMethod('determineAccessToken');
-        $method->setAccessible(true);
-
-        $method->invoke($server);
-    }
-
     public function testIsValidNotValid()
     {
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
@@ -148,7 +111,7 @@ class ResourceServerTests extends \PHPUnit_Framework_TestCase
             $scopeStorage
         );
 
-        $this->assertFalse($server->isValid());
+        $this->assertFalse($server->isValidRequest());
     }
 
     public function testIsValid()
@@ -197,7 +160,7 @@ class ResourceServerTests extends \PHPUnit_Framework_TestCase
         ]);
         $server->setRequest($request);
 
-        $this->assertTrue($server->isValid());
+        $this->assertTrue($server->isValidRequest());
         $this->assertEquals('at', $server->getTokenKey());
         $this->assertEquals(123, $server->getOwnerId());
         $this->assertEquals('user', $server->getOwnerType());

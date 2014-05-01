@@ -7,33 +7,8 @@ use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
 use \Mockery as M;
 
-class AuthorizationTests extends \PHPUnit_Framework_TestCase
+class AuthorizationTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetExceptionMessage()
-    {
-        $m = AuthorizationServer::getExceptionMessage('access_denied');
-
-        $reflector = new \ReflectionClass('League\OAuth2\Server\AuthorizationServer');
-        $exceptionMessages = $reflector->getProperty('exceptionMessages');
-        $exceptionMessages->setAccessible(true);
-        $v = $exceptionMessages->getValue();
-
-        $this->assertEquals($v['access_denied'], $m);
-    }
-
-    public function testGetExceptionCode()
-    {
-        $this->assertEquals('access_denied', AuthorizationServer::getExceptionType(2));
-    }
-
-    public function testGetExceptionHttpHeaders()
-    {
-        $this->assertEquals(array('HTTP/1.1 401 Unauthorized'), AuthorizationServer::getExceptionHttpHeaders('access_denied'));
-        $this->assertEquals(array('HTTP/1.1 500 Internal Server Error'), AuthorizationServer::getExceptionHttpHeaders('server_error'));
-        $this->assertEquals(array('HTTP/1.1 501 Not Implemented'), AuthorizationServer::getExceptionHttpHeaders('unsupported_grant_type'));
-        $this->assertEquals(array('HTTP/1.1 400 Bad Request'), AuthorizationServer::getExceptionHttpHeaders('invalid_refresh'));
-    }
-
     public function testSetGet()
     {
         $server = new AuthorizationServer;
@@ -67,7 +42,7 @@ class AuthorizationTests extends \PHPUnit_Framework_TestCase
 
     public function testInvalidGrantType()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidGrantTypeException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidGrantException');
         $server = new AuthorizationServer;
         $server->getGrantType('foobar');
     }
@@ -90,14 +65,14 @@ class AuthorizationTests extends \PHPUnit_Framework_TestCase
 
     public function testIssueAccessTokenEmptyGrantType()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
         $server = new AuthorizationServer;
         $this->assertTrue($server->issueAccessToken());
     }
 
     public function testIssueAccessTokenInvalidGrantType()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\UnsupportedGrantTypeException');
 
         $_POST['grant_type'] = 'foobar';
 

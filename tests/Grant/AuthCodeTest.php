@@ -9,7 +9,7 @@ use League\OAuth2\Server\Entity\Client;
 use League\OAuth2\Server\Entity\Session;
 use League\OAuth2\Server\Entity\AuthCode as AC;
 use League\OAuth2\Server\AuthorizationServer as Authorization;
-use League\OAuth2\Server\Grant\ClientException;
+use League\OAuth2\Server\Exception\InvalidRequestException;
 use Mockery as M;
 
 class AuthCodeTest extends \PHPUnit_Framework_TestCase
@@ -27,7 +27,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckAuthoriseParamsMissingClientId()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "client_id" parameter.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [];
 
@@ -41,7 +41,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckAuthoriseParamsMissingRedirectUri()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "redirect_uri" parameter.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
             'client_id' =>  'testapp'
@@ -56,7 +56,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckAuthoriseParamsMissingStateParam()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "state" parameter.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
             'client_id' =>  'testapp',
@@ -73,7 +73,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckAuthoriseParamsMissingResponseType()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "response_type" parameter.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
             'client_id'     =>  'testapp',
@@ -89,7 +89,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckAuthoriseParamsInvalidResponseType()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The authorization server does not support obtaining an access token using this method.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\UnsupportedResponseTypeException');
 
         $_POST = [
             'client_id'     =>  'testapp',
@@ -106,7 +106,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckAuthoriseParamsInvalidClient()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'Client authentication failed');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
 
         $_POST = [
             'client_id'     =>  'testapp',
@@ -129,7 +129,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckAuthoriseParamsInvalidScope()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The requested scope is invalid, unknown, or malformed. Check the "foo" scope.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidScopeException');
 
         $_POST = [
             'response_type' =>  'code',
@@ -260,7 +260,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCompleteFlowMissingClientId()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "client_id" parameter.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST['grant_type'] = 'authorization_code';
 
@@ -274,7 +274,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCompleteFlowMissingClientSecret()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "client_secret" parameter.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
             'grant_type' => 'authorization_code',
@@ -290,7 +290,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCompleteFlowMissingRedirectUri()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "redirect_uri" parameter.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
             'grant_type' => 'authorization_code',
@@ -307,7 +307,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCompleteFlowInvalidClient()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'Client authentication failed');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
 
         $_POST = [
             'grant_type'    =>  'authorization_code',
@@ -331,7 +331,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCompleteFlowMissingCode()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "code" parameter.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
             'grant_type'    =>  'authorization_code',
@@ -379,7 +379,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCompleteFlowInvalidCode()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "code" parameter.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
             'grant_type'    =>  'authorization_code',
@@ -428,7 +428,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCompleteFlowRedirectUriMismatch()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException', 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "redirect_uri" parameter.');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
             'grant_type'    =>  'authorization_code',

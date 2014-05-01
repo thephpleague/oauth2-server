@@ -5,7 +5,7 @@ namespace LeagueTests;
 use LeagueTests\Stubs\StubAbstractServer;
 use \Mockery as M;
 
-class AbstractTokenTests extends \PHPUnit_Framework_TestCase
+class AbstractTokenTest extends \PHPUnit_Framework_TestCase
 {
     function testSetGet()
     {
@@ -19,7 +19,7 @@ class AbstractTokenTests extends \PHPUnit_Framework_TestCase
 
     function testGetStorageException()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ServerException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\ServerErrorException');
         $server = new StubAbstractServer();
         $server->getStorage('foobar');
     }

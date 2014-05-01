@@ -5,7 +5,7 @@ namespace LeagueTests\Grant;
 use League\OAuth2\Server\Grant;
 use League\OAuth2\Server\Entity\Scope;
 use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Grant\ClientException;
+use League\OAuth2\Server\Exception\InvalidRequestException;
 use LeagueTests\Stubs\StubAbstractGrant;
 use Mockery as M;
 
@@ -74,7 +74,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateScopesMissingScope()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
@@ -91,7 +91,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateScopesInvalidScope()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ClientException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidScopeException');
 
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
