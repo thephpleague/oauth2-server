@@ -209,7 +209,7 @@ class Session
             return $this->client;
         }
 
-        $this->client = $this->server->getStorage('client')->getBySession($this->getId());
+        $this->client = $this->server->getStorage('client')->getBySession($this);
         return $this->client;
     }
 

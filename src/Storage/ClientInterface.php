@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server\Storage;
 
+use League\OAuth2\Server\Entity\Session;
+
 /**
  * Client storage interface
  */
