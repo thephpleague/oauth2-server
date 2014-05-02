@@ -29,9 +29,9 @@ class OAuthException extends \Exception
     /**
      * Throw a new exception
      */
-    public function __construct()
+    public function __construct($msg = 'An error occured')
     {
-        parent::__construct('An error occured');
+        parent::__construct($msg);
     }
 
     /**
@@ -66,7 +66,7 @@ class OAuthException extends \Exception
         // include the "WWW-Authenticate" response header field
         // matching the authentication scheme used by the client.
         // @codeCoverageIgnoreStart
-        if ($error === 'invalid_client') {
+        if ($this->errorType === 'invalid_client') {
             $authScheme = null;
             $request = new Request();
             if ($request->server('PHP_AUTH_USER') !== null) {
