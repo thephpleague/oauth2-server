@@ -2,7 +2,9 @@
 
 namespace LeagueTests\Stubs;
 
-class StubAbstractToken extends \League\OAuth2\Server\Entity\AbstractToken
+use \League\OAuth2\Server\Entity\AbstractTokenEntity;
+
+class StubAbstractTokenEntity extends AbstractTokenEntity
 {
     public function expire()
     {
