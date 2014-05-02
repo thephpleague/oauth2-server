@@ -1,8 +1,8 @@
 <?php
 
-namespace LeagueTests\Entities;
+namespace LeagueTests\Entity;
 
-use League\OAuth2\Server\Entity\Scope;
+use League\OAuth2\Server\Entity\ScopeEntity;
 use \Mockery as M;
 
 class ScopeTests extends \PHPUnit_Framework_TestCase

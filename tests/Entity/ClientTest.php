@@ -1,8 +1,8 @@
 <?php
 
-namespace LeagueTests\Entities;
+namespace LeagueTests\Entity;
 
-use League\OAuth2\Server\Entity\Client;
+use League\OAuth2\Server\Entity\ClientEntity;
 use \Mockery as M;
 
 class ClientTest extends \PHPUnit_Framework_TestCase

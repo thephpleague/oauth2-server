@@ -1,13 +1,13 @@
 <?php
 
-namespace LeagueTests\Entities;
+namespace LeagueTests\Entity;
 
-use League\OAuth2\Server\Entity\AccessToken;
-use League\OAuth2\Server\Entity\AuthCode;
-use League\OAuth2\Server\Entity\Client;
-use League\OAuth2\Server\Entity\RefreshToken;
-use League\OAuth2\Server\Entity\Session;
-use League\OAuth2\Server\Entity\Scope;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\AuthCodeEntity;
+use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\RefreshTokenEntity;
+use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\AuthorizationServer as Authorization;
 use \Mockery as M;
 
