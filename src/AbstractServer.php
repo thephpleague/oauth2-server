@@ -51,7 +51,7 @@ abstract class AbstractServer
     public function getRequest()
     {
         if ($this->request === null) {
-            $this->request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+            $this->request = Request::createFromGlobals();
         }
 
         return $this->request;
