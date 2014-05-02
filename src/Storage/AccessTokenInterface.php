@@ -11,11 +11,11 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\Entity\AccessToken;
-use League\OAuth2\Server\Entity\AbstractToken;
-use League\OAuth2\Server\Entity\RefreshToken;
-use League\OAuth2\Server\Entity\AuthCode;
-use League\OAuth2\Server\Entity\Scope;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\AbstractTokenEntity;
+use League\OAuth2\Server\Entity\RefreshTokenEntity;
+use League\OAuth2\Server\Entity\AuthCodeEntity;
+use League\OAuth2\Server\Entity\ScopeEntity;
 
 /**
  * Access token interface
@@ -23,25 +23,25 @@ use League\OAuth2\Server\Entity\Scope;
 interface AccessTokenInterface
 {
     /**
-     * Get an instance of Entity\AccessToken
+     * Get an instance of Entity\AccessTokenEntity
      * @param  string $token The access token
-     * @return \League\OAuth2\Server\Entity\AccessToken
+     * @return \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     public function get($token);
 
     /**
      * Get the access token associated with an access token
-     * @param \League\OAuth2\Server\Entity\RefreshToken $refreshToken
-     * @return \League\OAuth2\Server\Entity\AccessToken
+     * @param \League\OAuth2\Server\Entity\RefreshTokenEntity $refreshToken
+     * @return \League\OAuth2\Server\Entity\AccessTokenEntity
      */
-    public function getByRefreshToken(RefreshToken $refreshToken);
+    public function getByRefreshToken(RefreshTokenEntity $refreshToken);
 
     /**
      * Get the scopes for an access token
-     * @param  \League\OAuth2\Server\Entity\AbstractToken $token The access token
-     * @return array Array of \League\OAuth2\Server\Entity\Scope
+     * @param  \League\OAuth2\Server\Entity\AbstractTokenEntity $token The access token
+     * @return array Array of \League\OAuth2\Server\Entity\ScopeEntity
      */
-    public function getScopes(AbstractToken $token);
+    public function getScopes(AbstractTokenEntity $token);
 
     /**
      * Creates a new access token
@@ -54,16 +54,16 @@ interface AccessTokenInterface
 
     /**
      * Associate a scope with an acess token
-     * @param  \League\OAuth2\Server\Entity\AbstractToken $token The access token
-     * @param  \League\OAuth2\Server\Entity\Scope $scope The scope
+     * @param  \League\OAuth2\Server\Entity\AbstractTokenEntity $token The access token
+     * @param  \League\OAuth2\Server\Entity\ScopeEntity $scope The scope
      * @return void
      */
-    public function associateScope(AbstractToken $token, Scope $scope);
+    public function associateScope(AbstractTokenEntity $token, ScopeEntity $scope);
 
     /**
      * Delete an access token
-     * @param  \League\OAuth2\Server\Entity\AbstractToken $token The access token to delete
+     * @param  \League\OAuth2\Server\Entity\AbstractTokenEntity $token The access token to delete
      * @return void
      */
-    public function delete(AbstractToken $token);
+    public function delete(AbstractTokenEntity $token);
 }

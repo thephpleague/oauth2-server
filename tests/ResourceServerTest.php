@@ -4,10 +4,10 @@ namespace LeagueTests;
 
 use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
-use League\OAuth2\Server\Entity\AccessToken;
-use League\OAuth2\Server\Entity\Session;
-use League\OAuth2\Server\Entity\Client;
-use League\OAuth2\Server\Entity\Scope;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\ScopeEntity;
 use \Mockery as M;
 
 class ResourceServerTest extends \PHPUnit_Framework_TestCase

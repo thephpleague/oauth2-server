@@ -19,7 +19,7 @@ interface AuthCodeInterface
     /**
      * Get the auth code
      * @param  string $code
-     * @return \League\OAuth2\Server\Entity\AuthCode
+     * @return \League\OAuth2\Server\Entity\AuthCodeEntity
      */
     public function get($code);
 }

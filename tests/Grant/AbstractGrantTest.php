@@ -3,7 +3,7 @@
 namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\Grant;
-use League\OAuth2\Server\Entity\Scope;
+use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\InvalidRequestException;
 use LeagueTests\Stubs\StubAbstractGrant;

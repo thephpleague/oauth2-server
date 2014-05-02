@@ -27,7 +27,7 @@ interface ScopeInterface
      *
      * @param  string     $scope     The scope
      * @param  string     $grantType The grant type used in the request (default = "null")
-     * @return bool|array If the scope doesn't exist return false
+     * @return \League\OAuth2\Server\Entity\ScopeEntity
      */
     public function get($scope, $grantType = null);
 }

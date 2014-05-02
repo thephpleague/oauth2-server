@@ -3,8 +3,8 @@
 namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\Grant\ClientCredentials;
-use League\OAuth2\Server\Entity\Scope;
-use League\OAuth2\Server\Entity\Client;
+use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\AuthorizationServer as Authorization;
 use League\OAuth2\Server\Grant\ClientException;
 use Mockery as M;

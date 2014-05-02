@@ -11,6 +11,11 @@
 
 namespace League\OAuth2\Server\Storage;
 
+use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\AuthCodeEntity;
+use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\ScopeEntity;
+
 /**
  * Session storage interface
  */
@@ -19,30 +24,30 @@ interface SessionInterface
     /**
      * Get a session from it's identifier
      * @param string $sessionId
-     * @return \League\OAuth2\Server\Entity\Session
+     * @return \League\OAuth2\Server\Entity\SessionEntity
      */
     public function get($sessionId);
 
     /**
      * Get a session from an access token
-     * @param  \League\OAuth2\Server\Entity\AccessToken $accessToken The access token
-     * @return \League\OAuth2\Server\Entity\Session
+     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken The access token
+     * @return \League\OAuth2\Server\Entity\SessionEntity
      */
-    public function getByAccessToken($accessToken);
+    public function getByAccessToken(AccessTokenEntity $accessToken);
 
     /**
      * Get a session from an auth code
-     * @param  \League\OAuth2\Server\Entity\AuthCode $authCode The auth code
-     * @return \League\OAuth2\Server\Entity\Session
+     * @param  \League\OAuth2\Server\Entity\AuthCodeEntity $authCode The auth code
+     * @return \League\OAuth2\Server\Entity\SessionEntity
      */
-    public function getByAuthCode($authCode);
+    public function getByAuthCode(AuthCodeEntity $authCode);
 
     /**
      * Get a session's scopes
-     * @param  integer $sessionId
-     * @return array Array of \League\OAuth2\Server\Entity\Scope
+     * @param  \League\OAuth2\Server\Entity\SessionEntity
+     * @return array Array of \League\OAuth2\Server\Entity\ScopeEntity
      */
-    public function getScopes($sessionId);
+    public function getScopes(SessionEntity $session);
 
     /**
      * Create a new session
@@ -56,9 +61,9 @@ interface SessionInterface
 
     /**
      * Associate a scope with a session
-     * @param  integer $sessionId
-     * @param  string  $scopeId    The scopes ID might be an integer or string
+     * @param  \League\OAuth2\Server\Entity\SessionEntity $scope The scope
+     * @param  \League\OAuth2\Server\Entity\ScopeEntity $scope The scope
      * @return void
      */
-    public function associateScope($sessionId, $scopeId);
+    public function associateScope(SessionEntity $session, ScopeEntity $scope);
 }
