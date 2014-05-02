@@ -18,9 +18,10 @@ use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
-use League\OAuth2\Server\Entity\RefreshToken as RT;
-use League\OAuth2\Server\Entity\AccessToken;
-use League\OAuth2\Server\Entity\Session;
+use League\OAuth2\Server\Entity\RefreshTokenEntity;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\ClientEntity;
 
 /**
  * Referesh token grant
@@ -80,7 +81,7 @@ class RefreshToken extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if ($client === null) {
+        if (($client instanceof ClientEntity) === false) {
             throw new Exception\InvalidClientException();
         }
 
@@ -92,7 +93,7 @@ class RefreshToken extends AbstractGrant
         // Validate refresh token
         $oldRefreshToken = $this->server->getStorage('refresh_token')->get($oldRefreshTokenParam);
 
-        if (($oldRefreshToken instanceof RT) === false) {
+        if (($oldRefreshToken instanceof RefreshTokenEntity) === false) {
             throw new Exception\InvalidRefreshException();
         }
 
@@ -122,7 +123,7 @@ class RefreshToken extends AbstractGrant
         }
 
         // Generate a new access token and assign it the correct sessions
-        $newAccessToken = new AccessToken($this->server);
+        $newAccessToken = new AccessTokenEntity($this->server);
         $newAccessToken->setToken(SecureKey::generate());
         $newAccessToken->setExpireTime($this->server->getAccessTokenTTL() + time());
         $newAccessToken->setSession($session);
@@ -146,7 +147,7 @@ class RefreshToken extends AbstractGrant
         $oldRefreshToken->expire($this->server->getStorage('refresh_token'));
 
         // Generate a new refresh token
-        $newRefreshToken = new RT($this->server);
+        $newRefreshToken = new RefreshTokenEntity($this->server);
         $newRefreshToken->setToken(SecureKey::generate());
         $newRefreshToken->setExpireTime($this->getRefreshTokenTTL() + time());
         $newRefreshToken->setAccessToken($newAccessToken);

@@ -14,12 +14,12 @@ namespace League\OAuth2\Server\Grant;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Request;
 use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\Entity\Client;
-use League\OAuth2\Server\Entity\RefreshToken;
-use League\OAuth2\Server\Entity\Session;
-use League\OAuth2\Server\Entity\AccessToken;
-use League\OAuth2\Server\Entity\Scope;
-use League\OAuth2\Server\Entity\AuthCode as AC;
+use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\RefreshTokenEntity;
+use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\AuthCodeEntity;
 use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
@@ -100,7 +100,7 @@ class AuthCode extends AbstractGrant
         }
 
         // Ensure response type is one that is recognised
-        if ( ! in_array($responseType, $this->server->getResponseTypes())) {
+        if (!in_array($responseType, $this->server->getResponseTypes())) {
             throw new Exception\UnsupportedResponseTypeException($responseType);
         }
 
@@ -112,7 +112,7 @@ class AuthCode extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if (($client instanceof Client) === false) {
+        if (($client instanceof ClientEntity) === false) {
             throw new Exception\InvalidClientException();
         }
 
@@ -140,13 +140,13 @@ class AuthCode extends AbstractGrant
     public function newAuthoriseRequest($type, $typeId, $authParams = [])
     {
         // Create a new session
-        $session = new Session($this->server);
+        $session = new SessionEntity($this->server);
         $session->setOwner($type, $typeId);
         $session->associateClient($authParams['client']);
         $session->save();
 
         // Create a new auth code
-        $authCode = new AC($this->server);
+        $authCode = new AuthCodeEntity($this->server);
         $authCode->setToken(SecureKey::generate());
         $authCode->setRedirectUri($authParams['redirect_uri']);
 
@@ -191,7 +191,7 @@ class AuthCode extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if (($client instanceof Client) === false) {
+        if (($client instanceof ClientEntity) === false) {
             throw new Exception\InvalidClientException();
         }
 
@@ -202,7 +202,7 @@ class AuthCode extends AbstractGrant
         }
 
         $code = $this->server->getStorage('auth_code')->get($authCode);
-        if (($code instanceof AC) === false) {
+        if (($code instanceof AuthCodeEntity) === false) {
             throw new Exception\InvalidRequestException('code');
         }
 
@@ -215,7 +215,7 @@ class AuthCode extends AbstractGrant
         $authCodeScopes = $code->getScopes();
 
         // Generate the access token
-        $accessToken = new AccessToken($this->server);
+        $accessToken = new AccessTokenEntity($this->server);
         $accessToken->setToken(SecureKey::generate());
         $accessToken->setExpireTime($this->server->getAccessTokenTTL() + time());
 
@@ -232,7 +232,7 @@ class AuthCode extends AbstractGrant
 
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
-            $refreshToken = new RefreshToken($this->server);
+            $refreshToken = new RefreshTokenEntity($this->server);
             $refreshToken->setToken(SecureKey::generate());
             $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
             $response['refresh_token'] = $refreshToken->getToken();

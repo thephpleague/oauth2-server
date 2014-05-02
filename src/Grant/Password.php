@@ -12,11 +12,11 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Entity\AccessToken;
-use League\OAuth2\Server\Entity\Client;
-use League\OAuth2\Server\Entity\RefreshToken as RT;
-use League\OAuth2\Server\Entity\Session;
-use League\OAuth2\Server\Entity\Scope;
+use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\RefreshTokenEntity;
+use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Storage\SessionInterface;
@@ -101,7 +101,7 @@ class Password extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if (($client instanceof Client) === false) {
+        if (($client instanceof ClientEntity) === false) {
             throw new Exception\InvalidClientException();
         }
 
@@ -127,12 +127,12 @@ class Password extends AbstractGrant
         $scopes = $this->validateScopes($scopeParam);
 
         // Create a new session
-        $session = new Session($this->server);
+        $session = new SessionEntity($this->server);
         $session->setOwner('user', $userId);
         $session->associateClient($client);
 
         // Generate an access token
-        $accessToken = new AccessToken($this->server);
+        $accessToken = new AccessTokenEntity($this->server);
         $accessToken->setToken(SecureKey::generate());
         $accessToken->setExpireTime($this->server->getAccessTokenTTL() + time());
 
@@ -151,7 +151,7 @@ class Password extends AbstractGrant
 
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
-            $refreshToken = new RT($this->server);
+            $refreshToken = new RefreshTokenEntity($this->server);
             $refreshToken->setToken(SecureKey::generate());
             $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
             $response['refresh_token'] = $refreshToken->getToken();

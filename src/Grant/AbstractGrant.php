@@ -12,7 +12,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Entity\Scope;
+use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Exception;
 
 /**
@@ -138,7 +138,7 @@ abstract class AbstractGrant implements GrantTypeInterface
                 $this->getIdentifier()
             );
 
-            if (($scope instanceof Scope) === false) {
+            if (($scope instanceof ScopeEntity) === false) {
                 throw new Exception\InvalidScopeException($scopeItem);
             }
 
@@ -150,14 +150,14 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Format the local scopes array
-     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entity\Scope
+     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entity\ScopeEntity
      * @return array
      */
     protected function formatScopes($unformated = [])
     {
         $scopes = [];
         foreach ($unformated as $scope) {
-            if ($scope instanceof Scope) {
+            if ($scope instanceof ScopeEntity) {
                 $scopes[$scope->getId()] = $scope;
             }
         }

@@ -139,20 +139,20 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $server->setTokenKey('at');
 
         $accessTokenStorage->shouldReceive('get')->andReturn(
-            (new AccessToken($server))->setToken('abcdef')
+            (new AccessTokenEntity($server))->setToken('abcdef')
         );
 
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new Scope($server))->setId('foo'),
-            (new Scope($server))->setId('bar')
+            (new ScopeEntity($server))->setId('foo'),
+            (new ScopeEntity($server))->setId('bar')
         ]);
 
         $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
-            (new Session($server))->setId('foobar')->setOwner('user', 123)
+            (new SessionEntity($server))->setId('foobar')->setOwner('user', 123)
         );
 
         $clientStorage->shouldReceive('getBySession')->andReturn(
-            (new Client($server))->setId('testapp')
+            (new ClientEntity($server))->setId('testapp')
         );
 
         $request = new \Symfony\Component\HttpFoundation\Request();

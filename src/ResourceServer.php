@@ -17,7 +17,7 @@ use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\AuthCodeInterface;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
-use League\OAuth2\Server\Entity\AccessToken;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -136,24 +136,6 @@ class ResourceServer extends AbstractServer
     }
 
     /**
-     * Checks if the access token is valid or not
-     * @param $headersOnly Limit Access Token to Authorization header only
-     * @return bool
-     */
-    public function isValidRequest($headersOnly = true, $accessToken = null)
-    {
-        try {
-            $accessTokenString = ($accessToken !== null) ? $accessToken : $this->determineAccessToken($headersOnly, $accessToken);
-        } catch (\Exception $e) {
-            return false;
-        }
-
-        // Set the access token
-        $this->accessToken = $this->storages['access_token']->get($accessTokenString);
-        return ($this->accessToken instanceof AccessToken);
-    }
-
-    /**
      * Get the session scopes
      * @return array
      */
@@ -184,6 +166,20 @@ class ResourceServer extends AbstractServer
     }
 
     /**
+     * Checks if the access token is valid or not
+     * @param $headersOnly Limit Access Token to Authorization header only
+     * @return bool
+     */
+    public function isValidRequest($headersOnly = true, $accessToken = null)
+    {
+        $accessTokenString = ($accessToken !== null) ? $accessToken : $this->determineAccessToken($headersOnly, $accessToken);
+
+        // Set the access token
+        $this->accessToken = $this->storages['access_token']->get($accessTokenString);
+        return ($this->accessToken instanceof AccessTokenEntity);
+    }
+
+    /**
      * Reads in the access token from the headers
      * @param $headersOnly Limit Access Token to Authorization header only
      * @throws Exception\MissingAccessTokenException  Thrown if there is no access token presented
@@ -195,7 +191,9 @@ class ResourceServer extends AbstractServer
             $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
             $accessToken = ($accessToken === 'Bearer') ? '' : $accessToken;
         } elseif ($headersOnly === false) {
-            $accessToken = $this->getRequest()->request->get($this->tokenKey);
+            $accessToken = ($this->getRequest()->server->get('REQUEST_METHOD') === 'GET') ?
+                                $this->getRequest()->query->get($this->tokenKey) :
+                                $this->getRequest()->request->get($this->tokenKey);
         }
 
         if (empty($accessToken)) {

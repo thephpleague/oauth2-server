@@ -14,58 +14,69 @@ class RefreshTokenTests extends \PHPUnit_Framework_TestCase
     function testSetAccessToken()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
-        $entity = new RefreshToken($server);
-        $entity->setAccessToken((new AccessToken($server)));
+        $entity = new RefreshTokenEntity($server);
+        $entity->setAccessToken((new AccessTokenEntity($server)));
 
         $reflector = new \ReflectionClass($entity);
         $accessTokenProperty = $reflector->getProperty('accessToken');
         $accessTokenProperty->setAccessible(true);
 
-        $this->assertTrue($accessTokenProperty->getValue($entity) instanceof AccessToken);
+        $this->assertTrue($accessTokenProperty->getValue($entity) instanceof AccessTokenEntity);
     }
 
     function testSave()
     {
-        $server = new Authorization();
+        $server = M::mock('League\OAuth2\Server\AbstractServer');
+        $server->shouldReceive('setAccessTokenStorage');
+        $server->shouldReceive('setRefreshTokenStorage');
 
         $refreshTokenStorage = M::mock('League\OAuth2\Server\Storage\RefreshTokenInterface');
         $refreshTokenStorage->shouldReceive('create');
         $refreshTokenStorage->shouldReceive('setServer');
         $refreshTokenStorage->shouldReceive('associateScope');
 
+        $server->shouldReceive('getStorage')->with('refresh_token')->andReturn($refreshTokenStorage);
+
         $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');
         $accessTokenStorage->shouldReceive('setServer');
         $accessTokenStorage->shouldReceive('getByRefreshToken')->andReturn(
-            (new AccessToken($server))->setToken('foobar')
+            (new AccessTokenEntity($server))->setToken('foobar')
         );
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new Scope($server))->setId('foo')
+            (new ScopeEntity($server))->setId('foo')
         ]);
+
+        $server->shouldReceive('getStorage')->with('access_token')->andReturn($accessTokenStorage);
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
-            (new Session($server))
+            (new SessionEntity($server))
         );
         $sessionStorage->shouldReceive('setServer');
+
+        $server->shouldReceive('getStorage')->with('session')->andReturn($sessionStorage);
 
         $server->setAccessTokenStorage($accessTokenStorage);
         $server->setRefreshTokenStorage($refreshTokenStorage);
 
-        $entity = new RefreshToken($server);
+        $entity = new RefreshTokenEntity($server);
         $this->assertSame(null, $entity->save());
     }
 
     function testExpire()
     {
-        $server = new Authorization();
+        $server = M::mock('League\OAuth2\Server\AbstractServer');
+        $server->shouldReceive('setRefreshTokenStorage');
 
         $refreshTokenStorage = M::mock('League\OAuth2\Server\Storage\RefreshTokenInterface');
         $refreshTokenStorage->shouldReceive('delete');
         $refreshTokenStorage->shouldReceive('setServer');
 
+        $server->shouldReceive('getStorage')->with('refresh_token')->andReturn($refreshTokenStorage);
+
         $server->setRefreshTokenStorage($refreshTokenStorage);
 
-        $entity = new RefreshToken($server);
+        $entity = new RefreshTokenEntity($server);
         $this->assertSame($entity->expire(), null);
     }
 }

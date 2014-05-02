@@ -10,7 +10,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     public function testSetGet()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
-        $client = new Client($server);
+        $client = new ClientEntity($server);
         $client->setId('foobar');
         $client->setSecret('barfoo');
         $client->setName('Test Client');

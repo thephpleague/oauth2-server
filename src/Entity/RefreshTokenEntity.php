@@ -24,7 +24,7 @@ class RefreshTokenEntity extends AbstractTokenEntity
 {
     /**
      * Access token associated to refresh token
-     * @var \League\OAuth2\Server\Entity\AccessToken
+     * @var \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     protected $accessToken;
 
@@ -61,11 +61,6 @@ class RefreshTokenEntity extends AbstractTokenEntity
             $this->getExpireTime(),
             $this->getAccessToken()->getToken()
         );
-
-        // Associate the scope with the token
-        foreach ($this->getScopes() as $scope) {
-            $this->server->getStorage('refresh_token')->associateScope($this->getToken(), $scope->getId());
-        }
     }
 
     /**
@@ -73,6 +68,6 @@ class RefreshTokenEntity extends AbstractTokenEntity
      */
     public function expire()
     {
-        $this->server->getStorage('refresh_token')->delete($this->getToken());
+        $this->server->getStorage('refresh_token')->delete($this);
     }
 }

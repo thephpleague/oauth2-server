@@ -36,16 +36,16 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $method->setAccessible(true);
 
         $scopes = [
-            (new Scope($server))->setId('scope1')->setDescription('foo'),
-            (new Scope($server))->setId('scope2')->setDescription('bar')
+            (new ScopeEntity($server))->setId('scope1')->setDescription('foo'),
+            (new ScopeEntity($server))->setId('scope2')->setDescription('bar')
         ];
 
         $result = $method->invokeArgs($grant, [$scopes]);
 
         $this->assertTrue(isset($result['scope1']));
         $this->assertTrue(isset($result['scope2']));
-        $this->assertTrue($result['scope1'] instanceof Scope);
-        $this->assertTrue($result['scope2'] instanceof Scope);
+        $this->assertTrue($result['scope1'] instanceof ScopeEntity);
+        $this->assertTrue($result['scope2'] instanceof ScopeEntity);
     }
 
     public function testValidateScopes()
@@ -55,7 +55,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
         $scopeStorage->shouldReceive('get')->andReturn(
-            (new Scope($server))->setId('foo')
+            (new ScopeEntity($server))->setId('foo')
         );
 
         $server->setScopeStorage($scopeStorage);
@@ -65,7 +65,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'foo'   =>  (new Scope($server))->setId('foo')
+                'foo'   =>  (new ScopeEntity($server))->setId('foo')
             ],
 
             $grant->validateScopes('foo')
@@ -113,7 +113,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
         $scopeStorage->shouldReceive('get')->andReturn(
-            (new Scope($server))->setId('foo')
+            (new ScopeEntity($server))->setId('foo')
         );
         $server->setScopeStorage($scopeStorage);
 
@@ -134,7 +134,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
         $scopeStorage->shouldReceive('get')->andReturn(
-            (new Scope($server))->setId('foo')
+            (new ScopeEntity($server))->setId('foo')
         );
         $server->setScopeStorage($scopeStorage);
 
