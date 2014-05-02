@@ -2,7 +2,7 @@
 
 namespace LeagueTests\Grant;
 
-use League\OAuth2\Server\Grant\RefreshToken;
+use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
@@ -15,7 +15,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 {
     function testSetRefreshTokenTTL()
     {
-        $grant = new RefreshToken;
+        $grant = new RefreshTokenGrant;
         $grant->setRefreshTokenTTL(86400);
 
         $property = new \ReflectionProperty($grant, 'refreshTokenTTL');
@@ -31,7 +31,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $_POST['grant_type'] = 'refresh_token';
 
         $server = new AuthorizationServer;
-        $grant = new RefreshToken;
+        $grant = new RefreshTokenGrant;
 
         $server->addGrantType($grant);
         $server->issueAccessToken();
@@ -47,7 +47,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer;
-        $grant = new RefreshToken;
+        $grant = new RefreshTokenGrant;
 
         $server->addGrantType($grant);
         $server->issueAccessToken();
@@ -64,7 +64,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer;
-        $grant = new RefreshToken;
+        $grant = new RefreshTokenGrant;
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -87,7 +87,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer;
-        $grant = new RefreshToken;
+        $grant = new RefreshTokenGrant;
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -122,7 +122,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer;
-        $grant = new RefreshToken;
+        $grant = new RefreshTokenGrant;
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -156,7 +156,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer;
-        $grant = new RefreshToken;
+        $grant = new RefreshTokenGrant;
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -226,7 +226,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer;
-        $grant = new RefreshToken;
+        $grant = new RefreshTokenGrant;
 
         $oldSession = (new SessionEntity($server))->associateScope((new ScopeEntity($server))->setId('foo'));
 
@@ -298,7 +298,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer;
-        $grant = new RefreshToken;
+        $grant = new RefreshTokenGrant;
 
         $oldSession = (new SessionEntity($server))->associateScope((new ScopeEntity($server))->setId('foo'));
 
