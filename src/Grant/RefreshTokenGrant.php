@@ -26,7 +26,7 @@ use League\OAuth2\Server\Entity\ClientEntity;
 /**
  * Referesh token grant
  */
-class RefreshToken extends AbstractGrant
+class RefreshTokenGrant extends AbstractGrant
 {
     /**
      * {@inheritdoc}

@@ -28,7 +28,7 @@ use League\OAuth2\Server\Storage\ScopeInterface;
 /**
  * Auth code grant class
  */
-class AuthCode extends AbstractGrant
+class AuthCodeGrant extends AbstractGrant
 {
     /**
      * Grant identifier

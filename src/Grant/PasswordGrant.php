@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 Client credentials grant
+ * OAuth 2.0 Password grant
  *
  * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
@@ -12,8 +12,9 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Exception;
@@ -23,42 +24,65 @@ use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
 
 /**
- * Client credentials grant class
+ * Password grant class
  */
-class ClientCredentials extends AbstractGrant
+class PasswordGrant extends AbstractGrant
 {
     /**
      * Grant identifier
      * @var string
      */
-    protected $identifier = 'client_credentials';
+    protected $identifier = 'password';
 
     /**
      * Response type
      * @var string
      */
-    protected $responseType = null;
+    protected $responseType;
 
     /**
-     * AuthServer instance
-     * @var AuthServer
+     * Callback to authenticate a user's name and password
+     * @var function
      */
-    protected $server = null;
+    protected $callback;
 
     /**
      * Access token expires in override
      * @var int
      */
-    protected $accessTokenTTL = null;
+    protected $accessTokenTTL;
 
     /**
-     * Complete the client credentials grant
+     * Set the callback to verify a user's username and password
+     * @param callable $callback The callback function
+     * @return void
+     */
+    public function setVerifyCredentialsCallback(callable $callback)
+    {
+        $this->callback = $callback;
+    }
+
+    /**
+     * Return the callback function
+     * @return callable
+     */
+    protected function getVerifyCredentialsCallback()
+    {
+        if (is_null($this->callback) || ! is_callable($this->callback)) {
+            throw new Exception\ServerErrorException('Null or non-callable callback set on Password grant');
+        }
+
+        return $this->callback;
+    }
+
+    /**
+     * Complete the password grant
      * @param  null|array $inputParams
      * @return array
      */
-    public function completeFlow()
+    public function completeFlow($inputParams = null)
     {
-         // Get the required params
+        // Get the required params
         $clientId = $this->server->getRequest()->request->get('client_id', null);
         if (is_null($clientId)) {
             throw new Exception\InvalidRequestException('client_id');
@@ -81,13 +105,30 @@ class ClientCredentials extends AbstractGrant
             throw new Exception\InvalidClientException();
         }
 
+        $username = $this->server->getRequest()->request->get('username', null);
+        if (is_null($username)) {
+            throw new Exception\InvalidRequestException('username');
+        }
+
+        $password = $this->server->getRequest()->request->get('password', null);
+        if (is_null($password)) {
+            throw new Exception\InvalidRequestException('password');
+        }
+
+        // Check if user's username and password are correct
+        $userId = call_user_func($this->getVerifyCredentialsCallback(), $username, $password);
+
+        if ($userId === false) {
+            throw new Exception\InvalidCredentialsException();
+        }
+
         // Validate any scopes that are in the request
         $scopeParam = $this->server->getRequest()->request->get('scope', '');
         $scopes = $this->validateScopes($scopeParam);
 
         // Create a new session
         $session = new SessionEntity($this->server);
-        $session->setOwner('client', $client->getId());
+        $session->setOwner('user', $userId);
         $session->associateClient($client);
 
         // Generate an access token
@@ -101,11 +142,6 @@ class ClientCredentials extends AbstractGrant
             $session->associateScope($scope);
         }
 
-        // Save everything
-        $session->save($this->server->getStorage('session'));
-        $accessToken->setSession($session);
-        $accessToken->save($this->server->getStorage('access_token'));
-
         $response = [
             'access_token'  =>  $accessToken->getToken(),
             'token_type'    =>  'Bearer',
@@ -113,6 +149,25 @@ class ClientCredentials extends AbstractGrant
             'expires_in'    =>  $this->server->getAccessTokenTTL()
         ];
 
+        // Associate a refresh token if set
+        if ($this->server->hasGrantType('refresh_token')) {
+            $refreshToken = new RefreshTokenEntity($this->server);
+            $refreshToken->setToken(SecureKey::generate());
+            $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
+            $response['refresh_token'] = $refreshToken->getToken();
+        }
+
+        // Save everything
+        $session->save();
+        $accessToken->setSession($session);
+        $accessToken->save();
+
+        if ($this->server->hasGrantType('refresh_token')) {
+            $refreshToken->setAccessToken($accessToken);
+            $refreshToken->save();
+        }
+
         return $response;
     }
+
 }
