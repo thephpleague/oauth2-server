@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 /**
  * Refresh token entity class
  */
-class RefreshToken extends AbstractToken
+class RefreshTokenEntity extends AbstractTokenEntity
 {
     /**
      * Access token associated to refresh token
@@ -30,10 +30,10 @@ class RefreshToken extends AbstractToken
 
     /**
      * Associate an access token
-     * @param \League\OAuth2\Server\Entity\AccessToken $accessToken
+     * @param \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken
      * @return self
      */
-    public function setAccessToken(AccessToken $accessToken)
+    public function setAccessToken(AccessTokenEntity $accessToken)
     {
         $this->accessToken = $accessToken;
         return $this;
@@ -45,7 +45,7 @@ class RefreshToken extends AbstractToken
      */
     public function getAccessToken()
     {
-        if (! $this->accessToken instanceof AccessToken) {
+        if (! $this->accessToken instanceof AccessTokenEntity) {
             $this->accessToken = $this->server->getStorage('access_token')->getByRefreshToken($this);
         }
         return $this->accessToken;

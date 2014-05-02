@@ -20,8 +20,51 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 /**
  * Access token entity class
  */
-class AccessToken extends AbstractToken
+class AccessTokenEntity extends AbstractTokenEntity
 {
+    /**
+     * Get session
+     * @return \League\OAuth2\Server\SessionEntity
+     */
+    public function getSession()
+    {
+        if ($this->session instanceof SessionEntity) {
+            return $this->session;
+        }
+
+        $this->session = $this->server->getStorage('session')->getByAccessToken($this);
+        return $this->session;
+    }
+
+    /**
+     * Check if access token has an associated scope
+     * @param string $scope Scope to check
+     * @return bool
+     */
+    public function hasScope($scope)
+    {
+        if ($this->scopes === null) {
+            $this->getScopes();
+        }
+
+        return isset($this->scopes[$scope]);
+    }
+
+    /**
+     * Return all scopes associated with the session
+     * @return array Array of \League\OAuth2\Server\Entity\Scope
+     */
+    public function getScopes()
+    {
+        if ($this->scopes === null) {
+            $this->scopes = $this->formatScopes(
+                $this->server->getStorage('access_token')->getScopes($this)
+            );
+        }
+
+        return $this->scopes;
+    }
+
     /**
      * {@inheritdoc}
      */

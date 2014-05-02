@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 /**
  * Access token entity class
  */
-class AuthCode extends AbstractToken
+class AuthCodeEntity extends AbstractTokenEntity
 {
     /**
      * Redirect URI
@@ -49,7 +49,7 @@ class AuthCode extends AbstractToken
     }
 
     /**
-     * [generateRedirectUri description]
+     * Generate a redirect URI
      * @param  string $state          The state parameter if set by the client
      * @param  string $queryDelimeter The query delimiter ('?' for auth code grant, '#' for implicit grant)
      * @return string
@@ -69,11 +69,11 @@ class AuthCode extends AbstractToken
      */
     public function getSession()
     {
-        if ($this->session instanceof Session) {
+        if ($this->session instanceof SessionEntity) {
             return $this->session;
         }
 
-        $this->session = $this->server->getStorage('session')->getByAuthCode($this->token);
+        $this->session = $this->server->getStorage('session')->getByAuthCode($this);
         return $this->session;
     }
 

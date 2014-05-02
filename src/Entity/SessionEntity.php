@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 /**
  * Session entity grant
  */
-class Session
+class SessionEntity
 {
     /**
      * Session identifier
@@ -48,19 +48,19 @@ class Session
 
     /**
      * Auth code
-     * @var \League\OAuth2\Server\Entity\AuthCode
+     * @var \League\OAuth2\Server\Entity\AuthCodeEntity
      */
     protected $authCode;
 
     /**
      * Access token
-     * @var \League\OAuth2\Server\Entity\AccessToken
+     * @var \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     protected $accessToken;
 
     /**
      * Refresh token
-     * @var \League\OAuth2\Server\Entity\RefreshToken
+     * @var \League\OAuth2\Server\Entity\RefreshTokenEntity
      */
     protected $refreshToken;
 
@@ -109,10 +109,10 @@ class Session
 
     /**
      * Associate a scope
-     * @param \League\OAuth2\Server\Entity\Scope $scope
+     * @param \League\OAuth2\Server\Entity\ScopeEntity $scope
      * @return self
      */
-    public function associateScope(Scope $scope)
+    public function associateScope(ScopeEntity $scope)
     {
         if (!isset($this->scopes[$scope->getId()])) {
             $this->scopes[$scope->getId()] = $scope;
@@ -158,7 +158,7 @@ class Session
         $scopes = [];
         if (is_array($unformated)) {
             foreach ($unformated as $scope) {
-                if ($scope instanceof Scope) {
+                if ($scope instanceof ScopeEntity) {
                     $scopes[$scope->getId()] = $scope;
                 }
             }
@@ -168,10 +168,10 @@ class Session
 
     /**
      * Associate an access token with the session
-     * @param  \League\OAuth2\Server\Entity\AccessToken $accessToken
+     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken
      * @return self
      */
-    public function associateAccessToken(AccessToken $accessToken)
+    public function associateAccessToken(AccessTokenEntity $accessToken)
     {
         $this->accessToken = $accessToken;
         return $this;
@@ -179,10 +179,10 @@ class Session
 
     /**
      * Associate a refresh token with the session
-     * @param  \League\OAuth2\Server\Entity\RefreshToken $refreshToken
+     * @param  \League\OAuth2\Server\Entity\RefreshTokenEntity $refreshToken
      * @return self
      */
-    public function associateRefreshToken(RefreshToken $refreshToken)
+    public function associateRefreshToken(RefreshTokenEntity $refreshToken)
     {
         $this->refreshToken = $refreshToken;
         return $this;
@@ -190,10 +190,10 @@ class Session
 
     /**
      * Associate a client with the session
-     * @param  League\OAuth2\Server\Entity\Client $client The client
+     * @param  League\OAuth2\Server\Entity\ClientEntity $client The client
      * @return self
      */
-    public function associateClient(Client $client)
+    public function associateClient(ClientEntity $client)
     {
         $this->client = $client;
         return $this;
@@ -205,7 +205,7 @@ class Session
      */
     public function getClient()
     {
-        if ($this->client instanceof Client) {
+        if ($this->client instanceof ClientEntity) {
             return $this->client;
         }
 

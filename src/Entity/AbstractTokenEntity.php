@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 /**
  * Abstract token class
  */
-abstract class AbstractToken
+abstract class AbstractTokenEntity
 {
     /**
      * Access token ID
@@ -30,7 +30,7 @@ abstract class AbstractToken
 
     /**
      * Associated session
-     * @var \League\OAuth2\Server\Session
+     * @var \League\OAuth2\Server\SessionEntity
      */
     protected $session;
 
@@ -48,7 +48,7 @@ abstract class AbstractToken
 
     /**
      * Authorization or resource server
-     * @var \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource
+     * @var \League\OAuth2\Server\AbstractServer
      */
     protected $server;
 
@@ -65,27 +65,13 @@ abstract class AbstractToken
 
     /**
      * Set session
-     * @param \League\OAuth2\Server\Session $session
+     * @param \League\OAuth2\Server\SessionEntity $session
      * @return self
      */
-    public function setSession(Session $session)
+    public function setSession(SessionEntity $session)
     {
         $this->session = $session;
         return $this;
-    }
-
-    /**
-     * Get session
-     * @return \League\OAuth2\Server\Session
-     */
-    public function getSession()
-    {
-        if ($this->session instanceof Session) {
-            return $this->session;
-        }
-
-        $this->session = $this->server->getStorage('session')->getByAccessToken($this->token);
-        return $this->session;
     }
 
     /**
@@ -130,45 +116,16 @@ abstract class AbstractToken
 
     /**
      * Associate a scope
-     * @param \League\OAuth2\Server\Entity\Scope $scope
+     * @param \League\OAuth2\Server\Entity\ScopeEntity $scope
      * @return self
      */
-    public function associateScope(Scope $scope)
+    public function associateScope(ScopeEntity $scope)
     {
         if (!isset($this->scopes[$scope->getId()])) {
             $this->scopes[$scope->getId()] = $scope;
         }
 
         return $this;
-    }
-
-    /**
-     * Check if access token has an associated scope
-     * @param string $scope Scope to check
-     * @return bool
-     */
-    public function hasScope($scope)
-    {
-        if ($this->scopes === null) {
-            $this->getScopes();
-        }
-
-        return isset($this->scopes[$scope]);
-    }
-
-    /**
-     * Return all scopes associated with the session
-     * @return array Array of \League\OAuth2\Server\Entity\Scope
-     */
-    public function getScopes()
-    {
-        if ($this->scopes === null) {
-            $this->scopes = $this->formatScopes(
-                $this->server->getStorage('access_token')->getScopes($this)
-            );
-        }
-
-        return $this->scopes;
     }
 
     /**
@@ -180,7 +137,7 @@ abstract class AbstractToken
     {
         $scopes = [];
         foreach ($unformatted as $scope) {
-            if ($scope instanceof Scope) {
+            if ($scope instanceof ScopeEntity) {
                 $scopes[$scope->getId()] = $scope;
             }
         }

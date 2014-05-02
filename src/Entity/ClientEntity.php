@@ -17,7 +17,7 @@ use League\OAuth2\Server\AbstractServer;
 /**
  * Client entity class
  */
-class Client
+class ClientEntity
 {
     /**
      * Client identifier

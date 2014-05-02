@@ -17,7 +17,7 @@ use League\OAuth2\Server\AbstractServer;
 /**
  * Scope entity class
  */
-class Scope
+class ScopeEntity
 {
     /**
      * Scope identifier
@@ -33,7 +33,7 @@ class Scope
 
     /**
      * Authorization or resource server
-     * @var \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource
+     * @var \League\OAuth2\Server\AbstractServer
      */
     protected $server;
 
