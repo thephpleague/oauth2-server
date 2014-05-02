@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server\Storage;
 
+use League\OAuth2\Server\AbstractServer;
+
 /**
  * Storage adapter class
  */
@@ -26,7 +28,7 @@ class Adapter
      * Set the server
      * @param \League\OAuth2\Server\AbstractServer $server
      */
-    public function setServer($server)
+    public function setServer(AbstractServer $server)
     {
         $this->server = $server;
         return $this;
