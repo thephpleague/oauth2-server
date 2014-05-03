@@ -8,7 +8,7 @@ use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\AuthorizationServer;
 use \Mockery as M;
 
-class AbstractTokenTests extends \PHPUnit_Framework_TestCase
+class AbstractTokenTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetGet()
     {

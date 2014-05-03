@@ -10,7 +10,7 @@ use \Mockery as M;
 
 class AuthCodeTest extends \PHPUnit_Framework_TestCase
 {
-    function testSetGet()
+    public function testSetGet()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
 
@@ -26,7 +26,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($code->getSession() instanceof \League\OAuth2\Server\Entity\SessionEntity);
     }
 
-    function testSave()
+    public function testSave()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
         $server->shouldReceive('setAuthCodeStorage');
@@ -57,7 +57,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($entity->save() instanceof AuthCodeEntity);
     }
 
-    function testExpire()
+    public function testExpire()
     {
         $server = new AuthorizationServer();
 

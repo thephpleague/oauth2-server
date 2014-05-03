@@ -3,7 +3,6 @@
 namespace LeagueTests;
 
 use League\OAuth2\Server\ResourceServer;
-use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
@@ -33,7 +32,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         return $server;
     }
 
-    function testGetSet()
+    public function testGetSet()
     {
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('setServer');

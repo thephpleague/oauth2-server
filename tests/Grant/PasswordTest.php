@@ -5,15 +5,13 @@ namespace LeagueTests\Grant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Entity\ScopeEntity;
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\AuthorizationServer;
 use Mockery as M;
 
 class PasswordTest extends \PHPUnit_Framework_TestCase
 {
-    function testCompleteFlowMissingClientId()
+    public function testCompleteFlowMissingClientId()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
@@ -27,7 +25,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    function testCompleteFlowMissingClientSecret()
+    public function testCompleteFlowMissingClientSecret()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
@@ -43,7 +41,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowInvalidClient()
+    public function testCompleteFlowInvalidClient()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
 
@@ -66,7 +64,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testNoUsername()
+    public function testNoUsername()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
@@ -108,7 +106,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testNoPassword()
+    public function testNoPassword()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
@@ -151,7 +149,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testNoCallable()
+    public function testNoCallable()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\ServerErrorException');
 
@@ -195,7 +193,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowInvalidScope()
+    public function testCompleteFlowInvalidScope()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidScopeException');
 
@@ -243,7 +241,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowNoScopes()
+    public function testCompleteFlowNoScopes()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
@@ -292,7 +290,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowInvalidCredentials()
+    public function testCompleteFlowInvalidCredentials()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidCredentialsException');
 
@@ -348,7 +346,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlow()
+    public function testCompleteFlow()
     {
         $_POST = [
             'grant_type' => 'password',
@@ -407,7 +405,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($response['expires']));
     }
 
-    function testCompleteFlowRefreshToken()
+    public function testCompleteFlowRefreshToken()
     {
         $_POST = [
             'grant_type' => 'password',

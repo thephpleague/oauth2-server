@@ -3,11 +3,10 @@
 namespace LeagueTests;
 
 use LeagueTests\Stubs\StubAbstractServer;
-use \Mockery as M;
 
-class AbstractTokenTest extends \PHPUnit_Framework_TestCase
+class AbstractServerTest extends \PHPUnit_Framework_TestCase
 {
-    function testSetGet()
+    public function testSetGet()
     {
         $server = new StubAbstractServer();
         $this->assertTrue($server->getRequest() instanceof \Symfony\Component\HttpFoundation\Request);
@@ -17,7 +16,7 @@ class AbstractTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($server2->getRequest() instanceof \Symfony\Component\HttpFoundation\Request);
     }
 
-    function testGetStorageException()
+    public function testGetStorageException()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\ServerErrorException');
         $server = new StubAbstractServer();

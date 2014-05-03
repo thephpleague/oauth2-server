@@ -4,11 +4,10 @@ namespace LeagueTests\Storage;
 
 use League\OAuth2\Server\Storage\Adapter;
 use LeagueTests\Stubs\StubAbstractServer;
-use \Mockery as M;
 
 class AdapterTest extends \PHPUnit_Framework_TestCase
 {
-    function testSetGet()
+    public function testSetGet()
     {
         $adapter = new Adapter;
 

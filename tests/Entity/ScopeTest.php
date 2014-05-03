@@ -5,7 +5,7 @@ namespace LeagueTests\Entity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use \Mockery as M;
 
-class ScopeTests extends \PHPUnit_Framework_TestCase
+class ScopeTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetGet()
     {

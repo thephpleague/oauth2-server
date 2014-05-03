@@ -5,12 +5,11 @@ namespace LeagueTests\Entity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\AuthorizationServer;
 use \Mockery as M;
 
-class AccessTokenTests extends \PHPUnit_Framework_TestCase
+class AccessTokenTest extends \PHPUnit_Framework_TestCase
 {
-    function testSave()
+    public function testSave()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
         $server->shouldReceive('setAccessTokenStorage');
@@ -40,7 +39,7 @@ class AccessTokenTests extends \PHPUnit_Framework_TestCase
         $this->assertTrue($entity->save() instanceof AccessTokenEntity);
     }
 
-    function testExpire()
+    public function testExpire()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
 

@@ -13,7 +13,7 @@ use Mockery as M;
 
 class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 {
-    function testSetRefreshTokenTTL()
+    public function testSetRefreshTokenTTL()
     {
         $grant = new RefreshTokenGrant;
         $grant->setRefreshTokenTTL(86400);
@@ -24,7 +24,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(86400, $property->getValue($grant));
     }
 
-    function testCompleteFlowMissingClientId()
+    public function testCompleteFlowMissingClientId()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
@@ -37,7 +37,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowMissingClientSecret()
+    public function testCompleteFlowMissingClientSecret()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
@@ -53,7 +53,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowInvalidClient()
+    public function testCompleteFlowInvalidClient()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
 
@@ -76,7 +76,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowMissingRefreshToken()
+    public function testCompleteFlowMissingRefreshToken()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
@@ -110,7 +110,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowInvalidRefreshToken()
+    public function testCompleteFlowInvalidRefreshToken()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRefreshException');
 
@@ -146,7 +146,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowExistingScopes()
+    public function testCompleteFlowExistingScopes()
     {
         $_POST = [
             'grant_type'    => 'refresh_token',
@@ -215,7 +215,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($response['expires']));
     }
 
-    function testCompleteFlowRequestScopes()
+    public function testCompleteFlowRequestScopes()
     {
         $_POST = [
             'grant_type'    => 'refresh_token',
@@ -287,7 +287,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($response['expires']));
     }
 
-    function testCompleteFlowRequestScopesInvalid()
+    public function testCompleteFlowRequestScopesInvalid()
     {
         $_POST = [
             'grant_type'    => 'refresh_token',

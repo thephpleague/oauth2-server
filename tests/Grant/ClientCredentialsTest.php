@@ -6,12 +6,11 @@ use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Grant\ClientException;
 use Mockery as M;
 
-class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
+class ClientCredentialsTest extends \PHPUnit_Framework_TestCase
 {
-    function testCompleteFlowMissingClientId()
+    public function testCompleteFlowMissingClientId()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
@@ -25,7 +24,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    function testCompleteFlowMissingClientSecret()
+    public function testCompleteFlowMissingClientSecret()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
@@ -41,7 +40,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowInvalidClient()
+    public function testCompleteFlowInvalidClient()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
 
@@ -64,7 +63,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowInvalidScope()
+    public function testCompleteFlowInvalidScope()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidScopeException');
 
@@ -107,7 +106,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlowNoScopes()
+    public function testCompleteFlowNoScopes()
     {
         $_POST = [
             'grant_type' => 'client_credentials',
@@ -151,7 +150,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    function testCompleteFlow()
+    public function testCompleteFlow()
     {
         $_POST = [
             'grant_type' => 'client_credentials',

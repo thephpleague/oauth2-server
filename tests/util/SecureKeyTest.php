@@ -1,13 +1,12 @@
 <?php
 
-namespace LeagueTests\Util;
+namespace LeagueTests\util;
 
 use \League\OAuth2\Server\Util\SecureKey;
-use \Mockery as M;
 
 class SecureKeyTest extends \PHPUnit_Framework_TestCase
 {
-	function testGenerate()
+    public function testGenerate()
     {
         $v1 = SecureKey::generate();
         $v2 = SecureKey::generate();

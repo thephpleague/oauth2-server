@@ -121,7 +121,6 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
         $clientStorage->shouldReceive('setServer');
         $clientStorage->shouldReceive('get')->andReturn(null);
 
-
         $server->setClientStorage($clientStorage);
 
         $server->addGrantType($grant);

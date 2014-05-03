@@ -7,7 +7,7 @@ use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
 use \Mockery as M;
 
-class AuthorizationTest extends \PHPUnit_Framework_TestCase
+class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetGet()
     {

@@ -6,12 +6,11 @@ use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
-use League\OAuth2\Server\AuthorizationServer as Authorization;
 use \Mockery as M;
 
-class RefreshTokenTests extends \PHPUnit_Framework_TestCase
+class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 {
-    function testSetAccessToken()
+    public function testSetAccessToken()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
         $entity = new RefreshTokenEntity($server);
@@ -24,7 +23,7 @@ class RefreshTokenTests extends \PHPUnit_Framework_TestCase
         $this->assertTrue($accessTokenProperty->getValue($entity) instanceof AccessTokenEntity);
     }
 
-    function testSave()
+    public function testSave()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
         $server->shouldReceive('setAccessTokenStorage');
@@ -63,7 +62,7 @@ class RefreshTokenTests extends \PHPUnit_Framework_TestCase
         $this->assertSame(null, $entity->save());
     }
 
-    function testExpire()
+    public function testExpire()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
         $server->shouldReceive('setRefreshTokenStorage');

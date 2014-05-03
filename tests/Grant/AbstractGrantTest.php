@@ -11,7 +11,7 @@ use Mockery as M;
 
 class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 {
-    function testSetGet()
+    public function testSetGet()
     {
         $server = new AuthorizationServer;
 
