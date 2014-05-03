@@ -1,6 +1,5 @@
 /vendor
 /composer.lock
-/tests
 /build
 /docs
 /testing
