@@ -32,6 +32,11 @@ class UnsupportedGrantTypeException extends OAuthException
 
     public function __construct($parameter)
     {
-        parent::__construct(sprintf('The authorization grant type "%s" is not supported by the authorization server.', $parameter));
+        parent::__construct(
+            sprintf(
+                'The authorization grant type "%s" is not supported by the authorization server.',
+                $parameter
+            )
+        );
     }
 }

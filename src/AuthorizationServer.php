@@ -174,7 +174,7 @@ class AuthorizationServer extends AbstractServer
 
         $this->grantTypes[$identifier] = $grantType;
 
-        if ( ! is_null($grantType->getResponseType())) {
+        if (!is_null($grantType->getResponseType())) {
             $this->responseTypes[] = $grantType->getResponseType();
         }
 
@@ -316,7 +316,7 @@ class AuthorizationServer extends AbstractServer
         }
 
         // Ensure grant type is one that is recognised and is enabled
-        if ( ! in_array($grantType, array_keys($this->grantTypes))) {
+        if (!in_array($grantType, array_keys($this->grantTypes))) {
             throw new Exception\UnsupportedGrantTypeException($grantType);
         }
 

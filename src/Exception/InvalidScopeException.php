@@ -32,6 +32,11 @@ class InvalidScopeException extends OAuthException
 
     public function __construct($parameter)
     {
-        parent::__construct(sprintf('The requested scope is invalid, unknown, or malformed. Check the "%s" scope.', $parameter));
+        parent::__construct(
+            sprintf(
+                'The requested scope is invalid, unknown, or malformed. Check the "%s" scope.',
+                $parameter
+            )
+        );
     }
 }

@@ -173,7 +173,9 @@ class ResourceServer extends AbstractServer
      */
     public function isValidRequest($headersOnly = true, $accessToken = null)
     {
-        $accessTokenString = ($accessToken !== null) ? $accessToken : $this->determineAccessToken($headersOnly, $accessToken);
+        $accessTokenString = ($accessToken !== null)
+                                ? $accessToken
+                                : $this->determineAccessToken($headersOnly, $accessToken);
 
         // Set the access token
         $this->accessToken = $this->storages['access_token']->get($accessTokenString);

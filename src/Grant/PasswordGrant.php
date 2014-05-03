@@ -164,5 +164,4 @@ class PasswordGrant extends AbstractGrant
 
         return $response;
     }
-
 }

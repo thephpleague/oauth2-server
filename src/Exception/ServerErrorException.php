@@ -29,8 +29,10 @@ class ServerErrorException extends OAuthException
     /**
      * {@inheritdoc}
      */
-    public function __construct($parameter = 'The authorization server encountered an unexpected condition which prevented it from fulfilling the request.')
-    {
+    public function __construct(
+        $parameter = 'The authorization server encountered an unexpected condition which prevented it from fulfilling'
+        . 'the request.'
+    ) {
         parent::__construct($parameter);
     }
 }

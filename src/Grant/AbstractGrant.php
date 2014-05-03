@@ -116,13 +116,15 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         for ($i = 0; $i < count($scopesList); $i++) {
             $scopesList[$i] = trim($scopesList[$i]);
-            if ($scopesList[$i] === '') unset($scopesList[$i]); // Remove any junk scopes
+            if ($scopesList[$i] === '') {
+                unset($scopesList[$i]); // Remove any junk scopes
+            }
         }
 
         if (
-            $this->server->scopeParamRequired() === true &&
-            $this->server->getDefaultScope() === null &&
-            count($scopesList) === 0
+            $this->server->scopeParamRequired() === true
+            && $this->server->getDefaultScope() === null
+            && count($scopesList) === 0
         ) {
             throw new Exception\InvalidRequestException('scope');
         } elseif (count($scopesList) === 0 && $this->server->getDefaultScope() !== null) {
@@ -185,5 +187,4 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @return array An array of parameters to be passed back to the client
      */
     abstract public function completeFlow();
-
 }
