@@ -1,6 +1,6 @@
 # PHP OAuth 2.0 Server
 
-[![Latest Stable Version](https://poser.pugx.org/league/oauth2-server/v/stable.png)](https://packagist.org/packages/league/oauth2-server) [![Coverage Status](https://coveralls.io/repos/php-loep/oauth2-server/badge.png?branch=master)](https://coveralls.io/r/php-loep/oauth2-server?branch=master) [![Total Downloads](https://poser.pugx.org/league/oauth2-server/downloads.png)](https://packagist.org/packages/league/oauth2-server) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/php-loep/oauth2-server/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![Latest Stable Version](https://poser.pugx.org/league/oauth2-server/v/stable.png)](https://packagist.org/packages/league/oauth2-server) [![Coverage Status](https://coveralls.io/repos/thephpleague/oauth2-server/badge.png?branch=v4.0.0-WIP)](https://coveralls.io/r/thephpleague/oauth2-server?branch=v4.0.0-WIP) [![Total Downloads](https://poser.pugx.org/league/oauth2-server/downloads.png)](https://packagist.org/packages/league/oauth2-server)
 
 
 A standards compliant [OAuth 2.0](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authorization server and resource server written in PHP.
