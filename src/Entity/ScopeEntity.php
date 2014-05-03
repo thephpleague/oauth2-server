@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server\Entity;
 
-use League\OAuth2\Server\Exception\ServerException;
 use League\OAuth2\Server\AbstractServer;
 
 /**
@@ -39,23 +38,25 @@ class ScopeEntity
 
     /**
      * __construct
-     * @param \League\OAuth2\Server\AbstractServer $server
+     * @param  \League\OAuth2\Server\AbstractServer $server
      * @return self
      */
     public function __construct(AbstractServer $server)
     {
         $this->server = $server;
+
         return $this;
     }
 
     /**
      * Set the scope identifer
-     * @param string $id The scope identifier
+     * @param  string $id The scope identifier
      * @return self
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -70,12 +71,13 @@ class ScopeEntity
 
     /**
      * Set the scope's descripton
-     * @param string $description
+     * @param  string $description
      * @return self
      */
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 

@@ -11,19 +11,14 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Request;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Entity\AuthCodeEntity;
 use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\ClientInterface;
-use League\OAuth2\Server\Storage\ScopeInterface;
 
 /**
  * Auth code grant class
@@ -62,7 +57,7 @@ class AuthCodeGrant extends AbstractGrant
 
     /**
      * Override the default access token expire time
-     * @param int $authTokenTTL
+     * @param  int  $authTokenTTL
      * @return void
      */
     public function setAuthTokenTTL($authTokenTTL)
@@ -132,10 +127,10 @@ class AuthCodeGrant extends AbstractGrant
     /**
      * Parse a new authorise request
      *
-     * @param  string $type        The session owner's type
-     * @param  string $typeId      The session owner's ID
-     * @param  array  $authParams  The authorise request $_GET parameters
-     * @return string              An authorisation code
+     * @param  string $type       The session owner's type
+     * @param  string $typeId     The session owner's ID
+     * @param  array  $authParams The authorise request $_GET parameters
+     * @return string An authorisation code
      */
     public function newAuthoriseRequest($type, $typeId, $authParams = [])
     {

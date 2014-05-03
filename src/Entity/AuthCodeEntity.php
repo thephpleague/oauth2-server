@@ -11,12 +11,6 @@
 
 namespace League\OAuth2\Server\Entity;
 
-use League\OAuth2\Server\Storage\SessionStorageInterface;
-use League\OAuth2\Server\Storage\AccessTokenInterface;
-use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Exception\InvalidAccessTokenException;
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 /**
  * Access token entity class
  */
@@ -30,18 +24,19 @@ class AuthCodeEntity extends AbstractTokenEntity
 
     /**
      * Set the redirect URI for the authorization request
-     * @param string $redirectUri
-     * @return  self
+     * @param  string $redirectUri
+     * @return self
      */
     public function setRedirectUri($redirectUri)
     {
         $this->redirectUri = $redirectUri;
+
         return $this;
     }
 
     /**
      * Get the redirect URI
-     * @return  string
+     * @return string
      */
     public function getRedirectUri()
     {
@@ -58,6 +53,7 @@ class AuthCodeEntity extends AbstractTokenEntity
     {
         $uri = $this->getRedirectUri();
         $uri .= (strstr($this->getRedirectUri(), $queryDelimeter) === false) ? $queryDelimeter : '&';
+
         return $uri.http_build_query([
             'code'  =>  $this->getToken(),
             'state' =>  $state
@@ -74,6 +70,7 @@ class AuthCodeEntity extends AbstractTokenEntity
         }
 
         $this->session = $this->server->getStorage('session')->getByAuthCode($this);
+
         return $this->session;
     }
 

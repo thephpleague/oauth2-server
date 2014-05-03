@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server\Entity;
 
-use League\OAuth2\Server\Exception\ServerException;
 use League\OAuth2\Server\AbstractServer;
 
 /**
@@ -51,23 +50,25 @@ class ClientEntity
 
     /**
      * __construct
-     * @param \League\OAuth2\Server\AbstractServer $server
+     * @param  \League\OAuth2\Server\AbstractServer $server
      * @return self
      */
     public function __construct(AbstractServer $server)
     {
         $this->server = $server;
+
         return $this;
     }
 
     /**
      * Set the client identifier
-     * @param string $id
+     * @param  string $id
      * @return self
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -82,12 +83,13 @@ class ClientEntity
 
     /**
      * Set the client secret
-     * @param string $secret
+     * @param  string $secret
      * @return self
      */
     public function setSecret($secret)
     {
         $this->secret = $secret;
+
         return $this;
     }
 
@@ -102,12 +104,13 @@ class ClientEntity
 
     /**
      * Set the client name
-     * @param string $name
+     * @param  string $name
      * @return self
      */
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -122,12 +125,13 @@ class ClientEntity
 
     /**
      * Set the client redirect URI
-     * @param string $redirectUri
+     * @param  string $redirectUri
      * @return self
      */
     public function setRedirectUri($redirectUri)
     {
         $this->redirectUri = $redirectUri;
+
         return $this;
     }
 

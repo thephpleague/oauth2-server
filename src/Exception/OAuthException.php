@@ -36,7 +36,7 @@ class OAuthException extends \Exception
 
     /**
      * Get all headers that have to be send with the error response
-     * @return array         Array with header values
+     * @return array Array with header values
      */
     public function getHttpHeaders()
     {
@@ -86,7 +86,6 @@ class OAuthException extends \Exception
             }
         }
         // @codeCoverageIgnoreEnd
-
         return $headers;
     }
 }

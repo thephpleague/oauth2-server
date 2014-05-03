@@ -61,12 +61,13 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Return the identifier
-     * @param string $identifier
+     * @param  string $identifier
      * @return self
      */
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
+
         return $this;
     }
 
@@ -81,29 +82,31 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Override the default access token expire time
-     * @param int $accessTokenTTL
+     * @param  int  $accessTokenTTL
      * @return self
      */
     public function setAccessTokenTTL($accessTokenTTL)
     {
         $this->accessTokenTTL = $accessTokenTTL;
+
         return $this;
     }
 
     /**
      * Inject the authorization server into the grant
-     * @param AuthorizationServer $server The authorization server instance
-     * @return  self
+     * @param  AuthorizationServer $server The authorization server instance
+     * @return self
      */
     public function setAuthorizationServer(AuthorizationServer $server)
     {
         $this->server = $server;
+
         return $this;
     }
 
     /**
      * Given a list of scopes, validate them and return an arrary of Scope entities
-     * @param string $scopeParam A string of scopes (e.g. "profile email birthday")
+     * @param  string          $scopeParam A string of scopes (e.g. "profile email birthday")
      * @return array
      * @throws ClientException If scope is invalid, or no scopes passed when required
      */
@@ -161,6 +164,7 @@ abstract class AbstractGrant implements GrantTypeInterface
                 $scopes[$scope->getId()] = $scope;
             }
         }
+
         return $scopes;
     }
 
@@ -170,15 +174,15 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Example response:
      * <pre>
      *  array(
-     *      'access_token'  =>  (string),   // The access token
-     *      'refresh_token' =>  (string),   // The refresh token (only set if the refresh token grant is enabled)
+     *      'access_token'  =>  (string) ,   // The access token
+     *      'refresh_token' =>  (string) ,   // The refresh token (only set if the refresh token grant is enabled)
      *      'token_type'    =>  'bearer',   // Almost always "bearer" (exceptions: JWT, SAML)
-     *      'expires'       =>  (int),      // The timestamp of when the access token will expire
-     *      'expires_in'    =>  (int)       // The number of seconds before the access token will expire
+     *      'expires'       =>  (int) ,      // The timestamp of when the access token will expire
+     *      'expires_in'    =>  (int) // The number of seconds before the access token will expire
      *  )
      * </pre>
      *
-     * @return array                   An array of parameters to be passed back to the client
+     * @return array An array of parameters to be passed back to the client
      */
     abstract public function completeFlow();
 

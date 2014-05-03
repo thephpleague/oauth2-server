@@ -11,10 +11,7 @@
 
 namespace League\OAuth2\Server;
 
-use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
-use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\Storage\StorageWrapper;
 use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\AuthCodeInterface;
@@ -78,85 +75,92 @@ class AuthorizationServer extends AbstractServer
     public function __construct()
     {
         $this->storages = [];
+
         return $this;
     }
 
     /**
      * Set the client storage
-     * @param ClientInterface $storage
+     * @param  ClientInterface $storage
      * @return self
      */
     public function setClientStorage(ClientInterface $storage)
     {
         $storage->setServer($this);
         $this->storages['client'] = $storage;
+
         return $this;
     }
 
     /**
      * Set the session storage
-     * @param SessionInterface $storage
+     * @param  SessionInterface $storage
      * @return self
      */
     public function setSessionStorage(SessionInterface $storage)
     {
         $storage->setServer($this);
         $this->storages['session'] = $storage;
+
         return $this;
     }
 
     /**
      * Set the access token storage
-     * @param AccessTokenInterface $storage
+     * @param  AccessTokenInterface $storage
      * @return self
      */
     public function setAccessTokenStorage(AccessTokenInterface $storage)
     {
         $storage->setServer($this);
         $this->storages['access_token'] = $storage;
+
         return $this;
     }
 
     /**
      * Set the refresh token storage
-     * @param RefreshTokenInteface $storage
+     * @param  RefreshTokenInteface $storage
      * @return self
      */
     public function setRefreshTokenStorage(RefreshTokenInterface $storage)
     {
         $storage->setServer($this);
         $this->storages['refresh_token'] = $storage;
+
         return $this;
     }
 
     /**
      * Set the auth code storage
-     * @param AuthCodeInterface $authCode
+     * @param  AuthCodeInterface $authCode
      * @return self
      */
     public function setAuthCodeStorage(AuthCodeInterface $storage)
     {
         $storage->setServer($this);
         $this->storages['auth_code'] = $storage;
+
         return $this;
     }
 
     /**
      * Set the scope storage
-     * @param ScopeInterface $storage
+     * @param  ScopeInterface $storage
      * @return self
      */
     public function setScopeStorage(ScopeInterface $storage)
     {
         $storage->setServer($this);
         $this->storages['scope'] = $storage;
+
         return $this;
     }
 
     /**
      * Enable support for a grant
-     * @param GrantTypeInterface $grantType  A grant class which conforms to Interface/GrantTypeInterface
-     * @param null|string        $identifier An identifier for the grant (autodetected if not passed)
+     * @param  GrantTypeInterface $grantType  A grant class which conforms to Interface/GrantTypeInterface
+     * @param  null|string        $identifier An identifier for the grant (autodetected if not passed)
      * @return self
      */
     public function addGrantType(GrantTypeInterface $grantType, $identifier = null)
@@ -204,6 +208,7 @@ class AuthorizationServer extends AbstractServer
     public function requireScopeParam($require = true)
     {
         $this->requireScopeParam = $require;
+
         return $this;
     }
 
@@ -224,6 +229,7 @@ class AuthorizationServer extends AbstractServer
     public function setDefaultScope($default = null)
     {
         $this->defaultScope = $default;
+
         return $this;
     }
 
@@ -254,6 +260,7 @@ class AuthorizationServer extends AbstractServer
     public function requireStateParam($require = true)
     {
         $this->requireStateParam = $require;
+
         return $this;
     }
 
@@ -273,6 +280,7 @@ class AuthorizationServer extends AbstractServer
     public function setScopeDelimeter($scopeDelimeter = ' ')
     {
         $this->scopeDelimeter = $scopeDelimeter;
+
         return $this;
     }
 
@@ -292,6 +300,7 @@ class AuthorizationServer extends AbstractServer
     public function setAccessTokenTTL($accessTokenTTL = 3600)
     {
         $this->accessTokenTTL = $accessTokenTTL;
+
         return $this;
     }
 
@@ -317,7 +326,7 @@ class AuthorizationServer extends AbstractServer
 
     /**
      * Return a grant type class
-     * @param  string $grantType The grant type identifer
+     * @param  string                   $grantType The grant type identifer
      * @return Grant\GrantTypeInterface
      */
     public function getGrantType($grantType)

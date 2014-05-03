@@ -11,12 +11,6 @@
 
 namespace League\OAuth2\Server\Entity;
 
-use League\OAuth2\Server\Storage\SessionStorageInterface;
-use League\OAuth2\Server\Storage\RefreshTokenInterface;
-use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Exception\InvalidAccessTokenException;
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 /**
  * Refresh token entity class
  */
@@ -30,12 +24,13 @@ class RefreshTokenEntity extends AbstractTokenEntity
 
     /**
      * Associate an access token
-     * @param \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken
+     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken
      * @return self
      */
     public function setAccessToken(AccessTokenEntity $accessToken)
     {
         $this->accessToken = $accessToken;
+
         return $this;
     }
 
@@ -48,6 +43,7 @@ class RefreshTokenEntity extends AbstractTokenEntity
         if (! $this->accessToken instanceof AccessTokenEntity) {
             $this->accessToken = $this->server->getStorage('access_token')->getByRefreshToken($this);
         }
+
         return $this->accessToken;
     }
 

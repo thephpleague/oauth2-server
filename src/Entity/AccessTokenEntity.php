@@ -11,12 +11,6 @@
 
 namespace League\OAuth2\Server\Entity;
 
-use League\OAuth2\Server\Storage\SessionStorageInterface;
-use League\OAuth2\Server\Storage\AccessTokenInterface;
-use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Exception\InvalidAccessTokenException;
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 /**
  * Access token entity class
  */
@@ -33,12 +27,13 @@ class AccessTokenEntity extends AbstractTokenEntity
         }
 
         $this->session = $this->server->getStorage('session')->getByAccessToken($this);
+
         return $this->session;
     }
 
     /**
      * Check if access token has an associated scope
-     * @param string $scope Scope to check
+     * @param  string $scope Scope to check
      * @return bool
      */
     public function hasScope($scope)

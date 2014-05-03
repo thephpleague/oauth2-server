@@ -11,9 +11,7 @@
 
 namespace League\OAuth2\Server\Entity;
 
-use League\OAuth2\Server\Storage\SessionStorageInterface;
 use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Exception\ServerException;
 use League\OAuth2\Server\AbstractServer;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -54,34 +52,37 @@ abstract class AbstractTokenEntity
 
     /**
      * __construct
-     * @param \League\OAuth2\Server\AbstractServer $server
+     * @param  \League\OAuth2\Server\AbstractServer $server
      * @return self
      */
     public function __construct(AbstractServer $server)
     {
         $this->server = $server;
+
         return $this;
     }
 
     /**
      * Set session
-     * @param \League\OAuth2\Server\SessionEntity $session
+     * @param  \League\OAuth2\Server\SessionEntity $session
      * @return self
      */
     public function setSession(SessionEntity $session)
     {
         $this->session = $session;
+
         return $this;
     }
 
     /**
      * Set the expire time of the token
-     * @param integer $expireTime Unix time stamp
+     * @param  integer $expireTime Unix time stamp
      * @return self
      */
     public function setExpireTime($expireTime)
     {
         $this->expireTime = $expireTime;
+
         return $this;
     }
 
@@ -96,12 +97,13 @@ abstract class AbstractTokenEntity
 
     /**
      * Set access token ID
-     * @param string $token Token ID
+     * @param  string $token Token ID
      * @return self
      */
     public function setToken($token = null)
     {
         $this->token = ($token !== null) ? $token : SecureKey::generate();
+
         return $this;
     }
 
@@ -116,7 +118,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Associate a scope
-     * @param \League\OAuth2\Server\Entity\ScopeEntity $scope
+     * @param  \League\OAuth2\Server\Entity\ScopeEntity $scope
      * @return self
      */
     public function associateScope(ScopeEntity $scope)
@@ -141,6 +143,7 @@ abstract class AbstractTokenEntity
                 $scopes[$scope->getId()] = $scope;
             }
         }
+
         return $scopes;
     }
 
