@@ -22,5 +22,3 @@ script:
 
 after_script:
   - php vendor/bin/coveralls
-
-script: phpunit --configuration phpunit.xml.dist
