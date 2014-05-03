@@ -1,54 +1,64 @@
 {
-	"name": "league/oauth2-server",
-	"description": "A lightweight and powerful OAuth 2.0 authorization and resource server library with support for all the core specification grants. This library will allow you to secure your API with OAuth and allow your applications users to approve apps that want to access their data from your API.",
-	"homepage": "https://github.com/php-loep/oauth2-server",
-	"license": "MIT",
-	"require": {
-		"php": ">=5.4.0",
-		"symfony/http-foundation": "2.*"
-	},
-	"require-dev": {
-		"league/phpunit-coverage-listener": "~1.0",
-    	"mockery/mockery": "0.8"
-	},
-	"repositories": [
-		{
-			"type": "git",
-			"url": "https://github.com/thephpleague/oauth2-server.git"
-		}
-	],
-	"keywords": [
-		"oauth",
+    "name": "league/oauth2-server",
+    "description": "A lightweight and powerful OAuth 2.0 authorization and resource server library with support for all the core specification grants. This library will allow you to secure your API with OAuth and allow your applications users to approve apps that want to access their data from your API.",
+    "homepage": "https://github.com/php-loep/oauth2-server",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.4.0",
+        "symfony/http-foundation": "~2.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0",
+        "mockery/mockery": "~0.9",
+        "league/phpunit-coverage-listener": "~1.0"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/thephpleague/oauth2-server.git"
+        }
+    ],
+    "keywords": [
+        "oauth",
         "oauth2",
         "oauth 2",
-		"oauth 2.0",
-		"server",
+        "oauth 2.0",
+        "server",
         "auth",
         "authorization",
-		"authorisation",
-		"authentication",
-		"resource",
-		"api",
-		"auth",
-		"protect",
-		"secure"
-	],
-	"authors": [
-		{
-			"name": "Alex Bilbie",
-			"email": "hello@alexbilbie.com",
-			"homepage": "http://www.alexbilbie.com",
-			"role": "Developer"
-		}
-	],
-	"replace": {
-		"lncd/oauth2": "*",
-		"league/oauth2server": "*"
-	},
-	"autoload": {
+        "authorisation",
+        "authentication",
+        "resource",
+        "api",
+        "auth",
+        "protect",
+        "secure"
+    ],
+    "authors": [
+        {
+            "name": "Alex Bilbie",
+            "email": "hello@alexbilbie.com",
+            "homepage": "http://www.alexbilbie.com",
+            "role": "Developer"
+        }
+    ],
+    "replace": {
+        "lncd/oauth2": "*",
+        "league/oauth2server": "*"
+    },
+    "autoload": {
         "psr-4": {
-            "League\\OAuth2\\Server\\": "src/",
+            "League\\OAuth2\\Server\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "LeagueTests\\": "tests/"
         }
-	}
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-v4.0.0-WIP": "4.0-dev"
+        }
+    }
 }
