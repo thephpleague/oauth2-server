@@ -31,6 +31,7 @@ class Adapter
     public function setServer(AbstractServer $server)
     {
         $this->server = $server;
+
         return $this;
     }
 

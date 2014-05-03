@@ -11,14 +11,6 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Request;
-use League\OAuth2\Server\Authorization;
-use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\ClientInterface;
-use League\OAuth2\Server\Storage\ScopeInterface;
-
 /**
  * Grant type interface
  */
@@ -26,7 +18,7 @@ interface GrantTypeInterface
 {
     /**
      * Complete the grant flow
-     * @return  array
+     * @return array
      */
     public function completeFlow();
 }

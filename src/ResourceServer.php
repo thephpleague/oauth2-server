@@ -11,10 +11,8 @@
 
 namespace League\OAuth2\Server;
 
-use League\OAuth2\Server\Storage\StorageWrapper;
 use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
-use League\OAuth2\Server\Storage\AuthCodeInterface;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
@@ -39,10 +37,10 @@ class ResourceServer extends AbstractServer
 
     /**
      * Initialise the resource server
-     * @param SessionInterface    $sessionStorage
-     * @param AccessTokenInteface $accessTokenStorage
-     * @param ClientInterface     $clientStorage
-     * @param ScopeInterface      $scopeStorage
+     * @param  SessionInterface    $sessionStorage
+     * @param  AccessTokenInteface $accessTokenStorage
+     * @param  ClientInterface     $clientStorage
+     * @param  ScopeInterface      $scopeStorage
      * @return self
      */
     public function __construct(
@@ -68,14 +66,15 @@ class ResourceServer extends AbstractServer
 
     /**
      * Set the storage
-     * @param  string $type Storage type
-     * @param mixed $storage Storage class
+     * @param  string $type    Storage type
+     * @param  mixed  $storage Storage class
      * @return self
      */
     protected function setStorage($type, $storage)
     {
         $storage->setServer($this);
         $this->storages[$type] = $storage;
+
         return $this;
     }
 
@@ -96,6 +95,7 @@ class ResourceServer extends AbstractServer
     public function setTokenKey($key)
     {
         $this->tokenKey = $key;
+
         return $this;
     }
 
@@ -146,8 +146,8 @@ class ResourceServer extends AbstractServer
 
     /**
      * Checks if the presented access token has the given scope(s)
-     * @param array|string $scopes An array of scopes or a single scope as a string
-     * @return bool Returns bool if all scopes are found, false if any fail
+     * @param  array|string $scopes An array of scopes or a single scope as a string
+     * @return bool         Returns bool if all scopes are found, false if any fail
      */
     public function hasScope($scopes)
     {
@@ -162,6 +162,7 @@ class ResourceServer extends AbstractServer
                 }
             }
         }
+
         return true;
     }
 
@@ -176,13 +177,14 @@ class ResourceServer extends AbstractServer
 
         // Set the access token
         $this->accessToken = $this->storages['access_token']->get($accessTokenString);
+
         return ($this->accessToken instanceof AccessTokenEntity);
     }
 
     /**
      * Reads in the access token from the headers
      * @param $headersOnly Limit Access Token to Authorization header only
-     * @throws Exception\MissingAccessTokenException  Thrown if there is no access token presented
+     * @throws Exception\MissingAccessTokenException Thrown if there is no access token presented
      * @return string
      */
     public function determineAccessToken($headersOnly = false)

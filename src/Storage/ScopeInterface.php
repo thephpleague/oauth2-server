@@ -25,8 +25,8 @@ interface ScopeInterface
      * SELECT * FROM oauth_scopes WHERE scope = :scope
      * </code>
      *
-     * @param  string     $scope     The scope
-     * @param  string     $grantType The grant type used in the request (default = "null")
+     * @param  string                                   $scope     The scope
+     * @param  string                                   $grantType The grant type used in the request (default = "null")
      * @return \League\OAuth2\Server\Entity\ScopeEntity
      */
     public function get($scope, $grantType = null);

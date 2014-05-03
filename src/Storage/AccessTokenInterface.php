@@ -14,7 +14,6 @@ namespace League\OAuth2\Server\Storage;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\AbstractTokenEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
-use League\OAuth2\Server\Entity\AuthCodeEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 
 /**
@@ -24,14 +23,14 @@ interface AccessTokenInterface
 {
     /**
      * Get an instance of Entity\AccessTokenEntity
-     * @param  string $token The access token
+     * @param  string                                         $token The access token
      * @return \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     public function get($token);
 
     /**
      * Get the access token associated with an access token
-     * @param \League\OAuth2\Server\Entity\RefreshTokenEntity $refreshToken
+     * @param  \League\OAuth2\Server\Entity\RefreshTokenEntity $refreshToken
      * @return \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     public function getByRefreshToken(RefreshTokenEntity $refreshToken);
@@ -39,15 +38,15 @@ interface AccessTokenInterface
     /**
      * Get the scopes for an access token
      * @param  \League\OAuth2\Server\Entity\AbstractTokenEntity $token The access token
-     * @return array Array of \League\OAuth2\Server\Entity\ScopeEntity
+     * @return array                                            Array of \League\OAuth2\Server\Entity\ScopeEntity
      */
     public function getScopes(AbstractTokenEntity $token);
 
     /**
      * Creates a new access token
-     * @param  string $token The access token
-     * @param  integer $expireTime The expire time expressed as a unix timestamp
-     * @param  string|integer $sessionId The session ID
+     * @param  string                                   $token      The access token
+     * @param  integer                                  $expireTime The expire time expressed as a unix timestamp
+     * @param  string|integer                           $sessionId  The session ID
      * @return \League\OAuth2\Server\Entity\AccessToken
      */
     public function create($token, $expireTime, $sessionId);
@@ -55,7 +54,7 @@ interface AccessTokenInterface
     /**
      * Associate a scope with an acess token
      * @param  \League\OAuth2\Server\Entity\AbstractTokenEntity $token The access token
-     * @param  \League\OAuth2\Server\Entity\ScopeEntity $scope The scope
+     * @param  \League\OAuth2\Server\Entity\ScopeEntity         $scope The scope
      * @return void
      */
     public function associateScope(AbstractTokenEntity $token, ScopeEntity $scope);

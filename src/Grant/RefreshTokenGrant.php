@@ -12,15 +12,10 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Request;
-use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\ClientInterface;
-use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
 
 /**
@@ -41,7 +36,7 @@ class RefreshTokenGrant extends AbstractGrant
 
     /**
      * Set the TTL of the refresh token
-     * @param int $refreshTokenTTL
+     * @param  int  $refreshTokenTTL
      * @return void
      */
     public function setRefreshTokenTTL($refreshTokenTTL)

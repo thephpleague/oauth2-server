@@ -11,17 +11,12 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
-use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\ClientInterface;
-use League\OAuth2\Server\Storage\ScopeInterface;
 
 /**
  * Password grant class
@@ -54,7 +49,7 @@ class PasswordGrant extends AbstractGrant
 
     /**
      * Set the callback to verify a user's username and password
-     * @param callable $callback The callback function
+     * @param  callable $callback The callback function
      * @return void
      */
     public function setVerifyCredentialsCallback(callable $callback)

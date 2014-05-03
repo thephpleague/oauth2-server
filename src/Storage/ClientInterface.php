@@ -20,10 +20,10 @@ interface ClientInterface
 {
     /**
      * Validate a client
-     * @param  string     $clientId     The client's ID
-     * @param  string     $clientSecret The client's secret (default = "null")
-     * @param  string     $redirectUri  The client's redirect URI (default = "null")
-     * @param  string     $grantType    The grant type used in the request (default = "null")
+     * @param  string                                   $clientId     The client's ID
+     * @param  string                                   $clientSecret The client's secret (default = "null")
+     * @param  string                                   $redirectUri  The client's redirect URI (default = "null")
+     * @param  string                                   $grantType    The grant type used in the request (default = "null")
      * @return League\OAuth2\Server\Entity\ClientEntity
      */
     public function get($clientId, $clientSecret = null, $redirectUri = null, $grantType = null);

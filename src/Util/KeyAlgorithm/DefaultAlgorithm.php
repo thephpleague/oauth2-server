@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server\Util\KeyAlgorithm;
 
-
 class DefaultAlgorithm implements KeyAlgorithmInterface
 {
     /**
