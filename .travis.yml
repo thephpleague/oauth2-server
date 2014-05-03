@@ -12,8 +12,15 @@ matrix:
 
 before_script:
     - composer self-update
-    - composer --version
+    - composer require satooshi/php-coveralls:dev-master --no-update --dev
     - composer install --prefer-source
-    - ./vendor/bin/phpcs src --standard=psr2
+
+script:
+  - mkdir -p build/logs
+  - phpunit --coverage-text
+  - ./vendor/bin/phpcs src --standard=psr2
+
+after_script:
+  - php vendor/bin/coveralls
 
 script: phpunit --configuration phpunit.xml.dist
