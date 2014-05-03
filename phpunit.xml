@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" stopOnError="false" stopOnFailure="false" stopOnIncomplete="false" stopOnSkipped="false" bootstrap="tests/Bootstrap.php">
+<phpunit colors="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" stopOnError="true" stopOnFailure="true" stopOnIncomplete="false" stopOnSkipped="false" bootstrap="tests/Bootstrap.php">
 	<testsuites>
 		<testsuite name="Tests">
-           <directory>./tests/</directory>
-       </testsuite>
+		   <directory>./tests/</directory>
+	   </testsuite>
 	</testsuites>
 	<filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
-        </whitelist>
+		<whitelist addUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">src</directory>
+		</whitelist>
 	</filter>
 	<logging>
-		<log type="coverage-text" target="php://stdout" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="60" highLowerBound="90"/>
-        <log type="coverage-html" target="tests/coverage" title="lncd/OAuth" charset="UTF-8" yui="true" highlight="true" lowUpperBound="60" highLowerBound="90"/>
+		<log type="coverage-text" target="php://stdout" title="thephpleague/oauth2-server" charset="UTF-8" yui="true" highlight="true" lowUpperBound="60" highLowerBound="90"/>
+		<log type="coverage-html" target="build/coverage" title="thephpleague/oauth2-server" charset="UTF-8" yui="true" highlight="true" lowUpperBound="60" highLowerBound="90"/>
 	</logging>
 </phpunit>
