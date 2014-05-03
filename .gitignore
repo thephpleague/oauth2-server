@@ -1,6 +1,7 @@
 /vendor
 /composer.lock
-/tests/coverage
+/tests
+/build
 /docs
 /testing
 /examples/relational/vendor
