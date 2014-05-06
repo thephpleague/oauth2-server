@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server\Exception;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Exception class
  */
