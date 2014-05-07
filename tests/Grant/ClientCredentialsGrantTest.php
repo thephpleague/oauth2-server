@@ -8,7 +8,7 @@ use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\AuthorizationServer;
 use Mockery as M;
 
-class ClientCredentialsTest extends \PHPUnit_Framework_TestCase
+class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 {
     public function testCompleteFlowMissingClientId()
     {

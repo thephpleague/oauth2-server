@@ -12,7 +12,7 @@ use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\InvalidRequestException;
 use Mockery as M;
 
-class AuthCodeTest extends \PHPUnit_Framework_TestCase
+class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetAuthTokenTTL()
     {
