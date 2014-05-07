@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server\TokenType;
 
+use Symfony\Component\HttpFoundation\Request;
+
 abstract class AbstractTokenType
 {
     /**
@@ -38,4 +40,11 @@ abstract class AbstractTokenType
     {
         return isset($this->response[$key]) ? $this->response[$key] : null;
     }
+
+    /**
+     * Determine the access token in the authorization header
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return string
+     */
+    abstract public function determineAccessTokenInHeader(Request $request);
 }

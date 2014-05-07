@@ -16,6 +16,7 @@ use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\TokenType\Bearer;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -194,9 +195,8 @@ class ResourceServer extends AbstractServer
      */
     public function determineAccessToken($headersOnly = false)
     {
-        if ($header = $this->getRequest()->headers->get('Authorization')) {
-            $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
-            $accessToken = ($accessToken === 'Bearer') ? '' : $accessToken;
+        if ($this->getRequest()->headers->get('Authorization') !== null) {
+            $accessToken = $this->getTokenType()->determineAccessTokenInHeader($this->getRequest());
         } elseif ($headersOnly === false) {
             $accessToken = ($this->getRequest()->server->get('REQUEST_METHOD') === 'GET') ?
                                 $this->getRequest()->query->get($this->tokenKey) :

@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server\TokenType;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class Bearer extends AbstractTokenType implements TokenTypeInterface
 {
     /**
@@ -30,5 +32,15 @@ class Bearer extends AbstractTokenType implements TokenTypeInterface
         }
 
         return $return;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function determineAccessTokenInHeader(Request $request)
+    {
+        $header = $request->headers->get('Authorization');
+        $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
+        return ($accessToken === 'Bearer') ? '' : $accessToken;
     }
 }
