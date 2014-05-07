@@ -29,7 +29,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
-        $_POST = [];
+        $_GET = [];
         $server = new AuthorizationServer;
 
         $grant = new AuthCodeGrant;
@@ -44,7 +44,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $server = new AuthorizationServer;
-        $_POST = [
+        $_GET = [
             'client_id' =>  'testapp'
         ];
 
@@ -58,7 +58,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
-        $_POST = [
+        $_GET = [
             'client_id' =>  'testapp',
             'redirect_uri'  =>  'http://foo/bar'
         ];
@@ -75,7 +75,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
-        $_POST = [
+        $_GET = [
             'client_id'     =>  'testapp',
             'redirect_uri'  =>  'http://foo/bar'
         ];
@@ -91,7 +91,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\UnsupportedResponseTypeException');
 
-        $_POST = [
+        $_GET = [
             'client_id'     =>  'testapp',
             'redirect_uri'  =>  'http://foo/bar',
             'response_type' =>  'foobar'
@@ -108,7 +108,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
 
-        $_POST = [
+        $_GET = [
             'client_id'     =>  'testapp',
             'redirect_uri'  =>  'http://foo/bar',
             'response_type' =>  'code'
@@ -131,7 +131,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidScopeException');
 
-        $_POST = [
+        $_GET = [
             'response_type' =>  'code',
             'client_id'     =>  'testapp',
             'redirect_uri'  =>  'http://foo/bar',
@@ -172,7 +172,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testCheckAuthoriseParams()
     {
-        $_POST = [
+        $_GET = [
             'response_type' =>  'code',
             'client_id'     =>  'testapp',
             'redirect_uri'  =>  'http://foo/bar',
@@ -220,7 +220,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $result = $grant->checkAuthoriseParams();
 
         $this->assertTrue($result['client'] instanceof ClientEntity);
-        $this->assertTrue($result['redirect_uri'] === $_POST['redirect_uri']);
+        $this->assertTrue($result['redirect_uri'] === $_GET['redirect_uri']);
         $this->assertTrue($result['state'] === null);
         $this->assertTrue($result['response_type'] === 'code');
         $this->assertTrue($result['scopes']['foo'] instanceof ScopeEntity);
