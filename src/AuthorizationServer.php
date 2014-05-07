@@ -18,6 +18,7 @@ use League\OAuth2\Server\Storage\AuthCodeInterface;
 use League\OAuth2\Server\Storage\RefreshTokenInterface;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
+use League\OAuth2\Server\TokenType\Bearer;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -75,6 +76,8 @@ class AuthorizationServer extends AbstractServer
     public function __construct()
     {
         $this->storages = [];
+
+        $this->setTokenType(new Bearer);
 
         return $this;
     }
