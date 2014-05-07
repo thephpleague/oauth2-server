@@ -11,7 +11,13 @@
 
 namespace League\OAuth2\Server\TokenType;
 
-class Mac extends AbstractBearer implements TokenTypeInterface
+class Mac extends AbstractTokenType implements TokenTypeInterface
 {
-
+    /**
+     * {@inheritdoc}
+     */
+    public function generateResponse()
+    {
+        throw new \RuntimeException('MAC tokens are not currently supported');
+    }
 }

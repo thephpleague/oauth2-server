@@ -11,30 +11,15 @@
 
 namespace League\OAuth2\Server\TokenType;
 
-class Bearer extends AbstractBearer implements TokenTypeInterface
+class Bearer extends AbstractTokenType implements TokenTypeInterface
 {
-    protected $response = [];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function set($key, $value)
-    {
-        $this->responsekey[$key] = $value;
-    }
-
-    private function get($key)
-    {
-        return isset($this->response[$key]) ? $this->response[$key] : null;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function generateResponse()
     {
         $return = [
-            'access_token'  =>  $this->get('refresh_token'),
+            'access_token'  =>  $this->get('access_token'),
             'token_type'    =>  'Bearer',
             'expires'       =>  $this->get('expires'),
             'expires_in'    =>  $this->get('expires_in')

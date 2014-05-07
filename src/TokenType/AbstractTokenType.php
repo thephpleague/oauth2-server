@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server\TokenType;
 
-abstract class AbstractBearer
+abstract class AbstractTokenType
 {
     /**
      * Response array
@@ -26,7 +26,7 @@ abstract class AbstractBearer
      */
     public function set($key, $value)
     {
-        $this->responsekey[$key] = $value;
+        $this->response[$key] = $value;
     }
 
     /**
@@ -34,7 +34,7 @@ abstract class AbstractBearer
      * @param  string $key
      * @return mixed
      */
-    private function get($key)
+    public function get($key)
     {
         return isset($this->response[$key]) ? $this->response[$key] : null;
     }
