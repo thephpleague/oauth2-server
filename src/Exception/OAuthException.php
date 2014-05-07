@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server\Exception;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Exception class
  */
@@ -69,10 +71,10 @@ class OAuthException extends \Exception
         if ($this->errorType === 'invalid_client') {
             $authScheme = null;
             $request = new Request();
-            if ($request->server('PHP_AUTH_USER') !== null) {
+            if ($request->getUser() !== null) {
                 $authScheme = 'Basic';
             } else {
-                $authHeader = $request->header('Authorization');
+                $authHeader = $request->headers->get('Authorization');
                 if ($authHeader !== null) {
                     if (strpos($authHeader, 'Bearer') === 0) {
                         $authScheme = 'Bearer';
