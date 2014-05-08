@@ -29,7 +29,7 @@ class AccessDeniedException extends OAuthException
     /**
      * {@inheritdoc}
      */
-    public function __construct($parameter)
+    public function __construct()
     {
         parent::__construct('The resource owner or authorization server denied the request.');
     }
