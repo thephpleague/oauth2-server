@@ -110,8 +110,8 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
             $scopeStorage
         );
 
-        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
-        $server->isValidRequest();
+        $this->setExpectedException('League\OAuth2\Server\Exception\AccessDeniedException');
+        $server->isValidRequest(false, 'foobar');
     }
 
     public function testIsValid()

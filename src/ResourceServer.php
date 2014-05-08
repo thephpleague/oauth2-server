@@ -17,6 +17,7 @@ use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\TokenType\Bearer;
+use League\OAuth2\Server\Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -184,7 +185,11 @@ class ResourceServer extends AbstractServer
         // Set the access token
         $this->accessToken = $this->storages['access_token']->get($accessTokenString);
 
-        return ($this->accessToken instanceof AccessTokenEntity);
+        if (!$this->accessToken instanceof AccessTokenEntity) {
+            throw new Exception\AccessDeniedException;
+        }
+
+        return true;
     }
 
     /**
@@ -198,9 +203,9 @@ class ResourceServer extends AbstractServer
         if ($this->getRequest()->headers->get('Authorization') !== null) {
             $accessToken = $this->getTokenType()->determineAccessTokenInHeader($this->getRequest());
         } elseif ($headersOnly === false) {
-            $accessToken = ($this->getRequest()->server->get('REQUEST_METHOD') === 'GET') ?
-                                $this->getRequest()->query->get($this->tokenKey) :
-                                $this->getRequest()->request->get($this->tokenKey);
+            $accessToken = ($this->getRequest()->server->get('REQUEST_METHOD') === 'GET')
+                                ? $this->getRequest()->query->get($this->tokenKey)
+                                : $this->getRequest()->request->get($this->tokenKey);
         }
 
         if (empty($accessToken)) {
