@@ -16,7 +16,7 @@ use League\OAuth2\Server\AbstractServer;
 /**
  * Scope entity class
  */
-class ScopeEntity
+class ScopeEntity implements \JsonSerializable
 {
     /**
      * Scope identifier
@@ -88,5 +88,17 @@ class ScopeEntity
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Returns a JSON object when entity is passed into json_encode
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id'    =>  $this->getId(),
+            'description'   =>  $this->getDescription()
+        ];
     }
 }

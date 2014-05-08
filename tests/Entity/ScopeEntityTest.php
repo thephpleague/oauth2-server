@@ -16,5 +16,7 @@ class ScopeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('foobar', $scope->getId());
         $this->assertEquals('barfoo', $scope->getDescription());
+
+        $this->assertTrue(is_array($scope->jsonSerialize()));
     }
 }
