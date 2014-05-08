@@ -43,7 +43,7 @@ abstract class AbstractTokenType
 
     /**
      * Determine the access token in the authorization header
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param  \Symfony\Component\HttpFoundation\Request $request
      * @return string
      */
     abstract public function determineAccessTokenInHeader(Request $request);
