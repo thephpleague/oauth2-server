@@ -18,6 +18,7 @@ before_script:
     - php config/init.php
     - php -S localhost:8000 &
     - sleep 3
+    - cd ../..
 
 script:
   - mkdir -p build/logs
