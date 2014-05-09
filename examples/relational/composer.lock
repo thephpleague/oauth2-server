@@ -1,0 +1,559 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+    ],
+    "hash": "abcfdbc3594f0666218cab21fbbf0829",
+    "packages": [
+        {
+            "name": "fzaninotto/faker",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fzaninotto/Faker.git",
+                "reference": "1d143fd8caf4d264602450bc01d7484af788706b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/1d143fd8caf4d264602450bc01d7484af788706b",
+                "reference": "1d143fd8caf4d264602450bc01d7484af788706b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Faker": "src/",
+                    "Faker\\PHPUnit": "test/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Zaninotto"
+                }
+            ],
+            "description": "Faker is a PHP library that generates fake data for you.",
+            "keywords": [
+                "data",
+                "faker",
+                "fixtures"
+            ],
+            "time": "2013-12-16 21:56:48"
+        },
+        {
+            "name": "illuminate/container",
+            "version": "v4.1.28",
+            "target-dir": "Illuminate/Container",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/container.git",
+                "reference": "51d590fd7e301f56c567459a26343a8288330f69"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/container/zipball/51d590fd7e301f56c567459a26343a8288330f69",
+                "reference": "51d590fd7e301f56c567459a26343a8288330f69",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.0.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Illuminate\\Container": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com",
+                    "homepage": "https://github.com/taylorotwell",
+                    "role": "Developer"
+                }
+            ],
+            "time": "2014-03-22 20:29:54"
+        },
+        {
+            "name": "illuminate/database",
+            "version": "v4.1.28",
+            "target-dir": "Illuminate/Database",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/database.git",
+                "reference": "c84f39734c6bfe7fbf694ff8dc33d15605553de2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/database/zipball/c84f39734c6bfe7fbf694ff8dc33d15605553de2",
+                "reference": "c84f39734c6bfe7fbf694ff8dc33d15605553de2",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/container": "4.1.*",
+                "illuminate/events": "4.1.*",
+                "illuminate/support": "4.1.*",
+                "nesbot/carbon": "1.*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "illuminate/cache": "4.1.*",
+                "illuminate/console": "4.1.*",
+                "illuminate/filesystem": "4.1.*",
+                "illuminate/pagination": "4.1.*",
+                "illuminate/support": "4.1.*",
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "4.0.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Illuminate\\Database": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com",
+                    "homepage": "https://github.com/taylorotwell",
+                    "role": "Developer"
+                }
+            ],
+            "keywords": [
+                "database",
+                "laravel",
+                "orm",
+                "sql"
+            ],
+            "time": "2014-04-11 20:10:04"
+        },
+        {
+            "name": "illuminate/events",
+            "version": "v4.1.28",
+            "target-dir": "Illuminate/Events",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/events.git",
+                "reference": "ef6ae5962134a35667f24349bc2c9b8ad1e20c8b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/events/zipball/ef6ae5962134a35667f24349bc2c9b8ad1e20c8b",
+                "reference": "ef6ae5962134a35667f24349bc2c9b8ad1e20c8b",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/container": "4.1.*",
+                "illuminate/support": "4.1.*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "4.0.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Illuminate\\Events": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com",
+                    "homepage": "https://github.com/taylorotwell",
+                    "role": "Developer"
+                }
+            ],
+            "time": "2014-03-22 20:12:48"
+        },
+        {
+            "name": "illuminate/support",
+            "version": "v4.1.28",
+            "target-dir": "Illuminate/Support",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/support.git",
+                "reference": "69b248f240719e8d764ee6ec0384819fa57d60bb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/69b248f240719e8d764ee6ec0384819fa57d60bb",
+                "reference": "69b248f240719e8d764ee6ec0384819fa57d60bb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "jeremeamia/superclosure": "1.0.*",
+                "mockery/mockery": "0.9.*",
+                "patchwork/utf8": "1.1.*",
+                "phpunit/phpunit": "4.0.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Illuminate\\Support": ""
+                },
+                "files": [
+                    "Illuminate/Support/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com",
+                    "homepage": "https://github.com/taylorotwell",
+                    "role": "Developer"
+                }
+            ],
+            "time": "2014-03-22 20:29:54"
+        },
+        {
+            "name": "nesbot/carbon",
+            "version": "1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/briannesbitt/Carbon.git",
+                "reference": "21c4cb4301969c7d85aee8a62eefdfa881413af0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/21c4cb4301969c7d85aee8a62eefdfa881413af0",
+                "reference": "21c4cb4301969c7d85aee8a62eefdfa881413af0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Carbon": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brian Nesbitt",
+                    "email": "brian@nesbot.com",
+                    "homepage": "http://nesbot.com"
+                }
+            ],
+            "description": "A simple API extension for DateTime.",
+            "homepage": "https://github.com/briannesbitt/Carbon",
+            "keywords": [
+                "date",
+                "datetime",
+                "time"
+            ],
+            "time": "2014-01-07 05:10:44"
+        },
+        {
+            "name": "nikic/fast-route",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nikic/FastRoute.git",
+                "reference": "29c5bf70254d8ce59414646de3e9e43aafc9735e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nikic/FastRoute/zipball/29c5bf70254d8ce59414646de3e9e43aafc9735e",
+                "reference": "29c5bf70254d8ce59414646de3e9e43aafc9735e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Nikita Popov",
+                    "email": "nikic@php.net"
+                }
+            ],
+            "description": "Fast request router for PHP",
+            "keywords": [
+                "router",
+                "routing"
+            ],
+            "time": "2014-03-04 15:05:38"
+        },
+        {
+            "name": "orno/di",
+            "version": "v2.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/orno/di.git",
+                "reference": "e8d29523da316125e67a6d39d477da90dc7be656"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/orno/di/zipball/e8d29523da316125e67a6d39d477da90dc7be656",
+                "reference": "e8d29523da316125e67a6d39d477da90dc7be656",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "suggest": {
+                "orno/cache": "Enables caching of reflection based resolution",
+                "orno/config": "Allows useage of config files rather than interacting with the container directly"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Orno\\Di": "src/",
+                    "OrnoTest": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Phil Bennett",
+                    "email": "philipobenito@gmail.com"
+                }
+            ],
+            "description": "Orno Di is a small but powerful dependency injection container with automatic resolution of dependencies.",
+            "keywords": [
+                "container",
+                "dependency",
+                "di",
+                "injection",
+                "orno"
+            ],
+            "time": "2014-04-03 08:23:38"
+        },
+        {
+            "name": "orno/http",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/orno/http.git",
+                "reference": "65d37f6f92f3357c234a592fdd57b2f54c2ef514"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/orno/http/zipball/65d37f6f92f3357c234a592fdd57b2f54c2ef514",
+                "reference": "65d37f6f92f3357c234a592fdd57b2f54c2ef514",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "symfony/http-foundation": "2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Orno\\Http\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Phil Bennett",
+                    "email": "philipobenito@gmail.com"
+                }
+            ],
+            "description": "A wrapper for Symfony\\HttpFoundation with some encapsulation and convenience methods.",
+            "homepage": "http://github.com/orno/http",
+            "keywords": [
+                "http",
+                "orno",
+                "request",
+                "response"
+            ],
+            "time": "2014-03-05 10:22:10"
+        },
+        {
+            "name": "orno/route",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/orno/route.git",
+                "reference": "af2aee8314e6e700b4d69dc61f5c67ae030741e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/orno/route/zipball/af2aee8314e6e700b4d69dc61f5c67ae030741e9",
+                "reference": "af2aee8314e6e700b4d69dc61f5c67ae030741e9",
+                "shasum": ""
+            },
+            "require": {
+                "nikic/fast-route": "0.1.*",
+                "orno/di": "2.*",
+                "orno/http": "1.*",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Orno\\Route\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Phil Bennett",
+                    "email": "hello@happyaccidents.me"
+                }
+            ],
+            "description": "Fast routing package combining Nikita Popov's FastRoute and Orno\\Di to provide route dispatching to dependency injected controllers.",
+            "keywords": [
+                "FastRoute",
+                "di",
+                "dispatcher",
+                "orno",
+                "route"
+            ],
+            "time": "2014-04-13 13:46:11"
+        },
+        {
+            "name": "symfony/http-foundation",
+            "version": "v2.4.4",
+            "target-dir": "Symfony/Component/HttpFoundation",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/HttpFoundation.git",
+                "reference": "22c4dee84271ad0cd08d19f26d89f2878e11159b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/22c4dee84271ad0cd08d19f26d89f2878e11159b",
+                "reference": "22c4dee84271ad0cd08d19f26d89f2878e11159b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "symfony/expression-language": "~2.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\HttpFoundation\\": ""
+                },
+                "classmap": [
+                    "Symfony/Component/HttpFoundation/Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony HttpFoundation Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-04-18 21:02:05"
+        }
+    ],
+    "packages-dev": [
+
+    ],
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": [
+
+    ],
+    "platform": [
+
+    ],
+    "platform-dev": [
+
+    ]
+}

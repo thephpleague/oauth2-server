@@ -5,5 +5,6 @@
 /testing
 /examples/relational/vendor
 /examples/relational/config/oauth2.sqlite3
+/examples/relational/composer.lock
 /examples/nosql/vendor
 /examples/nosql/config/oauth2.sqlite3
