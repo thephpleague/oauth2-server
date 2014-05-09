@@ -148,6 +148,19 @@ abstract class AbstractTokenEntity
     }
 
     /**
+     * Returns the token as a string if the object is cast as a string
+     * @return string
+     */
+    public function __toString()
+    {
+        if (is_null($this->token)) {
+            throw new \BadMethodCallException('Token is null');
+        }
+
+        return $this->token;
+    }
+
+    /**
      * Expire the token
      * @return void
      */
