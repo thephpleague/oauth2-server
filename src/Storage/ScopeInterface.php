@@ -18,13 +18,6 @@ interface ScopeInterface
 {
     /**
      * Return information about a scope
-     *
-     * Example SQL query:
-     *
-     * <code>
-     * SELECT * FROM oauth_scopes WHERE scope = :scope
-     * </code>
-     *
      * @param  string                                   $scope     The scope
      * @param  string                                   $grantType The grant type used in the request (default = "null")
      * @return \League\OAuth2\Server\Entity\ScopeEntity
