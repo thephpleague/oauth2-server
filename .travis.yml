@@ -15,8 +15,8 @@ before_script:
     - composer require satooshi/php-coveralls:dev-master --no-update --dev
     - composer install --prefer-source
     - cd examples/relational && composer install
-    - cd examples/relational && php config/init.php
-    - php -S localhost:8000 examples/relational/api.php &
+    - php config/init.php
+    - php -S localhost:8000 &
     - sleep 3
 
 script:
