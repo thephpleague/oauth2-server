@@ -20,6 +20,8 @@ before_script:
     - sleep 3
     - cd ../..
     - wget http://codeception.com/codecept.phar
+    - mkdir tests/codecept/tests/_log
+    - chmod -R 777 tests/codecept/tests/_log
 
 script:
   - mkdir -p build/logs
