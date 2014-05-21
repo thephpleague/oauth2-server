@@ -232,8 +232,8 @@ class AuthCode implements GrantTypeInterface {
         $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($authCodeDetails['session_id'], $accessToken, $accessTokenExpires);
 
         // Associate scopes with the access token
-        if (count($scopes) > 0) {
-            foreach ($scopes as $scope) {
+        if (isset($inputParams['scopes'])) {
+            foreach ($inputParams['scopes'] as $scope) {
                 $this->authServer->getStorage('session')->associateScope($accessTokenId, $scope['scope_id']);
             }
         }
