@@ -12,15 +12,18 @@ The framework is provided as a Composer package which can be installed by adding
 ```javascript
 {
 	"require": {
-		"league/oauth2-server": "3.*"
+		"league/oauth2-server": "4.*"
 	}
 }
 ```
 
-### Framework Integrations
+### Storage Adapters
 
-* [Laravel 4 service provider](https://packagist.org/packages/lucadegasperi/oauth2-server-laravel) by @lucadegasperi
-* [Laravel 4 Eloquent implementation](https://github.com/ScubaClick/scubaclick-oauth2) by @ScubaClick (under development)
+The following adapters have been created by other developers to help you easily integrate this library into your project.
+
+* [Redis storage adapter](https://github.com/jasonlewis/oauth2-server-redis) by @jasonlewis
+
+If you want to roll your own adapter check out the docs.
 
 ---
 
