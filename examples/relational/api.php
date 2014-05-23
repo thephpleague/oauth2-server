@@ -9,6 +9,7 @@ use \Orno\Http\Exception\NotFoundException;
 use \League\OAuth2\Server\ResourceServer;
 use \RelationalExample\Storage;
 use \RelationalExample\Model;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 include __DIR__.'/vendor/autoload.php';
 
