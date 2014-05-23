@@ -66,12 +66,11 @@ class AuthCodeGrant extends AbstractGrant
     }
 
     /**
-     * Check authorise parameters
+     * Check authorize parameters
      *
-     * @throws
-     * @return array Authorise request parameters
+     * @return array Authorize request parameters
      */
-    public function checkAuthoriseParams()
+    public function checkAuthorizeParams()
     {
         // Get required params
         $clientId = $this->server->getRequest()->query->get('client_id', null);
@@ -125,14 +124,14 @@ class AuthCodeGrant extends AbstractGrant
     }
 
     /**
-     * Parse a new authorise request
+     * Parse a new authorize request
      *
      * @param  string $type       The session owner's type
      * @param  string $typeId     The session owner's ID
-     * @param  array  $authParams The authorise request $_GET parameters
+     * @param  array  $authParams The authorize request $_GET parameters
      * @return string An authorisation code
      */
-    public function newAuthoriseRequest($type, $typeId, $authParams = [])
+    public function newAuthorizeRequest($type, $typeId, $authParams = [])
     {
         // Create a new session
         $session = new SessionEntity($this->server);
@@ -201,7 +200,7 @@ class AuthCodeGrant extends AbstractGrant
             throw new Exception\InvalidRequestException('code');
         }
 
-        // Check redirect URI presented matches redirect URI originally used in authorise request
+        // Check redirect URI presented matches redirect URI originally used in authorize request
         if ($code->getRedirectUri() !== $redirectUri) {
             throw new Exception\InvalidRequestException('redirect_uri');
         }
