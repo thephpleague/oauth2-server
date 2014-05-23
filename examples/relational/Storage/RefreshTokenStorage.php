@@ -4,6 +4,7 @@ namespace RelationalExample\Storage;
 
 use League\OAuth2\Server\Storage\RefreshTokenInterface;
 use League\OAuth2\Server\Storage\Adapter;
+use League\OAuth2\Server\Entity\RefreshTokenEntity;
 
 class RefreshTokenStorage extends Adapter implements RefreshTokenInterface
 {
@@ -26,8 +27,9 @@ class RefreshTokenStorage extends Adapter implements RefreshTokenInterface
     /**
      * {@inheritdoc}
      */
-    public function delete($token)
+    public function delete(RefreshTokenEntity $token)
     {
         die(var_dump(__METHOD__, func_get_args()));
     }
+
 }
