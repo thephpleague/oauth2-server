@@ -192,6 +192,39 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $this->assertEquals('abcdef', $result);
     }
 
+    public function test_hasScope_isRequired()
+    {
+        $s = $this->returnDefault();
+
+        $reflector = new ReflectionClass($s);
+        $param = $reflector->getProperty('sessionScopes');
+        $param->setAccessible(true);
+        $param->setValue($s, array(
+            'a', 'b', 'c'
+        ));
+
+        $result = $s->hasScope(array('a', 'b'), true);
+
+        $this->assertEquals(true, $result);
+    }
+
+    /**
+     * @expectedException League\OAuth2\Server\Exception\InsufficientScopeException
+     */
+    public function test_hasScope_isRequiredFailure()
+    {
+        $s = $this->returnDefault();
+
+        $reflector = new ReflectionClass($s);
+        $param = $reflector->getProperty('sessionScopes');
+        $param->setAccessible(true);
+        $param->setValue($s, array(
+            'a', 'b', 'c'
+        ));
+
+        $s->hasScope('d', true);
+    }
+
     /**
      * @expectedException League\OAuth2\Server\Exception\InvalidAccessTokenException
      */

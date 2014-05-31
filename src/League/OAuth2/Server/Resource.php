@@ -93,7 +93,7 @@ class Resource
     protected static $exceptionMessages = array(
         'invalid_request'    =>  'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "%s" parameter.',
         'invalid_token'      =>  'The access token provided is expired, revoked, malformed, or invalid for other reasons.',
-        'insufficient_scope' =>  'The request requires higher privileges than provided by the access token.',
+        'insufficient_scope' =>  'The request requires higher privileges than provided by the access token. Required scopes are: %s.',
     );
 
     /**
@@ -328,25 +328,26 @@ class Resource
      * Checks if the presented access token has the given scope(s).
      *
      * @param array|string  An array of scopes or a single scope as a string
+     * @param bool          If scopes are required, missing scope will trigger an exception
+     * @throws Exception\InsufficientScopeException Thrown if the any of the given scopes are not in the session
      * @return bool         Returns bool if all scopes are found, false if any fail
      */
-    public function hasScope($scopes)
+    public function hasScope($scopes, $required = false)
     {
-        if (is_string($scopes)) {
-            if (in_array($scopes, $this->sessionScopes)) {
-                return true;
-            }
-            return false;
-        } elseif (is_array($scopes)) {
-            foreach ($scopes as $scope) {
-                if (! in_array($scope, $this->sessionScopes)) {
-                    return false;
-                }
-            }
-            return true;
+        if (!is_array($scopes)) {
+            $scopes = array($scopes);
         }
 
-        return false;
+        $missing = array_diff($scopes, $this->sessionScopes);
+
+        if ($missing) {
+            if ($required) {
+                $missing = implode(', ', $missing);
+                throw new Exception\InsufficientScopeException(sprintf(self::$exceptionMessages['insufficient_scope'], $missing), 3);
+            }
+            return false;
+        }
+        return true;
     }
 
     /**
