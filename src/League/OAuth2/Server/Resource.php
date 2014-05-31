@@ -4,7 +4,8 @@
  *
  * @package     php-loep/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) 2013 PHP League of Extraordinary Packages
+ * @author      Woody Gilk <woody@shadowhand.me>
+ * @copyright   Copyright (c) 2013-2014 PHP League of Extraordinary Packages
  * @license     http://mit-license.org/
  * @link        http://github.com/php-loep/oauth2-server
  */
@@ -274,7 +275,7 @@ class Resource
         }
 
         if (empty($accessToken)) {
-            throw new Exception\InvalidAccessTokenException('Access token is missing');
+            throw new Exception\MissingAccessTokenException('Access token is missing');
         }
 
         return $accessToken;

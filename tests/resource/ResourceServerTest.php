@@ -66,7 +66,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException League\OAuth2\Server\Exception\InvalidAccessTokenException
+     * @expectedException League\OAuth2\Server\Exception\MissingAccessTokenException
      */
     public function test_determineAccessToken_missingToken()
     {
@@ -84,7 +84,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException League\OAuth2\Server\Exception\InvalidAccessTokenException
+     * @expectedException League\OAuth2\Server\Exception\MissingAccessTokenException
      */
     public function test_determineAccessToken_brokenCurlRequest()
     {
