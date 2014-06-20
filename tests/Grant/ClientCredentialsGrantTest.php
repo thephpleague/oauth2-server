@@ -221,19 +221,9 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('setServer');
-        // $sessionStorage->shouldReceive('create')->andreturn(123);
-        // $sessionStorage->shouldReceive('getScopes')->shouldReceive('getScopes')->andReturn([
-        //     (new ScopeEntity($server))->setId('foo')
-        // ]);
-        // $sessionStorage->shouldReceive('associateScope');
 
         $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');
         $accessTokenStorage->shouldReceive('setServer');
-        // $accessTokenStorage->shouldReceive('create');
-        // $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-        //     (new ScopeEntity($server))->setId('foo')
-        // ]);
-        // $accessTokenStorage->shouldReceive('associateScope');
 
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
