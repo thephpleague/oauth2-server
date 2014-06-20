@@ -27,6 +27,16 @@ interface AuthCodeInterface
     public function get($code);
 
     /**
+     * Create an auth code.
+     * @param string  $token      The token ID
+     * @param integer $expireTime Token expire time
+     * @param integer $sessionId  Session identifier
+     *
+     * @return void
+     */
+    public function create($token, $expireTime, $sessionId);
+
+    /**
      * Get the scopes for an access token
      * @param  \League\OAuth2\Server\Entity\AuthCodeEntity $token The auth code
      * @return array                                       Array of \League\OAuth2\Server\Entity\ScopeEntity
