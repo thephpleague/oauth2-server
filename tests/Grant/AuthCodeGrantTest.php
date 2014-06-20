@@ -35,7 +35,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new AuthCodeGrant;
 
         $server->addGrantType($grant);
-        $grant->checkAuthoriseParams();
+        $grant->checkAuthorizeParams();
 
     }
 
@@ -51,7 +51,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new AuthCodeGrant;
 
         $server->addGrantType($grant);
-        $grant->checkAuthoriseParams();
+        $grant->checkAuthorizeParams();
     }
 
     public function testCheckAuthoriseParamsMissingStateParam()
@@ -68,7 +68,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $server->requireStateParam(true);
 
         $server->addGrantType($grant);
-        $grant->checkAuthoriseParams();
+        $grant->checkAuthorizeParams();
     }
 
     public function testCheckAuthoriseParamsMissingResponseType()
@@ -84,7 +84,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new AuthCodeGrant;
 
         $server->addGrantType($grant);
-        $grant->checkAuthoriseParams();
+        $grant->checkAuthorizeParams();
     }
 
     public function testCheckAuthoriseParamsInvalidResponseType()
@@ -101,7 +101,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new AuthCodeGrant;
 
         $server->addGrantType($grant);
-        $grant->checkAuthoriseParams();
+        $grant->checkAuthorizeParams();
     }
 
     public function testCheckAuthoriseParamsInvalidClient()
@@ -124,7 +124,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $server->setClientStorage($clientStorage);
 
         $server->addGrantType($grant);
-        $grant->checkAuthoriseParams();
+        $grant->checkAuthorizeParams();
     }
 
     public function testCheckAuthoriseParamsInvalidScope()
@@ -167,7 +167,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $server->setAccessTokenStorage($accessTokenStorage);
 
         $server->addGrantType($grant);
-        $grant->checkAuthoriseParams();
+        $grant->checkAuthorizeParams();
     }
 
     public function testCheckAuthoriseParams()
@@ -217,7 +217,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $server->addGrantType($grant);
 
-        $result = $grant->checkAuthoriseParams();
+        $result = $grant->checkAuthorizeParams();
 
         $this->assertTrue($result['client'] instanceof ClientEntity);
         $this->assertTrue($result['redirect_uri'] === $_GET['redirect_uri']);
@@ -250,7 +250,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $authCodeStorage->shouldReceive('associateScope');
         $server->setAuthCodeStorage($authCodeStorage);
 
-        $grant->newAuthoriseRequest('user', 123, [
+        $grant->newAuthorizeRequest('user', 123, [
             'client'        => $client,
             'redirect_uri'  =>  'http://foo/bar',
             'scopes'        =>  [$scope],
