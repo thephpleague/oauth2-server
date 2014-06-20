@@ -153,10 +153,9 @@ abstract class AbstractTokenEntity
      */
     public function __toString()
     {
-        if (is_null($this->token)) {
-            throw new \BadMethodCallException('Token is null');
+        if ($this->token === null) {
+            return '';
         }
-
         return $this->token;
     }
 
