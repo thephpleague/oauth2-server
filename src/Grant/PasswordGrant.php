@@ -72,10 +72,9 @@ class PasswordGrant extends AbstractGrant
 
     /**
      * Complete the password grant
-     * @param  null|array $inputParams
      * @return array
      */
-    public function completeFlow($inputParams = null)
+    public function completeFlow()
     {
         // Get the required params
         $clientId = $this->server->getRequest()->request->get('client_id', null);

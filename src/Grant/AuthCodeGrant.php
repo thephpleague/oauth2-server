@@ -142,7 +142,8 @@ class AuthCodeGrant extends AbstractGrant
         // Create a new auth code
         $authCode = new AuthCodeEntity($this->server);
         $authCode->setToken(SecureKey::generate());
-        $authCode->setRedirectUri($authParams['redirect_uri']);
+        $authCode->setRedirectUri();
+        $authCode->setExpireTime(time() + $this->authTokenTTL);
 
         foreach ($authParams['scopes'] as $scope) {
             $authCode->associateScope($scope);
@@ -156,10 +157,9 @@ class AuthCodeGrant extends AbstractGrant
 
     /**
      * Complete the auth code grant
-     * @param  null|array $inputParams
      * @return array
      */
-    public function completeFlow($inputParams = null)
+    public function completeFlow()
     {
         // Get the required params
         $clientId = $this->server->getRequest()->request->get('client_id', null);

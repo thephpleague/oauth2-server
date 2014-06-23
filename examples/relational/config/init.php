@@ -59,6 +59,21 @@ Capsule::table('oauth_clients')->insert([
 
 /******************************************************************************/
 
+print 'Creating client redirect uris table'.PHP_EOL;
+
+Capsule::schema()->create('oauth_client_redirect_uris', function ($table) {
+    $table->increments('id');
+    $table->string('client_id');
+    $table->string('redirect_uri');
+});
+
+Capsule::table('oauth_client_redirect_uris')->insert([
+    'client_id'     =>  'testclient',
+    'redirect_uri'  =>  'http://example.com/redirect'
+]);
+
+/******************************************************************************/
+
 print 'Creating scopes table'.PHP_EOL;
 
 Capsule::schema()->create('oauth_scopes', function ($table) {

@@ -5,40 +5,32 @@ namespace OAuth2Server\RelationalExample;
 use \Orno\Http\Request;
 use \Orno\Http\Response;
 use \Orno\Http\JsonResponse;
-use \League\OAuth2\Server\AuthorizationServer;
-use \League\OAuth2\Server\Exception;
-use \League\OAuth2\Server\Grant;
+use \Orno\Http\Exception\MethodNotAllowedException;
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+// use \League\OAuth2\Server\Exception;
 use \RelationalExample\Storage;
 use \RelationalExample\Model;
-use Illuminate\Database\Capsule\Manager as Capsule;
 
 include __DIR__.'/vendor/autoload.php';
 
 // Routing setup
-$request = (new Request)->createFromGlobals();
 $router = new \Orno\Route\RouteCollection;
-$router->setStrategy(\Orno\Route\RouteStrategyInterface::RESTFUL_STRATEGY);
 
 // Set up the OAuth 2.0 resource server
-$sessionStorage = new Storage\SessionStorage();
-$accessTokenStorage = new Storage\AccessTokenStorage();
-$clientStorage = new Storage\ClientStorage();
-$scopeStorage = new Storage\ScopeStorage();
-$accessTokenStorage = new Storage\AccessTokenStorage();
-$refreshTokenStorage = new Storage\RefreshTokenStorage();
-$authCodeStorage = new Storage\AuthCodeStorage();
+$server = new \League\OAuth2\Server\AuthorizationServer;
+$server->setSessionStorage(new Storage\SessionStorage);
+$server->setAccessTokenStorage(new Storage\AccessTokenStorage);
+$server->setRefreshTokenStorage(new Storage\RefreshTokenStorage);
+$server->setClientStorage(new Storage\ClientStorage);
+$server->setScopeStorage(new Storage\ScopeStorage);
+$server->setAuthCodeStorage(new Storage\AuthCodeStorage);
 
-$server = new AuthorizationServer();
-$server->setSessionStorage($sessionStorage);
-$server->setAccessTokenStorage($accessTokenStorage);
-$server->setRefreshTokenStorage($refreshTokenStorage);
-$server->setClientStorage($clientStorage);
-$server->setScopeStorage($scopeStorage);
-$server->setAuthCodeStorage($authCodeStorage);
-
-$authCodeGrant = new Grant\AuthCodeGrant();
+$authCodeGrant = new \League\OAuth2\Server\Grant\AuthCodeGrant();
 $server->addGrantType($authCodeGrant);
 
+$request = (new Request)->createFromGlobals();
 $server->setRequest($request);
 
 // GET /authorize
@@ -61,15 +53,35 @@ $router->get('/authorize', function (Request $request) use ($server) {
 
     // ...
 
+    // ...
+
+    // ...
+
     // Create a new authorize request which will respond with a redirect URI that the user will be redirected to
 
-    $redirectUri = $server->newAuthorizeRequest('user', 1, $authParams);
+    $redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', 1, $authParams);
 
     $response = new Response('', 200, [
         'Location'  =>  $redirectUri
     ]);
 
     return $response;
+});
+
+// /access_token
+$router->post('/access_token', function (Request $request) use ($server) {
+
+    try {
+        $response = $server->getGrantType('authorization_code')->completeFlow();
+    } catch (\Exception $e) {
+        echo json_encode([
+            'error'     =>  $e->errorType,
+            'message'   =>  $e->getMessage()
+        ]);
+
+        exit;
+    }
+
 });
 
 $dispatcher = $router->getDispatcher();

@@ -16,7 +16,31 @@ class ClientStorage extends Adapter implements ClientInterface
      */
     public function get($clientId, $clientSecret = null, $redirectUri = null, $grantType = null)
     {
-        die(var_dump(__METHOD__, func_get_args()));
+        $query = Capsule::table('oauth_clients')
+                          ->select('oauth_clients.*')
+                          ->where('oauth_clients.id', $clientId);
+
+        if ($clientSecret !== null) {
+            $query->where('oauth_clients.secret', $clientSecret);
+        }
+
+        if ($redirectUri) {
+            $query->join('oauth_client_redirect_uris', 'oauth_clients.id', '=', 'oauth_client_redirect_uris.client_id')
+                  ->select(['oauth_clients.*', 'oauth_client_redirect_uris.*'])
+                  ->where('oauth_client_redirect_uris.redirect_uri', $redirectUri);
+        }
+
+        $result = $query->get();
+
+        if (count($result) === 1) {
+            $client = new ClientEntity($this->server);
+            $client->setId($result[0]['id']);
+            $client->setName($result[0]['name']);
+
+            return $client;
+        }
+
+        return null;
     }
 
     /**
@@ -37,5 +61,7 @@ class ClientStorage extends Adapter implements ClientInterface
 
             return $client;
         }
+
+        return null;
     }
 }

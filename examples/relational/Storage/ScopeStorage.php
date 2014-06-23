@@ -4,6 +4,9 @@ namespace RelationalExample\Storage;
 
 use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Storage\Adapter;
+use League\OAuth2\Server\Entity\ScopeEntity;
+
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 class ScopeStorage extends Adapter implements ScopeInterface
 {
@@ -12,6 +15,16 @@ class ScopeStorage extends Adapter implements ScopeInterface
      */
     public function get($scope, $grantType = null)
     {
-        die(var_dump(__METHOD__, func_get_args()));
+        $result = Capsule::table('oauth_scopes')
+                                ->where('id', $scope)
+                                ->get();
+
+        if (count($result) === 0) {
+            return null;
+        }
+
+        return (new ScopeEntity($this->server))
+                            ->setId($result[0]['id'])
+                            ->setDescription($result[0]['description']);
     }
 }

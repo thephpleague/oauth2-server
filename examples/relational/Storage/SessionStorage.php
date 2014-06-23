@@ -57,7 +57,22 @@ class SessionStorage extends Adapter implements SessionInterface
      */
     public function getScopes(SessionEntity $session)
     {
-        die(var_dump(__CLASS__.'::'.__METHOD__, func_get_args()));
+        $result = Capsule::table('oauth_sessions')
+                            ->select('oauth_scopes.*')
+                            ->join('oauth_session_scopes', 'oauth_sessions.id', '=', 'oauth_session_scopes.session_id')
+                            ->join('oauth_scopes', 'oauth_scopes.id', '=', 'oauth_session_scopes.scope')
+                            ->where('oauth_sessions.id', $session->getId())
+                            ->get();
+
+        $scopes = [];
+
+        foreach ($result as $scope) {
+            $scopes[] = (new ScopeEntity($this->server))
+                            ->setId($scope['id'])
+                            ->setDescription($scope['description']);
+        }
+
+        return $scopes;
     }
 
     /**
@@ -65,7 +80,14 @@ class SessionStorage extends Adapter implements SessionInterface
      */
     public function create($ownerType, $ownerId, $clientId, $clientRedirectUri = null)
     {
-        die(var_dump(__CLASS__.'::'.__METHOD__, func_get_args()));
+        $id = Capsule::table('oauth_sessions')
+                        ->insert([
+                            'owner_type'  =>    $ownerType,
+                            'owner_id'    =>    $ownerId,
+                            'client_id'   =>    $clientId
+                        ]);
+
+        return $id;
     }
 
     /**
