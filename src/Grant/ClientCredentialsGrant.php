@@ -56,12 +56,18 @@ class ClientCredentialsGrant extends AbstractGrant
          // Get the required params
         $clientId = $this->server->getRequest()->request->get('client_id', null);
         if (is_null($clientId)) {
-            throw new Exception\InvalidRequestException('client_id');
+            $clientId = $this->server->getRequest()->getUser();
+            if (is_null($clientId)) {
+                throw new Exception\InvalidRequestException('client_id');
+            }
         }
 
         $clientSecret = $this->server->getRequest()->request->get('client_secret', null);
         if (is_null($clientSecret)) {
-            throw new Exception\InvalidRequestException('client_secret');
+            $clientId = $this->server->getRequest()->getPassword();
+            if (is_null($clientSecret)) {
+                throw new Exception\InvalidRequestException('client_secret');
+            }
         }
 
         // Validate client ID and client secret
