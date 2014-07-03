@@ -173,7 +173,7 @@ class AuthCodeGrant extends AbstractGrant
 
         $clientSecret = $this->server->getRequest()->request->get('client_secret', null);
         if (is_null($clientSecret)) {
-            $clientId = $this->server->getRequest()->getPassword();
+            $clientSecret = $this->server->getRequest()->getPassword();
             if (is_null($clientSecret)) {
                 throw new Exception\InvalidRequestException('client_secret');
             }
