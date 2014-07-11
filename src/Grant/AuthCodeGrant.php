@@ -141,8 +141,8 @@ class AuthCodeGrant extends AbstractGrant
 
         // Create a new auth code
         $authCode = new AuthCodeEntity($this->server);
-        $authCode->setToken(SecureKey::generate());
-        $authCode->setRedirectUri();
+        $authCode->setId(SecureKey::generate());
+        $authCode->setRedirectUri($authParams['redirect_uri']);
         $authCode->setExpireTime(time() + $this->authTokenTTL);
 
         foreach ($authParams['scopes'] as $scope) {
@@ -210,23 +210,23 @@ class AuthCodeGrant extends AbstractGrant
 
         // Generate the access token
         $accessToken = new AccessTokenEntity($this->server);
-        $accessToken->setToken(SecureKey::generate());
+        $accessToken->setId(SecureKey::generate());
         $accessToken->setExpireTime($this->server->getAccessTokenTTL() + time());
 
         foreach ($authCodeScopes as $authCodeScope) {
             $session->associateScope($authCodeScope);
         }
 
-        $this->server->getTokenType()->set('access_token', $accessToken->getToken());
+        $this->server->getTokenType()->set('access_token', $accessToken->getId());
         $this->server->getTokenType()->set('expires', $accessToken->getExpireTime());
         $this->server->getTokenType()->set('expires_in', $this->server->getAccessTokenTTL());
 
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
             $refreshToken = new RefreshTokenEntity($this->server);
-            $refreshToken->setToken(SecureKey::generate());
+            $refreshToken->setId(SecureKey::generate());
             $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
-            $this->server->getTokenType()->set('refresh_token', $refreshToken->getToken());
+            $this->server->getTokenType()->set('refresh_token', $refreshToken->getId());
         }
 
         // Expire the auth code

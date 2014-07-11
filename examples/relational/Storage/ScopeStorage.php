@@ -23,8 +23,9 @@ class ScopeStorage extends Adapter implements ScopeInterface
             return null;
         }
 
-        return (new ScopeEntity($this->server))
-                            ->setId($result[0]['id'])
-                            ->setDescription($result[0]['description']);
+        return (new ScopeEntity($this->server))->hydrate([
+            'id'            =>  $result[0]['id'],
+            'description'   =>  $result[0]['description']
+        ]);
     }
 }

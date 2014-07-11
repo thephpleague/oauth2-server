@@ -53,9 +53,9 @@ class RefreshTokenEntity extends AbstractTokenEntity
     public function save()
     {
         $this->server->getStorage('refresh_token')->create(
-            $this->getToken(),
+            $this->getId(),
             $this->getExpireTime(),
-            $this->getAccessToken()->getToken()
+            $this->getAccessToken()->getId()
         );
     }
 

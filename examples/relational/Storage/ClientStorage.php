@@ -34,8 +34,10 @@ class ClientStorage extends Adapter implements ClientInterface
 
         if (count($result) === 1) {
             $client = new ClientEntity($this->server);
-            $client->setId($result[0]['id']);
-            $client->setName($result[0]['name']);
+            $client->hydrate([
+                'id'    =>  $result[0]['id'],
+                'name'  =>  $result[0]['name']
+            ]);
 
             return $client;
         }
@@ -56,8 +58,10 @@ class ClientStorage extends Adapter implements ClientInterface
 
         if (count($result) === 1) {
             $client = new ClientEntity($this->server);
-            $client->setId($result[0]['id']);
-            $client->setName($result[0]['name']);
+            $client->hydrate([
+                'id'    =>  $result[0]['id'],
+                'name'  =>  $result[0]['name']
+            ]);
 
             return $client;
         }

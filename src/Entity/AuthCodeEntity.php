@@ -55,7 +55,7 @@ class AuthCodeEntity extends AbstractTokenEntity
         $uri .= (strstr($this->getRedirectUri(), $queryDelimeter) === false) ? $queryDelimeter : '&';
 
         return $uri.http_build_query([
-            'code'  =>  $this->getToken(),
+            'code'  =>  $this->getId(),
             'state' =>  $state
         ]);
     }
@@ -94,7 +94,7 @@ class AuthCodeEntity extends AbstractTokenEntity
     public function save()
     {
         $this->server->getStorage('auth_code')->create(
-            $this->getToken(),
+            $this->getId(),
             $this->getExpireTime(),
             $this->getSession()->getId()
         );

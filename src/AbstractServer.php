@@ -132,7 +132,7 @@ abstract class AbstractServer
      * Get the access token type
      * @return TokenTypeInterface
      */
-    public function getIdType()
+    public function getTokenType()
     {
         return $this->tokenType;
     }

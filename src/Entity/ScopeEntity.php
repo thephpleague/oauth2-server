@@ -18,6 +18,8 @@ use League\OAuth2\Server\AbstractServer;
  */
 class ScopeEntity implements \JsonSerializable
 {
+    use EntityTrait;
+
     /**
      * Scope identifier
      * @var string
@@ -49,36 +51,12 @@ class ScopeEntity implements \JsonSerializable
     }
 
     /**
-     * Set the scope identifer
-     * @param  string $id The scope identifier
-     * @return self
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
      * Return the scope identifer
      * @return string
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set the scope's descripton
-     * @param  string $description
-     * @return self
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-
-        return $this;
     }
 
     /**

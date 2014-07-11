@@ -78,7 +78,7 @@ class AuthorizationServer extends AbstractServer
         $this->storages = [];
 
         // Set Bearer as the default token type
-        $this->setTokenType(new Bearer);
+        $this->setIdType(new Bearer);
 
         parent::__construct();
 

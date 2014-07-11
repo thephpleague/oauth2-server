@@ -64,7 +64,7 @@ class ResourceServer extends AbstractServer
         $this->setStorage('scope', $scopeStorage);
 
         // Set Bearer as the default token type
-        $this->setTokenType(new Bearer);
+        $this->setIdType(new Bearer);
 
         parent::__construct();
 
@@ -89,7 +89,7 @@ class ResourceServer extends AbstractServer
      * Returns the query string key for the access token.
      * @return string
      */
-    public function getTokenKey()
+    public function getIdKey()
     {
         return $this->tokenKey;
     }
@@ -99,7 +99,7 @@ class ResourceServer extends AbstractServer
      * @param $key The new query string key
      * @return self
      */
-    public function setTokenKey($key)
+    public function setIdKey($key)
     {
         $this->tokenKey = $key;
 
@@ -130,7 +130,7 @@ class ResourceServer extends AbstractServer
      */
     public function getAccessToken()
     {
-        return $this->accessToken->getToken();
+        return $this->accessToken->getId();
     }
 
     /**

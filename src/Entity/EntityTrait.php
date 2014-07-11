@@ -19,10 +19,12 @@ trait EntityTrait
      */
     public function hydrate(array $properties)
     {
-        foreach ($properties as $prop) {
-            if (isset($this->{$prop})) {
-                $this->{$prop} = $prop;
+        foreach ($properties as $prop => $val) {
+            if (property_exists($this, $prop)) {
+                $this->{$prop} = $val;
             }
         }
+
+        return $this;
     }
 }
