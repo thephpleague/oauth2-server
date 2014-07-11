@@ -10,9 +10,10 @@ class ScopeTest extends \PHPUnit_Framework_TestCase
     public function testSetGet()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
-        $scope = new ScopeEntity($server);
-        $scope->setId('foobar');
-        $scope->setDescription('barfoo');
+        $scope = (new ScopeEntity($server))->hydrate([
+            'id' => 'foobar',
+            'description' => 'barfoo'
+        ]);
 
         $this->assertEquals('foobar', $scope->getId());
         $this->assertEquals('barfoo', $scope->getDescription());

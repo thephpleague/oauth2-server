@@ -39,10 +39,10 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');
         $accessTokenStorage->shouldReceive('setServer');
         $accessTokenStorage->shouldReceive('getByRefreshToken')->andReturn(
-            (new AccessTokenEntity($server))->setToken('foobar')
+            (new AccessTokenEntity($server))->setId('foobar')
         );
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->setId('foo')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
 
         $server->shouldReceive('getStorage')->with('access_token')->andReturn($accessTokenStorage);
