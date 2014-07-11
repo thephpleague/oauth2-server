@@ -66,6 +66,8 @@ class ResourceServer extends AbstractServer
         // Set Bearer as the default token type
         $this->setTokenType(new Bearer);
 
+        parent::__construct();
+
         return $this;
     }
 

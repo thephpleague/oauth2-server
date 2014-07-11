@@ -228,6 +228,8 @@ class SessionEntity
         $this->ownerType = $type;
         $this->ownerId = $id;
 
+        $this->server->eventEmitter->emit(new Event\SessionOwnerEvent($this));
+
         return $this;
     }
 
