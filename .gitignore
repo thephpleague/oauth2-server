@@ -3,3 +3,4 @@
 /tests/coverage
 /docs
 /testing
+build/coverage
