@@ -16,6 +16,32 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         return new League\OAuth2\Server\Resource($this->session);
     }
 
+    public function test_getExceptionMessage()
+    {
+        $m = League\OAuth2\Server\Resource::getExceptionMessage('invalid_request');
+
+        $reflector = new ReflectionClass($this->returnDefault());
+        $exceptionMessages = $reflector->getProperty('exceptionMessages');
+        $exceptionMessages->setAccessible(true);
+        $v = $exceptionMessages->getValue();
+
+        $this->assertEquals($v['invalid_request'], $m);
+    }
+
+    public function test_getExceptionCode()
+    {
+        $this->assertEquals('invalid_request', League\OAuth2\Server\Resource::getExceptionType(0));
+        $this->assertEquals('invalid_token', League\OAuth2\Server\Resource::getExceptionType(1));
+        $this->assertEquals('insufficient_scope', League\OAuth2\Server\Resource::getExceptionType(2));
+    }
+
+    public function test_getExceptionHttpHeaders()
+    {
+        $this->assertEquals(array('HTTP/1.1 400 Bad Request'), League\OAuth2\Server\Resource::getExceptionHttpHeaders('invalid_request'));
+        $this->assertEquals(array('HTTP/1.1 401 Unauthorized'), League\OAuth2\Server\Resource::getExceptionHttpHeaders('invalid_token'));
+        $this->assertContains('HTTP/1.1 403 Forbidden', League\OAuth2\Server\Resource::getExceptionHttpHeaders('insufficient_scope'));
+    }
+
     public function test_setRequest()
     {
         $s = $this->returnDefault();
@@ -66,7 +92,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException League\OAuth2\Server\Exception\InvalidAccessTokenException
+     * @expectedException League\OAuth2\Server\Exception\MissingAccessTokenException
      */
     public function test_determineAccessToken_missingToken()
     {
@@ -84,7 +110,7 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException League\OAuth2\Server\Exception\InvalidAccessTokenException
+     * @expectedException League\OAuth2\Server\Exception\MissingAccessTokenException
      */
     public function test_determineAccessToken_brokenCurlRequest()
     {
@@ -166,6 +192,39 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $this->assertEquals('abcdef', $result);
     }
 
+    public function test_hasScope_isRequired()
+    {
+        $s = $this->returnDefault();
+
+        $reflector = new ReflectionClass($s);
+        $param = $reflector->getProperty('sessionScopes');
+        $param->setAccessible(true);
+        $param->setValue($s, array(
+            'a', 'b', 'c'
+        ));
+
+        $result = $s->hasScope(array('a', 'b'), true);
+
+        $this->assertEquals(true, $result);
+    }
+
+    /**
+     * @expectedException League\OAuth2\Server\Exception\InsufficientScopeException
+     */
+    public function test_hasScope_isRequiredFailure()
+    {
+        $s = $this->returnDefault();
+
+        $reflector = new ReflectionClass($s);
+        $param = $reflector->getProperty('sessionScopes');
+        $param->setAccessible(true);
+        $param->setValue($s, array(
+            'a', 'b', 'c'
+        ));
+
+        $s->hasScope('d', true);
+    }
+
     /**
      * @expectedException League\OAuth2\Server\Exception\InvalidAccessTokenException
      */
@@ -216,11 +275,10 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
         $this->assertEquals('user', $s->getOwnerType());
         $this->assertEquals('abcdef', $s->getAccessToken());
         $this->assertEquals('testapp', $s->getClientId());
-        $this->assertTrue($s->hasScope('foo'));
-        $this->assertTrue($s->hasScope('bar'));
-        $this->assertTrue($s->hasScope(array('foo', 'bar')));
-        $this->assertFalse($s->hasScope(array('foobar')));
-        $this->assertFalse($s->hasScope('foobar'));
-        $this->assertFalse($s->hasScope(new StdClass));
+    	$this->assertTrue($s->hasScope('foo'));
+    	$this->assertTrue($s->hasScope('bar'));
+    	$this->assertTrue($s->hasScope(array('foo', 'bar')));
+    	$this->assertFalse($s->hasScope(array('foobar')));
+    	$this->assertFalse($s->hasScope('foobar'));
     }
 }

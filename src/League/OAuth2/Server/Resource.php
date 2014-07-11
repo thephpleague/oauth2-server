@@ -4,7 +4,8 @@
  *
  * @package     php-loep/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) 2013 PHP League of Extraordinary Packages
+ * @author      Woody Gilk <woody@shadowhand.me>
+ * @copyright   Copyright (c) 2013-2014 PHP League of Extraordinary Packages
  * @license     http://mit-license.org/
  * @link        http://github.com/php-loep/oauth2-server
  */
@@ -74,6 +75,117 @@ class Resource
      * @var string
      */
     protected $clientId = null;
+
+    /**
+     * Exception error codes
+     * @var array
+     */
+    protected static $exceptionCodes = array(
+        0   =>  'invalid_request',
+        1   =>  'invalid_token',
+        2   =>  'insufficient_scope',
+    );
+
+    /**
+     * Exception error messages
+     * @var array
+     */
+    protected static $exceptionMessages = array(
+        'invalid_request'    =>  'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "%s" parameter.',
+        'invalid_token'      =>  'The access token provided is expired, revoked, malformed, or invalid for other reasons.',
+        'insufficient_scope' =>  'The request requires higher privileges than provided by the access token. Required scopes are: %s.',
+    );
+
+    /**
+     * Exception error HTTP status codes
+     * @var array
+     *
+     * RFC 6750, section 3.1:
+     * When a request fails, the resource server responds using the
+     * appropriate HTTP status code (typically, 400, 401, 403, or 405) and
+     * includes one of the following error codes in the response:
+     */
+    protected static $exceptionHttpStatusCodes = array(
+        'invalid_request'    =>  400,
+        'invalid_token'      =>  401,
+        'insufficient_scope' =>  403,
+    );
+
+    /**
+     * Get an exception message
+     *
+     * @param  string $error The error message key
+     * @return string        The error message
+     */
+    public static function getExceptionMessage($error = '')
+    {
+        return self::$exceptionMessages[$error];
+    }
+
+    /**
+     * Get an exception code
+     *
+     * @param  integer $code The exception code
+     * @return string        The exception code type
+     */
+    public static function getExceptionType($code = 0)
+    {
+        return self::$exceptionCodes[$code];
+    }
+
+        /**
+     * Get all headers that have to be send with the error response
+     *
+     * @param  string $error The error message key
+     * @return array         Array with header values
+     */
+    public static function getExceptionHttpHeaders($error)
+    {
+        $headers = array();
+        switch (self::$exceptionHttpStatusCodes[$error]) {
+            case 401:
+                $headers[] = 'HTTP/1.1 401 Unauthorized';
+                break;
+            case 403:
+                $headers[] = 'HTTP/1.1 403 Forbidden';
+                break;
+            case 400:
+            default:
+                $headers[] = 'HTTP/1.1 400 Bad Request';
+        }
+
+        // Add "WWW-Authenticate" header
+        //
+        // RFC 6749, section 5.2.:
+        // "If the client attempted to authenticate via the 'Authorization'
+        // request header field, the authorization server MUST
+        // respond with an HTTP 401 (Unauthorized) status code and
+        // include the "WWW-Authenticate" response header field
+        // matching the authentication scheme used by the client.
+        // @codeCoverageIgnoreStart
+        if ($error === 'insufficient_scope') {
+            $authScheme = null;
+            $request = new Request();
+            if ($request->server('PHP_AUTH_USER') !== null) {
+                $authScheme = 'Basic';
+            } else {
+                $authHeader = $request->header('Authorization');
+                if ($authHeader !== null) {
+                    if (strpos($authHeader, 'Bearer') === 0) {
+                        $authScheme = 'Bearer';
+                    } elseif (strpos($authHeader, 'Basic') === 0) {
+                        $authScheme = 'Basic';
+                    }
+                }
+            }
+            if ($authScheme !== null) {
+                $headers[] = 'WWW-Authenticate: '.$authScheme.' realm=""';
+            }
+        }
+        // @codeCoverageIgnoreEnd
+
+        return $headers;
+    }
 
     /**
      * Sets up the Resource
@@ -186,7 +298,7 @@ class Resource
         $result = $this->storages['session']->validateAccessToken($accessToken);
 
         if (! $result) {
-            throw new Exception\InvalidAccessTokenException('Access token is not valid');
+            throw new Exception\InvalidAccessTokenException(self::$exceptionMessages['invalid_token'], 1);
         }
 
         $this->accessToken = $accessToken;
@@ -216,25 +328,26 @@ class Resource
      * Checks if the presented access token has the given scope(s).
      *
      * @param array|string  An array of scopes or a single scope as a string
+     * @param bool          If scopes are required, missing scope will trigger an exception
+     * @throws Exception\InsufficientScopeException Thrown if the any of the given scopes are not in the session
      * @return bool         Returns bool if all scopes are found, false if any fail
      */
-    public function hasScope($scopes)
+    public function hasScope($scopes, $required = false)
     {
-        if (is_string($scopes)) {
-            if (in_array($scopes, $this->sessionScopes)) {
-                return true;
-            }
-            return false;
-        } elseif (is_array($scopes)) {
-            foreach ($scopes as $scope) {
-                if (! in_array($scope, $this->sessionScopes)) {
-                    return false;
-                }
-            }
-            return true;
+        if (!is_array($scopes)) {
+            $scopes = array($scopes);
         }
 
-        return false;
+        $missing = array_diff($scopes, $this->sessionScopes);
+
+        if ($missing) {
+            if ($required) {
+                $missing = implode(', ', $missing);
+                throw new Exception\InsufficientScopeException(sprintf(self::$exceptionMessages['insufficient_scope'], $missing), 3);
+            }
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -274,7 +387,7 @@ class Resource
         }
 
         if (empty($accessToken)) {
-            throw new Exception\InvalidAccessTokenException('Access token is missing');
+            throw new Exception\MissingAccessTokenException(self::$exceptionMessages['invalid_request'], 0);
         }
 
         return $accessToken;
