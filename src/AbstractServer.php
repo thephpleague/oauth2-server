@@ -51,7 +51,7 @@ abstract class AbstractServer
      */
     public function __construct()
     {
-        $this->eventEmitter = $this->setEventEmitter();
+        $this->setEventEmitter();
     }
 
     /**
@@ -70,6 +70,11 @@ abstract class AbstractServer
     public function addEventListener($eventName, callable $listener)
     {
         $this->eventEmitter->addListener($eventName, $listener);
+    }
+
+    public function getEventEmitter()
+    {
+        return $this->eventEmitter;
     }
 
     /**
@@ -118,7 +123,7 @@ abstract class AbstractServer
      * @param  TokenTypeInterface $tokenType The token type
      * @return void
      */
-    public function setTokenType(TokenTypeInterface $tokenType)
+    public function setIdType(TokenTypeInterface $tokenType)
     {
         $this->tokenType = $tokenType;
     }
@@ -127,7 +132,7 @@ abstract class AbstractServer
      * Get the access token type
      * @return TokenTypeInterface
      */
-    public function getTokenType()
+    public function getIdType()
     {
         return $this->tokenType;
     }
