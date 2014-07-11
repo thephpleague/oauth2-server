@@ -163,7 +163,7 @@ class Resource
         // include the "WWW-Authenticate" response header field
         // matching the authentication scheme used by the client.
         // @codeCoverageIgnoreStart
-        if ($error === 'insufficient_scope') {
+        if ($error === 'invalid_token') {
             $authScheme = null;
             $request = new Request();
             if ($request->server('PHP_AUTH_USER') !== null) {
