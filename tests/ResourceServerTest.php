@@ -141,10 +141,10 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
             (new AccessTokenEntity($server))->setId('abcdef')
         );
 
-        // $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-        //     (new ScopeEntity($server))->hydrate(['id' => 'foo']),
-        //     (new ScopeEntity($server))->hydrate(['id' => 'bar'])
-        // ]);
+        $accessTokenStorage->shouldReceive('getScopes')->andReturn([
+            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
+            (new ScopeEntity($server))->hydrate(['id' => 'bar'])
+        ]);
 
         $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
             (new SessionEntity($server))->setId('foobar')->setOwner('user', 123)

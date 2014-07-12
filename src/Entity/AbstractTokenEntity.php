@@ -36,7 +36,7 @@ abstract class AbstractTokenEntity
      * Session scopes
      * @var array    Array of ScopeEntity
      */
-    protected $scopes = [];
+    protected $scopes;
 
     /**
      * Token expire time
