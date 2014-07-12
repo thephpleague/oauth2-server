@@ -11,10 +11,10 @@
 
 namespace League\OAuth2\Server\Event;
 
-use League\Event\EventAbstract;
+use League\Event\AbstractEvent;
 use League\OAuth2\Server\Entity\SessionEntity;
 
-class SessionOwnerEvent extends EventAbstract
+class SessionOwnerEvent extends AbstractEvent
 {
     /**
      * Session entity
