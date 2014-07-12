@@ -73,6 +73,26 @@ class Implicit implements GrantTypeInterface {
         // Create an access token
         $accessTokenId = $this->authServer->getStorage('session')->associateAccessToken($sessionId, $accessToken, $accessTokenExpires);
 
+        // Validate any scopes that are in the request
+        $scopes = explode($this->authServer->getScopeDelimeter(), $authParams['scope']);
+        
+        for ($i = 0; $i < count($scopes); $i++) {
+            $scopes[$i] = trim($scopes[$i]);
+            if ($scopes[$i] === '') unset($scopes[$i]); // Remove any junk scopes
+        }
+        
+        $authParams['scopes'] = array();
+        
+        foreach ($scopes as $scope) {
+            $scopeDetails = $this->authServer->getStorage('scope')->getScope($scope, $authParams['client_id'], $this->identifier);
+        
+            if ($scopeDetails === false) {
+                throw new Exception\ClientException(sprintf($this->authServer->getExceptionMessage('invalid_scope'), $scope), 4);
+            }
+        
+            $authParams['scopes'][] = $scopeDetails;
+        }
+        
         // Associate scopes with the access token
         foreach ($authParams['scopes'] as $scope) {
             $this->authServer->getStorage('session')->associateScope($accessTokenId, $scope['id']);
