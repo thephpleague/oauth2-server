@@ -1,6 +1,6 @@
 CREATE TABLE `oauth_clients` (
-  `id` CHAR(40) NOT NULL,
-  `secret` CHAR(40) NOT NULL,
+  `id` CHAR(40) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `secret` CHAR(40) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `name` VARCHAR(255) NOT NULL,
   `auto_approve` TINYINT(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -9,7 +9,7 @@ CREATE TABLE `oauth_clients` (
 
 CREATE TABLE `oauth_client_endpoints` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `client_id` char(40) NOT NULL,
+  `client_id` char(40) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `redirect_uri` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `i_oaclen_clid` (`client_id`),
@@ -18,7 +18,7 @@ CREATE TABLE `oauth_client_endpoints` (
 
 CREATE TABLE `oauth_sessions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `client_id` char(40) NOT NULL,
+  `client_id` char(40) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `owner_type` enum('user','client') NOT NULL DEFAULT 'user',
   `owner_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -29,7 +29,7 @@ CREATE TABLE `oauth_sessions` (
 CREATE TABLE `oauth_session_access_tokens` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `session_id` int(10) unsigned NOT NULL,
-  `access_token` char(40) NOT NULL,
+  `access_token` char(40) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `access_token_expires` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `u_oaseacto_acto_seid` (`access_token`,`session_id`),
@@ -40,7 +40,7 @@ CREATE TABLE `oauth_session_access_tokens` (
 CREATE TABLE `oauth_session_authcodes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `session_id` int(10) unsigned NOT NULL,
-  `auth_code` char(40) NOT NULL,
+  `auth_code` char(40) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `auth_code_expires` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `session_id` (`session_id`),
@@ -56,9 +56,9 @@ CREATE TABLE `oauth_session_redirects` (
 
 CREATE TABLE `oauth_session_refresh_tokens` (
   `session_access_token_id` int(10) unsigned NOT NULL,
-  `refresh_token` char(40) NOT NULL,
+  `refresh_token` char(40) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `refresh_token_expires` int(10) unsigned NOT NULL,
-  `client_id` char(40) NOT NULL,
+  `client_id` char(40) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`session_access_token_id`),
   KEY `client_id` (`client_id`),
   CONSTRAINT `oauth_session_refresh_tokens_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `oauth_clients` (`id`) ON DELETE CASCADE,
