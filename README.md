@@ -12,7 +12,7 @@ The framework is provided as a Composer package which can be installed by adding
 ```javascript
 {
 	"require": {
-		"league/oauth2-server": "3.*"
+		"league/oauth2-server": "~3.2"
 	}
 }
 ```
