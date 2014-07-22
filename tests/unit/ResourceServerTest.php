@@ -137,6 +137,10 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
 
         $server->setIdKey('at');
 
+        $server->addEventListener('session.owner', function($event) {
+            $this->assertTrue($event->getSession() instanceof \League\OAuth2\Server\Entity\SessionEntity);
+        });
+
         $accessTokenStorage->shouldReceive('get')->andReturn(
             (new AccessTokenEntity($server))->setId('abcdef')
         );
