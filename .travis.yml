@@ -19,8 +19,8 @@ before_script:
     - php -S localhost:8000 &
     - sleep 3
     - cd ../..
-    - mkdir tests/functional/tests/_log
-    - chmod -R 777 tests/functional/tests/_log
+    - mkdir tests/api/tests/_log
+    - chmod -R 777 tests/api/tests/_log
 
 script:
   - mkdir -p build/logs
