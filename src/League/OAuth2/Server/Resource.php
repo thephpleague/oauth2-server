@@ -165,7 +165,7 @@ class Resource
         // @codeCoverageIgnoreStart
         if ($error === 'invalid_token') {
             $authScheme = null;
-            $request = new Request();
+            $request = Request::buildFromGlobals();
             if ($request->server('PHP_AUTH_USER') !== null) {
                 $authScheme = 'Basic';
             } else {
