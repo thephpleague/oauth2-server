@@ -24,9 +24,9 @@ class AccessTokenStorage extends Adapter implements AccessTokenInterface
                             ->get();
 
         if (count($result) === 1) {
-            $token = new AccessTokenEntity($this->server);
-            $token->setExpireTime($result[0]['expire_time']);
-            $token->setToken($result[0]['access_token']);
+            $token = (new AccessTokenEntity($this->server))
+                        ->setId($result[0]['access_token'])
+                        ->setExpireTime($result[0]['expire_time']);
 
             return $token;
         }
@@ -50,16 +50,17 @@ class AccessTokenStorage extends Adapter implements AccessTokenInterface
         $result = Capsule::table('oauth_access_token_scopes')
                                     ->select(['oauth_scopes.id', 'oauth_scopes.description'])
                                     ->join('oauth_scopes', 'oauth_access_token_scopes.scope', '=', 'oauth_scopes.id')
-                                    ->where('access_token', $token->getToken())
+                                    ->where('access_token', $token->getId())
                                     ->get();
 
         $response = [];
 
         if (count($result) > 0) {
             foreach ($result as $row) {
-                $scope = new ScopeEntity($this->server);
-                $scope->setId($row['id']);
-                $scope->setDescription($row['description']);
+                $scope = (new ScopeEntity($this->server))->hydrate([
+                    'id'            =>  $row['id'],
+                    'description'   =>  $row['description']
+                ]);
                 $response[] = $scope;
             }
         }

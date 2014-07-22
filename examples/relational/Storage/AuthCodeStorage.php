@@ -23,7 +23,7 @@ class AuthCodeStorage extends Adapter implements AuthCodeInterface
 
         if (count($result) === 1) {
             $token = new AuthCodeEntity($this->server);
-            $token->setToken($result[0]['auth_code']);
+            $token->setId($result[0]['auth_code']);
             return $token;
         }
 

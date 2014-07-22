@@ -1,4 +1,4 @@
-class_name: ApiGuy
+class_name: ApiTester
 modules:
     enabled: [PhpBrowser, REST, ApiHelper]
     config:

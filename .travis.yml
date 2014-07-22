@@ -19,14 +19,13 @@ before_script:
     - php -S localhost:8000 &
     - sleep 3
     - cd ../..
-    - wget http://codeception.com/codecept.phar
-    - mkdir tests/codecept/tests/_log
-    - chmod -R 777 tests/codecept/tests/_log
+    - mkdir tests/functional/tests/_log
+    - chmod -R 777 tests/functional/tests/_log
 
 script:
   - mkdir -p build/logs
   - phpunit --coverage-text
-  - php codecept.phar run api -c tests/codecept/codeception.yml
+  - ./vendor/bin/codecept run api -d
   - ./vendor/bin/phpcs src --standard=psr2
 
 after_script:

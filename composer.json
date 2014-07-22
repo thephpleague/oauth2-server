@@ -13,7 +13,7 @@
         "mockery/mockery": "~0.9",
         "league/phpunit-coverage-listener": "~1.0",
         "squizlabs/php_codesniffer": "1.*",
-        "codeception/codeception": "2.0.2"
+        "codeception/codeception": "2.0.*"
     },
     "repositories": [
         {

@@ -8,3 +8,4 @@
 /examples/nosql/config/oauth2.sqlite3
 /examples/relational/composer.lock
 /tests/functional/tests/_log
+tests/_output/*

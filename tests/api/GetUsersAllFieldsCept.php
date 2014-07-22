@@ -1,5 +1,5 @@
 <?php
-$I = new ApiGuy($scenario);
+$I = new ApiTester($scenario);
 $I->wantTo('get all users with all fields');
 $I->sendGET('api.php/users?access_token=iamgod');
 $I->seeResponseCodeIs(200);

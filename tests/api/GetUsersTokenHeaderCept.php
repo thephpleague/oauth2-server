@@ -1,5 +1,5 @@
 <?php
-$I = new ApiGuy($scenario);
+$I = new ApiTester($scenario);
 $I->wantTo('get all users with header access token');
 $I->haveHttpHeader('Authorization', 'Bearer iamgod');
 $I->sendGET('api.php/users');
