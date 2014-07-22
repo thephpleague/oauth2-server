@@ -1,6 +1,6 @@
-class_name: ApiTester
+class_name: ResourceServerTester
 modules:
-    enabled: [PhpBrowser, REST, ApiHelper]
+    enabled: [PhpBrowser, REST, ResourceServerHelper]
     config:
       PhpBrowser:
           url: http://localhost:8000/
