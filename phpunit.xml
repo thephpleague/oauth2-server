@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" stopOnError="true" stopOnFailure="true" stopOnIncomplete="false" stopOnSkipped="false" bootstrap="tests/Bootstrap.php">
+<phpunit colors="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" stopOnError="true" stopOnFailure="true" stopOnIncomplete="false" stopOnSkipped="false" bootstrap="tests/unit/Bootstrap.php">
 	<testsuites>
 		<testsuite name="Tests">
-		   <directory>./tests/</directory>
+		   <directory>./tests/unit/</directory>
 	   </testsuite>
 	</testsuites>
 	<filter>

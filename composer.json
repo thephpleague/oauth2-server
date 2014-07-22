@@ -56,7 +56,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "LeagueTests\\": "tests/"
+            "LeagueTests\\": "tests/unit/"
         }
     },
     "extra": {
