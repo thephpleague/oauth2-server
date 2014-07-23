@@ -38,8 +38,8 @@ class Resource_Server_test extends PHPUnit_Framework_TestCase
     public function test_getExceptionHttpHeaders()
     {
         $this->assertEquals(array('HTTP/1.1 400 Bad Request'), League\OAuth2\Server\Resource::getExceptionHttpHeaders('invalid_request'));
-        $this->assertEquals(array('HTTP/1.1 401 Unauthorized'), League\OAuth2\Server\Resource::getExceptionHttpHeaders('invalid_token'));
-        $this->assertContains('HTTP/1.1 403 Forbidden', League\OAuth2\Server\Resource::getExceptionHttpHeaders('insufficient_scope'));
+        $this->assertContains('HTTP/1.1 401 Unauthorized', League\OAuth2\Server\Resource::getExceptionHttpHeaders('invalid_token'));
+        $this->assertEquals(array('HTTP/1.1 403 Forbidden'), League\OAuth2\Server\Resource::getExceptionHttpHeaders('insufficient_scope'));
     }
 
     public function test_setRequest()

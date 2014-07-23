@@ -76,22 +76,25 @@ class Request implements RequestInterface
 
     protected function readHeaders()
     {
-        if (function_exists('getallheaders')) {
+        if (function_exists('apache_request_headers')) {
             // @codeCoverageIgnoreStart
-            $headers = getallheaders();
+            $headers = apache_request_headers();
+        } elseif (function_exists('http_get_request_headers')) {
+            $headers = http_get_request_headers();
         } else {
             // @codeCoverageIgnoreEnd
             $headers = array();
             foreach ($this->server() as $name => $value) {
                 if (substr($name, 0, 5) == 'HTTP_') {
-                    $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+                    // HTTP_FOO_BAR becomes FOO-BAR
+                    $name = str_replace(array('HTTP_', '_'), array('', '-'), $name);
                     $headers[$name] = $value;
                 }
             }
         }
 
         return $this->normalizeHeaders($headers);
-   }
+    }
 
     protected function getPropertyValue($property, $index = null, $default = null)
     {
