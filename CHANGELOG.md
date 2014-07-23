@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.2 (released 2014-07-23)
+
+* Fix Resource server Request HTTP header access (Issue #188)
+
 ## 3.2 (released 2014-04-16)
 
 * Added the ability to change the algorithm that is used to generate the token strings (Issue #151)
