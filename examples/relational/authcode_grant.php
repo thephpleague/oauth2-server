@@ -33,7 +33,6 @@ $server->addGrantType($authCodeGrant);
 $request = (new Request)->createFromGlobals();
 $server->setRequest($request);
 
-// GET /authorize
 $router->get('/authorize', function (Request $request) use ($server) {
 
     // First ensure the parameters in the query string are correct
@@ -74,15 +73,12 @@ $router->get('/authorize', function (Request $request) use ($server) {
     return $response;
 });
 
-// /access_token
 $router->post('/access_token', function (Request $request) use ($server) {
 
     try {
 
         $response = $server->issueAccessToken();
-        return new Response(json_encode($response), 200, [
-            'Location'  =>  $redirectUri
-        ]);
+        return new Response(json_encode($response), 200);
 
     } catch (\Exception $e) {
 
