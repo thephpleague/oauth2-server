@@ -24,13 +24,14 @@ class AuthCodeStorage extends Adapter implements AuthCodeInterface
         if (count($result) === 1) {
             $token = new AuthCodeEntity($this->server);
             $token->setId($result[0]['auth_code']);
+            $token->setRedirectUri($result[0]['client_redirect_uri']);
             return $token;
         }
 
         return null;
     }
 
-    public function create($token, $$expireTime, $sessionId)
+    public function create($token, $expireTime, $sessionId, $redirectUri)
     {
         Capsule::table('oauth_auth_codes')
                     ->insert([
@@ -46,7 +47,25 @@ class AuthCodeStorage extends Adapter implements AuthCodeInterface
      */
     public function getScopes(AuthCodeEntity $token)
     {
-        die(var_dump(__METHOD__, func_get_args()));
+        $result = Capsule::table('oauth_auth_code_scopes')
+                                    ->select(['oauth_scopes.id', 'oauth_scopes.description'])
+                                    ->join('oauth_scopes', 'oauth_auth_code_scopes.scope', '=', 'oauth_scopes.id')
+                                    ->where('auth_code', $token->getId())
+                                    ->get();
+
+        $response = [];
+
+        if (count($result) > 0) {
+            foreach ($result as $row) {
+                $scope = (new ScopeEntity($this->server))->hydrate([
+                    'id'            =>  $row['id'],
+                    'description'   =>  $row['description']
+                ]);
+                $response[] = $scope;
+            }
+        }
+
+        return $response;
     }
 
     /**
@@ -55,10 +74,10 @@ class AuthCodeStorage extends Adapter implements AuthCodeInterface
     public function associateScope(AuthCodeEntity $token, ScopeEntity $scope)
     {
         Capsule::table('oauth_auth_code_scopes')
-                            ->insert([
-                                'auth_code' =>  $token->getToken(),
-                                'scope'     =>  $scope->getId()
-                            ]);
+                    ->insert([
+                        'auth_code' =>  $token->getId(),
+                        'scope'     =>  $scope->getId()
+                    ]);
     }
 
     /**
@@ -66,6 +85,8 @@ class AuthCodeStorage extends Adapter implements AuthCodeInterface
      */
     public function delete(AuthCodeEntity $token)
     {
-        die(var_dump(__METHOD__, func_get_args()));
+        Capsule::table('oauth_auth_codes')
+                    ->where('auth_code', $token->getId())
+                    ->delete();
     }
 }

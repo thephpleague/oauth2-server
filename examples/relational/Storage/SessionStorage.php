@@ -29,11 +29,10 @@ class SessionStorage extends Adapter implements SessionInterface
         $result = Capsule::table('oauth_sessions')
                             ->select(['oauth_sessions.id', 'oauth_sessions.owner_type', 'oauth_sessions.owner_id', 'oauth_sessions.client_id', 'oauth_sessions.client_redirect_uri'])
                             ->join('oauth_access_tokens', 'oauth_access_tokens.session_id', '=', 'oauth_sessions.id')
-                            ->where('oauth_access_tokens.access_token', $accessToken->getToken())
+                            ->where('oauth_access_tokens.access_token', $accessToken->getId())
                             ->get();
 
         if (count($result) === 1) {
-            // die(var_dump($result));
             $session = new SessionEntity($this->server);
             $session->setId($result[0]['id']);
             $session->setOwner($result[0]['owner_type'], $result[0]['owner_id']);
@@ -49,7 +48,21 @@ class SessionStorage extends Adapter implements SessionInterface
      */
     public function getByAuthCode(AuthCodeEntity $authCode)
     {
-        die(var_dump(__METHOD__, func_get_args()));
+        $result = Capsule::table('oauth_sessions')
+                            ->select(['oauth_sessions.id', 'oauth_sessions.owner_type', 'oauth_sessions.owner_id', 'oauth_sessions.client_id', 'oauth_sessions.client_redirect_uri'])
+                            ->join('oauth_auth_codes', 'oauth_auth_codes.session_id', '=', 'oauth_sessions.id')
+                            ->where('oauth_auth_codes.auth_code', $authCode->getId())
+                            ->get();
+
+        if (count($result) === 1) {
+            $session = new SessionEntity($this->server);
+            $session->setId($result[0]['id']);
+            $session->setOwner($result[0]['owner_type'], $result[0]['owner_id']);
+
+            return $session;
+        }
+
+        return null;
     }
 
     /**
@@ -67,9 +80,10 @@ class SessionStorage extends Adapter implements SessionInterface
         $scopes = [];
 
         foreach ($result as $scope) {
-            $scopes[] = (new ScopeEntity($this->server))
-                            ->setId($scope['id'])
-                            ->setDescription($scope['description']);
+            $scopes[] = (new ScopeEntity($this->server))->hydrate([
+                'id'            =>  $scope['id'],
+                'description'   =>  $scope['description']
+            ]);
         }
 
         return $scopes;
@@ -95,6 +109,10 @@ class SessionStorage extends Adapter implements SessionInterface
      */
     public function associateScope(SessionEntity $session, ScopeEntity $scope)
     {
-        die(var_dump(__CLASS__.'::'.__METHOD__, func_get_args()));
+        Capsule::table('oauth_session_scopes')
+                            ->insert([
+                                'session_id'    =>  $session->getId(),
+                                'scope'         =>  $scope->getId()
+                            ]);
     }
 }
