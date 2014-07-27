@@ -39,14 +39,20 @@ $router->get('/authorize', function (Request $request) use ($server) {
     // First ensure the parameters in the query string are correct
 
     try {
-        $authParams = $server->getGrantType('authorization_code')->checkAuthorizeParams();
-    } catch (\Exception $e) {
-        echo json_encode([
-            'error'     =>  $e->errorType,
-            'message'   =>  $e->getMessage()
-        ]);
 
-        exit;
+        $authParams = $server->getGrantType('authorization_code')->checkAuthorizeParams();
+
+    } catch (\Exception $e) {
+
+        return new Response(
+            json_encode([
+                'error'     =>  $e->errorType,
+                'message'   =>  $e->getMessage()
+            ]),
+            $e->httpStatusCode,
+            $e->getHttpHeaders()
+        );
+
     }
 
     // Normally at this point you would show the user a sign-in screen and ask them to authorize the requested scopes
@@ -72,14 +78,23 @@ $router->get('/authorize', function (Request $request) use ($server) {
 $router->post('/access_token', function (Request $request) use ($server) {
 
     try {
-        $response = $server->getGrantType('authorization_code')->completeFlow();
-    } catch (\Exception $e) {
-        echo json_encode([
-            'error'     =>  $e->errorType,
-            'message'   =>  $e->getMessage()
+
+        $response = $server->issueAccessToken();
+        return new Response(json_encode($response), 200, [
+            'Location'  =>  $redirectUri
         ]);
 
-        exit;
+    } catch (\Exception $e) {
+
+        return new Response(
+            json_encode([
+                'error'     =>  $e->errorType,
+                'message'   =>  $e->getMessage()
+            ]),
+            $e->httpStatusCode,
+            $e->getHttpHeaders()
+        );
+
     }
 
 });
@@ -87,5 +102,3 @@ $router->post('/access_token', function (Request $request) use ($server) {
 $dispatcher = $router->getDispatcher();
 $response = $dispatcher->dispatch($request->getMethod(), $request->getPathInfo());
 $response->send();
-
-// var_dump(Capsule::getQueryLog());
