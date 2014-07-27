@@ -11,7 +11,7 @@ use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\AuthorizationServer;
 use Mockery as M;
 
-class RefreshTokenGreantTest extends \PHPUnit_Framework_TestCase
+class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetRefreshTokenTTL()
     {
@@ -212,7 +212,6 @@ class RefreshTokenGreantTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(array_key_exists('refresh_token', $response));
         $this->assertTrue(array_key_exists('token_type', $response));
         $this->assertTrue(array_key_exists('expires_in', $response));
-        $this->assertTrue(array_key_exists('expires', $response));
     }
 
     public function testCompleteFlowRequestScopes()
@@ -284,7 +283,6 @@ class RefreshTokenGreantTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($response['refresh_token']));
         $this->assertTrue(isset($response['token_type']));
         $this->assertTrue(isset($response['expires_in']));
-        $this->assertTrue(isset($response['expires']));
     }
 
     public function testCompleteFlowRequestScopesInvalid()

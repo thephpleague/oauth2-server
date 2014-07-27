@@ -402,7 +402,6 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(array_key_exists('access_token', $response));
         $this->assertTrue(array_key_exists('token_type', $response));
         $this->assertTrue(array_key_exists('expires_in', $response));
-        $this->assertTrue(array_key_exists('expires', $response));
     }
 
     public function testCompleteFlowRefreshToken()
@@ -470,6 +469,5 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         // $this->assertTrue(array_key_exists('refresh_token', $response));
         $this->assertTrue(array_key_exists('token_type', $response));
         $this->assertTrue(array_key_exists('expires_in', $response));
-        $this->assertTrue(array_key_exists('expires', $response));
     }
 }

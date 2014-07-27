@@ -23,7 +23,6 @@ class Bearer extends AbstractTokenType implements TokenTypeInterface
         $return = [
             'access_token'  =>  $this->get('access_token'),
             'token_type'    =>  'Bearer',
-            'expires'       =>  $this->get('expires'),
             'expires_in'    =>  $this->get('expires_in')
         ];
 
