@@ -9,3 +9,4 @@
 /examples/relational/composer.lock
 /tests/codecept/tests/_log
 tests/_output/*
+oauth2-server.paw
