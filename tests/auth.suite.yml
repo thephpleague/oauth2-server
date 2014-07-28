@@ -1,0 +1,8 @@
+class_name: AuthTester
+modules:
+    enabled: [PhpBrowser, REST, AuthHelper]
+    config:
+      PhpBrowser:
+          url: http://localhost:8000/
+      REST:
+          url: http://localhost:8000/

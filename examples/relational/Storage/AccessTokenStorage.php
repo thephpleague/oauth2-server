@@ -73,7 +73,12 @@ class AccessTokenStorage extends Adapter implements AccessTokenInterface
      */
     public function create($token, $expireTime, $sessionId)
     {
-        die(var_dump(__METHOD__, func_get_args()));
+        Capsule::table('oauth_access_tokens')
+                    ->insert([
+                        'access_token'     =>  $token,
+                        'session_id'    =>  $sessionId,
+                        'expire_time'   =>  $expireTime
+                    ]);
     }
 
     /**

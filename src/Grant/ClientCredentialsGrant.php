@@ -102,7 +102,6 @@ class ClientCredentialsGrant extends AbstractGrant
         $accessToken->save($this->server->getStorage('access_token'));
 
         $this->server->getTokenType()->set('access_token', $accessToken->getId());
-        $this->server->getTokenType()->set('expires', $accessToken->getExpireTime());
         $this->server->getTokenType()->set('expires_in', $this->server->getAccessTokenTTL());
 
         return $this->server->getTokenType()->generateResponse();

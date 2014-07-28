@@ -137,7 +137,6 @@ class PasswordGrant extends AbstractGrant
         }
 
         $this->server->getTokenType()->set('access_token', $accessToken->getId());
-        $this->server->getTokenType()->set('expires', $accessToken->getExpireTime());
         $this->server->getTokenType()->set('expires_in', $this->server->getAccessTokenTTL());
 
         // Associate a refresh token if set

@@ -96,7 +96,8 @@ class AuthCodeEntity extends AbstractTokenEntity
         $this->server->getStorage('auth_code')->create(
             $this->getId(),
             $this->getExpireTime(),
-            $this->getSession()->getId()
+            $this->getSession()->getId(),
+            $this->getRedirectUri()
         );
 
         // Associate the scope with the token

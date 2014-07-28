@@ -181,6 +181,7 @@ Capsule::schema()->create('oauth_auth_codes', function ($table) {
     $table->string('auth_code')->primary();
     $table->integer('session_id');
     $table->integer('expire_time');
+    $table->string('client_redirect_uri');
 
     $table->foreign('session_id')->references('id')->on('oauth_sessions')->onDelete('cascade');
 });
