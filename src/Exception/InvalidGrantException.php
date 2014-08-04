@@ -34,8 +34,7 @@ class InvalidGrantException extends OAuthException
     {
         parent::__construct(
             sprintf(
-                'The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used
-                in the authorization request, or was issued to another client. Check the "%s" parameter.',
+                'The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client. Check the "%s" parameter.',
                 $parameter
             )
         );
