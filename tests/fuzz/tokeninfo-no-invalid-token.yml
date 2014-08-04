@@ -1,0 +1,18 @@
+url: 'http://localhost:8000/api.php/tokeninfo'
+request:
+    method: GET
+    headers:
+        -
+            key: Authorization
+            value: Bearer foobar
+response:
+    statusCode: 401
+    headers:
+        Content-type: application/json
+    body:
+        -
+            key: error
+            value: "access_denied"
+        -
+            key: message
+            value: "The resource owner or authorization server denied the request."

@@ -1,0 +1,24 @@
+url: 'http://localhost:8000/api.php/tokeninfo'
+request:
+    method: GET
+    headers:
+        -
+            key: Authorization
+            value: "Bearer iamgod"
+response:
+    statusCode: 200
+    headers:
+        Content-type: application/json
+    body:
+        -
+            key: owner_id
+            value: testclient
+        -
+            key: owner_type
+            value: client
+        -
+            key: access_token
+            value: iamgod
+        -
+            key: client_id
+            value: testclient
