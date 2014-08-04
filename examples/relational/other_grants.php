@@ -38,6 +38,9 @@ $server->addGrantType($passwordGrant);
 $refrehTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
 $server->addGrantType($refrehTokenGrant);
 
+// $refrehTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
+// $server->addGrantType($refrehTokenGrant);
+
 // Routing setup
 $request = (new Request)->createFromGlobals();
 $router = new \Orno\Route\RouteCollection;
