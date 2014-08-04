@@ -33,6 +33,7 @@ $server = new ResourceServer(
 $request = (new Request)->createFromGlobals();
 $router = new \Orno\Route\RouteCollection;
 
+// GET /tokeninfo
 $router->get('/tokeninfo', function (Request $request) use ($server) {
 
     $token = [
@@ -47,12 +48,64 @@ $router->get('/tokeninfo', function (Request $request) use ($server) {
 
 });
 
+// GET /users
+$router->get('/users', function (Request $request) use ($server) {
+
+    $results = (new Model\Users())->get();
+
+    $users = [];
+
+    foreach ($results as $result) {
+        $user = [
+            'username'  =>  $result['username'],
+            'name'      =>  $result['name']
+        ];
+
+        if ($server->hasScope('email')) {
+            $user['email'] = $result['email'];
+        }
+
+        if ($server->hasScope('photo')) {
+            $user['photo'] = $result['photo'];
+        }
+
+        $users[] = $user;
+    }
+
+    return new Response(json_encode($users));
+});
+
+// GET /users/{username}
+$router->get('/users/{username}', function (Request $request, $args) use ($server) {
+
+    $result = (new Model\Users())->get($args['username']);
+
+    if (count($result) === 0) {
+        throw new NotFoundException();
+    }
+
+    $user = [
+        'username'  =>  $result[0]['username'],
+        'name'      =>  $result[0]['name']
+    ];
+
+    if ($server->hasScope('email')) {
+        $user['email'] = $result[0]['email'];
+    }
+
+    if ($server->hasScope('photo')) {
+        $user['photo'] = $result[0]['photo'];
+    }
+
+    return new Response(json_encode($user));
+});
+
 $dispatcher = $router->getDispatcher();
 
 try {
 
     // Check that access token is present
-    $server->isValidRequest();
+    $server->isValidRequest(false);
 
     // A successful response
     $response = $dispatcher->dispatch(
