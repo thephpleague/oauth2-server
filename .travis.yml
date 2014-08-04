@@ -23,7 +23,7 @@ before_script:
 script:
   - mkdir -p build/logs
   - phpunit --coverage-text
-  - ./vendor/bin/codecept run resourceServer -d
+  - ./vendor/bin/FizzFuzz run tests/fuzz
   - ./vendor/bin/phpcs src --standard=psr2
 
 after_script:
