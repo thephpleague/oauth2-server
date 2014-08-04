@@ -165,11 +165,9 @@ print 'Creating refresh tokens table'.PHP_EOL;
 
 Capsule::schema()->create('oauth_refresh_tokens', function ($table) {
     $table->string('refresh_token')->primary();
-    $table->integer('session_id');
     $table->integer('expire_time');
     $table->string('access_token');
 
-    $table->foreign('session_id')->references('id')->on('oauth_sessions')->onDelete('cascade');
     $table->foreign('access_token')->references('id')->on('oauth_access_tokens')->onDelete('cascade');
 });
 
