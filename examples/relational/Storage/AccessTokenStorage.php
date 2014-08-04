@@ -86,7 +86,11 @@ class AccessTokenStorage extends Adapter implements AccessTokenInterface
      */
     public function associateScope(AbstractTokenEntity $token, ScopeEntity $scope)
     {
-        die(var_dump(__METHOD__, func_get_args()));
+        Capsule::table('oauth_access_token_scopes')
+                    ->insert([
+                        'access_token'  =>  $token->getId(),
+                        'scope' =>  $scope->getId()
+                    ]);
     }
 
     /**
