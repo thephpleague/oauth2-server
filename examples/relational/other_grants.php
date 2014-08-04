@@ -27,16 +27,21 @@ $server->setAuthCodeStorage(new Storage\AuthCodeStorage);
 
 $clientCredentials = new \League\OAuth2\Server\Grant\ClientCredentialsGrant();
 $server->addGrantType($clientCredentials);
+
 $passwordGrant = new \League\OAuth2\Server\Grant\PasswordGrant();
+$passwordGrant->setVerifyCredentialsCallback(function ($username, $password) {
+    $result = (new Model\Users())->get($username);
+    if (count($result) !== 1) {
+        return false;
+    }
+
+    if (password_verify($password, $result[0]['password'])) {
+        return $username;
+    }
+
+    return false;
+});
 $server->addGrantType($passwordGrant);
-$refrehTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
-$server->addGrantType($refrehTokenGrant);
-$clientCredentials = new \League\OAuth2\Server\Grant\ClientCredentialsGrant();
-$server->addGrantType($clientCredentials);
-$passwordGrant = new \League\OAuth2\Server\Grant\PasswordGrant();
-$server->addGrantType($passwordGrant);
-$refrehTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
-$server->addGrantType($refrehTokenGrant);
 
 // $refrehTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
 // $server->addGrantType($refrehTokenGrant);
