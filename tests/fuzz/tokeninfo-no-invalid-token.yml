@@ -8,7 +8,9 @@ request:
 response:
     statusCode: 401
     headers:
-        Content-type: application/json
+        -
+            key: Content-type
+            value: application/json
     body:
         -
             key: error

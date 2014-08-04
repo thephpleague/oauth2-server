@@ -4,7 +4,9 @@ request:
 response:
     statusCode: 400
     headers:
-        Content-type: application/json
+        -
+            key: Content-type
+            value: application/json
     body:
         -
             key: error

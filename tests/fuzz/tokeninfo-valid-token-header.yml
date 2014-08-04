@@ -1,6 +1,10 @@
-url: 'http://localhost:8000/api.php/tokeninfo?access_token=iamgod'
+url: 'http://localhost:8000/api.php/tokeninfo'
 request:
     method: GET
+    headers:
+        -
+            key: Authorization
+            value: "Bearer iamgod"
 response:
     statusCode: 200
     headers:

@@ -2,13 +2,15 @@ url: 'http://localhost:8000/api.php/tokeninfo?access_token=foobar'
 request:
     method: GET
 response:
-    statusCode: 400
+    statusCode: 401
     headers:
-        Content-type: application/json
+        -
+            key: Content-type
+            value: application/json
     body:
         -
             key: error
-            value: "invalid_request"
+            value: "access_denied"
         -
             key: message
-            value: "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"access token\" parameter."
+            value: "The resource owner or authorization server denied the request."
