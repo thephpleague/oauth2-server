@@ -8,7 +8,7 @@ class Users
 {
     public function get($username = null)
     {
-        $query = Capsule::table('users')->select(['username', 'name', 'email', 'photo']);
+        $query = Capsule::table('users')->select(['username', 'password', 'name', 'email', 'photo']);
 
         if ($username !== null) {
             $query->where('username', '=', $username);
