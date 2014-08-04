@@ -1,7 +1,4 @@
 <?php
-
-namespace OAuth2Server\RelationalExample;
-
 use \Orno\Http\Request;
 use \Orno\Http\Response;
 use \Orno\Http\JsonResponse;
@@ -32,26 +29,10 @@ $server = new ResourceServer(
     $scopeStorage
 );
 
-$server->setRequest($request);
+// Routing setup
+$request = (new Request)->createFromGlobals();
+$router = new \Orno\Route\RouteCollection;
 
-// Check that access token is present
-try {
-    $server->isValidRequest(false);
-} catch (\League\OAuth2\Server\Exception\OAuthException $e) {
-
-    foreach ($e->getHttpHeaders() as $header) {
-        header($header);
-    }
-
-    echo json_encode([
-        'error'     =>  $e->errorType,
-        'message'   =>  $e->getMessage()
-    ]);
-
-    exit;
-}
-
-// GET /tokeninfo
 $router->get('/tokeninfo', function (Request $request) use ($server) {
 
     $token = [
@@ -62,62 +43,50 @@ $router->get('/tokeninfo', function (Request $request) use ($server) {
         'scopes'  =>  $server->getScopes()
     ];
 
-    return new JsonResponse($token);
+    return new Response(json_encode($token));
 
-});
-
-// GET /users
-$router->get('/users', function (Request $request) use ($server) {
-
-    $results = (new Model\Users())->get();
-
-    $users = [];
-
-    foreach ($results as $result) {
-        $user = [
-            'username'  =>  $result['username'],
-            'name'      =>  $result['name']
-        ];
-
-        if ($server->hasScope('email')) {
-            $user['email'] = $result['email'];
-        }
-
-        if ($server->hasScope('photo')) {
-            $user['photo'] = $result['photo'];
-        }
-
-        $users[] = $user;
-    }
-
-    return new JsonResponse($users);
-});
-
-// GET /users/{username}
-$router->get('/users/{username}', function (Request $request, $args) use ($server) {
-
-    $result = (new Model\Users())->get($args['username']);
-
-    if (count($result) === 0) {
-        throw new NotFoundException();
-    }
-
-    $user = [
-        'username'  =>  $result[0]['username'],
-        'name'      =>  $result[0]['name']
-    ];
-
-    if ($server->hasScope('email')) {
-        $user['email'] = $result[0]['email'];
-    }
-
-    if ($server->hasScope('photo')) {
-        $user['photo'] = $result[0]['photo'];
-    }
-
-    return new JsonResponse($user);
 });
 
 $dispatcher = $router->getDispatcher();
-$response = $dispatcher->dispatch($request->getMethod(), $request->getPathInfo());
-$response->send();
+
+try {
+
+    // Check that access token is present
+    $server->isValidRequest();
+
+    // A successful response
+    $response = $dispatcher->dispatch(
+        $request->getMethod(),
+        $request->getPathInfo()
+    );
+
+} catch (\Orno\Http\Exception $e) {
+
+    // A failed response
+    $response = $e->getJsonResponse();
+    $response->setContent(json_encode(['status_code' => $e->getStatusCode(), 'message' => $e->getMessage()]));
+
+} catch (\League\OAuth2\Server\Exception\OAuthException $e) {
+
+    $response = new Response(json_encode([
+        'error'     =>  $e->errorType,
+        'message'   =>  $e->getMessage()
+    ]), $e->httpStatusCode);
+
+    foreach ($e->getHttpHeaders() as $header) {
+        $response->headers($header);
+    }
+
+} catch (\Exception $e) {
+
+    $response = new Orno\Http\Response;
+    $response->setStatusCode(500);
+    $response->setContent(json_encode(['status_code' => 500, 'message' => $e->getMessage()]));
+
+} finally {
+
+    // Return the response
+    $response->headers->set('Content-type', 'application/json');
+    $response->send();
+
+}
