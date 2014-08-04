@@ -13,12 +13,16 @@
         "mockery/mockery": "~0.9",
         "league/phpunit-coverage-listener": "~1.0",
         "squizlabs/php_codesniffer": "1.*",
-        "codeception/codeception": "2.0.*"
+        "codeception/codeception": "2.0.*",
+        "alexbilbie/fizzfuzz": "dev-develop"
     },
     "repositories": [
         {
             "type": "git",
             "url": "https://github.com/thephpleague/oauth2-server.git"
+        },{
+            "type": "git",
+            "url": "https://github.com/alexbilbie/fizzfuzz.git"
         }
     ],
     "keywords": [
