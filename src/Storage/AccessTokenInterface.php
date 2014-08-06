@@ -29,13 +29,6 @@ interface AccessTokenInterface
     public function get($token);
 
     /**
-     * Get the access token associated with an access token
-     * @param  \League\OAuth2\Server\Entity\RefreshTokenEntity $refreshToken
-     * @return \League\OAuth2\Server\Entity\AccessTokenEntity
-     */
-    public function getByRefreshToken(RefreshTokenEntity $refreshToken);
-
-    /**
      * Get the scopes for an access token
      * @param  \League\OAuth2\Server\Entity\AbstractTokenEntity $token The access token
      * @return array                                            Array of \League\OAuth2\Server\Entity\ScopeEntity

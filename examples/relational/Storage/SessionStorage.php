@@ -16,14 +16,6 @@ class SessionStorage extends Adapter implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function get($token)
-    {
-        die(var_dump(__METHOD__, func_get_args()));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getByAccessToken(AccessTokenEntity $accessToken)
     {
         $result = Capsule::table('oauth_sessions')

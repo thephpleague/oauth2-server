@@ -37,14 +37,6 @@ class AccessTokenStorage extends Adapter implements AccessTokenInterface
     /**
      * {@inheritdoc}
      */
-    public function getByRefreshToken(RefreshTokenEntity $refreshToken)
-    {
-        die(var_dump(__METHOD__, func_get_args()));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getScopes(AbstractTokenEntity $token)
     {
         $result = Capsule::table('oauth_access_token_scopes')
