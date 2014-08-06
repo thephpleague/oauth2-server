@@ -13,7 +13,7 @@ matrix:
 before_script:
     - composer self-update
     - composer require satooshi/php-coveralls:dev-master --no-update --dev
-    - composer install --prefer-dist
+    - composer install
     - cd examples/relational && composer install --prefer-dist
     - php config/init.php
     - php -S localhost:8000 &
