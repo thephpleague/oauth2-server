@@ -23,4 +23,3 @@ before_script:
 script:
   - mkdir -p build/logs
   - phpunit --coverage-text
-  - ./vendor/bin/fizzfuzz run tests/fuzz
