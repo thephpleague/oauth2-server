@@ -174,7 +174,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
         $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');
         $accessTokenStorage->shouldReceive('setServer');
-        $accessTokenStorage->shouldReceive('getByRefreshToken')->andReturn(
+        $accessTokenStorage->shouldReceive('get')->andReturn(
             (new AccessTokenEntity($server))
         );
         $accessTokenStorage->shouldReceive('delete');
@@ -245,7 +245,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
         $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');
         $accessTokenStorage->shouldReceive('setServer');
-        $accessTokenStorage->shouldReceive('getByRefreshToken')->andReturn(
+        $accessTokenStorage->shouldReceive('get')->andReturn(
             (new AccessTokenEntity($server))
         );
         $accessTokenStorage->shouldReceive('delete');
@@ -316,7 +316,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
         $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');
         $accessTokenStorage->shouldReceive('setServer');
-        $accessTokenStorage->shouldReceive('getByRefreshToken')->andReturn(
+        $accessTokenStorage->shouldReceive('get')->andReturn(
             (new AccessTokenEntity($server))
         );
         $accessTokenStorage->shouldReceive('delete');
