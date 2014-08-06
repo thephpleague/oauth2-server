@@ -19,12 +19,12 @@ class InvalidRefreshException extends OAuthException
     /**
      * {@inheritdoc}
      */
-    public $httpStatusCode = 401;
+    public $httpStatusCode = 400;
 
     /**
      * {@inheritdoc}
      */
-    public $errorType = 'invalid_client';
+    public $errorType = 'invalid_request';
 
     /**
      * {@inheritdoc}
