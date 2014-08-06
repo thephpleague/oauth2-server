@@ -5,14 +5,25 @@ php:
   - 5.5
   - 5.6
   - hhvm
-  
+
 matrix:
   allow_failures:
     - php: hhvm
 
-before_script: composer install --prefer-source
-script: phpunit --configuration phpunit.xml.dist
-
 cache:
   directories:
     - vendor
+
+before_script:
+    - composer self-update
+    - composer require satooshi/php-coveralls:dev-master --no-update --dev
+    - composer install
+    - cd examples/relational && composer install --prefer-dist
+    - php config/init.php
+    - php -S localhost:8000 &
+    - sleep 3
+    - cd ../..
+
+script:
+  - mkdir -p build/logs
+  - phpunit --coverage-text

@@ -1,0 +1,17 @@
+{
+    "require": {
+        "illuminate/database": "4.1.*",
+        "orno/route": "1.*",
+        "ircmaxell/password-compat": "1.0.2",
+        "league/event": "0.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "League\\OAuth2\\Server\\": "../../src/",
+            "RelationalExample\\": "."
+        },
+        "files": [
+            "config/db.php"
+        ]
+    }
+}

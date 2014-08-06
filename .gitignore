@@ -1,6 +1,12 @@
 /vendor
 /composer.lock
-/tests/coverage
+/build
 /docs
 /testing
-build/coverage
+/examples/relational/vendor
+/examples/relational/config/oauth2.sqlite3
+/examples/nosql/vendor
+/examples/nosql/config/oauth2.sqlite3
+/examples/relational/composer.lock
+/tests/codecept/tests/_log
+oauth2-server.paw
