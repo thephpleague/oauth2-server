@@ -13,12 +13,13 @@ matrix:
 before_script:
     - composer self-update
     - composer require satooshi/php-coveralls:dev-master --no-update --dev
-    - composer install --prefer-source
+    - composer install
+    - cd examples/relational && composer install --prefer-dist
+    - php config/init.php
+    - php -S localhost:8000 &
+    - sleep 3
+    - cd ../..
 
 script:
   - mkdir -p build/logs
   - phpunit --coverage-text
-  - ./vendor/bin/phpcs src --standard=psr2
-
-after_script:
-  - php vendor/bin/coveralls

@@ -5,18 +5,24 @@
     "license": "MIT",
     "require": {
         "php": ">=5.4.0",
-        "symfony/http-foundation": "~2.1"
+        "symfony/http-foundation": "~2.1",
+        "league/event": "0.2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
         "mockery/mockery": "~0.9",
         "league/phpunit-coverage-listener": "~1.0",
-        "squizlabs/php_codesniffer": "1.*"
+        "squizlabs/php_codesniffer": "1.*",
+        "codeception/codeception": "2.0.*",
+        "alexbilbie/fizzfuzz": "dev-develop"
     },
     "repositories": [
         {
             "type": "git",
             "url": "https://github.com/thephpleague/oauth2-server.git"
+        },{
+            "type": "git",
+            "url": "https://github.com/alexbilbie/fizzfuzz.git"
         }
     ],
     "keywords": [
@@ -54,7 +60,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "LeagueTests\\": "tests/"
+            "LeagueTests\\": "tests/unit/"
         }
     },
     "extra": {

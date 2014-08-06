@@ -1,0 +1,16 @@
+url: 'http://localhost:8000/api.php/tokeninfo'
+request:
+    method: GET
+response:
+    statusCode: 400
+    headers:
+        -
+            key: Content-type
+            value: application/json
+    body:
+        -
+            key: error
+            value: "invalid_request"
+        -
+            key: message
+            value: "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"access token\" parameter."

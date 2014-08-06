@@ -135,15 +135,19 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
             $scopeStorage
         );
 
-        $server->setTokenKey('at');
+        $server->setIdKey('at');
+
+        $server->addEventListener('session.owner', function($event) {
+            $this->assertTrue($event->getSession() instanceof \League\OAuth2\Server\Entity\SessionEntity);
+        });
 
         $accessTokenStorage->shouldReceive('get')->andReturn(
-            (new AccessTokenEntity($server))->setToken('abcdef')
+            (new AccessTokenEntity($server))->setId('abcdef')
         );
 
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->setId('foo'),
-            (new ScopeEntity($server))->setId('bar')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
+            (new ScopeEntity($server))->hydrate(['id' => 'bar'])
         ]);
 
         $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
@@ -151,7 +155,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         );
 
         $clientStorage->shouldReceive('getBySession')->andReturn(
-            (new ClientEntity($server))->setId('testapp')
+            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
         );
 
         $request = new \Symfony\Component\HttpFoundation\Request();
@@ -161,7 +165,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $server->setRequest($request);
 
         $this->assertTrue($server->isValidRequest());
-        $this->assertEquals('at', $server->getTokenKey());
+        $this->assertEquals('at', $server->getIdKey());
         $this->assertEquals(123, $server->getOwnerId());
         $this->assertEquals('user', $server->getOwnerType());
         $this->assertEquals('abcdef', $server->getAccessToken());

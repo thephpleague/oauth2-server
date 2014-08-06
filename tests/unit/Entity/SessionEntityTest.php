@@ -14,14 +14,22 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetGet()
     {
+        $emitter = M::mock('League\Event\Emitter');
+        $emitter->shouldReceive('emit');
         $server = M::mock('League\OAuth2\Server\AbstractServer');
+        $server->shouldReceive('setEventEmitter');
+        $server->shouldReceive('getEventEmitter')->andReturn($emitter);
+        $server->setEventEmitter($emitter);
+
         $entity = new SessionEntity($server);
         $entity->setId('foobar');
         $entity->setOwner('user', 123);
         $entity->associateAccessToken((new AccessTokenEntity($server)));
         $entity->associateRefreshToken((new RefreshTokenEntity($server)));
         $entity->associateClient((new ClientEntity($server)));
-        $entity->associateScope((new ScopeEntity($server))->setId('foo'));
+        $entity->associateScope(
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
+        );
         // $entity->associateAuthCode((new AuthCode($server)));
 
         $this->assertEquals('foobar', $entity->getId());
@@ -51,8 +59,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $method->setAccessible(true);
 
         $scopes = [
-            (new ScopeEntity($server))->setId('scope1')->setDescription('foo'),
-            (new ScopeEntity($server))->setId('scope2')->setDescription('bar')
+            (new ScopeEntity($server))->hydrate(['id' => 'scope1']),
+            (new ScopeEntity($server))->hydrate(['id' => 'scope2'])
         ];
 
         $result = $method->invokeArgs($entity, [$scopes]);
@@ -124,14 +132,14 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $sessionStorage->shouldReceive('associateScope');
         $sessionStorage->shouldReceive('setServer');
         $sessionStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->setId('foo')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
 
         $server->shouldReceive('getStorage')->with('session')->andReturn($sessionStorage);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('getBySession')->andReturn(
-            (new ClientEntity($server))->setId('foo')
+            (new ClientEntity($server))->hydrate(['id' => 'foo'])
         );
         $clientStorage->shouldReceive('setServer');
 

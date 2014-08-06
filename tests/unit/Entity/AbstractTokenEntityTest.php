@@ -16,12 +16,12 @@ class AbstractTokenTest extends \PHPUnit_Framework_TestCase
         $time = time();
 
         $entity = new StubAbstractTokenEntity($server);
-        $entity->setToken('foobar');
+        $entity->setId('foobar');
         $entity->setExpireTime($time);
         $entity->setSession((new SessionEntity($server)));
-        $entity->associateScope((new ScopeEntity($server))->setId('foo'));
+        $entity->associateScope((new ScopeEntity($server))->hydrate(['id' => 'foo']));
 
-        $this->assertEquals('foobar', $entity->getToken());
+        $this->assertEquals('foobar', $entity->getId());
         $this->assertEquals($time, $entity->getExpireTime());
         // $this->assertTrue($entity->getSession() instanceof SessionEntity);
         // $this->assertTrue($entity->hasScope('foo'));
@@ -74,7 +74,7 @@ class AbstractTokenTest extends \PHPUnit_Framework_TestCase
         $accessTokenStorage->shouldReceive('getScopes')->andReturn(
             []
         );
-        $accessTokenStorage->shouldReceive('setServer');
+        $accessTokenStorage''>shouldReceive('setServer');
 
         $server->setAccessTokenStorage($accessTokenStorage);
 
@@ -92,8 +92,8 @@ class AbstractTokenTest extends \PHPUnit_Framework_TestCase
         $method->setAccessible(true);
 
         $scopes = [
-            (new ScopeEntity($server))->setId('scope1')->setDescription('foo'),
-            (new ScopeEntity($server))->setId('scope2')->setDescription('bar')
+            (new ScopeEntity($server))->hydrate(['id' => 'scope1', 'description' => 'foo']),
+            (new ScopeEntity($server))->hydrate(['id' => 'scope2', 'description' => 'bar'])
         ];
 
         $result = $method->invokeArgs($entity, [$scopes]);
@@ -102,5 +102,15 @@ class AbstractTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($result['scope2']));
         $this->assertTrue($result['scope1'] instanceof ScopeEntity);
         $this->assertTrue($result['scope2'] instanceof ScopeEntity);
+    }
+
+    public function test__toString()
+    {
+        $server = M::mock('League\OAuth2\Server\AbstractServer');
+
+        $entity = new StubAbstractTokenEntity($server);
+        $this->assertEquals('', (string) $entity);
+        $entity->setId('foobar');
+        $this->assertEquals('foobar', (string) $entity);
     }
 }

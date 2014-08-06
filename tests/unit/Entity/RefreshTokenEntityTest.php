@@ -8,8 +8,21 @@ use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use \Mockery as M;
 
-class RefreshTokenTest extends \PHPUnit_Framework_TestCase
+class RefreshTokenEntityTest extends \PHPUnit_Framework_TestCase
 {
+    public function testSetAccessTokenId()
+    {
+        $server = M::mock('League\OAuth2\Server\AbstractServer');
+        $entity = new RefreshTokenEntity($server);
+        $entity->setAccessTokenId('foobar');
+
+        $reflector = new \ReflectionClass($entity);
+        $accessTokenProperty = $reflector->getProperty('accessTokenId');
+        $accessTokenProperty->setAccessible(true);
+
+        $this->assertSame($accessTokenProperty->getValue($entity), 'foobar');
+    }
+
     public function testSetAccessToken()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
@@ -17,7 +30,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $entity->setAccessToken((new AccessTokenEntity($server)));
 
         $reflector = new \ReflectionClass($entity);
-        $accessTokenProperty = $reflector->getProperty('accessToken');
+        $accessTokenProperty = $reflector->getProperty('accessTokenEntity');
         $accessTokenProperty->setAccessible(true);
 
         $this->assertTrue($accessTokenProperty->getValue($entity) instanceof AccessTokenEntity);
@@ -38,11 +51,11 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
         $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');
         $accessTokenStorage->shouldReceive('setServer');
-        $accessTokenStorage->shouldReceive('getByRefreshToken')->andReturn(
-            (new AccessTokenEntity($server))->setToken('foobar')
+        $accessTokenStorage->shouldReceive('get')->andReturn(
+            (new AccessTokenEntity($server))->setId('foobar')
         );
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->setId('foo')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
 
         $server->shouldReceive('getStorage')->with('access_token')->andReturn($accessTokenStorage);

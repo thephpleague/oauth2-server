@@ -20,7 +20,7 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         $accessTokenStorage->shouldReceive('associateScope');
         $accessTokenStorage->shouldReceive('setServer');
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->setId('foo')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');

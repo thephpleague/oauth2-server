@@ -18,7 +18,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
 
         $code = new AuthCodeEntity($server);
         $code->setRedirectUri('http://foo/bar');
-        $code->setToken('foobar');
+        $code->setId('foobar');
         $code->setSession($session);
 
         $this->assertEquals('http://foo/bar', $code->getRedirectUri());
@@ -37,7 +37,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
         $authCodeStorage->shouldReceive('associateScope');
         $authCodeStorage->shouldReceive('setServer');
         $authCodeStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->setId('foo')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
 
         $server->shouldReceive('getStorage')->with('auth_code')->andReturn($authCodeStorage);

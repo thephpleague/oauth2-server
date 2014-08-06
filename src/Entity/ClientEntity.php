@@ -18,6 +18,8 @@ use League\OAuth2\Server\AbstractServer;
  */
 class ClientEntity
 {
+    use EntityTrait;
+
     /**
      * Client identifier
      * @var string
@@ -61,36 +63,12 @@ class ClientEntity
     }
 
     /**
-     * Set the client identifier
-     * @param  string $id
-     * @return self
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
      * Return the client identifier
      * @return string
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set the client secret
-     * @param  string $secret
-     * @return self
-     */
-    public function setSecret($secret)
-    {
-        $this->secret = $secret;
-
-        return $this;
     }
 
     /**
@@ -103,36 +81,12 @@ class ClientEntity
     }
 
     /**
-     * Set the client name
-     * @param  string $name
-     * @return self
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
      * Get the client name
      * @return string
      */
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Set the client redirect URI
-     * @param  string $redirectUri
-     * @return self
-     */
-    public function setRedirectUri($redirectUri)
-    {
-        $this->redirectUri = $redirectUri;
-
-        return $this;
     }
 
     /**

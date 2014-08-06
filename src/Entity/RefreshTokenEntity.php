@@ -20,16 +20,34 @@ class RefreshTokenEntity extends AbstractTokenEntity
      * Access token associated to refresh token
      * @var \League\OAuth2\Server\Entity\AccessTokenEntity
      */
-    protected $accessToken;
+    protected $accessTokenEntity;
+
+    /**
+     * Id of the access token
+     * @var string
+     */
+    protected $accessTokenId;
+
+    /**
+     * Set the ID of the associated access token
+     * @param  string $accessToken
+     * @return self
+     */
+    public function setAccessTokenId($accessTokenId)
+    {
+        $this->accessTokenId = $accessTokenId;
+
+        return $this;
+    }
 
     /**
      * Associate an access token
      * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken
      * @return self
      */
-    public function setAccessToken(AccessTokenEntity $accessToken)
+    public function setAccessToken(AccessTokenEntity $accessTokenEntity)
     {
-        $this->accessToken = $accessToken;
+        $this->accessTokenEntity = $accessTokenEntity;
 
         return $this;
     }
@@ -40,11 +58,11 @@ class RefreshTokenEntity extends AbstractTokenEntity
      */
     public function getAccessToken()
     {
-        if (! $this->accessToken instanceof AccessTokenEntity) {
-            $this->accessToken = $this->server->getStorage('access_token')->getByRefreshToken($this);
+        if (! $this->accessTokenEntity instanceof AccessTokenEntity) {
+            $this->accessTokenEntity = $this->server->getStorage('access_token')->get($this->accessTokenId);
         }
 
-        return $this->accessToken;
+        return $this->accessTokenEntity;
     }
 
     /**
@@ -53,9 +71,9 @@ class RefreshTokenEntity extends AbstractTokenEntity
     public function save()
     {
         $this->server->getStorage('refresh_token')->create(
-            $this->getToken(),
+            $this->getId(),
             $this->getExpireTime(),
-            $this->getAccessToken()->getToken()
+            $this->getAccessToken()->getId()
         );
     }
 

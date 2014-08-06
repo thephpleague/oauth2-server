@@ -28,13 +28,14 @@ interface AuthCodeInterface
 
     /**
      * Create an auth code.
-     * @param string  $token      The token ID
-     * @param integer $expireTime Token expire time
-     * @param integer $sessionId  Session identifier
+     * @param string  $token       The token ID
+     * @param integer $expireTime  Token expire time
+     * @param integer $sessionId   Session identifier
+     * @param string  $redirectUri Client redirect uri
      *
      * @return void
      */
-    public function create($token, $expireTime, $sessionId);
+    public function create($token, $expireTime, $sessionId, $redirectUri);
 
     /**
      * Get the scopes for an access token

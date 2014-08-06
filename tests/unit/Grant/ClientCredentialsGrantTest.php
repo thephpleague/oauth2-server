@@ -80,7 +80,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
         $clientStorage->shouldReceive('get')->andReturn(
-            (new ClientEntity($server))->setId('testapp')
+            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
         );
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
@@ -120,7 +120,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
         $clientStorage->shouldReceive('get')->andReturn(
-            (new ClientEntity($server))->setId('testapp')
+            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
         );
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
@@ -138,7 +138,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
         // $scopeStorage->shouldReceive('get')->andReturn(
-        //     // (new ScopeEntity($server))->setId('foo')
+        //     // (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         // );
 
         $server->setClientStorage($clientStorage);
@@ -165,14 +165,14 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
         $clientStorage->shouldReceive('get')->andReturn(
-            (new ClientEntity($server))->setId('testapp')
+            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
         );
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('setServer');
         $sessionStorage->shouldReceive('create')->andreturn(123);
         $sessionStorage->shouldReceive('getScopes')->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->setId('foo')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
         $sessionStorage->shouldReceive('associateScope');
 
@@ -180,14 +180,55 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenStorage->shouldReceive('setServer');
         $accessTokenStorage->shouldReceive('create');
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->setId('foo')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
         $accessTokenStorage->shouldReceive('associateScope');
 
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
         $scopeStorage->shouldReceive('get')->andReturn(
-            (new ScopeEntity($server))->setId('foo')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
+        );
+
+        $server->setClientStorage($clientStorage);
+        $server->setScopeStorage($scopeStorage);
+        $server->setSessionStorage($sessionStorage);
+        $server->setAccessTokenStorage($accessTokenStorage);
+
+        $server->addGrantType($grant);
+        $server->issueAccessToken();
+    }
+
+    public function testClientNotAuthorizedToUseGrant()
+    {
+        $this->setExpectedException('\League\OAuth2\Server\Exception\UnauthorizedClientException');
+
+        $_POST = [
+            'grant_type' => 'client_credentials',
+            'client_id' =>  'testapp',
+            'client_secret' =>  'foobar',
+            'scope' =>  'foo'
+        ];
+
+        $server = new AuthorizationServer;
+        $grant = new ClientCredentialsGrant;
+
+        $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
+        $clientStorage->shouldReceive('setServer');
+        $clientStorage->shouldReceive('get')->andThrow(
+            new \League\OAuth2\Server\Exception\UnauthorizedClientException
+        );
+
+        $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
+        $sessionStorage->shouldReceive('setServer');
+
+        $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');
+        $accessTokenStorage->shouldReceive('setServer');
+
+        $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
+        $scopeStorage->shouldReceive('setServer');
+        $scopeStorage->shouldReceive('get')->andReturn(
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         );
 
         $server->setClientStorage($clientStorage);

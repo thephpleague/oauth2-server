@@ -21,10 +21,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 abstract class AbstractTokenEntity
 {
     /**
-     * Access token ID
+     * Token identifier
      * @var string
      */
-    protected $token;
+    protected $id;
 
     /**
      * Associated session
@@ -34,7 +34,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Session scopes
-     * @var \Symfony\Component\HttpFoundation\ParameterBag
+     * @var array    Array of ScopeEntity
      */
     protected $scopes;
 
@@ -96,13 +96,13 @@ abstract class AbstractTokenEntity
     }
 
     /**
-     * Set access token ID
+     * Set token ID
      * @param  string $token Token ID
      * @return self
      */
-    public function setToken($token = null)
+    public function setId($id = null)
     {
-        $this->token = ($token !== null) ? $token : SecureKey::generate();
+        $this->id = ($id !== null) ? $id : SecureKey::generate();
 
         return $this;
     }
@@ -111,9 +111,9 @@ abstract class AbstractTokenEntity
      * Get the token ID
      * @return string
      */
-    public function getToken()
+    public function getId()
     {
-        return $this->token;
+        return $this->id;
     }
 
     /**
@@ -153,11 +153,10 @@ abstract class AbstractTokenEntity
      */
     public function __toString()
     {
-        if (is_null($this->token)) {
-            throw new \BadMethodCallException('Token is null');
+        if ($this->id === null) {
+            return '';
         }
-
-        return $this->token;
+        return $this->id;
     }
 
     /**

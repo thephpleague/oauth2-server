@@ -14,6 +14,7 @@ namespace League\OAuth2\Server;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\TokenType\TokenTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
+use League\Event\Emitter;
 
 /**
  * OAuth 2.0 Resource Server
@@ -39,6 +40,42 @@ abstract class AbstractServer
      * @var TokenTypeInterface
      */
     protected $tokenType;
+
+    /**
+     * Event emitter
+     */
+    protected $eventEmitter;
+
+    /**
+     * Abstract server constructor
+     */
+    public function __construct()
+    {
+        $this->setEventEmitter();
+    }
+
+    /**
+     * Set an event emitter
+     * @param object $emitter Event emitter object
+     */
+    public function setEventEmitter($emitter = null)
+    {
+        if ($emitter === null) {
+            $this->eventEmitter = new Emitter;
+        } else {
+            $this->eventEmitter = $emitter;
+        }
+    }
+
+    public function addEventListener($eventName, callable $listener)
+    {
+        $this->eventEmitter->addListener($eventName, $listener);
+    }
+
+    public function getEventEmitter()
+    {
+        return $this->eventEmitter;
+    }
 
     /**
      * Sets the Request Object
@@ -86,7 +123,7 @@ abstract class AbstractServer
      * @param  TokenTypeInterface $tokenType The token type
      * @return void
      */
-    public function setTokenType(TokenTypeInterface $tokenType)
+    public function setIdType(TokenTypeInterface $tokenType)
     {
         $this->tokenType = $tokenType;
     }

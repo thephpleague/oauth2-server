@@ -22,13 +22,6 @@ use League\OAuth2\Server\Entity\ScopeEntity;
 interface SessionInterface
 {
     /**
-     * Get a session from it's identifier
-     * @param  string                                     $sessionId
-     * @return \League\OAuth2\Server\Entity\SessionEntity
-     */
-    public function get($sessionId);
-
-    /**
      * Get a session from an access token
      * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken The access token
      * @return \League\OAuth2\Server\Entity\SessionEntity

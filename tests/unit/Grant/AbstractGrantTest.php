@@ -36,8 +36,8 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $method->setAccessible(true);
 
         $scopes = [
-            (new ScopeEntity($server))->setId('scope1')->setDescription('foo'),
-            (new ScopeEntity($server))->setId('scope2')->setDescription('bar')
+            (new ScopeEntity($server))->hydrate(['id' => 'scope1', 'description' => 'foo']),
+            (new ScopeEntity($server))->hydrate(['id' => 'scope2', 'description' => 'bar'])
         ];
 
         $result = $method->invokeArgs($grant, [$scopes]);
@@ -55,7 +55,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
         $scopeStorage->shouldReceive('get')->andReturn(
-            (new ScopeEntity($server))->setId('foo')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         );
 
         $server->setScopeStorage($scopeStorage);
@@ -65,9 +65,8 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'foo'   =>  (new ScopeEntity($server))->setId('foo')
+                'foo' => (new ScopeEntity($server))->hydrate(['id' => 'foo'])
             ],
-
             $grant->validateScopes('foo')
         );
     }
@@ -113,7 +112,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
         $scopeStorage->shouldReceive('get')->andReturn(
-            (new ScopeEntity($server))->setId('foo')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         );
         $server->setScopeStorage($scopeStorage);
 
@@ -134,7 +133,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
         $scopeStorage->shouldReceive('get')->andReturn(
-            (new ScopeEntity($server))->setId('foo')
+            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         );
         $server->setScopeStorage($scopeStorage);
 

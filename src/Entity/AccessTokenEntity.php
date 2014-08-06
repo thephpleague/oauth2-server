@@ -66,7 +66,7 @@ class AccessTokenEntity extends AbstractTokenEntity
     public function save()
     {
         $this->server->getStorage('access_token')->create(
-            $this->getToken(),
+            $this->getId(),
             $this->getExpireTime(),
             $this->getSession()->getId()
         );
