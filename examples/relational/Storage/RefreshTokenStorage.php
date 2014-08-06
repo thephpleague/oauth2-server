@@ -15,7 +15,21 @@ class RefreshTokenStorage extends Adapter implements RefreshTokenInterface
      */
     public function get($token)
     {
-        die(var_dump(__METHOD__, func_get_args()));
+        $result = Capsule::table('oauth_refresh_tokens')
+                            ->where('refresh_token', $token)
+                            ->where('expire_time', '>=', time())
+                            ->get();
+
+        if (count($result) === 1) {
+            $token = (new RefreshTokenEntity($this->server))
+                        ->setId($result[0]['refresh_token'])
+                        ->setExpireTime($result[0]['expire_time'])
+                        ->setAccessTokenId($result[0]['access_token']);
+
+            return $token;
+        }
+
+        return null;
     }
 
     /**
@@ -36,7 +50,9 @@ class RefreshTokenStorage extends Adapter implements RefreshTokenInterface
      */
     public function delete(RefreshTokenEntity $token)
     {
-        die(var_dump(__METHOD__, func_get_args()));
+        Capsule::table('oauth_refresh_tokens')
+                            ->where('refresh_token', $token->getId())
+                            ->delete();
     }
 
 }

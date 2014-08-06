@@ -90,6 +90,8 @@ class AccessTokenStorage extends Adapter implements AccessTokenInterface
      */
     public function delete(AbstractTokenEntity $token)
     {
-        die(var_dump(__METHOD__, func_get_args()));
+        Capsule::table('oauth_access_token_scopes')
+                    ->where('access_token', $token->getId())
+                    ->delete();
     }
 }
