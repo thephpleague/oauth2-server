@@ -83,21 +83,6 @@ class AuthCodeGrant extends AbstractGrant
             throw new Exception\InvalidRequestException('redirect_uri');
         }
 
-        $state = $this->server->getRequest()->query->get('state', null);
-        if ($this->server->stateParamRequired() === true && is_null($state)) {
-            throw new Exception\InvalidRequestException('state');
-        }
-
-        $responseType = $this->server->getRequest()->query->get('response_type', null);
-        if (is_null($responseType)) {
-            throw new Exception\InvalidRequestException('response_type');
-        }
-
-        // Ensure response type is one that is recognised
-        if (!in_array($responseType, $this->server->getResponseTypes())) {
-            throw new Exception\UnsupportedResponseTypeException($responseType);
-        }
-
         // Validate client ID and redirect URI
         $client = $this->server->getStorage('client')->get(
             $clientId,
@@ -108,6 +93,21 @@ class AuthCodeGrant extends AbstractGrant
 
         if (($client instanceof ClientEntity) === false) {
             throw new Exception\InvalidClientException();
+        }
+
+        $state = $this->server->getRequest()->query->get('state', null);
+        if ($this->server->stateParamRequired() === true && is_null($state)) {
+            throw new Exception\InvalidRequestException('state', true);
+        }
+
+        $responseType = $this->server->getRequest()->query->get('response_type', null);
+        if (is_null($responseType)) {
+            throw new Exception\InvalidRequestException('response_type', true);
+        }
+
+        // Ensure response type is one that is recognised
+        if (!in_array($responseType, $this->server->getResponseTypes())) {
+            throw new Exception\UnsupportedResponseTypeException($responseType);
         }
 
         // Validate any scopes that are in the request

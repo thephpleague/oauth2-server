@@ -30,7 +30,7 @@ class InvalidScopeException extends OAuthException
      * {@inheritdoc}
      */
 
-    public function __construct($parameter)
+    public function __construct($parameter, $shouldRedirect = false)
     {
         parent::__construct(
             sprintf(
@@ -38,5 +38,7 @@ class InvalidScopeException extends OAuthException
                 $parameter
             )
         );
+
+        $this->serverShouldRedirect = $shouldRedirect;
     }
 }

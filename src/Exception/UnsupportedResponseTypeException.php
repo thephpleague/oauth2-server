@@ -32,5 +32,6 @@ class UnsupportedResponseTypeException extends OAuthException
     public function __construct($parameter)
     {
         parent::__construct('The authorization server does not support obtaining an access token using this method.');
+        $this->serverShouldRedirect = true;
     }
 }

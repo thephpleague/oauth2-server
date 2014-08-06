@@ -54,56 +54,6 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->checkAuthorizeParams();
     }
 
-    public function testCheckAuthoriseParamsMissingStateParam()
-    {
-        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
-
-        $_GET = [
-            'client_id' =>  'testapp',
-            'redirect_uri'  =>  'http://foo/bar'
-        ];
-        $server = new AuthorizationServer;
-
-        $grant = new AuthCodeGrant;
-        $server->requireStateParam(true);
-
-        $server->addGrantType($grant);
-        $grant->checkAuthorizeParams();
-    }
-
-    public function testCheckAuthoriseParamsMissingResponseType()
-    {
-        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
-
-        $_GET = [
-            'client_id'     =>  'testapp',
-            'redirect_uri'  =>  'http://foo/bar'
-        ];
-        $server = new AuthorizationServer;
-
-        $grant = new AuthCodeGrant;
-
-        $server->addGrantType($grant);
-        $grant->checkAuthorizeParams();
-    }
-
-    public function testCheckAuthoriseParamsInvalidResponseType()
-    {
-        $this->setExpectedException('League\OAuth2\Server\Exception\UnsupportedResponseTypeException');
-
-        $_GET = [
-            'client_id'     =>  'testapp',
-            'redirect_uri'  =>  'http://foo/bar',
-            'response_type' =>  'foobar'
-        ];
-        $server = new AuthorizationServer;
-
-        $grant = new AuthCodeGrant;
-
-        $server->addGrantType($grant);
-        $grant->checkAuthorizeParams();
-    }
-
     public function testCheckAuthoriseParamsInvalidClient()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
@@ -122,6 +72,77 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $clientStorage->shouldReceive('get')->andReturn(null);
 
         $server->setClientStorage($clientStorage);
+
+        $server->addGrantType($grant);
+        $grant->checkAuthorizeParams();
+    }
+
+    public function testCheckAuthoriseParamsMissingStateParam()
+    {
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
+
+        $_GET = [
+            'client_id' =>  'testapp',
+            'redirect_uri'  =>  'http://foo/bar'
+        ];
+        $server = new AuthorizationServer;
+
+        $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
+        $clientStorage->shouldReceive('setServer');
+        $clientStorage->shouldReceive('get')->andReturn(
+            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
+        );
+        $server->setClientStorage($clientStorage);
+
+        $grant = new AuthCodeGrant;
+        $server->requireStateParam(true);
+
+        $server->addGrantType($grant);
+        $grant->checkAuthorizeParams();
+    }
+
+    public function testCheckAuthoriseParamsMissingResponseType()
+    {
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
+
+        $_GET = [
+            'client_id'     =>  'testapp',
+            'redirect_uri'  =>  'http://foo/bar'
+        ];
+        $server = new AuthorizationServer;
+
+        $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
+        $clientStorage->shouldReceive('setServer');
+        $clientStorage->shouldReceive('get')->andReturn(
+            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
+        );
+        $server->setClientStorage($clientStorage);
+
+        $grant = new AuthCodeGrant;
+
+        $server->addGrantType($grant);
+        $grant->checkAuthorizeParams();
+    }
+
+    public function testCheckAuthoriseParamsInvalidResponseType()
+    {
+        $this->setExpectedException('League\OAuth2\Server\Exception\UnsupportedResponseTypeException');
+
+        $_GET = [
+            'client_id'     =>  'testapp',
+            'redirect_uri'  =>  'http://foo/bar',
+            'response_type' =>  'foobar'
+        ];
+        $server = new AuthorizationServer;
+
+        $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
+        $clientStorage->shouldReceive('setServer');
+        $clientStorage->shouldReceive('get')->andReturn(
+            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
+        );
+        $server->setClientStorage($clientStorage);
+
+        $grant = new AuthCodeGrant;
 
         $server->addGrantType($grant);
         $grant->checkAuthorizeParams();

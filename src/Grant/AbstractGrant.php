@@ -144,7 +144,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             );
 
             if (($scope instanceof ScopeEntity) === false) {
-                throw new Exception\InvalidScopeException($scopeItem);
+                throw new Exception\InvalidScopeException($scopeItem, true);
             }
 
             $scopes[$scope->getId()] = $scope;

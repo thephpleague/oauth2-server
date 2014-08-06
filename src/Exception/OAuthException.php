@@ -24,6 +24,12 @@ class OAuthException extends \Exception
     public $httpStatusCode = 400;
 
     /**
+     * If true the server should redirect back to the client
+     * @var boolean
+     */
+    public $serverShouldRedirect = false;
+
+    /**
      * The exception type
      */
     public $errorType = '';
@@ -34,6 +40,15 @@ class OAuthException extends \Exception
     public function __construct($msg = 'An error occured')
     {
         parent::__construct($msg);
+    }
+
+    /**
+     * Should the server redirect back to the client?
+     * @return bool
+     */
+    public function shouldRedirect()
+    {
+        return $this->serverShouldRedirect;
     }
 
     /**
