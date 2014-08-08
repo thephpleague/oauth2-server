@@ -42,27 +42,13 @@ The authorization server is a flexible class and the following core specificatio
 * client credentials ([section 2.3.1](http://tools.ietf.org/html/rfc6749#section-2.3.1))
 * password (user credentials) ([section 4.3](http://tools.ietf.org/html/rfc6749#section-4.3))
 
-An [overview of the different OAuth 2.0 grants](https://github.com/thephpleague/oauth2-server/wiki/Which-OAuth-2.0-grant-should-I-use%3F) can be found in the [wiki].
-
 ### Resource Server
 
 The resource server allows you to secure your API endpoints by checking for a valid OAuth access token in the request and ensuring the token has the correct scope(s) (i.e. permissions) to access resources.
 
 ### Custom grants
 
-Custom grants can be created easily by implementing an interface. Check out the [custom grant guide](https://github.com/thephpleague/oauth2-server/wiki/Creating-custom-grants).
-
-## Tutorials and Documentation
-
-* **[Wiki]** - The wiki has lots of guides on how to use this library.
-
-* **[Developing an OAuth-2.0 Authorization Server]** - A simple tutorial on how to use the authorization server.
-
-* **[Securing your API with OAuth 2.0]** - A simple tutorial on how to use the resource server to secure an API server.
-
-[Wiki]: https://github.com/thephpleague/oauth2-server/wiki
-[Securing your API with OAuth 2.0]: https://github.com/thephpleague/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0
-[Developing an OAuth-2.0 Authorization Server]: https://github.com/thephpleague/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server
+Custom grants can be created easily by implementing an interface.
 
 ## Changelog
 
