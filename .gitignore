@@ -10,3 +10,5 @@
 /examples/relational/composer.lock
 /tests/codecept/tests/_log
 oauth2-server.paw
+/output_*/
+/.sculpin
