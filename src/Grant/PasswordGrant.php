@@ -138,8 +138,11 @@ class PasswordGrant extends AbstractGrant
 
         // Associate scopes with the session and access token
         foreach ($scopes as $scope) {
-            $accessToken->associateScope($scope);
-            $session->associateScope($scope);
+           $session->associateScope($scope);
+        }
+
+        foreach ($session->getScopes() as $scope) {
+           $accessToken->associateScope($scope);
         }
 
         $this->server->getTokenType()->set('access_token', $accessToken->getId());
