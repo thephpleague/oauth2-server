@@ -84,6 +84,7 @@ class Resource
         0   =>  'invalid_request',
         1   =>  'invalid_token',
         2   =>  'insufficient_scope',
+        3   =>  'missing_token',
     );
 
     /**
@@ -94,6 +95,7 @@ class Resource
         'invalid_request'    =>  'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "%s" parameter.',
         'invalid_token'      =>  'The access token provided is expired, revoked, malformed, or invalid for other reasons.',
         'insufficient_scope' =>  'The request requires higher privileges than provided by the access token. Required scopes are: %s.',
+        'missing_token'      =>  'The request is missing an access token in either the Authorization header or the %s request parameter.',
     );
 
     /**
@@ -109,6 +111,7 @@ class Resource
         'invalid_request'    =>  400,
         'invalid_token'      =>  401,
         'insufficient_scope' =>  403,
+        'missing_token'      =>  400,
     );
 
     /**
@@ -387,7 +390,7 @@ class Resource
         }
 
         if (empty($accessToken)) {
-            throw new Exception\MissingAccessTokenException(self::$exceptionMessages['invalid_request'], 0);
+            throw new Exception\MissingAccessTokenException(sprintf(self::$exceptionMessages['missing_token'], $this->tokenKey), 3);
         }
 
         return $accessToken;
