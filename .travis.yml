@@ -10,8 +10,12 @@ matrix:
   allow_failures:
     - php: hhvm
 
-before_script: composer install --prefer-source
-script: phpunit --configuration phpunit.xml.dist
+before_script:
+  - travis_retry composer self-update
+  - travis_retry composer install --no-interaction --prefer-source --dev
+
+script:
+  - phpunit --verbose
 
 cache:
   directories:
