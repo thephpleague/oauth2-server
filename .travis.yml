@@ -10,14 +10,10 @@ matrix:
   allow_failures:
     - php: hhvm
 
-cache:
-  directories:
-    - vendor
-
 before_script:
-    - composer self-update
-    - composer require satooshi/php-coveralls:dev-master --no-update --dev
-    - composer install
+    - travis_retry composer self-update
+    - travis_retry composer require satooshi/php-coveralls:dev-master --no-update --dev
+    - travis_retry composer install --no-interaction --prefer-source --dev
     - cd examples/relational && composer install --prefer-dist
     - php config/init.php
     - php -S localhost:8000 &
@@ -26,4 +22,4 @@ before_script:
 
 script:
   - mkdir -p build/logs
-  - phpunit --coverage-text
+  - phpunit --coverage-text --verbose
