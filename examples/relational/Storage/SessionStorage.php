@@ -87,7 +87,7 @@ class SessionStorage extends Adapter implements SessionInterface
     public function create($ownerType, $ownerId, $clientId, $clientRedirectUri = null)
     {
         $id = Capsule::table('oauth_sessions')
-                        ->insert([
+                        ->insertGetId([
                             'owner_type'  =>    $ownerType,
                             'owner_id'    =>    $ownerId,
                             'client_id'   =>    $clientId
