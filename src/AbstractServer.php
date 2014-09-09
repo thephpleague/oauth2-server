@@ -123,7 +123,7 @@ abstract class AbstractServer
      * @param  TokenTypeInterface $tokenType The token type
      * @return void
      */
-    public function setIdType(TokenTypeInterface $tokenType)
+    public function setTokenType(TokenTypeInterface $tokenType)
     {
         $this->tokenType = $tokenType;
     }

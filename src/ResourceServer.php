@@ -64,7 +64,7 @@ class ResourceServer extends AbstractServer
         $this->setStorage('scope', $scopeStorage);
 
         // Set Bearer as the default token type
-        $this->setIdType(new Bearer);
+        $this->setTokenType(new Bearer);
 
         parent::__construct();
 
