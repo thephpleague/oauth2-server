@@ -126,7 +126,7 @@ class RefreshToken implements GrantTypeInterface {
         $accessTokenId = $this->authServer->getStorage('session')->validateRefreshToken($authParams['refresh_token'], $authParams['client_id']);
 
         if ($accessTokenId === false) {
-            throw new Exception\ClientException($this->authServer->getExceptionMessage('invalid_refresh'), 0);
+            throw new Exception\ClientException($this->authServer->getExceptionMessage('invalid_refresh'), 11);
         }
 
         // Get the existing access token

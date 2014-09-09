@@ -93,7 +93,9 @@ class Authorization
         6   =>  'temporarily_unavailable',
         7   =>  'unsupported_grant_type',
         8   =>  'invalid_client',
-        9   =>  'invalid_grant'
+        9   =>  'invalid_grant',
+        10  =>  'invalid_credentials',
+        11  =>  'invalid_refresh'
     );
 
     /**
