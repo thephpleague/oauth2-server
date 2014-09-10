@@ -137,6 +137,10 @@ abstract class AbstractTokenEntity
      */
     protected function formatScopes($unformatted = [])
     {
+        if (is_null($unformatted)) {
+            return [];
+        }
+
         $scopes = [];
         foreach ($unformatted as $scope) {
             if ($scope instanceof ScopeEntity) {
