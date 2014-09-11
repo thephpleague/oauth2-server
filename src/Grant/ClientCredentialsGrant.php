@@ -94,7 +94,7 @@ class ClientCredentialsGrant extends AbstractGrant
         // Generate an access token
         $accessToken = new AccessTokenEntity($this->server);
         $accessToken->setId(SecureKey::generate());
-        $accessToken->setExpireTime($this->server->getAccessTokenTTL() + time());
+        $accessToken->setExpireTime($this->getAccessTokenTTL() + time());
 
         // Associate scopes with the session and access token
         foreach ($scopes as $scope) {
@@ -111,7 +111,7 @@ class ClientCredentialsGrant extends AbstractGrant
         $accessToken->save($this->server->getStorage('access_token'));
 
         $this->server->getTokenType()->set('access_token', $accessToken->getId());
-        $this->server->getTokenType()->set('expires_in', $this->server->getAccessTokenTTL());
+        $this->server->getTokenType()->set('expires_in', $this->getAccessTokenTTL());
 
         return $this->server->getTokenType()->generateResponse();
     }
