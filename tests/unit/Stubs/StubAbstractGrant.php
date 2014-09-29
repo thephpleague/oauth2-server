@@ -11,11 +11,6 @@ class StubAbstractGrant extends \League\OAuth2\Server\Grant\AbstractGrant
         return true;
     }
 
-    public function getAccessTokenTTL()
-    {
-        return $this->accessTokenTTL;
-    }
-
     public function getAuthorizationServer()
     {
         return $this->server;

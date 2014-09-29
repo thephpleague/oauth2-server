@@ -81,6 +81,19 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * Get the TTL for an access token
+     * @return int The TTL
+     */
+    public function getAccessTokenTTL()
+    {
+        if ($this->accessTokenTTL) {
+            return $this->accessTokenTTL;
+        }
+
+        return $this->server->getAccessTokenTTL();
+    }
+
+    /**
      * Override the default access token expire time
      * @param  int  $accessTokenTTL
      * @return self
