@@ -125,6 +125,7 @@ abstract class AbstractServer
      */
     public function setTokenType(TokenTypeInterface $tokenType)
     {
+        $tokenType->setServer($this);
         $this->tokenType = $tokenType;
     }
 

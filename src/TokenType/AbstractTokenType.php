@@ -12,6 +12,7 @@
 namespace League\OAuth2\Server\TokenType;
 
 use Symfony\Component\HttpFoundation\Request;
+use League\OAuth2\Server\AbstractServer;
 
 abstract class AbstractTokenType
 {
@@ -22,6 +23,21 @@ abstract class AbstractTokenType
     protected $response = [];
 
     /**
+     * Server
+     * @var \League\OAuth2\Server\AbstractServer $server
+     */
+    protected $server;
+
+    /**
+     * Set the server
+     * @param \League\OAuth2\Server\AbstractServer $server
+     */
+    public function setServer(AbstractServer $server)
+    {
+        $this->server = $server;
+        return $this;
+    }
+
      * Set a key/value response pair
      * @param string $key
      * @param mixed  $value
