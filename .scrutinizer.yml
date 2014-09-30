@@ -26,7 +26,7 @@ tools:
             paths: ['src']
     php_loc:
         enabled: true
-        excluded_dirs: [vendor, test]
+        excluded_dirs: [vendor, tests]
     php_cpd:
         enabled: true
-        excluded_dirs: [vendor, test]
+        excluded_dirs: [vendor, tests]
