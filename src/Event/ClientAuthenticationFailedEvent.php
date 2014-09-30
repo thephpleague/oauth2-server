@@ -41,10 +41,10 @@ class ClientAuthenticationFailedEvent extends AbstractEvent
     }
 
     /**
-     * Return session
+     * Return request
      * @return \Symfony\Component\HttpFoundation\Request
      */
-    public function getSession()
+    public function getRequest()
     {
         return $this->request;
     }
