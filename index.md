@@ -30,3 +30,7 @@ In addition it supports the following token types:
 * Bearer tokens
 * MAC tokens (coming soon)
 * JSON web tokens (coming soon)
+
+## Questions?
+
+This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](https://twitter.com/alexbilbie).
