@@ -21,13 +21,13 @@ class Bearer extends AbstractTokenType implements TokenTypeInterface
     public function generateResponse()
     {
         $return = [
-            'access_token'  =>  $this->get('access_token'),
+            'access_token'  =>  $this->getParam('access_token'),
             'token_type'    =>  'Bearer',
-            'expires_in'    =>  $this->get('expires_in')
+            'expires_in'    =>  $this->getParam('expires_in')
         ];
 
-        if (!is_null($this->get('refresh_token'))) {
-            $return['refresh_token'] = $this->get('refresh_token');
+        if (!is_null($this->getParam('refresh_token'))) {
+            $return['refresh_token'] = $this->getParam('refresh_token');
         }
 
         return $return;

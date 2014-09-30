@@ -42,7 +42,7 @@ abstract class AbstractTokenType
      * @param string $key
      * @param mixed  $value
      */
-    public function set($key, $value)
+    public function setParam($key, $value)
     {
         $this->response[$key] = $value;
     }
@@ -52,7 +52,7 @@ abstract class AbstractTokenType
      * @param  string $key
      * @return mixed
      */
-    public function get($key)
+    public function getParam($key)
     {
         return isset($this->response[$key]) ? $this->response[$key] : null;
     }

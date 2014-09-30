@@ -148,15 +148,15 @@ class PasswordGrant extends AbstractGrant
            $accessToken->associateScope($scope);
         }
 
-        $this->server->getTokenType()->set('access_token', $accessToken->getId());
-        $this->server->getTokenType()->set('expires_in', $this->getAccessTokenTTL());
+        $this->server->getTokenType()->setParam('access_token', $accessToken->getId());
+        $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
 
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
             $refreshToken = new RefreshTokenEntity($this->server);
             $refreshToken->setId(SecureKey::generate());
             $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
-            $this->server->getTokenType()->set('refresh_token', $refreshToken->getId());
+            $this->server->getTokenType()->setParam('refresh_token', $refreshToken->getId());
         }
 
         // Save everything
