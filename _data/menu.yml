@@ -1,2 +1,18 @@
 Getting Started:
     Introduction: '/'
+    Terminology: '/terminology/'
+    Installation: '/installation/'
+    Implementing storage interfaces: '/implementing-storage-interfaces/'
+Authorization Server:
+    'Which grant?': '/authorization-server/which-grant/'
+    'Authorization Code Grant': '/authorization-server/auth-code-grant/'
+    'Client Credentials Grant': '/authorization-server/client-credentials-grant/'
+    'Password Grant': '/authorization-server/resource-owner-password-credentials-grant/'
+    'Refresh Token Grant': '/authorization-server/refresh-token-grant/'
+    'Server Customisation': '/authorization-server/customisation/'
+    'Events': '/authorization-server/events/'
+    'Custom token identifier generator': '/authorization-server/custom-token-identifier-generator/'
+    'Custom token types': '/authorization-server/custom-token-types/'
+    'Custom grants': '/authorization-server/custom-grants/'
+Resource Server:
+    'Securing your API': '/resource-server/securing-your-api/'
