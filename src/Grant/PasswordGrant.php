@@ -127,7 +127,7 @@ class PasswordGrant extends AbstractGrant
 
         // Validate any scopes that are in the request
         $scopeParam = $this->server->getRequest()->request->get('scope', '');
-        $scopes = $this->validateScopes($scopeParam);
+        $scopes = $this->validateScopes($scopeParam, $client);
 
         // Create a new session
         $session = new SessionEntity($this->server);

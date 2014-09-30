@@ -13,6 +13,7 @@ namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Exception;
 
 /**
@@ -120,10 +121,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Given a list of scopes, validate them and return an arrary of Scope entities
      * @param  string          $scopeParam A string of scopes (e.g. "profile email birthday")
+     * @param  ClientEntity    $client A string of scopes (e.g. "profile email birthday")
      * @return array
      * @throws ClientException If scope is invalid, or no scopes passed when required
      */
-    public function validateScopes($scopeParam = '')
+    public function validateScopes($scopeParam = '', ClientEntity $client)
     {
         $scopesList = explode($this->server->getScopeDelimeter(), $scopeParam);
 
@@ -153,7 +155,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         foreach ($scopesList as $scopeItem) {
             $scope = $this->server->getStorage('scope')->get(
                 $scopeItem,
-                $this->getIdentifier()
+                $this->getIdentifier(),
+                $client->getId()
             );
 
             if (($scope instanceof ScopeEntity) === false) {

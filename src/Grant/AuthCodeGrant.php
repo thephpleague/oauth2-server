@@ -114,7 +114,7 @@ class AuthCodeGrant extends AbstractGrant
 
         // Validate any scopes that are in the request
         $scopeParam = $this->server->getRequest()->query->get('scope', '');
-        $scopes = $this->validateScopes($scopeParam);
+        $scopes = $this->validateScopes($scopeParam, $client);
 
         return [
             'client'        =>  $client,

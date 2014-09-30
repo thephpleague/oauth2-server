@@ -4,6 +4,7 @@ namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\Grant;
 use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\InvalidRequestException;
 use LeagueTests\Stubs\StubAbstractGrant;
@@ -63,11 +64,13 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new StubAbstractGrant;
         $grant->setAuthorizationServer($server);
 
+        $client = (new ClientEntity($server))->hydrate(['id' => 'testapp']);
+
         $this->assertEquals(
             [
                 'foo' => (new ScopeEntity($server))->hydrate(['id' => 'foo'])
             ],
-            $grant->validateScopes('foo')
+            $grant->validateScopes('foo', $client)
         );
     }
 
@@ -85,7 +88,9 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new StubAbstractGrant;
         $grant->setAuthorizationServer($server);
 
-        $grant->validateScopes();
+        $client = (new ClientEntity($server))->hydrate(['id' => 'testapp']);
+
+        $grant->validateScopes(null, $client);
     }
 
     public function testValidateScopesInvalidScope()
@@ -102,7 +107,9 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new StubAbstractGrant;
         $grant->setAuthorizationServer($server);
 
-        $grant->validateScopes('blah');
+        $client = (new ClientEntity($server))->hydrate(['id' => 'testapp']);
+
+        $grant->validateScopes('blah', $client);
     }
 
     public function testValidateScopesDefaultScope()
@@ -123,7 +130,9 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new StubAbstractGrant;
         $grant->setAuthorizationServer($server);
 
-        $grant->validateScopes();
+        $client = (new ClientEntity($server))->hydrate(['id' => 'testapp']);
+
+        $grant->validateScopes(null, $client);
     }
 
     public function testValidateScopesDefaultScopeArray()
@@ -144,6 +153,8 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new StubAbstractGrant;
         $grant->setAuthorizationServer($server);
 
-        $grant->validateScopes();
+        $client = (new ClientEntity($server))->hydrate(['id' => 'testapp']);
+
+        $grant->validateScopes(null, $client);
     }
 }

@@ -14,6 +14,7 @@ namespace League\OAuth2\Server\Entity;
 use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\AbstractServer;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use League\OAuth2\Server\Entity\SessionEntity;
 
 /**
  * Abstract token class
@@ -28,7 +29,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Associated session
-     * @var \League\OAuth2\Server\SessionEntity
+     * @var \League\OAuth2\Server\Entity\SessionEntity
      */
     protected $session;
 
@@ -64,7 +65,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Set session
-     * @param  \League\OAuth2\Server\SessionEntity $session
+     * @param  \League\OAuth2\Server\Entity\SessionEntity $session
      * @return self
      */
     public function setSession(SessionEntity $session)
