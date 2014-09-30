@@ -1,62 +1,45 @@
 # PHP OAuth 2.0 Server
 
-[![Latest Stable Version](https://poser.pugx.org/league/oauth2-server/v/stable.png)](https://packagist.org/packages/league/oauth2-server) [![Coverage Status](https://coveralls.io/repos/thephpleague/oauth2-server/badge.png?branch=v4.0.0-WIP)](https://coveralls.io/r/thephpleague/oauth2-server?branch=v4.0.0-WIP) [![Total Downloads](https://poser.pugx.org/league/oauth2-server/downloads.png)](https://packagist.org/packages/league/oauth2-server)
+[![Latest Version](http://img.shields.io/packagist/v/league/oauth2-server.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)<br />
+[![Build Status](https://img.shields.io/travis/thephpleague/oauth2-server/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/oauth2-server)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server)
+[![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-server.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-server)
 
 
-A standards compliant [OAuth 2.0](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authorization server and resource server written in PHP.
+A standards compliant [OAuth 2.0](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authorization server and resource server written in PHP which makes working with OAuth 2.0 trivial. You can easily configure an OAuth 2.0 server to protect your API with access tokens, or allow clients to request new access tokens and refresh them.
 
-## Package Installation
+It supports out of the box the following grants:
 
-The framework is provided as a Composer package which can be installed by adding the package to your composer.json file:
+* Authorization code grant
+* Client credentials grant
+* Resource owner password credentials grant
+* Refresh grant
 
-```javascript
-{
-    "require": {
-        "league/oauth2-server": "dev-develop"
-    }
-}
-```
+You can also define your own grants.
 
-### Storage Adapters
+In addition it supports the following token types:
 
-The following adapters have been created by other developers to help you easily integrate this library into your project.
+* Bearer tokens
+* MAC tokens (coming soon)
+* JSON web tokens (coming soon)
 
-* [Redis storage adapter](https://github.com/jasonlewis/oauth2-server-redis) by @jasonlewis
 
-If you want to roll your own adapter check out the docs.
+## Requirements
 
----
+The following versions of PHP are supported:
 
-The library features 100% unit test code coverage. To run the tests yourself run `phpunit` from the project root.
+* PHP 5.4
+* PHP 5.5
+* PHP 5.6
+* HHVM
 
-## Current Features
+## Documentation
 
-### Authorization Server
+This library has [full documentation](http://oauth2.thephpleague.com), powered by [Jekyll](http://jekyllrb.com/).
 
-The authorization server is a flexible class and the following core specification grants are implemented:
-
-* authorization code ([section 4.1](http://tools.ietf.org/html/rfc6749#section-4.1))
-* refresh token ([section 6](http://tools.ietf.org/html/rfc6749#section-6))
-* client credentials ([section 2.3.1](http://tools.ietf.org/html/rfc6749#section-2.3.1))
-* password (user credentials) ([section 4.3](http://tools.ietf.org/html/rfc6749#section-4.3))
-
-An overview of the different OAuth 2.0 grants can be found in the wiki [https://github.com/php-loep/oauth2-server/wiki/Which-OAuth-2.0-grant-should-I-use%3F](https://github.com/php-loep/oauth2-server/wiki/Which-OAuth-2.0-grant-should-I-use%3F).
-
-### Resource Server
-
-The resource server allows you to secure your API endpoints by checking for a valid OAuth access token in the request and ensuring the token has the correct scope(s) (i.e. permissions) to access resources.
-
-### Custom grants
-
-Custom grants can be created easily by implementing an interface. Check out a guide here [https://github.com/php-loep/oauth2-server/wiki/Creating-custom-grants](https://github.com/php-loep/oauth2-server/wiki/Creating-custom-grants).
-
-## Tutorials and documentation
-
-The wiki has lots of guides on how to use this library, check it out - [https://github.com/php-loep/oauth2-server/wiki](https://github.com/php-loep/oauth2-server/wiki).
-
-A simple tutorial on how to use the authorization server can be found at [https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server](https://github.com/php-loep/oauth2-server/wiki/Developing-an-OAuth-2.0-authorization-server).
-
-A simple tutorial on how to use the resource server to secure an API server can be found at [https://github.com/php-loep/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0](https://github.com/php-loep/oauth2-server/wiki/Securing-your-API-with-OAuth-2.0).
+Contribute to this documentation in the [gh-pages branch](https://github.com/thephpleague/oauth2-server/tree/gh-pages/).
 
 ## Changelog
 
@@ -68,7 +51,7 @@ Please see [CONTRIBUTING](https://github.com/php-loep/oauth2-server/blob/master/
 
 ## Support
 
-Bugs and feature request are tracked on [GitHub](https://github.com/php-loep/oauth2-server/issues)
+Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague/oauth2-server/issues)
 
 ## License
 
