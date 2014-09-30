@@ -12,7 +12,6 @@ matrix:
 
 before_script:
     - travis_retry composer self-update
-    - travis_retry composer require satooshi/php-coveralls:dev-master --no-update --dev
     - travis_retry composer install --no-interaction --prefer-source --dev
     - cd examples/relational && composer install --prefer-dist
     - php config/init.php
@@ -22,4 +21,8 @@ before_script:
 
 script:
   - mkdir -p build/logs
-  - phpunit --coverage-text --verbose
+  - phpunit --coverage-text --verbose --coverage-clover=coverage.clover
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
