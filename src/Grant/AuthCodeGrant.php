@@ -230,6 +230,7 @@ class AuthCodeGrant extends AbstractGrant
            $accessToken->associateScope($scope);
         }
 
+        $this->server->getTokenType()->setSession($session);
         $this->server->getTokenType()->setParam('access_token', $accessToken->getId());
         $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
 

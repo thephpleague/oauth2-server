@@ -112,6 +112,7 @@ class ClientCredentialsGrant extends AbstractGrant
         $accessToken->setSession($session);
         $accessToken->save($this->server->getStorage('access_token'));
 
+        $this->server->getTokenType()->setSession($session);
         $this->server->getTokenType()->setParam('access_token', $accessToken->getId());
         $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
 
