@@ -43,11 +43,11 @@ Contribute to this documentation in the [gh-pages branch](https://github.com/the
 
 ## Changelog
 
-[See the project releases page](https://github.com/php-loep/oauth2-server/releases)
+[See the project releases page](https://github.com/thephpleague/oauth2-server/releases)
 
 ## Contributing
 
-Please see [CONTRIBUTING](https://github.com/php-loep/oauth2-server/blob/master/CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](https://github.com/thephpleague/oauth2-server/blob/master/CONTRIBUTING.md) for details.
 
 ## Support
 
@@ -55,7 +55,7 @@ Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague
 
 ## License
 
-This package is released under the MIT License. See the bundled [LICENSE](https://github.com/php-loep/oauth2-server/blob/master/LICENSE) file for details.
+This package is released under the MIT License. See the bundled [LICENSE](https://github.com/thephpleague/oauth2-server/blob/master/LICENSE) file for details.
 
 ## Credits
 
@@ -67,6 +67,6 @@ Special thanks to:
 * [Nick Jackson](https://github.com/jacksonj04)
 * [Michael Gooden](https://github.com/MichaelGooden)
 * [Phil Sturgeon](https://github.com/philsturgeon)
-* [and all the other contributors](https://github.com/php-loep/oauth2-server/contributors)
+* [and all the other contributors](https://github.com/thephpleague/oauth2-server/contributors)
 
 The initial code was developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which was funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.
