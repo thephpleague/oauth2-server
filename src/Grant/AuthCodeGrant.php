@@ -19,6 +19,7 @@ use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\AuthCodeEntity;
 use League\OAuth2\Server\Util\SecureKey;
+use League\OAuth2\Server\Event;
 
 /**
  * Auth code grant class
@@ -92,6 +93,7 @@ class AuthCodeGrant extends AbstractGrant
         );
 
         if (($client instanceof ClientEntity) === false) {
+            $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
 
@@ -192,6 +194,7 @@ class AuthCodeGrant extends AbstractGrant
         );
 
         if (($client instanceof ClientEntity) === false) {
+            $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
 

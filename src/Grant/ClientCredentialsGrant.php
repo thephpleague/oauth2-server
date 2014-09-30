@@ -16,6 +16,7 @@ use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
+use League\OAuth2\Server\Event;
 
 /**
  * Client credentials grant class
@@ -79,6 +80,7 @@ class ClientCredentialsGrant extends AbstractGrant
         );
 
         if (($client instanceof ClientEntity) === false) {
+            $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
 

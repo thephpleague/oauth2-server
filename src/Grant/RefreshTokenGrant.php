@@ -17,6 +17,7 @@ use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Event;
 
 /**
  * Referesh token grant
@@ -83,6 +84,7 @@ class RefreshTokenGrant extends AbstractGrant
         );
 
         if (($client instanceof ClientEntity) === false) {
+            $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
 

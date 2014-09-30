@@ -17,6 +17,7 @@ use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
+use League\OAuth2\Server\Event;
 
 /**
  * Password grant class
@@ -102,6 +103,7 @@ class PasswordGrant extends AbstractGrant
         );
 
         if (($client instanceof ClientEntity) === false) {
+            $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
 
@@ -119,6 +121,7 @@ class PasswordGrant extends AbstractGrant
         $userId = call_user_func($this->getVerifyCredentialsCallback(), $username, $password);
 
         if ($userId === false) {
+            $this->server->getEventEmitter()->emit(new Event\UserAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidCredentialsException();
         }
 
