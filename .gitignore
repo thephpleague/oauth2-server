@@ -11,4 +11,4 @@
 /tests/codecept/tests/_log
 oauth2-server.paw
 /output_*/
-/.sculpin
+/_site
