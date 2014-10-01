@@ -6,7 +6,7 @@ permalink: /authorization-server/events/
 
 # Authorization server events
 
-During the lifecycle of a request passing through the authorization server a number of events are emitted.
+During the lifecycle of a request passing through the authorization server a number of events may be emitted.
 
 You can subscribe to these events by attaching listeners to the authorization server.
 
