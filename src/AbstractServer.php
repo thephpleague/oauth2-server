@@ -82,7 +82,7 @@ abstract class AbstractServer
      * @param \Symfony\Component\HttpFoundation\Request The Request Object
      * @return self
      */
-    public function setRequest(Request $request)
+    public function setRequest($request)
     {
         $this->request = $request;
 
