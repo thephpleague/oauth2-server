@@ -5,7 +5,7 @@ title: Introduction
 
 # Introduction
 
-[![Author](http://img.shields.io/badge/author-@alexbilbie-blue.svg?style=flat-square)](https://twitter.com/philsturgeon)
+[![Author](http://img.shields.io/badge/author-@alexbilbie-yellow.svg?style=flat-square)](https://twitter.com/philsturgeon)
 [![Source Code](http://img.shields.io/badge/source-thephpleague%2Foauth2--server-blue.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server)
 [![Latest Version](http://img.shields.io/packagist/v/league/oauth2-server.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)<br />
