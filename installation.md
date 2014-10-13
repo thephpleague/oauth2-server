@@ -8,11 +8,9 @@ permalink: /installation/
 
 The recommended way of installing the library is via Composer.
 
-If you already have a composer.json file in your root then add `"league/oauth2-server": "4.*"` in the require object. Then run `composer update`.
+In your project root just run:
 
-Otherwise create a new file in your project root called composer.json add set the contents to:
-
-~~~shell
+~~~ shell
 composer require league/oauth2-server:4.0.x-dev
 ~~~
 
