@@ -12,12 +12,8 @@ If you already have a composer.json file in your root then add `"league/oauth2-s
 
 Otherwise create a new file in your project root called composer.json add set the contents to:
 
-~~~ javascript
-{
-    "require": {
-        "league/oauth2-server": "4.0.*@dev"
-    }
-}
+~~~shell
+composer require league/oauth2-server:4.0.x-dev
 ~~~
 
 Now, assuming you have [installed Composer](https://getcomposer.org/download/) run `composer update`.
