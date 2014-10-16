@@ -17,7 +17,7 @@ $server->setSessionStorage(new Storage\SessionStorage);
 $server->setAccessTokenStorage(new Storage\AccessTokenStorage);
 $server->setClientStorage(new Storage\ClientStorage);
 $server->setScopeStorage(new Storage\ScopeStorage);
-$server->setAccessTokenStorage(new Storage\RefreshTokenStorage);
+$server->setRefreshTokenStorage(new Storage\RefreshTokenStorage);
 
 $refrehTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
 $server->addGrantType($refrehTokenGrant);
