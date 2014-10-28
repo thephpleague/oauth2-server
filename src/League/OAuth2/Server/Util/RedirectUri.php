@@ -16,13 +16,13 @@ namespace League\OAuth2\Server\Util;
  */
 class RedirectUri
 {
-	/**
-	 * Generate a new redirect uri
-	 * @param  string $uri            The base URI
-	 * @param  array  $params         The query string parameters
-	 * @param  string $queryDelimeter The query string delimeter (default: "?")
-	 * @return string                 The updated URI
-	 */
+    /**
+     * Generate a new redirect uri
+     * @param  string $uri            The base URI
+     * @param  array  $params         The query string parameters
+     * @param  string $queryDelimeter The query string delimeter (default: "?")
+     * @return string                 The updated URI
+    */
     public static function make($uri, $params = array(), $queryDelimeter = '?')
     {
         $uri .= (strstr($uri, $queryDelimeter) === false) ? $queryDelimeter : '&';
