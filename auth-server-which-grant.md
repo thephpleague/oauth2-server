@@ -90,7 +90,7 @@ This grant is suitable for trusted clients such as a service’s own mobile clie
 
 ~~~ php
 $clientCredentials = new League\OAuth2\Server\Grant\ClientCredentialsGrant();
-server->addGrantType($clientCredentials);
+$server->addGrantType($clientCredentials);
 ~~~
 
 This grant is similar to the resource owner credentials grant except only the client’s credentials are used to authenticate a request for an access token. Again this grant should only be allowed to be used by trusted clients.
