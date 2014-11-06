@@ -215,6 +215,8 @@ class AuthCodeGrant extends AbstractGrant
         }
 
         $session = $code->getSession();
+        $session->associateClient($client);
+
         $authCodeScopes = $code->getScopes();
 
         // Generate the access token
