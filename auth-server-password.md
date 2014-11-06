@@ -22,6 +22,8 @@ $passwordGrant = new \League\OAuth2\Server\Grant\PasswordGrant();
 $passwordGrant->setVerifyCredentialsCallback(function ($username, $password) {
     // implement logic here to validate a username and password, return an ID if valid, otherwise return false
 });
+
+$server->addGrantType($passwordGrant);
 ~~~
 
 
