@@ -18,5 +18,5 @@ interface KeyAlgorithmInterface
      * @param  integer $len Length of the generated code
      * @return string
      */
-    public function generate();
+    public function generate($len);
 }
