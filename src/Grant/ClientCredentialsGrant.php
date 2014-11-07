@@ -49,7 +49,7 @@ class ClientCredentialsGrant extends AbstractGrant
 
     /**
      * Complete the client credentials grant
-     * @return \League\OAuth2\Server\TokenType\TokenTypeInterface
+     * @return array
      */
     public function completeFlow()
     {

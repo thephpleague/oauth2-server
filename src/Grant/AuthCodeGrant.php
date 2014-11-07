@@ -159,7 +159,7 @@ class AuthCodeGrant extends AbstractGrant
 
     /**
      * Complete the auth code grant
-     * @return \League\OAuth2\Server\TokenType\TokenTypeInterface
+     * @return array
      */
     public function completeFlow()
     {

@@ -115,7 +115,7 @@ abstract class AbstractServer
     /**
      * Return a storage class
      * @param  string                                                                  $obj The class required
-     * @return Storage\ClientInterface|Storage\ScopeInterface|Storage\SessionInterface
+     * @return Storage\ClientInterface|Storage\ScopeInterface|Storage\SessionInterface|Storage\AccessTokenInterface|Storage\AuthCodeInterface|Storage\RefreshTokenInterface
      */
     public function getStorage($obj)
     {

@@ -73,7 +73,7 @@ class PasswordGrant extends AbstractGrant
 
     /**
      * Complete the password grant
-     * @return \League\OAuth2\Server\TokenType\TokenTypeInterface
+     * @return array
      */
     public function completeFlow()
     {
