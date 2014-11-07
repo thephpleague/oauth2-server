@@ -38,7 +38,7 @@ class PasswordGrant extends AbstractGrant
 
     /**
      * Callback to authenticate a user's name and password
-     * @var function
+     * @var callable
      */
     protected $callback;
 
