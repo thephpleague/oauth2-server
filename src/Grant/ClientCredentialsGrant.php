@@ -107,9 +107,9 @@ class ClientCredentialsGrant extends AbstractGrant
         }
 
         // Save everything
-        $session->save($this->server->getStorage('session'));
+        $session->save();
         $accessToken->setSession($session);
-        $accessToken->save($this->server->getStorage('access_token'));
+        $accessToken->save();
 
         $this->server->getTokenType()->setSession($session);
         $this->server->getTokenType()->setParam('access_token', $accessToken->getId());
