@@ -13,7 +13,7 @@ class ScopeStorage extends Adapter implements ScopeInterface
     /**
      * {@inheritdoc}
      */
-    public function get($scope, $grantType = null)
+    public function get($scope, $grantType = null, $clientId = null)
     {
         $result = Capsule::table('oauth_scopes')
                                 ->where('id', $scope)
