@@ -41,7 +41,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * AuthServer instance
-     * @var AuthServer
+     * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server;
 
