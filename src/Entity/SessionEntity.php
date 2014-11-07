@@ -70,7 +70,7 @@ class SessionEntity
 
     /**
      * Authorization or resource server
-     * @var \League\OAuth2\Server\Authorization|\League\OAuth2\Server\Resource
+     * @var \League\OAuth2\Server\AuthorizationServer|\League\OAuth2\Server\ResourceServer
      */
     protected $server;
 
@@ -137,7 +137,7 @@ class SessionEntity
 
     /**
      * Return all scopes associated with the session
-     * @return array Array of \League\OAuth2\Server\Entity\Scope
+     * @return \League\OAuth2\Server\Entity\Scope[]
      */
     public function getScopes()
     {
@@ -150,7 +150,7 @@ class SessionEntity
 
     /**
      * Format the local scopes array
-     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entity\Scope
+     * @param  \League\OAuth2\Server\Entity\Scope[]
      * @return array
      */
     private function formatScopes($unformated = [])
@@ -193,7 +193,7 @@ class SessionEntity
 
     /**
      * Associate a client with the session
-     * @param  League\OAuth2\Server\Entity\ClientEntity $client The client
+     * @param  \League\OAuth2\Server\Entity\ClientEntity $client The client
      * @return self
      */
     public function associateClient(ClientEntity $client)
