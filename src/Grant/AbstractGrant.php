@@ -108,7 +108,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Inject the authorization server into the grant
-     * @param  AuthorizationServer $server The authorization server instance
+     * @param  \League\OAuth2\Server\AuthorizationServer   $server The authorization server instance
      * @return self
      */
     public function setAuthorizationServer(AuthorizationServer $server)
@@ -119,11 +119,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Given a list of scopes, validate them and return an arrary of Scope entities
-     * @param  string          $scopeParam A string of scopes (e.g. "profile email birthday")
-     * @param  ClientEntity    $client A string of scopes (e.g. "profile email birthday")
-     * @return array
-     * @throws ClientException If scope is invalid, or no scopes passed when required
+     * Given a list of scopes, validate them and return an array of Scope entities
+     * @param  string                                       $scopeParam  A string of scopes (e.g. "profile email birthday")
+     * @param  \League\OAuth2\Server\Entity\ClientEntity    $client      A string of scopes (e.g. "profile email birthday")
+     * @return \League\OAuth2\Server\Entity\ScopeEntity[]
+     * @throws \League\OAuth2\Server\Exception\ClientException           If scope is invalid, or no scopes passed when required
      */
     public function validateScopes($scopeParam = '', ClientEntity $client)
     {
@@ -171,7 +171,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Format the local scopes array
-     * @param  array $unformated Array of Array of \League\OAuth2\Server\Entity\ScopeEntity
+     * @param  \League\OAuth2\Server\Entity\ScopeEntity[]
      * @return array
      */
     protected function formatScopes($unformated = [])

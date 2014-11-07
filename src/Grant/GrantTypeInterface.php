@@ -18,7 +18,7 @@ interface GrantTypeInterface
 {
     /**
      * Complete the grant flow
-     * @return array
+     * @return \League\OAuth2\Server\TokenType\TokenTypeInterface
      */
     public function completeFlow();
 }
