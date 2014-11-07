@@ -28,7 +28,7 @@ class SessionEntity
 
     /**
      * Client identifier
-     * @var string
+     * @var \League\OAuth2\Server\Entity\ClientEntity
      */
     protected $client;
 
