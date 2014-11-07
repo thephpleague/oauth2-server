@@ -61,7 +61,8 @@ class AuthCodeEntity extends AbstractTokenEntity
     }
 
     /**
-     * {@inheritdoc}
+     * Get session
+     * @return \League\OAuth2\Server\Entity\SessionEntity
      */
     public function getSession()
     {
@@ -75,7 +76,8 @@ class AuthCodeEntity extends AbstractTokenEntity
     }
 
     /**
-     * {@inheritdoc}
+     * Return all scopes associated with the session
+     * @return \League\OAuth2\Server\Entity\Scope[]
      */
     public function getScopes()
     {
