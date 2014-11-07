@@ -9,11 +9,6 @@ php:
 before_script:
     - travis_retry composer self-update
     - travis_retry composer install --no-interaction --prefer-source --dev
-    - cd examples/relational && composer install --prefer-dist
-    - php config/init.php
-    - php -S localhost:8000 &
-    - sleep 3
-    - cd ../..
 
 script:
   - mkdir -p build/logs
