@@ -46,7 +46,7 @@ class AccessTokenEntity extends AbstractTokenEntity
     }
 
     /**
-     * Return all scopes associated with the session
+     * Return all scopes associated with the access token
      * @return \League\OAuth2\Server\Entity\Scope[]
      */
     public function getScopes()

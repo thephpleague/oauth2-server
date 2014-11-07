@@ -35,7 +35,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Session scopes
-     * @var array    Array of ScopeEntity
+     * @var \League\OAuth2\Server\Entity\ScopeEntity[]
      */
     protected $scopes;
 
@@ -133,7 +133,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Format the local scopes array
-     * @param  array $unformatted Array of \League\OAuth2\Server\Entity\Scope
+     * @param  \League\OAuth2\Server\Entity\ScopeEntity[]
      * @return array
      */
     protected function formatScopes($unformatted = [])
