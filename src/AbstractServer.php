@@ -25,7 +25,7 @@ abstract class AbstractServer
     /**
      * The request object
      *
-     * @var Util\RequestInterface
+     * @var \Symfony\Component\HttpFoundation\Request
      */
     protected $request;
 
@@ -37,12 +37,13 @@ abstract class AbstractServer
 
     /**
      * Token type
-     * @var TokenTypeInterface
+     * @var \League\OAuth2\Server\TokenType\TokenTypeInterface
      */
     protected $tokenType;
 
     /**
      * Event emitter
+     * @var \League\Event\Emitter
      */
     protected $eventEmitter;
 
@@ -67,11 +68,20 @@ abstract class AbstractServer
         }
     }
 
+    /**
+     * Add an event listener to the event emitter
+     * @param string   $eventName Event name
+     * @param callable $listener  Callable function or method
+     */
     public function addEventListener($eventName, callable $listener)
     {
         $this->eventEmitter->addListener($eventName, $listener);
     }
 
+    /**
+     * Returns the event emitter
+     * @return \League\Event\Emitter
+     */
     public function getEventEmitter()
     {
         return $this->eventEmitter;

@@ -18,11 +18,11 @@ class AccessTokenEntity extends AbstractTokenEntity
 {
     /**
      * Get session
-     * @return \League\OAuth2\Server\SessionEntity
+     * @return \League\OAuth2\Server\Entity\SessionEntity
      */
     public function getSession()
     {
-        if ($this->session instanceof SessionEntity) {
+        if ($this->session instanceof Entity\SessionEntity) {
             return $this->session;
         }
 
@@ -47,7 +47,7 @@ class AccessTokenEntity extends AbstractTokenEntity
 
     /**
      * Return all scopes associated with the session
-     * @return array Array of \League\OAuth2\Server\Entity\Scope
+     * @return [\League\OAuth2\Server\Entity\Scope]
      */
     public function getScopes()
     {
