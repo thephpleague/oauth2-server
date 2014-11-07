@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 storage adapter
+ * OAuth 2.0 abstract storage
  *
  * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
@@ -14,9 +14,9 @@ namespace League\OAuth2\Server\Storage;
 use League\OAuth2\Server\AbstractServer;
 
 /**
- * Storage adapter class
+ * Abstract storage class
  */
-class Adapter
+abstract class AbstractStorage
 {
     /**
      * Server
