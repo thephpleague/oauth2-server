@@ -6,6 +6,7 @@ use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\AuthorizationServer;
 use Mockery as M;
 
@@ -372,6 +373,9 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $sessionStorage->shouldReceive('getScopes')->shouldReceive('getScopes')->andReturn([
             (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
+        $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
+            (new SessionEntity($server))->setId('foobar')
+        );
         $sessionStorage->shouldReceive('associateScope');
 
         $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');
@@ -430,6 +434,9 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $sessionStorage->shouldReceive('getScopes')->shouldReceive('getScopes')->andReturn([
             (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
+        $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
+            (new SessionEntity($server))->setId('foobar')
+        );
         $sessionStorage->shouldReceive('associateScope');
 
         $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');

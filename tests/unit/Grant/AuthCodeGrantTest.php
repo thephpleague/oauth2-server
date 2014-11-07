@@ -526,6 +526,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $sessionStorage->shouldReceive('getByAuthCode')->andReturn(
             (new SessionEntity($server))->setId('foobar')
         );
+        $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
+            (new SessionEntity($server))->setId('foobar')
+        );
         $sessionStorage->shouldReceive('getScopes')->andReturn([
             (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
@@ -592,6 +595,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $sessionStorage->shouldReceive('create')->andreturn(123);
         $sessionStorage->shouldReceive('associateScope');
         $sessionStorage->shouldReceive('getByAuthCode')->andReturn(
+            (new SessionEntity($server))->setId('foobar')
+        );
+        $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
             (new SessionEntity($server))->setId('foobar')
         );
         $sessionStorage->shouldReceive('getScopes')->andReturn([
