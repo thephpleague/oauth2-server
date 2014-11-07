@@ -16,7 +16,7 @@ use League\OAuth2\Server\AbstractServer;
 /**
  * Abstract storage class
  */
-abstract class AbstractStorage
+abstract class AbstractStorage implements StorageInterface
 {
     /**
      * Server
