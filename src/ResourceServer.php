@@ -182,7 +182,7 @@ class ResourceServer extends AbstractServer
     {
         $accessTokenString = ($accessToken !== null)
                                 ? $accessToken
-                                : $this->determineAccessToken($headersOnly, $accessToken);
+                                : $this->determineAccessToken($headersOnly);
 
         // Set the access token
         $this->accessToken = $this->storages['access_token']->get($accessTokenString);
