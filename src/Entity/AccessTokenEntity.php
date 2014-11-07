@@ -22,7 +22,7 @@ class AccessTokenEntity extends AbstractTokenEntity
      */
     public function getSession()
     {
-        if ($this->session instanceof Entity\SessionEntity) {
+        if ($this->session instanceof SessionEntity) {
             return $this->session;
         }
 
