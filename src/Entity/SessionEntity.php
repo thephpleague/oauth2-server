@@ -205,7 +205,7 @@ class SessionEntity
 
     /**
      * Return the session client
-     * @return League\OAuth2\Server\Entity\Client
+     * @return \League\OAuth2\Server\Entity\ClientEntity
      */
     public function getClient()
     {
