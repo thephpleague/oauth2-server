@@ -19,7 +19,7 @@ use League\OAuth2\Server\Entity\ScopeEntity;
 /**
  * Access token interface
  */
-interface AccessTokenInterface
+interface AccessTokenInterface extends StorageInterface
 {
     /**
      * Get an instance of Entity\AccessTokenEntity

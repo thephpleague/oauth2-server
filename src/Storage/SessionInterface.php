@@ -19,7 +19,7 @@ use League\OAuth2\Server\Entity\ScopeEntity;
 /**
  * Session storage interface
  */
-interface SessionInterface
+interface SessionInterface extends StorageInterface
 {
     /**
      * Get a session from an access token

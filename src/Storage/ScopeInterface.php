@@ -14,7 +14,7 @@ namespace League\OAuth2\Server\Storage;
 /**
  * Scope interface
  */
-interface ScopeInterface
+interface ScopeInterface extends StorageInterface
 {
     /**
      * Return information about a scope

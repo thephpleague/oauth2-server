@@ -17,7 +17,7 @@ use League\OAuth2\Server\Entity\ScopeEntity;
 /**
  * Auth code storage interface
  */
-interface AuthCodeInterface
+interface AuthCodeInterface extends StorageInterface
 {
     /**
      * Get the auth code

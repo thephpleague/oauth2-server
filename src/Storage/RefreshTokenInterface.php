@@ -16,7 +16,7 @@ use League\OAuth2\Server\Entity\RefreshTokenEntity;
 /**
  * Refresh token interface
  */
-interface RefreshTokenInterface
+interface RefreshTokenInterface extends StorageInterface
 {
     /**
      * Return a new instance of \League\OAuth2\Server\Entity\RefreshTokenEntity

@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\AbstractServer;
 
 /**
  * Storage interface

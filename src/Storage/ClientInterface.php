@@ -16,7 +16,7 @@ use League\OAuth2\Server\Entity\SessionEntity;
 /**
  * Client storage interface
  */
-interface ClientInterface
+interface ClientInterface extends StorageInterface
 {
     /**
      * Validate a client
