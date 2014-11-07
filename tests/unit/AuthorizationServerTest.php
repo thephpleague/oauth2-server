@@ -34,7 +34,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($server->getResponseTypes(), ['foobar']);
         $this->assertTrue($server->scopeParamRequired());
         $this->assertTrue($server->stateParamRequired());
-        $this->assertTrue($server->getStorage('scope') instanceof ScopeInterface);
+        $this->assertTrue($server->getScopeStorage() instanceof ScopeInterface);
         $this->assertEquals('foobar', $server->getDefaultScope());
         $this->assertEquals(',', $server->getScopeDelimeter());
         $this->assertEquals(1, $server->getAccessTokenTTL());

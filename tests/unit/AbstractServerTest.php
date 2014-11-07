@@ -25,11 +25,4 @@ class AbstractServerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($server2->getRequest() instanceof \Symfony\Component\HttpFoundation\Request);
 
     }
-
-    public function testGetStorageException()
-    {
-        $this->setExpectedException('League\OAuth2\Server\Exception\ServerErrorException');
-        $server = new StubAbstractServer();
-        $server->getStorage('foobar');
-    }
 }

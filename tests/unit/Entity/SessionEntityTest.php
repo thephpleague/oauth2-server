@@ -81,7 +81,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $accessTokenStorage->shouldReceive('setServer');
         $server->setAccessTokenStorage($accessTokenStorage);
 
-        $server->shouldReceive('getStorage')->with('access_token')->andReturn($accessTokenStorage);
+        $server->shouldReceive('getAccessTokenStorage')->andReturn($accessTokenStorage);
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('getScopes')->andReturn(
@@ -90,7 +90,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $sessionStorage->shouldReceive('setServer');
         $server->setSessionStorage($sessionStorage);
 
-        $server->shouldReceive('getStorage')->with('session')->andReturn($sessionStorage);
+        $server->shouldReceive('getSessionStorage')->andReturn($sessionStorage);
 
         $entity = new SessionEntity($server);
         $this->assertEquals($entity->getScopes(), []);
@@ -106,7 +106,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $accessTokenStorage->shouldReceive('setServer');
         $server->setAccessTokenStorage($accessTokenStorage);
 
-        $server->shouldReceive('getStorage')->with('access_token')->andReturn($accessTokenStorage);
+        $server->shouldReceive('getAccessTokenStorage')->andReturn($accessTokenStorage);
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('getScopes')->andReturn(
@@ -115,7 +115,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $sessionStorage->shouldReceive('setServer');
         $server->setSessionStorage($sessionStorage);
 
-        $server->shouldReceive('getStorage')->with('session')->andReturn($sessionStorage);
+        $server->shouldReceive('getSessionStorage')->andReturn($sessionStorage);
 
         $entity = new SessionEntity($server);
         $this->assertFalse($entity->hasScope('foo'));
@@ -135,7 +135,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
             (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
 
-        $server->shouldReceive('getStorage')->with('session')->andReturn($sessionStorage);
+        $server->shouldReceive('getSessionStorage')->andReturn($sessionStorage);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('getBySession')->andReturn(
@@ -143,7 +143,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         );
         $clientStorage->shouldReceive('setServer');
 
-        $server->shouldReceive('getStorage')->with('client')->andReturn($clientStorage);
+        $server->shouldReceive('getClientStorage')->andReturn($clientStorage);
 
         $server->setSessionStorage($sessionStorage);
         $server->setClientStorage($clientStorage);

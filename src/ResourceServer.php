@@ -27,7 +27,7 @@ class ResourceServer extends AbstractServer
 {
     /**
      * The access token
-     * @var League\OAuth2\Server\AccessToken
+     * @var \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     protected $accessToken;
 
@@ -51,36 +51,15 @@ class ResourceServer extends AbstractServer
         ClientInterface $clientStorage,
         ScopeInterface $scopeStorage
     ) {
-        $sessionStorage->setServer($this);
-        $this->setStorage('session', $sessionStorage);
-
-        $accessTokenStorage->setServer($this);
-        $this->setStorage('access_token', $accessTokenStorage);
-
-        $clientStorage->setServer($this);
-        $this->setStorage('client', $clientStorage);
-
-        $scopeStorage->setServer($this);
-        $this->setStorage('scope', $scopeStorage);
+        $this->setSessionStorage($sessionStorage);
+        $this->setAccessTokenStorage($accessTokenStorage);
+        $this->setClientStorage($clientStorage);
+        $this->setScopeStorage($scopeStorage);
 
         // Set Bearer as the default token type
         $this->setTokenType(new Bearer);
 
         parent::__construct();
-
-        return $this;
-    }
-
-    /**
-     * Set the storage
-     * @param  string $type    Storage type
-     * @param  mixed  $storage Storage class
-     * @return self
-     */
-    protected function setStorage($type, $storage)
-    {
-        $storage->setServer($this);
-        $this->storages[$type] = $storage;
 
         return $this;
     }
@@ -185,7 +164,7 @@ class ResourceServer extends AbstractServer
                                 : $this->determineAccessToken($headersOnly);
 
         // Set the access token
-        $this->accessToken = $this->storages['access_token']->get($accessTokenString);
+        $this->accessToken = $this->getAccessTokenStorage()->get($accessTokenString);
 
         if (!$this->accessToken instanceof AccessTokenEntity) {
             throw new Exception\AccessDeniedException;

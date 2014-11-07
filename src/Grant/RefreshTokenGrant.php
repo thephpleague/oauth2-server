@@ -76,7 +76,7 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         // Validate client ID and client secret
-        $client = $this->server->getStorage('client')->get(
+        $client = $this->server->getClientStorage()->get(
             $clientId,
             $clientSecret,
             null,
@@ -94,7 +94,7 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         // Validate refresh token
-        $oldRefreshToken = $this->server->getStorage('refresh_token')->get($oldRefreshTokenParam);
+        $oldRefreshToken = $this->server->getRefreshTokenStorage()->get($oldRefreshTokenParam);
 
         if (($oldRefreshToken instanceof RefreshTokenEntity) === false) {
             throw new Exception\InvalidRefreshException();
@@ -136,7 +136,7 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         // Expire the old token and save the new one
-        $oldAccessToken->expire($this->server->getStorage('access_token'));
+        $oldAccessToken->expire();
         $newAccessToken->save();
 
         $this->server->getTokenType()->setSession($session);

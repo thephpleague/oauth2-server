@@ -153,7 +153,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $scopes = [];
 
         foreach ($scopesList as $scopeItem) {
-            $scope = $this->server->getStorage('scope')->get(
+            $scope = $this->server->getScopeStorage()->get(
                 $scopeItem,
                 $this->getIdentifier(),
                 $client->getId()

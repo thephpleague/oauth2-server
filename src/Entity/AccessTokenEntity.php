@@ -26,7 +26,7 @@ class AccessTokenEntity extends AbstractTokenEntity
             return $this->session;
         }
 
-        $this->session = $this->server->getStorage('session')->getByAccessToken($this);
+        $this->session = $this->server->getSessionStorage()->getByAccessToken($this);
 
         return $this->session;
     }
@@ -53,7 +53,7 @@ class AccessTokenEntity extends AbstractTokenEntity
     {
         if ($this->scopes === null) {
             $this->scopes = $this->formatScopes(
-                $this->server->getStorage('access_token')->getScopes($this)
+                $this->server->getAccessTokenStorage()->getScopes($this)
             );
         }
 
@@ -65,7 +65,7 @@ class AccessTokenEntity extends AbstractTokenEntity
      */
     public function save()
     {
-        $this->server->getStorage('access_token')->create(
+        $this->server->getAccessTokenStorage()->create(
             $this->getId(),
             $this->getExpireTime(),
             $this->getSession()->getId()
@@ -73,7 +73,7 @@ class AccessTokenEntity extends AbstractTokenEntity
 
         // Associate the scope with the token
         foreach ($this->getScopes() as $scope) {
-            $this->server->getStorage('access_token')->associateScope($this, $scope);
+            $this->server->getAccessTokenStorage()->associateScope($this, $scope);
         }
 
         return $this;
@@ -84,6 +84,6 @@ class AccessTokenEntity extends AbstractTokenEntity
      */
     public function expire()
     {
-        $this->server->getStorage('access_token')->delete($this);
+        $this->server->getAccessTokenStorage()->delete($this);
     }
 }

@@ -29,8 +29,8 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         );
         $sessionStorage->shouldReceive('setServer');
 
-        $server->shouldReceive('getStorage')->with('session')->andReturn($sessionStorage);
-        $server->shouldReceive('getStorage')->with('access_token')->andReturn($accessTokenStorage);
+        $server->shouldReceive('getSessionStorage')->andReturn($sessionStorage);
+        $server->shouldReceive('getAccessTokenStorage')->andReturn($accessTokenStorage);
 
         $server->setAccessTokenStorage($accessTokenStorage);
         $server->setSessionStorage($sessionStorage);
@@ -49,7 +49,7 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         $accessTokenStorage->shouldReceive('delete');
         $accessTokenStorage->shouldReceive('setServer');
 
-        $server->shouldReceive('getStorage')->with('access_token')->andReturn($accessTokenStorage);
+        $server->shouldReceive('getAccessTokenStorage')->andReturn($accessTokenStorage);
 
         $server->setAccessTokenStorage($accessTokenStorage);
 

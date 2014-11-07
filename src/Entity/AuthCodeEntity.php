@@ -70,7 +70,7 @@ class AuthCodeEntity extends AbstractTokenEntity
             return $this->session;
         }
 
-        $this->session = $this->server->getStorage('session')->getByAuthCode($this);
+        $this->session = $this->server->getSessionStorage()->getByAuthCode($this);
 
         return $this->session;
     }
@@ -83,7 +83,7 @@ class AuthCodeEntity extends AbstractTokenEntity
     {
         if ($this->scopes === null) {
             $this->scopes = $this->formatScopes(
-                $this->server->getStorage('auth_code')->getScopes($this)
+                $this->server->getAuthCodeStorage()->getScopes($this)
             );
         }
 
@@ -95,7 +95,7 @@ class AuthCodeEntity extends AbstractTokenEntity
      */
     public function save()
     {
-        $this->server->getStorage('auth_code')->create(
+        $this->server->getAuthCodeStorage()->create(
             $this->getId(),
             $this->getExpireTime(),
             $this->getSession()->getId(),
@@ -104,7 +104,7 @@ class AuthCodeEntity extends AbstractTokenEntity
 
         // Associate the scope with the token
         foreach ($this->getScopes() as $scope) {
-            $this->server->getStorage('auth_code')->associateScope($this, $scope);
+            $this->server->getAuthCodeStorage()->associateScope($this, $scope);
         }
 
         return $this;
@@ -115,6 +115,6 @@ class AuthCodeEntity extends AbstractTokenEntity
      */
     public function expire()
     {
-        $this->server->getStorage('auth_code')->delete($this);
+        $this->server->getAuthCodeStorage()->delete($this);
     }
 }

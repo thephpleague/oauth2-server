@@ -85,7 +85,7 @@ class AuthCodeGrant extends AbstractGrant
         }
 
         // Validate client ID and redirect URI
-        $client = $this->server->getStorage('client')->get(
+        $client = $this->server->getClientStorage()->get(
             $clientId,
             null,
             $redirectUri,
@@ -186,7 +186,7 @@ class AuthCodeGrant extends AbstractGrant
         }
 
         // Validate client ID and client secret
-        $client = $this->server->getStorage('client')->get(
+        $client = $this->server->getClientStorage()->get(
             $clientId,
             $clientSecret,
             $redirectUri,
@@ -204,7 +204,7 @@ class AuthCodeGrant extends AbstractGrant
             throw new Exception\InvalidRequestException('code');
         }
 
-        $code = $this->server->getStorage('auth_code')->get($authCode);
+        $code = $this->server->getAuthCodeStorage()->get($authCode);
         if (($code instanceof AuthCodeEntity) === false) {
             throw new Exception\InvalidRequestException('code');
         }

@@ -71,7 +71,7 @@ class ClientCredentialsGrant extends AbstractGrant
         }
 
         // Validate client ID and client secret
-        $client = $this->server->getStorage('client')->get(
+        $client = $this->server->getClientStorage()->get(
             $clientId,
             $clientSecret,
             null,

@@ -142,7 +142,7 @@ class SessionEntity
     public function getScopes()
     {
         if ($this->scopes === null) {
-            $this->scopes = $this->formatScopes($this->server->getStorage('session')->getScopes($this));
+            $this->scopes = $this->formatScopes($this->server->getSessionStorage()->getScopes($this));
         }
 
         return $this->scopes;
@@ -213,7 +213,7 @@ class SessionEntity
             return $this->client;
         }
 
-        $this->client = $this->server->getStorage('client')->getBySession($this);
+        $this->client = $this->server->getClientStorage()->getBySession($this);
 
         return $this->client;
     }
@@ -259,7 +259,7 @@ class SessionEntity
     public function save()
     {
         // Save the session and get an identifier
-        $id = $this->server->getStorage('session')->create(
+        $id = $this->server->getSessionStorage()->create(
             $this->getOwnerType(),
             $this->getOwnerId(),
             $this->getClient()->getId(),
@@ -270,7 +270,7 @@ class SessionEntity
 
         // Associate the scope with the session
         foreach ($this->getScopes() as $scope) {
-            $this->server->getStorage('session')->associateScope($this, $scope);
+            $this->server->getSessionStorage()->associateScope($this, $scope);
         }
     }
 }

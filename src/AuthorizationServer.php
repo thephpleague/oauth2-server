@@ -75,90 +75,10 @@ class AuthorizationServer extends AbstractServer
      */
     public function __construct()
     {
-        $this->storages = [];
-
         // Set Bearer as the default token type
         $this->setTokenType(new Bearer);
 
         parent::__construct();
-
-        return $this;
-    }
-
-    /**
-     * Set the client storage
-     * @param  ClientInterface $storage
-     * @return self
-     */
-    public function setClientStorage(ClientInterface $storage)
-    {
-        $storage->setServer($this);
-        $this->storages['client'] = $storage;
-
-        return $this;
-    }
-
-    /**
-     * Set the session storage
-     * @param  SessionInterface $storage
-     * @return self
-     */
-    public function setSessionStorage(SessionInterface $storage)
-    {
-        $storage->setServer($this);
-        $this->storages['session'] = $storage;
-
-        return $this;
-    }
-
-    /**
-     * Set the access token storage
-     * @param  AccessTokenInterface $storage
-     * @return self
-     */
-    public function setAccessTokenStorage(AccessTokenInterface $storage)
-    {
-        $storage->setServer($this);
-        $this->storages['access_token'] = $storage;
-
-        return $this;
-    }
-
-    /**
-     * Set the refresh token storage
-     * @param  RefreshTokenInteface $storage
-     * @return self
-     */
-    public function setRefreshTokenStorage(RefreshTokenInterface $storage)
-    {
-        $storage->setServer($this);
-        $this->storages['refresh_token'] = $storage;
-
-        return $this;
-    }
-
-    /**
-     * Set the auth code storage
-     * @param  AuthCodeInterface $authCode
-     * @return self
-     */
-    public function setAuthCodeStorage(AuthCodeInterface $storage)
-    {
-        $storage->setServer($this);
-        $this->storages['auth_code'] = $storage;
-
-        return $this;
-    }
-
-    /**
-     * Set the scope storage
-     * @param  ScopeInterface $storage
-     * @return self
-     */
-    public function setScopeStorage(ScopeInterface $storage)
-    {
-        $storage->setServer($this);
-        $this->storages['scope'] = $storage;
 
         return $this;
     }

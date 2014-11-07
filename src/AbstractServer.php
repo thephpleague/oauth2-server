@@ -13,6 +13,12 @@ namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\TokenType\TokenTypeInterface;
+use League\OAuth2\Server\Storage\SessionInterface;
+use League\OAuth2\Server\Storage\AccessTokenInterface;
+use League\OAuth2\Server\Storage\RefreshTokenInterface;
+use League\OAuth2\Server\Storage\AuthCodeInterface;
+use League\OAuth2\Server\Storage\ScopeInterface;
+use League\OAuth2\Server\Storage\ClientInterface;
 use Symfony\Component\HttpFoundation\Request;
 use League\Event\Emitter;
 
@@ -30,10 +36,40 @@ abstract class AbstractServer
     protected $request;
 
     /**
-     * Storage classes
-     * @var array
+     * Session storage
+     * @var \League\OAuth2\Server\Storage\SessionInterface
      */
-    protected $storages = [];
+    protected $sessionStorage;
+
+    /**
+     * Access token storage
+     * @var \League\OAuth2\Server\Storage\AccessTokenInterface
+     */
+    protected $accessTokenStorage;
+
+    /**
+     * Refresh token storage
+     * @var \League\OAuth2\Server\Storage\RefreshTokenInterface
+     */
+    protected $refreshTokenStorage;
+
+    /**
+     * Auth code storage
+     * @var \League\OAuth2\Server\Storage\AuthCodeInterface
+     */
+    protected $authCodeStorage;
+
+    /**
+     * Scope storage
+     * @var \League\OAuth2\Server\Storage\ScopeInterface
+     */
+    protected $scopeStorage;
+
+    /**
+     * Client storage
+     * @var \League\OAuth2\Server\Storage\ClientInterface
+     */
+    protected $clientStorage;
 
     /**
      * Token type
@@ -113,19 +149,135 @@ abstract class AbstractServer
     }
 
     /**
-     * Return a storage class
-     * @param  string                                                                  $obj The class required
-     * @return Storage\ClientInterface|Storage\ScopeInterface|Storage\SessionInterface|Storage\AccessTokenInterface|Storage\AuthCodeInterface|Storage\RefreshTokenInterface
+     * Set the client storage
+     * @param  \League\OAuth2\Server\Storage\ClientInterface $storage
+     * @return self
      */
-    public function getStorage($obj)
+    public function setClientStorage(ClientInterface $storage)
     {
-        if (!isset($this->storages[$obj])) {
-            throw new Exception\ServerErrorException(
-                'The `'.$obj.'` storage interface has not been registered with the server'
-            );
-        }
+        $storage->setServer($this);
+        $this->clientStorage = $storage;
 
-        return $this->storages[$obj];
+        return $this;
+    }
+
+    /**
+     * Set the session storage
+     * @param  \League\OAuth2\Server\Storage\SessionInterface $storage
+     * @return self
+     */
+    public function setSessionStorage(SessionInterface $storage)
+    {
+        $storage->setServer($this);
+        $this->sessionStorage = $storage;
+
+        return $this;
+    }
+
+    /**
+     * Set the access token storage
+     * @param  \League\OAuth2\Server\Storage\AccessTokenInterface $storage
+     * @return self
+     */
+    public function setAccessTokenStorage(AccessTokenInterface $storage)
+    {
+        $storage->setServer($this);
+        $this->accessTokenStorage = $storage;
+
+        return $this;
+    }
+
+    /**
+     * Set the refresh token storage
+     * @param  \League\OAuth2\Server\Storage\RefreshTokenInteface $storage
+     * @return self
+     */
+    public function setRefreshTokenStorage(RefreshTokenInterface $storage)
+    {
+        $storage->setServer($this);
+        $this->refreshTokenStorage = $storage;
+
+        return $this;
+    }
+
+    /**
+     * Set the auth code storage
+     * @param  \League\OAuth2\Server\Storage\AuthCodeInterface $authCode
+     * @return self
+     */
+    public function setAuthCodeStorage(AuthCodeInterface $storage)
+    {
+        $storage->setServer($this);
+        $this->authCodeStorage = $storage;
+
+        return $this;
+    }
+
+    /**
+     * Set the scope storage
+     * @param  \League\OAuth2\Server\Storage\ScopeInterface $storage
+     * @return self
+     */
+    public function setScopeStorage(ScopeInterface $storage)
+    {
+        $storage->setServer($this);
+        $this->scopeStorage = $storage;
+
+        return $this;
+    }
+
+    /**
+     * Return the client storage
+     * @return \League\OAuth2\Server\Storage\ClientInterface
+     */
+    public function getClientStorage()
+    {
+        return $this->clientStorage;
+    }
+
+    /**
+     * Return the scope storage
+     * @return \League\OAuth2\Server\Storage\ScopeInterface
+     */
+    public function getScopeStorage()
+    {
+        return $this->scopeStorage;
+    }
+
+    /**
+     * Return the session storage
+     * @return \League\OAuth2\Server\Storage\SessionInterface
+     */
+    public function getSessionStorage()
+    {
+        return $this->sessionStorage;
+    }
+
+    /**
+     * Return the refresh token storage
+     * @return \League\OAuth2\Server\Storage\RefreshTokenInterface
+     */
+    public function getRefreshTokenStorage()
+    {
+        return $this->refreshTokenStorage;
+    }
+
+    /**
+     * Return the access token storage
+     * @return \League\OAuth2\Server\Storage\AccessTokenInterface
+     */
+    public function getAccessTokenStorage()
+    {
+        return $this->accessTokenStorage;
+    }
+
+    /**
+     * Return the auth code storage
+     * @return \League\OAuth2\Server\Storage\AuthCodeInterface
+     */
+    public function getAuthCodeStorage()
+    {
+        return $this->authCodeStorage;
     }
 
     /**

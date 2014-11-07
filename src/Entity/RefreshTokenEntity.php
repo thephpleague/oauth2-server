@@ -59,7 +59,7 @@ class RefreshTokenEntity extends AbstractTokenEntity
     public function getAccessToken()
     {
         if (! $this->accessTokenEntity instanceof AccessTokenEntity) {
-            $this->accessTokenEntity = $this->server->getStorage('access_token')->get($this->accessTokenId);
+            $this->accessTokenEntity = $this->server->getAccessTokenStorage()->get($this->accessTokenId);
         }
 
         return $this->accessTokenEntity;
@@ -70,7 +70,7 @@ class RefreshTokenEntity extends AbstractTokenEntity
      */
     public function save()
     {
-        $this->server->getStorage('refresh_token')->create(
+        $this->server->getRefreshTokenStorage()->create(
             $this->getId(),
             $this->getExpireTime(),
             $this->getAccessToken()->getId()
@@ -82,6 +82,6 @@ class RefreshTokenEntity extends AbstractTokenEntity
      */
     public function expire()
     {
-        $this->server->getStorage('refresh_token')->delete($this);
+        $this->server->getRefreshTokenStorage()->delete($this);
     }
 }

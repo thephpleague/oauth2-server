@@ -40,7 +40,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
             (new ScopeEntity($server))->hydrate(['id' => 'foo'])
         ]);
 
-        $server->shouldReceive('getStorage')->with('auth_code')->andReturn($authCodeStorage);
+        $server->shouldReceive('getAuthCodeStorage')->andReturn($authCodeStorage);
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('getByAuthCode')->andReturn(
@@ -48,7 +48,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
         );
         $sessionStorage->shouldReceive('setServer');
 
-        $server->shouldReceive('getStorage')->with('session')->andReturn($sessionStorage);
+        $server->shouldReceive('getSessionStorage')->andReturn($sessionStorage);
 
         $server->setAuthCodeStorage($authCodeStorage);
         $server->setSessionStorage($sessionStorage);
