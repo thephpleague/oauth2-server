@@ -38,6 +38,12 @@ $router->get('/oauth', function (Request $request) use ($server) {
 
     } catch (\Exception $e) {
 
+        if ($e->shouldRedirect()) {
+            return new Response('', 302, [
+                'Location'  =>  $e->getRedirectUri()
+            ]);
+        }
+
         return new Response(
             json_encode([
                 'error'     =>  $e->errorType,
@@ -51,11 +57,9 @@ $router->get('/oauth', function (Request $request) use ($server) {
 
     // Everything is okay, save $authParams to the a session and redirect the user to sign-in
 
-    $response = new Response('', 302, [
+    return = new Response('', 302, [
         'Location'  =>  '/signin'
     ]);
-
-    return $response;
 
 });
 ~~~
