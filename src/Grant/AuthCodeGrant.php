@@ -99,22 +99,22 @@ class AuthCodeGrant extends AbstractGrant
 
         $state = $this->server->getRequest()->query->get('state', null);
         if ($this->server->stateParamRequired() === true && is_null($state)) {
-            throw new Exception\InvalidRequestException('state', true);
+            throw new Exception\InvalidRequestException('state', $redirectUri);
         }
 
         $responseType = $this->server->getRequest()->query->get('response_type', null);
         if (is_null($responseType)) {
-            throw new Exception\InvalidRequestException('response_type', true);
+            throw new Exception\InvalidRequestException('response_type', $redirectUri);
         }
 
         // Ensure response type is one that is recognised
         if (!in_array($responseType, $this->server->getResponseTypes())) {
-            throw new Exception\UnsupportedResponseTypeException($responseType);
+            throw new Exception\UnsupportedResponseTypeException($responseType, $redirectUri);
         }
 
         // Validate any scopes that are in the request
         $scopeParam = $this->server->getRequest()->query->get('scope', '');
-        $scopes = $this->validateScopes($scopeParam, $client);
+        $scopes = $this->validateScopes($scopeParam, $client, $redirectUri);
 
         return [
             'client'        =>  $client,

@@ -24,10 +24,10 @@ class OAuthException extends \Exception
     public $httpStatusCode = 400;
 
     /**
-     * If true the server should redirect back to the client
-     * @var boolean
+     * Redirect URI if the server should redirect back to the client
+     * @var string|null
      */
-    public $serverShouldRedirect = false;
+    public $redirectUri = null;
 
     /**
      * The exception type
@@ -48,7 +48,22 @@ class OAuthException extends \Exception
      */
     public function shouldRedirect()
     {
-        return $this->serverShouldRedirect;
+        return is_null($this->redirectUri) ? false : true;
+    }
+
+    /**
+     * Return redirect URI if set
+     * @return string|null
+     */
+    public function getRedirectUri()
+    {
+        return \League\OAuth2\Server\Util\RedirectUri::make(
+            $this->redirectUri,
+            [
+                'error' =>  $this->errorType,
+                'message' =>  $this->getMessage(),
+            ]
+        );
     }
 
     /**

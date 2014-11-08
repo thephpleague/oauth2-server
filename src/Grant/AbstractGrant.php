@@ -121,11 +121,12 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Given a list of scopes, validate them and return an array of Scope entities
      * @param  string                                       $scopeParam  A string of scopes (e.g. "profile email birthday")
-     * @param  \League\OAuth2\Server\Entity\ClientEntity    $client      A string of scopes (e.g. "profile email birthday")
+     * @param  \League\OAuth2\Server\Entity\ClientEntity    $client      Client entity
+     * @param  string|null                                  $redirectUri The redirect URI to return the user to
      * @return \League\OAuth2\Server\Entity\ScopeEntity[]
-     * @throws \League\OAuth2\Server\Exception\ClientException           If scope is invalid, or no scopes passed when required
+     * @throws \League\OAuth2\Server\Exception\InvalidScopeException     If scope is invalid, or no scopes passed when required
      */
-    public function validateScopes($scopeParam = '', ClientEntity $client)
+    public function validateScopes($scopeParam = '', ClientEntity $client, $redirectUri = null)
     {
         $scopesList = explode($this->server->getScopeDelimeter(), $scopeParam);
 
@@ -160,7 +161,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             );
 
             if (($scope instanceof ScopeEntity) === false) {
-                throw new Exception\InvalidScopeException($scopeItem, true);
+                throw new Exception\InvalidScopeException($scopeItem, $redirectUri);
             }
 
             $scopes[$scope->getId()] = $scope;
