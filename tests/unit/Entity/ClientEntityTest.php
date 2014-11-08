@@ -3,9 +3,9 @@
 namespace LeagueTests\Entity;
 
 use League\OAuth2\Server\Entity\ClientEntity;
-use \Mockery as M;
+use Mockery as M;
 
-class ClientTest extends \PHPUnit_Framework_TestCase
+class ClientEntityTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetGet()
     {
@@ -14,7 +14,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             'id' => 'foobar',
             'secret' => 'barfoo',
             'name' => 'Test Client',
-            'redirectUri' => 'http://foo/bar'
+            'redirectUri' => 'http://foo/bar',
         ]);
 
         $this->assertEquals('foobar', $client->getId());

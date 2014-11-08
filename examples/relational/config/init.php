@@ -29,7 +29,7 @@ Capsule::table('users')->insert([
     'password'  =>  password_hash('whisky', PASSWORD_DEFAULT),
     'name'      =>  'Alex Bilbie',
     'email'     =>  'hello@alexbilbie.com',
-    'photo'     =>  'https://s.gravatar.com/avatar/14902eb1dac66b8458ebbb481d80f0a3'
+    'photo'     =>  'https://s.gravatar.com/avatar/14902eb1dac66b8458ebbb481d80f0a3',
 ]);
 
 Capsule::table('users')->insert([
@@ -37,7 +37,7 @@ Capsule::table('users')->insert([
     'password'  =>  password_hash('cider', PASSWORD_DEFAULT),
     'name'      =>  'Phil Sturgeon',
     'email'     =>  'email@philsturgeon.co.uk',
-    'photo'     =>  'https://s.gravatar.com/avatar/14df293d6c5cd6f05996dfc606a6a951'
+    'photo'     =>  'https://s.gravatar.com/avatar/14df293d6c5cd6f05996dfc606a6a951',
 ]);
 
 /******************************************************************************/
@@ -54,7 +54,7 @@ Capsule::schema()->create('oauth_clients', function ($table) {
 Capsule::table('oauth_clients')->insert([
     'id'        =>  'testclient',
     'secret'    =>  'secret',
-    'name'      =>  'Test Client'
+    'name'      =>  'Test Client',
 ]);
 
 /******************************************************************************/
@@ -69,7 +69,7 @@ Capsule::schema()->create('oauth_client_redirect_uris', function ($table) {
 
 Capsule::table('oauth_client_redirect_uris')->insert([
     'client_id'     =>  'testclient',
-    'redirect_uri'  =>  'http://example.com/redirect'
+    'redirect_uri'  =>  'http://example.com/redirect',
 ]);
 
 /******************************************************************************/
@@ -84,17 +84,17 @@ Capsule::schema()->create('oauth_scopes', function ($table) {
 
 Capsule::table('oauth_scopes')->insert([
     'id'            =>  'basic',
-    'description'   =>  'Basic details about your account'
+    'description'   =>  'Basic details about your account',
 ]);
 
 Capsule::table('oauth_scopes')->insert([
     'id'            =>  'email',
-    'description'   =>  'Your email address'
+    'description'   =>  'Your email address',
 ]);
 
 Capsule::table('oauth_scopes')->insert([
     'id'            =>  'photo',
-    'description'   =>  'Your photo'
+    'description'   =>  'Your photo',
 ]);
 
 /******************************************************************************/
@@ -114,19 +114,19 @@ Capsule::schema()->create('oauth_sessions', function ($table) {
 Capsule::table('oauth_sessions')->insert([
     'owner_type'    =>  'client',
     'owner_id'      =>  'testclient',
-    'client_id'     =>  'testclient'
+    'client_id'     =>  'testclient',
 ]);
 
 Capsule::table('oauth_sessions')->insert([
     'owner_type'    =>  'user',
     'owner_id'      =>  '1',
-    'client_id'     =>  'testclient'
+    'client_id'     =>  'testclient',
 ]);
 
 Capsule::table('oauth_sessions')->insert([
     'owner_type'    =>  'user',
     'owner_id'      =>  '2',
-    'client_id'     =>  'testclient'
+    'client_id'     =>  'testclient',
 ]);
 
 /******************************************************************************/
@@ -144,19 +144,19 @@ Capsule::schema()->create('oauth_access_tokens', function ($table) {
 Capsule::table('oauth_access_tokens')->insert([
     'access_token'  =>  'iamgod',
     'session_id'    =>  '1',
-    'expire_time'   =>  time() + 86400
+    'expire_time'   =>  time() + 86400,
 ]);
 
 Capsule::table('oauth_access_tokens')->insert([
     'access_token'  =>  'iamalex',
     'session_id'    =>  '2',
-    'expire_time'   =>  time() + 86400
+    'expire_time'   =>  time() + 86400,
 ]);
 
 Capsule::table('oauth_access_tokens')->insert([
     'access_token'  =>  'iamphil',
     'session_id'    =>  '3',
-    'expire_time'   =>  time() + 86400
+    'expire_time'   =>  time() + 86400,
 ]);
 
 /******************************************************************************/
@@ -199,27 +199,27 @@ Capsule::schema()->create('oauth_access_token_scopes', function ($table) {
 
 Capsule::table('oauth_access_token_scopes')->insert([
     'access_token'  =>  'iamgod',
-    'scope'         =>  'basic'
+    'scope'         =>  'basic',
 ]);
 
 Capsule::table('oauth_access_token_scopes')->insert([
     'access_token'  =>  'iamgod',
-    'scope'         =>  'email'
+    'scope'         =>  'email',
 ]);
 
 Capsule::table('oauth_access_token_scopes')->insert([
     'access_token'  =>  'iamgod',
-    'scope'         =>  'photo'
+    'scope'         =>  'photo',
 ]);
 
 Capsule::table('oauth_access_token_scopes')->insert([
     'access_token'  =>  'iamphil',
-    'scope'         =>  'email'
+    'scope'         =>  'email',
 ]);
 
 Capsule::table('oauth_access_token_scopes')->insert([
     'access_token'  =>  'iamalex',
-    'scope'         =>  'photo'
+    'scope'         =>  'photo',
 ]);
 
 /******************************************************************************/

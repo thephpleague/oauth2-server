@@ -2,12 +2,11 @@
 
 namespace RelationalExample\Storage;
 
-use League\OAuth2\Server\Storage\ClientInterface;
-use League\OAuth2\Server\Storage\Adapter;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
-
-use Illuminate\Database\Capsule\Manager as Capsule;
+use League\OAuth2\Server\Storage\Adapter;
+use League\OAuth2\Server\Storage\ClientInterface;
 
 class ClientStorage extends Adapter implements ClientInterface
 {
@@ -36,7 +35,7 @@ class ClientStorage extends Adapter implements ClientInterface
             $client = new ClientEntity($this->server);
             $client->hydrate([
                 'id'    =>  $result[0]['id'],
-                'name'  =>  $result[0]['name']
+                'name'  =>  $result[0]['name'],
             ]);
 
             return $client;
@@ -60,7 +59,7 @@ class ClientStorage extends Adapter implements ClientInterface
             $client = new ClientEntity($this->server);
             $client->hydrate([
                 'id'    =>  $result[0]['id'],
-                'name'  =>  $result[0]['name']
+                'name'  =>  $result[0]['name'],
             ]);
 
             return $client;

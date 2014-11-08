@@ -23,7 +23,7 @@ class RedirectUri
      * @param  string $queryDelimeter The query string delimeter (default: "?")
      * @return string The updated URI
      */
-    public static function make($uri, $params = array(), $queryDelimeter = '?')
+    public static function make($uri, $params = [], $queryDelimeter = '?')
     {
         $uri .= (strstr($uri, $queryDelimeter) === false) ? $queryDelimeter : '&';
 

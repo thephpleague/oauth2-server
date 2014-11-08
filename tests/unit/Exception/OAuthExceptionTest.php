@@ -2,13 +2,13 @@
 
 namespace LeagueTests;
 
-use \Mockery as M;
+use League\OAuth2\Server\Exception\OAuthException;
 
 class OAuthExceptionTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetHttpHeaders()
     {
-        $exception = new \League\OAuth2\Server\Exception\OAuthException();
+        $exception = new OAuthException();
 
         $exception->httpStatusCode = 400;
         $this->assertSame($exception->getHttpHeaders(), ['HTTP/1.1 400 Bad Request']);
@@ -25,7 +25,7 @@ class OAuthExceptionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldRedirect()
     {
-        $exception = new \League\OAuth2\Server\Exception\OAuthException();
+        $exception = new OAuthException();
         $exception->redirectUri = 'http://example.com/';
         $exception->errorType = 'Error';
         $this->assertTrue($exception->shouldRedirect());

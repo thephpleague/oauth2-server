@@ -3,16 +3,16 @@
 namespace LeagueTests\Entity;
 
 use League\OAuth2\Server\Entity\ScopeEntity;
-use \Mockery as M;
+use Mockery as M;
 
-class ScopeTest extends \PHPUnit_Framework_TestCase
+class ScopeEntityTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetGet()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
         $scope = (new ScopeEntity($server))->hydrate([
             'id' => 'foobar',
-            'description' => 'barfoo'
+            'description' => 'barfoo',
         ]);
 
         $this->assertEquals('foobar', $scope->getId());

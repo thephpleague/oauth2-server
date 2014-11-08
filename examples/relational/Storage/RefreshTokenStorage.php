@@ -2,11 +2,10 @@
 
 namespace RelationalExample\Storage;
 
-use League\OAuth2\Server\Storage\RefreshTokenInterface;
-use League\OAuth2\Server\Storage\Adapter;
-use League\OAuth2\Server\Entity\RefreshTokenEntity;
-
 use Illuminate\Database\Capsule\Manager as Capsule;
+use League\OAuth2\Server\Entity\RefreshTokenEntity;
+use League\OAuth2\Server\Storage\Adapter;
+use League\OAuth2\Server\Storage\RefreshTokenInterface;
 
 class RefreshTokenStorage extends Adapter implements RefreshTokenInterface
 {
@@ -40,7 +39,7 @@ class RefreshTokenStorage extends Adapter implements RefreshTokenInterface
                     ->insert([
                         'refresh_token'     =>  $token,
                         'access_token'    =>  $accessToken,
-                        'expire_time'   =>  $expireTime
+                        'expire_time'   =>  $expireTime,
                     ]);
     }
 
@@ -53,5 +52,4 @@ class RefreshTokenStorage extends Adapter implements RefreshTokenInterface
                             ->where('refresh_token', $token->getId())
                             ->delete();
     }
-
 }

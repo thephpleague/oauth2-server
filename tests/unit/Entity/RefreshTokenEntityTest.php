@@ -2,11 +2,11 @@
 
 namespace LeagueTests\Entity;
 
-use League\OAuth2\Server\Entity\ScopeEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
-use \Mockery as M;
+use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\SessionEntity;
+use Mockery as M;
 
 class RefreshTokenEntityTest extends \PHPUnit_Framework_TestCase
 {
@@ -55,7 +55,7 @@ class RefreshTokenEntityTest extends \PHPUnit_Framework_TestCase
             (new AccessTokenEntity($server))->setId('foobar')
         );
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
+            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
         ]);
 
         $server->shouldReceive('getAccessTokenStorage')->andReturn($accessTokenStorage);

@@ -11,9 +11,8 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\AbstractTokenEntity;
-use League\OAuth2\Server\Entity\RefreshTokenEntity;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 
 /**

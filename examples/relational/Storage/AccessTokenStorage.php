@@ -2,14 +2,12 @@
 
 namespace RelationalExample\Storage;
 
+use Illuminate\Database\Capsule\Manager as Capsule;
+use League\OAuth2\Server\Entity\AbstractTokenEntity;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\Adapter;
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\AbstractTokenEntity;
-use League\OAuth2\Server\Entity\RefreshTokenEntity;
-use League\OAuth2\Server\Entity\ScopeEntity;
-
-use Illuminate\Database\Capsule\Manager as Capsule;
 
 class AccessTokenStorage extends Adapter implements AccessTokenInterface
 {
@@ -50,7 +48,7 @@ class AccessTokenStorage extends Adapter implements AccessTokenInterface
             foreach ($result as $row) {
                 $scope = (new ScopeEntity($this->server))->hydrate([
                     'id'            =>  $row['id'],
-                    'description'   =>  $row['description']
+                    'description'   =>  $row['description'],
                 ]);
                 $response[] = $scope;
             }
@@ -68,7 +66,7 @@ class AccessTokenStorage extends Adapter implements AccessTokenInterface
                     ->insert([
                         'access_token'     =>  $token,
                         'session_id'    =>  $sessionId,
-                        'expire_time'   =>  $expireTime
+                        'expire_time'   =>  $expireTime,
                     ]);
     }
 
@@ -80,7 +78,7 @@ class AccessTokenStorage extends Adapter implements AccessTokenInterface
         Capsule::table('oauth_access_token_scopes')
                     ->insert([
                         'access_token'  =>  $token->getId(),
-                        'scope' =>  $scope->getId()
+                        'scope' =>  $scope->getId(),
                     ]);
     }
 

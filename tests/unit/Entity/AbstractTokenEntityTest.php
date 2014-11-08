@@ -3,12 +3,12 @@
 namespace LeagueTests\Entity;
 
 use LeagueTests\Stubs\StubAbstractTokenEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
-use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\AuthorizationServer;
-use \Mockery as M;
+use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\SessionEntity;
+use Mockery as M;
 
-class AbstractTokenTest extends \PHPUnit_Framework_TestCase
+class AbstractTokenEntityTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetGet()
     {
@@ -93,7 +93,7 @@ class AbstractTokenTest extends \PHPUnit_Framework_TestCase
 
         $scopes = [
             (new ScopeEntity($server))->hydrate(['id' => 'scope1', 'description' => 'foo']),
-            (new ScopeEntity($server))->hydrate(['id' => 'scope2', 'description' => 'bar'])
+            (new ScopeEntity($server))->hydrate(['id' => 'scope2', 'description' => 'bar']),
         ];
 
         $result = $method->invokeArgs($entity, [$scopes]);

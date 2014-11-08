@@ -11,16 +11,15 @@
 
 namespace League\OAuth2\Server;
 
-use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\TokenType\TokenTypeInterface;
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\AccessTokenInterface;
-use League\OAuth2\Server\Storage\RefreshTokenInterface;
-use League\OAuth2\Server\Storage\AuthCodeInterface;
-use League\OAuth2\Server\Storage\ScopeInterface;
-use League\OAuth2\Server\Storage\ClientInterface;
-use Symfony\Component\HttpFoundation\Request;
 use League\Event\Emitter;
+use League\OAuth2\Server\Storage\AccessTokenInterface;
+use League\OAuth2\Server\Storage\AuthCodeInterface;
+use League\OAuth2\Server\Storage\ClientInterface;
+use League\OAuth2\Server\Storage\RefreshTokenInterface;
+use League\OAuth2\Server\Storage\ScopeInterface;
+use League\OAuth2\Server\Storage\SessionInterface;
+use League\OAuth2\Server\TokenType\TokenTypeInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * OAuth 2.0 Resource Server
@@ -98,7 +97,7 @@ abstract class AbstractServer
     public function setEventEmitter($emitter = null)
     {
         if ($emitter === null) {
-            $this->eventEmitter = new Emitter;
+            $this->eventEmitter = new Emitter();
         } else {
             $this->eventEmitter = $emitter;
         }

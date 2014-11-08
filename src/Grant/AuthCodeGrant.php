@@ -11,15 +11,15 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Request;
-use League\OAuth2\Server\Exception;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\AuthCodeEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\AuthCodeEntity;
-use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\Event;
+use League\OAuth2\Server\Exception;
+use League\OAuth2\Server\Request;
+use League\OAuth2\Server\Util\SecureKey;
 
 /**
  * Auth code grant class
@@ -234,7 +234,7 @@ class AuthCodeGrant extends AbstractGrant
         }
 
         foreach ($session->getScopes() as $scope) {
-           $accessToken->associateScope($scope);
+            $accessToken->associateScope($scope);
         }
 
         $this->server->getTokenType()->setSession($session);

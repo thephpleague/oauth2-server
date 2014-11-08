@@ -2,21 +2,21 @@
 
 namespace LeagueTests\Grant;
 
-use League\OAuth2\Server\Grant;
-use League\OAuth2\Server\Entity\ScopeEntity;
-use League\OAuth2\Server\Entity\ClientEntity;
-use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Exception\InvalidRequestException;
 use LeagueTests\Stubs\StubAbstractGrant;
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Exception\InvalidRequestException;
+use League\OAuth2\Server\Grant;
 use Mockery as M;
 
 class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetGet()
     {
-        $server = new AuthorizationServer;
+        $server = new AuthorizationServer();
 
-        $grant = new StubAbstractGrant;
+        $grant = new StubAbstractGrant();
         $grant->setIdentifier('foobar');
         $grant->setAccessTokenTTL(300);
         $grant->setAuthorizationServer($server);
@@ -31,14 +31,14 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
 
-        $grant = new StubAbstractGrant;
+        $grant = new StubAbstractGrant();
         $reflectedGrant = new \ReflectionClass('LeagueTests\Stubs\StubAbstractGrant');
         $method = $reflectedGrant->getMethod('formatScopes');
         $method->setAccessible(true);
 
         $scopes = [
             (new ScopeEntity($server))->hydrate(['id' => 'scope1', 'description' => 'foo']),
-            (new ScopeEntity($server))->hydrate(['id' => 'scope2', 'description' => 'bar'])
+            (new ScopeEntity($server))->hydrate(['id' => 'scope2', 'description' => 'bar']),
         ];
 
         $result = $method->invokeArgs($grant, [$scopes]);
@@ -51,7 +51,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateScopes()
     {
-        $server = new AuthorizationServer;
+        $server = new AuthorizationServer();
 
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
@@ -61,14 +61,14 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $server->setScopeStorage($scopeStorage);
 
-        $grant = new StubAbstractGrant;
+        $grant = new StubAbstractGrant();
         $grant->setAuthorizationServer($server);
 
         $client = (new ClientEntity($server))->hydrate(['id' => 'testapp']);
 
         $this->assertEquals(
             [
-                'foo' => (new ScopeEntity($server))->hydrate(['id' => 'foo'])
+                'foo' => (new ScopeEntity($server))->hydrate(['id' => 'foo']),
             ],
             $grant->validateScopes('foo', $client)
         );
@@ -81,11 +81,11 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
 
-        $server = new AuthorizationServer;
+        $server = new AuthorizationServer();
         $server->requireScopeParam(true);
         $server->setScopeStorage($scopeStorage);
 
-        $grant = new StubAbstractGrant;
+        $grant = new StubAbstractGrant();
         $grant->setAuthorizationServer($server);
 
         $client = (new ClientEntity($server))->hydrate(['id' => 'testapp']);
@@ -101,10 +101,10 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $scopeStorage->shouldReceive('setServer');
         $scopeStorage->shouldReceive('get')->andReturn(null);
 
-        $server = new AuthorizationServer;
+        $server = new AuthorizationServer();
         $server->setScopeStorage($scopeStorage);
 
-        $grant = new StubAbstractGrant;
+        $grant = new StubAbstractGrant();
         $grant->setAuthorizationServer($server);
 
         $client = (new ClientEntity($server))->hydrate(['id' => 'testapp']);
@@ -114,7 +114,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateScopesDefaultScope()
     {
-        $server = new AuthorizationServer;
+        $server = new AuthorizationServer();
 
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
@@ -127,7 +127,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $server->setScopeStorage($scopeStorage);
         $server->setDefaultScope('foo');
 
-        $grant = new StubAbstractGrant;
+        $grant = new StubAbstractGrant();
         $grant->setAuthorizationServer($server);
 
         $client = (new ClientEntity($server))->hydrate(['id' => 'testapp']);
@@ -137,7 +137,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateScopesDefaultScopeArray()
     {
-        $server = new AuthorizationServer;
+        $server = new AuthorizationServer();
 
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
@@ -150,7 +150,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $server->setScopeStorage($scopeStorage);
         $server->setDefaultScope(['foo', 'bar']);
 
-        $grant = new StubAbstractGrant;
+        $grant = new StubAbstractGrant();
         $grant->setAuthorizationServer($server);
 
         $client = (new ClientEntity($server))->hydrate(['id' => 'testapp']);

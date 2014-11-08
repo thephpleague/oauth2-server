@@ -2,14 +2,13 @@
 
 namespace RelationalExample\Storage;
 
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\Adapter;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\AuthCodeEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
-
-use Illuminate\Database\Capsule\Manager as Capsule;
+use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Storage\Adapter;
+use League\OAuth2\Server\Storage\SessionInterface;
 
 class SessionStorage extends Adapter implements SessionInterface
 {
@@ -74,7 +73,7 @@ class SessionStorage extends Adapter implements SessionInterface
         foreach ($result as $scope) {
             $scopes[] = (new ScopeEntity($this->server))->hydrate([
                 'id'            =>  $scope['id'],
-                'description'   =>  $scope['description']
+                'description'   =>  $scope['description'],
             ]);
         }
 
@@ -90,7 +89,7 @@ class SessionStorage extends Adapter implements SessionInterface
                         ->insertGetId([
                             'owner_type'  =>    $ownerType,
                             'owner_id'    =>    $ownerId,
-                            'client_id'   =>    $clientId
+                            'client_id'   =>    $clientId,
                         ]);
 
         return $id;
@@ -104,7 +103,7 @@ class SessionStorage extends Adapter implements SessionInterface
         Capsule::table('oauth_session_scopes')
                             ->insert([
                                 'session_id'    =>  $session->getId(),
-                                'scope'         =>  $scope->getId()
+                                'scope'         =>  $scope->getId(),
                             ]);
     }
 }

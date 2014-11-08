@@ -11,13 +11,12 @@
 
 namespace League\OAuth2\Server;
 
-use League\OAuth2\Server\Storage\ClientInterface;
-use League\OAuth2\Server\Storage\AccessTokenInterface;
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Storage\AccessTokenInterface;
+use League\OAuth2\Server\Storage\ClientInterface;
+use League\OAuth2\Server\Storage\ScopeInterface;
+use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\TokenType\Bearer;
-use League\OAuth2\Server\Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -57,7 +56,7 @@ class ResourceServer extends AbstractServer
         $this->setScopeStorage($scopeStorage);
 
         // Set Bearer as the default token type
-        $this->setTokenType(new Bearer);
+        $this->setTokenType(new Bearer());
 
         parent::__construct();
 
@@ -101,13 +100,13 @@ class ResourceServer extends AbstractServer
 
         // Ensure the access token exists
         if (!$this->accessToken instanceof AccessTokenEntity) {
-            throw new Exception\AccessDeniedException;
+            throw new Exception\AccessDeniedException();
         }
 
         // Check the access token hasn't expired
         // Ensure the auth code hasn't expired
         if ($this->accessToken->isExpired() === true) {
-            throw new Exception\AccessDeniedException;
+            throw new Exception\AccessDeniedException();
         }
 
         return true;
