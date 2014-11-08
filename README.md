@@ -1,54 +1,45 @@
-# PHP OAuth 2.0 Server
+# PHP OAuth 2.0 Server by [@alexbilbie](https://twitter.com/alexbilbie)
 
-[![Latest Stable Version](https://poser.pugx.org/league/oauth2-server/v/stable.png)](https://packagist.org/packages/league/oauth2-server) [![Coverage Status](https://coveralls.io/repos/thephpleague/oauth2-server/badge.png?branch=master)](https://coveralls.io/r/thephpleague/oauth2-server?branch=master) [![Total Downloads](https://poser.pugx.org/league/oauth2-server/downloads.png)](https://packagist.org/packages/league/oauth2-server) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/thephpleague/oauth2-server/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
-
-A standards compliant [OAuth 2.0](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authorization server and resource server written in PHP.
-
-## Package Installation
-
-The framework is provided as a Composer package which can be installed by adding the package to your `composer.json` file:
-
-```javascript
-{
-	"require": {
-		"league/oauth2-server": "3.*"
-	}
-}
-```
-
-### Framework Integrations
-
-* [Laravel Service Provider](https://packagist.org/packages/lucadegasperi/oauth2-server-laravel) by @lucadegasperi
-* [Laravel Eloquent implementation](https://github.com/ScubaClick/scubaclick-oauth2) by @ScubaClick (under development)
-
----
-
-The library features 100% unit test code coverage. To run the tests yourself run `phpunit` from the project root.
-
-[![Build Status](https://travis-ci.org/thephpleague/oauth2-server.png?branch=master)](https://travis-ci.org/thephpleague/oauth2-server) [master]
-
-[![Build Status](https://travis-ci.org/thephpleague/oauth2-server.png?branch=develop)](https://travis-ci.org/thephpleague/oauth2-server) [develop]
+[![Latest Version](http://img.shields.io/packagist/v/league/oauth2-server.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Build Status](https://img.shields.io/travis/thephpleague/oauth2-server/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/oauth2-server)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server)
+[![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-server.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-server)
 
 
-## Current Features
+A standards compliant [OAuth 2.0](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authorization server and resource server written in PHP which makes working with OAuth 2.0 trivial. You can easily configure an OAuth 2.0 server to protect your API with access tokens, or allow clients to request new access tokens and refresh them.
 
-### Authorization Server
+It supports out of the box the following grants:
 
-The authorization server is a flexible class and the following core specification grants are implemented:
+* Authorization code grant
+* Client credentials grant
+* Resource owner password credentials grant
+* Refresh grant
 
-* authorization code ([section 4.1](http://tools.ietf.org/html/rfc6749#section-4.1))
-* refresh token ([section 6](http://tools.ietf.org/html/rfc6749#section-6))
-* client credentials ([section 2.3.1](http://tools.ietf.org/html/rfc6749#section-2.3.1))
-* password (user credentials) ([section 4.3](http://tools.ietf.org/html/rfc6749#section-4.3))
+You can also define your own grants.
 
-### Resource Server
+In addition it supports the following token types:
 
-The resource server allows you to secure your API endpoints by checking for a valid OAuth access token in the request and ensuring the token has the correct scope(s) (i.e. permissions) to access resources.
+* Bearer tokens
+* MAC tokens (coming soon)
+* JSON web tokens (coming soon)
 
-### Custom grants
 
-Custom grants can be created easily by implementing an interface.
+## Requirements
+
+The following versions of PHP are supported:
+
+* PHP 5.4
+* PHP 5.5
+* PHP 5.6
+* HHVM
+
+## Documentation
+
+This library has [full documentation](http://oauth2.thephpleague.com), powered by [Jekyll](http://jekyllrb.com/).
+
+Contribute to this documentation in the [gh-pages branch](https://github.com/thephpleague/oauth2-server/tree/gh-pages/).
 
 ## Changelog
 
@@ -79,5 +70,3 @@ Special thanks to:
 * [and all the other contributors](https://github.com/thephpleague/oauth2-server/contributors)
 
 The initial code was developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which was funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/thephpleague/oauth2-server/trend.png)](https://bitdeli.com/free "Bitdeli Badge")

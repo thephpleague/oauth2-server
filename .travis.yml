@@ -5,14 +5,15 @@ php:
   - 5.5
   - 5.6
   - hhvm
-  
-matrix:
-  allow_failures:
-    - php: hhvm
 
-before_script: composer install --prefer-source
-script: phpunit --configuration phpunit.xml.dist
+before_script:
+    - travis_retry composer self-update
+    - travis_retry composer install --no-interaction --prefer-source --dev
 
-cache:
-  directories:
-    - vendor
+script:
+  - mkdir -p build/logs
+  - phpunit --coverage-text --verbose --coverage-clover=coverage.clover
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
