@@ -22,4 +22,13 @@ class OAuthExceptionTest extends \PHPUnit_Framework_TestCase
         $exception->httpStatusCode = 501;
         $this->assertSame($exception->getHttpHeaders(), ['HTTP/1.1 501 Not Implemented']);
     }
+
+    public function testShouldRedirect()
+    {
+        $exception = new \League\OAuth2\Server\Exception\OAuthException();
+        $exception->redirectUri = 'http://example.com/';
+        $exception->errorType = 'Error';
+        $this->assertTrue($exception->shouldRedirect());
+        $this->assertEquals('http://example.com/?error=Error&message=An+error+occured', $exception->getRedirectUri());
+    }
 }
