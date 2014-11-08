@@ -209,6 +209,11 @@ class AuthCodeGrant extends AbstractGrant
             throw new Exception\InvalidRequestException('code');
         }
 
+        // Ensure the auth code hasn't expired
+        if ($code->isExpired() === true) {
+            throw new Exception\InvalidRequestException('code');
+        }
+
         // Check redirect URI presented matches redirect URI originally used in authorize request
         if ($code->getRedirectUri() !== $redirectUri) {
             throw new Exception\InvalidRequestException('redirect_uri');

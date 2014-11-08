@@ -99,7 +99,14 @@ class ResourceServer extends AbstractServer
         // Set the access token
         $this->accessToken = $this->getAccessTokenStorage()->get($accessTokenString);
 
+        // Ensure the access token exists
         if (!$this->accessToken instanceof AccessTokenEntity) {
+            throw new Exception\AccessDeniedException;
+        }
+
+        // Check the access token hasn't expired
+        // Ensure the auth code hasn't expired
+        if ($this->accessToken->isExpired() === true) {
             throw new Exception\AccessDeniedException;
         }
 

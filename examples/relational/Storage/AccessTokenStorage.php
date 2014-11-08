@@ -20,7 +20,6 @@ class AccessTokenStorage extends Adapter implements AccessTokenInterface
     {
         $result = Capsule::table('oauth_access_tokens')
                             ->where('access_token', $token)
-                            ->where('expire_time', '>=', time())
                             ->get();
 
         if (count($result) === 1) {

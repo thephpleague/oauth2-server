@@ -17,7 +17,6 @@ class RefreshTokenStorage extends Adapter implements RefreshTokenInterface
     {
         $result = Capsule::table('oauth_refresh_tokens')
                             ->where('refresh_token', $token)
-                            ->where('expire_time', '>=', time())
                             ->get();
 
         if (count($result) === 1) {

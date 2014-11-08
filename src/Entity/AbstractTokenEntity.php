@@ -97,6 +97,15 @@ abstract class AbstractTokenEntity
     }
 
     /**
+     * Is the token expired?
+     * @return bool
+     */
+    public function isExpired()
+    {
+        return ((time() - $this->expireTime) > 0);
+    }
+
+    /**
      * Set token ID
      * @param  string $token Token ID
      * @return self

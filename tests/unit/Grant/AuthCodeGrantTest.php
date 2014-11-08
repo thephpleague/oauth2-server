@@ -551,7 +551,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $authCodeStorage->shouldReceive('setServer');
         $authCodeStorage->shouldReceive('delete');
         $authCodeStorage->shouldReceive('get')->andReturn(
-            (new AuthCodeEntity($server))->setId('foobar')->setRedirectUri('http://foo/bar')
+            (new AuthCodeEntity($server))->setId('foobar')->setRedirectUri('http://foo/bar')->setExpireTime(time() + 300)
         );
         $authCodeStorage->shouldReceive('getScopes')->andReturn([
             (new ScopeEntity($server))->hydrate(['id' => 'foo'])
@@ -622,7 +622,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $authCodeStorage->shouldReceive('setServer');
         $authCodeStorage->shouldReceive('delete');
         $authCodeStorage->shouldReceive('get')->andReturn(
-            (new AuthCodeEntity($server))->setId('foobar')->setRedirectUri('http://foo/bar')
+            (new AuthCodeEntity($server))->setId('foobar')->setRedirectUri('http://foo/bar')->setExpireTime(time() + 300)
         );
         $authCodeStorage->shouldReceive('getScopes')->andReturn([
             (new ScopeEntity($server))->hydrate(['id' => 'foo'])
