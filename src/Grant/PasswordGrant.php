@@ -11,13 +11,13 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Event;
 
 /**
  * Password grant class
@@ -141,11 +141,11 @@ class PasswordGrant extends AbstractGrant
 
         // Associate scopes with the session and access token
         foreach ($scopes as $scope) {
-           $session->associateScope($scope);
+            $session->associateScope($scope);
         }
 
         foreach ($session->getScopes() as $scope) {
-           $accessToken->associateScope($scope);
+            $accessToken->associateScope($scope);
         }
 
         $this->server->getTokenType()->setSession($session);

@@ -2,11 +2,10 @@
 
 namespace RelationalExample\Storage;
 
-use League\OAuth2\Server\Storage\ScopeInterface;
-use League\OAuth2\Server\Storage\Adapter;
-use League\OAuth2\Server\Entity\ScopeEntity;
-
 use Illuminate\Database\Capsule\Manager as Capsule;
+use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Storage\Adapter;
+use League\OAuth2\Server\Storage\ScopeInterface;
 
 class ScopeStorage extends Adapter implements ScopeInterface
 {
@@ -25,7 +24,7 @@ class ScopeStorage extends Adapter implements ScopeInterface
 
         return (new ScopeEntity($this->server))->hydrate([
             'id'            =>  $result[0]['id'],
-            'description'   =>  $result[0]['description']
+            'description'   =>  $result[0]['description'],
         ]);
     }
 }

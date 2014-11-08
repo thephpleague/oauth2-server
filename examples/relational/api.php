@@ -1,19 +1,17 @@
 <?php
-use \Orno\Http\Request;
-use \Orno\Http\Response;
-use \Orno\Http\JsonResponse;
-use \Orno\Http\Exception\NotFoundException;
-use \League\OAuth2\Server\ResourceServer;
-use \RelationalExample\Storage;
-use \RelationalExample\Model;
-use Illuminate\Database\Capsule\Manager as Capsule;
-use \League\Event\Emitter;
+
+use League\OAuth2\Server\ResourceServer;
+use Orno\Http\Exception\NotFoundException;
+use Orno\Http\Request;
+use Orno\Http\Response;
+use RelationalExample\Model;
+use RelationalExample\Storage;
 
 include __DIR__.'/vendor/autoload.php';
 
 // Routing setup
-$request = (new Request)->createFromGlobals();
-$router = new \Orno\Route\RouteCollection;
+$request = (new Request())->createFromGlobals();
+$router = new \Orno\Route\RouteCollection();
 $router->setStrategy(\Orno\Route\RouteStrategyInterface::RESTFUL_STRATEGY);
 
 // Set up the OAuth 2.0 resource server
@@ -30,8 +28,8 @@ $server = new ResourceServer(
 );
 
 // Routing setup
-$request = (new Request)->createFromGlobals();
-$router = new \Orno\Route\RouteCollection;
+$request = (new Request())->createFromGlobals();
+$router = new \Orno\Route\RouteCollection();
 
 // GET /tokeninfo
 $router->get('/tokeninfo', function (Request $request) use ($server) {
@@ -41,7 +39,7 @@ $router->get('/tokeninfo', function (Request $request) use ($server) {
         'owner_type'  =>  $server->getOwnerType(),
         'access_token'  =>  $server->getAccessToken(),
         'client_id'  =>  $server->getClientId(),
-        'scopes'  =>  $server->getScopes()
+        'scopes'  =>  $server->getScopes(),
     ];
 
     return new Response(json_encode($token));
@@ -58,7 +56,7 @@ $router->get('/users', function (Request $request) use ($server) {
     foreach ($results as $result) {
         $user = [
             'username'  =>  $result['username'],
-            'name'      =>  $result['name']
+            'name'      =>  $result['name'],
         ];
 
         if ($server->hasScope('email')) {
@@ -86,7 +84,7 @@ $router->get('/users/{username}', function (Request $request, $args) use ($serve
 
     $user = [
         'username'  =>  $result[0]['username'],
-        'name'      =>  $result[0]['name']
+        'name'      =>  $result[0]['name'],
     ];
 
     if ($server->hasScope('email')) {
@@ -103,7 +101,6 @@ $router->get('/users/{username}', function (Request $request, $args) use ($serve
 $dispatcher = $router->getDispatcher();
 
 try {
-
     // Check that access token is present
     $server->isValidRequest(false);
 
@@ -112,34 +109,25 @@ try {
         $request->getMethod(),
         $request->getPathInfo()
     );
-
 } catch (\Orno\Http\Exception $e) {
-
     // A failed response
     $response = $e->getJsonResponse();
     $response->setContent(json_encode(['status_code' => $e->getStatusCode(), 'message' => $e->getMessage()]));
-
 } catch (\League\OAuth2\Server\Exception\OAuthException $e) {
-
     $response = new Response(json_encode([
         'error'     =>  $e->errorType,
-        'message'   =>  $e->getMessage()
+        'message'   =>  $e->getMessage(),
     ]), $e->httpStatusCode);
 
     foreach ($e->getHttpHeaders() as $header) {
         $response->headers($header);
     }
-
 } catch (\Exception $e) {
-
-    $response = new Orno\Http\Response;
+    $response = new Orno\Http\Response();
     $response->setStatusCode(500);
     $response->setContent(json_encode(['status_code' => 500, 'message' => $e->getMessage()]));
-
 } finally {
-
     // Return the response
     $response->headers->set('Content-type', 'application/json');
     $response->send();
-
 }

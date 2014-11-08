@@ -2,15 +2,15 @@
 
 namespace LeagueTests\Entity;
 
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
-use League\OAuth2\Server\AuthorizationServer;
-use \Mockery as M;
+use League\OAuth2\Server\Entity\SessionEntity;
+use Mockery as M;
 
-class SessionTest extends \PHPUnit_Framework_TestCase
+class SessionEntityTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetGet()
     {
@@ -60,7 +60,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 
         $scopes = [
             (new ScopeEntity($server))->hydrate(['id' => 'scope1']),
-            (new ScopeEntity($server))->hydrate(['id' => 'scope2'])
+            (new ScopeEntity($server))->hydrate(['id' => 'scope2']),
         ];
 
         $result = $method->invokeArgs($entity, [$scopes]);
@@ -132,7 +132,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $sessionStorage->shouldReceive('associateScope');
         $sessionStorage->shouldReceive('setServer');
         $sessionStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
+            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
         ]);
 
         $server->shouldReceive('getSessionStorage')->andReturn($sessionStorage);

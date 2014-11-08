@@ -12,12 +12,6 @@
 namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Grant\GrantTypeInterface;
-use League\OAuth2\Server\Storage\ClientInterface;
-use League\OAuth2\Server\Storage\AccessTokenInterface;
-use League\OAuth2\Server\Storage\AuthCodeInterface;
-use League\OAuth2\Server\Storage\RefreshTokenInterface;
-use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\TokenType\Bearer;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -76,7 +70,7 @@ class AuthorizationServer extends AbstractServer
     public function __construct()
     {
         // Set Bearer as the default token type
-        $this->setTokenType(new Bearer);
+        $this->setTokenType(new Bearer());
 
         parent::__construct();
 

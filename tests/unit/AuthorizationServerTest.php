@@ -5,13 +5,13 @@ namespace LeagueTests;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
-use \Mockery as M;
+use Mockery as M;
 
 class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetGet()
     {
-        $server = new AuthorizationServer;
+        $server = new AuthorizationServer();
         $server->requireScopeParam(true);
         $server->requireStateParam(true);
         $server->setDefaultScope('foobar');
@@ -43,7 +43,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     public function testInvalidGrantType()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidGrantException');
-        $server = new AuthorizationServer;
+        $server = new AuthorizationServer();
         $server->getGrantType('foobar');
     }
 
@@ -57,7 +57,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $_POST['grant_type'] = 'foobar';
 
-        $server = new AuthorizationServer;
+        $server = new AuthorizationServer();
         $server->addGrantType($grant);
 
         $this->assertTrue($server->issueAccessToken());
@@ -66,7 +66,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     public function testIssueAccessTokenEmptyGrantType()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
-        $server = new AuthorizationServer;
+        $server = new AuthorizationServer();
         $this->assertTrue($server->issueAccessToken());
     }
 
@@ -76,7 +76,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $_POST['grant_type'] = 'foobar';
 
-        $server = new AuthorizationServer;
+        $server = new AuthorizationServer();
         $this->assertTrue($server->issueAccessToken());
     }
 }

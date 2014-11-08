@@ -30,6 +30,6 @@ class DefaultAlgorithm implements KeyAlgorithmInterface
             // @codeCoverageIgnoreEnd
         }
 
-        return substr(str_replace(array('/', '+', '='), '', base64_encode($bytes)), 0, $len);
+        return substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $len);
     }
 }

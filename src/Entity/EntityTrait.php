@@ -15,7 +15,7 @@ trait EntityTrait
 {
     /**
      * Hydrate an entity with properites
-     * @param  array  $properties
+     * @param array $properties
      */
     public function hydrate(array $properties)
     {

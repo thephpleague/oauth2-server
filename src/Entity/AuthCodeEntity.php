@@ -56,7 +56,7 @@ class AuthCodeEntity extends AbstractTokenEntity
 
         return $uri.http_build_query([
             'code'  =>  $this->getId(),
-            'state' =>  $state
+            'state' =>  $state,
         ]);
     }
 

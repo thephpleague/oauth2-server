@@ -13,8 +13,8 @@ namespace League\OAuth2\Server\Storage;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\AuthCodeEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\SessionEntity;
 
 /**
  * Session storage interface

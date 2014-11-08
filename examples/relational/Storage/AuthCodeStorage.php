@@ -2,12 +2,11 @@
 
 namespace RelationalExample\Storage;
 
-use League\OAuth2\Server\Storage\AuthCodeInterface;
-use League\OAuth2\Server\Storage\Adapter;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use League\OAuth2\Server\Entity\AuthCodeEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
-
-use Illuminate\Database\Capsule\Manager as Capsule;
+use League\OAuth2\Server\Storage\Adapter;
+use League\OAuth2\Server\Storage\AuthCodeInterface;
 
 class AuthCodeStorage extends Adapter implements AuthCodeInterface
 {
@@ -25,6 +24,7 @@ class AuthCodeStorage extends Adapter implements AuthCodeInterface
             $token = new AuthCodeEntity($this->server);
             $token->setId($result[0]['auth_code']);
             $token->setRedirectUri($result[0]['client_redirect_uri']);
+
             return $token;
         }
 
@@ -38,7 +38,7 @@ class AuthCodeStorage extends Adapter implements AuthCodeInterface
                         'auth_code'     =>  $token,
                         'client_redirect_uri'  =>  $redirectUri,
                         'session_id'    =>  $sessionId,
-                        'expire_time'   =>  $expireTime
+                        'expire_time'   =>  $expireTime,
                     ]);
     }
 
@@ -59,7 +59,7 @@ class AuthCodeStorage extends Adapter implements AuthCodeInterface
             foreach ($result as $row) {
                 $scope = (new ScopeEntity($this->server))->hydrate([
                     'id'            =>  $row['id'],
-                    'description'   =>  $row['description']
+                    'description'   =>  $row['description'],
                 ]);
                 $response[] = $scope;
             }
@@ -76,7 +76,7 @@ class AuthCodeStorage extends Adapter implements AuthCodeInterface
         Capsule::table('oauth_auth_code_scopes')
                     ->insert([
                         'auth_code' =>  $token->getId(),
-                        'scope'     =>  $scope->getId()
+                        'scope'     =>  $scope->getId(),
                     ]);
     }
 

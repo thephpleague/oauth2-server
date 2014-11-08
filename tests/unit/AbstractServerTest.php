@@ -10,7 +10,7 @@ class AbstractServerTest extends \PHPUnit_Framework_TestCase
     {
         $server = new StubAbstractServer();
         $var = 0;
-        $server->addEventListener('event.name', function() use ($var) {
+        $server->addEventListener('event.name', function () use ($var) {
             $var++;
             $this->assertSame(1, $var);
         });
@@ -18,11 +18,9 @@ class AbstractServerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($server->getRequest() instanceof \Symfony\Component\HttpFoundation\Request);
         $this->assertTrue($server->getEventEmitter() instanceof \League\Event\Emitter);
 
-
         $server2 = new StubAbstractServer();
-        $server2->setRequest((new \Symfony\Component\HttpFoundation\Request));
+        $server2->setRequest((new \Symfony\Component\HttpFoundation\Request()));
         $server2->setEventEmitter(1);
         $this->assertTrue($server2->getRequest() instanceof \Symfony\Component\HttpFoundation\Request);
-
     }
 }

@@ -2,13 +2,13 @@
 
 namespace LeagueTests\Entity;
 
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Entity\AuthCodeEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
-use League\OAuth2\Server\Entity\AuthCodeEntity;
-use League\OAuth2\Server\AuthorizationServer;
-use \Mockery as M;
+use Mockery as M;
 
-class AuthCodeTest extends \PHPUnit_Framework_TestCase
+class AuthCodeEntityTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetGet()
     {
@@ -37,7 +37,7 @@ class AuthCodeTest extends \PHPUnit_Framework_TestCase
         $authCodeStorage->shouldReceive('associateScope');
         $authCodeStorage->shouldReceive('setServer');
         $authCodeStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
+            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
         ]);
 
         $server->shouldReceive('getAuthCodeStorage')->andReturn($authCodeStorage);

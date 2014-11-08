@@ -11,9 +11,9 @@
 
 namespace League\OAuth2\Server\TokenType;
 
-use Symfony\Component\HttpFoundation\Request;
 use League\OAuth2\Server\AbstractServer;
 use League\OAuth2\Server\Entity\SessionEntity;
+use Symfony\Component\HttpFoundation\Request;
 
 abstract class AbstractTokenType
 {
@@ -42,6 +42,7 @@ abstract class AbstractTokenType
     public function setServer(AbstractServer $server)
     {
         $this->server = $server;
+
         return $this;
     }
 
@@ -52,6 +53,7 @@ abstract class AbstractTokenType
     public function setSession(SessionEntity $session)
     {
         $this->session = $session;
+
         return $this;
     }
 

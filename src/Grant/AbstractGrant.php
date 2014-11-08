@@ -12,8 +12,8 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Exception;
 
 /**
@@ -108,7 +108,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Inject the authorization server into the grant
-     * @param  \League\OAuth2\Server\AuthorizationServer   $server The authorization server instance
+     * @param  \League\OAuth2\Server\AuthorizationServer $server The authorization server instance
      * @return self
      */
     public function setAuthorizationServer(AuthorizationServer $server)
@@ -120,11 +120,11 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Given a list of scopes, validate them and return an array of Scope entities
-     * @param  string                                       $scopeParam  A string of scopes (e.g. "profile email birthday")
-     * @param  \League\OAuth2\Server\Entity\ClientEntity    $client      Client entity
-     * @param  string|null                                  $redirectUri The redirect URI to return the user to
+     * @param  string                                                $scopeParam  A string of scopes (e.g. "profile email birthday")
+     * @param  \League\OAuth2\Server\Entity\ClientEntity             $client      Client entity
+     * @param  string|null                                           $redirectUri The redirect URI to return the user to
      * @return \League\OAuth2\Server\Entity\ScopeEntity[]
-     * @throws \League\OAuth2\Server\Exception\InvalidScopeException     If scope is invalid, or no scopes passed when required
+     * @throws \League\OAuth2\Server\Exception\InvalidScopeException If scope is invalid, or no scopes passed when required
      */
     public function validateScopes($scopeParam = '', ClientEntity $client, $redirectUri = null)
     {

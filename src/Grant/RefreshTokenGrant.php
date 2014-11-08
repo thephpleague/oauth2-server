@@ -11,13 +11,13 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Request;
-use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\Util\SecureKey;
-use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Event;
+use League\OAuth2\Server\Exception;
+use League\OAuth2\Server\Request;
+use League\OAuth2\Server\Util\SecureKey;
 
 /**
  * Referesh token grant

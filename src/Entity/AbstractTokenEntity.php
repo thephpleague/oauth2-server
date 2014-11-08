@@ -11,10 +11,8 @@
 
 namespace League\OAuth2\Server\Entity;
 
-use League\OAuth2\Server\Util\SecureKey;
 use League\OAuth2\Server\AbstractServer;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Util\SecureKey;
 
 /**
  * Abstract token class
@@ -170,6 +168,7 @@ abstract class AbstractTokenEntity
         if ($this->id === null) {
             return '';
         }
+
         return $this->id;
     }
 

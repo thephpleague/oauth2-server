@@ -2,7 +2,7 @@
 
 namespace LeagueTests\util;
 
-use \League\OAuth2\Server\Util\SecureKey;
+use League\OAuth2\Server\Util\SecureKey;
 
 class SecureKeyTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,8 +26,7 @@ class SecureKeyTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('generate')
             ->with(11)
-            ->will($this->returnValue($result))
-        ;
+            ->will($this->returnValue($result));
 
         SecureKey::setAlgorithm($algorithm);
         $this->assertSame($algorithm, SecureKey::getAlgorithm());
