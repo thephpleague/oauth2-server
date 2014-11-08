@@ -165,17 +165,6 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $server->setRequest($request);
 
         $this->assertTrue($server->isValidRequest());
-        $this->assertEquals('at', $server->getIdKey());
-        $this->assertEquals(123, $server->getOwnerId());
-        $this->assertEquals('user', $server->getOwnerType());
         $this->assertEquals('abcdef', $server->getAccessToken());
-        $this->assertEquals('testapp', $server->getClientId());
-        $this->assertTrue($server->hasScope('foo'));
-        $this->assertTrue($server->hasScope('bar'));
-        $this->assertTrue($server->hasScope(['foo', 'bar']));
-        $this->assertTrue(isset($server->getScopes()['foo']));
-        $this->assertTrue(isset($server->getScopes()['bar']));
-        $this->assertFalse($server->hasScope(['foobar']));
-        $this->assertFalse($server->hasScope('foobar'));
     }
 }

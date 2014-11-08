@@ -65,15 +65,6 @@ class ResourceServer extends AbstractServer
     }
 
     /**
-     * Returns the query string key for the access token.
-     * @return string
-     */
-    public function getIdKey()
-    {
-        return $this->tokenKey;
-    }
-
-    /**
      * Sets the query string key for the access token.
      * @param $key The new query string key
      * @return self
@@ -86,70 +77,12 @@ class ResourceServer extends AbstractServer
     }
 
     /**
-     * Gets the access token owner ID
-     * @return string
-     */
-    public function getOwnerId()
-    {
-        return $this->accessToken->getSession()->getOwnerId();
-    }
-
-    /**
-     * Gets the owner type
-     * @return string
-     */
-    public function getOwnerType()
-    {
-        return $this->accessToken->getSession()->getOwnerType();
-    }
-
-    /**
      * Gets the access token
      * @return string
      */
     public function getAccessToken()
     {
         return $this->accessToken->getId();
-    }
-
-    /**
-     * Gets the client ID that created the session
-     * @return string
-     */
-    public function getClientId()
-    {
-        return $this->accessToken->getSession()->getClient()->getId();
-    }
-
-    /**
-     * Get the session scopes
-     * @return array
-     */
-    public function getScopes()
-    {
-        return $this->accessToken->getScopes();
-    }
-
-    /**
-     * Checks if the presented access token has the given scope(s)
-     * @param  array|string $scopes An array of scopes or a single scope as a string
-     * @return bool         Returns bool if all scopes are found, false if any fail
-     */
-    public function hasScope($scopes)
-    {
-        if (is_string($scopes)) {
-            return $this->accessToken->hasScope($scopes);
-        }
-
-        if (is_array($scopes)) {
-            foreach ($scopes as $scope) {
-                if (!$this->accessToken->hasScope($scope)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     /**
