@@ -31,6 +31,17 @@ In addition it supports the following token types:
 * MAC tokens (coming soon)
 * JSON web tokens (coming soon)
 
+## Changelog
+
+The changelog can be viewed here - [https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md).
+
+The latest release is `4.0.1` (released 2014-11-09):
+
+* Alias the master branch in composer.json (Issue #243)
+* Numerous PHP CodeSniffer fixes (Issue #244)
+* .travis.yml update (Issue #245)
+* The getAccessToken method should return an AccessTokenEntity object instead of a string in ResourceServer.php (#246)
+
 ## Questions?
 
 This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](https://twitter.com/alexbilbie).
