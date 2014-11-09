@@ -77,11 +77,11 @@ class ResourceServer extends AbstractServer
 
     /**
      * Gets the access token
-     * @return string
+     * @return \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     public function getAccessToken()
     {
-        return $this->accessToken->getId();
+        return $this->accessToken;
     }
 
     /**
