@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.1 (released 2014-11-09)
+
+* Alias the master branch in composer.json (Issue #243)
+* Numerous PHP CodeSniffer fixes (Issue #244)
+* .travis.yml update (Issue #245)
+* The getAccessToken method should return an AccessTokenEntity object instead of a string in ResourceServer.php (#246)
+
 ## 4.0.0 (released 2014-11-08)
 
 * Complete rewrite
