@@ -61,6 +61,8 @@ If you have a mobile application that is for your own service (such as the offic
 
 ## Implicit grant ([section 4.2](http://tools.ietf.org/html/rfc6749#section-4.2))
 
+**Not currently supported. [See #249](https://github.com/thephpleague/oauth2-server/issues/249)**
+
 The implicit grant is similar to the authentication code grant described above. The user will be redirected in a browser to the IdP authorisation server, sign in, authorise the request but instead of being returned to the client with an authentication code they are redirected with an access token straight away.
 
 The purpose of the implicit grant is for use by clients which are not capable of keeping the client’s own credentials secret; for example a JavaScript only application.
