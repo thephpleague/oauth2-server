@@ -6,10 +6,10 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use League\OAuth2\Server\Entity\AbstractTokenEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Storage\AbstractStorage;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
-use League\OAuth2\Server\Storage\Adapter;
 
-class AccessTokenStorage extends Adapter implements AccessTokenInterface
+class AccessTokenStorage extends AbstractStorage implements AccessTokenInterface
 {
     /**
      * {@inheritdoc}

@@ -4,10 +4,10 @@ namespace RelationalExample\Storage;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
-use League\OAuth2\Server\Storage\Adapter;
+use League\OAuth2\Server\Storage\AbstractStorage;
 use League\OAuth2\Server\Storage\RefreshTokenInterface;
 
-class RefreshTokenStorage extends Adapter implements RefreshTokenInterface
+class RefreshTokenStorage extends AbstractStorage implements RefreshTokenInterface
 {
     /**
      * {@inheritdoc}
