@@ -18,7 +18,6 @@ use League\OAuth2\Server\Entity\RefreshTokenEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\Request;
 use League\OAuth2\Server\Util\SecureKey;
 
 /**
@@ -40,7 +39,7 @@ class AuthCodeGrant extends AbstractGrant
 
     /**
      * AuthServer instance
-     * @var AuthServer
+     * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server = null;
 
@@ -70,6 +69,8 @@ class AuthCodeGrant extends AbstractGrant
      * Check authorize parameters
      *
      * @return array Authorize request parameters
+     *
+     * @throws
      */
     public function checkAuthorizeParams()
     {
@@ -160,6 +161,7 @@ class AuthCodeGrant extends AbstractGrant
     /**
      * Complete the auth code grant
      * @return array
+     * @throws
      */
     public function completeFlow()
     {
@@ -257,7 +259,7 @@ class AuthCodeGrant extends AbstractGrant
         $accessToken->setSession($session);
         $accessToken->save();
 
-        if ($this->server->hasGrantType('refresh_token')) {
+        if ($refreshToken && $this->server->hasGrantType('refresh_token')) {
             $refreshToken->setAccessToken($accessToken);
             $refreshToken->save();
         }

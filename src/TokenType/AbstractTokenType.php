@@ -38,6 +38,7 @@ abstract class AbstractTokenType
     /**
      * Set the server
      * @param \League\OAuth2\Server\AbstractServer $server
+     * @return self
      */
     public function setServer(AbstractServer $server)
     {
@@ -49,6 +50,7 @@ abstract class AbstractTokenType
     /**
      * Set the session entity
      * @param \League\OAuth2\Server\Entity\SessionEntity $session
+     * @return self
      */
     public function setSession(SessionEntity $session)
     {

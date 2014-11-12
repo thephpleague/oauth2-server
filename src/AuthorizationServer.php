@@ -144,7 +144,7 @@ class AuthorizationServer extends AbstractServer
     /**
      * Default scope to be used if none is provided and requireScopeParam() is false
      * @param string $default Name of the default scope
-     * @param self
+     * @return self
      */
     public function setDefaultScope($default = null)
     {
@@ -164,8 +164,7 @@ class AuthorizationServer extends AbstractServer
 
     /**
      * Require the "state" paremter in checkAuthoriseParams()
-     * @param  boolean $require
-     * @return void
+     * @return bool
      */
     public function stateParamRequired()
     {
@@ -175,7 +174,7 @@ class AuthorizationServer extends AbstractServer
     /**
      * Require the "state" paremter in checkAuthoriseParams()
      * @param  boolean $require
-     * @return void
+     * @return self
      */
     public function requireStateParam($require = true)
     {
@@ -196,6 +195,7 @@ class AuthorizationServer extends AbstractServer
     /**
      * Set the scope delimiter
      * @param string $scopeDelimeter
+     * @return self
      */
     public function setScopeDelimeter($scopeDelimeter = ' ')
     {
@@ -216,6 +216,7 @@ class AuthorizationServer extends AbstractServer
     /**
      * Set the TTL for an access token
      * @param int $accessTokenTTL The new TTL
+     * @return self
      */
     public function setAccessTokenTTL($accessTokenTTL = 3600)
     {
@@ -227,6 +228,7 @@ class AuthorizationServer extends AbstractServer
     /**
      * Issue an access token
      * @return array Authorise request parameters
+     * @throws
      */
     public function issueAccessToken()
     {
@@ -248,6 +250,7 @@ class AuthorizationServer extends AbstractServer
      * Return a grant type class
      * @param  string                   $grantType The grant type identifer
      * @return Grant\GrantTypeInterface
+     * @throws
      */
     public function getGrantType($grantType)
     {

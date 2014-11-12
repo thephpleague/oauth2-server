@@ -54,7 +54,7 @@ interface SessionInterface extends StorageInterface
 
     /**
      * Associate a scope with a session
-     * @param  \League\OAuth2\Server\Entity\SessionEntity $scope The scope
+     * @param  \League\OAuth2\Server\Entity\SessionEntity $session The session
      * @param  \League\OAuth2\Server\Entity\ScopeEntity   $scope The scope
      * @return void
      */

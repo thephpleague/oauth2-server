@@ -37,7 +37,7 @@ class ClientCredentialsGrant extends AbstractGrant
 
     /**
      * AuthServer instance
-     * @var AuthServer
+     * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server = null;
 
@@ -50,6 +50,7 @@ class ClientCredentialsGrant extends AbstractGrant
     /**
      * Complete the client credentials grant
      * @return array
+     * @throws
      */
     public function completeFlow()
     {

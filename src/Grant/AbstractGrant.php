@@ -125,6 +125,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param  string|null                                           $redirectUri The redirect URI to return the user to
      * @return \League\OAuth2\Server\Entity\ScopeEntity[]
      * @throws \League\OAuth2\Server\Exception\InvalidScopeException If scope is invalid, or no scopes passed when required
+     * @throws
      */
     public function validateScopes($scopeParam = '', ClientEntity $client, $redirectUri = null)
     {

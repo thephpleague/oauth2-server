@@ -36,6 +36,7 @@ class OAuthException extends \Exception
 
     /**
      * Throw a new exception
+     * @param string $msg Exception Message
      */
     public function __construct($msg = 'An error occured')
     {

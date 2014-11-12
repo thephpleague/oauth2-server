@@ -77,7 +77,7 @@ class AuthCodeEntity extends AbstractTokenEntity
 
     /**
      * Return all scopes associated with the session
-     * @return \League\OAuth2\Server\Entity\Scope[]
+     * @return \League\OAuth2\Server\Entity\ScopeEntity[]
      */
     public function getScopes()
     {
