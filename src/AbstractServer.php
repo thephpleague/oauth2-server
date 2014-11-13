@@ -188,7 +188,7 @@ abstract class AbstractServer
 
     /**
      * Set the refresh token storage
-     * @param  \League\OAuth2\Server\Storage\RefreshTokenInteface $storage
+     * @param  \League\OAuth2\Server\Storage\RefreshTokenInterface $storage
      * @return self
      */
     public function setRefreshTokenStorage(RefreshTokenInterface $storage)
@@ -201,7 +201,7 @@ abstract class AbstractServer
 
     /**
      * Set the auth code storage
-     * @param  \League\OAuth2\Server\Storage\AuthCodeInterface $authCode
+     * @param  \League\OAuth2\Server\Storage\AuthCodeInterface $storage
      * @return self
      */
     public function setAuthCodeStorage(AuthCodeInterface $storage)

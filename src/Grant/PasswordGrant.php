@@ -61,6 +61,7 @@ class PasswordGrant extends AbstractGrant
     /**
      * Return the callback function
      * @return callable
+     * @throws
      */
     protected function getVerifyCredentialsCallback()
     {
@@ -74,6 +75,7 @@ class PasswordGrant extends AbstractGrant
     /**
      * Complete the password grant
      * @return array
+     * @throws
      */
     public function completeFlow()
     {

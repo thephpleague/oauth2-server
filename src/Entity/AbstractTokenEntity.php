@@ -105,7 +105,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Set token ID
-     * @param  string $token Token ID
+     * @param  string $id Token ID
      * @return self
      */
     public function setId($id = null)

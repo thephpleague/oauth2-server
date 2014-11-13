@@ -24,7 +24,7 @@ class UserAuthenticationFailedEvent extends AbstractEvent
 
     /**
      * Init the event with a request
-     * @param \Symfony\Component\HttpFoundation\Requesty $request
+     * @param \Symfony\Component\HttpFoundation\Request $request
      */
     public function __construct(Request $request)
     {

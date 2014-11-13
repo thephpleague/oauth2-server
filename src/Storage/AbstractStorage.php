@@ -27,6 +27,7 @@ abstract class AbstractStorage implements StorageInterface
     /**
      * Set the server
      * @param \League\OAuth2\Server\AbstractServer $server
+     * @return self
      */
     public function setServer(AbstractServer $server)
     {
