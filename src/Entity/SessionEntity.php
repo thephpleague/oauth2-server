@@ -20,6 +20,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class SessionEntity
 {
+    use EntityTrait;
+
     /**
      * Session identifier
      * @var string
