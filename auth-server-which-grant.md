@@ -106,8 +106,8 @@ When someone visits a member of staff’s page on the [University of Lincoln sta
 **To enable this grant:**
 
 ~~~ php
-$refrehTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
-$server->addGrantType($refrehTokenGrant);
+$refreshTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
+$server->addGrantType($refreshTokenGrant);
 ~~~
 
 The OAuth 2.0 specification also details a fifth grant which can be used to “refresh” (i.e. renew) an access token which has expired.
