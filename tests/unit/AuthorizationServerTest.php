@@ -15,7 +15,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $server->requireScopeParam(true);
         $server->requireStateParam(true);
         $server->setDefaultScope('foobar');
-        $server->setScopeDelimeter(',');
+        $server->setScopeDelimiter(',');
         $server->setAccessTokenTTL(1);
 
         $grant = M::mock('League\OAuth2\Server\Grant\GrantTypeInterface');
@@ -36,7 +36,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($server->stateParamRequired());
         $this->assertTrue($server->getScopeStorage() instanceof ScopeInterface);
         $this->assertEquals('foobar', $server->getDefaultScope());
-        $this->assertEquals(',', $server->getScopeDelimeter());
+        $this->assertEquals(',', $server->getScopeDelimiter());
         $this->assertEquals(1, $server->getAccessTokenTTL());
     }
 

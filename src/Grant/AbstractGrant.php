@@ -129,7 +129,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateScopes($scopeParam = '', ClientEntity $client, $redirectUri = null)
     {
-        $scopesList = explode($this->server->getScopeDelimeter(), $scopeParam);
+        $scopesList = explode($this->server->getScopeDelimiter(), $scopeParam);
 
         for ($i = 0; $i < count($scopesList); $i++) {
             $scopesList[$i] = trim($scopesList[$i]);

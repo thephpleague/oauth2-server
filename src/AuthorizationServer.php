@@ -25,7 +25,7 @@ class AuthorizationServer extends AbstractServer
      * The OAuth 2 specification states it should be a space but most use a comma
      * @var string
      */
-    protected $scopeDelimeter = ' ';
+    protected $scopeDelimiter = ' ';
 
     /**
      * The TTL (time to live) of an access token in seconds (default: 3600)
@@ -184,22 +184,22 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Get the scope delimeter
+     * Get the scope delimiter
      * @return string The scope delimiter (default: ",")
      */
-    public function getScopeDelimeter()
+    public function getScopeDelimiter()
     {
-        return $this->scopeDelimeter;
+        return $this->scopeDelimiter;
     }
 
     /**
      * Set the scope delimiter
-     * @param string $scopeDelimeter
+     * @param string $scopeDelimiter
      * @return self
      */
-    public function setScopeDelimeter($scopeDelimeter = ' ')
+    public function setScopeDelimiter($scopeDelimiter = ' ')
     {
-        $this->scopeDelimeter = $scopeDelimeter;
+        $this->scopeDelimiter = $scopeDelimiter;
 
         return $this;
     }
