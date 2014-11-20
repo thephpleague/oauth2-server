@@ -35,7 +35,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Callback to authenticate a user's name and password
-     * @var function
+     * @var callable
      */
     protected $callback;
 

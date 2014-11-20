@@ -153,11 +153,11 @@ class SessionEntity
      * @param  \League\OAuth2\Server\Entity\Scope[]
      * @return array
      */
-    private function formatScopes($unformated = [])
+    private function formatScopes($unformatted = [])
     {
         $scopes = [];
-        if (is_array($unformated)) {
-            foreach ($unformated as $scope) {
+        if (is_array($unformatted)) {
+            foreach ($unformatted as $scope) {
                 if ($scope instanceof ScopeEntity) {
                     $scopes[$scope->getId()] = $scope;
                 }

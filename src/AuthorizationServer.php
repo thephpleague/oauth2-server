@@ -121,7 +121,7 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Require the "scope" paremter in checkAuthoriseParams()
+     * Require the "scope" parameter in checkAuthoriseParams()
      * @param  boolean $require
      * @return self
      */
@@ -248,7 +248,7 @@ class AuthorizationServer extends AbstractServer
 
     /**
      * Return a grant type class
-     * @param  string                   $grantType The grant type identifer
+     * @param  string                   $grantType The grant type identifier
      * @return Grant\GrantTypeInterface
      * @throws
      */
