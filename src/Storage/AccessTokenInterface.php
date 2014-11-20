@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\Entity\AbstractTokenEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 
@@ -29,10 +28,10 @@ interface AccessTokenInterface extends StorageInterface
 
     /**
      * Get the scopes for an access token
-     * @param  \League\OAuth2\Server\Entity\AbstractTokenEntity $token The access token
+     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
      * @return array                                            Array of \League\OAuth2\Server\Entity\ScopeEntity
      */
-    public function getScopes(AbstractTokenEntity $token);
+    public function getScopes(AccessTokenEntity $token);
 
     /**
      * Creates a new access token
@@ -45,16 +44,16 @@ interface AccessTokenInterface extends StorageInterface
 
     /**
      * Associate a scope with an acess token
-     * @param  \League\OAuth2\Server\Entity\AbstractTokenEntity $token The access token
+     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
      * @param  \League\OAuth2\Server\Entity\ScopeEntity         $scope The scope
      * @return void
      */
-    public function associateScope(AbstractTokenEntity $token, ScopeEntity $scope);
+    public function associateScope(AccessTokenEntity $token, ScopeEntity $scope);
 
     /**
      * Delete an access token
-     * @param  \League\OAuth2\Server\Entity\AbstractTokenEntity $token The access token to delete
+     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token to delete
      * @return void
      */
-    public function delete(AbstractTokenEntity $token);
+    public function delete(AccessTokenEntity $token);
 }

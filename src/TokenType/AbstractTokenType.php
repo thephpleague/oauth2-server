@@ -13,7 +13,6 @@ namespace League\OAuth2\Server\TokenType;
 
 use League\OAuth2\Server\AbstractServer;
 use League\OAuth2\Server\Entity\SessionEntity;
-use Symfony\Component\HttpFoundation\Request;
 
 abstract class AbstractTokenType
 {
@@ -36,9 +35,7 @@ abstract class AbstractTokenType
     protected $session;
 
     /**
-     * Set the server
-     * @param \League\OAuth2\Server\AbstractServer $server
-     * @return self
+     * {@inheritdoc}
      */
     public function setServer(AbstractServer $server)
     {
@@ -48,9 +45,7 @@ abstract class AbstractTokenType
     }
 
     /**
-     * Set the session entity
-     * @param \League\OAuth2\Server\Entity\SessionEntity $session
-     * @return self
+     * {@inheritdoc}
      */
     public function setSession(SessionEntity $session)
     {
@@ -60,9 +55,7 @@ abstract class AbstractTokenType
     }
 
     /**
-     * Set a key/value response pair
-     * @param string $key
-     * @param mixed  $value
+     * {@inheritdoc}
      */
     public function setParam($key, $value)
     {
@@ -70,19 +63,10 @@ abstract class AbstractTokenType
     }
 
     /**
-     * Get a key from the response array
-     * @param  string $key
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getParam($key)
     {
         return isset($this->response[$key]) ? $this->response[$key] : null;
     }
-
-    /**
-     * Determine the access token in the authorization header
-     * @param  \Symfony\Component\HttpFoundation\Request $request
-     * @return string
-     */
-    abstract public function determineAccessTokenInHeader(Request $request);
 }
