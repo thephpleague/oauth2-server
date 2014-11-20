@@ -13,7 +13,6 @@ namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\TokenType\Bearer;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * OAuth 2.0 authorization server class

@@ -12,8 +12,7 @@
 namespace League\OAuth2\Server\Entity;
 
 use League\OAuth2\Server\AbstractServer;
-use League\OAuth2\Server\Event;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use League\OAuth2\Server\Event\SessionOwnerEvent;
 
 /**
  * Session entity grant
@@ -229,7 +228,7 @@ class SessionEntity
         $this->ownerType = $type;
         $this->ownerId = $id;
 
-        $this->server->getEventEmitter()->emit(new Event\SessionOwnerEvent($this));
+        $this->server->getEventEmitter()->emit(new SessionOwnerEvent($this));
 
         return $this;
     }

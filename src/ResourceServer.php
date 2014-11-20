@@ -17,7 +17,6 @@ use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\TokenType\Bearer;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * OAuth 2.0 Resource Server

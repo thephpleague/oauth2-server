@@ -11,6 +11,7 @@
 
 namespace League\OAuth2\Server\Exception;
 
+use League\OAuth2\Server\Util\RedirectUri;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -58,7 +59,7 @@ class OAuthException extends \Exception
      */
     public function getRedirectUri()
     {
-        return \League\OAuth2\Server\Util\RedirectUri::make(
+        return RedirectUri::make(
             $this->redirectUri,
             [
                 'error' =>  $this->errorType,
