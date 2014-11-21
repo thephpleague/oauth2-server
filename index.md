@@ -37,9 +37,9 @@ The changelog can be viewed here - [https://github.com/thephpleague/oauth2-serve
 
 The latest release is `4.0.2` (released 2014-11-21):
 
-> * Improved interfaces (Issue #255)
-> * Learnt how to spell delimiter and so `getScopeDelimiter()` and `setScopeDelimiter()` methods have been renamed
-> * Docblock improvements (Issue #254)
+* Improved interfaces (Issue #255)
+* Learnt how to spell delimiter and so `getScopeDelimiter()` and `setScopeDelimiter()` methods have been renamed
+* Docblock improvements (Issue #254)
 
 ## Questions?
 
