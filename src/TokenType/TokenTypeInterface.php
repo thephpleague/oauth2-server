@@ -12,6 +12,7 @@
 namespace League\OAuth2\Server\TokenType;
 
 use League\OAuth2\Server\AbstractServer;
+use League\OAuth2\Server\Entity\SessionEntity;
 use Symfony\Component\HttpFoundation\Request;
 
 interface TokenTypeInterface
@@ -42,6 +43,12 @@ interface TokenTypeInterface
      * @return mixed
      */
     public function getParam($key);
+
+    /**
+     * @param \League\OAuth2\Server\Entity\SessionEntity $session
+     * @return self
+     */
+    public function setSession(SessionEntity $session);
 
     /**
      * Determine the access token in the authorization header
