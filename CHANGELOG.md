@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.2 (released 2014-11-21)
+
+* Improved interfaces (Issue #255)
+* Learnt how to spell delimiter and so `getScopeDelimiter()` and `setScopeDelimiter()` methods have been renamed
+* Docblock improvements (Issue #254)
+
 ## 4.0.1 (released 2014-11-09)
 
 * Alias the master branch in composer.json (Issue #243)
