@@ -52,8 +52,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $accessTokenTTL;
 
     /**
-     * Return the identifier
-     * @return string
+     * {@inheritdoc}
      */
     public function getIdentifier()
     {
@@ -61,9 +60,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Return the identifier
-     * @param  string $identifier
-     * @return self
+     * {@inheritdoc}
      */
     public function setIdentifier($identifier)
     {
@@ -73,8 +70,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Return the response type
-     * @return string
+     * {@inheritdoc}
      */
     public function getResponseType()
     {
@@ -107,9 +103,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Inject the authorization server into the grant
-     * @param  \League\OAuth2\Server\AuthorizationServer $server The authorization server instance
-     * @return self
+     * {@inheritdoc}
      */
     public function setAuthorizationServer(AuthorizationServer $server)
     {
