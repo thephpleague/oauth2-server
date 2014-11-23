@@ -166,20 +166,15 @@ class AuthCodeGrant extends AbstractGrant
     public function completeFlow()
     {
         // Get the required params
-        $clientId = $this->server->getRequest()->request->get('client_id', null);
+        $clientId = $this->server->getRequest()->request->get('client_id', $this->server->getRequest()->getUser());
         if (is_null($clientId)) {
-            $clientId = $this->server->getRequest()->getUser();
-            if (is_null($clientId)) {
-                throw new Exception\InvalidRequestException('client_id');
-            }
+            throw new Exception\InvalidRequestException('client_id');
         }
 
-        $clientSecret = $this->server->getRequest()->request->get('client_secret', null);
+        $clientSecret = $this->server->getRequest()->request->get('client_secret',
+            $this->server->getRequest()->getPassword());
         if (is_null($clientSecret)) {
-            $clientSecret = $this->server->getRequest()->getPassword();
-            if (is_null($clientSecret)) {
-                throw new Exception\InvalidRequestException('client_secret');
-            }
+            throw new Exception\InvalidRequestException('client_secret');
         }
 
         $redirectUri = $this->server->getRequest()->request->get('redirect_uri', null);
