@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.3 (released 2014-12-02)
+
+* Fix bad type hintings (Issue #267)
+* Do not forget to set the expire time (Issue #268)
+
 ## 4.0.2 (released 2014-11-21)
 
 * Improved interfaces (Issue #255)
