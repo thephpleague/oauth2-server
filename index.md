@@ -35,11 +35,12 @@ In addition it supports the following token types:
 
 The changelog can be viewed here - [https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md).
 
-The latest release is `4.0.2` (released 2014-11-21):
+The latest release is `4.0.3` (released 2014-12-02):
 
-* Improved interfaces (Issue #255)
-* Learnt how to spell delimiter and so `getScopeDelimiter()` and `setScopeDelimiter()` methods have been renamed
-* Docblock improvements (Issue #254)
+## 4.0.3 (released 2014-12-02)
+
+* Fix bad type hintings (Issue #267)
+* Do not forget to set the expire time (Issue #268)
 
 ## Questions?
 
