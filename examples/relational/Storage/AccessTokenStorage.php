@@ -34,7 +34,7 @@ class AccessTokenStorage extends AbstractStorage implements AccessTokenInterface
     /**
      * {@inheritdoc}
      */
-    public function getScopes(AbstractTokenEntity $token)
+    public function getScopes(AccessTokenEntity $token)
     {
         $result = Capsule::table('oauth_access_token_scopes')
                                     ->select(['oauth_scopes.id', 'oauth_scopes.description'])
@@ -73,7 +73,7 @@ class AccessTokenStorage extends AbstractStorage implements AccessTokenInterface
     /**
      * {@inheritdoc}
      */
-    public function associateScope(AbstractTokenEntity $token, ScopeEntity $scope)
+    public function associateScope(AccessTokenEntity $token, ScopeEntity $scope)
     {
         Capsule::table('oauth_access_token_scopes')
                     ->insert([
@@ -85,7 +85,7 @@ class AccessTokenStorage extends AbstractStorage implements AccessTokenInterface
     /**
      * {@inheritdoc}
      */
-    public function delete(AbstractTokenEntity $token)
+    public function delete(AccessTokenEntity $token)
     {
         Capsule::table('oauth_access_token_scopes')
                     ->where('access_token', $token->getId())
