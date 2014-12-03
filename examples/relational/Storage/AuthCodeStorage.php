@@ -24,6 +24,7 @@ class AuthCodeStorage extends AbstractStorage implements AuthCodeInterface
             $token = new AuthCodeEntity($this->server);
             $token->setId($result[0]['auth_code']);
             $token->setRedirectUri($result[0]['client_redirect_uri']);
+            $token->setExpireTime($result[0]['expire_time']);
 
             return $token;
         }
