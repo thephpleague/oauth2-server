@@ -94,6 +94,11 @@ class RefreshTokenGrant extends AbstractGrant
             throw new Exception\InvalidRefreshException();
         }
 
+        // Ensure the old refresh token hasn't expired
+        if ($oldRefreshToken->isExpired() === true) {
+            throw new Exception\InvalidRefreshException();
+        }
+
         $oldAccessToken = $oldRefreshToken->getAccessToken();
 
         // Get the scopes for the original session
