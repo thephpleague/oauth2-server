@@ -35,12 +35,11 @@ In addition it supports the following token types:
 
 The changelog can be viewed here - [https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md).
 
-The latest release is `4.0.3` (released 2014-12-02):
+The latest release is `4.0.4` (released 2014-12-03):
 
-## 4.0.3 (released 2014-12-02)
+## 4.0.4 (released 2014-12-03)
 
-* Fix bad type hintings (Issue #267)
-* Do not forget to set the expire time (Issue #268)
+* Ensure refresh token hasn't expired (Issue #270)
 
 ## Questions?
 
