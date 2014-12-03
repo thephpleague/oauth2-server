@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.4 (released 2014-12-03)
+
+* Ensure refresh token hasn't expired (Issue #270)
+
 ## 4.0.3 (released 2014-12-02)
 
 * Fix bad type hintings (Issue #267)
