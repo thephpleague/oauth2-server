@@ -65,7 +65,7 @@ class PasswordGrant extends AbstractGrant
      */
     protected function getVerifyCredentialsCallback()
     {
-        if (is_null($this->callback) || ! is_callable($this->callback)) {
+        if (is_null($this->callback) || !is_callable($this->callback)) {
             throw new Exception\ServerErrorException('Null or non-callable callback set on Password grant');
         }
 

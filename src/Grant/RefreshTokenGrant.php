@@ -36,7 +36,7 @@ class RefreshTokenGrant extends AbstractGrant
 
     /**
      * Set the TTL of the refresh token
-     * @param  int  $refreshTokenTTL
+     * @param  int $refreshTokenTTL
      * @return void
      */
     public function setRefreshTokenTTL($refreshTokenTTL)

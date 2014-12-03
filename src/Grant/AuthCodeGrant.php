@@ -57,7 +57,7 @@ class AuthCodeGrant extends AbstractGrant
 
     /**
      * Override the default access token expire time
-     * @param  int  $authTokenTTL
+     * @param  int $authTokenTTL
      * @return void
      */
     public function setAuthTokenTTL($authTokenTTL)
@@ -118,11 +118,11 @@ class AuthCodeGrant extends AbstractGrant
         $scopes = $this->validateScopes($scopeParam, $client, $redirectUri);
 
         return [
-            'client'        =>  $client,
-            'redirect_uri'  =>  $redirectUri,
-            'state'         =>  $state,
-            'response_type' =>  $responseType,
-            'scopes'        =>  $scopes
+            'client'        => $client,
+            'redirect_uri'  => $redirectUri,
+            'state'         => $state,
+            'response_type' => $responseType,
+            'scopes'        => $scopes
         ];
     }
 
