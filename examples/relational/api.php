@@ -59,11 +59,11 @@ $router->get('/users', function (Request $request) use ($server) {
             'name'      =>  $result['name'],
         ];
 
-        if ($server->hasScope('email')) {
+        if ($server->getAccessToken()->hasScope('email')) {
             $user['email'] = $result['email'];
         }
 
-        if ($server->hasScope('photo')) {
+        if ($server->getAccessToken()->hasScope('photo')) {
             $user['photo'] = $result['photo'];
         }
 
@@ -87,11 +87,11 @@ $router->get('/users/{username}', function (Request $request, $args) use ($serve
         'name'      =>  $result[0]['name'],
     ];
 
-    if ($server->hasScope('email')) {
+    if ($server->getAccessToken()->hasScope('email')) {
         $user['email'] = $result[0]['email'];
     }
 
-    if ($server->hasScope('photo')) {
+    if ($server->getAccessToken()->hasScope('photo')) {
         $user['photo'] = $result[0]['photo'];
     }
 
