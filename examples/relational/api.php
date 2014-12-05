@@ -34,12 +34,14 @@ $router = new \Orno\Route\RouteCollection();
 // GET /tokeninfo
 $router->get('/tokeninfo', function (Request $request) use ($server) {
 
+    $accessToken = $server->getAccessToken();
+    $session = $server->getSessionStorage()->getByAccessToken($accessToken);
     $token = [
-        'owner_id'  =>  $server->getOwnerId(),
-        'owner_type'  =>  $server->getOwnerType(),
-        'access_token'  =>  $server->getAccessToken(),
-        'client_id'  =>  $server->getClientId(),
-        'scopes'  =>  $server->getScopes(),
+        'owner_id' => $session->getOwnerId(),
+        'owner_type' => $session->getOwnerType(),
+        'access_token' => $accessToken,
+        'client_id' => $session->getClient()->getId(),
+        'scopes' => $accessToken->getScopes(),
     ];
 
     return new Response(json_encode($token));
