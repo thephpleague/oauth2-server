@@ -32,7 +32,6 @@ interface AuthCodeInterface extends StorageInterface
      * @param integer $expireTime  Token expire time
      * @param integer $sessionId   Session identifier
      * @param string  $redirectUri Client redirect uri
-     *
      * @return void
      */
     public function create($token, $expireTime, $sessionId, $redirectUri);
