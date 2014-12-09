@@ -14,17 +14,20 @@ namespace League\OAuth2\Server\Entity;
 /**
  * Access token entity class
  */
-class AuthCodeEntity extends AbstractTokenEntity
+class AuthCodeEntity extends AbstractTokenEntity implements AuthCodeInterface
 {
     /**
      * Redirect URI
+     *
      * @var string
      */
     protected $redirectUri = '';
 
     /**
      * Set the redirect URI for the authorization request
-     * @param  string $redirectUri
+     *
+     * @param string $redirectUri
+     *
      * @return self
      */
     public function setRedirectUri($redirectUri)
@@ -36,6 +39,7 @@ class AuthCodeEntity extends AbstractTokenEntity
 
     /**
      * Get the redirect URI
+     *
      * @return string
      */
     public function getRedirectUri()
@@ -45,8 +49,10 @@ class AuthCodeEntity extends AbstractTokenEntity
 
     /**
      * Generate a redirect URI
-     * @param  string $state          The state parameter if set by the client
-     * @param  string $queryDelimeter The query delimiter ('?' for auth code grant, '#' for implicit grant)
+     *
+     * @param string $state          The state parameter if set by the client
+     * @param string $queryDelimeter The query delimiter ('?' for auth code grant, '#' for implicit grant)
+     *
      * @return string
      */
     public function generateRedirectUri($state = null, $queryDelimeter = '?')
@@ -62,11 +68,12 @@ class AuthCodeEntity extends AbstractTokenEntity
 
     /**
      * Get session
-     * @return \League\OAuth2\Server\Entity\SessionEntity
+     *
+     * @return \League\OAuth2\Server\Entity\SessionInterface
      */
     public function getSession()
     {
-        if ($this->session instanceof SessionEntity) {
+        if ($this->session instanceof SessionInterface) {
             return $this->session;
         }
 
@@ -77,7 +84,7 @@ class AuthCodeEntity extends AbstractTokenEntity
 
     /**
      * Return all scopes associated with the session
-     * @return \League\OAuth2\Server\Entity\ScopeEntity[]
+     * @return \League\OAuth2\Server\Entity\ScopeInterface[]
      */
     public function getScopes()
     {

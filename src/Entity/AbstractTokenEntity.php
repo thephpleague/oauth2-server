@@ -21,37 +21,42 @@ abstract class AbstractTokenEntity
 {
     /**
      * Token identifier
+     *
      * @var string
      */
     protected $id;
 
     /**
      * Associated session
-     * @var \League\OAuth2\Server\Entity\SessionEntity
+     * @var \League\OAuth2\Server\Entity\SessionInterface
      */
     protected $session;
 
     /**
      * Session scopes
-     * @var \League\OAuth2\Server\Entity\ScopeEntity[]
+     * @var \League\OAuth2\Server\Entity\ScopeInterface[]
      */
     protected $scopes;
 
     /**
      * Token expire time
+     *
      * @var int
      */
     protected $expireTime = 0;
 
     /**
      * Authorization or resource server
+     *
      * @var \League\OAuth2\Server\AbstractServer
      */
     protected $server;
 
     /**
      * __construct
-     * @param  \League\OAuth2\Server\AbstractServer $server
+     *
+     * @param \League\OAuth2\Server\AbstractServer $server
+     *
      * @return self
      */
     public function __construct(AbstractServer $server)
@@ -63,10 +68,10 @@ abstract class AbstractTokenEntity
 
     /**
      * Set session
-     * @param  \League\OAuth2\Server\Entity\SessionEntity $session
+     * @param \League\OAuth2\Server\Entity\SessionInterface $session
      * @return self
      */
-    public function setSession(SessionEntity $session)
+    public function setSession(SessionInterface $session)
     {
         $this->session = $session;
 
@@ -75,7 +80,9 @@ abstract class AbstractTokenEntity
 
     /**
      * Set the expire time of the token
-     * @param  integer $expireTime Unix time stamp
+     *
+     * @param integer $expireTime Unix time stamp
+     *
      * @return self
      */
     public function setExpireTime($expireTime)
@@ -87,6 +94,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Return token expire time
+     *
      * @return int
      */
     public function getExpireTime()
@@ -96,6 +104,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Is the token expired?
+     *
      * @return bool
      */
     public function isExpired()
@@ -105,7 +114,9 @@ abstract class AbstractTokenEntity
 
     /**
      * Set token ID
-     * @param  string $id Token ID
+     *
+     * @param string $id Token ID
+     *
      * @return self
      */
     public function setId($id = null)
@@ -117,6 +128,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Get the token ID
+     *
      * @return string
      */
     public function getId()
@@ -126,10 +138,10 @@ abstract class AbstractTokenEntity
 
     /**
      * Associate a scope
-     * @param  \League\OAuth2\Server\Entity\ScopeEntity $scope
+     * @param \League\OAuth2\Server\Entity\ScopeInterface $scope
      * @return self
      */
-    public function associateScope(ScopeEntity $scope)
+    public function associateScope(ScopeInterface $scope)
     {
         if (!isset($this->scopes[$scope->getId()])) {
             $this->scopes[$scope->getId()] = $scope;
@@ -140,7 +152,8 @@ abstract class AbstractTokenEntity
 
     /**
      * Format the local scopes array
-     * @param  \League\OAuth2\Server\Entity\ScopeEntity[]
+     * @param array[\League\OAuth2\Server\Entity\ScopeInterface] $unformatted
+     * @internal param \League\OAuth2\Server\Entity\ScopeInterface $scope []
      * @return array
      */
     protected function formatScopes($unformatted = [])
@@ -151,7 +164,7 @@ abstract class AbstractTokenEntity
 
         $scopes = [];
         foreach ($unformatted as $scope) {
-            if ($scope instanceof ScopeEntity) {
+            if ($scope instanceof ScopeInterface) {
                 $scopes[$scope->getId()] = $scope;
             }
         }
@@ -161,6 +174,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Returns the token as a string if the object is cast as a string
+     *
      * @return string
      */
     public function __toString()
@@ -174,12 +188,14 @@ abstract class AbstractTokenEntity
 
     /**
      * Expire the token
+     *
      * @return void
      */
     abstract public function expire();
 
     /**
      * Save the token
+     *
      * @return void
      */
     abstract public function save();

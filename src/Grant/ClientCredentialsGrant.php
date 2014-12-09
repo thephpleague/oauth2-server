@@ -11,9 +11,10 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\ClientEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Entity\ClientInterface;
+use League\OAuth2\Server\Entity\EntityFactory;
+use League\OAuth2\Server\Entity\FactoryInterface;
 use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
@@ -24,32 +25,50 @@ use League\OAuth2\Server\Util\SecureKey;
 class ClientCredentialsGrant extends AbstractGrant
 {
     /**
+     * @var FactoryInterface
+     */
+    private $entityFactory;
+    
+    /**
      * Grant identifier
+     *
      * @var string
      */
     protected $identifier = 'client_credentials';
 
     /**
      * Response type
+     *
      * @var string
      */
     protected $responseType = null;
 
     /**
      * AuthServer instance
-     * @var \League\OAuth2\Server\AuthorizationServer
+     * @var AuthorizationServer
      */
     protected $server = null;
 
     /**
      * Access token expires in override
+     *
      * @var int
      */
     protected $accessTokenTTL = null;
 
     /**
+     * @param \League\OAuth2\Server\Entity\FactoryInterface $entityFactory
+     */
+    public function __construct(FactoryInterface $entityFactory)
+    {
+        $this->entityFactory = $entityFactory;
+    }
+
+    /**
      * Complete the client credentials grant
+     *
      * @return array
+     *
      * @throws
      */
     public function completeFlow()
@@ -74,7 +93,7 @@ class ClientCredentialsGrant extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if (($client instanceof ClientEntity) === false) {
+        if (($client instanceof ClientInterface) === false) {
             $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
@@ -84,12 +103,12 @@ class ClientCredentialsGrant extends AbstractGrant
         $scopes = $this->validateScopes($scopeParam, $client);
 
         // Create a new session
-        $session = new SessionEntity($this->server);
+        $session = $this->entityFactory->buildSessionEntity();
         $session->setOwner('client', $client->getId());
         $session->associateClient($client);
 
         // Generate an access token
-        $accessToken = new AccessTokenEntity($this->server);
+        $accessToken = $this->entityFactory->buildAccessTokenEntity();
         $accessToken->setId(SecureKey::generate());
         $accessToken->setExpireTime($this->getAccessTokenTTL() + time());
 

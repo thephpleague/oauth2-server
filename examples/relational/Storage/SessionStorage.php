@@ -3,11 +3,13 @@
 namespace RelationalExample\Storage;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\AuthCodeEntity;
+use League\OAuth2\Server\Entity\AccessTokenInterface;
+use League\OAuth2\Server\Entity\AuthCodeInterface;
 use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\ScopeInterface;
 use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Storage\AbstractStorage;
+use League\OAuth2\Server\Entity\SessionInterface as SessionEntityInterface;
 use League\OAuth2\Server\Storage\SessionInterface;
 
 class SessionStorage extends AbstractStorage implements SessionInterface
@@ -15,7 +17,7 @@ class SessionStorage extends AbstractStorage implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function getByAccessToken(AccessTokenEntity $accessToken)
+    public function getByAccessToken(AccessTokenInterface $accessToken)
     {
         $result = Capsule::table('oauth_sessions')
                             ->select(['oauth_sessions.id', 'oauth_sessions.owner_type', 'oauth_sessions.owner_id', 'oauth_sessions.client_id', 'oauth_sessions.client_redirect_uri'])
@@ -31,13 +33,13 @@ class SessionStorage extends AbstractStorage implements SessionInterface
             return $session;
         }
 
-        return null;
+        return;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getByAuthCode(AuthCodeEntity $authCode)
+    public function getByAuthCode(AuthCodeInterface $authCode)
     {
         $result = Capsule::table('oauth_sessions')
                             ->select(['oauth_sessions.id', 'oauth_sessions.owner_type', 'oauth_sessions.owner_id', 'oauth_sessions.client_id', 'oauth_sessions.client_redirect_uri'])
@@ -53,13 +55,13 @@ class SessionStorage extends AbstractStorage implements SessionInterface
             return $session;
         }
 
-        return null;
+        return;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getScopes(SessionEntity $session)
+    public function getScopes(SessionEntityInterface $session)
     {
         $result = Capsule::table('oauth_sessions')
                             ->select('oauth_scopes.*')
@@ -98,7 +100,7 @@ class SessionStorage extends AbstractStorage implements SessionInterface
     /**
      * {@inheritdoc}
      */
-    public function associateScope(SessionEntity $session, ScopeEntity $scope)
+    public function associateScope(SessionEntityInterface $session, ScopeInterface $scope)
     {
         Capsule::table('oauth_session_scopes')
                             ->insert([

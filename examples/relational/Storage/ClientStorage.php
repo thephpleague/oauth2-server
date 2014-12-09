@@ -5,6 +5,7 @@ namespace RelationalExample\Storage;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\SessionInterface;
 use League\OAuth2\Server\Storage\AbstractStorage;
 use League\OAuth2\Server\Storage\ClientInterface;
 
@@ -41,13 +42,13 @@ class ClientStorage extends AbstractStorage implements ClientInterface
             return $client;
         }
 
-        return null;
+        return;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getBySession(SessionEntity $session)
+    public function getBySession(SessionInterface $session)
     {
         $result = Capsule::table('oauth_clients')
                             ->select(['oauth_clients.id', 'oauth_clients.name'])
@@ -65,6 +66,6 @@ class ClientStorage extends AbstractStorage implements ClientInterface
             return $client;
         }
 
-        return null;
+        return;
     }
 }

@@ -3,9 +3,10 @@
 namespace RelationalExample\Storage;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use League\OAuth2\Server\Entity\AbstractTokenEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\AccessTokenInterface as AccessTokenEntityInterface;
 use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\ScopeInterface;
 use League\OAuth2\Server\Storage\AbstractStorage;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
 
@@ -28,13 +29,13 @@ class AccessTokenStorage extends AbstractStorage implements AccessTokenInterface
             return $token;
         }
 
-        return null;
+        return;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getScopes(AccessTokenEntity $token)
+    public function getScopes(AccessTokenEntityInterface $token)
     {
         $result = Capsule::table('oauth_access_token_scopes')
                                     ->select(['oauth_scopes.id', 'oauth_scopes.description'])
@@ -73,7 +74,7 @@ class AccessTokenStorage extends AbstractStorage implements AccessTokenInterface
     /**
      * {@inheritdoc}
      */
-    public function associateScope(AccessTokenEntity $token, ScopeEntity $scope)
+    public function associateScope(AccessTokenEntityInterface $token, ScopeInterface $scope)
     {
         Capsule::table('oauth_access_token_scopes')
                     ->insert([
@@ -85,7 +86,7 @@ class AccessTokenStorage extends AbstractStorage implements AccessTokenInterface
     /**
      * {@inheritdoc}
      */
-    public function delete(AccessTokenEntity $token)
+    public function delete(AccessTokenEntityInterface $token)
     {
         Capsule::table('oauth_access_token_scopes')
                     ->where('access_token', $token->getId())

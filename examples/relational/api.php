@@ -34,12 +34,14 @@ $router = new \Orno\Route\RouteCollection();
 // GET /tokeninfo
 $router->get('/tokeninfo', function (Request $request) use ($server) {
 
+    $accessToken = $server->getAccessToken();
+    $session = $server->getSessionStorage()->getByAccessToken($accessToken);
     $token = [
-        'owner_id'  =>  $server->getOwnerId(),
-        'owner_type'  =>  $server->getOwnerType(),
-        'access_token'  =>  $server->getAccessToken(),
-        'client_id'  =>  $server->getClientId(),
-        'scopes'  =>  $server->getScopes(),
+        'owner_id' => $session->getOwnerId(),
+        'owner_type' => $session->getOwnerType(),
+        'access_token' => $accessToken,
+        'client_id' => $session->getClient()->getId(),
+        'scopes' => $accessToken->getScopes(),
     ];
 
     return new Response(json_encode($token));
@@ -59,11 +61,11 @@ $router->get('/users', function (Request $request) use ($server) {
             'name'      =>  $result['name'],
         ];
 
-        if ($server->hasScope('email')) {
+        if ($server->getAccessToken()->hasScope('email')) {
             $user['email'] = $result['email'];
         }
 
-        if ($server->hasScope('photo')) {
+        if ($server->getAccessToken()->hasScope('photo')) {
             $user['photo'] = $result['photo'];
         }
 
@@ -74,7 +76,7 @@ $router->get('/users', function (Request $request) use ($server) {
 });
 
 // GET /users/{username}
-$router->get('/users/{username}', function (Request $request, $args) use ($server) {
+$router->get('/users/{username}', function (Request $request, Response $response, array $args) use ($server) {
 
     $result = (new Model\Users())->get($args['username']);
 
@@ -87,11 +89,11 @@ $router->get('/users/{username}', function (Request $request, $args) use ($serve
         'name'      =>  $result[0]['name'],
     ];
 
-    if ($server->hasScope('email')) {
+    if ($server->getAccessToken()->hasScope('email')) {
         $user['email'] = $result[0]['email'];
     }
 
-    if ($server->hasScope('photo')) {
+    if ($server->getAccessToken()->hasScope('photo')) {
         $user['photo'] = $result[0]['photo'];
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use League\OAuth2\Server\Entity\EntityFactory;
 use Orno\Http\Request;
 use Orno\Http\Response;
 use RelationalExample\Model;
@@ -21,10 +22,12 @@ $server->setClientStorage(new Storage\ClientStorage());
 $server->setScopeStorage(new Storage\ScopeStorage());
 $server->setAuthCodeStorage(new Storage\AuthCodeStorage());
 
-$clientCredentials = new \League\OAuth2\Server\Grant\ClientCredentialsGrant();
+$entityFactory = new EntityFactory($server);
+
+$clientCredentials = new \League\OAuth2\Server\Grant\ClientCredentialsGrant($entityFactory);
 $server->addGrantType($clientCredentials);
 
-$passwordGrant = new \League\OAuth2\Server\Grant\PasswordGrant();
+$passwordGrant = new \League\OAuth2\Server\Grant\PasswordGrant($entityFactory);
 $passwordGrant->setVerifyCredentialsCallback(function ($username, $password) {
     $result = (new Model\Users())->get($username);
     if (count($result) !== 1) {
@@ -39,7 +42,7 @@ $passwordGrant->setVerifyCredentialsCallback(function ($username, $password) {
 });
 $server->addGrantType($passwordGrant);
 
-$refrehTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
+$refrehTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant($entityFactory);
 $server->addGrantType($refrehTokenGrant);
 
 // Routing setup
@@ -52,7 +55,7 @@ $router->post('/access_token', function (Request $request) use ($server) {
         $response = $server->issueAccessToken();
 
         return new Response(json_encode($response), 200);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         return new Response(
             json_encode([
                 'error'     =>  $e->errorType,
@@ -86,7 +89,7 @@ try {
     foreach ($e->getHttpHeaders() as $header) {
         $response->headers($header);
     }
-} catch (\Exception $e) {
+} catch (Exception $e) {
     $response = new Orno\Http\Response();
     $response->setStatusCode(500);
     $response->setContent(json_encode(['status_code' => 500, 'message' => $e->getMessage()]));

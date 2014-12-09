@@ -11,10 +11,8 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\ClientEntity;
-use League\OAuth2\Server\Entity\RefreshTokenEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\ClientInterface;
+use League\OAuth2\Server\Entity\FactoryInterface;
 use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
@@ -25,32 +23,51 @@ use League\OAuth2\Server\Util\SecureKey;
 class PasswordGrant extends AbstractGrant
 {
     /**
+     * @var FactoryInterface
+     */
+    private $entityFactory;
+    
+    /**
      * Grant identifier
+     *
      * @var string
      */
     protected $identifier = 'password';
 
     /**
      * Response type
+     *
      * @var string
      */
     protected $responseType;
 
     /**
      * Callback to authenticate a user's name and password
+     *
      * @var callable
      */
     protected $callback;
 
     /**
      * Access token expires in override
+     *
      * @var int
      */
     protected $accessTokenTTL;
+    
+    /**
+     * @param FactoryInterface $entityFactory
+     */
+    public function __construct(FactoryInterface $entityFactory)
+    {
+        $this->entityFactory = $entityFactory;
+    }
 
     /**
      * Set the callback to verify a user's username and password
-     * @param  callable $callback The callback function
+     *
+     * @param callable $callback The callback function
+     *
      * @return void
      */
     public function setVerifyCredentialsCallback(callable $callback)
@@ -60,7 +77,9 @@ class PasswordGrant extends AbstractGrant
 
     /**
      * Return the callback function
+     *
      * @return callable
+     *
      * @throws
      */
     protected function getVerifyCredentialsCallback()
@@ -74,7 +93,9 @@ class PasswordGrant extends AbstractGrant
 
     /**
      * Complete the password grant
+     *
      * @return array
+     *
      * @throws
      */
     public function completeFlow()
@@ -99,7 +120,7 @@ class PasswordGrant extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if (($client instanceof ClientEntity) === false) {
+        if (($client instanceof ClientInterface) === false) {
             $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
@@ -127,12 +148,12 @@ class PasswordGrant extends AbstractGrant
         $scopes = $this->validateScopes($scopeParam, $client);
 
         // Create a new session
-        $session = new SessionEntity($this->server);
+        $session = $this->entityFactory->buildSessionEntity();
         $session->setOwner('user', $userId);
         $session->associateClient($client);
 
         // Generate an access token
-        $accessToken = new AccessTokenEntity($this->server);
+        $accessToken = $this->entityFactory->buildAccessTokenEntity();
         $accessToken->setId(SecureKey::generate());
         $accessToken->setExpireTime($this->getAccessTokenTTL() + time());
 
@@ -151,7 +172,7 @@ class PasswordGrant extends AbstractGrant
 
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
-            $refreshToken = new RefreshTokenEntity($this->server);
+            $refreshToken = $this->entityFactory->buildRefreshTokenEntity();
             $refreshToken->setId(SecureKey::generate());
             $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
             $this->server->getTokenType()->setParam('refresh_token', $refreshToken->getId());

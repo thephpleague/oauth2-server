@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 Entity trait
+ * OAuth 2.0 Client entity
  *
  * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
@@ -11,23 +11,15 @@
 
 namespace League\OAuth2\Server\Entity;
 
-trait EntityTrait
+/**
+ * Hydratable entity interface
+ */
+interface HydratableInterface
 {
     /**
-     * Hydrate an entity with properites
-     *
+     * Hydrate an entity with properties
      * @param array $properties
-     *
      * @return self
      */
-    public function hydrate(array $properties)
-    {
-        foreach ($properties as $prop => $val) {
-            if (property_exists($this, $prop)) {
-                $this->{$prop} = $val;
-            }
-        }
-
-        return $this;
-    }
+    public function hydrate(array $properties);
 }

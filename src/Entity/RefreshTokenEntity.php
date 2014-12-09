@@ -14,23 +14,27 @@ namespace League\OAuth2\Server\Entity;
 /**
  * Refresh token entity class
  */
-class RefreshTokenEntity extends AbstractTokenEntity
+class RefreshTokenEntity extends AbstractTokenEntity implements RefreshTokenInterface
 {
     /**
      * Access token associated to refresh token
+     *
      * @var \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     protected $accessTokenEntity;
 
     /**
      * Id of the access token
+     *
      * @var string
      */
     protected $accessTokenId;
 
     /**
      * Set the ID of the associated access token
-     * @param  string $accessTokenId
+     *
+     * @param string $accessTokenId
+     *
      * @return self
      */
     public function setAccessTokenId($accessTokenId)
@@ -42,10 +46,12 @@ class RefreshTokenEntity extends AbstractTokenEntity
 
     /**
      * Associate an access token
-     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $accessTokenEntity
+     *
+     * @param \League\OAuth2\Server\Entity\AccessTokenInterface $accessTokenEntity
+     *
      * @return self
      */
-    public function setAccessToken(AccessTokenEntity $accessTokenEntity)
+    public function setAccessToken(AccessTokenInterface $accessTokenEntity)
     {
         $this->accessTokenEntity = $accessTokenEntity;
 
@@ -54,11 +60,12 @@ class RefreshTokenEntity extends AbstractTokenEntity
 
     /**
      * Return access token
+     *
      * @return AccessTokenEntity
      */
     public function getAccessToken()
     {
-        if (! $this->accessTokenEntity instanceof AccessTokenEntity) {
+        if (! $this->accessTokenEntity instanceof AccessTokenInterface) {
             $this->accessTokenEntity = $this->server->getAccessTokenStorage()->get($this->accessTokenId);
         }
 

@@ -11,8 +11,8 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\AccessTokenInterface as AccessTokenEntityInterface;
+use League\OAuth2\Server\Entity\ScopeInterface as ScopeEntityInterface;
 
 /**
  * Access token interface
@@ -20,40 +20,42 @@ use League\OAuth2\Server\Entity\ScopeEntity;
 interface AccessTokenInterface extends StorageInterface
 {
     /**
-     * Get an instance of Entity\AccessTokenEntity
-     * @param  string                                         $token The access token
-     * @return \League\OAuth2\Server\Entity\AccessTokenEntity
+     * Get an instance of Entity\AccessTokenInterface
+     * @param  string $token The access token
+     * @return \League\OAuth2\Server\Entity\AccessTokenInterface
      */
     public function get($token);
 
     /**
      * Get the scopes for an access token
-     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
-     * @return array                                            Array of \League\OAuth2\Server\Entity\ScopeEntity
+     * @param \League\OAuth2\Server\Entity\AccessTokenInterface $token The access token
+     * @return array Array of \League\OAuth2\Server\Entity\ScopeInterface
      */
-    public function getScopes(AccessTokenEntity $token);
+    public function getScopes(AccessTokenEntityInterface $token);
 
     /**
      * Creates a new access token
-     * @param  string                                   $token      The access token
-     * @param  integer                                  $expireTime The expire time expressed as a unix timestamp
-     * @param  string|integer                           $sessionId  The session ID
-     * @return \League\OAuth2\Server\Entity\AccessTokenEntity
+     *
+     * @param string         $token      The access token
+     * @param integer        $expireTime The expire time expressed as a unix timestamp
+     * @param string|integer $sessionId  The session ID
+     *
+     * @return void
      */
     public function create($token, $expireTime, $sessionId);
 
     /**
-     * Associate a scope with an acess token
-     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
-     * @param  \League\OAuth2\Server\Entity\ScopeEntity         $scope The scope
+     * Associate a scope with an access token
+     * @param  \League\OAuth2\Server\Entity\AccessTokenInterface $token The access token
+     * @param  \League\OAuth2\Server\Entity\ScopeInterface       $scope The scope
      * @return void
      */
-    public function associateScope(AccessTokenEntity $token, ScopeEntity $scope);
+    public function associateScope(AccessTokenEntityInterface $token, ScopeEntityInterface $scope);
 
     /**
      * Delete an access token
-     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token to delete
+     * @param  \League\OAuth2\Server\Entity\AccessTokenInterface $token The access token to delete
      * @return void
      */
-    public function delete(AccessTokenEntity $token);
+    public function delete(AccessTokenEntityInterface $token);
 }

@@ -18,9 +18,11 @@ class RedirectUri
 {
     /**
      * Generate a new redirect uri
-     * @param  string $uri            The base URI
-     * @param  array  $params         The query string parameters
-     * @param  string $queryDelimeter The query string delimeter (default: "?")
+     *
+     * @param string $uri            The base URI
+     * @param array  $params         The query string parameters
+     * @param string $queryDelimeter The query string delimeter (default: "?")
+     *
      * @return string The updated URI
      */
     public static function make($uri, $params = [], $queryDelimeter = '?')

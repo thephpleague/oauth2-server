@@ -17,65 +17,76 @@ use League\OAuth2\Server\Event\SessionOwnerEvent;
 /**
  * Session entity grant
  */
-class SessionEntity
+class SessionEntity implements SessionInterface
 {
     /**
      * Session identifier
+     *
      * @var string
      */
     protected $id;
 
     /**
      * Client identifier
+     *
      * @var \League\OAuth2\Server\Entity\ClientEntity
      */
     protected $client;
 
     /**
      * Session owner identifier
+     *
      * @var string
      */
     protected $ownerId;
 
     /**
      * Session owner type (e.g. "user")
+     *
      * @var string
      */
     protected $ownerType;
 
     /**
      * Auth code
+     *
      * @var \League\OAuth2\Server\Entity\AuthCodeEntity
      */
     protected $authCode;
 
     /**
      * Access token
+     *
      * @var \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     protected $accessToken;
 
     /**
      * Refresh token
+     *
      * @var \League\OAuth2\Server\Entity\RefreshTokenEntity
      */
     protected $refreshToken;
 
     /**
      * Session scopes
+     *
      * @var \Symfony\Component\HttpFoundation\ParameterBag
      */
     protected $scopes;
 
     /**
      * Authorization or resource server
+     *
      * @var \League\OAuth2\Server\AuthorizationServer|\League\OAuth2\Server\ResourceServer
      */
     protected $server;
 
     /**
      * __construct
-     * @param  \League\OAuth2\Server\AbstractServer $server
+     *
+     * @param \League\OAuth2\Server\AbstractServer $server
+     *
      * @return self
      */
     public function __construct(AbstractServer $server)
@@ -87,7 +98,9 @@ class SessionEntity
 
     /**
      * Set the session identifier
-     * @param  string $id
+     *
+     * @param string $id
+     *
      * @return self
      */
     public function setId($id)
@@ -99,6 +112,7 @@ class SessionEntity
 
     /**
      * Return the session identifier
+     *
      * @return string
      */
     public function getId()
@@ -108,10 +122,10 @@ class SessionEntity
 
     /**
      * Associate a scope
-     * @param  \League\OAuth2\Server\Entity\ScopeEntity $scope
+     * @param  \League\OAuth2\Server\Entity\ScopeInterface $scope
      * @return self
      */
-    public function associateScope(ScopeEntity $scope)
+    public function associateScope(ScopeInterface $scope)
     {
         if (!isset($this->scopes[$scope->getId()])) {
             $this->scopes[$scope->getId()] = $scope;
@@ -122,7 +136,9 @@ class SessionEntity
 
     /**
      * Check if access token has an associated scope
-     * @param  string $scope Scope to check
+     *
+     * @param string $scope Scope to check
+     *
      * @return bool
      */
     public function hasScope($scope)
@@ -136,7 +152,7 @@ class SessionEntity
 
     /**
      * Return all scopes associated with the session
-     * @return \League\OAuth2\Server\Entity\ScopeEntity[]
+     * @return \League\OAuth2\Server\Entity\ScopeInterface[]
      */
     public function getScopes()
     {
@@ -149,7 +165,7 @@ class SessionEntity
 
     /**
      * Format the local scopes array
-     * @param  \League\OAuth2\Server\Entity\Scope[]
+     * @param  \League\OAuth2\Server\Entity\ScopeInterface[]
      * @return array
      */
     private function formatScopes($unformatted = [])
@@ -157,7 +173,7 @@ class SessionEntity
         $scopes = [];
         if (is_array($unformatted)) {
             foreach ($unformatted as $scope) {
-                if ($scope instanceof ScopeEntity) {
+                if ($scope instanceof ScopeInterface) {
                     $scopes[$scope->getId()] = $scope;
                 }
             }
@@ -168,10 +184,12 @@ class SessionEntity
 
     /**
      * Associate an access token with the session
-     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken
+     *
+     * @param \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken
+     *
      * @return self
      */
-    public function associateAccessToken(AccessTokenEntity $accessToken)
+    public function associateAccessToken(AccessTokenInterface $accessToken)
     {
         $this->accessToken = $accessToken;
 
@@ -180,10 +198,12 @@ class SessionEntity
 
     /**
      * Associate a refresh token with the session
-     * @param  \League\OAuth2\Server\Entity\RefreshTokenEntity $refreshToken
+     *
+     * @param \League\OAuth2\Server\Entity\RefreshTokenEntity $refreshToken
+     *
      * @return self
      */
-    public function associateRefreshToken(RefreshTokenEntity $refreshToken)
+    public function associateRefreshToken(RefreshTokenInterface $refreshToken)
     {
         $this->refreshToken = $refreshToken;
 
@@ -192,10 +212,10 @@ class SessionEntity
 
     /**
      * Associate a client with the session
-     * @param  \League\OAuth2\Server\Entity\ClientEntity $client The client
+     * @param  \League\OAuth2\Server\Entity\ClientInterface $client The client
      * @return self
      */
-    public function associateClient(ClientEntity $client)
+    public function associateClient(ClientInterface $client)
     {
         $this->client = $client;
 
@@ -204,11 +224,11 @@ class SessionEntity
 
     /**
      * Return the session client
-     * @return \League\OAuth2\Server\Entity\ClientEntity
+     * @return \League\OAuth2\Server\Entity\ClientInterface
      */
     public function getClient()
     {
-        if ($this->client instanceof ClientEntity) {
+        if ($this->client instanceof ClientInterface) {
             return $this->client;
         }
 
@@ -219,8 +239,10 @@ class SessionEntity
 
     /**
      * Set the session owner
-     * @param  string $type The type of the owner (e.g. user, app)
-     * @param  string $id   The identifier of the owner
+     *
+     * @param string $type The type of the owner (e.g. user, app)
+     * @param string $id   The identifier of the owner
+     *
      * @return self
      */
     public function setOwner($type, $id)
@@ -235,6 +257,7 @@ class SessionEntity
 
     /**
      * Return session owner identifier
+     *
      * @return string
      */
     public function getOwnerId()
@@ -244,6 +267,7 @@ class SessionEntity
 
     /**
      * Return session owner type
+     *
      * @return string
      */
     public function getOwnerType()
@@ -253,6 +277,7 @@ class SessionEntity
 
     /**
      * Save the session
+     *
      * @return void
      */
     public function save()

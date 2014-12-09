@@ -25,22 +25,26 @@ class ResourceServer extends AbstractServer
 {
     /**
      * The access token
+     *
      * @var \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     protected $accessToken;
 
     /**
      * The query string key which is used by clients to present the access token (default: access_token)
+     *
      * @var string
      */
     protected $tokenKey = 'access_token';
 
     /**
      * Initialise the resource server
-     * @param  SessionInterface     $sessionStorage
-     * @param  AccessTokenInterface $accessTokenStorage
-     * @param  ClientInterface      $clientStorage
-     * @param  ScopeInterface       $scopeStorage
+     *
+     * @param SessionInterface     $sessionStorage
+     * @param AccessTokenInterface $accessTokenStorage
+     * @param ClientInterface      $clientStorage
+     * @param ScopeInterface       $scopeStorage
+     *
      * @return self
      */
     public function __construct(
@@ -64,7 +68,9 @@ class ResourceServer extends AbstractServer
 
     /**
      * Sets the query string key for the access token.
+     *
      * @param string $key The new query string key
+     *
      * @return self
      */
     public function setIdKey($key)
@@ -76,6 +82,7 @@ class ResourceServer extends AbstractServer
 
     /**
      * Gets the access token
+     *
      * @return \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     public function getAccessToken()
@@ -85,7 +92,8 @@ class ResourceServer extends AbstractServer
 
     /**
      * Checks if the access token is valid or not
-     * @param bool $headersOnly Limit Access Token to Authorization header only
+     *
+     * @param bool                   $headersOnly Limit Access Token to Authorization header only
      * @param AccessTokenEntity|null $accessToken Access Token
      *
      * @return bool
@@ -117,8 +125,11 @@ class ResourceServer extends AbstractServer
 
     /**
      * Reads in the access token from the headers
+     *
      * @param bool $headersOnly Limit Access Token to Authorization header only
+     *
      * @throws Exception\InvalidRequestException Thrown if there is no access token presented
+     *
      * @return string
      */
     public function determineAccessToken($headersOnly = false)

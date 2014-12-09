@@ -23,7 +23,9 @@ class SecureKey
 
     /**
      * Generate a new unique code
-     * @param  integer $len Length of the generated code
+     *
+     * @param integer $len Length of the generated code
+     *
      * @return string
      */
     public static function generate($len = 40)

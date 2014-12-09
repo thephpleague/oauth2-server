@@ -16,43 +16,50 @@ use League\OAuth2\Server\AbstractServer;
 /**
  * Client entity class
  */
-class ClientEntity
+class ClientEntity implements ClientInterface
 {
     use EntityTrait;
 
     /**
      * Client identifier
+     *
      * @var string
      */
     protected $id = null;
 
     /**
      * Client secret
+     *
      * @var string
      */
     protected $secret = null;
 
     /**
      * Client name
+     *
      * @var string
      */
     protected $name = null;
 
     /**
      * Client redirect URI
+     *
      * @var string
      */
     protected $redirectUri = null;
 
     /**
      * Authorization or resource server
+     *
      * @var \League\OAuth2\Server\AbstractServer
      */
     protected $server;
 
     /**
      * __construct
-     * @param  \League\OAuth2\Server\AbstractServer $server
+     *
+     * @param \League\OAuth2\Server\AbstractServer $server
+     *
      * @return self
      */
     public function __construct(AbstractServer $server)
@@ -64,6 +71,7 @@ class ClientEntity
 
     /**
      * Return the client identifier
+     *
      * @return string
      */
     public function getId()
@@ -73,6 +81,7 @@ class ClientEntity
 
     /**
      * Return the client secret
+     *
      * @return string
      */
     public function getSecret()
@@ -82,6 +91,7 @@ class ClientEntity
 
     /**
      * Get the client name
+     *
      * @return string
      */
     public function getName()
@@ -91,6 +101,7 @@ class ClientEntity
 
     /**
      * Returnt the client redirect URI
+     *
      * @return string
      */
     public function getRedirectUri()

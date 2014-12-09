@@ -26,6 +26,7 @@ class OAuthException extends \Exception
 
     /**
      * Redirect URI if the server should redirect back to the client
+     *
      * @var string|null
      */
     public $redirectUri = null;
@@ -37,6 +38,7 @@ class OAuthException extends \Exception
 
     /**
      * Throw a new exception
+     *
      * @param string $msg Exception Message
      */
     public function __construct($msg = 'An error occured')
@@ -46,6 +48,7 @@ class OAuthException extends \Exception
 
     /**
      * Should the server redirect back to the client?
+     *
      * @return bool
      */
     public function shouldRedirect()
@@ -55,6 +58,7 @@ class OAuthException extends \Exception
 
     /**
      * Return redirect URI if set
+     *
      * @return string|null
      */
     public function getRedirectUri()
@@ -70,6 +74,7 @@ class OAuthException extends \Exception
 
     /**
      * Get all headers that have to be send with the error response
+     *
      * @return array Array with header values
      */
     public function getHttpHeaders()

@@ -97,12 +97,22 @@ Capsule::table('oauth_scopes')->insert([
     'description'   =>  'Your photo',
 ]);
 
+
+Capsule::table('oauth_scopes')->insert([
+    'id'            =>  'openid',
+    'description'   =>  'OpenID Connect',
+]);
+
+Capsule::table('oauth_scopes')->insert([
+    'id'            =>  'profile',
+    'description'   =>  'Your profile',
+]);
 /******************************************************************************/
 
 print 'Creating sessions table'.PHP_EOL;
 
 Capsule::schema()->create('oauth_sessions', function ($table) {
-    $table->increments('id');
+    $table->increments('id')->unsigned();
     $table->string('owner_type');
     $table->string('owner_id');
     $table->string('client_id');
@@ -135,7 +145,7 @@ print 'Creating access tokens table'.PHP_EOL;
 
 Capsule::schema()->create('oauth_access_tokens', function ($table) {
     $table->string('access_token')->primary();
-    $table->integer('session_id');
+    $table->integer('session_id')->unsigned();
     $table->integer('expire_time');
 
     $table->foreign('session_id')->references('id')->on('oauth_sessions')->onDelete('cascade');
@@ -168,7 +178,7 @@ Capsule::schema()->create('oauth_refresh_tokens', function ($table) {
     $table->integer('expire_time');
     $table->string('access_token');
 
-    $table->foreign('access_token')->references('id')->on('oauth_access_tokens')->onDelete('cascade');
+    $table->foreign('access_token')->references('access_token')->on('oauth_access_tokens')->onDelete('cascade');
 });
 
 /******************************************************************************/
@@ -177,7 +187,7 @@ print 'Creating auth codes table'.PHP_EOL;
 
 Capsule::schema()->create('oauth_auth_codes', function ($table) {
     $table->string('auth_code')->primary();
-    $table->integer('session_id');
+    $table->integer('session_id')->unsigned();
     $table->integer('expire_time');
     $table->string('client_redirect_uri');
 
@@ -189,7 +199,7 @@ Capsule::schema()->create('oauth_auth_codes', function ($table) {
 print 'Creating oauth access token scopes table'.PHP_EOL;
 
 Capsule::schema()->create('oauth_access_token_scopes', function ($table) {
-    $table->increments('id');
+    $table->increments('id')->unsigned();
     $table->string('access_token');
     $table->string('scope');
 
@@ -240,8 +250,8 @@ Capsule::schema()->create('oauth_auth_code_scopes', function ($table) {
 print 'Creating oauth session scopes table'.PHP_EOL;
 
 Capsule::schema()->create('oauth_session_scopes', function ($table) {
-    $table->increments('id');
-    $table->string('session_id');
+    $table->increments('id')->unsigned();
+    $table->integer('session_id')->unsigned();
     $table->string('scope');
 
     $table->foreign('session_id')->references('id')->on('oauth_sessions')->onDelete('cascade');
