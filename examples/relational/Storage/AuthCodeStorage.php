@@ -4,7 +4,9 @@ namespace RelationalExample\Storage;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use League\OAuth2\Server\Entity\AuthCodeEntity;
+use League\OAuth2\Server\Entity\AuthCodeInterface as AuthCodeEntityInterface;
 use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\ScopeInterface;
 use League\OAuth2\Server\Storage\AbstractStorage;
 use League\OAuth2\Server\Storage\AuthCodeInterface;
 
@@ -46,7 +48,7 @@ class AuthCodeStorage extends AbstractStorage implements AuthCodeInterface
     /**
      * {@inheritdoc}
      */
-    public function getScopes(AuthCodeEntity $token)
+    public function getScopes(AuthCodeEntityInterface $token)
     {
         $result = Capsule::table('oauth_auth_code_scopes')
                                     ->select(['oauth_scopes.id', 'oauth_scopes.description'])
@@ -72,7 +74,7 @@ class AuthCodeStorage extends AbstractStorage implements AuthCodeInterface
     /**
      * {@inheritdoc}
      */
-    public function associateScope(AuthCodeEntity $token, ScopeEntity $scope)
+    public function associateScope(AuthCodeEntityInterface $token, ScopeInterface $scope)
     {
         Capsule::table('oauth_auth_code_scopes')
                     ->insert([
@@ -84,7 +86,7 @@ class AuthCodeStorage extends AbstractStorage implements AuthCodeInterface
     /**
      * {@inheritdoc}
      */
-    public function delete(AuthCodeEntity $token)
+    public function delete(AuthCodeEntityInterface $token)
     {
         Capsule::table('oauth_auth_codes')
                     ->where('auth_code', $token->getId())

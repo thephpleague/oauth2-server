@@ -17,7 +17,7 @@ use League\OAuth2\Server\Event\SessionOwnerEvent;
 /**
  * Session entity grant
  */
-class SessionEntity
+class SessionEntity implements SessionInterface
 {
     /**
      * Session identifier
@@ -122,12 +122,10 @@ class SessionEntity
 
     /**
      * Associate a scope
-     *
-     * @param \League\OAuth2\Server\Entity\ScopeEntity $scope
-     *
+     * @param  \League\OAuth2\Server\Entity\ScopeInterface $scope
      * @return self
      */
-    public function associateScope(ScopeEntity $scope)
+    public function associateScope(ScopeInterface $scope)
     {
         if (!isset($this->scopes[$scope->getId()])) {
             $this->scopes[$scope->getId()] = $scope;
@@ -154,8 +152,7 @@ class SessionEntity
 
     /**
      * Return all scopes associated with the session
-     *
-     * @return \League\OAuth2\Server\Entity\ScopeEntity[]
+     * @return \League\OAuth2\Server\Entity\ScopeInterface[]
      */
     public function getScopes()
     {
@@ -168,9 +165,7 @@ class SessionEntity
 
     /**
      * Format the local scopes array
-     *
-     * @param  \League\OAuth2\Server\Entity\Scope[]
-     *
+     * @param  \League\OAuth2\Server\Entity\ScopeInterface[]
      * @return array
      */
     private function formatScopes($unformatted = [])
@@ -178,7 +173,7 @@ class SessionEntity
         $scopes = [];
         if (is_array($unformatted)) {
             foreach ($unformatted as $scope) {
-                if ($scope instanceof ScopeEntity) {
+                if ($scope instanceof ScopeInterface) {
                     $scopes[$scope->getId()] = $scope;
                 }
             }
@@ -194,7 +189,7 @@ class SessionEntity
      *
      * @return self
      */
-    public function associateAccessToken(AccessTokenEntity $accessToken)
+    public function associateAccessToken(AccessTokenInterface $accessToken)
     {
         $this->accessToken = $accessToken;
 
@@ -208,7 +203,7 @@ class SessionEntity
      *
      * @return self
      */
-    public function associateRefreshToken(RefreshTokenEntity $refreshToken)
+    public function associateRefreshToken(RefreshTokenInterface $refreshToken)
     {
         $this->refreshToken = $refreshToken;
 
@@ -217,12 +212,10 @@ class SessionEntity
 
     /**
      * Associate a client with the session
-     *
-     * @param \League\OAuth2\Server\Entity\ClientEntity $client The client
-     *
+     * @param  \League\OAuth2\Server\Entity\ClientInterface $client The client
      * @return self
      */
-    public function associateClient(ClientEntity $client)
+    public function associateClient(ClientInterface $client)
     {
         $this->client = $client;
 
@@ -231,12 +224,11 @@ class SessionEntity
 
     /**
      * Return the session client
-     *
-     * @return \League\OAuth2\Server\Entity\ClientEntity
+     * @return \League\OAuth2\Server\Entity\ClientInterface
      */
     public function getClient()
     {
-        if ($this->client instanceof ClientEntity) {
+        if ($this->client instanceof ClientInterface) {
             return $this->client;
         }
 

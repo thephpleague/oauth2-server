@@ -3,15 +3,65 @@
 namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Entity\AccessTokenInterface;
 use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\FactoryInterface;
+use League\OAuth2\Server\Entity\RefreshTokenInterface;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\SessionInterface;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use Mockery as M;
+use PHPUnit_Framework_TestCase;
 
-class PasswordGrantTest extends \PHPUnit_Framework_TestCase
+class PasswordGrantTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var SessionInterface
+     */
+    private $session;
+    
+    /**
+     * @var AccessTokenInterface
+     */
+    private $accessToken;
+    
+    /**
+     * @var RefreshTokenInterface
+     */
+    private $refreshToken;
+    
+    /**
+     * @var FactoryInterface
+     */
+    private $entityFactory;
+    
+    public function setUp()
+    {
+        $this->session = M::mock('League\OAuth2\Server\Entity\SessionInterface')
+            ->shouldIgnoreMissing();
+        $this->accessToken = M::mock('League\OAuth2\Server\Entity\AccessTokenInterface')
+            ->shouldIgnoreMissing();
+        $this->refreshToken = M::mock('League\OAuth2\Server\Entity\RefreshTokenInterface')
+            ->shouldIgnoreMissing();
+        $this->entityFactory = M::mock('League\OAuth2\Server\Entity\FactoryInterface');
+        $this->entityFactory
+            ->shouldReceive('buildSessionEntity')
+            ->andReturn($this->session);
+        $this->entityFactory
+            ->shouldReceive('buildAccessTokenEntity')
+            ->andReturn($this->accessToken);
+        $this->entityFactory
+            ->shouldReceive('buildRefreshTokenEntity')
+            ->andReturn($this->refreshToken);
+    }
+    
+    public function tearDown()
+    {
+        M::close();
+    }
+    
     public function testCompleteFlowMissingClientId()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
@@ -19,7 +69,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $_POST['grant_type'] = 'password';
 
         $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
+        $grant = new PasswordGrant($this->entityFactory);
 
         $server->addGrantType($grant);
         $server->issueAccessToken();
@@ -35,7 +85,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
+        $grant = new PasswordGrant($this->entityFactory);
 
         $server->addGrantType($grant);
         $server->issueAccessToken();
@@ -52,7 +102,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
+        $grant = new PasswordGrant($this->entityFactory);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -75,7 +125,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
+        $grant = new PasswordGrant($this->entityFactory);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -118,7 +168,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
+        $grant = new PasswordGrant($this->entityFactory);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -162,7 +212,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
+        $grant = new PasswordGrant($this->entityFactory);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -207,7 +257,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
+        $grant = new PasswordGrant($this->entityFactory);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -254,7 +304,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
+        $grant = new PasswordGrant($this->entityFactory);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -304,7 +354,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
+        $grant = new PasswordGrant($this->entityFactory);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -358,7 +408,13 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
+        $grant = new PasswordGrant($this->entityFactory);
+        
+        $this->session
+            ->shouldReceive('getScopes')
+            ->andReturn([
+                (new ScopeEntity($server))->hydrate(['id' => 'foo']),
+            ]);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -369,9 +425,6 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('setServer');
         $sessionStorage->shouldReceive('create')->andreturn(123);
-        $sessionStorage->shouldReceive('getScopes')->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
-        ]);
         $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
             (new SessionEntity($server))->setId('foobar')
         );
@@ -419,7 +472,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
+        $grant = new PasswordGrant($this->entityFactory);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
@@ -427,12 +480,16 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
             (new ClientEntity($server))->hydrate(['id' => 'testapp'])
         );
 
+        $this->session
+            ->shouldReceive('getScopes')
+            ->andReturn([
+                (new ScopeEntity($server))->hydrate(['id' => 'foo']),
+            ]);
+
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('setServer');
         $sessionStorage->shouldReceive('create')->andreturn(123);
-        $sessionStorage->shouldReceive('getScopes')->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
-        ]);
+        
         $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
             (new SessionEntity($server))->setId('foobar')
         );
@@ -468,7 +525,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         });
 
         $server->addGrantType($grant);
-        $server->addGrantType(new RefreshTokenGrant());
+        $server->addGrantType(new RefreshTokenGrant($this->entityFactory));
         $response = $server->issueAccessToken();
 
         $this->assertTrue(array_key_exists('access_token', $response));

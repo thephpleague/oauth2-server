@@ -28,15 +28,13 @@ abstract class AbstractTokenEntity
 
     /**
      * Associated session
-     *
-     * @var \League\OAuth2\Server\Entity\SessionEntity
+     * @var \League\OAuth2\Server\Entity\SessionInterface
      */
     protected $session;
 
     /**
      * Session scopes
-     *
-     * @var \League\OAuth2\Server\Entity\ScopeEntity[]
+     * @var \League\OAuth2\Server\Entity\ScopeInterface[]
      */
     protected $scopes;
 
@@ -70,12 +68,10 @@ abstract class AbstractTokenEntity
 
     /**
      * Set session
-     *
-     * @param \League\OAuth2\Server\Entity\SessionEntity $session
-     *
+     * @param \League\OAuth2\Server\Entity\SessionInterface $session
      * @return self
      */
-    public function setSession(SessionEntity $session)
+    public function setSession(SessionInterface $session)
     {
         $this->session = $session;
 
@@ -142,12 +138,10 @@ abstract class AbstractTokenEntity
 
     /**
      * Associate a scope
-     *
-     * @param \League\OAuth2\Server\Entity\ScopeEntity $scope
-     *
+     * @param \League\OAuth2\Server\Entity\ScopeInterface $scope
      * @return self
      */
-    public function associateScope(ScopeEntity $scope)
+    public function associateScope(ScopeInterface $scope)
     {
         if (!isset($this->scopes[$scope->getId()])) {
             $this->scopes[$scope->getId()] = $scope;
@@ -158,9 +152,8 @@ abstract class AbstractTokenEntity
 
     /**
      * Format the local scopes array
-     *
-     * @param  \League\OAuth2\Server\Entity\ScopeEntity[]
-     *
+     * @param array[\League\OAuth2\Server\Entity\ScopeInterface] $unformatted
+     * @internal param \League\OAuth2\Server\Entity\ScopeInterface $scope []
      * @return array
      */
     protected function formatScopes($unformatted = [])
@@ -171,7 +164,7 @@ abstract class AbstractTokenEntity
 
         $scopes = [];
         foreach ($unformatted as $scope) {
-            if ($scope instanceof ScopeEntity) {
+            if ($scope instanceof ScopeInterface) {
                 $scopes[$scope->getId()] = $scope;
             }
         }
