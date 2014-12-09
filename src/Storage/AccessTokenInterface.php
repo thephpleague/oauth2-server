@@ -35,10 +35,10 @@ interface AccessTokenInterface extends StorageInterface
 
     /**
      * Creates a new access token
-     * @param  string                                   $token      The access token
-     * @param  integer                                  $expireTime The expire time expressed as a unix timestamp
-     * @param  string|integer                           $sessionId  The session ID
-     * @return \League\OAuth2\Server\Entity\AccessTokenEntity
+     * @param  string         $token      The access token
+     * @param  integer        $expireTime The expire time expressed as a unix timestamp
+     * @param  string|integer $sessionId  The session ID
+     * @return void
      */
     public function create($token, $expireTime, $sessionId);
 
