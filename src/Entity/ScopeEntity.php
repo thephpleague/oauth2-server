@@ -22,25 +22,30 @@ class ScopeEntity implements \JsonSerializable
 
     /**
      * Scope identifier
+     *
      * @var string
      */
     protected $id;
 
     /**
      * Scope description
+     *
      * @var string
      */
     protected $description;
 
     /**
      * Authorization or resource server
+     *
      * @var \League\OAuth2\Server\AbstractServer
      */
     protected $server;
 
     /**
      * __construct
-     * @param  \League\OAuth2\Server\AbstractServer $server
+     *
+     * @param \League\OAuth2\Server\AbstractServer $server
+     *
      * @return self
      */
     public function __construct(AbstractServer $server)
@@ -52,6 +57,7 @@ class ScopeEntity implements \JsonSerializable
 
     /**
      * Return the scope identifer
+     *
      * @return string
      */
     public function getId()
@@ -61,6 +67,7 @@ class ScopeEntity implements \JsonSerializable
 
     /**
      * Return the scope's description
+     *
      * @return string
      */
     public function getDescription()
@@ -70,6 +77,7 @@ class ScopeEntity implements \JsonSerializable
 
     /**
      * Returns a JSON object when entity is passed into json_encode
+     *
      * @return array
      */
     public function jsonSerialize()

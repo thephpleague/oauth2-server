@@ -25,31 +25,37 @@ class ClientCredentialsGrant extends AbstractGrant
 {
     /**
      * Grant identifier
+     *
      * @var string
      */
     protected $identifier = 'client_credentials';
 
     /**
      * Response type
+     *
      * @var string
      */
     protected $responseType = null;
 
     /**
      * AuthServer instance
+     *
      * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server = null;
 
     /**
      * Access token expires in override
+     *
      * @var int
      */
     protected $accessTokenTTL = null;
 
     /**
      * Complete the client credentials grant
+     *
      * @return array
+     *
      * @throws
      */
     public function completeFlow()

@@ -20,17 +20,21 @@ interface ClientInterface extends StorageInterface
 {
     /**
      * Validate a client
-     * @param  string                                   $clientId     The client's ID
-     * @param  string                                   $clientSecret The client's secret (default = "null")
-     * @param  string                                   $redirectUri  The client's redirect URI (default = "null")
-     * @param  string                                   $grantType    The grant type used (default = "null")
+     *
+     * @param string $clientId     The client's ID
+     * @param string $clientSecret The client's secret (default = "null")
+     * @param string $redirectUri  The client's redirect URI (default = "null")
+     * @param string $grantType    The grant type used (default = "null")
+     *
      * @return \League\OAuth2\Server\Entity\ClientEntity
      */
     public function get($clientId, $clientSecret = null, $redirectUri = null, $grantType = null);
 
     /**
      * Get the client associated with a session
-     * @param  \League\OAuth2\Server\Entity\SessionEntity $session The session
+     *
+     * @param \League\OAuth2\Server\Entity\SessionEntity $session The session
+     *
      * @return \League\OAuth2\Server\Entity\ClientEntity
      */
     public function getBySession(SessionEntity $session);

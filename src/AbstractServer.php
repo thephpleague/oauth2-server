@@ -36,48 +36,56 @@ abstract class AbstractServer
 
     /**
      * Session storage
+     *
      * @var \League\OAuth2\Server\Storage\SessionInterface
      */
     protected $sessionStorage;
 
     /**
      * Access token storage
+     *
      * @var \League\OAuth2\Server\Storage\AccessTokenInterface
      */
     protected $accessTokenStorage;
 
     /**
      * Refresh token storage
+     *
      * @var \League\OAuth2\Server\Storage\RefreshTokenInterface
      */
     protected $refreshTokenStorage;
 
     /**
      * Auth code storage
+     *
      * @var \League\OAuth2\Server\Storage\AuthCodeInterface
      */
     protected $authCodeStorage;
 
     /**
      * Scope storage
+     *
      * @var \League\OAuth2\Server\Storage\ScopeInterface
      */
     protected $scopeStorage;
 
     /**
      * Client storage
+     *
      * @var \League\OAuth2\Server\Storage\ClientInterface
      */
     protected $clientStorage;
 
     /**
      * Token type
+     *
      * @var \League\OAuth2\Server\TokenType\TokenTypeInterface
      */
     protected $tokenType;
 
     /**
      * Event emitter
+     *
      * @var \League\Event\Emitter
      */
     protected $eventEmitter;
@@ -92,6 +100,7 @@ abstract class AbstractServer
 
     /**
      * Set an event emitter
+     *
      * @param object $emitter Event emitter object
      */
     public function setEventEmitter($emitter = null)
@@ -105,6 +114,7 @@ abstract class AbstractServer
 
     /**
      * Add an event listener to the event emitter
+     *
      * @param string   $eventName Event name
      * @param callable $listener  Callable function or method
      */
@@ -115,6 +125,7 @@ abstract class AbstractServer
 
     /**
      * Returns the event emitter
+     *
      * @return \League\Event\Emitter
      */
     public function getEventEmitter()
@@ -124,7 +135,9 @@ abstract class AbstractServer
 
     /**
      * Sets the Request Object
+     *
      * @param \Symfony\Component\HttpFoundation\Request The Request Object
+     *
      * @return self
      */
     public function setRequest($request)
@@ -136,6 +149,7 @@ abstract class AbstractServer
 
     /**
      * Gets the Request object. It will create one from the globals if one is not set.
+     *
      * @return \Symfony\Component\HttpFoundation\Request
      */
     public function getRequest()
@@ -149,7 +163,9 @@ abstract class AbstractServer
 
     /**
      * Set the client storage
-     * @param  \League\OAuth2\Server\Storage\ClientInterface $storage
+     *
+     * @param \League\OAuth2\Server\Storage\ClientInterface $storage
+     *
      * @return self
      */
     public function setClientStorage(ClientInterface $storage)
@@ -162,7 +178,9 @@ abstract class AbstractServer
 
     /**
      * Set the session storage
-     * @param  \League\OAuth2\Server\Storage\SessionInterface $storage
+     *
+     * @param \League\OAuth2\Server\Storage\SessionInterface $storage
+     *
      * @return self
      */
     public function setSessionStorage(SessionInterface $storage)
@@ -175,7 +193,9 @@ abstract class AbstractServer
 
     /**
      * Set the access token storage
-     * @param  \League\OAuth2\Server\Storage\AccessTokenInterface $storage
+     *
+     * @param \League\OAuth2\Server\Storage\AccessTokenInterface $storage
+     *
      * @return self
      */
     public function setAccessTokenStorage(AccessTokenInterface $storage)
@@ -188,7 +208,9 @@ abstract class AbstractServer
 
     /**
      * Set the refresh token storage
-     * @param  \League\OAuth2\Server\Storage\RefreshTokenInterface $storage
+     *
+     * @param \League\OAuth2\Server\Storage\RefreshTokenInterface $storage
+     *
      * @return self
      */
     public function setRefreshTokenStorage(RefreshTokenInterface $storage)
@@ -201,7 +223,9 @@ abstract class AbstractServer
 
     /**
      * Set the auth code storage
-     * @param  \League\OAuth2\Server\Storage\AuthCodeInterface $storage
+     *
+     * @param \League\OAuth2\Server\Storage\AuthCodeInterface $storage
+     *
      * @return self
      */
     public function setAuthCodeStorage(AuthCodeInterface $storage)
@@ -214,7 +238,9 @@ abstract class AbstractServer
 
     /**
      * Set the scope storage
-     * @param  \League\OAuth2\Server\Storage\ScopeInterface $storage
+     *
+     * @param \League\OAuth2\Server\Storage\ScopeInterface $storage
+     *
      * @return self
      */
     public function setScopeStorage(ScopeInterface $storage)
@@ -227,6 +253,7 @@ abstract class AbstractServer
 
     /**
      * Return the client storage
+     *
      * @return \League\OAuth2\Server\Storage\ClientInterface
      */
     public function getClientStorage()
@@ -236,6 +263,7 @@ abstract class AbstractServer
 
     /**
      * Return the scope storage
+     *
      * @return \League\OAuth2\Server\Storage\ScopeInterface
      */
     public function getScopeStorage()
@@ -245,6 +273,7 @@ abstract class AbstractServer
 
     /**
      * Return the session storage
+     *
      * @return \League\OAuth2\Server\Storage\SessionInterface
      */
     public function getSessionStorage()
@@ -254,6 +283,7 @@ abstract class AbstractServer
 
     /**
      * Return the refresh token storage
+     *
      * @return \League\OAuth2\Server\Storage\RefreshTokenInterface
      */
     public function getRefreshTokenStorage()
@@ -263,6 +293,7 @@ abstract class AbstractServer
 
     /**
      * Return the access token storage
+     *
      * @return \League\OAuth2\Server\Storage\AccessTokenInterface
      */
     public function getAccessTokenStorage()
@@ -272,6 +303,7 @@ abstract class AbstractServer
 
     /**
      * Return the auth code storage
+     *
      * @return \League\OAuth2\Server\Storage\AuthCodeInterface
      */
     public function getAuthCodeStorage()
@@ -281,7 +313,9 @@ abstract class AbstractServer
 
     /**
      * Set the access token type
-     * @param  TokenTypeInterface $tokenType The token type
+     *
+     * @param TokenTypeInterface $tokenType The token type
+     *
      * @return void
      */
     public function setTokenType(TokenTypeInterface $tokenType)
@@ -292,6 +326,7 @@ abstract class AbstractServer
 
     /**
      * Get the access token type
+     *
      * @return TokenTypeInterface
      */
     public function getTokenType()

@@ -3,7 +3,6 @@
 namespace RelationalExample\Storage;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
-use League\OAuth2\Server\Entity\AbstractTokenEntity;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Storage\AbstractStorage;
@@ -28,7 +27,7 @@ class AccessTokenStorage extends AbstractStorage implements AccessTokenInterface
             return $token;
         }
 
-        return null;
+        return;
     }
 
     /**

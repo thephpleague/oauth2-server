@@ -21,7 +21,7 @@ class DefaultAlgorithm implements KeyAlgorithmInterface
         $stripped = '';
         do {
             $bytes = openssl_random_pseudo_bytes($len, $strong);
-    
+
             // We want to stop execution if the key fails because, well, that is bad.
             if ($bytes === false || $strong === false) {
                 // @codeCoverageIgnoreStart
@@ -30,6 +30,7 @@ class DefaultAlgorithm implements KeyAlgorithmInterface
             }
             $stripped .= str_replace(['/', '+', '='], '', base64_encode($bytes));
         } while (strlen($stripped) < $len);
+
         return substr($stripped, 0, $len);
     }
 }

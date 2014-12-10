@@ -18,18 +18,21 @@ abstract class AbstractTokenType
 {
     /**
      * Response array
+     *
      * @var array
      */
     protected $response = [];
 
     /**
      * Server
+     *
      * @var \League\OAuth2\Server\AbstractServer $server
      */
     protected $server;
 
     /**
      * Server
+     *
      * @var \League\OAuth2\Server\Entity\SessionEntity $session
      */
     protected $session;

@@ -20,6 +20,7 @@ interface StorageInterface
 {
     /**
      * Set the server
+     *
      * @param \League\OAuth2\Server\AbstractServer $server
      */
     public function setServer(AbstractServer $server);
