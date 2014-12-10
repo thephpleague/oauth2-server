@@ -24,7 +24,6 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * OAuth 2.0 Resource Server
  */
-
 abstract class AbstractServer
 {
     /**
