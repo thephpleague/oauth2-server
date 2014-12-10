@@ -29,23 +29,23 @@ interface AccessTokenInterface extends StorageInterface
     /**
      * Get the scopes for an access token
      * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
-     * @return array                                            Array of \League\OAuth2\Server\Entity\ScopeEntity
+     * @return array                                          Array of \League\OAuth2\Server\Entity\ScopeEntity
      */
     public function getScopes(AccessTokenEntity $token);
 
     /**
      * Creates a new access token
-     * @param  string                                   $token      The access token
-     * @param  integer                                  $expireTime The expire time expressed as a unix timestamp
-     * @param  string|integer                           $sessionId  The session ID
-     * @return \League\OAuth2\Server\Entity\AccessTokenEntity
+     * @param  string         $token      The access token
+     * @param  integer        $expireTime The expire time expressed as a unix timestamp
+     * @param  string|integer $sessionId  The session ID
+     * @return void
      */
     public function create($token, $expireTime, $sessionId);
 
     /**
      * Associate a scope with an acess token
      * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
-     * @param  \League\OAuth2\Server\Entity\ScopeEntity         $scope The scope
+     * @param  \League\OAuth2\Server\Entity\ScopeEntity       $scope The scope
      * @return void
      */
     public function associateScope(AccessTokenEntity $token, ScopeEntity $scope);
