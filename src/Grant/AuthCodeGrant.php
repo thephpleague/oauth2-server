@@ -27,37 +27,44 @@ class AuthCodeGrant extends AbstractGrant
 {
     /**
      * Grant identifier
+     *
      * @var string
      */
     protected $identifier = 'authorization_code';
 
     /**
      * Response type
+     *
      * @var string
      */
     protected $responseType = 'code';
 
     /**
      * AuthServer instance
+     *
      * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server = null;
 
     /**
      * Access token expires in override
+     *
      * @var int
      */
     protected $accessTokenTTL = null;
 
     /**
      * The TTL of the auth token
+     *
      * @var integer
      */
     protected $authTokenTTL = 600;
 
     /**
      * Override the default access token expire time
-     * @param  int $authTokenTTL
+     *
+     * @param int $authTokenTTL
+     *
      * @return void
      */
     public function setAuthTokenTTL($authTokenTTL)
@@ -129,9 +136,10 @@ class AuthCodeGrant extends AbstractGrant
     /**
      * Parse a new authorize request
      *
-     * @param  string $type       The session owner's type
-     * @param  string $typeId     The session owner's ID
-     * @param  array  $authParams The authorize request $_GET parameters
+     * @param string $type       The session owner's type
+     * @param string $typeId     The session owner's ID
+     * @param array  $authParams The authorize request $_GET parameters
+     *
      * @return string An authorisation code
      */
     public function newAuthorizeRequest($type, $typeId, $authParams = [])
@@ -160,7 +168,9 @@ class AuthCodeGrant extends AbstractGrant
 
     /**
      * Complete the auth code grant
+     *
      * @return array
+     *
      * @throws
      */
     public function completeFlow()

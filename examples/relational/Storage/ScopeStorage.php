@@ -19,7 +19,7 @@ class ScopeStorage extends AbstractStorage implements ScopeInterface
                                 ->get();
 
         if (count($result) === 0) {
-            return null;
+            return;
         }
 
         return (new ScopeEntity($this->server))->hydrate([

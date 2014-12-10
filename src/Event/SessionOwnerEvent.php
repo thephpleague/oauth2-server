@@ -18,12 +18,14 @@ class SessionOwnerEvent extends AbstractEvent
 {
     /**
      * Session entity
+     *
      * @var \League\OAuth2\Server\Entity\SessionEntity
      */
     private $session;
 
     /**
      * Init the event with a session
+     *
      * @param \League\OAuth2\Server\Entity\SessionEntity $session
      */
     public function __construct(SessionEntity $session)
@@ -33,6 +35,7 @@ class SessionOwnerEvent extends AbstractEvent
 
     /**
      * The name of the event
+     *
      * @return string
      */
     public function getName()
@@ -42,6 +45,7 @@ class SessionOwnerEvent extends AbstractEvent
 
     /**
      * Return session
+     *
      * @return \League\OAuth2\Server\Entity\SessionEntity
      */
     public function getSession()

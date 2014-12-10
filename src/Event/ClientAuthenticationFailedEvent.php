@@ -18,12 +18,14 @@ class ClientAuthenticationFailedEvent extends AbstractEvent
 {
     /**
      * Request
+     *
      * @var \Symfony\Component\HttpFoundation\Request
      */
     private $request;
 
     /**
      * Init the event with a request
+     *
      * @param \Symfony\Component\HttpFoundation\Request $request
      */
     public function __construct(Request $request)
@@ -33,6 +35,7 @@ class ClientAuthenticationFailedEvent extends AbstractEvent
 
     /**
      * The name of the event
+     *
      * @return string
      */
     public function getName()
@@ -42,6 +45,7 @@ class ClientAuthenticationFailedEvent extends AbstractEvent
 
     /**
      * Return request
+     *
      * @return \Symfony\Component\HttpFoundation\Request
      */
     public function getRequest()

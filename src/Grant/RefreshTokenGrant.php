@@ -30,13 +30,16 @@ class RefreshTokenGrant extends AbstractGrant
 
     /**
      * Refresh token TTL (default = 604800 | 1 week)
+     *
      * @var integer
      */
     protected $refreshTokenTTL = 604800;
 
     /**
      * Set the TTL of the refresh token
-     * @param  int $refreshTokenTTL
+     *
+     * @param int $refreshTokenTTL
+     *
      * @return void
      */
     public function setRefreshTokenTTL($refreshTokenTTL)
@@ -46,6 +49,7 @@ class RefreshTokenGrant extends AbstractGrant
 
     /**
      * Get the TTL of the refresh token
+     *
      * @return int
      */
     public function getRefreshTokenTTL()

@@ -288,7 +288,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     public function testCompleteFlowExpiredRefreshToken()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRefreshException');
-        
+
         $_POST = [
             'grant_type'    => 'refresh_token',
             'client_id'     =>  'testapp',

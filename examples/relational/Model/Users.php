@@ -20,6 +20,6 @@ class Users
             return $result;
         }
 
-        return null;
+        return;
     }
 }

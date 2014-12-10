@@ -26,31 +26,37 @@ class PasswordGrant extends AbstractGrant
 {
     /**
      * Grant identifier
+     *
      * @var string
      */
     protected $identifier = 'password';
 
     /**
      * Response type
+     *
      * @var string
      */
     protected $responseType;
 
     /**
      * Callback to authenticate a user's name and password
+     *
      * @var callable
      */
     protected $callback;
 
     /**
      * Access token expires in override
+     *
      * @var int
      */
     protected $accessTokenTTL;
 
     /**
      * Set the callback to verify a user's username and password
-     * @param  callable $callback The callback function
+     *
+     * @param callable $callback The callback function
+     *
      * @return void
      */
     public function setVerifyCredentialsCallback(callable $callback)
@@ -60,7 +66,9 @@ class PasswordGrant extends AbstractGrant
 
     /**
      * Return the callback function
+     *
      * @return callable
+     *
      * @throws
      */
     protected function getVerifyCredentialsCallback()
@@ -74,7 +82,9 @@ class PasswordGrant extends AbstractGrant
 
     /**
      * Complete the password grant
+     *
      * @return array
+     *
      * @throws
      */
     public function completeFlow()

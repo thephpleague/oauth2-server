@@ -15,7 +15,9 @@ interface KeyAlgorithmInterface
 {
     /**
      * Generate a new unique code
-     * @param  integer $len Length of the generated code
+     *
+     * @param integer $len Length of the generated code
+     *
      * @return string
      */
     public function generate($len);

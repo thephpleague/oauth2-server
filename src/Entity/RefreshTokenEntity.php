@@ -18,19 +18,23 @@ class RefreshTokenEntity extends AbstractTokenEntity
 {
     /**
      * Access token associated to refresh token
+     *
      * @var \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     protected $accessTokenEntity;
 
     /**
      * Id of the access token
+     *
      * @var string
      */
     protected $accessTokenId;
 
     /**
      * Set the ID of the associated access token
-     * @param  string $accessTokenId
+     *
+     * @param string $accessTokenId
+     *
      * @return self
      */
     public function setAccessTokenId($accessTokenId)
@@ -42,7 +46,9 @@ class RefreshTokenEntity extends AbstractTokenEntity
 
     /**
      * Associate an access token
-     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $accessTokenEntity
+     *
+     * @param \League\OAuth2\Server\Entity\AccessTokenEntity $accessTokenEntity
+     *
      * @return self
      */
     public function setAccessToken(AccessTokenEntity $accessTokenEntity)
@@ -54,6 +60,7 @@ class RefreshTokenEntity extends AbstractTokenEntity
 
     /**
      * Return access token
+     *
      * @return AccessTokenEntity
      */
     public function getAccessToken()

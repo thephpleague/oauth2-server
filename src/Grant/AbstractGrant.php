@@ -23,30 +23,35 @@ abstract class AbstractGrant implements GrantTypeInterface
 {
     /**
      * Grant identifier
+     *
      * @var string
      */
     protected $identifier = '';
 
     /**
      * Response type
+     *
      * @var string
      */
     protected $responseType;
 
     /**
      * Callback to authenticate a user's name and password
+     *
      * @var callable
      */
     protected $callback;
 
     /**
      * AuthServer instance
+     *
      * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server;
 
     /**
      * Access token expires in override
+     *
      * @var int
      */
     protected $accessTokenTTL;
@@ -79,6 +84,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Get the TTL for an access token
+     *
      * @return int The TTL
      */
     public function getAccessTokenTTL()
@@ -92,7 +98,9 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Override the default access token expire time
-     * @param  int $accessTokenTTL
+     *
+     * @param int $accessTokenTTL
+     *
      * @return self
      */
     public function setAccessTokenTTL($accessTokenTTL)
@@ -114,10 +122,13 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Given a list of scopes, validate them and return an array of Scope entities
-     * @param  string                                    $scopeParam  A string of scopes (e.g. "profile email birthday")
-     * @param  \League\OAuth2\Server\Entity\ClientEntity $client      Client entity
-     * @param  string|null                               $redirectUri The redirect URI to return the user to
+     *
+     * @param string                                    $scopeParam  A string of scopes (e.g. "profile email birthday")
+     * @param \League\OAuth2\Server\Entity\ClientEntity $client      Client entity
+     * @param string|null                               $redirectUri The redirect URI to return the user to
+     *
      * @return \League\OAuth2\Server\Entity\ScopeEntity[]
+     *
      * @throws \League\OAuth2\Server\Exception\InvalidScopeException If scope is invalid, or no scopes passed when required
      * @throws
      */
@@ -167,7 +178,9 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Format the local scopes array
+     *
      * @param  \League\OAuth2\Server\Entity\ScopeEntity[]
+     *
      * @return array
      */
     protected function formatScopes($unformated = [])
