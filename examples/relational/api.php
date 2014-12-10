@@ -76,7 +76,7 @@ $router->get('/users', function (Request $request) use ($server) {
 });
 
 // GET /users/{username}
-$router->get('/users/{username}', function (Request $request, $args) use ($server) {
+$router->get('/users/{username}', function (Request $request, Response $response, array $args) use ($server) {
 
     $result = (new Model\Users())->get($args['username']);
 
