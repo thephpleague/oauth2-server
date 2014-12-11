@@ -28,5 +28,9 @@ after_script:
   - git add -f .
   - git commit -m "Travis pushed coverage of ${TRAVIS_COMMIT}@${TRAVIS_BRANCH} to gh-pages"
   - git push -fq origin gh-pages > /dev/null
-
-secure: "C4wD/BQefKSu9W594iyLp+IBCjlM8kKlmp+nXKXnZGi0L8IkV3m4mmNOb8PExxGMhZ3mlev5DnU4Uoh4oJaUxnkR1FpX4dSEpyzU3VknUzSE2yZOlL+bdCw3o85TGoCcp/+ReJCOw5sncxTskJKHlW1YMa33FznaXwLNoImpjTg="
+branches:
+  only:
+    - master
+env:
+  global:
+    secure: "C4wD/BQefKSu9W594iyLp+IBCjlM8kKlmp+nXKXnZGi0L8IkV3m4mmNOb8PExxGMhZ3mlev5DnU4Uoh4oJaUxnkR1FpX4dSEpyzU3VknUzSE2yZOlL+bdCw3o85TGoCcp/+ReJCOw5sncxTskJKHlW1YMa33FznaXwLNoImpjTg="
