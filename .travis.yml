@@ -11,8 +11,22 @@ install:
 
 script:
   - mkdir -p build/logs
-  - phpunit --coverage-text --verbose --coverage-clover=coverage.clover
+  - phpunit --coverage-text --verbose --coverage-clover=coverage.clover --coverage-html coverage
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+  - git config --global user.email "travis@travis-ci.org"
+  - git config --global user.name "TravisCI"
+  - cp -R coverage ${HOME}/coverage
+  - cd ${HOME}
+  - git clone --quiet --branch=gh-pages https://${GITHUBTOKEN}@github.com/thephpleague/oauth2-server.git gh-pages > /dev/null
+  - cd gh-pages
+  - mkdir ${TRAVIS_BRANCH}
+  - cd ${TRAVIS_BRANCH}
+  - cp -Rf $HOME/coverage/* .
+  - git add -f .
+  - git commit -m "Travis pushed coverage of ${TRAVIS_COMMIT}@${TRAVIS_BRANCH} to gh-pages"
+  - git push -fq origin gh-pages > /dev/null
+
+secure: "C4wD/BQefKSu9W594iyLp+IBCjlM8kKlmp+nXKXnZGi0L8IkV3m4mmNOb8PExxGMhZ3mlev5DnU4Uoh4oJaUxnkR1FpX4dSEpyzU3VknUzSE2yZOlL+bdCw3o85TGoCcp/+ReJCOw5sncxTskJKHlW1YMa33FznaXwLNoImpjTg="
