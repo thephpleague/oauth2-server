@@ -241,7 +241,7 @@ print 'Creating oauth session scopes table'.PHP_EOL;
 
 Capsule::schema()->create('oauth_session_scopes', function ($table) {
     $table->increments('id')->unsigned();
-    $table->string('session_id')->unsigned();
+    $table->integer('session_id')->unsigned();
     $table->string('scope');
 
     $table->foreign('session_id')->references('id')->on('oauth_sessions')->onDelete('cascade');
