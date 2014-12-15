@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.5 (released 2014-12-15)
+
+* Prevent duplicate session in auth code grant (Issue #282)
+
 ## 4.0.4 (released 2014-12-03)
 
 * Ensure refresh token hasn't expired (Issue #270)
