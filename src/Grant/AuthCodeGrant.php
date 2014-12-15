@@ -260,7 +260,6 @@ class AuthCodeGrant extends AbstractGrant
         $code->expire();
 
         // Save all the things
-        $session->save();
         $accessToken->setSession($session);
         $accessToken->save();
 
