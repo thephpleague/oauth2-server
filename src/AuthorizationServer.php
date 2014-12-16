@@ -181,7 +181,7 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Require the "state" paremter in checkAuthoriseParams()
+     * Require the "state" parameter in checkAuthoriseParams()
      *
      * @return bool
      */
@@ -191,7 +191,7 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Require the "state" paremter in checkAuthoriseParams()
+     * Require the "state" parameter in checkAuthoriseParams()
      *
      * @param boolean $require
      *
