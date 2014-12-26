@@ -1,5 +1,10 @@
 <?php
 
+use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Entity\EntityFactory;
+use League\OAuth2\Server\Exception\OAuthException;
+use League\OAuth2\Server\Grant\AuthCodeGrant;
+use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use Orno\Http\Request;
 use Orno\Http\Response;
 use RelationalExample\Storage;
@@ -12,7 +17,7 @@ $router = new \Orno\Route\RouteCollection();
 $router->setStrategy(\Orno\Route\RouteStrategyInterface::RESTFUL_STRATEGY);
 
 // Set up the OAuth 2.0 authorization server
-$server = new \League\OAuth2\Server\AuthorizationServer();
+$server = new AuthorizationServer();
 $server->setSessionStorage(new Storage\SessionStorage());
 $server->setAccessTokenStorage(new Storage\AccessTokenStorage());
 $server->setRefreshTokenStorage(new Storage\RefreshTokenStorage());
@@ -20,10 +25,12 @@ $server->setClientStorage(new Storage\ClientStorage());
 $server->setScopeStorage(new Storage\ScopeStorage());
 $server->setAuthCodeStorage(new Storage\AuthCodeStorage());
 
-$authCodeGrant = new \League\OAuth2\Server\Grant\AuthCodeGrant();
+$entityFactory = new EntityFactory($server);
+
+$authCodeGrant = new AuthCodeGrant($entityFactory);
 $server->addGrantType($authCodeGrant);
 
-$refrehTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
+$refrehTokenGrant = new RefreshTokenGrant($entityFactory);
 $server->addGrantType($refrehTokenGrant);
 
 // Routing setup
@@ -36,7 +43,7 @@ $router->get('/authorize', function (Request $request) use ($server) {
 
     try {
         $authParams = $server->getGrantType('authorization_code')->checkAuthorizeParams();
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         return new Response(
             json_encode([
                 'error'     =>  $e->errorType,
@@ -72,7 +79,7 @@ $router->post('/access_token', function (Request $request) use ($server) {
         $response = $server->issueAccessToken();
 
         return new Response(json_encode($response), 200);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         return new Response(
             json_encode([
                 'error'     =>  $e->errorType,
@@ -97,7 +104,7 @@ try {
     // A failed response
     $response = $e->getJsonResponse();
     $response->setContent(json_encode(['status_code' => $e->getStatusCode(), 'message' => $e->getMessage()]));
-} catch (\League\OAuth2\Server\Exception\OAuthException $e) {
+} catch (OAuthException $e) {
     $response = new Response(json_encode([
         'error'     =>  $e->errorType,
         'message'   =>  $e->getMessage(),
@@ -106,7 +113,7 @@ try {
     foreach ($e->getHttpHeaders() as $header) {
         $response->headers($header);
     }
-} catch (\Exception $e) {
+} catch (Exception $e) {
     $response = new Orno\Http\Response();
     $response->setStatusCode(500);
     $response->setContent(json_encode(['status_code' => 500, 'message' => $e->getMessage()]));

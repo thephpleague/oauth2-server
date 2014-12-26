@@ -12,7 +12,7 @@
 namespace League\OAuth2\Server\TokenType;
 
 use League\OAuth2\Server\AbstractServer;
-use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\SessionInterface;
 
 abstract class AbstractTokenType
 {
@@ -32,8 +32,7 @@ abstract class AbstractTokenType
 
     /**
      * Server
-     *
-     * @var \League\OAuth2\Server\Entity\SessionEntity $session
+     * @var \League\OAuth2\Server\Entity\SessionInterface $session
      */
     protected $session;
 
@@ -50,7 +49,7 @@ abstract class AbstractTokenType
     /**
      * {@inheritdoc}
      */
-    public function setSession(SessionEntity $session)
+    public function setSession(SessionInterface $session)
     {
         $this->session = $session;
 

@@ -4,6 +4,7 @@ namespace RelationalExample\Storage;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
+use League\OAuth2\Server\Entity\RefreshTokenInterface as RefreshTokenEntityInterface;
 use League\OAuth2\Server\Storage\AbstractStorage;
 use League\OAuth2\Server\Storage\RefreshTokenInterface;
 
@@ -46,7 +47,7 @@ class RefreshTokenStorage extends AbstractStorage implements RefreshTokenInterfa
     /**
      * {@inheritdoc}
      */
-    public function delete(RefreshTokenEntity $token)
+    public function delete(RefreshTokenEntityInterface $token)
     {
         Capsule::table('oauth_refresh_tokens')
                             ->where('refresh_token', $token->getId())

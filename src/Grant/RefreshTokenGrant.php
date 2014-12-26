@@ -11,9 +11,9 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\ClientEntity;
-use League\OAuth2\Server\Entity\RefreshTokenEntity;
+use League\OAuth2\Server\Entity\ClientInterface;
+use League\OAuth2\Server\Entity\FactoryInterface;
+use League\OAuth2\Server\Entity\RefreshTokenInterface;
 use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
@@ -34,6 +34,19 @@ class RefreshTokenGrant extends AbstractGrant
      * @var integer
      */
     protected $refreshTokenTTL = 604800;
+
+    /**
+     * @var FactoryInterface
+     */
+    private $entityFactory;
+
+    /**
+     * @param \League\OAuth2\Server\Entity\FactoryInterface $entityFactory
+     */
+    public function __construct(FactoryInterface $entityFactory)
+    {
+        $this->entityFactory = $entityFactory;
+    }
 
     /**
      * Set the TTL of the refresh token
@@ -81,7 +94,7 @@ class RefreshTokenGrant extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if (($client instanceof ClientEntity) === false) {
+        if (($client instanceof ClientInterface) === false) {
             $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
@@ -94,7 +107,7 @@ class RefreshTokenGrant extends AbstractGrant
         // Validate refresh token
         $oldRefreshToken = $this->server->getRefreshTokenStorage()->get($oldRefreshTokenParam);
 
-        if (($oldRefreshToken instanceof RefreshTokenEntity) === false) {
+        if (($oldRefreshToken instanceof RefreshTokenInterface) === false) {
             throw new Exception\InvalidRefreshException();
         }
 
@@ -129,7 +142,7 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         // Generate a new access token and assign it the correct sessions
-        $newAccessToken = new AccessTokenEntity($this->server);
+        $newAccessToken = $this->entityFactory->buildAccessTokenEntity();
         $newAccessToken->setId(SecureKey::generate());
         $newAccessToken->setExpireTime($this->getAccessTokenTTL() + time());
         $newAccessToken->setSession($session);
@@ -150,7 +163,7 @@ class RefreshTokenGrant extends AbstractGrant
         $oldRefreshToken->expire();
 
         // Generate a new refresh token
-        $newRefreshToken = new RefreshTokenEntity($this->server);
+        $newRefreshToken = $this->entityFactory->buildRefreshTokenEntity();
         $newRefreshToken->setId(SecureKey::generate());
         $newRefreshToken->setExpireTime($this->getRefreshTokenTTL() + time());
         $newRefreshToken->setAccessToken($newAccessToken);

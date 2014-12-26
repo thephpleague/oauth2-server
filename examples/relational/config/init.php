@@ -97,6 +97,16 @@ Capsule::table('oauth_scopes')->insert([
     'description'   =>  'Your photo',
 ]);
 
+
+Capsule::table('oauth_scopes')->insert([
+    'id'            =>  'openid',
+    'description'   =>  'OpenID Connect',
+]);
+
+Capsule::table('oauth_scopes')->insert([
+    'id'            =>  'profile',
+    'description'   =>  'Your profile',
+]);
 /******************************************************************************/
 
 print 'Creating sessions table'.PHP_EOL;
