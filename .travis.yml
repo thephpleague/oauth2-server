@@ -34,3 +34,11 @@ branches:
 env:
   global:
     secure: "C4wD/BQefKSu9W594iyLp+IBCjlM8kKlmp+nXKXnZGi0L8IkV3m4mmNOb8PExxGMhZ3mlev5DnU4Uoh4oJaUxnkR1FpX4dSEpyzU3VknUzSE2yZOlL+bdCw3o85TGoCcp/+ReJCOw5sncxTskJKHlW1YMa33FznaXwLNoImpjTg="
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/7de0ca12596cd5268f30
+    on_success: always  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: false     # default: false
