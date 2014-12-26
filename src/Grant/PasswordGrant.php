@@ -26,7 +26,7 @@ class PasswordGrant extends AbstractGrant
      * @var FactoryInterface
      */
     private $entityFactory;
-    
+
     /**
      * Grant identifier
      *
@@ -54,7 +54,7 @@ class PasswordGrant extends AbstractGrant
      * @var int
      */
     protected $accessTokenTTL;
-    
+
     /**
      * @param FactoryInterface $entityFactory
      */

@@ -122,9 +122,9 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Given a list of scopes, validate them and return an array of Scope entities
-     * @param  string                                    $scopeParam  A string of scopes (e.g. "profile email birthday")
-     * @param  \League\OAuth2\Server\Entity\ClientInterface $client      Client entity
-     * @param  string|null                               $redirectUri The redirect URI to return the user to
+     * @param  string                                                $scopeParam  A string of scopes (e.g. "profile email birthday")
+     * @param  \League\OAuth2\Server\Entity\ClientInterface          $client      Client entity
+     * @param  string|null                                           $redirectUri The redirect URI to return the user to
      * @return \League\OAuth2\Server\Entity\ScopeInterface[]
      * @throws \League\OAuth2\Server\Exception\InvalidScopeException If scope is invalid, or no scopes passed when required
      * @throws

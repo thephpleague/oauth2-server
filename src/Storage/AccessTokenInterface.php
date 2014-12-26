@@ -21,15 +21,15 @@ interface AccessTokenInterface extends StorageInterface
 {
     /**
      * Get an instance of Entity\AccessTokenInterface
-     * @param  string $token The access token
+     * @param  string                                            $token The access token
      * @return \League\OAuth2\Server\Entity\AccessTokenInterface
      */
     public function get($token);
 
     /**
      * Get the scopes for an access token
-     * @param \League\OAuth2\Server\Entity\AccessTokenInterface $token The access token
-     * @return array Array of \League\OAuth2\Server\Entity\ScopeInterface
+     * @param  \League\OAuth2\Server\Entity\AccessTokenInterface $token The access token
+     * @return array                                             Array of \League\OAuth2\Server\Entity\ScopeInterface
      */
     public function getScopes(AccessTokenEntityInterface $token);
 

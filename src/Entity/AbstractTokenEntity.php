@@ -68,7 +68,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Set session
-     * @param \League\OAuth2\Server\Entity\SessionInterface $session
+     * @param  \League\OAuth2\Server\Entity\SessionInterface $session
      * @return self
      */
     public function setSession(SessionInterface $session)
@@ -138,7 +138,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Associate a scope
-     * @param \League\OAuth2\Server\Entity\ScopeInterface $scope
+     * @param  \League\OAuth2\Server\Entity\ScopeInterface $scope
      * @return self
      */
     public function associateScope(ScopeInterface $scope)
@@ -152,7 +152,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Format the local scopes array
-     * @param array[\League\OAuth2\Server\Entity\ScopeInterface] $unformatted
+     * @param  array[\League\OAuth2\Server\Entity\ScopeInterface] $unformatted
      * @internal param \League\OAuth2\Server\Entity\ScopeInterface $scope []
      * @return array
      */

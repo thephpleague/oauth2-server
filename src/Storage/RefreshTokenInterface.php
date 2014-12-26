@@ -20,16 +20,16 @@ interface RefreshTokenInterface extends StorageInterface
 {
     /**
      * Return a new instance of \League\OAuth2\Server\Entity\RefreshTokenEntityInterface
-     * @param  string                                          $token
+     * @param  string                                             $token
      * @return \League\OAuth2\Server\Entity\RefreshTokenInterface
      */
     public function get($token);
 
     /**
      * Create a new refresh token_name
-     * @param  string                                          $token
-     * @param  integer                                         $expireTime
-     * @param  string                                          $accessToken
+     * @param  string                                             $token
+     * @param  integer                                            $expireTime
+     * @param  string                                             $accessToken
      * @return \League\OAuth2\Server\Entity\RefreshTokenInterface
      */
     public function create($token, $expireTime, $accessToken);

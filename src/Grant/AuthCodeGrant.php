@@ -27,7 +27,7 @@ class AuthCodeGrant extends AbstractGrant
      * @var FactoryInterface
      */
     private $entityFactory;
-    
+
     /**
      * Grant identifier
      *

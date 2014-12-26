@@ -18,7 +18,7 @@ interface HydratableInterface
 {
     /**
      * Hydrate an entity with properties
-     * @param array $properties
+     * @param  array $properties
      * @return self
      */
     public function hydrate(array $properties);

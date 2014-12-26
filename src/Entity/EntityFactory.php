@@ -63,4 +63,4 @@ class EntityFactory implements FactoryInterface
     {
         return new SessionEntity($this->server);
     }
-} 
+}

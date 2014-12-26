@@ -28,7 +28,7 @@ class ClientCredentialsGrant extends AbstractGrant
      * @var FactoryInterface
      */
     private $entityFactory;
-    
+
     /**
      * Grant identifier
      *
