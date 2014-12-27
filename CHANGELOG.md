@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.1.0 (released 2014-12-27)
+
+* Added MAC token support (Issue #158)
+* Fixed example init code (Issue #280)
+* Toggle refresh token rotation (Issue #286)
+* Docblock fixes
+
 ## 4.0.5 (released 2014-12-15)
 
 * Prevent duplicate session in auth code grant (Issue #282)
