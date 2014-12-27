@@ -26,11 +26,6 @@ class Bearer extends AbstractTokenType implements TokenTypeInterface
             'expires_in'    =>  $this->getParam('expires_in'),
         ];
 
-        // Return the id_token in the response back to the client, according to OpenID Connect 1.0 specs
-        if (!is_null($this->getParam('id_token'))) {
-            $return['id_token'] = $this->getParam('id_token');
-        }
-
         if (!is_null($this->getParam('refresh_token'))) {
             $return['refresh_token'] = $this->getParam('refresh_token');
         }

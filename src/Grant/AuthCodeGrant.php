@@ -266,14 +266,6 @@ class AuthCodeGrant extends AbstractGrant
             $this->server->getTokenType()->setParam('refresh_token', $refreshToken->getId());
         }
 
-        // id_token is required to be returned to the client according to OpenID Connect 1.0 specs
-        foreach ($code->getScopes() as $scope) {
-            if ('openid' === $scope->getId()) {
-                $this->server->getTokenType()->setParam('id_token', $code->getId());
-                break;
-            }
-        }
-
         // Expire the auth code
         $code->expire();
 
