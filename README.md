@@ -22,9 +22,10 @@ You can also define your own grants.
 In addition it supports the following token types:
 
 * Bearer tokens
-* MAC tokens (coming soon)
+* MAC tokens
 * JSON web tokens (coming soon)
 
+You can define you own token types too.
 
 ## Requirements
 
