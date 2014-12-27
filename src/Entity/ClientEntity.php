@@ -18,8 +18,6 @@ use League\OAuth2\Server\AbstractServer;
  */
 class ClientEntity implements ClientInterface
 {
-    use EntityTrait;
-
     /**
      * Client identifier
      *

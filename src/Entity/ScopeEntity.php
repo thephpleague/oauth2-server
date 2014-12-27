@@ -18,8 +18,6 @@ use League\OAuth2\Server\AbstractServer;
  */
 class ScopeEntity implements ScopeInterface
 {
-    use EntityTrait;
-
     /**
      * Scope identifier
      *
