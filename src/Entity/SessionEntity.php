@@ -97,11 +97,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Set the session identifier
-     *
-     * @param string $id
-     *
-     * @return self
+     * {@inheritDoc}
      */
     public function setId($id)
     {
@@ -111,9 +107,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Return the session identifier
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getId()
     {
@@ -121,9 +115,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Associate a scope
-     * @param  \League\OAuth2\Server\Entity\ScopeInterface $scope
-     * @return self
+     * {@inheritDoc}
      */
     public function associateScope(ScopeInterface $scope)
     {
@@ -135,11 +127,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Check if access token has an associated scope
-     *
-     * @param string $scope Scope to check
-     *
-     * @return bool
+     * {@inheritDoc}
      */
     public function hasScope($scope)
     {
@@ -151,8 +139,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Return all scopes associated with the session
-     * @return \League\OAuth2\Server\Entity\ScopeInterface[]
+     * {@inheritDoc}
      */
     public function getScopes()
     {
@@ -164,9 +151,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Format the local scopes array
-     * @param  \League\OAuth2\Server\Entity\ScopeInterface[]
-     * @return array
+     * {@inheritDoc}
      */
     private function formatScopes($unformatted = [])
     {
@@ -183,25 +168,15 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Associate an access token with the session
-     *
-     * @param \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken
-     *
-     * @return self
+     * {@inheritDoc}
      */
     public function associateAccessToken(AccessTokenInterface $accessToken)
     {
         $this->accessToken = $accessToken;
-
-        return $this;
     }
 
     /**
-     * Associate a refresh token with the session
-     *
-     * @param \League\OAuth2\Server\Entity\RefreshTokenEntity $refreshToken
-     *
-     * @return self
+     * {@inheritDoc}
      */
     public function associateRefreshToken(RefreshTokenInterface $refreshToken)
     {
@@ -211,9 +186,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Associate a client with the session
-     * @param  \League\OAuth2\Server\Entity\ClientInterface $client The client
-     * @return self
+     * {@inheritDoc}
      */
     public function associateClient(ClientInterface $client)
     {
@@ -223,8 +196,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Return the session client
-     * @return \League\OAuth2\Server\Entity\ClientInterface
+     * {@inheritDoc}
      */
     public function getClient()
     {
@@ -238,12 +210,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Set the session owner
-     *
-     * @param string $type The type of the owner (e.g. user, app)
-     * @param string $id   The identifier of the owner
-     *
-     * @return self
+     * {@inheritDoc}
      */
     public function setOwner($type, $id)
     {
@@ -256,9 +223,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Return session owner identifier
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getOwnerId()
     {
@@ -266,9 +231,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Return session owner type
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getOwnerType()
     {
@@ -276,9 +239,7 @@ class SessionEntity implements SessionInterface
     }
 
     /**
-     * Save the session
-     *
-     * @return void
+     * {@inheritDoc}
      */
     public function save()
     {

@@ -65,7 +65,7 @@ interface SessionInterface
 
     /**
      * Associate a client with the session
-     * @param  ClientEntity $client The client
+     * @param  ClientInterface $client The client
      * @return self
      */
     public function associateClient(ClientInterface $client);

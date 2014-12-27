@@ -15,7 +15,7 @@ use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\TokenType\Bearer;
 
 /**
- * OAuth 2.0 authorization server class
+ * OAuth 2.0 Authorization Server
  */
 class AuthorizationServer extends AbstractServer
 {

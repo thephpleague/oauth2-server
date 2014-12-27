@@ -12,7 +12,7 @@
 namespace League\OAuth2\Server\Entity;
 
 /**
- * Access token entity class
+ * Auth code entity class
  */
 class AuthCodeEntity extends AbstractTokenEntity implements AuthCodeInterface
 {
@@ -24,11 +24,7 @@ class AuthCodeEntity extends AbstractTokenEntity implements AuthCodeInterface
     protected $redirectUri = '';
 
     /**
-     * Set the redirect URI for the authorization request
-     *
-     * @param string $redirectUri
-     *
-     * @return self
+     * {@inheritDoc}
      */
     public function setRedirectUri($redirectUri)
     {
@@ -38,9 +34,7 @@ class AuthCodeEntity extends AbstractTokenEntity implements AuthCodeInterface
     }
 
     /**
-     * Get the redirect URI
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getRedirectUri()
     {
@@ -48,28 +42,21 @@ class AuthCodeEntity extends AbstractTokenEntity implements AuthCodeInterface
     }
 
     /**
-     * Generate a redirect URI
-     *
-     * @param string $state          The state parameter if set by the client
-     * @param string $queryDelimeter The query delimiter ('?' for auth code grant, '#' for implicit grant)
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function generateRedirectUri($state = null, $queryDelimeter = '?')
     {
         $uri = $this->getRedirectUri();
         $uri .= (strstr($this->getRedirectUri(), $queryDelimeter) === false) ? $queryDelimeter : '&';
 
-        return $uri.http_build_query([
-            'code'  =>  $this->getId(),
-            'state' =>  $state,
+        return $uri . http_build_query([
+            'code'  => $this->getId(),
+            'state' => $state,
         ]);
     }
 
     /**
-     * Get session
-     *
-     * @return \League\OAuth2\Server\Entity\SessionInterface
+     * {@inheritDoc}
      */
     public function getSession()
     {
@@ -83,8 +70,7 @@ class AuthCodeEntity extends AbstractTokenEntity implements AuthCodeInterface
     }
 
     /**
-     * Return all scopes associated with the session
-     * @return \League\OAuth2\Server\Entity\ScopeInterface[]
+     * {@inheritDoc}
      */
     public function getScopes()
     {

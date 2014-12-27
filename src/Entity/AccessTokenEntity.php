@@ -17,8 +17,7 @@ namespace League\OAuth2\Server\Entity;
 class AccessTokenEntity extends AbstractTokenEntity implements AccessTokenInterface
 {
     /**
-     * Get session
-     * @return \League\OAuth2\Server\Entity\SessionInterface
+     * {@inheritDoc}
      */
     public function getSession()
     {
@@ -32,11 +31,7 @@ class AccessTokenEntity extends AbstractTokenEntity implements AccessTokenInterf
     }
 
     /**
-     * Check if access token has an associated scope
-     *
-     * @param string $scope Scope to check
-     *
-     * @return bool
+     * {@inheritDoc}
      */
     public function hasScope($scope)
     {
@@ -48,8 +43,7 @@ class AccessTokenEntity extends AbstractTokenEntity implements AccessTokenInterf
     }
 
     /**
-     * Return all scopes associated with the access token
-     * @return \League\OAuth2\Server\Entity\ScopeInterface[]
+     * {@inheritDoc}
      */
     public function getScopes()
     {

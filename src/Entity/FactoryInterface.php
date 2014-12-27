@@ -3,6 +3,9 @@
 
 namespace League\OAuth2\Server\Entity;
 
+/**
+ * Factory interface
+ */
 interface FactoryInterface
 {
     /**
