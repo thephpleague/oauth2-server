@@ -118,6 +118,12 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
         return ($this->hash_equals($calculatedSignature, $signature)) ? $accessToken : null;
     }
 
+    /**
+     * Prevent timing attack
+     * @param string $knownString
+     * @param string $userString
+     * @return bool
+     */
     private function hash_equals($knownString, $userString)
     {
         if (!function_exists('hash_equals')) {
