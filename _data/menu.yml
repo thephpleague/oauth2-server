@@ -12,7 +12,7 @@ Authorization Server:
     'Server Customisation': '/authorization-server/customisation/'
     'Events': '/authorization-server/events/'
     'Custom token identifier generator': '/authorization-server/custom-token-identifier-generator/'
-    'Custom token types': '/authorization-server/custom-token-types/'
+    'Token types': '/token-types/'
     'Custom grants': '/authorization-server/custom-grants/'
 Resource Server:
     'Securing your API': '/resource-server/securing-your-api/'
