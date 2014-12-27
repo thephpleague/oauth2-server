@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
 
 /**
  * MacTokenInterface
