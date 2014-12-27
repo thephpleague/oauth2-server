@@ -11,15 +11,16 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use League\Event\Event;
+use League\OAuth2\Server\Entity\AccessTokenInterface;
 use League\OAuth2\Server\Entity\ClientInterface;
 use League\OAuth2\Server\Entity\FactoryInterface;
 use League\OAuth2\Server\Entity\RefreshTokenInterface;
-use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 
 /**
- * Referesh token grant
+ * Refresh token grant
  */
 class RefreshTokenGrant extends AbstractGrant
 {
@@ -29,7 +30,7 @@ class RefreshTokenGrant extends AbstractGrant
     protected $identifier = 'refresh_token';
 
     /**
-     * Refresh token TTL (default = 604800 | 1 week)
+     * Refresh token TTL (default = 604800 = 1 week)
      *
      * @var integer
      */
@@ -46,6 +47,33 @@ class RefreshTokenGrant extends AbstractGrant
     public function __construct(FactoryInterface $entityFactory)
     {
         $this->entityFactory = $entityFactory;
+
+        // Attach to the event emitter so that refresh tokens will automatically be created
+        $this->server->addEventListener('oauth.accesstoken.created', [$this, 'accessTokenCreated']);
+    }
+
+    /**
+     * When an access token is created also create a refresh token (as appropriate)
+     * @param \League\Event\Event                               $event
+     * @param \League\OAuth2\Server\Entity\AccessTokenInterface $accessToken
+     * @param \League\OAuth2\Server\Grant\GrantTypeInterface    $grant
+     */
+    protected function accessTokenCreated(Event $event, AccessTokenInterface $accessToken, GrantTypeInterface $grant)
+    {
+        // Refresh tokens are only supported for certain grant types
+        if (in_array($grant->getIdentifier(), ['authorization_code', 'password']) === false) {
+            return;
+        }
+
+        // Create and save the refresh token
+        $refreshToken = $this->entityFactory->buildRefreshTokenEntity();
+        $refreshToken->setId(SecureKey::generate());
+        $refreshToken->setExpireTime($this->getRefreshTokenTTL() + time());
+        $refreshToken->setAccessToken($accessToken);
+        $refreshToken->save();
+
+        // Set the refresh token on the token type
+        $this->server->getTokenType()->setParam('refresh_token', $refreshToken->getId());
     }
 
     /**
@@ -95,7 +123,7 @@ class RefreshTokenGrant extends AbstractGrant
         );
 
         if (($client instanceof ClientInterface) === false) {
-            $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
+            $this->server->getEventEmitter()->emit('oauth.error.client.authfail', $this->server->getRequest());
             throw new Exception\InvalidClientException();
         }
 
@@ -168,6 +196,8 @@ class RefreshTokenGrant extends AbstractGrant
         $newRefreshToken->setExpireTime($this->getRefreshTokenTTL() + time());
         $newRefreshToken->setAccessToken($newAccessToken);
         $newRefreshToken->save();
+
+        $this->server->getEventEmitter()->emit('oauth.refreshtoken.created', $newRefreshToken);
 
         $this->server->getTokenType()->setParam('refresh_token', $newRefreshToken->getId());
 
