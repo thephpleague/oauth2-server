@@ -152,8 +152,7 @@ abstract class AbstractTokenEntity
 
     /**
      * Format the local scopes array
-     * @param  array[\League\OAuth2\Server\Entity\ScopeInterface] $unformatted
-     * @internal param \League\OAuth2\Server\Entity\ScopeInterface $scope []
+     * @param  \League\OAuth2\Server\Entity\ScopeInterface[] $unformatted
      * @return array
      */
     protected function formatScopes($unformatted = [])

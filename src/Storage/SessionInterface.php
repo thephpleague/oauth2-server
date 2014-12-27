@@ -42,7 +42,6 @@ interface SessionInterface extends StorageInterface
     /**
      * Get a session's scopes
      * @param  SessionEntityInterface $session
-     * @internal param $ \League\OAuth2\Server\Entity\SessionEntity
      * @return array                  Array of \League\OAuth2\Server\Entity\ScopeInterface
      */
     public function getScopes(SessionEntityInterface $session);
