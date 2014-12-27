@@ -19,6 +19,8 @@ use League\OAuth2\Server\Event\SessionOwnerEvent;
  */
 class SessionEntity
 {
+    use EntityTrait;
+
     /**
      * Session identifier
      *
