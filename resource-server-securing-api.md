@@ -85,7 +85,7 @@ When `$server->isValidRequest()` is called the library will run the following ta
 
 * Check if an access token is present in the query string
     * If not, check if an access token is contained in an `authorization` header.
-        * If not, throw League\OAuth2\Server\Exception\InvalidAccessTokenException`
+        * If not, throw `League\OAuth2\Server\Exception\InvalidAccessTokenException`
 * Check if the access token is valid with the database
     * If not, throw `League\OAuth2\Server\Exception\AccessDeniedException`
 * If the access token is valid:
