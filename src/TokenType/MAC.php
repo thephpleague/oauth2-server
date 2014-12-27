@@ -63,9 +63,11 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
 
             preg_match_all('/([a-zA-Z]*)="([\w=]*)"/', $param, $matches);
 
+            // @codeCoverageIgnoreStart
             if (count($matches) !== 3) {
                 return;
             }
+            // @codeCoverageIgnoreEnd
 
             $key = reset($matches[1]);
             $value = trim(reset($matches[2]));
@@ -74,7 +76,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
                 return;
             }
 
-            $params->add($key, $value);
+            $params->set($key, $value);
         }, $paramsRaw);
 
         // Validate parameters

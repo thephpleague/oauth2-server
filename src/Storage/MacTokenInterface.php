@@ -20,11 +20,11 @@ interface MacTokenInterface extends StorageInterface
 {
     /**
      * Create a MAC key linked to an access token
-     * @param  string                                         $macKey
-     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $accessTokenEntity
+     * @param  string $macKey
+     * @param  string $accessToken
      * @return void
      */
-    public function create($macKey, AccessTokenEntity $accessTokenEntity);
+    public function create($macKey, $accessToken);
 
     /**
      * Get a MAC key by access token
