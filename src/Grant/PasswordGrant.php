@@ -175,6 +175,7 @@ class PasswordGrant extends AbstractGrant
         $accessToken->setSession($session);
         $accessToken->save();
 
+        $this->server->getEventEmitter()->emit('oauth.accesstoken.created', $accessToken, $this);
 
         return $this->server->getTokenType()->generateResponse();
     }
