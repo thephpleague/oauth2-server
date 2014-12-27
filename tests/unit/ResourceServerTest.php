@@ -146,8 +146,8 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         );
 
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
-            (new ScopeEntity($server))->hydrate(['id' => 'bar']),
+            (new ScopeEntity($server))->setId('foo'),
+            (new ScopeEntity($server))->setId('bar'),
         ]);
 
         $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
@@ -155,7 +155,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         );
 
         $clientStorage->shouldReceive('getBySession')->andReturn(
-            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
+            (new ClientEntity($server))->setId('testapp')
         );
 
         $request = new \Symfony\Component\HttpFoundation\Request();
@@ -203,8 +203,8 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         );
 
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
-            (new ScopeEntity($server))->hydrate(['id' => 'bar']),
+            (new ScopeEntity($server))->setId('foo'),
+            (new ScopeEntity($server))->setId('bar'),
         ]);
 
         $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
@@ -212,7 +212,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         );
 
         $clientStorage->shouldReceive('getBySession')->andReturn(
-            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
+            (new ClientEntity($server))->setId('testapp')
         );
 
         $request = new \Symfony\Component\HttpFoundation\Request();

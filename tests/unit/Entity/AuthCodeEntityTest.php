@@ -37,7 +37,7 @@ class AuthCodeEntityTest extends \PHPUnit_Framework_TestCase
         $authCodeStorage->shouldReceive('associateScope');
         $authCodeStorage->shouldReceive('setServer');
         $authCodeStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
+            (new ScopeEntity($server))->setId('foo'),
         ]);
 
         $server->shouldReceive('getAuthCodeStorage')->andReturn($authCodeStorage);

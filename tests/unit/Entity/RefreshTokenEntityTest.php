@@ -55,7 +55,7 @@ class RefreshTokenEntityTest extends \PHPUnit_Framework_TestCase
             (new AccessTokenEntity($server))->setId('foobar')
         );
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
+            (new ScopeEntity($server))->setId('foo'),
         ]);
 
         $server->shouldReceive('getAccessTokenStorage')->andReturn($accessTokenStorage);

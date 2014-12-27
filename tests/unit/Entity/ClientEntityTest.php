@@ -10,12 +10,7 @@ class ClientEntityTest extends \PHPUnit_Framework_TestCase
     public function testSetGet()
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
-        $client = (new ClientEntity($server))->hydrate([
-            'id' => 'foobar',
-            'secret' => 'barfoo',
-            'name' => 'Test Client',
-            'redirectUri' => 'http://foo/bar',
-        ]);
+        $client = (new ClientEntity($server))->setId('foobar')->setSecret('barfoo')->setName('Test Client')->setRedirectUri('http://foo/bar');
 
         $this->assertEquals('foobar', $client->getId());
         $this->assertEquals('barfoo', $client->getSecret());

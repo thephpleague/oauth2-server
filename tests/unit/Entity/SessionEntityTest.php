@@ -28,7 +28,7 @@ class SessionEntityTest extends \PHPUnit_Framework_TestCase
         $entity->associateRefreshToken((new RefreshTokenEntity($server)));
         $entity->associateClient((new ClientEntity($server)));
         $entity->associateScope(
-            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
+            (new ScopeEntity($server))->setId('foo')
         );
         // $entity->associateAuthCode((new AuthCode($server)));
 
@@ -59,8 +59,8 @@ class SessionEntityTest extends \PHPUnit_Framework_TestCase
         $method->setAccessible(true);
 
         $scopes = [
-            (new ScopeEntity($server))->hydrate(['id' => 'scope1']),
-            (new ScopeEntity($server))->hydrate(['id' => 'scope2']),
+            (new ScopeEntity($server))->setId('scope1'),
+            (new ScopeEntity($server))->setId('scope2'),
         ];
 
         $result = $method->invokeArgs($entity, [$scopes]);
@@ -132,14 +132,14 @@ class SessionEntityTest extends \PHPUnit_Framework_TestCase
         $sessionStorage->shouldReceive('associateScope');
         $sessionStorage->shouldReceive('setServer');
         $sessionStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
+            (new ScopeEntity($server))->setId('id'),
         ]);
 
         $server->shouldReceive('getSessionStorage')->andReturn($sessionStorage);
 
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('getBySession')->andReturn(
-            (new ClientEntity($server))->hydrate(['id' => 'foo'])
+            (new ClientEntity($server))->setId('foo')
         );
         $clientStorage->shouldReceive('setServer');
 

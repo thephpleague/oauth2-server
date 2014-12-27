@@ -2,8 +2,8 @@
 
 namespace LeagueTests\Entity;
 
-use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\ScopeInterface;
 use League\OAuth2\Server\Entity\SessionEntity;
 use LeagueTests\Stubs\StubAbstractTokenEntity;
 use Mockery as M;
@@ -19,7 +19,7 @@ class AbstractTokenEntityTest extends \PHPUnit_Framework_TestCase
         $entity->setId('foobar');
         $entity->setExpireTime($time);
         $entity->setSession((new SessionEntity($server)));
-        $entity->associateScope((new ScopeEntity($server))->hydrate(['id' => 'foo']));
+        $entity->associateScope((new ScopeEntity($server))->setId('foo'));
 
         $this->assertEquals('foobar', $entity->getId());
         $this->assertEquals($time, $entity->getExpireTime());
@@ -92,8 +92,8 @@ class AbstractTokenEntityTest extends \PHPUnit_Framework_TestCase
         $method->setAccessible(true);
 
         $scopes = [
-            (new ScopeEntity($server))->hydrate(['id' => 'scope1', 'description' => 'foo']),
-            (new ScopeEntity($server))->hydrate(['id' => 'scope2', 'description' => 'bar']),
+            (new ScopeEntity($server))->setId('scope1')->setDescription('foo'),
+            (new ScopeEntity($server))->setId('scope2')->setDescription('bar'),
         ];
 
         $result = $method->invokeArgs($entity, [$scopes]);

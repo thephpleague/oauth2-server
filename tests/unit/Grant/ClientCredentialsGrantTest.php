@@ -122,7 +122,7 @@ class ClientCredentialsGrantTest extends PHPUnit_Framework_TestCase
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
         $clientStorage->shouldReceive('get')->andReturn(
-            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
+            (new ClientEntity($server))->setId('testapp')
         );
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
@@ -165,7 +165,7 @@ class ClientCredentialsGrantTest extends PHPUnit_Framework_TestCase
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
         $clientStorage->shouldReceive('get')->andReturn(
-            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
+            (new ClientEntity($server))->setId('testapp')
         );
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
@@ -186,7 +186,7 @@ class ClientCredentialsGrantTest extends PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
         // $scopeStorage->shouldReceive('get')->andReturn(
-        //     // (new ScopeEntity($server))->hydrate(['id' => 'foo'])
+        //     // (new ScopeEntity($server))->setId('foo
         // );
 
         $server->setClientStorage($clientStorage);
@@ -211,7 +211,7 @@ class ClientCredentialsGrantTest extends PHPUnit_Framework_TestCase
         
         $this->session->shouldReceive('getScopes')
             ->andReturn([
-                (new ScopeEntity($server))->hydrate(['id' => 'foo']),
+                (new ScopeEntity($server))->setId('foo'),
             ]);
 
         $grant = new ClientCredentialsGrant($this->entityFactory);
@@ -219,14 +219,14 @@ class ClientCredentialsGrantTest extends PHPUnit_Framework_TestCase
         $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
         $clientStorage->shouldReceive('setServer');
         $clientStorage->shouldReceive('get')->andReturn(
-            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
+            (new ClientEntity($server))->setId('testapp')
         );
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('setServer');
         $sessionStorage->shouldReceive('create')->andreturn(123);
         $sessionStorage->shouldReceive('getScopes')->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
+            (new ScopeEntity($server))->setId('foo'),
         ]);
         $sessionStorage->shouldReceive('getByAccessToken')->andReturn(
             (new SessionEntity($server))->setId('foobar')
@@ -237,14 +237,14 @@ class ClientCredentialsGrantTest extends PHPUnit_Framework_TestCase
         $accessTokenStorage->shouldReceive('setServer');
         $accessTokenStorage->shouldReceive('create');
         $accessTokenStorage->shouldReceive('getScopes')->andReturn([
-            (new ScopeEntity($server))->hydrate(['id' => 'foo']),
+            (new ScopeEntity($server))->setId('foo'),
         ]);
         $accessTokenStorage->shouldReceive('associateScope');
 
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
         $scopeStorage->shouldReceive('get')->andReturn(
-            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
+            (new ScopeEntity($server))->setId('foo')
         );
 
         $server->setClientStorage($clientStorage);
@@ -288,7 +288,7 @@ class ClientCredentialsGrantTest extends PHPUnit_Framework_TestCase
         $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
         $scopeStorage->shouldReceive('setServer');
         $scopeStorage->shouldReceive('get')->andReturn(
-            (new ScopeEntity($server))->hydrate(['id' => 'foo'])
+            (new ScopeEntity($server))->setId('foo')
         );
 
         $server->setClientStorage($clientStorage);
