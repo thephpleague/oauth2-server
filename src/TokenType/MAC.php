@@ -112,7 +112,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
             $calculatedSignatureParts[] = $params->get('ext');
         }
 
-        $calculatedSignature = base64_encode(hash_hmac('sha256', implode("\n", $calculatedSignatureParts), $macKey)));
+        $calculatedSignature = base64_encode(hash_hmac('sha256', implode("\n", $calculatedSignatureParts), $macKey));
 
         // Return the access token if the signature matches
         return ($this->hash_equals($calculatedSignature, $signature)) ? $accessToken : null;
