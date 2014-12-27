@@ -36,6 +36,13 @@ class RefreshTokenGrant extends AbstractGrant
     protected $refreshTokenTTL = 604800;
 
     /**
+     * Rotate token (default = true)
+     *
+     * @var integer
+     */
+    protected $refreshTokenRotate = true;
+
+    /**
      * Set the TTL of the refresh token
      *
      * @param int $refreshTokenTTL
@@ -55,6 +62,26 @@ class RefreshTokenGrant extends AbstractGrant
     public function getRefreshTokenTTL()
     {
         return $this->refreshTokenTTL;
+    }
+
+    /**
+     * Set the rotation boolean of the refresh token
+     *
+     * @return int
+     */
+    public function setRefreshTokenRotation($refreshTokenRotate)
+    {
+        $this->refreshTokenRotate = $refreshTokenRotate;
+    }
+
+    /**
+     * Get rotation boolean of the refresh token
+     *
+     * @return int
+     */
+    public function shouldRefreshTokenRotate()
+    {
+        return $this->refreshTokenRotate;
     }
 
     /**
@@ -146,17 +173,21 @@ class RefreshTokenGrant extends AbstractGrant
         $this->server->getTokenType()->setParam('access_token', $newAccessToken->getId());
         $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
 
-        // Expire the old refresh token
-        $oldRefreshToken->expire();
+        if ($this->shouldRefreshTokenRotate()) {
+            // Expire the old refresh token
+            $oldRefreshToken->expire();
 
-        // Generate a new refresh token
-        $newRefreshToken = new RefreshTokenEntity($this->server);
-        $newRefreshToken->setId(SecureKey::generate());
-        $newRefreshToken->setExpireTime($this->getRefreshTokenTTL() + time());
-        $newRefreshToken->setAccessToken($newAccessToken);
-        $newRefreshToken->save();
+            // Generate a new refresh token
+            $newRefreshToken = new RefreshTokenEntity($this->server);
+            $newRefreshToken->setId(SecureKey::generate());
+            $newRefreshToken->setExpireTime($this->getRefreshTokenTTL() + time());
+            $newRefreshToken->setAccessToken($newAccessToken);
+            $newRefreshToken->save();
 
-        $this->server->getTokenType()->setParam('refresh_token', $newRefreshToken->getId());
+            $this->server->getTokenType()->setParam('refresh_token', $newRefreshToken->getId());
+        } else {
+            $this->server->getTokenType()->setParam('refresh_token', $oldRefreshToken->getId());
+        }
 
         return $this->server->getTokenType()->generateResponse();
     }
