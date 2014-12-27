@@ -120,8 +120,8 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
 
     /**
      * Prevent timing attack
-     * @param string $knownString
-     * @param string $userString
+     * @param  string $knownString
+     * @param  string $userString
      * @return bool
      */
     private function hash_equals($knownString, $userString)

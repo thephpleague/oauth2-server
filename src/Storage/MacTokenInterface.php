@@ -11,8 +11,7 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\Entity\AccessTokenInterface;
-use League\OAuth2\Server\Entity\MacKeyInterface;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
 
 /**
  * MacTokenInterface
@@ -21,14 +20,15 @@ interface MacTokenInterface extends StorageInterface
 {
     /**
      * Create a MAC key linked to an access token
-     * @param string                                            $macKey
-     * @param \League\OAuth2\Server\Entity\AccessTokenInterface $accessToken
+     * @param  string                                         $macKey
+     * @param  \League\OAuth2\Server\Entity\AccessTokenEntity $accessTokenEntity
+     * @return void
      */
-    public function create($macKey, AccessTokenInterface $accessToken);
+    public function create($macKey, AccessTokenEntity $accessTokenEntity);
 
     /**
      * Get a MAC key by access token
-     * @param string $accessToken
+     * @param  string $accessToken
      * @return string
      */
     public function getByAccessToken($accessToken);
