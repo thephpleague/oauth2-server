@@ -35,9 +35,12 @@ In addition it supports the following token types:
 
 The changelog can be viewed here - [https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md).
 
-The latest release is `4.0.5` (released 2014-12-15):
+The latest release is `4.1.0` (released 2014-12-27):
 
-* Prevent duplicate session in auth code grant (Issue #282)
+* Added MAC token support (Issue #158)
+* Fixed example init code (Issue #280)
+* Toggle refresh token rotation (Issue #286)
+* Docblock fixes
 
 ## Questions?
 
