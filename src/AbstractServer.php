@@ -15,6 +15,7 @@ use League\Event\Emitter;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\AuthCodeInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
+use League\OAuth2\Server\Storage\MacTokenInterface;
 use League\OAuth2\Server\Storage\RefreshTokenInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Storage\SessionInterface;
@@ -74,6 +75,11 @@ abstract class AbstractServer
      * @var \League\OAuth2\Server\Storage\ClientInterface
      */
     protected $clientStorage;
+
+    /**
+     * @var \League\OAuth2\Server\Storage\MacTokenInterface
+     */
+    protected $macStorage;
 
     /**
      * Token type
@@ -331,5 +337,21 @@ abstract class AbstractServer
     public function getTokenType()
     {
         return $this->tokenType;
+    }
+
+    /**
+     * @return MacTokenInterface
+     */
+    public function getMacStorage()
+    {
+        return $this->macStorage;
+    }
+
+    /**
+     * @param MacTokenInterface $macStorage
+     */
+    public function setMacStorage(MacTokenInterface $macStorage)
+    {
+        $this->macStorage = $macStorage;
     }
 }
