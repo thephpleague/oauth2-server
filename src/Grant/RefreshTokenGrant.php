@@ -66,10 +66,9 @@ class RefreshTokenGrant extends AbstractGrant
 
     /**
      * Set the rotation boolean of the refresh token
-     *
-     * @return int
+     * @param bool $refreshTokenRotate
      */
-    public function setRefreshTokenRotation($refreshTokenRotate)
+    public function setRefreshTokenRotation($refreshTokenRotate = true)
     {
         $this->refreshTokenRotate = $refreshTokenRotate;
     }
@@ -77,9 +76,9 @@ class RefreshTokenGrant extends AbstractGrant
     /**
      * Get rotation boolean of the refresh token
      *
-     * @return int
+     * @return bool
      */
-    public function shouldRefreshTokenRotate()
+    public function shouldRotateRefreshTokens()
     {
         return $this->refreshTokenRotate;
     }
@@ -173,7 +172,7 @@ class RefreshTokenGrant extends AbstractGrant
         $this->server->getTokenType()->setParam('access_token', $newAccessToken->getId());
         $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
 
-        if ($this->shouldRefreshTokenRotate()) {
+        if ($this->shouldRotateRefreshTokens()) {
             // Expire the old refresh token
             $oldRefreshToken->expire();
 
