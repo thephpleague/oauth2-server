@@ -62,7 +62,7 @@ interface TokenTypeInterface
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @return string
+     * @return string|null
      */
     public function determineAccessTokenInHeader(Request $request);
 }
