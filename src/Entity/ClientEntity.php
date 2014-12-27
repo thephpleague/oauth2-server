@@ -68,9 +68,7 @@ class ClientEntity implements ClientInterface
     }
 
     /**
-     * Return the client identifier
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getId()
     {
@@ -78,9 +76,17 @@ class ClientEntity implements ClientInterface
     }
 
     /**
-     * Return the client secret
-     *
-     * @return string
+     * {@inheritDoc}
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getSecret()
     {
@@ -88,9 +94,7 @@ class ClientEntity implements ClientInterface
     }
 
     /**
-     * Get the client name
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getName()
     {
@@ -98,12 +102,39 @@ class ClientEntity implements ClientInterface
     }
 
     /**
-     * Returnt the client redirect URI
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getRedirectUri()
     {
         return $this->redirectUri;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setSecret($secret)
+    {
+        $this->secret = $secret;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setRedirectUri($redirectUri)
+    {
+        $this->redirectUri = $redirectUri;
+        return $this;
     }
 }

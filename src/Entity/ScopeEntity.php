@@ -54,9 +54,7 @@ class ScopeEntity implements ScopeInterface
     }
 
     /**
-     * Return the scope identifer
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getId()
     {
@@ -64,13 +62,31 @@ class ScopeEntity implements ScopeInterface
     }
 
     /**
-     * Return the scope's description
-     *
-     * @return string
+     * {@inheritDoc}
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
     }
 
     /**

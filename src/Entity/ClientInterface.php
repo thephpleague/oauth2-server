@@ -14,7 +14,7 @@ namespace League\OAuth2\Server\Entity;
 /**
  * Client entity interface
  */
-interface ClientInterface extends HydratableInterface
+interface ClientInterface
 {
     /**
      * Return the client identifier
@@ -23,10 +23,24 @@ interface ClientInterface extends HydratableInterface
     public function getId();
 
     /**
+     * Set client identifier
+     * @param string $id
+     * @return \League\OAuth2\Server\Entity\ClientInterface
+     */
+    public function setId($id);
+
+    /**
      * Return the client secret
      * @return string
      */
     public function getSecret();
+
+    /**
+     * Set client secret
+     * @param $secret
+     * @return self
+     */
+    public function setSecret($secret);
 
     /**
      * Get the client name
@@ -35,8 +49,20 @@ interface ClientInterface extends HydratableInterface
     public function getName();
 
     /**
-     * Returnt the client redirect URI
+     * Set client name
+     * @return self
+     */
+    public function setName($name);
+
+    /**
+     * Return the client redirect URI
      * @return string
      */
     public function getRedirectUri();
+
+    /**
+     * Set redirect URI
+     * @return self
+     */
+    public function setRedirectUri($redirectUri);
 }

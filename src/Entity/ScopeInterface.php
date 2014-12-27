@@ -14,17 +14,31 @@ namespace League\OAuth2\Server\Entity;
 /**
  * Scope entity interface
  */
-interface ScopeInterface extends \JsonSerializable, HydratableInterface
+interface ScopeInterface extends \JsonSerializable
 {
     /**
-     * Return the scope identifer
+     * Return the scope identifier
      * @return string
      */
     public function getId();
+
+    /**
+     * Set the scope identifier
+     * @param $id
+     * @return self
+     */
+    public function setId($id);
 
     /**
      * Return the scope's description
      * @return string
      */
     public function getDescription();
+
+    /**
+     * Set the scope description
+     * @param $description
+     * @return self
+     */
+    public function setDescription($description);
 }
