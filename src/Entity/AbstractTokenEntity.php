@@ -19,6 +19,8 @@ use League\OAuth2\Server\Util\SecureKey;
  */
 abstract class AbstractTokenEntity
 {
+    use EntityTrait;
+
     /**
      * Token identifier
      *
