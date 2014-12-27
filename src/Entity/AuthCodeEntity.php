@@ -49,7 +49,7 @@ class AuthCodeEntity extends AbstractTokenEntity implements AuthCodeInterface
         $uri = $this->getRedirectUri();
         $uri .= (strstr($this->getRedirectUri(), $queryDelimeter) === false) ? $queryDelimeter : '&';
 
-        return $uri . http_build_query([
+        return $uri.http_build_query([
             'code'  => $this->getId(),
             'state' => $state,
         ]);

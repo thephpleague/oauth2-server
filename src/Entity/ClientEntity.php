@@ -135,6 +135,7 @@ class ClientEntity implements ClientInterface
     public function setRedirectUri($redirectUri)
     {
         $this->redirectUri = $redirectUri;
+
         return $this;
     }
 }

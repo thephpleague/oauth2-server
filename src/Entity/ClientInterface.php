@@ -24,7 +24,7 @@ interface ClientInterface
 
     /**
      * Set client identifier
-     * @param string $id
+     * @param  string                                       $id
      * @return \League\OAuth2\Server\Entity\ClientInterface
      */
     public function setId($id);
