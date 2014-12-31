@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.1 (released 2014-12-31)
+
+* Changed `symfony/http-foundation` dependency version to `~2.4` so package can be installed in Laravel `4.1.*`
+
 ## 4.1.0 (released 2014-12-27)
 
 * Added MAC token support (Issue #158)
