@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.2 (released 2015-01-01)
+
+* Remove side-effects in hash_equals() implementation (Issue #290)
+
 ## 4.1.1 (released 2014-12-31)
 
 * Changed `symfony/http-foundation` dependency version to `~2.4` so package can be installed in Laravel `4.1.*`
