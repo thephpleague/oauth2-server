@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\Entity\SessionInterface;
+use League\OAuth2\Server\Entity\SessionInterface as SessionEntityInterface;
 
 /**
  * Client storage interface
@@ -33,5 +33,5 @@ interface ClientInterface extends StorageInterface
      * @param  \League\OAuth2\Server\Entity\SessionInterface $session The session
      * @return \League\OAuth2\Server\Entity\ClientInterface
      */
-    public function getBySession(SessionInterface $session);
+    public function getBySession(SessionEntityInterface $session);
 }

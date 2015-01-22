@@ -18,6 +18,7 @@ use League\OAuth2\Server\Entity\FactoryInterface;
 use League\OAuth2\Server\Entity\RefreshTokenInterface;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
+use League\OAuth2\Server\AuthorizationServer;
 
 /**
  * Refresh token grant
@@ -47,20 +48,32 @@ class RefreshTokenGrant extends AbstractGrant
     public function __construct(FactoryInterface $entityFactory)
     {
         $this->entityFactory = $entityFactory;
-
-        // Attach to the event emitter so that refresh tokens will automatically be created
-        $this->server->addEventListener('oauth.accesstoken.created', [$this, 'accessTokenCreated']);
     }
 
+	/**
+     * {@inheritdoc}
+     */
+    public function setAuthorizationServer(AuthorizationServer $server)
+    {
+        parent::setAuthorizationServer($server);
+		
+		// Attach to the event emitter so that refresh tokens will automatically be created
+		$RTClass = $this;
+		$this->server->addEventListener('oauth.accesstoken.created', function(Event $event, AccessTokenInterface $accessToken, GrantTypeInterface $grant) use($RTClass) {
+			$RTClass->accessTokenCreated($event, $accessToken, $grant);
+		});
+        return $this;
+    }
+	
     /**
      * When an access token is created also create a refresh token (as appropriate)
      * @param \League\Event\Event                               $event
      * @param \League\OAuth2\Server\Entity\AccessTokenInterface $accessToken
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface    $grant
      */
-    protected function accessTokenCreated(Event $event, AccessTokenInterface $accessToken, GrantTypeInterface $grant)
+    public function accessTokenCreated(Event $event, AccessTokenInterface $accessToken, GrantTypeInterface $grant)
     {
-        // Refresh tokens are only supported for certain grant types
+		// Refresh tokens are only supported for certain grant types
         if (in_array($grant->getIdentifier(), ['authorization_code', 'password']) === false) {
             return;
         }

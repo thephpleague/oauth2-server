@@ -1,0 +1,17 @@
+// REQUEST AN ACCESS TOKEN WITH PASSWORD GRANT
+curl -v --data "grant_type=password&username=test&password=cmd" -u "cmdline:curl" http://localhost/oauth2-server/examples/mongodb/other_grants.php/access_token
+
+// GET INFO ABOUT ACCESS TOKEN
+curl -v http://localhost/oauth2-server/examples/mongodb/api.php/tokeninfo?access_token=66ESv4khgIb7dRoa09aZ48V9QRS2XWbBHE8nu4Ua
+
+// GET ALL USERS
+curl -v http://localhost/oauth2-server/examples/mongodb/api.php/users?access_token=p0fPrJKPITj8Ee3NDOYJNsgEWBaOFsBw6GxBp6Oc
+
+// GET A USER
+curl -v http://localhost/oauth2-server/examples/mongodb/api.php/users/test?access_token=p0fPrJKPITj8Ee3NDOYJNsgEWBaOFsBw6GxBp6Oc
+
+// REQUEST AN AUTH CODE
+curl -v "http://localhost/oauth2-server/examples/mongodb/authcode_grant.php/authorize?client_id=cmdline&redirect_uri=/users&response_type=code"
+
+// REQUEST ACCESS TOKEN WITH AUTHORIZATION CODE GRANT
+curl -v -d "grant_type=authorization_code&redirect_uri=/users&code=HcYiSELHVl1v9BXX5r0WQ0Tf4atmEpNj4i8UDywe" -u "cmdline:curl" "http://localhost/oauth2-server/examples/mongodb/authcode_grant.php/access_token"

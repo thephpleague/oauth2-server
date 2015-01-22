@@ -12,6 +12,7 @@
 namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\AccessTokenInterface as AccessTokenEntityInterface;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
@@ -110,7 +111,7 @@ class ResourceServer extends AbstractServer
         $this->accessToken = $this->getAccessTokenStorage()->get($accessTokenString);
 
         // Ensure the access token exists
-        if (!$this->accessToken instanceof AccessTokenEntity) {
+        if (!$this->accessToken instanceof AccessTokenEntityInterface) {
             throw new Exception\AccessDeniedException();
         }
 
