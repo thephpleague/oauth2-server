@@ -98,9 +98,10 @@ class ResourceServer extends AbstractServer
      * @param bool                                                $headerOnly Limit Access Token to Authorization header
      * @param \League\OAuth2\Server\Entity\AccessTokenEntity|null $accessToken Access Token
      *
-     * @return bool
-     *
      * @throws \League\OAuth2\Server\Exception\AccessDeniedException
+     * @throws \League\OAuth2\Server\Exception\InvalidRequestException
+     *
+     * @return bool
      */
     public function isValidRequest($headerOnly = true, $accessToken = null)
     {
