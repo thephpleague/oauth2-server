@@ -32,11 +32,11 @@ $server->addGrantType($clientCredentials);
 $passwordGrant = new \League\OAuth2\Server\Grant\PasswordGrant($entityFactory);
 $passwordGrant->setVerifyCredentialsCallback(function ($username, $password) use($dm) {
 
-	$User = $dm->getRepository("MongoDBExample\Document\User")->find($username);
-	if(!$User)
-		return false;
-		
-	if (password_verify($password, $User->Password)) {
+    $User = $dm->getRepository("MongoDBExample\Document\User")->find($username);
+    if(!$User)
+        return false;
+        
+    if (password_verify($password, $User->Password)) {
         return $username;
     }
 

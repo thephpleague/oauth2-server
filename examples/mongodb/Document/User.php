@@ -10,27 +10,27 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class User
 {
-	/**
-	 * @ODM\Id(strategy="NONE")
-	 **/
-	public $id;
-    
+    /**
+     * @ODM\Id(strategy="NONE")
+     **/
+    public $id;
+
     /** 
      * @ODM\Field(name="password") 
      */
     public $Password;
-	
-	/** 
+
+    /** 
      * @ODM\Field(name="name") 
      */
     public $Name;
-	
-	/** 
+
+    /** 
      * @ODM\Field(name="email") 
      */
     public $Email;
-	
-	/** 
+
+    /** 
      * @ODM\Field(name="photo") 
      */
     public $Photo;

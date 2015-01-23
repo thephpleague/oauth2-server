@@ -9,31 +9,31 @@ use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 
 class DM {
 
-	private static $dm;
+    private static $dm;
 
-	public static function get() {
-		
-		if(!self::$dm) {
-			if ( ! file_exists($file = dirname(__DIR__).'/vendor/autoload.php')) {
-				throw new RuntimeException('Install dependencies to run this script.');
-			}
+    public static function get() {
 
-			$connection = new Connection();
+        if(!self::$dm) {
+            if ( ! file_exists($file = dirname(__DIR__).'/vendor/autoload.php')) {
+                throw new RuntimeException('Install dependencies to run this script.');
+            }
 
-			$config = new Configuration();
-			$config->setProxyDir(dirname(__DIR__) . '/Proxies');
-			$config->setProxyNamespace('Proxies');
-			$config->setHydratorDir(dirname(__DIR__) . '/Hydrators');
-			$config->setHydratorNamespace('Hydrators');
-			$config->setDefaultDB('oauth2');
-			$config->setMetadataDriverImpl(AnnotationDriver::create(dirname(__DIR__) . '/Documents'));
+            $connection = new Connection();
 
-			AnnotationDriver::registerAnnotationClasses();
+            $config = new Configuration();
+            $config->setProxyDir(dirname(__DIR__) . '/Proxies');
+            $config->setProxyNamespace('Proxies');
+            $config->setHydratorDir(dirname(__DIR__) . '/Hydrators');
+            $config->setHydratorNamespace('Hydrators');
+            $config->setDefaultDB('oauth2');
+            $config->setMetadataDriverImpl(AnnotationDriver::create(dirname(__DIR__) . '/Documents'));
 
-			self::$dm = DocumentManager::create($connection, $config);
-		}
-		
-		return self::$dm;
-	}
+            AnnotationDriver::registerAnnotationClasses();
+
+            self::$dm = DocumentManager::create($connection, $config);
+        }
+
+        return self::$dm;
+    }
 
 }

@@ -50,21 +50,21 @@ class RefreshTokenGrant extends AbstractGrant
         $this->entityFactory = $entityFactory;
     }
 
-	/**
+    /**
      * {@inheritdoc}
      */
     public function setAuthorizationServer(AuthorizationServer $server)
     {
         parent::setAuthorizationServer($server);
-		
-		// Attach to the event emitter so that refresh tokens will automatically be created
-		$RTClass = $this;
-		$this->server->addEventListener('oauth.accesstoken.created', function(Event $event, AccessTokenInterface $accessToken, GrantTypeInterface $grant) use($RTClass) {
-			$RTClass->accessTokenCreated($event, $accessToken, $grant);
-		});
+
+        // Attach to the event emitter so that refresh tokens will automatically be created
+        $RTClass = $this;
+        $this->server->addEventListener('oauth.accesstoken.created', function(Event $event, AccessTokenInterface $accessToken, GrantTypeInterface $grant) use($RTClass) {
+            $RTClass->accessTokenCreated($event, $accessToken, $grant);
+        });
         return $this;
     }
-	
+
     /**
      * When an access token is created also create a refresh token (as appropriate)
      * @param \League\Event\Event                               $event
@@ -73,7 +73,7 @@ class RefreshTokenGrant extends AbstractGrant
      */
     public function accessTokenCreated(Event $event, AccessTokenInterface $accessToken, GrantTypeInterface $grant)
     {
-		// Refresh tokens are only supported for certain grant types
+        // Refresh tokens are only supported for certain grant types
         if (in_array($grant->getIdentifier(), ['authorization_code', 'password']) === false) {
             return;
         }

@@ -3,7 +3,7 @@
         "orno/route": "1.*",
         "ircmaxell/password-compat": "1.0.2",
         "league/event": "0.2.0",
-		"doctrine/mongodb-odm": "1.0.0-BETA11"
+        "doctrine/mongodb-odm": "1.0.0-BETA11"
     },
     "autoload": {
         "psr-4": {
