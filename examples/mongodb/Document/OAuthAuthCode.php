@@ -15,7 +15,7 @@ class OAuthAuthCode implements AuthCodeEntityInterface {
 
     /**
      * @ODM\Id(strategy="NONE")
-     **/
+     */
     public $id;
 
     /**
@@ -38,20 +38,32 @@ class OAuthAuthCode implements AuthCodeEntityInterface {
      */
     protected $RedirectURI;
 
+    /**
+     * Constructor
+     */
     public function __construct(){
         $this->Scopes = new ArrayCollection();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setRedirectUri($redirectUri){
         $this->RedirectURI = $redirectUri;
         
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getRedirectUri(){
         return $this->RedirectURI;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function generateRedirectUri($state = null, $queryDelimeter = '?'){
         $uri = $this->getRedirectUri();
         $uri .= (strstr($this->getRedirectUri(), $queryDelimeter) === false) ? $queryDelimeter : '&';
@@ -62,6 +74,9 @@ class OAuthAuthCode implements AuthCodeEntityInterface {
         ]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getSession(){
         if(isset($this->Session->__isInitialized__) && !$this->Session->__isInitialized__) {
             $this->Session->__load();
@@ -69,34 +84,52 @@ class OAuthAuthCode implements AuthCodeEntityInterface {
         return $this->Session;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getScopes(){
         return $this->Scopes;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setSession(SessionEntityInterface $session)
     {
         $this->Session = $session;
 
         return $this;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     public function setExpireTime($expireTime)
     {
         $this->ExpireTime = $expireTime;
 
         return $this;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     public function getExpireTime()
     {
         return $this->ExpireTime;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isExpired()
     {
         return ((time() - $this->ExpireTime) > 0);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setId($id = NULL)
     {
         $this->id = $id;
@@ -104,11 +137,17 @@ class OAuthAuthCode implements AuthCodeEntityInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function associateScope(ScopeEntityInterface $scope)
     {
         if (!$this->Scopes->contains($scope)) {
@@ -118,6 +157,9 @@ class OAuthAuthCode implements AuthCodeEntityInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function __toString(){
         if ($this->id === null) {
             return '';
@@ -126,12 +168,18 @@ class OAuthAuthCode implements AuthCodeEntityInterface {
         return $this->id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function expire(){
         $dm = \MongoDBExample\Config\DM::get();
         $dm->remove($this);
         $dm->flush();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function save(){
         $dm = \MongoDBExample\Config\DM::get();
         $dm->persist($this);

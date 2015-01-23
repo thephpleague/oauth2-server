@@ -7,10 +7,18 @@ use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 
+/**
+ * Doctrine DocumentManager for MongoDB
+ */
 class DM {
-
+    /**
+     * @var \Doctrine\ODM\MongoDB\DocumentManager
+     */
     private static $dm;
 
+    /**
+     * get a DocumentManager instance
+     */
     public static function get() {
 
         if(!self::$dm) {
@@ -35,5 +43,4 @@ class DM {
 
         return self::$dm;
     }
-
 }

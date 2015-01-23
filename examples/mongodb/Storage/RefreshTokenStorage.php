@@ -6,8 +6,14 @@ use League\OAuth2\Server\Storage\RefreshTokenInterface;
 use MongoDBExample\Document\OAuthRefreshToken;
 use League\OAuth2\Server\Entity\RefreshTokenInterface as RefreshTokenEntityInterface;
 
+/**
+ * Storage class for refresh tokens
+ */
 class RefreshTokenStorage extends BaseStorage implements RefreshTokenInterface
 {
+    /**
+     * {@inheritDoc}
+     */
     public function get($token){
         if($RefreshToken = $this->documentManager->getRepository("MongoDBExample\Document\OAuthRefreshToken")->find($token))
             return $RefreshToken;
@@ -15,6 +21,9 @@ class RefreshTokenStorage extends BaseStorage implements RefreshTokenInterface
             return;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function create($token, $expireTime, $accessToken){
         $refreshToken = new OAuthRefreshToken();
         $refreshToken->setId($token);
@@ -24,6 +33,9 @@ class RefreshTokenStorage extends BaseStorage implements RefreshTokenInterface
         $this->documentManager->flush();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function delete(RefreshTokenEntityInterface $token){
         $this->documentManager->remove($token);
         $this->documentManager->flush();

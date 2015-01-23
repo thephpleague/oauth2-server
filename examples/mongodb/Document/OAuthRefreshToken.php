@@ -38,10 +38,16 @@ class OAuthRefreshToken implements RefreshTokenEntityInterface {
      */
     public $Scopes;
 
+    /**
+     * {@inheritDoc}
+     */
     public function setAccessTokenId($accessTokenId){
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
         $this->AccessToken = $accessTokenEntity;
@@ -49,6 +55,9 @@ class OAuthRefreshToken implements RefreshTokenEntityInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getAccessToken()
     {
         if(isset($this->AccessToken->__isInitialized__) && !$this->AccessToken->__isInitialized__) {
@@ -58,6 +67,9 @@ class OAuthRefreshToken implements RefreshTokenEntityInterface {
         return $this->AccessToken;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setSession(SessionEntityInterface $session)
     {
         $this->Session = $session;
@@ -65,6 +77,9 @@ class OAuthRefreshToken implements RefreshTokenEntityInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setExpireTime($expireTime)
     {
         $this->ExpireTime = $expireTime;
@@ -72,16 +87,25 @@ class OAuthRefreshToken implements RefreshTokenEntityInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getExpireTime()
     {
         return $this->ExpireTime;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isExpired()
     {
         return ((time() - $this->ExpireTime) > 0);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setId($id = NULL)
     {
         $this->id = $id;
@@ -89,11 +113,17 @@ class OAuthRefreshToken implements RefreshTokenEntityInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function associateScope(ScopeEntityInterface $scope)
     {
         if (!$this->Scopes->contains($scope)) {
@@ -103,6 +133,9 @@ class OAuthRefreshToken implements RefreshTokenEntityInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function __toString(){
         if ($this->id === null) {
             return '';
@@ -111,12 +144,18 @@ class OAuthRefreshToken implements RefreshTokenEntityInterface {
         return $this->id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function expire(){
         $dm = \MongoDBExample\Config\DM::get();
         $dm->remove($this);
         $dm->flush();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function save(){
         $dm = \MongoDBExample\Config\DM::get();
         $dm->persist($this);

@@ -9,24 +9,27 @@ use League\OAuth2\Server\Entity\AuthCodeInterface as AuthCodeEntityInterface;
 use League\OAuth2\Server\Entity\ScopeInterface as ScopeEntityInterface;
 use League\OAuth2\Server\Entity\SessionInterface as SessionEntityInterface;
 
+/**
+ * Storage class for sessions
+ */
 class SessionStorage extends BaseStorage implements SessionInterface
 {
     /**
-     * Get a session from an access token
+     * {@inheritDoc}
      */
     public function getByAccessToken(AccessTokenEntityInterface $accessToken){
         return $accessToken->getSession();
     }
 
     /**
-     * Get a session from an auth code
+     * {@inheritDoc}
      */
     public function getByAuthCode(AuthCodeEntityInterface $authCode){
         return $authCode->getSession();
     }
 
     /**
-     * Get a session's scopes
+     * {@inheritDoc}
      */
     public function getScopes(SessionEntityInterface $session){
 
@@ -37,7 +40,7 @@ class SessionStorage extends BaseStorage implements SessionInterface
     }
 
     /**
-     * Create a new session
+     * {@inheritDoc}
      */
     public function create($ownerType, $ownerId, $clientId, $clientRedirectUri = null){
         $session = new OAuthSession();
@@ -49,7 +52,7 @@ class SessionStorage extends BaseStorage implements SessionInterface
     }
 
     /**
-     * Associate a scope with a session
+     * {@inheritDoc}
      */
     public function associateScope(SessionEntityInterface $session, ScopeEntityInterface $scope){
         $session->getScopes()->add($scope);

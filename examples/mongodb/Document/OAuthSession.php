@@ -17,7 +17,7 @@ class OAuthSession implements SessionEntityInterface {
 
     /**
      * @ODM\Id(strategy="AUTO")
-     **/
+     */
     public $id;
 
     /**
@@ -50,19 +50,31 @@ class OAuthSession implements SessionEntityInterface {
      */
     protected $RefreshToken;
 
+    /**
+     * Constructor
+     */
     public function __construct(){
         $this->Scopes = new ArrayCollection();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setId($id) {
         $this->id = $id;
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getId(){
         return $this->id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function associateScope(ScopeEntityInterface $scope){
         if (!$this->Scopes->contains($scope)) {
             $this->Scopes->add($scope);
@@ -71,26 +83,41 @@ class OAuthSession implements SessionEntityInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function hasScope($scope){
         return $this->Scopes->contains($scope);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getScopes(){
         return $this->Scopes;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function associateAccessToken(AccessTokenEntityInterface $accessToken){
         $this->AccessToken = $accessToken;
 
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function associateRefreshToken(RefreshTokenEntityInterface $refreshToken){
         $this->RefreshToken = $refreshToken;
 
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function associateClient(ClientEntityInterface $client)
     {
         $this->Client = $client;
@@ -98,27 +125,42 @@ class OAuthSession implements SessionEntityInterface {
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getClient()
     {
         return $this->Client;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setOwner($type, $id)
     {
         $this->OwnerType = $type;
         $this->OwnerId = $id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getOwnerId()
     {
         return $this->OwnerId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getOwnerType()
     {
         return $this->OwnerType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function save(){
         $dm = \MongoDBExample\Config\DM::get();
         $dm->persist($this);

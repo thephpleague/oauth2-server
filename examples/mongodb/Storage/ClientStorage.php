@@ -8,7 +8,7 @@ use League\OAuth2\Server\Entity\SessionInterface as SessionEntityInterface;
 class ClientStorage extends BaseStorage implements ClientInterface
 {
     /**
-     * Validate a client
+     * {@inheritDoc}
      */
     public function get($clientId, $clientSecret = null, $redirectUri = null, $grantType = null){
         $filter = array(
@@ -30,7 +30,7 @@ class ClientStorage extends BaseStorage implements ClientInterface
     }
 
     /**
-     * Get the client associated with a session
+     * {@inheritDoc}
      */
     public function getBySession(SessionEntityInterface $session){
         return $session->getClient();

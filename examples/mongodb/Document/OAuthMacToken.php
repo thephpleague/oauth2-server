@@ -20,6 +20,9 @@ class OAuthMacToken{
      */
     protected $AccessToken;
 
+    /**
+     * {@inheritDoc}
+     */
     public function setAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
         $this->AccessToken = $accessTokenEntity;
@@ -27,6 +30,9 @@ class OAuthMacToken{
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getAccessToken()
     {
         if(isset($this->AccessToken->__isInitialized__) && !$this->AccessToken->__isInitialized__) {
@@ -36,6 +42,9 @@ class OAuthMacToken{
         return $this->AccessToken;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setId($id)
     {
         $this->id = $id;
@@ -43,6 +52,9 @@ class OAuthMacToken{
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getId()
     {
         return $this->id;

@@ -12,7 +12,7 @@ class OAuthScope implements ScopeEntityInterface {
 
     /**
      * @ODM\Id(strategy="NONE")
-     **/
+     */
     public $id;
 
     /**
@@ -20,30 +20,40 @@ class OAuthScope implements ScopeEntityInterface {
      */
     protected $Description;
 
+    /**
+     * {@inheritDoc}
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setId($id){
         $this->id = $id;
         return $this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getDescription()
     {
         return $this->Description;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setDescription($description){
         $this->Description = $description;
         return $this;
     }
 
     /**
-     * Returns a JSON object when entity is passed into json_encode
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function jsonSerialize()
     {

@@ -7,10 +7,13 @@ use MongoDBExample\Document\OAuthAccessToken;
 use League\OAuth2\Server\Entity\AccessTokenInterface as AccessTokenEntityInterface;
 use League\OAuth2\Server\Entity\ScopeInterface as ScopeEntityInterface;
 
+/**
+ * Storage class for access tokens
+ */
 class AccessTokenStorage extends BaseStorage implements AccessTokenInterface
 {
     /**
-     * Get an instance of Entity\AccessTokenEntity
+     * {@inheritDoc}
      */
     public function get($token){
 
@@ -21,7 +24,7 @@ class AccessTokenStorage extends BaseStorage implements AccessTokenInterface
     }
 
     /**
-     * Get the scopes for an access token
+     * {@inheritDoc}
      */
     public function getScopes(AccessTokenEntityInterface $token){
 
@@ -32,7 +35,7 @@ class AccessTokenStorage extends BaseStorage implements AccessTokenInterface
     }
 
     /**
-     * Creates a new access token
+     * {@inheritDoc}
      */
     public function create($token, $expireTime, $sessionId){
         $accessToken = new OAuthAccessToken();
@@ -44,14 +47,14 @@ class AccessTokenStorage extends BaseStorage implements AccessTokenInterface
     }
 
     /**
-     * Associate a scope with an acess token
+     * {@inheritDoc}
      */
     public function associateScope(AccessTokenEntityInterface $token, ScopeEntityInterface $scope){
         $token->getScopes()->add($scope);
     }
 
     /**
-     * Delete an access token
+     * {@inheritDoc}
      */
     public function delete(AccessTokenEntityInterface $token){
         $this->documentManager->remove($token);

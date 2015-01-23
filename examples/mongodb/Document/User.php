@@ -12,7 +12,7 @@ class User
 {
     /**
      * @ODM\Id(strategy="NONE")
-     **/
+     */
     public $id;
 
     /** 

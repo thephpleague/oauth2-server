@@ -7,14 +7,13 @@ use MongoDBExample\Document\OAuthAuthCode;
 use League\OAuth2\Server\Entity\AuthCodeInterface as AuthCodeEntityInterface;
 use League\OAuth2\Server\Entity\ScopeInterface as ScopeEntityInterface;
 
+/**
+ * Storage class for auth codes
+ */
 class AuthCodeStorage extends BaseStorage implements AuthCodeInterface
 {
     /**
-     * Get the auth code
-     *
-     * @param string $code
-     *
-     * @return \League\OAuth2\Server\Entity\AuthCodeEntity
+     * {@inheritDoc}
      */
     public function get($code){
         if($AccessToken = $this->documentManager->getRepository("MongoDBExample\Document\OAuthAuthCode")->find($code))
@@ -24,14 +23,7 @@ class AuthCodeStorage extends BaseStorage implements AuthCodeInterface
     }
 
     /**
-     * Create an auth code.
-     *
-     * @param string  $token       The token ID
-     * @param integer $expireTime  Token expire time
-     * @param integer $sessionId   Session identifier
-     * @param string  $redirectUri Client redirect uri
-     *
-     * @return void
+     * {@inheritDoc}
      */
     public function create($token, $expireTime, $sessionId, $redirectUri){
         $authCode = new OAuthAuthCode();
@@ -44,12 +36,8 @@ class AuthCodeStorage extends BaseStorage implements AuthCodeInterface
     }
 
     /**
-     * Get the scopes for an access token
-     *
-     * @param \League\OAuth2\Server\Entity\AuthCodeEntity $token The auth code
-     *
-     * @return array Array of \League\OAuth2\Server\Entity\ScopeEntity
-    */
+     * {@inheritDoc}
+     */
     public function getScopes(AuthCodeEntityInterface $token){
         if($AuthCode = $this->documentManager->getRepository("MongoDBExample\Document\OAuthAuthCode")->find($token->getId()))
             return $AuthCode->getScopes();
@@ -58,23 +46,14 @@ class AuthCodeStorage extends BaseStorage implements AuthCodeInterface
     }
 
     /**
-     * Associate a scope with an acess token
-     *
-     * @param \League\OAuth2\Server\Entity\AuthCodeEntity $token The auth code
-     * @param \League\OAuth2\Server\Entity\ScopeEntity    $scope The scope
-     *
-     * @return void
+     * {@inheritDoc}
      */
     public function associateScope(AuthCodeEntityInterface $token, ScopeEntityInterface $scope){
         $token->getScopes()->add($scope);
     }
 
     /**
-     * Delete an access token
-     *
-     * @param \League\OAuth2\Server\Entity\AuthCodeEntity $token The access token to delete
-     *
-     * @return void
+     * {@inheritDoc}
      */
     public function delete(AuthCodeEntityInterface $token){
         $this->documentManager->remove($token);
