@@ -57,7 +57,7 @@ $router->get('/oauth', function (Request $request) use ($server) {
 
     // Everything is okay, save $authParams to the a session and redirect the user to sign-in
 
-    return = new Response('', 302, [
+    return new Response('', 302, [
         'Location'  =>  '/signin'
     ]);
 
