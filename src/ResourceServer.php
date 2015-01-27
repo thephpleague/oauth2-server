@@ -12,6 +12,8 @@
 namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Exception\AccessDeniedException;
+use League\OAuth2\Server\Exception\InvalidRequestException;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
@@ -40,10 +42,10 @@ class ResourceServer extends AbstractServer
     /**
      * Initialise the resource server
      *
-     * @param SessionInterface     $sessionStorage
-     * @param AccessTokenInterface $accessTokenStorage
-     * @param ClientInterface      $clientStorage
-     * @param ScopeInterface       $scopeStorage
+     * @param \League\OAuth2\Server\Storage\SessionInterface     $sessionStorage
+     * @param \League\OAuth2\Server\Storage\AccessTokenInterface $accessTokenStorage
+     * @param \League\OAuth2\Server\Storage\ClientInterface      $clientStorage
+     * @param \League\OAuth2\Server\Storage\ScopeInterface       $scopeStorage
      *
      * @return self
      */
@@ -93,31 +95,32 @@ class ResourceServer extends AbstractServer
     /**
      * Checks if the access token is valid or not
      *
-     * @param bool                   $headersOnly Limit Access Token to Authorization header only
-     * @param AccessTokenEntity|null $accessToken Access Token
+     * @param bool                                                $headerOnly Limit Access Token to Authorization header
+     * @param \League\OAuth2\Server\Entity\AccessTokenEntity|null $accessToken Access Token
+     *
+     * @throws \League\OAuth2\Server\Exception\AccessDeniedException
+     * @throws \League\OAuth2\Server\Exception\InvalidRequestException
      *
      * @return bool
-     *
-     * @throws
      */
-    public function isValidRequest($headersOnly = true, $accessToken = null)
+    public function isValidRequest($headerOnly = true, $accessToken = null)
     {
         $accessTokenString = ($accessToken !== null)
                                 ? $accessToken
-                                : $this->determineAccessToken($headersOnly);
+                                : $this->determineAccessToken($headerOnly);
 
         // Set the access token
         $this->accessToken = $this->getAccessTokenStorage()->get($accessTokenString);
 
         // Ensure the access token exists
         if (!$this->accessToken instanceof AccessTokenEntity) {
-            throw new Exception\AccessDeniedException();
+            throw new AccessDeniedException();
         }
 
         // Check the access token hasn't expired
         // Ensure the auth code hasn't expired
         if ($this->accessToken->isExpired() === true) {
-            throw new Exception\AccessDeniedException();
+            throw new AccessDeniedException();
         }
 
         return true;
@@ -126,24 +129,24 @@ class ResourceServer extends AbstractServer
     /**
      * Reads in the access token from the headers
      *
-     * @param bool $headersOnly Limit Access Token to Authorization header only
+     * @param bool $headerOnly Limit Access Token to Authorization header
      *
-     * @throws Exception\InvalidRequestException Thrown if there is no access token presented
+     * @throws \League\OAuth2\Server\Exception\InvalidRequestException Thrown if there is no access token presented
      *
      * @return string
      */
-    public function determineAccessToken($headersOnly = false)
+    public function determineAccessToken($headerOnly = false)
     {
         if ($this->getRequest()->headers->get('Authorization') !== null) {
             $accessToken = $this->getTokenType()->determineAccessTokenInHeader($this->getRequest());
-        } elseif ($headersOnly === false) {
+        } elseif ($headerOnly === false) {
             $accessToken = ($this->getRequest()->server->get('REQUEST_METHOD') === 'GET')
                                 ? $this->getRequest()->query->get($this->tokenKey)
                                 : $this->getRequest()->request->get($this->tokenKey);
         }
 
         if (empty($accessToken)) {
-            throw new Exception\InvalidRequestException('access token');
+            throw new InvalidRequestException('access token');
         }
 
         return $accessToken;
