@@ -299,8 +299,15 @@ class SessionEntity
         );
 
         $this->setId($id);
+        $this->applyScopes();
+    }
 
-        // Associate the scope with the session
+    /**
+     * Apply any scope changes
+     *
+     * @return void
+     */
+    public function applyScopes() {
         foreach ($this->getScopes() as $scope) {
             $this->server->getSessionStorage()->associateScope($this, $scope);
         }
