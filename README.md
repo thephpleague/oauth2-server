@@ -55,6 +55,10 @@ Please see [CONTRIBUTING](https://github.com/thephpleague/oauth2-server/blob/mas
 
 Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague/oauth2-server/issues)
 
+## Security
+
+If you discover any security related issues, please email hello@alexbilbie.com instead of using the issue tracker.
+
 ## License
 
 This package is released under the MIT License. See the bundled [LICENSE](https://github.com/thephpleague/oauth2-server/blob/master/LICENSE) file for details.
