@@ -12,7 +12,7 @@
 namespace League\OAuth2\Server\Entity;
 
 /**
- * Access token entity class
+ * Auth Code entity class
  */
 class AuthCodeEntity extends AbstractTokenEntity
 {
