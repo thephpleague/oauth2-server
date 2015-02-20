@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server;
 
+use League\OAuth2\Server\Entity\EntityFactory;
+use League\OAuth2\Server\Entity\EntityFactoryInterface;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\TokenType\Bearer;
 
@@ -70,6 +72,11 @@ class AuthorizationServer extends AbstractServer
     protected $requireStateParam = false;
 
     /**
+     * @var \League\OAuth2\Server\Entity\EntityFactoryInterface
+     */
+    protected $entityFactory;
+
+    /**
      * Create a new OAuth2 authorization server
      *
      * @return self
@@ -78,6 +85,9 @@ class AuthorizationServer extends AbstractServer
     {
         // Set Bearer as the default token type
         $this->setTokenType(new Bearer());
+
+        // Default entity factory
+        $this->setEntityFactory(new EntityFactory($this));
 
         parent::__construct();
 
@@ -291,5 +301,24 @@ class AuthorizationServer extends AbstractServer
         }
 
         throw new Exception\InvalidGrantException($grantType);
+    }
+
+    /**
+     * @param \League\OAuth2\Server\Entity\EntityFactoryInterface
+     * @return self
+     */
+    public function setEntityFactory(EntityFactoryInterface $entityFactory)
+    {
+        $this->entityFactory = $entityFactory;
+
+        return $this;
+    }
+
+    /**
+     * @return \League\OAuth2\Server\Entity\EntityFactoryInterface
+     */
+    public function getEntityFactory()
+    {
+        return $this->entityFactory;
     }
 }

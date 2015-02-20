@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
+use League\OAuth2\Server\Entity\AccessTokenEntityInterface;
 use League\OAuth2\Server\Exception\AccessDeniedException;
 use League\OAuth2\Server\Exception\InvalidRequestException;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
@@ -28,7 +28,7 @@ class ResourceServer extends AbstractServer
     /**
      * The access token
      *
-     * @var \League\OAuth2\Server\Entity\AccessTokenEntity
+     * @var \League\OAuth2\Server\Entity\AccessTokenEntityInterface
      */
     protected $accessToken;
 
@@ -85,7 +85,7 @@ class ResourceServer extends AbstractServer
     /**
      * Gets the access token
      *
-     * @return \League\OAuth2\Server\Entity\AccessTokenEntity
+     * @return \League\OAuth2\Server\Entity\AccessTokenEntityInterface
      */
     public function getAccessToken()
     {
@@ -96,7 +96,7 @@ class ResourceServer extends AbstractServer
      * Checks if the access token is valid or not
      *
      * @param bool                                                $headerOnly Limit Access Token to Authorization header
-     * @param \League\OAuth2\Server\Entity\AccessTokenEntity|null $accessToken Access Token
+     * @param \League\OAuth2\Server\Entity\AccessTokenEntityInterface|null $accessToken Access Token
      *
      * @throws \League\OAuth2\Server\Exception\AccessDeniedException
      * @throws \League\OAuth2\Server\Exception\InvalidRequestException
@@ -113,7 +113,7 @@ class ResourceServer extends AbstractServer
         $this->accessToken = $this->getAccessTokenStorage()->get($accessTokenString);
 
         // Ensure the access token exists
-        if (!$this->accessToken instanceof AccessTokenEntity) {
+        if (!$this->accessToken instanceof AccessTokenEntityInterface) {
             throw new AccessDeniedException();
         }
 

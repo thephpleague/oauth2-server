@@ -11,11 +11,8 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\AuthCodeEntity;
-use League\OAuth2\Server\Entity\ClientEntity;
-use League\OAuth2\Server\Entity\RefreshTokenEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\AuthCodeEntityInterface;
+use League\OAuth2\Server\Entity\ClientEntityInterface;
 use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
@@ -100,7 +97,7 @@ class AuthCodeGrant extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if (($client instanceof ClientEntity) === false) {
+        if (($client instanceof ClientEntityInterface) === false) {
             $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
@@ -145,13 +142,13 @@ class AuthCodeGrant extends AbstractGrant
     public function newAuthorizeRequest($type, $typeId, $authParams = [])
     {
         // Create a new session
-        $session = new SessionEntity($this->server);
+        $session = $this->server->getEntityFactory()->createSessionEntity();
         $session->setOwner($type, $typeId);
         $session->associateClient($authParams['client']);
         $session->save();
 
         // Create a new auth code
-        $authCode = new AuthCodeEntity($this->server);
+        $authCode = $this->server->getEntityFactory()->createAuthCodeEntity();
         $authCode->setId(SecureKey::generate());
         $authCode->setRedirectUri($authParams['redirect_uri']);
         $authCode->setExpireTime(time() + $this->authTokenTTL);
@@ -200,7 +197,7 @@ class AuthCodeGrant extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if (($client instanceof ClientEntity) === false) {
+        if (($client instanceof ClientEntityInterface) === false) {
             $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
@@ -212,7 +209,7 @@ class AuthCodeGrant extends AbstractGrant
         }
 
         $code = $this->server->getAuthCodeStorage()->get($authCode);
-        if (($code instanceof AuthCodeEntity) === false) {
+        if (($code instanceof AuthCodeEntityInterface) === false) {
             throw new Exception\InvalidRequestException('code');
         }
 
@@ -232,7 +229,7 @@ class AuthCodeGrant extends AbstractGrant
         $authCodeScopes = $code->getScopes();
 
         // Generate the access token
-        $accessToken = new AccessTokenEntity($this->server);
+        $accessToken = $this->server->getEntityFactory()->createAccessTokenEntity();
         $accessToken->setId(SecureKey::generate());
         $accessToken->setExpireTime($this->getAccessTokenTTL() + time());
 
@@ -250,7 +247,7 @@ class AuthCodeGrant extends AbstractGrant
 
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
-            $refreshToken = new RefreshTokenEntity($this->server);
+            $refreshToken = $this->server->getEntityFactory()->createRefreshTokenEntity();
             $refreshToken->setId(SecureKey::generate());
             $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
             $this->server->getTokenType()->setParam('refresh_token', $refreshToken->getId());

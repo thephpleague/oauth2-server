@@ -12,9 +12,12 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entity\ClientEntityInterface;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
+use League\OAuth2\Server\Entity\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\SessionEntityInterface;
 use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
@@ -109,7 +112,7 @@ class PasswordGrant extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if (($client instanceof ClientEntity) === false) {
+        if (($client instanceof ClientEntityInterface) === false) {
             $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
@@ -137,12 +140,12 @@ class PasswordGrant extends AbstractGrant
         $scopes = $this->validateScopes($scopeParam, $client);
 
         // Create a new session
-        $session = new SessionEntity($this->server);
+        $session = $this->server->getEntityFactory()->createSessionEntity();
         $session->setOwner('user', $userId);
         $session->associateClient($client);
 
         // Generate an access token
-        $accessToken = new AccessTokenEntity($this->server);
+        $accessToken = $this->server->getEntityFactory()->createAccessTokenEntity();
         $accessToken->setId(SecureKey::generate());
         $accessToken->setExpireTime($this->getAccessTokenTTL() + time());
 
@@ -161,7 +164,7 @@ class PasswordGrant extends AbstractGrant
 
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
-            $refreshToken = new RefreshTokenEntity($this->server);
+            $refreshToken = $this->server->getEntityFactory()->createRefreshTokenEntity();
             $refreshToken->setId(SecureKey::generate());
             $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
             $this->server->getTokenType()->setParam('refresh_token', $refreshToken->getId());
