@@ -14,7 +14,7 @@ namespace League\OAuth2\Server\Entity;
 /**
  * Auth Code entity class
  */
-class AuthCodeEntity extends AbstractTokenEntity
+class AuthCodeEntity extends AbstractTokenEntity implements AuthCodeEntityInterface
 {
     /**
      * Redirect URI

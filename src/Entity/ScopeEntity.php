@@ -16,7 +16,7 @@ use League\OAuth2\Server\AbstractServer;
 /**
  * Scope entity class
  */
-class ScopeEntity implements \JsonSerializable
+class ScopeEntity implements \JsonSerializable, ScopeEntityInterface
 {
     use EntityTrait;
 

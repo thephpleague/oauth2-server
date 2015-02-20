@@ -12,8 +12,8 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Entity\ClientEntity;
-use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\ClientEntityInterface;
+use League\OAuth2\Server\Entity\ScopeEntityInterface;
 use League\OAuth2\Server\Exception;
 
 /**
@@ -124,15 +124,15 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Given a list of scopes, validate them and return an array of Scope entities
      *
      * @param string                                    $scopeParam  A string of scopes (e.g. "profile email birthday")
-     * @param \League\OAuth2\Server\Entity\ClientEntity $client      Client entity
+     * @param \League\OAuth2\Server\Entity\ClientEntityInterface $client      Client entity
      * @param string|null                               $redirectUri The redirect URI to return the user to
      *
-     * @return \League\OAuth2\Server\Entity\ScopeEntity[]
+     * @return \League\OAuth2\Server\Entity\ScopeEntityInterface[]
      *
      * @throws \League\OAuth2\Server\Exception\InvalidScopeException If scope is invalid, or no scopes passed when required
      * @throws
      */
-    public function validateScopes($scopeParam = '', ClientEntity $client, $redirectUri = null)
+    public function validateScopes($scopeParam = '', ClientEntityInterface $client, $redirectUri = null)
     {
         $scopesList = explode($this->server->getScopeDelimiter(), $scopeParam);
 
@@ -166,7 +166,7 @@ abstract class AbstractGrant implements GrantTypeInterface
                 $client->getId()
             );
 
-            if (($scope instanceof ScopeEntity) === false) {
+            if (($scope instanceof ScopeEntityInterface) === false) {
                 throw new Exception\InvalidScopeException($scopeItem, $redirectUri);
             }
 
@@ -179,7 +179,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Format the local scopes array
      *
-     * @param  \League\OAuth2\Server\Entity\ScopeEntity[]
+     * @param  \League\OAuth2\Server\Entity\ScopeEntityInterface[]
      *
      * @return array
      */
@@ -187,7 +187,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     {
         $scopes = [];
         foreach ($unformated as $scope) {
-            if ($scope instanceof ScopeEntity) {
+            if ($scope instanceof ScopeEntityInterface) {
                 $scopes[$scope->getId()] = $scope;
             }
         }

@@ -16,7 +16,7 @@ use League\OAuth2\Server\AbstractServer;
 /**
  * Client entity class
  */
-class ClientEntity
+class ClientEntity implements ClientEntityInterface
 {
     use EntityTrait;
 

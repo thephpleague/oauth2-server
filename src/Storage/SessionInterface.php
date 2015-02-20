@@ -11,10 +11,10 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\AuthCodeEntity;
-use League\OAuth2\Server\Entity\ScopeEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entity\AuthCodeEntityInterface;
+use League\OAuth2\Server\Entity\ScopeEntityInterface;
+use League\OAuth2\Server\Entity\SessionEntityInterface;
 
 /**
  * Session storage interface
@@ -24,29 +24,29 @@ interface SessionInterface extends StorageInterface
     /**
      * Get a session from an access token
      *
-     * @param \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken The access token
+     * @param \League\OAuth2\Server\Entity\AccessTokenEntityInterface $accessToken The access token
      *
-     * @return \League\OAuth2\Server\Entity\SessionEntity
+     * @return \League\OAuth2\Server\Entity\SessionEntityInterface
      */
-    public function getByAccessToken(AccessTokenEntity $accessToken);
+    public function getByAccessToken(AccessTokenEntityInterface $accessToken);
 
     /**
      * Get a session from an auth code
      *
-     * @param \League\OAuth2\Server\Entity\AuthCodeEntity $authCode The auth code
+     * @param \League\OAuth2\Server\Entity\AuthCodeEntityInterface $authCode The auth code
      *
-     * @return \League\OAuth2\Server\Entity\SessionEntity
+     * @return \League\OAuth2\Server\Entity\SessionEntityInterface
      */
-    public function getByAuthCode(AuthCodeEntity $authCode);
+    public function getByAuthCode(AuthCodeEntityInterface $authCode);
 
     /**
      * Get a session's scopes
      *
-     * @param  \League\OAuth2\Server\Entity\SessionEntity
+     * @param  \League\OAuth2\Server\Entity\SessionEntityInterface
      *
-     * @return array Array of \League\OAuth2\Server\Entity\ScopeEntity
+     * @return array Array of \League\OAuth2\Server\Entity\ScopeEntityInterface
      */
-    public function getScopes(SessionEntity $session);
+    public function getScopes(SessionEntityInterface $session);
 
     /**
      * Create a new session
@@ -63,10 +63,10 @@ interface SessionInterface extends StorageInterface
     /**
      * Associate a scope with a session
      *
-     * @param \League\OAuth2\Server\Entity\SessionEntity $session The session
-     * @param \League\OAuth2\Server\Entity\ScopeEntity   $scope   The scope
+     * @param \League\OAuth2\Server\Entity\SessionEntityInterface $session The session
+     * @param \League\OAuth2\Server\Entity\ScopeEntityInterface   $scope   The scope
      *
      * @return void
      */
-    public function associateScope(SessionEntity $session, ScopeEntity $scope);
+    public function associateScope(SessionEntityInterface $session, ScopeEntityInterface $scope);
 }

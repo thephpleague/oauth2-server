@@ -11,8 +11,8 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\Entity\AuthCodeEntity;
-use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entity\AuthCodeEntityInterface;
+use League\OAuth2\Server\Entity\ScopeEntityInterface;
 
 /**
  * Auth code storage interface
@@ -24,7 +24,7 @@ interface AuthCodeInterface extends StorageInterface
      *
      * @param string $code
      *
-     * @return \League\OAuth2\Server\Entity\AuthCodeEntity
+     * @return \League\OAuth2\Server\Entity\AuthCodeEntityInterface
      */
     public function get($code);
 
@@ -43,28 +43,28 @@ interface AuthCodeInterface extends StorageInterface
     /**
      * Get the scopes for an access token
      *
-     * @param \League\OAuth2\Server\Entity\AuthCodeEntity $token The auth code
+     * @param \League\OAuth2\Server\Entity\AuthCodeEntityInterface $token The auth code
      *
      * @return array Array of \League\OAuth2\Server\Entity\ScopeEntity
      */
-    public function getScopes(AuthCodeEntity $token);
+    public function getScopes(AuthCodeEntityInterface $token);
 
     /**
      * Associate a scope with an acess token
      *
-     * @param \League\OAuth2\Server\Entity\AuthCodeEntity $token The auth code
-     * @param \League\OAuth2\Server\Entity\ScopeEntity    $scope The scope
+     * @param \League\OAuth2\Server\Entity\AuthCodeEntityInterface $token The auth code
+     * @param \League\OAuth2\Server\Entity\ScopeEntityInterface    $scope The scope
      *
      * @return void
      */
-    public function associateScope(AuthCodeEntity $token, ScopeEntity $scope);
+    public function associateScope(AuthCodeEntityInterface $token, ScopeEntityInterface $scope);
 
     /**
      * Delete an access token
      *
-     * @param \League\OAuth2\Server\Entity\AuthCodeEntity $token The access token to delete
+     * @param \League\OAuth2\Server\Entity\AuthCodeEntityInterface $token The access token to delete
      *
      * @return void
      */
-    public function delete(AuthCodeEntity $token);
+    public function delete(AuthCodeEntityInterface $token);
 }

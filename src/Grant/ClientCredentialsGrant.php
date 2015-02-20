@@ -12,8 +12,10 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\ClientEntity;
+use League\OAuth2\Server\Entity\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entity\ClientEntityInterface;
 use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\SessionEntityInterface;
 use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
@@ -80,7 +82,7 @@ class ClientCredentialsGrant extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if (($client instanceof ClientEntity) === false) {
+        if (($client instanceof ClientEntityInterface) === false) {
             $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidClientException();
         }
@@ -90,12 +92,12 @@ class ClientCredentialsGrant extends AbstractGrant
         $scopes = $this->validateScopes($scopeParam, $client);
 
         // Create a new session
-        $session = new SessionEntity($this->server);
+        $session = $this->server->getEntityFactory()->createSessionEntity();
         $session->setOwner('client', $client->getId());
         $session->associateClient($client);
 
         // Generate an access token
-        $accessToken = new AccessTokenEntity($this->server);
+        $accessToken = $this->server->getEntityFactory()->createAccessTokenEntity();
         $accessToken->setId(SecureKey::generate());
         $accessToken->setExpireTime($this->getAccessTokenTTL() + time());
 

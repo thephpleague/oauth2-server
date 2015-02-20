@@ -12,23 +12,23 @@
 namespace League\OAuth2\Server\Event;
 
 use League\Event\AbstractEvent;
-use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\SessionEntityInterface;
 
 class SessionOwnerEvent extends AbstractEvent
 {
     /**
      * Session entity
      *
-     * @var \League\OAuth2\Server\Entity\SessionEntity
+     * @var \League\OAuth2\Server\Entity\SessionEntityInterface
      */
     private $session;
 
     /**
      * Init the event with a session
      *
-     * @param \League\OAuth2\Server\Entity\SessionEntity $session
+     * @param \League\OAuth2\Server\Entity\SessionEntityInterface $session
      */
-    public function __construct(SessionEntity $session)
+    public function __construct(SessionEntityInterface $session)
     {
         $this->session = $session;
     }
@@ -46,7 +46,7 @@ class SessionOwnerEvent extends AbstractEvent
     /**
      * Return session
      *
-     * @return \League\OAuth2\Server\Entity\SessionEntity
+     * @return \League\OAuth2\Server\Entity\SessionEntityInterface
      */
     public function getSession()
     {

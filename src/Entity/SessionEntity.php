@@ -17,7 +17,7 @@ use League\OAuth2\Server\Event\SessionOwnerEvent;
 /**
  * Session entity grant
  */
-class SessionEntity
+class SessionEntity implements SessionEntityInterface
 {
     /**
      * Session identifier

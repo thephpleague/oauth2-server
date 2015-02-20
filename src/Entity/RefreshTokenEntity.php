@@ -14,7 +14,7 @@ namespace League\OAuth2\Server\Entity;
 /**
  * Refresh token entity class
  */
-class RefreshTokenEntity extends AbstractTokenEntity
+class RefreshTokenEntity extends AbstractTokenEntity implements RefreshTokenEntityInterface
 {
     /**
      * Access token associated to refresh token
