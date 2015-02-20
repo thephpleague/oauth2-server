@@ -6,7 +6,7 @@ namespace League\OAuth2\Server\Entity;
 /**
  * Refresh token entity class
  */
-interface RefreshTokenEntityInterface
+interface RefreshTokenEntityInterface extends AbstractTokenEntityInterface
 {
     /**
      * Set the ID of the associated access token

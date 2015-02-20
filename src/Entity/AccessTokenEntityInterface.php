@@ -6,7 +6,7 @@ namespace League\OAuth2\Server\Entity;
 /**
  * Access token entity class
  */
-interface AccessTokenEntityInterface
+interface AccessTokenEntityInterface extends AbstractTokenEntityInterface
 {
     /**
      * Get session
