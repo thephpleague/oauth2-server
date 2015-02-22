@@ -86,7 +86,7 @@ class AccessTokenStorage extends AbstractStorage implements AccessTokenInterface
      */
     public function delete(AccessTokenEntity $token)
     {
-        Capsule::table('oauth_access_token_scopes')
+        Capsule::table('oauth_access_tokens')
                     ->where('access_token', $token->getId())
                     ->delete();
     }
