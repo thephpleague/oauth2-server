@@ -34,7 +34,7 @@ $router->post('/access_token', function (Request $request) use ($server) {
         $response = $server->issueAccessToken();
         return new Response(
             json_encode($response),
-            200
+            200,
             [
                 'Content-type'  =>  'application/json',
                 'Cache-Control' =>  'no-store',
