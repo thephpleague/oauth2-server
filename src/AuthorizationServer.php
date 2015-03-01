@@ -20,7 +20,7 @@ use League\OAuth2\Server\TokenType\Bearer;
 class AuthorizationServer extends AbstractServer
 {
     /**
-     * The delimeter between scopes specified in the scope query string parameter
+     * The delimiter between scopes specified in the scope query string parameter
      * The OAuth 2 specification states it should be a space but most use a comma
      *
      * @var string
