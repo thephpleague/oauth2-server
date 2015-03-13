@@ -148,7 +148,6 @@ class AuthCodeGrant extends AbstractGrant
         $session = new SessionEntity($this->server);
         $session->setOwner($type, $typeId);
         $session->associateClient($authParams['client']);
-        $session->save();
 
         // Create a new auth code
         $authCode = new AuthCodeEntity($this->server);
@@ -158,8 +157,10 @@ class AuthCodeGrant extends AbstractGrant
 
         foreach ($authParams['scopes'] as $scope) {
             $authCode->associateScope($scope);
+            $session->associateScope($scope);
         }
 
+        $session->save();
         $authCode->setSession($session);
         $authCode->save();
 
