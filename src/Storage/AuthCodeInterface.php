@@ -24,7 +24,7 @@ interface AuthCodeInterface extends StorageInterface
      *
      * @param string $code
      *
-     * @return \League\OAuth2\Server\Entity\AuthCodeEntity
+     * @return \League\OAuth2\Server\Entity\AuthCodeEntity | null
      */
     public function get($code);
 
@@ -45,7 +45,7 @@ interface AuthCodeInterface extends StorageInterface
      *
      * @param \League\OAuth2\Server\Entity\AuthCodeEntity $token The auth code
      *
-     * @return array Array of \League\OAuth2\Server\Entity\ScopeEntity
+     * @return \League\OAuth2\Server\Entity\ScopeEntity[] Array of \League\OAuth2\Server\Entity\ScopeEntity
      */
     public function getScopes(AuthCodeEntity $token);
 
