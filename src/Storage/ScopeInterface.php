@@ -23,7 +23,7 @@ interface ScopeInterface extends StorageInterface
      * @param string $grantType The grant type used in the request (default = "null")
      * @param string $clientId  The client sending the request (default = "null")
      *
-     * @return \League\OAuth2\Server\Entity\ScopeEntity
+     * @return \League\OAuth2\Server\Entity\ScopeEntity | null
      */
     public function get($scope, $grantType = null, $clientId = null);
 }

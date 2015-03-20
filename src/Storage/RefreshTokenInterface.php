@@ -23,7 +23,7 @@ interface RefreshTokenInterface extends StorageInterface
      *
      * @param string $token
      *
-     * @return \League\OAuth2\Server\Entity\RefreshTokenEntity
+     * @return \League\OAuth2\Server\Entity\RefreshTokenEntity | null
      */
     public function get($token);
 

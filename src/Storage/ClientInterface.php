@@ -26,7 +26,7 @@ interface ClientInterface extends StorageInterface
      * @param string $redirectUri  The client's redirect URI (default = "null")
      * @param string $grantType    The grant type used (default = "null")
      *
-     * @return \League\OAuth2\Server\Entity\ClientEntity
+     * @return \League\OAuth2\Server\Entity\ClientEntity | null
      */
     public function get($clientId, $clientSecret = null, $redirectUri = null, $grantType = null);
 
@@ -35,7 +35,7 @@ interface ClientInterface extends StorageInterface
      *
      * @param \League\OAuth2\Server\Entity\SessionEntity $session The session
      *
-     * @return \League\OAuth2\Server\Entity\ClientEntity
+     * @return \League\OAuth2\Server\Entity\ClientEntity | null
      */
     public function getBySession(SessionEntity $session);
 }

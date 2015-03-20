@@ -26,7 +26,7 @@ interface SessionInterface extends StorageInterface
      *
      * @param \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken The access token
      *
-     * @return \League\OAuth2\Server\Entity\SessionEntity
+     * @return \League\OAuth2\Server\Entity\SessionEntity | null
      */
     public function getByAccessToken(AccessTokenEntity $accessToken);
 
@@ -35,7 +35,7 @@ interface SessionInterface extends StorageInterface
      *
      * @param \League\OAuth2\Server\Entity\AuthCodeEntity $authCode The auth code
      *
-     * @return \League\OAuth2\Server\Entity\SessionEntity
+     * @return \League\OAuth2\Server\Entity\SessionEntity | null
      */
     public function getByAuthCode(AuthCodeEntity $authCode);
 
@@ -44,7 +44,7 @@ interface SessionInterface extends StorageInterface
      *
      * @param  \League\OAuth2\Server\Entity\SessionEntity
      *
-     * @return array Array of \League\OAuth2\Server\Entity\ScopeEntity
+     * @return \League\OAuth2\Server\Entity\ScopeEntity[] Array of \League\OAuth2\Server\Entity\ScopeEntity
      */
     public function getScopes(SessionEntity $session);
 

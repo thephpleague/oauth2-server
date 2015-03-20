@@ -24,7 +24,7 @@ interface AccessTokenInterface extends StorageInterface
      *
      * @param string $token The access token
      *
-     * @return \League\OAuth2\Server\Entity\AccessTokenEntity
+     * @return \League\OAuth2\Server\Entity\AccessTokenEntity | null
      */
     public function get($token);
 
@@ -33,7 +33,7 @@ interface AccessTokenInterface extends StorageInterface
      *
      * @param \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
      *
-     * @return array Array of \League\OAuth2\Server\Entity\ScopeEntity
+     * @return \League\OAuth2\Server\Entity\ScopeEntity[] Array of \League\OAuth2\Server\Entity\ScopeEntity
      */
     public function getScopes(AccessTokenEntity $token);
 
