@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.1.3 (released 2015-03-22)
+
+* Docblock, namespace and inconsistency fixes (Issue #303)
+* Docblock type fix (Issue #310)
+* Example bug fix (Issue #300)
+* Updated league/event to ~2.1 (Issue #311)
+* Fixed missing session scope (Issue #319)
+* Updated interface docs (Issue #323)
+* `.travis.yml` updates
+
 ## 4.1.2 (released 2015-01-01)
 
 * Remove side-effects in hash_equals() implementation (Issue #290)
