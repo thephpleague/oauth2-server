@@ -10,6 +10,7 @@ php:
 matrix:
   allow_failures:
     - php: 7.0
+  fast_finish: true
 
 install:
   - travis_retry composer install --no-interaction --prefer-source
