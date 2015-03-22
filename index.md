@@ -35,12 +35,15 @@ In addition it supports the following token types:
 
 The changelog can be viewed here - [https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md).
 
-The latest release is `4.1.0` (released 2014-12-27):
+The latest release is `4.1.3` (released 2015-03-22):
 
-* Added MAC token support (Issue #158)
-* Fixed example init code (Issue #280)
-* Toggle refresh token rotation (Issue #286)
-* Docblock fixes
+* Docblock, namespace and inconsistency fixes (Issue #303)
+* Docblock type fix (Issue #310)
+* Example bug fix (Issue #300)
+* Updated league/event to ~2.1 (Issue #311)
+* Fixed missing session scope (Issue #319)
+* Updated interface docs (Issue #323)
+* `.travis.yml` updates
 
 ## Questions?
 
