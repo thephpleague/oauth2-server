@@ -1,5 +1,11 @@
 language: php
 
+sudo: false
+
+cache:
+  directories:
+  - vendor
+
 php:
   - 5.4
   - 5.5
