@@ -9,9 +9,10 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
-namespace League\OAuth2\Server\TokenType;
+namespace League\OAuth2\Server\TokenTypes;
 
 use League\OAuth2\Server\AbstractServer;
+use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entity\SessionEntity;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -25,13 +26,9 @@ interface TokenTypeInterface
     public function generateResponse();
 
     /**
-     * Set the server
-     *
-     * @param \League\OAuth2\Server\AbstractServer $server
-     *
-     * @return self
+     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessToken
      */
-    public function setServer(AbstractServer $server);
+    public function setAccessToken(AccessTokenEntityInterface $accessToken);
 
     /**
      * Set a key/value response pair
@@ -49,13 +46,6 @@ interface TokenTypeInterface
      * @return mixed
      */
     public function getParam($key);
-
-    /**
-     * @param \League\OAuth2\Server\Entity\SessionEntity $session
-     *
-     * @return self
-     */
-    public function setSession(SessionEntity $session);
 
     /**
      * Determine the access token in the authorization header

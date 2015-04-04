@@ -9,11 +9,11 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
-namespace League\OAuth2\Server\TokenType;
+namespace League\OAuth2\Server\TokenTypes;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class Bearer extends AbstractTokenType implements TokenTypeInterface
+class Bearer extends AbstractTokenType
 {
     /**
      * {@inheritdoc}
