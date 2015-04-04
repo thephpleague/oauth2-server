@@ -9,7 +9,7 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
-namespace League\OAuth2\Server\Util\KeyAlgorithm;
+namespace League\OAuth2\Server\Utils\KeyAlgorithm;
 
 interface KeyAlgorithmInterface
 {

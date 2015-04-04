@@ -9,16 +9,19 @@
  * @link        http://github.com/php-loep/oauth2-server
  */
 
-namespace League\OAuth2\Server\Util;
+namespace League\OAuth2\Server\Utils;
 
-use League\OAuth2\Server\Util\KeyAlgorithm\DefaultAlgorithm;
-use League\OAuth2\Server\Util\KeyAlgorithm\KeyAlgorithmInterface;
+use League\OAuth2\Server\Utils\KeyAlgorithm\DefaultAlgorithm;
+use League\OAuth2\Server\Utils\KeyAlgorithm\KeyAlgorithmInterface;
 
 /**
  * SecureKey class
  */
 class SecureKey
 {
+    /**
+     * @var KeyAlgorithmInterface
+     */
     protected static $algorithm;
 
     /**

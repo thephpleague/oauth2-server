@@ -9,7 +9,7 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
-namespace League\OAuth2\Server\Util;
+namespace League\OAuth2\Server\Utils;
 
 /**
  * RedirectUri class
@@ -21,14 +21,14 @@ class RedirectUri
      *
      * @param string $uri            The base URI
      * @param array  $params         The query string parameters
-     * @param string $queryDelimeter The query string delimeter (default: "?")
+     * @param string $queryDelimiter The query string delimiter (default: "?")
      *
      * @return string The updated URI
      */
-    public static function make($uri, $params = [], $queryDelimeter = '?')
+    public static function make($uri, $params = [], $queryDelimiter = '?')
     {
-        $uri .= (strstr($uri, $queryDelimeter) === false) ? $queryDelimeter : '&';
+        $uri .= (strstr($uri, $queryDelimiter) === false) ? $queryDelimiter : '&';
 
-        return $uri.http_build_query($params);
+        return $uri . http_build_query($params);
     }
 }
