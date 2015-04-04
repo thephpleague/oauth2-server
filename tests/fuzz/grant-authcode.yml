@@ -1,9 +1,0 @@
-url: 'http://localhost:8000/authcode_grant.php/authorize?client_id=testclient&redirect_uri=http%3A%2F%2Fexample.com%2Fredirect&response_type=code&scope=basic'
-request:
-    method: GET
-response:
-    statusCode: 200
-    headers:
-        -
-            key: Location
-            valueRegex: /http:\/\/example.com\/redirect\?code=([a-zA-Z0-9]*)/
