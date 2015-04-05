@@ -9,12 +9,11 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
-namespace League\OAuth2\Server\TokenTypes;
+namespace League\OAuth2\Server\ResponseTypes;
 
-use Period\Period;
 use Symfony\Component\HttpFoundation\Request;
 
-class BearerTokenType extends AbstractTokenType
+class BearerTokenResponseType extends AbstractResponseType
 {
     /**
      * {@inheritdoc}
@@ -24,10 +23,7 @@ class BearerTokenType extends AbstractTokenType
         $return = [
             'access_token' => $this->accessToken->getIdentifier(),
             'token_type'   => 'Bearer',
-            'expires_in'   => (new Period(
-                new \DateTime(),
-                $this->accessToken->getExpiryDateTime())
-            )->getTimestampInterval(),
+            'expires_in'   => $this->accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp()
         ];
 
         if (!is_null($this->getParam('refresh_token'))) {

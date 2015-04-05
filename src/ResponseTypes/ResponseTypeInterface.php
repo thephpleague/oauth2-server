@@ -9,14 +9,15 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
-namespace League\OAuth2\Server\TokenTypes;
+namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\AbstractServer;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entity\SessionEntity;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-interface TokenTypeInterface
+interface ResponseTypeInterface
 {
     /**
      * Generate a response
@@ -55,4 +56,9 @@ interface TokenTypeInterface
      * @return string
      */
     public function determineAccessTokenInHeader(Request $request);
+
+    /**
+     * @return Response
+     */
+    public function generateHttpResponse();
 }
