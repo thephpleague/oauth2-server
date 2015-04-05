@@ -2,7 +2,7 @@
 $I = new ApiTester($scenario);
 $I->wantTo('get an access token using the client credentials grant');
 $I->sendPOST(
-    'access_token',
+    'client_credentials.php/access_token',
     [
         'grant_type'    => 'client_credentials',
         'client_id'     => 'myawesomeapp',
