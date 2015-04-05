@@ -9,14 +9,12 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
-namespace League\OAuth2\Server\Storage;
-
-use League\OAuth2\Server\Entity\RefreshTokenEntity;
+namespace League\OAuth2\Server\Repositories;
 
 /**
  * Refresh token interface
  */
-interface RefreshTokenInterface extends StorageInterface
+interface RefreshTokenRepositoryInterface extends RepositoryInterface
 {
     /**
      * Return a new instance of \League\OAuth2\Server\Entity\RefreshTokenEntity
