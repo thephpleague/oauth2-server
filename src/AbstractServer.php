@@ -44,7 +44,8 @@ abstract class AbstractServer implements ContainerAwareInterface, EmitterAwareIn
     {
         $this->setContainer(new Container());
         $this->getContainer()->singleton('emitter', $this->getEmitter());
-        $this->getContainer()->addServiceProvider('League\OAuth2\Server\ServiceProviders\ClientCredentialsGrantServerProvider');
+        $this->getContainer()->addServiceProvider('League\OAuth2\Server\ServiceProviders\ClientCredentialsGrantProvider');
+        $this->getContainer()->addServiceProvider('League\OAuth2\Server\ServiceProviders\PasswordGrantProvider');
     }
 
     /**
