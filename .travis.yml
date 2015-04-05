@@ -25,7 +25,7 @@ before_script:
   - cd examples/
   - composer install
   - cd public/
-  - php -S localhost:7777 index.php &
+  - php -S localhost:7777 &
   - cd ../..
 
 script:
