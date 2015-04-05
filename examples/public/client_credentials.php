@@ -18,16 +18,14 @@ $server->addRepository(new AccessTokenRepository());
 // Enable the client credentials grant which will return access tokens that last for 24 hours
 $server->enableGrantType('ClientCredentialsGrant', null, new \DateInterval('PT24H'));
 
-// Setup routing
+// Setup app + routing
 $application = new \Proton\Application();
 $application->post('/access_token', function (Request $request) use ($server) {
-
     try {
         return $server->getAccessTokenResponse($request);
     } catch (OAuthException $e) {
         return $e->generateHttpResponse();
     }
-
 });
 
 // Run the app
