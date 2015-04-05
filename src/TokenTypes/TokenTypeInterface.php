@@ -14,7 +14,7 @@ namespace League\OAuth2\Server\TokenTypes;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-interface ResponseTokenInterface
+interface TokenTypeInterface
 {
     /**
      * Generate a response
