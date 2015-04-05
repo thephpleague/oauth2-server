@@ -40,9 +40,11 @@ after_script:
   - git add -f .
   - git commit -m "Travis pushed coverage of ${TRAVIS_COMMIT}@${TRAVIS_BRANCH} to gh-pages"
   - git push -fq origin gh-pages > /dev/null
+
 branches:
   only:
     - master
+    - v5
 
 env:
   global:
