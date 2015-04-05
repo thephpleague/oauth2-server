@@ -11,7 +11,9 @@
 	},
 	"require-dev": {
 		"phpunit/phpunit": "4.3.*",
-		"mockery/mockery": "0.9.*"
+		"mockery/mockery": "0.9.*",
+		"codeception/codeception": "~2.0",
+		"flow/jsonpath": "0.2.*"
 	},
 	"repositories": [
 		{
