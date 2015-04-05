@@ -9,61 +9,53 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
-namespace League\OAuth2\Server\Storage;
+namespace League\OAuth2\Server\Repositories;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 
 /**
  * Access token interface
  */
-interface AccessTokenInterface extends StorageInterface
+interface AccessTokenRepositoryInterface extends RepositoryInterface
 {
     /**
      * Get an instance of Entity\AccessTokenEntity
      *
-     * @param string $token The access token
+     * @param string $tokenIdentifier The access token identifier
      *
-     * @return \League\OAuth2\Server\Entity\AccessTokenEntity
+     * @return \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
      */
-    public function get($token);
+    public function get($tokenIdentifier);
 
     /**
      * Get the scopes for an access token
      *
-     * @param \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
+     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $token
      *
-     * @return array Array of \League\OAuth2\Server\Entity\ScopeEntity
+     * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[]
      */
-    public function getScopes(AccessTokenEntity $token);
+    public function getScopes(AccessTokenEntityInterface $token);
 
     /**
      * Creates a new access token
      *
-     * @param string         $token      The access token
-     * @param integer        $expireTime The expire time expressed as a unix timestamp
-     * @param string|integer $sessionId  The session ID
-     *
-     * @return void
+     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessTokenEntity
      */
-    public function create($token, $expireTime, $sessionId);
+    public function create(AccessTokenEntityInterface $accessTokenEntity);
 
     /**
-     * Associate a scope with an acess token
+     * Associate a scope with an access token
      *
-     * @param \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
-     * @param \League\OAuth2\Server\Entity\ScopeEntity       $scope The scope
-     *
-     * @return void
+     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessTokenEntityInterface
+     * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface       $scope
      */
-    public function associateScope(AccessTokenEntity $token, ScopeEntity $scope);
+    public function associateScope(AccessTokenEntityInterface $accessTokenEntityInterface, ScopeEntityInterface $scope);
 
     /**
      * Delete an access token
      *
-     * @param \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token to delete
-     *
-     * @return void
+     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessToken
      */
-    public function delete(AccessTokenEntity $token);
+    public function delete(AccessTokenEntityInterface $accessToken);
 }
