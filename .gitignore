@@ -2,3 +2,4 @@
 /composer.lock
 .idea
 /examples/vendor
+/tests/_output
