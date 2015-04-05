@@ -9,22 +9,21 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
-namespace League\OAuth2\Server\Storage;
+namespace League\OAuth2\Server\Repositories;
 
-use League\OAuth2\Server\Entity\AuthCodeEntity;
-use League\OAuth2\Server\Entity\ScopeEntity;
+use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
 
 /**
  * Auth code storage interface
  */
-interface AuthCodeInterface extends StorageInterface
+interface AuthCodeRepositoryInterface extends RepositoryInterface
 {
     /**
      * Get the auth code
      *
      * @param string $code
      *
-     * @return \League\OAuth2\Server\Entity\AuthCodeEntity
+     * @return \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface
      */
     public function get($code);
 
@@ -41,30 +40,9 @@ interface AuthCodeInterface extends StorageInterface
     public function create($token, $expireTime, $sessionId, $redirectUri);
 
     /**
-     * Get the scopes for an access token
-     *
-     * @param \League\OAuth2\Server\Entity\AuthCodeEntity $token The auth code
-     *
-     * @return array Array of \League\OAuth2\Server\Entity\ScopeEntity
-     */
-    public function getScopes(AuthCodeEntity $token);
-
-    /**
-     * Associate a scope with an acess token
-     *
-     * @param \League\OAuth2\Server\Entity\AuthCodeEntity $token The auth code
-     * @param \League\OAuth2\Server\Entity\ScopeEntity    $scope The scope
-     *
-     * @return void
-     */
-    public function associateScope(AuthCodeEntity $token, ScopeEntity $scope);
-
-    /**
      * Delete an access token
      *
-     * @param \League\OAuth2\Server\Entity\AuthCodeEntity $token The access token to delete
-     *
-     * @return void
+     * @param \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface $token The access token to delete
      */
-    public function delete(AuthCodeEntity $token);
+    public function delete(AuthCodeEntityInterface $token);
 }

@@ -16,6 +16,7 @@ use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterTrait;
+use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -97,6 +98,9 @@ abstract class AbstractServer implements ContainerAwareInterface, EmitterAwareIn
                 break;
             case ($repository instanceof UserRepositoryInterface):
                 $this->getContainer()->add('UserRepository', $repository);
+                break;
+            case ($repository instanceof AuthCodeRepositoryInterface):
+                $this->getContainer()->add('AuthCodeRepository', $repository);
                 break;
         }
     }
