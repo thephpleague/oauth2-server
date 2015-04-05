@@ -99,18 +99,4 @@ abstract class AbstractServer implements ContainerAwareInterface, EmitterAwareIn
                 break;
         }
     }
-
-    /**
-     * Get a hydrated grant
-     *
-     * @param string        $grant
-     * @param \DateInterval $tokenTTL
-     *
-     * @return \League\OAuth2\Server\Repositories\RepositoryInterface
-     * @deprecated
-     */
-    public function getGrant($grant, \DateInterval $tokenTTL)
-    {
-        return $this->getContainer()->get($grant, [$this->responseType, $tokenTTL]);
-    }
 }
