@@ -13,6 +13,7 @@ namespace League\OAuth2\Server\Exception;
 
 use League\OAuth2\Server\Util\RedirectUri;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Exception class
@@ -66,8 +67,8 @@ class OAuthException extends \Exception
         return RedirectUri::make(
             $this->redirectUri,
             [
-                'error' =>  $this->errorType,
-                'message' =>  $this->getMessage(),
+                'error'   => $this->errorType,
+                'message' => $this->getMessage(),
             ]
         );
     }
@@ -121,7 +122,7 @@ class OAuthException extends \Exception
                 }
             }
             if ($authScheme !== null) {
-                $headers[] = 'WWW-Authenticate: '.$authScheme.' realm=""';
+                $headers[] = 'WWW-Authenticate: ' . $authScheme . ' realm=""';
             }
         }
         // @codeCoverageIgnoreEnd
