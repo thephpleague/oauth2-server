@@ -20,6 +20,7 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -92,6 +93,9 @@ abstract class AbstractServer implements ContainerAwareInterface, EmitterAwareIn
                 break;
             case ($repository instanceof ScopeRepositoryInterface):
                 $this->getContainer()->add('ScopeRepository', $repository);
+                break;
+            case ($repository instanceof UserRepositoryInterface):
+                $this->getContainer()->add('UserRepository', $repository);
                 break;
         }
     }
