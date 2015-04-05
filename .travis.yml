@@ -26,9 +26,9 @@ before_script:
   - composer install
   - cd public/
   - php -S localhost:7777 index.php &
+  - cd ../..
 
 script:
-  - mkdir -p build/logs
   - vendor/bin/codecept run
 
 after_script:
