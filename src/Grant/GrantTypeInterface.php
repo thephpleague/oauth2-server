@@ -12,7 +12,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\TokenTypes\TokenTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -37,16 +37,16 @@ interface GrantTypeInterface
     /**
      * Return an access token
      *
-     * @param \Symfony\Component\HttpFoundation\Request                 $request
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param \DateInterval                                             $accessTokenTTL
-     * @param string                                                    $scopeDelimiter
+     * @param \Symfony\Component\HttpFoundation\Request           $request
+     * @param \League\OAuth2\Server\TokenTypes\TokenTypeInterface $tokenType
+     * @param \DateInterval                                       $accessTokenTTL
+     * @param string                                              $scopeDelimiter
      *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @return \League\OAuth2\Server\TokenTypes\TokenTypeInterface
      */
     public function getAccessTokenAsType(
         Request $request,
-        ResponseTypeInterface $responseType,
+        TokenTypeInterface $tokenType,
         DateInterval $accessTokenTTL,
         $scopeDelimiter = ' '
     );

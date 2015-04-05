@@ -16,7 +16,7 @@ use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\TokenTypes\TokenTypeInterface;
 use League\OAuth2\Server\Utils\SecureKey;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -35,19 +35,19 @@ class ClientCredentialsGrant extends AbstractGrant
     /**
      * Return an access token
      *
-     * @param \Symfony\Component\HttpFoundation\Request                 $request
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param \DateInterval                                             $accessTokenTTL
-     * @param string                                                    $scopeDelimiter
+     * @param \Symfony\Component\HttpFoundation\Request           $request
+     * @param \League\OAuth2\Server\TokenTypes\TokenTypeInterface $tokenType
+     * @param \DateInterval                                       $accessTokenTTL
+     * @param string                                              $scopeDelimiter
      *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @return \League\OAuth2\Server\TokenTypes\TokenTypeInterface
      * @throws \League\OAuth2\Server\Exception\InvalidClientException
      * @throws \League\OAuth2\Server\Exception\InvalidRequestException
      * @throws \League\OAuth2\Server\Exception\InvalidScopeException
      */
     public function getAccessTokenAsType(
         Request $request,
-        ResponseTypeInterface $responseType,
+        TokenTypeInterface $tokenType,
         DateInterval $accessTokenTTL,
         $scopeDelimiter = ' '
     ) {
@@ -95,8 +95,8 @@ class ClientCredentialsGrant extends AbstractGrant
         $this->accessTokenRepository->create($accessToken);
 
         // Inject access token into token type
-        $responseType->setAccessToken($accessToken);
+        $tokenType->setAccessToken($accessToken);
 
-        return $responseType;
+        return $tokenType;
     }
 }
