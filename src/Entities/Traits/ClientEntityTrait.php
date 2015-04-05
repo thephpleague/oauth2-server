@@ -6,31 +6,7 @@ trait ClientEntityTrait
     /**
      * @var string
      */
-    protected $secret;
-
-    /**
-     * @var string
-     */
     protected $name;
-
-    /**
-     * Get the client's secret
-     * @return string
-     */
-    public function getSecret()
-    {
-        return $this->secret;
-    }
-
-    /**
-     * Set the client's secret
-     * @param string $secret
-     * @return string
-     */
-    public function setSecret($secret)
-    {
-        $this->secret = $secret;
-    }
 
     /**
      * Get the client's name

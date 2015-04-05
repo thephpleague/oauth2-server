@@ -16,19 +16,6 @@ interface ClientEntityInterface
     public function setIdentifier($identifier);
 
     /**
-     * Get the client's secret
-     * @return string
-     */
-    public function getSecret();
-
-    /**
-     * Set the client's secret
-     * @param string $secret
-     * @return string
-     */
-    public function setSecret($secret);
-
-    /**
      * Get the client's name
      * @return string
      */

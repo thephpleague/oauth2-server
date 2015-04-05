@@ -44,7 +44,6 @@ class ClientRepository implements ClientRepositoryInterface
         $client = new ClientEntity();
         $client->setIdentifier($clientIdentifier);
         $client->setName($clients[$clientIdentifier]['name']);
-        $client->setSecret($clients[$clientIdentifier]['secret']);
 
         return $client;
     }
