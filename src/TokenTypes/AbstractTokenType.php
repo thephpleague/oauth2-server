@@ -9,12 +9,12 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
-namespace League\OAuth2\Server\ResponseTypes;
+namespace League\OAuth2\Server\TokenTypes;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class AbstractResponseType implements ResponseTypeInterface
+abstract class AbstractTokenType implements TokenTypeInterface
 {
     /**
      * Response array
@@ -45,7 +45,7 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     }
 
     /**
-     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessToken
+     * {@inheritdoc}
      */
     public function setAccessToken(AccessTokenEntityInterface $accessToken)
     {
