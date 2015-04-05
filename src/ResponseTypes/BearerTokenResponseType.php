@@ -11,9 +11,10 @@
 
 namespace League\OAuth2\Server\TokenTypes;
 
+use Period\Period;
 use Symfony\Component\HttpFoundation\Request;
 
-class Bearer extends AbstractTokenType
+class BearerTokenType extends AbstractTokenType
 {
     /**
      * {@inheritdoc}
@@ -21,9 +22,12 @@ class Bearer extends AbstractTokenType
     public function generateResponse()
     {
         $return = [
-            'access_token'  =>  $this->getParam('access_token'),
-            'token_type'    =>  'Bearer',
-            'expires_in'    =>  $this->getParam('expires_in'),
+            'access_token' => $this->accessToken->getIdentifier(),
+            'token_type'   => 'Bearer',
+            'expires_in'   => (new Period(
+                new \DateTime(),
+                $this->accessToken->getExpiryDateTime())
+            )->getTimestampInterval(),
         ];
 
         if (!is_null($this->getParam('refresh_token'))) {
@@ -40,6 +44,8 @@ class Bearer extends AbstractTokenType
     {
         $header = $request->headers->get('Authorization');
         $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
+
+        // ^(?:\s+)?Bearer\s([a-zA-Z0-9-._~+/=]*)
 
         return ($accessToken === 'Bearer') ? '' : $accessToken;
     }
