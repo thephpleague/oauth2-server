@@ -80,7 +80,9 @@ class OAuthException extends \Exception
      */
     public function getHttpHeaders()
     {
-        $headers = [];
+        $headers = [
+            'Content-type'  =>  'application/json'
+        ];
         switch ($this->httpStatusCode) {
             case 401:
                 $headers[] = 'HTTP/1.1 401 Unauthorized';
