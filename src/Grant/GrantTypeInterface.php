@@ -11,7 +11,9 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\AuthorizationServer;
+use DateInterval;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Grant type interface
@@ -26,34 +28,26 @@ interface GrantTypeInterface
     public function getIdentifier();
 
     /**
-     * Return the identifier
-     *
-     * @param string $identifier
-     *
-     * @return self
-     */
-    public function setIdentifier($identifier);
-
-    /**
-     * Return the response type
+     * Details what the grant responds with
      *
      * @return string
      */
-    public function getResponseType();
+    public function respondsWith();
 
     /**
-     * Inject the authorization server into the grant
+     * Return an access token
      *
-     * @param \League\OAuth2\Server\AuthorizationServer $server The authorization server instance
+     * @param \Symfony\Component\HttpFoundation\Request                 $request
+     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
+     * @param \DateInterval                                             $accessTokenTTL
+     * @param string                                                    $scopeDelimiter
      *
-     * @return self
+     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */
-    public function setAuthorizationServer(AuthorizationServer $server);
-
-    /**
-     * Complete the grant flow
-     *
-     * @return array
-     */
-    public function completeFlow();
+    public function getAccessTokenAsType(
+        Request $request,
+        ResponseTypeInterface $responseType,
+        DateInterval $accessTokenTTL,
+        $scopeDelimiter = ' '
+    );
 }
