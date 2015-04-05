@@ -2,8 +2,8 @@
 namespace League\OAuth2\Server;
 
 use DateInterval;
-use League\OAuth2\Server\ResponseTypes\BearerTokenResponseType;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\TokenTypes\BearerTokenType;
+use League\OAuth2\Server\TokenTypes\TokenTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Server extends AbstractServer
@@ -14,9 +14,9 @@ class Server extends AbstractServer
     protected $enabledGrantTypes = [];
 
     /**
-     * @var \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface[]
+     * @var TokenTypeInterface[]
      */
-    protected $grantTypeResponseTypes = [];
+    protected $grantTypeTokenTypes = [];
 
     /**
      * @var DateInterval[]
@@ -24,7 +24,7 @@ class Server extends AbstractServer
     protected $grantTypeAccessTokenTTL = [];
 
     /**
-     * @var \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @var TokenTypeInterface
      */
     protected $defaultResponseType;
 
@@ -41,16 +41,16 @@ class Server extends AbstractServer
     /**
      * New server instance
      *
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $defaultResponseType
-     * @param DateInterval                                              $defaultAccessTokenTTL
+     * @param TokenTypeInterface $defaultResponseType
+     * @param DateInterval                                                $defaultAccessTokenTTL
      */
     public function __construct(
-        ResponseTypeInterface $defaultResponseType = null,
+        TokenTypeInterface $defaultResponseType = null,
         DateInterval $defaultAccessTokenTTL = null
     ) {
-        $this->defaultResponseType = ($defaultResponseType instanceof ResponseTypeInterface)
+        $this->defaultResponseType = ($defaultResponseType instanceof TokenTypeInterface)
             ? $defaultResponseType
-            : new BearerTokenResponseType();
+            : new BearerTokenType();
 
         $this->defaultAccessTokenTTL = ($defaultAccessTokenTTL instanceof DateInterval)
             ? $defaultAccessTokenTTL
@@ -60,15 +60,15 @@ class Server extends AbstractServer
     }
 
     /**
-     * @param string                                                    $grantType
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param DateInterval                                              $accessTokenTTL
+     * @param string                                                      $grantType
+     * @param TokenTypeInterface $tokenType
+     * @param DateInterval                                                $accessTokenTTL
      *
      * @throws \Exception
      */
     public function enableGrantType(
         $grantType,
-        ResponseTypeInterface $responseType = null,
+        TokenTypeInterface $tokenType = null,
         DateInterval $accessTokenTTL = null
     ) {
         if ($this->getContainer()->isInServiceProvider($grantType)) {
@@ -80,10 +80,10 @@ class Server extends AbstractServer
         }
 
         // Set grant response type
-        if ($responseType instanceof ResponseTypeInterface) {
-            $this->grantTypeResponseTypes[$grantIdentifier] = $responseType;
+        if ($tokenType instanceof TokenTypeInterface) {
+            $this->grantTypeTokenTypes[$grantIdentifier] = $tokenType;
         } else {
-            $this->grantTypeResponseTypes[$grantIdentifier] = $this->defaultResponseType;
+            $this->grantTypeTokenTypes[$grantIdentifier] = $this->defaultResponseType;
         }
 
         // Set grant access token TTL
@@ -99,7 +99,7 @@ class Server extends AbstractServer
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @return TokenTypeInterface
      * @throws \Exception
      */
     public function getAccessTokenResponse(Request $request = null)
@@ -112,17 +112,17 @@ class Server extends AbstractServer
         $grantType = $request->request->get('grant_type', null);
 
         if ($grantType === null || !isset($this->enabledGrantTypes[$grantType])) {
-            throw new \Exception('Unknown grant type');
+            throw new Exception\InvalidGrantException($grantType);
         }
 
-        $responseType = $this->enabledGrantTypes[$grantType]->getAccessTokenAsType(
+        $tokenType = $this->enabledGrantTypes[$grantType]->getAccessTokenAsType(
             $request,
-            $this->grantTypeResponseTypes[$grantType],
+            $this->grantTypeTokenTypes[$grantType],
             $this->grantTypeAccessTokenTTL[$grantType],
             $this->scopeDelimiter
         );
 
-        return $responseType->generateHttpResponse();
+        return $tokenType->generateHttpResponse();
     }
 
     /**
