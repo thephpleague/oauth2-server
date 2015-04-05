@@ -127,4 +127,22 @@ class OAuthException extends \Exception
         // @codeCoverageIgnoreEnd
         return $headers;
     }
+
+    /**
+     * Generate a HTTP response
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function generateHttpResponse()
+    {
+        return new Response(
+            json_encode(
+                [
+                    'error'   => $this->errorType,
+                    'message' => $this->getMessage()
+                ]
+            ),
+            $this->httpStatusCode,
+            $this->getHttpHeaders()
+        );
+    }
 }
