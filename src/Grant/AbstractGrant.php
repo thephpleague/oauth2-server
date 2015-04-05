@@ -11,10 +11,13 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Entity\ClientEntity;
-use League\OAuth2\Server\Entity\ScopeEntity;
+use League\Event\Emitter;
+use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 
 /**
  * Abstract grant class
@@ -29,32 +32,54 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $identifier = '';
 
     /**
-     * Response type
+     * Grant responds with
      *
      * @var string
      */
-    protected $responseType;
+    protected $respondsWith = 'token';
 
     /**
-     * Callback to authenticate a user's name and password
-     *
-     * @var callable
+     * @var \Symfony\Component\HttpFoundation\Request
      */
-    protected $callback;
+    protected $request;
 
     /**
-     * AuthServer instance
-     *
-     * @var \League\OAuth2\Server\AuthorizationServer
+     * @var ClientRepositoryInterface
      */
-    protected $server;
+    protected $clientRepository;
 
     /**
-     * Access token expires in override
-     *
-     * @var int
+     * @var AccessTokenRepositoryInterface
      */
-    protected $accessTokenTTL;
+    protected $accessTokenRepository;
+
+    /**
+     * @var \League\Event\Emitter
+     */
+    protected $emitter;
+
+    /**
+     * @var ScopeRepositoryInterface
+     */
+    protected $scopeRepository;
+
+    /**
+     * @param \League\Event\Emitter                                             $emitter
+     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
+     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     */
+    public function __construct(
+        Emitter $emitter,
+        ClientRepositoryInterface $clientRepository,
+        ScopeRepositoryInterface $scopeRepository,
+        AccessTokenRepositoryInterface $accessTokenRepository
+    ) {
+        $this->emitter = $emitter;
+        $this->clientRepository = $clientRepository;
+        $this->scopeRepository = $scopeRepository;
+        $this->accessTokenRepository = $accessTokenRepository;
+    }
 
     /**
      * {@inheritdoc}
@@ -67,74 +92,27 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function setIdentifier($identifier)
+    public function respondsWith()
     {
-        $this->identifier = $identifier;
-
-        return $this;
+        return $this->respondsWith;
     }
 
     /**
-     * {@inheritdoc}
+     * @param string                $scopeParamValue A string containing a delimited set of scope identifiers
+     * @param string                $scopeDelimiter  The delimiter between the scopes in the value string
+     * @param ClientEntityInterface $client
+     * @param string                $redirectUri
+     *
+     * @return \League\OAuth2\Server\Entities\ScopeEntity[]
+     * @throws \League\OAuth2\Server\Exception\InvalidScopeException
      */
-    public function getResponseType()
-    {
-        return $this->responseType;
-    }
-
-    /**
-     * Get the TTL for an access token
-     *
-     * @return int The TTL
-     */
-    public function getAccessTokenTTL()
-    {
-        if ($this->accessTokenTTL) {
-            return $this->accessTokenTTL;
-        }
-
-        return $this->server->getAccessTokenTTL();
-    }
-
-    /**
-     * Override the default access token expire time
-     *
-     * @param int $accessTokenTTL
-     *
-     * @return self
-     */
-    public function setAccessTokenTTL($accessTokenTTL)
-    {
-        $this->accessTokenTTL = $accessTokenTTL;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAuthorizationServer(AuthorizationServer $server)
-    {
-        $this->server = $server;
-
-        return $this;
-    }
-
-    /**
-     * Given a list of scopes, validate them and return an array of Scope entities
-     *
-     * @param string                                    $scopeParam  A string of scopes (e.g. "profile email birthday")
-     * @param \League\OAuth2\Server\Entity\ClientEntity $client      Client entity
-     * @param string|null                               $redirectUri The redirect URI to return the user to
-     *
-     * @return \League\OAuth2\Server\Entity\ScopeEntity[]
-     *
-     * @throws \League\OAuth2\Server\Exception\InvalidScopeException If scope is invalid, or no scopes passed when required
-     * @throws
-     */
-    public function validateScopes($scopeParam = '', ClientEntity $client, $redirectUri = null)
-    {
-        $scopesList = explode($this->server->getScopeDelimiter(), $scopeParam);
+    public function validateScopes(
+        $scopeParamValue,
+        $scopeDelimiter,
+        ClientEntityInterface $client,
+        $redirectUri = null
+    ) {
+        $scopesList = explode($scopeDelimiter, trim($scopeParamValue));
 
         for ($i = 0; $i < count($scopesList); $i++) {
             $scopesList[$i] = trim($scopesList[$i]);
@@ -143,53 +121,19 @@ abstract class AbstractGrant implements GrantTypeInterface
             }
         }
 
-        if (
-            $this->server->scopeParamRequired() === true
-            && $this->server->getDefaultScope() === null
-            && count($scopesList) === 0
-        ) {
-            throw new Exception\InvalidRequestException('scope');
-        } elseif (count($scopesList) === 0 && $this->server->getDefaultScope() !== null) {
-            if (is_array($this->server->getDefaultScope())) {
-                $scopesList = $this->server->getDefaultScope();
-            } else {
-                $scopesList = [0 => $this->server->getDefaultScope()];
-            }
-        }
-
         $scopes = [];
-
         foreach ($scopesList as $scopeItem) {
-            $scope = $this->server->getScopeStorage()->get(
+            $scope = $this->scopeRepository->get(
                 $scopeItem,
                 $this->getIdentifier(),
-                $client->getId()
+                $client->getIdentifier()
             );
 
             if (($scope instanceof ScopeEntity) === false) {
                 throw new Exception\InvalidScopeException($scopeItem, $redirectUri);
             }
 
-            $scopes[$scope->getId()] = $scope;
-        }
-
-        return $scopes;
-    }
-
-    /**
-     * Format the local scopes array
-     *
-     * @param  \League\OAuth2\Server\Entity\ScopeEntity[]
-     *
-     * @return array
-     */
-    protected function formatScopes($unformated = [])
-    {
-        $scopes = [];
-        foreach ($unformated as $scope) {
-            if ($scope instanceof ScopeEntity) {
-                $scopes[$scope->getId()] = $scope;
-            }
+            $scopes[] = $scope;
         }
 
         return $scopes;

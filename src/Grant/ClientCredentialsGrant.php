@@ -11,12 +11,14 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\ClientEntity;
-use League\OAuth2\Server\Entity\SessionEntity;
-use League\OAuth2\Server\Event;
+use DateInterval;
+use League\Event\Event;
+use League\OAuth2\Server\Entities\AccessTokenEntity;
+use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\Util\SecureKey;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\Utils\SecureKey;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Client credentials grant class
@@ -31,92 +33,70 @@ class ClientCredentialsGrant extends AbstractGrant
     protected $identifier = 'client_credentials';
 
     /**
-     * Response type
+     * Return an access token
      *
-     * @var string
+     * @param \Symfony\Component\HttpFoundation\Request                 $request
+     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
+     * @param \DateInterval                                             $accessTokenTTL
+     * @param string                                                    $scopeDelimiter
+     *
+     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @throws \League\OAuth2\Server\Exception\InvalidClientException
+     * @throws \League\OAuth2\Server\Exception\InvalidRequestException
+     * @throws \League\OAuth2\Server\Exception\InvalidScopeException
      */
-    protected $responseType = null;
-
-    /**
-     * AuthServer instance
-     *
-     * @var \League\OAuth2\Server\AuthorizationServer
-     */
-    protected $server = null;
-
-    /**
-     * Access token expires in override
-     *
-     * @var int
-     */
-    protected $accessTokenTTL = null;
-
-    /**
-     * Complete the client credentials grant
-     *
-     * @return array
-     *
-     * @throws
-     */
-    public function completeFlow()
-    {
+    public function getAccessTokenAsType(
+        Request $request,
+        ResponseTypeInterface $responseType,
+        DateInterval $accessTokenTTL,
+        $scopeDelimiter = ' '
+    ) {
         // Get the required params
-        $clientId = $this->server->getRequest()->request->get('client_id', $this->server->getRequest()->getUser());
+        $clientId = $request->request->get('client_id', $request->getUser());
         if (is_null($clientId)) {
             throw new Exception\InvalidRequestException('client_id');
         }
 
-        $clientSecret = $this->server->getRequest()->request->get('client_secret',
-            $this->server->getRequest()->getPassword());
+        $clientSecret = $request->request->get('client_secret', $request->getPassword());
         if (is_null($clientSecret)) {
             throw new Exception\InvalidRequestException('client_secret');
         }
 
         // Validate client ID and client secret
-        $client = $this->server->getClientStorage()->get(
+        $client = $this->clientRepository->get(
             $clientId,
             $clientSecret,
             null,
             $this->getIdentifier()
         );
 
-        if (($client instanceof ClientEntity) === false) {
-            $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
+        if (($client instanceof ClientEntityInterface) === false) {
+            $this->emitter->emit(new Event('client.authentication.failed', $request));
             throw new Exception\InvalidClientException();
         }
 
         // Validate any scopes that are in the request
-        $scopeParam = $this->server->getRequest()->request->get('scope', '');
-        $scopes = $this->validateScopes($scopeParam, $client);
-
-        // Create a new session
-        $session = new SessionEntity($this->server);
-        $session->setOwner('client', $client->getId());
-        $session->associateClient($client);
+        $scopeParam = $request->request->get('scope', '');
+        $scopes = $this->validateScopes($scopeParam, $scopeDelimiter, $client);
 
         // Generate an access token
-        $accessToken = new AccessTokenEntity($this->server);
-        $accessToken->setId(SecureKey::generate());
-        $accessToken->setExpireTime($this->getAccessTokenTTL() + time());
+        $accessToken = new AccessTokenEntity();
+        $accessToken->setIdentifier(SecureKey::generate());
+        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
+        $accessToken->setClient($client);
+        $accessToken->setOwner('client', $client->getIdentifier());
 
         // Associate scopes with the session and access token
         foreach ($scopes as $scope) {
-            $session->associateScope($scope);
+            $accessToken->addScope($scope);
         }
 
-        foreach ($session->getScopes() as $scope) {
-            $accessToken->associateScope($scope);
-        }
+        // Save the token
+        $this->accessTokenRepository->create($accessToken);
 
-        // Save everything
-        $session->save();
-        $accessToken->setSession($session);
-        $accessToken->save();
+        // Inject access token into token type
+        $responseType->setAccessToken($accessToken);
 
-        $this->server->getTokenType()->setSession($session);
-        $this->server->getTokenType()->setParam('access_token', $accessToken->getId());
-        $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
-
-        return $this->server->getTokenType()->generateResponse();
+        return $responseType;
     }
 }
