@@ -5,7 +5,7 @@ namespace League\OAuth2\Server\ServiceProviders;
 use League\Container\ServiceProvider;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 
-class ClientCredentialsGrantServerProvider extends ServiceProvider
+class ClientCredentialsGrantProvider extends ServiceProvider
 {
     protected $provides = ['ClientCredentialsGrant'];
 
