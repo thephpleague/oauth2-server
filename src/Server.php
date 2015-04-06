@@ -1,4 +1,5 @@
 <?php
+
 namespace League\OAuth2\Server;
 
 use DateInterval;
@@ -40,23 +41,42 @@ class Server extends AbstractServer
 
     /**
      * New server instance
-     *
-     * @param TokenTypeInterface $defaultTokenType
-     * @param DateInterval       $defaultAccessTokenTTL
      */
-    public function __construct(
-        TokenTypeInterface $defaultTokenType = null,
-        DateInterval $defaultAccessTokenTTL = null
-    ) {
-        $this->defaultResponseType = ($defaultTokenType instanceof TokenTypeInterface)
-            ? $defaultTokenType
-            : new BearerTokenType();
-
-        $this->defaultAccessTokenTTL = ($defaultAccessTokenTTL instanceof DateInterval)
-            ? $defaultAccessTokenTTL
-            : new DateInterval('PT01H'); // default of 1 hour
+    public function __construct() {
+        $this->defaultTokenType = new BearerTokenType();
+        $this->defaultAccessTokenTTL = new DateInterval('PT01H'); // default of 1 hour
 
         parent::__construct();
+    }
+
+    /**
+     * Set the default token type that grants will return
+     *
+     * @param TokenTypeInterface $defaultTokenType
+     */
+    public function setDefaultTokenType(TokenTypeInterface $defaultTokenType)
+    {
+        $this->defaultTokenType = $defaultTokenType;
+    }
+
+    /**
+     * Set the delimiter used to separate scopes in a request
+     *
+     * @param string $scopeDelimiter
+     */
+    public function setScopeDelimiter($scopeDelimiter)
+    {
+        $this->scopeDelimiter = $scopeDelimiter;
+    }
+
+    /**
+     * Set the default TTL of access tokens
+     *
+     * @param DateInterval $defaultAccessTokenTTL
+     */
+    public function setDefaultAccessTokenTTL(DateInterval $defaultAccessTokenTTL)
+    {
+        $this->defaultAccessTokenTTL = $defaultAccessTokenTTL;
     }
 
     /**
@@ -83,7 +103,7 @@ class Server extends AbstractServer
         if ($tokenType instanceof TokenTypeInterface) {
             $this->grantTypeTokenTypes[$grantIdentifier] = $tokenType;
         } else {
-            $this->grantTypeTokenTypes[$grantIdentifier] = $this->defaultResponseType;
+            $this->grantTypeTokenTypes[$grantIdentifier] = $this->defaultTokenType;
         }
 
         // Set grant access token TTL
@@ -123,15 +143,5 @@ class Server extends AbstractServer
         );
 
         return $tokenType->generateHttpResponse();
-    }
-
-    /**
-     * Set the delimiter used to separate scopes in a request
-     *
-     * @param string $scopeDelimiter
-     */
-    public function setScopeDelimiter($scopeDelimiter)
-    {
-        $this->scopeDelimiter = $scopeDelimiter;
     }
 }
