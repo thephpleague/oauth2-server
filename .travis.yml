@@ -30,7 +30,7 @@ before_script:
   - cd ../..
 
 script:
-  - vendor/bin/codecept run
+  - vendor/bin/codecept build && vendor/bin/codecept run
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
