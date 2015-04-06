@@ -19,10 +19,10 @@ interface ClientRepositoryInterface extends RepositoryInterface
     /**
      * Get a client
      *
-     * @param string $clientIdentifier The client's identifier
-     * @param string $clientSecret     The client's secret (default = "null")
-     * @param string $redirectUri      The client's redirect URI (default = "null")
-     * @param string $grantType        The grant type used (default = "null")
+     * @param string      $clientIdentifier The client's identifier
+     * @param string|null $clientSecret     The client's secret
+     * @param string|null $redirectUri      The client's redirect URI
+     * @param string|null $grantType        The grant type used
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface
      */
