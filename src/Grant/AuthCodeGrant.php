@@ -273,7 +273,8 @@ class AuthCodeGrant extends AbstractGrant
         // Generate the access token
         $accessToken = new AccessTokenEntity($this->server);
         $accessToken->setIdentifier(SecureKey::generate());
-        $accessToken->setExpiryDateTime((new \DateTime)->add($accessTokenTTL));
+        $expirationDateTime = (new \DateTime())->add($accessTokenTTL);
+        $accessToken->setExpiryDateTime($expirationDateTime);
         $accessToken->setClient($client);
 
         foreach ($code->getScopes() as $scope) {

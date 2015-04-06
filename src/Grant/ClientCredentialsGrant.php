@@ -82,7 +82,8 @@ class ClientCredentialsGrant extends AbstractGrant
         // Generate an access token
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier(SecureKey::generate());
-        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
+        $expirationDateTime = (new \DateTime())->add($accessTokenTTL);
+        $accessToken->setExpiryDateTime($expirationDateTime);
         $accessToken->setClient($client);
         $accessToken->setOwner('client', $client->getIdentifier());
 

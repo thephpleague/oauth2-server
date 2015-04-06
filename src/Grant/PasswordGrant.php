@@ -147,7 +147,8 @@ class PasswordGrant extends AbstractGrant
         // Generate an access token
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier(SecureKey::generate());
-        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
+        $expirationDateTime = (new \DateTime())->add($accessTokenTTL);
+        $accessToken->setExpiryDateTime($expirationDateTime);
         $accessToken->setOwner('user', $user->getIdentifier());
         $accessToken->setClient($client);
 
