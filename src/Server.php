@@ -26,7 +26,7 @@ class Server extends AbstractServer
     /**
      * @var TokenTypeInterface
      */
-    protected $defaultResponseType;
+    protected $defaultTokenType;
 
     /**
      * @var DateInterval
@@ -41,15 +41,15 @@ class Server extends AbstractServer
     /**
      * New server instance
      *
-     * @param TokenTypeInterface $defaultResponseType
-     * @param DateInterval                                                $defaultAccessTokenTTL
+     * @param TokenTypeInterface $defaultTokenType
+     * @param DateInterval       $defaultAccessTokenTTL
      */
     public function __construct(
-        TokenTypeInterface $defaultResponseType = null,
+        TokenTypeInterface $defaultTokenType = null,
         DateInterval $defaultAccessTokenTTL = null
     ) {
-        $this->defaultResponseType = ($defaultResponseType instanceof TokenTypeInterface)
-            ? $defaultResponseType
+        $this->defaultResponseType = ($defaultTokenType instanceof TokenTypeInterface)
+            ? $defaultTokenType
             : new BearerTokenType();
 
         $this->defaultAccessTokenTTL = ($defaultAccessTokenTTL instanceof DateInterval)
@@ -60,9 +60,9 @@ class Server extends AbstractServer
     }
 
     /**
-     * @param string                                                      $grantType
+     * @param string             $grantType
      * @param TokenTypeInterface $tokenType
-     * @param DateInterval                                                $accessTokenTTL
+     * @param DateInterval       $accessTokenTTL
      *
      * @throws \Exception
      */
