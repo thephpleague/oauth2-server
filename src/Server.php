@@ -76,7 +76,7 @@ class Server extends AbstractServer
             $grantIdentifier = $grant->getIdentifier();
             $this->enabledGrantTypes[$grantIdentifier] = $grant;
         } else {
-            throw new \Exception('Unregistered grant type');
+            throw new \Exception('Unregistered grant type'); // @TODO fix
         }
 
         // Set grant response type
