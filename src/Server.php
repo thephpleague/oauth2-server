@@ -111,7 +111,7 @@ class Server extends AbstractServer
         // Run the requested grant type
         $grantType = $request->request->get('grant_type', null);
 
-        if ($grantType === null || !isset($this->enabledGrantTypes[$grantType])) {
+        if ($grantType === null || isset($this->enabledGrantTypes[$grantType]) === false) {
             throw new Exception\InvalidGrantException($grantType);
         }
 
