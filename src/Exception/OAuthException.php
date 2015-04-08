@@ -43,7 +43,7 @@ class OAuthException extends \Exception
      */
     public function __construct($msg = 'An error occured')
     {
-        parent::__construct($msg);
+        parent::__construct($msg, $this->httpStatusCode);
     }
 
     /**
