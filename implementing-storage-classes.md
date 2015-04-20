@@ -6,7 +6,7 @@ permalink: /implementing-storage-interfaces/
 
 # Implementing the storage interfaces
 
-In order to use both the resource server and authorization server you need need to implement a number of interfaces.
+In order to use both the resource server and authorization server you need to implement a number of interfaces.
 
 If you are using the resource server you need to implement the following interfaces:
 
