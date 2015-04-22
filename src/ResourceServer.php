@@ -114,13 +114,13 @@ class ResourceServer extends AbstractServer
 
         // Ensure the access token exists
         if (!$this->accessToken instanceof AccessTokenEntity) {
-            throw new AccessDeniedException();
+            throw new InvalidTokenException();
         }
 
         // Check the access token hasn't expired
         // Ensure the auth code hasn't expired
         if ($this->accessToken->isExpired() === true) {
-            throw new AccessDeniedException();
+            throw new InvalidTokenException();
         }
 
         return true;
