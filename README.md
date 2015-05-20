@@ -51,6 +51,11 @@ Contribute to this documentation in the [gh-pages branch](https://github.com/the
 
 Please see [CONTRIBUTING](https://github.com/thephpleague/oauth2-server/blob/master/CONTRIBUTING.md) for details.
 
+## Integration
+
+- [CakePHP 3](https://github.com/uafrica/oauth-server)
+- [Laravel](https://github.com/lucadegasperi/oauth2-server-laravel)
+
 ## Support
 
 Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague/oauth2-server/issues)
