@@ -9,11 +9,6 @@ use RelationalExample\Storage;
 
 include __DIR__.'/vendor/autoload.php';
 
-// Routing setup
-$request = (new Request())->createFromGlobals();
-$router = new \Orno\Route\RouteCollection();
-$router->setStrategy(\Orno\Route\RouteStrategyInterface::RESTFUL_STRATEGY);
-
 // Set up the OAuth 2.0 resource server
 $sessionStorage = new Storage\SessionStorage();
 $accessTokenStorage = new Storage\AccessTokenStorage();
