@@ -84,7 +84,7 @@ class OAuthException extends \Exception
      */
     public function getParameter()
     {
-        return $this->redirectUri;
+        return $this->parameter;
     }
 
     /**
