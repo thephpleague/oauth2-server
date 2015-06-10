@@ -47,7 +47,7 @@ $router->post('/access_token', function (Request $request) use ($server) {
             ]
         );
 
-    } catch (\Exception $e) {
+    } catch (OAuthException $e) {
 
         return new Response(
             json_encode([
