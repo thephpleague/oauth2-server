@@ -117,7 +117,7 @@ View:
 Route:
 
 ~~~ php
-$router->get('/signin', function (Request $request) use ($server) {
+$router->post('/signin', function (Request $request) use ($server) {
 
     if (!isset($_POST['authorization'])) {
         // show form
