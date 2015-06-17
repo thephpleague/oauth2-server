@@ -129,48 +129,38 @@ class RefreshTokenGrant extends AbstractGrant
             throw new Exception\InvalidRefreshException();
         }
 
-        $oldAccessToken = $oldRefreshToken->getAccessToken();
-
-        // Get the scopes for the original session
-        $session = $oldAccessToken->getSession();
-        $scopes = $this->formatScopes($session->getScopes());
-
-        // Get and validate any requested scopes
-        $requestedScopesString = $this->server->getRequest()->request->get('scope', '');
-        $requestedScopes = $this->validateScopes($requestedScopesString, $client);
-
-        // If no new scopes are requested then give the access token the original session scopes
-        if (count($requestedScopes) === 0) {
-            $newScopes = $scopes;
-        } else {
-            // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
-            //  the request doesn't include any new scopes
-            foreach ($requestedScopes as $requestedScope) {
-                if (!isset($scopes[$requestedScope->getId()])) {
-                    throw new Exception\InvalidScopeException($requestedScope->getId());
-                }
-            }
-
-            $newScopes = $requestedScopes;
-        }
+        // // Get the scopes for the original session
+        // $session = $oldAccessToken->getSession();
+        // $scopes = $this->formatScopes($session->getScopes());
+        //
+        // // Get and validate any requested scopes
+        // $requestedScopesString = $this->server->getRequest()->request->get('scope', '');
+        // $requestedScopes = $this->validateScopes($requestedScopesString, $client);
+        //
+        // // If no new scopes are requested then give the access token the original session scopes
+        // if (count($requestedScopes) === 0) {
+        //     $newScopes = $scopes;
+        // } else {
+        //     // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
+        //     //  the request doesn't include any new scopes
+        //     foreach ($requestedScopes as $requestedScope) {
+        //         if (!isset($scopes[$requestedScope->getId()])) {
+        //             throw new Exception\InvalidScopeException($requestedScope->getId());
+        //         }
+        //     }
+        //
+        //     $newScopes = $requestedScopes;
+        // }
 
         // Generate a new access token and assign it the correct sessions
         $newAccessToken = new AccessTokenEntity($this->server);
-        $newAccessToken->setId(SecureKey::generate());
+        $newAccessToken->setId(SecureKey::generate(128));
         $newAccessToken->setExpireTime($this->getAccessTokenTTL() + time());
-        $newAccessToken->setSession($session);
+        $newAccessToken->setClientId($client->getId());
 
-        foreach ($newScopes as $newScope) {
-            $newAccessToken->associateScope($newScope);
-        }
-
-        // Expire the old token and save the new one
-        $oldAccessToken->expire();
-        $newAccessToken->save();
-
-        $this->server->getTokenType()->setSession($session);
-        $this->server->getTokenType()->setParam('access_token', $newAccessToken->getId());
-        $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
+        // foreach ($newScopes as $newScope) {
+        //     $newAccessToken->associateScope($newScope);
+        // }
 
         if ($this->shouldRotateRefreshTokens()) {
             // Expire the old refresh token
@@ -178,15 +168,22 @@ class RefreshTokenGrant extends AbstractGrant
 
             // Generate a new refresh token
             $newRefreshToken = new RefreshTokenEntity($this->server);
-            $newRefreshToken->setId(SecureKey::generate());
+            $newRefreshToken->setId(SecureKey::generate(128));
             $newRefreshToken->setExpireTime($this->getRefreshTokenTTL() + time());
-            $newRefreshToken->setAccessToken($newAccessToken);
+            $newRefreshToken->setClientId($client->getId());
             $newRefreshToken->save();
 
             $this->server->getTokenType()->setParam('refresh_token', $newRefreshToken->getId());
+            $newAccessToken->setRefreshToken($newRefreshToken->getId());
         } else {
             $this->server->getTokenType()->setParam('refresh_token', $oldRefreshToken->getId());
         }
+
+        // Save the new access token
+        $newAccessToken->save();
+
+        $this->server->getTokenType()->setParam('access_token', $newAccessToken->getId());
+        $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
 
         return $this->server->getTokenType()->generateResponse();
     }
