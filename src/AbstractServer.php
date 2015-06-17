@@ -13,6 +13,7 @@ namespace League\OAuth2\Server;
 
 use League\Event\Emitter;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
+use League\OAuth2\Server\Storage\UsersAccessTokenInterface;
 use League\OAuth2\Server\Storage\AuthCodeInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\MacTokenInterface;
@@ -75,6 +76,13 @@ abstract class AbstractServer
      * @var \League\OAuth2\Server\Storage\ClientInterface
      */
     protected $clientStorage;
+
+    /**
+     * Users Access Token storage
+     *
+     * @var \League\OAuth2\Server\Storage\UsersAccessTokenInterface
+     */
+    protected $usersAccessTokenStorage;
 
     /**
      * @var \League\OAuth2\Server\Storage\MacTokenInterface
@@ -182,6 +190,21 @@ abstract class AbstractServer
     }
 
     /**
+     * Set the usersAccessToken storage
+     *
+     * @param \League\OAuth2\Server\Storage\UsersAccessTokenInterface $storage
+     *
+     * @return self
+     */
+    public function setUsersAccessTokenStorage(UsersAccessTokenInterface $storage)
+    {
+        $storage->setServer($this);
+        $this->usersAccessTokenStorage = $storage;
+
+        return $this;
+    }
+
+    /**
      * Set the session storage
      *
      * @param \League\OAuth2\Server\Storage\SessionInterface $storage
@@ -264,6 +287,16 @@ abstract class AbstractServer
     public function getClientStorage()
     {
         return $this->clientStorage;
+    }
+
+    /**
+     * Return the usersAccessToken storage
+     *
+     * @return \League\OAuth2\Server\Storage\UsersAccessTokenInterface
+     */
+    public function getUsersAccessTokenStorage()
+    {
+        return $this->usersAccessTokenStorage;
     }
 
     /**

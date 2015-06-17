@@ -95,16 +95,10 @@ class PasswordGrant extends AbstractGrant
             throw new Exception\InvalidRequestException('client_id');
         }
 
-        $clientSecret = $this->server->getRequest()->request->get('client_secret',
-            $this->server->getRequest()->getPassword());
-        if (is_null($clientSecret)) {
-            throw new Exception\InvalidRequestException('client_secret');
-        }
-
         // Validate client ID and client secret
         $client = $this->server->getClientStorage()->get(
             $clientId,
-            $clientSecret,
+            null,
             null,
             $this->getIdentifier()
         );
@@ -125,9 +119,9 @@ class PasswordGrant extends AbstractGrant
         }
 
         // Check if user's username and password are correct
-        $userId = call_user_func($this->getVerifyCredentialsCallback(), $username, $password);
+        $user = call_user_func($this->getVerifyCredentialsCallback(), $username, $password);
 
-        if ($userId === false) {
+        if (is_null($user)) {
             $this->server->getEventEmitter()->emit(new Event\UserAuthenticationFailedEvent($this->server->getRequest()));
             throw new Exception\InvalidCredentialsException();
         }
@@ -136,46 +130,35 @@ class PasswordGrant extends AbstractGrant
         $scopeParam = $this->server->getRequest()->request->get('scope', '');
         $scopes = $this->validateScopes($scopeParam, $client);
 
-        // Create a new session
-        $session = new SessionEntity($this->server);
-        $session->setOwner('user', $userId);
-        $session->associateClient($client);
-
         // Generate an access token
-        $accessToken = new AccessTokenEntity($this->server);
-        $accessToken->setId(SecureKey::generate());
-        $accessToken->setExpireTime($this->getAccessTokenTTL() + time());
+        $accessTokenEntity = new AccessTokenEntity($this->server);
+        $accessTokenEntity->setId(SecureKey::generate(128));
+        $accessTokenEntity->setExpireTime($this->getAccessTokenTTL() + time());
+        $accessTokenEntity->setClientId($client->getId());
 
         // Associate scopes with the session and access token
-        foreach ($scopes as $scope) {
-            $session->associateScope($scope);
-        }
+        // foreach ($scopes as $scope) {
+        //     $accessTokenEntity->associateScope($scope);
+        // }
 
-        foreach ($session->getScopes() as $scope) {
-            $accessToken->associateScope($scope);
-        }
-
-        $this->server->getTokenType()->setSession($session);
-        $this->server->getTokenType()->setParam('access_token', $accessToken->getId());
+        $this->server->getTokenType()->setParam('access_token', $accessTokenEntity->getId());
         $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
 
         // Associate a refresh token if set
         if ($this->server->hasGrantType('refresh_token')) {
             $refreshToken = new RefreshTokenEntity($this->server);
-            $refreshToken->setId(SecureKey::generate());
+            $refreshToken->setId(SecureKey::generate(128));
             $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
+            $refreshToken->setClientId($client->getId());
+            $refreshToken->save();
+
             $this->server->getTokenType()->setParam('refresh_token', $refreshToken->getId());
+            $accessTokenEntity->setRefreshToken($refreshToken->getId());
         }
 
         // Save everything
-        $session->save();
-        $accessToken->setSession($session);
-        $accessToken->save();
-
-        if ($this->server->hasGrantType('refresh_token')) {
-            $refreshToken->setAccessToken($accessToken);
-            $refreshToken->save();
-        }
+        $accessTokenEntity->save();
+        $this->server->getUsersAccessTokenStorage()->create($accessTokenEntity, $user);
 
         return $this->server->getTokenType()->generateResponse();
     }

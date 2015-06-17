@@ -16,6 +16,8 @@ namespace League\OAuth2\Server\Entity;
  */
 class AccessTokenEntity extends AbstractTokenEntity
 {
+  protected $refreshToken = null;
+
     /**
      * Get session
      *
@@ -72,7 +74,8 @@ class AccessTokenEntity extends AbstractTokenEntity
         $this->server->getAccessTokenStorage()->create(
             $this->getId(),
             $this->getExpireTime(),
-            $this->getSession()->getId()
+            $this->getClientId(),
+            $this->getRefreshToken()
         );
 
         // Associate the scope with the token
@@ -89,5 +92,13 @@ class AccessTokenEntity extends AbstractTokenEntity
     public function expire()
     {
         $this->server->getAccessTokenStorage()->delete($this);
+    }
+
+    public function setRefreshToken($refreshToken) {
+      $this->refreshToken = $refreshToken;
+    }
+
+    public function getRefreshToken() {
+      return $this->refreshToken;
     }
 }
