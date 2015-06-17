@@ -137,17 +137,17 @@ class PasswordGrant extends AbstractGrant
         $scopes = $this->validateScopes($scopeParam, $client);
 
         // Generate an access token
-        $accessTokenEntity = new AccessTokenEntity($this->server);
-        $accessTokenEntity->setId(SecureKey::generate(128));
-        $accessTokenEntity->setExpireTime($this->getAccessTokenTTL() + time());
-        $accessTokenEntity->setClientId($client->getId());
+        $accessToken = new AccessTokenEntity($this->server);
+        $accessToken->setId(SecureKey::generate(128));
+        $accessToken->setExpireTime($this->getAccessTokenTTL() + time());
+        $accessToken->setClientId($client->getId());
 
         // Associate scopes with the session and access token
         // foreach ($scopes as $scope) {
-        //     $accessTokenEntity->associateScope($scope);
+        //     $accessToken->associateScope($scope);
         // }
 
-        $this->server->getTokenType()->setParam('access_token', $accessTokenEntity->getId());
+        $this->server->getTokenType()->setParam('access_token', $accessToken->getId());
         $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
 
         // Associate a refresh token if set
@@ -159,12 +159,12 @@ class PasswordGrant extends AbstractGrant
             $refreshToken->save();
 
             $this->server->getTokenType()->setParam('refresh_token', $refreshToken->getId());
-            $accessTokenEntity->setRefreshToken($refreshToken->getId());
+            $accessToken->setRefreshToken($refreshToken->getId());
         }
 
         // Save everything
-        $accessTokenEntity->save();
-        $this->server->getUsersAccessTokenStorage()->create($accessTokenEntity, $user);
+        $accessToken->save();
+        $this->server->getUsersAccessTokenStorage()->create($accessToken, $user);
 
         return $this->server->getTokenType()->generateResponse();
     }
