@@ -79,23 +79,6 @@ class OAuthException extends \Exception
      */
     public function getHttpHeaders()
     {
-        $headers = [];
-        switch ($this->httpStatusCode) {
-            case 401:
-                $headers[] = 'HTTP/1.1 401 Unauthorized';
-                break;
-            case 500:
-                $headers[] = 'HTTP/1.1 500 Internal Server Error';
-                break;
-            case 501:
-                $headers[] = 'HTTP/1.1 501 Not Implemented';
-                break;
-            case 400:
-            default:
-                $headers[] = 'HTTP/1.1 400 Bad Request';
-                break;
-        }
-
         // Add "WWW-Authenticate" header
         //
         // RFC 6749, section 5.2.:
@@ -105,9 +88,10 @@ class OAuthException extends \Exception
         // include the "WWW-Authenticate" response header field
         // matching the authentication scheme used by the client.
         // @codeCoverageIgnoreStart
+        $headers = [];
         if ($this->errorType === 'invalid_client') {
             $authScheme = null;
-            $request = new Request();
+            $request = Request::createFromGlobals();
             if ($request->getUser() !== null) {
                 $authScheme = 'Basic';
             } else {
@@ -121,10 +105,17 @@ class OAuthException extends \Exception
                 }
             }
             if ($authScheme !== null) {
-                $headers[] = 'WWW-Authenticate: '.$authScheme.' realm=""';
+                $headers['WWW-Authenticate'] = $authScheme.' realm=""';
             }
         }
         // @codeCoverageIgnoreEnd
         return $headers;
+    }
+
+    public function getResponse() {
+        return [
+            'error' =>  $this->errorType,
+            'error_description' =>  $this->getMessage()
+        ];
     }
 }
