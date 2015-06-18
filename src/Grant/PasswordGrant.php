@@ -52,6 +52,12 @@ class PasswordGrant extends AbstractGrant
      */
     protected $accessTokenTTL;
 
+    public function __construct()
+    {
+        $this->acceptedParams[] = 'username';
+        $this->acceptedParams[] = 'password';
+    }
+
     /**
      * Set the callback to verify a user's username and password
      *
@@ -89,6 +95,8 @@ class PasswordGrant extends AbstractGrant
      */
     public function completeFlow()
     {
+        $this->validateParams();
+
         // Get the required params
         $clientId = $this->server->getRequest()->request->get('client_id', $this->server->getRequest()->getUser());
         if (is_null($clientId)) {
@@ -159,7 +167,6 @@ class PasswordGrant extends AbstractGrant
             $refreshToken->save();
 
             $this->server->getTokenType()->setParam('refresh_token', $refreshToken->getId());
-            $accessToken->setRefreshToken($refreshToken->getId());
         }
 
         // Save everything

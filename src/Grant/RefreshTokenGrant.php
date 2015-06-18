@@ -42,6 +42,11 @@ class RefreshTokenGrant extends AbstractGrant
      */
     protected $refreshTokenRotate = true;
 
+    public function __construct()
+    {
+        $this->acceptedParams[] = 'refresh_token';
+    }
+
     /**
      * Set the TTL of the refresh token
      *
@@ -174,7 +179,7 @@ class RefreshTokenGrant extends AbstractGrant
             $newRefreshToken->save();
 
             $this->server->getTokenType()->setParam('refresh_token', $newRefreshToken->getId());
-            $newAccessToken->setRefreshToken($newRefreshToken->getId());
+            $newAccessToken->setRefreshToken($oldRefreshToken->getId());
         } else {
             $this->server->getTokenType()->setParam('refresh_token', $oldRefreshToken->getId());
         }
