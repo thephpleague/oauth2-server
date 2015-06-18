@@ -80,7 +80,7 @@ class RefreshTokenEntity extends AbstractTokenEntity
         $this->server->getRefreshTokenStorage()->create(
             $this->getId(),
             $this->getExpireTime(),
-            $this->getAccessToken()->getId()
+            $this->getClientId()
         );
     }
 

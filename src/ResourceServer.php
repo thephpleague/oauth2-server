@@ -42,24 +42,9 @@ class ResourceServer extends AbstractServer
     /**
      * Initialise the resource server
      *
-     * @param \League\OAuth2\Server\Storage\SessionInterface     $sessionStorage
-     * @param \League\OAuth2\Server\Storage\AccessTokenInterface $accessTokenStorage
-     * @param \League\OAuth2\Server\Storage\ClientInterface      $clientStorage
-     * @param \League\OAuth2\Server\Storage\ScopeInterface       $scopeStorage
-     *
      * @return self
      */
-    public function __construct(
-        SessionInterface $sessionStorage,
-        AccessTokenInterface $accessTokenStorage,
-        ClientInterface $clientStorage,
-        ScopeInterface $scopeStorage
-    ) {
-        $this->setSessionStorage($sessionStorage);
-        $this->setAccessTokenStorage($accessTokenStorage);
-        $this->setClientStorage($clientStorage);
-        $this->setScopeStorage($scopeStorage);
-
+    public function __construct() {
         // Set Bearer as the default token type
         $this->setTokenType(new Bearer());
 

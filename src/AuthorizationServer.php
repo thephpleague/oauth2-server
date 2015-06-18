@@ -13,6 +13,8 @@ namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\TokenType\Bearer;
+use League\OAuth2\Server\Util\TokenGeneratorInterface;
+use League\OAuth2\Server\Exception\ServerErrorException;
 
 /**
  * OAuth 2.0 authorization server class
@@ -70,14 +72,22 @@ class AuthorizationServer extends AbstractServer
     protected $requireStateParam = false;
 
     /**
+     * The token generator
+     *
+     * @var \Util\TokenGeneratorInterface
+     */
+    protected $tokenGenerator;
+
+    /**
      * Create a new OAuth2 authorization server
      *
      * @return self
      */
-    public function __construct()
+    public function __construct(TokenGeneratorInterface $tokenGenerator)
     {
         // Set Bearer as the default token type
         $this->setTokenType(new Bearer());
+        $this->tokenGenerator = $tokenGenerator;
 
         parent::__construct();
 
@@ -291,5 +301,31 @@ class AuthorizationServer extends AbstractServer
         }
 
         throw new Exception\InvalidGrantException($grantType);
+    }
+
+    /**
+     * Generate a new access token
+     */
+    public function generateAccessToken() {
+        $accessToken = $this->tokenGenerator->generateAccessToken();
+
+        if (is_null($accessToken)) {
+            throw new ServerErrorException();
+        }
+
+        return $accessToken;
+    }
+
+    /**
+     * Generate a new refresh token
+     */
+    public function generateRefreshToken() {
+        $refreshToken = $this->tokenGenerator->generateRefreshToken();
+
+        if (is_null($refreshToken)) {
+            throw new ServerErrorException();
+        }
+
+        return $refreshToken;
     }
 }

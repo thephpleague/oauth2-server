@@ -57,6 +57,51 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $accessTokenTTL;
 
     /**
+     * Array of accepted parameters for this grant
+     *
+     * @var string[]
+     */
+    protected $acceptedParams = [
+        'client_id',
+        'client_password',
+        'grant_type'
+    ];
+
+    /**
+     * Validate to make sure the request parameters do not contain unsupported
+     * inputs or duplicated inputs.
+     *
+     * @return void
+     */
+    protected function validateParams() {
+        $params = $this->server->getRequest()->request->all();
+
+        $clientId = $this->server->getRequest()->getUser();
+        $clientPassword = $this->server->getRequest()->getPassword();
+
+        $clientCredentials = [
+            'client_id' => $clientId,
+            'client_password' => $clientPassword
+        ];
+
+        foreach ($clientCredentials as $clientKey => $clientValue) {
+            if ( !is_null($clientValue) ) {
+                if (isset($params[$clientKey]) || !in_array($clientKey, $this->acceptedParams)) {
+                    throw new Exception\InvalidRequestException($clientKey);
+                }
+
+                $params[$clientKey] = $clientValue;
+            }
+        }
+
+        foreach ($params as $key => $value) {
+            if ( !isset($params[$key]) ) {
+                throw new Exception\InvalidRequestException($key);
+            }
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getIdentifier()

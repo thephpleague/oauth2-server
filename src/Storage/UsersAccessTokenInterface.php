@@ -11,22 +11,20 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\Entity\AccessTokenEntity;
 
 /**
  * Client storage interface
  */
-interface ClientInterface extends StorageInterface
+interface UsersAccessTokenInterface extends StorageInterface
 {
     /**
      * Validate a client
      *
-     * @param string $clientId     The client's ID
-     * @param string $clientSecret The client's secret (default = "null")
-     * @param string $redirectUri  The client's redirect URI (default = "null")
-     * @param string $grantType    The grant type used (default = "null")
+     * @param AccessTokenEntity $accessToken     The access token
+     * @param int $userId The user ID
      *
      * @return \League\OAuth2\Server\Entity\ClientEntity | null
      */
-    public function get($clientId, $clientSecret = null, $redirectUri = null, $grantType = null);
+     public function create(AccessTokenEntity $accessToken, $userId);
 }
