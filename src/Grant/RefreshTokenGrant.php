@@ -19,7 +19,7 @@ use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 
 /**
- * Referesh token grant
+ * Refresh token grant
  */
 class RefreshTokenGrant extends AbstractGrant
 {
