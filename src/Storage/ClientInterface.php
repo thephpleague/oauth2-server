@@ -29,13 +29,4 @@ interface ClientInterface extends StorageInterface
      * @return \League\OAuth2\Server\Entity\ClientEntity | null
      */
     public function get($clientId, $clientSecret = null, $redirectUri = null, $grantType = null);
-
-    /**
-     * Get the client associated with a session
-     *
-     * @param \League\OAuth2\Server\Entity\SessionEntity $session The session
-     *
-     * @return \League\OAuth2\Server\Entity\ClientEntity | null
-     */
-    public function getBySession(SessionEntity $session);
 }
