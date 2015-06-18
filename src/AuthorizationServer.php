@@ -14,6 +14,7 @@ namespace League\OAuth2\Server;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\TokenType\Bearer;
 use League\OAuth2\Server\Util\TokenGeneratorInterface;
+use League\OAuth2\Server\Exception\ServerErrorException;
 
 /**
  * OAuth 2.0 authorization server class
@@ -306,13 +307,25 @@ class AuthorizationServer extends AbstractServer
      * Generate a new access token
      */
     public function generateAccessToken() {
-        return $this->tokenGenerator->generateAccessToken();
+        $accessToken = $this->tokenGenerator->generateAccessToken();
+
+        if (is_null($accessToken)) {
+            throw new ServerErrorException();
+        }
+
+        return $accessToken;
     }
 
     /**
      * Generate a new refresh token
      */
     public function generateRefreshToken() {
-        return $this->tokenGenerator->generateRefreshToken();
+        $refreshToken = $this->tokenGenerator->generateRefreshToken();
+
+        if (is_null($refreshToken)) {
+            throw new ServerErrorException();
+        }
+
+        return $refreshToken;
     }
 }
