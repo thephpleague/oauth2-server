@@ -186,7 +186,7 @@ class RefreshTokenGrant extends AbstractGrant
             $this->server->getTokenType()->setParam('refresh_token', $newRefreshToken->getId());
         } else {
             $this->server->getTokenType()->setParam('refresh_token', $oldRefreshToken->getId());
-            $oldRefreshToken->getAccessToken($newAccessToken);
+            $oldRefreshToken->setAccessToken($newAccessToken);
             $oldRefreshToken->save();
         }
 
