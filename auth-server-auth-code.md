@@ -117,7 +117,7 @@ View:
 Route:
 
 ~~~ php
-$router->get('/signin', function (Request $request) use ($server) {
+$router->post('/signin', function (Request $request) use ($server) {
 
     if (!isset($_POST['authorization'])) {
         // show form
@@ -140,7 +140,7 @@ $router->get('/signin', function (Request $request) use ($server) {
 
         $error = new \League\OAuth2\Server\Util\AccessDeniedException;
 
-        $redirectUri = new \League\OAuth2\Server\Util\RedirectUri(
+        $redirectUri = \League\OAuth2\Server\Util\RedirectUri::make(
             $authParams['redirect_uri'],
             [
                 'error' =>  $error->errorType,
