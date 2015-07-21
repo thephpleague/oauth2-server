@@ -117,7 +117,7 @@ View:
 Route:
 
 ~~~ php
-$router->get('/signin', function (Request $request) use ($server) {
+$router->get('/authorize', function (Request $request) use ($server) {
 
     if (!isset($_POST['authorization'])) {
         // show form
@@ -144,7 +144,7 @@ $router->get('/signin', function (Request $request) use ($server) {
             $authParams['redirect_uri'],
             [
                 'error' =>  $error->errorType,
-                'message'   =>  $e->getMessage()
+                'message'   =>  $error->getMessage()
             ]
         );
 
