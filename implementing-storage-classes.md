@@ -12,15 +12,15 @@ If you are using the resource server you need to implement the following interfa
 
 * `League\OAuth2\Server\Storage\SessionInterface` - contains methods for retrieving and setting sessions
 * `League\OAuth2\Server\Storage\AccessTokenInterface` - contains methods for retrieving, creating and deleting access tokens
-* `League\OAuth2\Server\Storage\ClientStorage` - single method to get a client
-* `League\OAuth2\Server\Storage\ScopeStorage` - single method to get a scope
+* `League\OAuth2\Server\Storage\ClientInterface` - single method to get a client
+* `League\OAuth2\Server\Storage\ScopeInterface` - single method to get a scope
 
 If you are using the authorization server you need to implement the following interfaces:
 
 * `League\OAuth2\Server\Storage\SessionInterface` - contains methods for retrieving and setting sessions
 * `League\OAuth2\Server\Storage\AccessTokenInterface` - contains methods for retrieving, creating and deleting access tokens
-* `League\OAuth2\Server\Storage\ClientStorage` - single method to get a client
-* `League\OAuth2\Server\Storage\ScopeStorage` - single method to get a scope
+* `League\OAuth2\Server\Storage\ClientInterface` - single method to get a client
+* `League\OAuth2\Server\Storage\ScopeInterface` - single method to get a scope
 
 If you are using the authorization code grant you also need to implement:
 
