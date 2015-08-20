@@ -227,8 +227,11 @@ class AuthCodeGrant extends AbstractGrant
             throw new Exception\InvalidRequestException('redirect_uri');
         }
 
+        // Check client ID presented matches client ID originally used in authorize request
         $session = $code->getSession();
-        $session->associateClient($client);
+        if ($session->getClient()->getId() !== $client->getId()) {
+            throw new Exception\InvalidRequestException('code');
+        }
 
         $authCodeScopes = $code->getScopes();
 
