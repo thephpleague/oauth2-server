@@ -13,6 +13,7 @@ namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\ServerInterface\AccessTokenServer;
+use League\OAuth2\Server\ServerInterface\AuthCodeServer;
 use League\OAuth2\Server\ServerInterface\GrantServer;
 use League\OAuth2\Server\ServerInterface\ScopeServer;
 use League\OAuth2\Server\TokenType\Bearer;
@@ -20,7 +21,7 @@ use League\OAuth2\Server\TokenType\Bearer;
 /**
  * OAuth 2.0 authorization server class
  */
-class AuthorizationServer extends AbstractServer implements GrantServer, ScopeServer, AccessTokenServer
+class AuthorizationServer extends AbstractServer implements GrantServer, ScopeServer, AccessTokenServer, AuthCodeServer
 {
     /**
      * The delimiter between scopes specified in the scope query string parameter
@@ -111,6 +112,24 @@ class AuthorizationServer extends AbstractServer implements GrantServer, ScopeSe
         }
 
         return $this;
+    }
+
+    /**
+     * Return a grant type class
+     *
+     * @param string $grantType The grant type identifier
+     *
+     * @return GrantTypeInterface
+     *
+     * @throws
+     */
+    public function getGrantType($grantType)
+    {
+        if (isset($this->grantTypes[$grantType])) {
+            return $this->grantTypes[$grantType];
+        }
+
+        throw new Exception\InvalidGrantException($grantType);
     }
 
     /**
@@ -276,23 +295,5 @@ class AuthorizationServer extends AbstractServer implements GrantServer, ScopeSe
 
         // Complete the flow
         return $this->getGrantType($grantType)->completeFlow();
-    }
-
-    /**
-     * Return a grant type class
-     *
-     * @param string $grantType The grant type identifier
-     *
-     * @return GrantTypeInterface
-     *
-     * @throws
-     */
-    public function getGrantType($grantType)
-    {
-        if (isset($this->grantTypes[$grantType])) {
-            return $this->grantTypes[$grantType];
-        }
-
-        throw new Exception\InvalidGrantException($grantType);
     }
 }
