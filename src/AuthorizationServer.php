@@ -12,12 +12,15 @@
 namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Grant\GrantTypeInterface;
+use League\OAuth2\Server\ServerInterface\AccessTokenServer;
+use League\OAuth2\Server\ServerInterface\GrantServer;
+use League\OAuth2\Server\ServerInterface\ScopeServer;
 use League\OAuth2\Server\TokenType\Bearer;
 
 /**
  * OAuth 2.0 authorization server class
  */
-class AuthorizationServer extends AbstractServer
+class AuthorizationServer extends AbstractServer implements GrantServer, ScopeServer, AccessTokenServer
 {
     /**
      * The delimiter between scopes specified in the scope query string parameter
@@ -280,7 +283,7 @@ class AuthorizationServer extends AbstractServer
      *
      * @param string $grantType The grant type identifier
      *
-     * @return Grant\GrantTypeInterface
+     * @return GrantTypeInterface
      *
      * @throws
      */
