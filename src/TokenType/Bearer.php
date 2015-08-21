@@ -38,9 +38,16 @@ class Bearer extends AbstractTokenType implements TokenTypeInterface
      */
     public function determineAccessTokenInHeader(Request $request)
     {
-        $header = $request->headers->get('Authorization');
-        $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
+        if ($request->headers->has('Authorization') === false) {
+            return;
+        }
 
-        return ($accessToken === 'Bearer') ? '' : $accessToken;
+        $header = $request->headers->get('Authorization');
+
+        if (substr($header, 0, 7) !== 'Bearer ') {
+            return;
+        }
+
+        return trim(substr($header, 7));
     }
 }
