@@ -78,7 +78,7 @@ class SessionEntity
     /**
      * Authorization or resource server
      *
-     * @var \League\OAuth2\Server\AuthorizationServer|\League\OAuth2\Server\ResourceServer
+     * @var \League\OAuth2\Server\ServerInterface\AuthorizationServer|\League\OAuth2\Server\ResourceServer
      */
     protected $server;
 
