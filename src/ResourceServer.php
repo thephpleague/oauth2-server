@@ -19,6 +19,7 @@ use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Storage\SessionInterface;
 use League\OAuth2\Server\TokenType\Bearer;
+use League\OAuth2\Server\TokenType\MAC;
 
 /**
  * OAuth 2.0 Resource Server
@@ -139,7 +140,7 @@ class ResourceServer extends AbstractServer
     {
         if ($this->getRequest()->headers->get('Authorization') !== null) {
             $accessToken = $this->getTokenType()->determineAccessTokenInHeader($this->getRequest());
-        } elseif ($headerOnly === false) {
+        } elseif ($headerOnly === false && (! $this->getTokenType() instanceof MAC)) {
             $accessToken = ($this->getRequest()->server->get('REQUEST_METHOD') === 'GET')
                                 ? $this->getRequest()->query->get($this->tokenKey)
                                 : $this->getRequest()->request->get($this->tokenKey);
