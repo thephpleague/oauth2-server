@@ -13,5 +13,10 @@ interface AuthorizationServer extends
     TokenTypeAware,
     StorageAware
 {
-
+    /**
+     * Returns response types
+     *
+     * @return array
+     */
+    public function getResponseTypes();
 }
