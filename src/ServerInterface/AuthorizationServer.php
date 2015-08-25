@@ -1,8 +1,17 @@
 <?php
-
 namespace League\OAuth2\Server\ServerInterface;
 
-interface AuthorizationServer extends GrantServer, ScopeServer, AccessTokenServer, AuthCodeServer
+use League\OAuth2\Server\Storage\StorageAware\StorageAware;
+
+interface AuthorizationServer extends
+    GrantServer,
+    ScopeServer,
+    AccessTokenServer,
+    AuthCodeServer,
+    EventDispatcher,
+    RequestAware,
+    TokenTypeAware,
+    StorageAware
 {
 
 }
