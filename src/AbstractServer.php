@@ -12,6 +12,7 @@
 namespace League\OAuth2\Server;
 
 use League\Event\Emitter;
+use League\OAuth2\Server\ServerInterface\EventDispatcher;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\AuthCodeInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
@@ -25,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * OAuth 2.0 Resource Server
  */
-abstract class AbstractServer
+abstract class AbstractServer implements EventDispatcher
 {
     /**
      * The request object
