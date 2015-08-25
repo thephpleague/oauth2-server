@@ -11,8 +11,8 @@
 
 namespace League\OAuth2\Server\Entity;
 
-use League\OAuth2\Server\AbstractServer;
 use League\OAuth2\Server\Event\SessionOwnerEvent;
+use League\OAuth2\Server\ServerInterface\Server;
 
 /**
  * Session entity grant
@@ -85,11 +85,11 @@ class SessionEntity
     /**
      * __construct
      *
-     * @param \League\OAuth2\Server\AbstractServer $server
+     * @param Server $server
      *
      * @return self
      */
-    public function __construct(AbstractServer $server)
+    public function __construct(Server $server)
     {
         $this->server = $server;
 

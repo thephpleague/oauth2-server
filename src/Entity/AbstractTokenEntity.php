@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server\Entity;
 
-use League\OAuth2\Server\AbstractServer;
+use League\OAuth2\Server\ServerInterface\Server;
 use League\OAuth2\Server\Util\SecureKey;
 
 /**
@@ -50,18 +50,19 @@ abstract class AbstractTokenEntity
     /**
      * Authorization or resource server
      *
-     * @var \League\OAuth2\Server\AbstractServer
+     * @var Server
      */
     protected $server;
 
     /**
      * __construct
      *
-     * @param \League\OAuth2\Server\AbstractServer $server
      *
-     * @return self
+     * @param Server $server
+     *
+     * $return self
      */
-    public function __construct(AbstractServer $server)
+    public function __construct(Server $server)
     {
         $this->server = $server;
 

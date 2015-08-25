@@ -12,9 +12,7 @@
 namespace League\OAuth2\Server;
 
 use League\Event\Emitter;
-use League\OAuth2\Server\ServerInterface\EventDispatcher;
-use League\OAuth2\Server\ServerInterface\RequestAware;
-use League\OAuth2\Server\ServerInterface\TokenTypeAware;
+use League\OAuth2\Server\ServerInterface\Server;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\AuthCodeInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
@@ -22,14 +20,13 @@ use League\OAuth2\Server\Storage\MacTokenInterface;
 use League\OAuth2\Server\Storage\RefreshTokenInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
 use League\OAuth2\Server\Storage\SessionInterface;
-use League\OAuth2\Server\Storage\StorageAware\StorageAware;
 use League\OAuth2\Server\TokenType\TokenTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * OAuth 2.0 Resource Server
  */
-abstract class AbstractServer implements EventDispatcher, RequestAware, TokenTypeAware, StorageAware
+abstract class AbstractServer implements Server
 {
     /**
      * The request object
