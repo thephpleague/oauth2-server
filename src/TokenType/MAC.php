@@ -1,14 +1,14 @@
 <?php
+
 /**
- * OAuth 2.0 MAC Token Type
+ * OAuth 2.0 MAC Token Type.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\TokenType;
 
 use League\OAuth2\Server\Util\SecureKey;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * MAC Token Type
+ * MAC Token Type.
  */
 class MAC extends AbstractTokenType implements TokenTypeInterface
 {
@@ -29,12 +29,16 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
         $this->server->getMacStorage()->create($macKey, $this->getParam('access_token'));
 
         $response = [
-            'access_token'  =>  $this->getParam('access_token'),
-            'token_type'    =>  'mac',
-            'expires_in'    =>  $this->getParam('expires_in'),
-            'mac_key'       =>  $macKey,
-            'mac_algorithm' =>  'hmac-sha-256',
+            'access_token' => $this->getParam('access_token'),
+            'token_type' => 'mac',
+            'expires_in' => $this->getParam('expires_in'),
+            'mac_key' => $macKey,
+            'mac_algorithm' => 'hmac-sha-256',
         ];
+
+        if (!is_null($this->getParam('refresh_token'))) {
+            $response['refresh_token'] = $this->getParam('refresh_token');
+        }
 
         return $response;
     }
@@ -121,9 +125,11 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
     }
 
     /**
-     * Prevent timing attack
-     * @param  string $knownString
-     * @param  string $userString
+     * Prevent timing attack.
+     *
+     * @param string $knownString
+     * @param string $userString
+     *
      * @return bool
      */
     private function hash_equals($knownString, $userString)
@@ -136,7 +142,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
         }
         $len = strlen($knownString);
         $result = 0;
-        for ($i = 0; $i < $len; $i++) {
+        for ($i = 0; $i < $len; ++$i) {
             $result |= (ord($knownString[$i]) ^ ord($userString[$i]));
         }
         // They are only identical strings if $result is exactly 0...
