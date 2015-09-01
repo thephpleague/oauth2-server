@@ -105,7 +105,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
             $timestamp,
             $nonce,
             strtoupper($request->getMethod()),
-            $request->getUri(),
+            $request->getRequestUri(),
             $request->getHost(),
             $request->getPort(),
         ];

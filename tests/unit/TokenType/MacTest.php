@@ -52,7 +52,7 @@ class MacTest extends \PHPUnit_Framework_TestCase
             $ts,
             'foo',
             strtoupper($request->getMethod()),
-            $request->getUri(),
+            $request->getRequestUri(),
             $request->getHost(),
             $request->getPort(),
             'ext'
