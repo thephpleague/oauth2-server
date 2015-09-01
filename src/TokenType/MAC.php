@@ -36,6 +36,10 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
             'mac_algorithm' =>  'hmac-sha-256',
         ];
 
+        if (!is_null($this->getParam('refresh_token'))) {
+            $response['refresh_token'] = $this->getParam('refresh_token');
+        }
+
         return $response;
     }
 
