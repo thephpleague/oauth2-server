@@ -61,7 +61,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
         array_map(function ($param) use (&$params) {
             $param = trim($param);
 
-            preg_match_all('/([a-zA-Z]*)="([\w=]*)"/', $param, $matches);
+            preg_match_all('/([a-zA-Z]*)="([\w=\/+]*)"/', $param, $matches);
 
             // @codeCoverageIgnoreStart
             if (count($matches) !== 3) {
