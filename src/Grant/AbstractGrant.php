@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\ServerInterface\AuthorizationServer;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Exception;
@@ -45,7 +45,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * AuthServer instance
      *
-     * @var \League\OAuth2\Server\AuthorizationServer
+     * @var \League\OAuth2\Server\ServerInterface\AuthorizationServer
      */
     protected $server;
 

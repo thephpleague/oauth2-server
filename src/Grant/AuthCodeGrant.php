@@ -42,7 +42,7 @@ class AuthCodeGrant extends AbstractGrant
     /**
      * AuthServer instance
      *
-     * @var \League\OAuth2\Server\AuthorizationServer
+     * @var \League\OAuth2\Server\ServerInterface\AuthorizationServer
      */
     protected $server = null;
 

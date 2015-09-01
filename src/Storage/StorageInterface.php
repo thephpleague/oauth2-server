@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\AbstractServer;
+use League\OAuth2\Server\ServerInterface\Server;
 
 /**
  * Storage interface
@@ -21,7 +21,9 @@ interface StorageInterface
     /**
      * Set the server
      *
-     * @param \League\OAuth2\Server\AbstractServer $server
+     * @param Server $server
+     *
+     * @return self
      */
-    public function setServer(AbstractServer $server);
+    public function setServer(Server $server);
 }

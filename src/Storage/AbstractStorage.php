@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server\Storage;
 
-use League\OAuth2\Server\AbstractServer;
+use League\OAuth2\Server\ServerInterface\Server;
 
 /**
  * Abstract storage class
@@ -21,18 +21,19 @@ abstract class AbstractStorage implements StorageInterface
     /**
      * Server
      *
-     * @var \League\OAuth2\Server\AbstractServer $server
+     * @var Server $server
      */
     protected $server;
 
     /**
      * Set the server
      *
-     * @param \League\OAuth2\Server\AbstractServer $server
      *
-     * @return self
+     * @param Server $server
+     *
+     * @return AbstractStorage
      */
-    public function setServer(AbstractServer $server)
+    public function setServer(Server $server)
     {
         $this->server = $server;
 
@@ -42,7 +43,8 @@ abstract class AbstractStorage implements StorageInterface
     /**
      * Return the server
      *
-     * @return \League\OAuth2\Server\AbstractServer
+     * @return Server
+     *
      */
     protected function getServer()
     {

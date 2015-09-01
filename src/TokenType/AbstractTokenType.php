@@ -11,8 +11,8 @@
 
 namespace League\OAuth2\Server\TokenType;
 
-use League\OAuth2\Server\AbstractServer;
 use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\ServerInterface\Server;
 
 abstract class AbstractTokenType
 {
@@ -26,7 +26,7 @@ abstract class AbstractTokenType
     /**
      * Server
      *
-     * @var \League\OAuth2\Server\AbstractServer $server
+     * @var Server $server
      */
     protected $server;
 
@@ -40,7 +40,7 @@ abstract class AbstractTokenType
     /**
      * {@inheritdoc}
      */
-    public function setServer(AbstractServer $server)
+    public function setServer(Server $server)
     {
         $this->server = $server;
 

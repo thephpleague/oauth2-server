@@ -11,8 +11,8 @@
 
 namespace League\OAuth2\Server\TokenType;
 
-use League\OAuth2\Server\AbstractServer;
 use League\OAuth2\Server\Entity\SessionEntity;
+use League\OAuth2\Server\ServerInterface\Server;
 use Symfony\Component\HttpFoundation\Request;
 
 interface TokenTypeInterface
@@ -27,11 +27,11 @@ interface TokenTypeInterface
     /**
      * Set the server
      *
-     * @param \League\OAuth2\Server\AbstractServer $server
+     * @param Server $server
      *
      * @return self
      */
-    public function setServer(AbstractServer $server);
+    public function setServer(Server $server);
 
     /**
      * Set a key/value response pair
