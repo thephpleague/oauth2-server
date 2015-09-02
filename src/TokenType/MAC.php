@@ -36,6 +36,10 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
             'mac_algorithm' =>  'hmac-sha-256',
         ];
 
+        if (!is_null($this->getParam('refresh_token'))) {
+            $response['refresh_token'] = $this->getParam('refresh_token');
+        }
+
         return $response;
     }
 
@@ -61,7 +65,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
         array_map(function ($param) use (&$params) {
             $param = trim($param);
 
-            preg_match_all('/([a-zA-Z]*)="([\w=]*)"/', $param, $matches);
+            preg_match_all('/([a-zA-Z]*)="([\w=\/+]*)"/', $param, $matches);
 
             // @codeCoverageIgnoreStart
             if (count($matches) !== 3) {
@@ -105,7 +109,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
             $timestamp,
             $nonce,
             strtoupper($request->getMethod()),
-            $request->getUri(),
+            $request->getRequestUri(),
             $request->getHost(),
             $request->getPort(),
         ];
