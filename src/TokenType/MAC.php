@@ -88,7 +88,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
             return;
         }
 
-        if ((int) $params->get('ts') !== time()) {
+        if (abs($params->get('ts') - time()) > 300) {
             return;
         }
 
