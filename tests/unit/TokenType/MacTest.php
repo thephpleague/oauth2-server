@@ -57,7 +57,7 @@ class MacTest extends \PHPUnit_Framework_TestCase
             $request->getPort(),
             'ext'
         ];
-        $calculatedSignature = base64_encode(hash_hmac('sha256', implode("\n", $calculatedSignatureParts), 'abcdef'));
+        $calculatedSignature = base64_encode(hash_hmac('sha256', implode("\n", $calculatedSignatureParts), 'abcdef', true));
 
         $request->headers->set('Authorization',  sprintf('MAC id="foo", nonce="foo", ts="%s", mac="%s", ext="ext"', $ts, $calculatedSignature));
 
