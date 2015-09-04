@@ -43,6 +43,14 @@ class RefreshTokenGrant extends AbstractGrant
     protected $refreshTokenRotate = true;
 
     /**
+     * Whether to require the client secret when
+     * completing the flow.
+     *
+     * @var boolean
+     */
+    protected $requireClientSecret = true;
+
+    /**
      * Set the TTL of the refresh token
      *
      * @param int $refreshTokenTTL
@@ -84,6 +92,28 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
+     *
+     * @param bool $required True to require client secret during access
+     *                       token request. False if not. Default = true
+     */
+    public function setRequireClientSecret($required)
+    {
+        $this->requireClientSecret = $required;
+    }
+
+    /**
+     * True if client secret is required during
+     * access token request. False if it isn't.
+     *
+     * @return bool
+     */
+    public function shouldRequireClientSecret()
+    {
+        return $this->requireClientSecret;
+    }
+
+
+    /**
      * {@inheritdoc}
      */
     public function completeFlow()
@@ -95,7 +125,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         $clientSecret = $this->server->getRequest()->request->get('client_secret',
             $this->server->getRequest()->getPassword());
-        if (is_null($clientSecret)) {
+        if ($this->shouldRequireClientSecret() && is_null($clientSecret)) {
             throw new Exception\InvalidRequestException('client_secret');
         }
 

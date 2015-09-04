@@ -61,6 +61,14 @@ class AuthCodeGrant extends AbstractGrant
     protected $authTokenTTL = 600;
 
     /**
+     * Whether to require the client secret when
+     * completing the flow.
+     *
+     * @var boolean
+     */
+    protected $requireClientSecret = true;
+
+    /**
      * Override the default access token expire time
      *
      * @param int $authTokenTTL
@@ -70,6 +78,27 @@ class AuthCodeGrant extends AbstractGrant
     public function setAuthTokenTTL($authTokenTTL)
     {
         $this->authTokenTTL = $authTokenTTL;
+    }
+
+    /**
+     *
+     * @param bool $required True to require client secret during access
+     *                       token request. False if not. Default = true
+     */
+    public function setRequireClientSecret($required)
+    {
+        $this->requireClientSecret = $required;
+    }
+
+    /**
+     * True if client secret is required during
+     * access token request. False if it isn't.
+     *
+     * @return bool
+     */
+    public function shouldRequireClientSecret()
+    {
+        return $this->requireClientSecret;
     }
 
     /**
@@ -184,7 +213,7 @@ class AuthCodeGrant extends AbstractGrant
 
         $clientSecret = $this->server->getRequest()->request->get('client_secret',
             $this->server->getRequest()->getPassword());
-        if (is_null($clientSecret)) {
+        if ($this->shouldRequireClientSecret() && is_null($clientSecret)) {
             throw new Exception\InvalidRequestException('client_secret');
         }
 
