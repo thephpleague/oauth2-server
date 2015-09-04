@@ -37,6 +37,11 @@ class OAuthException extends \Exception
     public $errorType = '';
 
     /**
+     * Parameter eventually passed to Exception
+     */
+    public $parameter = '';
+
+    /**
      * Throw a new exception
      *
      * @param string $msg Exception Message
@@ -70,6 +75,16 @@ class OAuthException extends \Exception
                 'message' =>  $this->getMessage(),
             ]
         );
+    }
+
+    /**
+     * Return parameter if set
+     *
+     * @return string
+     */
+    public function getParameter()
+    {
+        return $this->parameter;
     }
 
     /**
