@@ -122,10 +122,11 @@ abstract class AbstractServer
      *
      * @param string   $eventName Event name
      * @param callable $listener  Callable function or method
+     * @param int      $priority  Priority of event listener
      */
-    public function addEventListener($eventName, callable $listener)
+    public function addEventListener($eventName, callable $listener, $priority = Emitter::P_NORMAL)
     {
-        $this->eventEmitter->addListener($eventName, $listener);
+        $this->eventEmitter->addListener($eventName, $listener, $priority);
     }
 
     /**
