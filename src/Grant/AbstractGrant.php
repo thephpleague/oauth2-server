@@ -18,6 +18,7 @@ use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Abstract grant class
@@ -39,7 +40,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $respondsWith = 'token';
 
     /**
-     * @var \Symfony\Component\HttpFoundation\Request
+     * @var ServerRequestInterface
      */
     protected $request;
 
@@ -64,18 +65,15 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $scopeRepository;
 
     /**
-     * @param \League\Event\Emitter                                             $emitter
      * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
      * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
      * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
      */
     public function __construct(
-        Emitter $emitter,
         ClientRepositoryInterface $clientRepository,
         ScopeRepositoryInterface $scopeRepository,
         AccessTokenRepositoryInterface $accessTokenRepository
     ) {
-        $this->emitter = $emitter;
         $this->clientRepository = $clientRepository;
         $this->scopeRepository = $scopeRepository;
         $this->accessTokenRepository = $accessTokenRepository;
@@ -98,8 +96,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param string                $scopeParamValue A string containing a delimited set of scope identifiers
-     * @param string                $scopeDelimiter  The delimiter between the scopes in the value string
+     * @param string                $scopeParamValue      A string containing a delimited set of scope identifiers
+     * @param string                $scopeDelimiterString The delimiter between the scopes in the value string
      * @param ClientEntityInterface $client
      * @param string                $redirectUri
      *
@@ -108,18 +106,16 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateScopes(
         $scopeParamValue,
-        $scopeDelimiter,
+        $scopeDelimiterString,
         ClientEntityInterface $client,
         $redirectUri = null
     ) {
-        $scopesList = explode($scopeDelimiter, trim($scopeParamValue));
-
-        for ($i = 0; $i < count($scopesList); $i++) {
-            $scopesList[$i] = trim($scopesList[$i]);
-            if ($scopesList[$i] === '') {
-                unset($scopesList[$i]); // Remove any junk scopes
+        $scopesList = array_filter(
+            explode($scopeDelimiterString, trim($scopeParamValue)),
+            function ($scope) {
+                return !empty($scope);
             }
-        }
+        );
 
         $scopes = [];
         foreach ($scopesList as $scopeItem) {
@@ -137,5 +133,13 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         return $scopes;
+    }
+
+    /**
+     * @param Emitter $emitter
+     */
+    public function setEmitter(Emitter $emitter)
+    {
+        $this->emitter = $emitter;
     }
 }

@@ -222,7 +222,7 @@ class AuthCodeGrant extends AbstractGrant
         // Get the required params
         $clientId = $request->request->get('client_id', $request->getUser());
         if (is_null($clientId)) {
-            throw new InvalidRequestException('client_id');
+            throw new InvalidRequestException('client_id', '');
         }
 
         $clientSecret = $request->request->get('client_secret',

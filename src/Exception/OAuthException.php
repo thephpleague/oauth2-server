@@ -11,9 +11,11 @@
 
 namespace League\OAuth2\Server\Exception;
 
-use League\OAuth2\Server\Util\RedirectUri;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use League\OAuth2\Server\Utils\RedirectUri;
+use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Request;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequest;
 
 /**
  * Exception class
@@ -38,13 +40,20 @@ class OAuthException extends \Exception
     public $errorType = '';
 
     /**
+     * @var string
+     */
+    private $description;
+
+    /**
      * Throw a new exception
      *
-     * @param string $msg Exception Message
+     * @param string      $msg         Exception Message
+     * @param string|null $description Description of error
      */
-    public function __construct($msg = 'An error occured')
+    public function __construct($msg = 'An error occurred', $description = null)
     {
         parent::__construct($msg);
+        $this->description = $description;
     }
 
     /**
@@ -81,7 +90,7 @@ class OAuthException extends \Exception
     public function getHttpHeaders()
     {
         $headers = [
-            'Content-type'  =>  'application/json'
+            'Content-type' => 'application/json'
         ];
         switch ($this->httpStatusCode) {
             case 401:
@@ -110,11 +119,11 @@ class OAuthException extends \Exception
         // @codeCoverageIgnoreStart
         if ($this->errorType === 'invalid_client') {
             $authScheme = null;
-            $request = new Request();
-            if ($request->getUser() !== null) {
+            $request = new ServerRequest();
+            if ($request->getServerParams()['PHP_AUTH_USER'] !== null) {
                 $authScheme = 'Basic';
             } else {
-                $authHeader = $request->headers->get('Authorization');
+                $authHeader = $request->getHeader('authorization');
                 if ($authHeader !== null) {
                     if (strpos($authHeader, 'Bearer') === 0) {
                         $authScheme = 'Bearer';
@@ -124,7 +133,7 @@ class OAuthException extends \Exception
                 }
             }
             if ($authScheme !== null) {
-                $headers[] = 'WWW-Authenticate: ' . $authScheme . ' realm=""';
+                $headers[] = 'WWW-Authenticate: ' . $authScheme . ' realm="OAuth"';
             }
         }
         // @codeCoverageIgnoreEnd
@@ -133,17 +142,21 @@ class OAuthException extends \Exception
 
     /**
      * Generate a HTTP response
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return ResponseInterface
      */
     public function generateHttpResponse()
     {
+        $payload = [
+            'error'   => $this->errorType,
+            'message' => $this->getMessage()
+        ];
+
+        if ($this->description !== null) {
+            $payload['description'] = $this->description;
+        }
+
         return new Response(
-            json_encode(
-                [
-                    'error'   => $this->errorType,
-                    'message' => $this->getMessage()
-                ]
-            ),
+            json_encode($payload),
             $this->httpStatusCode,
             $this->getHttpHeaders()
         );

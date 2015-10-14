@@ -30,7 +30,7 @@ class InvalidRequestException extends OAuthException
      * {@inheritdoc}
      */
 
-    public function __construct($parameter, $redirectUri = null)
+    public function __construct($parameter, $redirectUri = null, $description = null)
     {
         parent::__construct(
             sprintf(

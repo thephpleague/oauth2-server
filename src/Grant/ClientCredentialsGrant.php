@@ -18,7 +18,7 @@ use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\TokenTypes\TokenTypeInterface;
 use League\OAuth2\Server\Utils\SecureKey;
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Client credentials grant class
@@ -35,7 +35,7 @@ class ClientCredentialsGrant extends AbstractGrant
     /**
      * Return an access token
      *
-     * @param \Symfony\Component\HttpFoundation\Request           $request
+     * @param \Psr\Http\Message\ServerRequestInterface            $request
      * @param \League\OAuth2\Server\TokenTypes\TokenTypeInterface $tokenType
      * @param \DateInterval                                       $accessTokenTTL
      * @param string                                              $scopeDelimiter
@@ -45,19 +45,29 @@ class ClientCredentialsGrant extends AbstractGrant
      * @throws \League\OAuth2\Server\Exception\InvalidRequestException
      * @throws \League\OAuth2\Server\Exception\InvalidScopeException
      */
-    public function getAccessTokenAsType(
-        Request $request,
+    public function respondToRequest(
+        ServerRequestInterface $request,
         TokenTypeInterface $tokenType,
         DateInterval $accessTokenTTL,
         $scopeDelimiter = ' '
     ) {
         // Get the required params
-        $clientId = $request->request->get('client_id', $request->getUser());
+        $clientId = isset($request->getParsedBody()['client_id'])
+            ? $request->getParsedBody()['client_id'] // $_POST['client_id']
+            : isset($request->getServerParams()['PHP_AUTH_USER'])
+                ? $request->getServerParams()['PHP_AUTH_USER'] // $_SERVER['PHP_AUTH_USER']
+                : null;
+
         if (is_null($clientId)) {
             throw new Exception\InvalidRequestException('client_id');
         }
 
-        $clientSecret = $request->request->get('client_secret', $request->getPassword());
+        $clientSecret = isset($request->getParsedBody()['client_secret'])
+            ? $request->getParsedBody()['client_secret'] // $_POST['client_id']
+            : isset($request->getServerParams()['PHP_AUTH_PW'])
+                ? $request->getServerParams()['PHP_AUTH_PW'] // $_SERVER['PHP_AUTH_USER']
+                : null;
+
         if (is_null($clientSecret)) {
             throw new Exception\InvalidRequestException('client_secret');
         }
@@ -76,14 +86,15 @@ class ClientCredentialsGrant extends AbstractGrant
         }
 
         // Validate any scopes that are in the request
-        $scopeParam = $request->request->get('scope', '');
+        $scopeParam = isset($request->getParsedBody()['scope'])
+            ? $request->getParsedBody()['scope'] // $_POST['scope']
+            : '';
         $scopes = $this->validateScopes($scopeParam, $scopeDelimiter, $client);
 
         // Generate an access token
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier(SecureKey::generate());
-        $expirationDateTime = (new \DateTime())->add($accessTokenTTL);
-        $accessToken->setExpiryDateTime($expirationDateTime);
+        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
         $accessToken->setClient($client);
         $accessToken->setOwner('client', $client->getIdentifier());
 
@@ -99,5 +110,29 @@ class ClientCredentialsGrant extends AbstractGrant
         $tokenType->setAccessToken($accessToken);
 
         return $tokenType;
+    }
+
+    /**
+     * The grant type should return true if it is able to respond to this request.
+     *
+     * For example most grant types will check that the $_POST['grant_type'] property matches it's identifier property.
+     *
+     * Some grants, such as the authorization code grant can respond to multiple requests
+     *  - i.e. a client requesting an authorization code and requesting an access token
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     *
+     * @return boolean
+     */
+    public function canRespondToRequest(ServerRequestInterface $request)
+    {
+        if (
+            isset($request->getParsedBody()['grant_type'])
+            && $request->getParsedBody()['grant_type'] === 'client_credentials'
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

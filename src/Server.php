@@ -3,12 +3,24 @@
 namespace League\OAuth2\Server;
 
 use DateInterval;
+use League\Event\EmitterAwareInterface;
+use League\Event\EmitterAwareTrait;
+use League\OAuth2\Server\Grant\GrantTypeInterface;
+//use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+//use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
+//use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\RepositoryInterface;
+//use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+//use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\TokenTypes\BearerTokenType;
 use League\OAuth2\Server\TokenTypes\TokenTypeInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\ServerRequestFactory;
 
-class Server extends AbstractServer
+class Server implements EmitterAwareInterface
 {
+    use EmitterAwareTrait;
+
     /**
      * @var \League\OAuth2\Server\Grant\GrantTypeInterface[]
      */
@@ -37,16 +49,20 @@ class Server extends AbstractServer
     /**
      * @var string
      */
-    protected $scopeDelimiter = ' ';
+    protected $scopeDelimiterString = ' ';
+
+    /**
+     * @var RepositoryInterface[]
+     */
+//    protected $repositories = [];
 
     /**
      * New server instance
      */
-    public function __construct() {
-        $this->defaultTokenType = new BearerTokenType();
-        $this->defaultAccessTokenTTL = new DateInterval('PT01H'); // default of 1 hour
-
-        parent::__construct();
+    public function __construct()
+    {
+        $this->setDefaultTokenType(new BearerTokenType());
+        $this->setDefaultAccessTokenTTL(new DateInterval('PT01H')); // default of 1 hour
     }
 
     /**
@@ -60,13 +76,13 @@ class Server extends AbstractServer
     }
 
     /**
-     * Set the delimiter used to separate scopes in a request
+     * Set the delimiter string used to separate scopes in a request
      *
-     * @param string $scopeDelimiter
+     * @param string $scopeDelimiterString
      */
-    public function setScopeDelimiter($scopeDelimiter)
+    public function setScopeDelimiterString($scopeDelimiterString)
     {
-        $this->scopeDelimiter = $scopeDelimiter;
+        $this->scopeDelimiterString = $scopeDelimiterString;
     }
 
     /**
@@ -80,68 +96,89 @@ class Server extends AbstractServer
     }
 
     /**
-     * @param string             $grantType
-     * @param TokenTypeInterface $tokenType
-     * @param DateInterval       $accessTokenTTL
+     * Enable a grant type on the server
      *
-     * @throws \Exception
+     * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
+     * @param TokenTypeInterface                             $tokenType
+     * @param DateInterval                                   $accessTokenTTL
      */
     public function enableGrantType(
-        $grantType,
+        GrantTypeInterface $grantType,
         TokenTypeInterface $tokenType = null,
         DateInterval $accessTokenTTL = null
     ) {
-        if ($this->getContainer()->isInServiceProvider($grantType)) {
-            $grant = $this->getContainer()->get($grantType);
-            $grantIdentifier = $grant->getIdentifier();
-            $this->enabledGrantTypes[$grantIdentifier] = $grant;
-        } else {
-            throw new \Exception('Unregistered grant type'); // @TODO fix
-        }
+        $grantType->setEmitter($this->getEmitter());
+        $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
 
         // Set grant response type
         if ($tokenType instanceof TokenTypeInterface) {
-            $this->grantTypeTokenTypes[$grantIdentifier] = $tokenType;
+            $this->grantTypeTokenTypes[$grantType->getIdentifier()] = $tokenType;
         } else {
-            $this->grantTypeTokenTypes[$grantIdentifier] = $this->defaultTokenType;
+            $this->grantTypeTokenTypes[$grantType->getIdentifier()] = $this->defaultTokenType;
         }
 
         // Set grant access token TTL
         if ($accessTokenTTL instanceof DateInterval) {
-            $this->grantTypeAccessTokenTTL[$grantIdentifier] = $accessTokenTTL;
+            $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
         } else {
-            $this->grantTypeAccessTokenTTL[$grantIdentifier] = $this->defaultAccessTokenTTL;
+            $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $this->defaultAccessTokenTTL;
         }
     }
 
     /**
      * Return an access token response
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param \Psr\Http\Message\ServerRequestInterface $request
      *
-     * @return TokenTypeInterface
-     * @throws \Exception
+     * @return \League\OAuth2\Server\TokenTypes\TokenTypeInterface
+     * @throws \League\OAuth2\Server\Exception\InvalidGrantException
      */
-    public function getAccessTokenResponse(Request $request = null)
+    public function respondToRequest(ServerRequestInterface $request = null)
     {
         if ($request === null) {
-            $request = Request::createFromGlobals();
+            $request = ServerRequestFactory::fromGlobals();
         }
 
-        // Run the requested grant type
-        $grantType = $request->request->get('grant_type', null);
-
-        if ($grantType === null || isset($this->enabledGrantTypes[$grantType]) === false) {
-            throw new Exception\InvalidGrantException($grantType);
+        $response = null;
+        foreach ($this->enabledGrantTypes as $grantType) {
+            if ($grantType->canRespondToRequest($request)) {
+                $response = $grantType->respondToRequest(
+                    $request,
+                    $this->grantTypeTokenTypes[$grantType->getIdentifier()],
+                    $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()],
+                    $this->scopeDelimiterString
+                );
+            }
         }
 
-        $tokenType = $this->enabledGrantTypes[$grantType]->getAccessTokenAsType(
-            $request,
-            $this->grantTypeTokenTypes[$grantType],
-            $this->grantTypeAccessTokenTTL[$grantType],
-            $this->scopeDelimiter
-        );
+        if ($response === null) {
+            // do something here
+        }
 
-        return $tokenType->generateHttpResponse();
+        return $response;
     }
+
+    /**
+     * @param \League\OAuth2\Server\Repositories\RepositoryInterface $repository
+     */
+    /*public function addRepository(RepositoryInterface $repository)
+    {
+        switch ($repository) {
+            case ($repository instanceof AccessTokenRepositoryInterface):
+                $this->repositories[AccessTokenRepositoryInterface::class] = $repository;
+                break;
+            case ($repository instanceof ClientRepositoryInterface):
+                $this->repositories[ClientRepositoryInterface::class] = $repository;
+                break;
+            case ($repository instanceof ScopeRepositoryInterface):
+                $this->repositories[ScopeRepositoryInterface::class] = $repository;
+                break;
+            case ($repository instanceof UserRepositoryInterface):
+                $this->repositories[UserRepositoryInterface::class] = $repository;
+                break;
+            case ($repository instanceof AuthCodeRepositoryInterface):
+                $this->repositories[AuthCodeRepositoryInterface::class] = $repository;
+                break;
+        }
+    }*/
 }

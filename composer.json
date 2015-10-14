@@ -4,14 +4,12 @@
 	"homepage": "http://oauth2.thephpleague.com/",
 	"license": "MIT",
 	"require": {
-		"php": ">=5.4.0",
-		"symfony/http-foundation": "~2.4",
+		"php": ">=5.5.9",
 		"league/event": "~2.1",
-		"league/container": "~1.0",
-		"firebase/php-jwt": "~2.0"
+	  	"zendframework/zend-diactoros": "~1.1"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "4.3.*",
+		"phpunit/phpunit": "4.8.*",
 		"mockery/mockery": "0.9.*",
 		"codeception/codeception": "~2.0",
 		"flow/jsonpath": "0.2.*"

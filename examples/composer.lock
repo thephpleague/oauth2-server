@@ -1,10 +1,11 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9ae3d11ba275cce8764cfa3002ec7c93",
+    "hash": "ad90034834be06a42fc0b780af9a9425",
+    "content-hash": "caf5b7d7e9c81d118a89ce3b7a38b6ad",
     "packages": [
         {
             "name": "alexbilbie/proton",
@@ -65,368 +66,6 @@
             "time": "2015-03-26 17:35:31"
         },
         {
-            "name": "danielstjules/stringy",
-            "version": "1.9.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/danielstjules/Stringy.git",
-                "reference": "3cf18e9e424a6dedc38b7eb7ef580edb0929461b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/danielstjules/Stringy/zipball/3cf18e9e424a6dedc38b7eb7ef580edb0929461b",
-                "reference": "3cf18e9e424a6dedc38b7eb7ef580edb0929461b",
-                "shasum": ""
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Stringy\\": "src/"
-                },
-                "files": [
-                    "src/Create.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Daniel St. Jules",
-                    "email": "danielst.jules@gmail.com",
-                    "homepage": "http://www.danielstjules.com"
-                }
-            ],
-            "description": "A string manipulation library with multibyte support",
-            "homepage": "https://github.com/danielstjules/Stringy",
-            "keywords": [
-                "UTF",
-                "helpers",
-                "manipulation",
-                "methods",
-                "multibyte",
-                "string",
-                "utf-8",
-                "utility",
-                "utils"
-            ],
-            "time": "2015-02-10 06:19:18"
-        },
-        {
-            "name": "doctrine/inflector",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/inflector.git",
-                "reference": "0bcb2e79d8571787f18b7eb036ed3d004908e604"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/inflector/zipball/0bcb2e79d8571787f18b7eb036ed3d004908e604",
-                "reference": "0bcb2e79d8571787f18b7eb036ed3d004908e604",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.*"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Doctrine\\Common\\Inflector\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Roman Borschel",
-                    "email": "roman@code-factory.org"
-                },
-                {
-                    "name": "Benjamin Eberlei",
-                    "email": "kontakt@beberlei.de"
-                },
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
-                },
-                {
-                    "name": "Jonathan Wage",
-                    "email": "jonwage@gmail.com"
-                },
-                {
-                    "name": "Johannes Schmitt",
-                    "email": "schmittjoh@gmail.com"
-                }
-            ],
-            "description": "Common String Manipulations with regard to casing and singular/plural rules.",
-            "homepage": "http://www.doctrine-project.org",
-            "keywords": [
-                "inflection",
-                "pluralize",
-                "singularize",
-                "string"
-            ],
-            "time": "2014-12-20 21:24:13"
-        },
-        {
-            "name": "firebase/php-jwt",
-            "version": "2.0.0",
-            "target-dir": "Firebase/PHP-JWT",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "ffcfd888ce1e4f2d70cac2dc9b7301038332fe57"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/ffcfd888ce1e4f2d70cac2dc9b7301038332fe57",
-                "reference": "ffcfd888ce1e4f2d70cac2dc9b7301038332fe57",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "Authentication/",
-                    "Exceptions/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Neuman Vong",
-                    "email": "neuman+pear@twilio.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Anant Narayanan",
-                    "email": "anant@php.net",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
-            "homepage": "https://github.com/firebase/php-jwt",
-            "time": "2015-04-01 18:46:38"
-        },
-        {
-            "name": "illuminate/container",
-            "version": "v5.0.26",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/illuminate/container.git",
-                "reference": "a11c01c1d8b6941bd7ef2f104749ada5e34f146e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/container/zipball/a11c01c1d8b6941bd7ef2f104749ada5e34f146e",
-                "reference": "a11c01c1d8b6941bd7ef2f104749ada5e34f146e",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/contracts": "5.0.*",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Illuminate\\Container\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylorotwell@gmail.com"
-                }
-            ],
-            "description": "The Illuminate Container package.",
-            "homepage": "http://laravel.com",
-            "time": "2015-03-25 17:06:14"
-        },
-        {
-            "name": "illuminate/contracts",
-            "version": "v5.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/illuminate/contracts.git",
-                "reference": "78f1dba092d5fcb6d3a19537662abe31c4d128fd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/78f1dba092d5fcb6d3a19537662abe31c4d128fd",
-                "reference": "78f1dba092d5fcb6d3a19537662abe31c4d128fd",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Illuminate\\Contracts\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylorotwell@gmail.com"
-                }
-            ],
-            "description": "The Illuminate Contracts package.",
-            "time": "2015-01-30 16:27:08"
-        },
-        {
-            "name": "illuminate/database",
-            "version": "v5.0.27",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/illuminate/database.git",
-                "reference": "8d41d6a2c20b4295f7f77b5ee1ac91d9060510f5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/database/zipball/8d41d6a2c20b4295f7f77b5ee1ac91d9060510f5",
-                "reference": "8d41d6a2c20b4295f7f77b5ee1ac91d9060510f5",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/container": "5.0.*",
-                "illuminate/contracts": "5.0.*",
-                "illuminate/support": "5.0.*",
-                "nesbot/carbon": "~1.0",
-                "php": ">=5.4.0"
-            },
-            "suggest": {
-                "doctrine/dbal": "Required to rename columns and drop SQLite columns (~2.4).",
-                "illuminate/console": "Required to use the database commands (5.0.*).",
-                "illuminate/events": "Required to use the observers with Eloquent (5.0.*).",
-                "illuminate/filesystem": "Required to use the migrations (5.0.*)."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Illuminate\\Database\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylorotwell@gmail.com"
-                }
-            ],
-            "description": "The Illuminate Database package.",
-            "homepage": "http://laravel.com",
-            "keywords": [
-                "database",
-                "laravel",
-                "orm",
-                "sql"
-            ],
-            "time": "2015-04-04 01:34:34"
-        },
-        {
-            "name": "illuminate/support",
-            "version": "v5.0.26",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/illuminate/support.git",
-                "reference": "29e8618a45d090572e092abf193a257bf28c48d9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/29e8618a45d090572e092abf193a257bf28c48d9",
-                "reference": "29e8618a45d090572e092abf193a257bf28c48d9",
-                "shasum": ""
-            },
-            "require": {
-                "danielstjules/stringy": "~1.8",
-                "doctrine/inflector": "~1.0",
-                "ext-mbstring": "*",
-                "illuminate/contracts": "5.0.*",
-                "php": ">=5.4.0"
-            },
-            "suggest": {
-                "jeremeamia/superclosure": "Required to be able to serialize closures (~2.0)."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Illuminate\\Support\\": ""
-                },
-                "files": [
-                    "helpers.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylorotwell@gmail.com"
-                }
-            ],
-            "description": "The Illuminate Support package.",
-            "homepage": "http://laravel.com",
-            "time": "2015-03-27 14:49:11"
-        },
-        {
             "name": "ircmaxell/password-compat",
             "version": "v1.0.4",
             "source": {
@@ -470,16 +109,16 @@
         },
         {
             "name": "league/container",
-            "version": "1.3.1",
+            "version": "1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/container.git",
-                "reference": "6cbb3d83bfb979eaf43cd3c279c22abf3fbcf9ff"
+                "reference": "7e6c17fe48f76f3b97aeca70dc29c3f3c7c88d15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/container/zipball/6cbb3d83bfb979eaf43cd3c279c22abf3fbcf9ff",
-                "reference": "6cbb3d83bfb979eaf43cd3c279c22abf3fbcf9ff",
+                "url": "https://api.github.com/repos/thephpleague/container/zipball/7e6c17fe48f76f3b97aeca70dc29c3f3c7c88d15",
+                "reference": "7e6c17fe48f76f3b97aeca70dc29c3f3c7c88d15",
                 "shasum": ""
             },
             "require": {
@@ -494,7 +133,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.3-dev"
+                    "dev-master": "2.0-dev",
+                    "dev-1.x": "1.3-dev"
                 }
             },
             "autoload": {
@@ -523,20 +163,20 @@
                 "injection",
                 "league"
             ],
-            "time": "2015-02-21 18:55:49"
+            "time": "2015-04-05 17:14:48"
         },
         {
             "name": "league/event",
-            "version": "2.1.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/event.git",
-                "reference": "cecc6213023a8b18efb163853569082051e5f1ea"
+                "reference": "e4bfc88dbcb60c8d8a2939a71f9813e141bbe4cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/event/zipball/cecc6213023a8b18efb163853569082051e5f1ea",
-                "reference": "cecc6213023a8b18efb163853569082051e5f1ea",
+                "url": "https://api.github.com/repos/thephpleague/event/zipball/e4bfc88dbcb60c8d8a2939a71f9813e141bbe4cd",
+                "reference": "e4bfc88dbcb60c8d8a2939a71f9813e141bbe4cd",
                 "shasum": ""
             },
             "require": {
@@ -573,20 +213,20 @@
                 "event",
                 "listener"
             ],
-            "time": "2015-03-30 07:53:52"
+            "time": "2015-05-21 12:24:47"
         },
         {
             "name": "league/route",
-            "version": "1.1.0",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/route.git",
-                "reference": "06b0b3cb203f329875ad534d0f8a049d23767005"
+                "reference": "079e87a4653b43e2cba47b9e0563179c1c49fcf8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/route/zipball/06b0b3cb203f329875ad534d0f8a049d23767005",
-                "reference": "06b0b3cb203f329875ad534d0f8a049d23767005",
+                "url": "https://api.github.com/repos/thephpleague/route/zipball/079e87a4653b43e2cba47b9e0563179c1c49fcf8",
+                "reference": "079e87a4653b43e2cba47b9e0563179c1c49fcf8",
                 "shasum": ""
             },
             "require": {
@@ -631,20 +271,20 @@
                 "league",
                 "route"
             ],
-            "time": "2015-02-24 18:34:01"
+            "time": "2015-09-11 07:40:31"
         },
         {
             "name": "monolog/monolog",
-            "version": "1.13.1",
+            "version": "1.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "c31a2c4e8db5da8b46c74cf275d7f109c0f249ac"
+                "reference": "0524c87587ab85bc4c2d6f5b41253ccb930a5422"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/c31a2c4e8db5da8b46c74cf275d7f109c0f249ac",
-                "reference": "c31a2c4e8db5da8b46c74cf275d7f109c0f249ac",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/0524c87587ab85bc4c2d6f5b41253ccb930a5422",
+                "reference": "0524c87587ab85bc4c2d6f5b41253ccb930a5422",
                 "shasum": ""
             },
             "require": {
@@ -655,12 +295,14 @@
                 "psr/log-implementation": "1.0.0"
             },
             "require-dev": {
-                "aws/aws-sdk-php": "~2.4, >2.4.8",
+                "aws/aws-sdk-php": "^2.4.9",
                 "doctrine/couchdb": "~1.0@dev",
                 "graylog2/gelf-php": "~1.0",
-                "phpunit/phpunit": "~4.0",
-                "raven/raven": "~0.5",
-                "ruflin/elastica": "0.90.*",
+                "php-console/php-console": "^3.1.3",
+                "phpunit/phpunit": "~4.5",
+                "phpunit/phpunit-mock-objects": "2.3.0",
+                "raven/raven": "~0.11",
+                "ruflin/elastica": ">=0.90 <3.0",
                 "swiftmailer/swiftmailer": "~5.3",
                 "videlalvaro/php-amqplib": "~2.4"
             },
@@ -670,6 +312,7 @@
                 "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
                 "ext-mongo": "Allow sending log messages to a MongoDB server",
                 "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
+                "php-console/php-console": "Allow sending log messages to Google Chrome",
                 "raven/raven": "Allow sending log messages to a Sentry server",
                 "rollbar/rollbar": "Allow sending log messages to Rollbar",
                 "ruflin/elastica": "Allow sending log messages to an Elastic Search server",
@@ -678,7 +321,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.13.x-dev"
+                    "dev-master": "1.16.x-dev"
                 }
             },
             "autoload": {
@@ -704,67 +347,20 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2015-03-09 09:58:04"
-        },
-        {
-            "name": "nesbot/carbon",
-            "version": "1.18.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "99e2f69f7bdc2cc4334b2d00f1e0ba450623ea36"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/99e2f69f7bdc2cc4334b2d00f1e0ba450623ea36",
-                "reference": "99e2f69f7bdc2cc4334b2d00f1e0ba450623ea36",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0",
-                "symfony/translation": "2.6.*"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Carbon": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Brian Nesbitt",
-                    "email": "brian@nesbot.com",
-                    "homepage": "http://nesbot.com"
-                }
-            ],
-            "description": "A simple API extension for DateTime.",
-            "homepage": "http://carbon.nesbot.com",
-            "keywords": [
-                "date",
-                "datetime",
-                "time"
-            ],
-            "time": "2015-03-26 03:05:57"
+            "time": "2015-08-31 09:17:37"
         },
         {
             "name": "nikic/fast-route",
-            "version": "v0.4.0",
+            "version": "v0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/FastRoute.git",
-                "reference": "f26a8f7788f25c0e3e9b1579d38d7ccab2755320"
+                "reference": "31fa86924556b80735f98b294a7ffdfb26789f22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/FastRoute/zipball/f26a8f7788f25c0e3e9b1579d38d7ccab2755320",
-                "reference": "f26a8f7788f25c0e3e9b1579d38d7ccab2755320",
+                "url": "https://api.github.com/repos/nikic/FastRoute/zipball/31fa86924556b80735f98b294a7ffdfb26789f22",
+                "reference": "31fa86924556b80735f98b294a7ffdfb26789f22",
                 "shasum": ""
             },
             "require": {
@@ -794,7 +390,7 @@
                 "router",
                 "routing"
             ],
-            "time": "2015-02-26 15:33:07"
+            "time": "2015-06-18 19:15:47"
         },
         {
             "name": "psr/log",
@@ -836,21 +432,20 @@
         },
         {
             "name": "symfony/debug",
-            "version": "v2.6.6",
-            "target-dir": "Symfony/Component/Debug",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Debug.git",
-                "reference": "d49a46a20a8f0544aedac54466750ad787d3d3e3"
+                "url": "https://github.com/symfony/debug.git",
+                "reference": "c79c361bca8e5ada6a47603875a3c964d03b67b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Debug/zipball/d49a46a20a8f0544aedac54466750ad787d3d3e3",
-                "reference": "d49a46a20a8f0544aedac54466750ad787d3d3e3",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/c79c361bca8e5ada6a47603875a3c964d03b67b1",
+                "reference": "c79c361bca8e5ada6a47603875a3c964d03b67b1",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
+                "php": ">=5.3.9",
                 "psr/log": "~1.0"
             },
             "conflict": {
@@ -858,22 +453,17 @@
             },
             "require-dev": {
                 "symfony/class-loader": "~2.2",
-                "symfony/http-foundation": "~2.1",
                 "symfony/http-kernel": "~2.3.24|~2.5.9|~2.6,>=2.6.2",
                 "symfony/phpunit-bridge": "~2.7"
-            },
-            "suggest": {
-                "symfony/http-foundation": "",
-                "symfony/http-kernel": ""
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.6-dev"
+                    "dev-master": "2.7-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "Symfony\\Component\\Debug\\": ""
                 }
             },
@@ -883,35 +473,34 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony Debug Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-03-22 16:55:57"
+            "homepage": "https://symfony.com",
+            "time": "2015-09-14 08:41:38"
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.6.6",
-            "target-dir": "Symfony/Component/EventDispatcher",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "70f7c8478739ad21e3deef0d977b38c77f1fb284"
+                "url": "https://github.com/symfony/event-dispatcher.git",
+                "reference": "ae4dcc2a8d3de98bd794167a3ccda1311597c5d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/70f7c8478739ad21e3deef0d977b38c77f1fb284",
-                "reference": "70f7c8478739ad21e3deef0d977b38c77f1fb284",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/ae4dcc2a8d3de98bd794167a3ccda1311597c5d9",
+                "reference": "ae4dcc2a8d3de98bd794167a3ccda1311597c5d9",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": ">=5.3.9"
             },
             "require-dev": {
                 "psr/log": "~1.0",
@@ -928,11 +517,11 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.6-dev"
+                    "dev-master": "2.7-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "Symfony\\Component\\EventDispatcher\\": ""
                 }
             },
@@ -942,35 +531,34 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony EventDispatcher Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-03-13 17:37:22"
+            "homepage": "https://symfony.com",
+            "time": "2015-09-22 13:49:29"
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v2.6.6",
-            "target-dir": "Symfony/Component/HttpFoundation",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/HttpFoundation.git",
-                "reference": "8a6337233f08f7520de97f4ffd6f00e947d892f9"
+                "url": "https://github.com/symfony/http-foundation.git",
+                "reference": "e1509119f164a0d0a940d7d924d693a7a28a5470"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/8a6337233f08f7520de97f4ffd6f00e947d892f9",
-                "reference": "8a6337233f08f7520de97f4ffd6f00e947d892f9",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/e1509119f164a0d0a940d7d924d693a7a28a5470",
+                "reference": "e1509119f164a0d0a940d7d924d693a7a28a5470",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": ">=5.3.9"
             },
             "require-dev": {
                 "symfony/expression-language": "~2.4",
@@ -979,15 +567,15 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.6-dev"
+                    "dev-master": "2.7-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "Symfony\\Component\\HttpFoundation\\": ""
                 },
                 "classmap": [
-                    "Symfony/Component/HttpFoundation/Resources/stubs"
+                    "Resources/stubs"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -996,44 +584,46 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony HttpFoundation Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-04-01 16:50:12"
+            "homepage": "https://symfony.com",
+            "time": "2015-09-22 13:49:29"
         },
         {
             "name": "symfony/http-kernel",
-            "version": "v2.6.6",
-            "target-dir": "Symfony/Component/HttpKernel",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/HttpKernel.git",
-                "reference": "3829cacfe21eaf3f73604a62d79183d1f6e792c4"
+                "url": "https://github.com/symfony/http-kernel.git",
+                "reference": "353aa457424262d7d4e4289ea483145921cffcb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/3829cacfe21eaf3f73604a62d79183d1f6e792c4",
-                "reference": "3829cacfe21eaf3f73604a62d79183d1f6e792c4",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/353aa457424262d7d4e4289ea483145921cffcb5",
+                "reference": "353aa457424262d7d4e4289ea483145921cffcb5",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
+                "php": ">=5.3.9",
                 "psr/log": "~1.0",
                 "symfony/debug": "~2.6,>=2.6.2",
-                "symfony/event-dispatcher": "~2.5.9|~2.6,>=2.6.2",
+                "symfony/event-dispatcher": "~2.6,>=2.6.7",
                 "symfony/http-foundation": "~2.5,>=2.5.4"
+            },
+            "conflict": {
+                "symfony/config": "<2.7"
             },
             "require-dev": {
                 "symfony/browser-kit": "~2.3",
                 "symfony/class-loader": "~2.1",
-                "symfony/config": "~2.0,>=2.0.5",
+                "symfony/config": "~2.7",
                 "symfony/console": "~2.3",
                 "symfony/css-selector": "~2.0,>=2.0.5",
                 "symfony/dependency-injection": "~2.2",
@@ -1060,11 +650,11 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.6-dev"
+                    "dev-master": "2.7-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "Symfony\\Component\\HttpKernel\\": ""
                 }
             },
@@ -1074,76 +664,17 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony HttpKernel Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-04-01 16:55:26"
-        },
-        {
-            "name": "symfony/translation",
-            "version": "v2.6.6",
-            "target-dir": "Symfony/Component/Translation",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/Translation.git",
-                "reference": "bd939f05cdaca128f4ddbae1b447d6f0203b60af"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Translation/zipball/bd939f05cdaca128f4ddbae1b447d6f0203b60af",
-                "reference": "bd939f05cdaca128f4ddbae1b447d6f0203b60af",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "require-dev": {
-                "psr/log": "~1.0",
-                "symfony/config": "~2.3,>=2.3.12",
-                "symfony/intl": "~2.3",
-                "symfony/phpunit-bridge": "~2.7",
-                "symfony/yaml": "~2.2"
-            },
-            "suggest": {
-                "psr/log": "To use logging capability in translator",
-                "symfony/config": "",
-                "symfony/yaml": ""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.6-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Symfony\\Component\\Translation\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "Symfony Translation Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-03-30 15:54:10"
+            "homepage": "https://symfony.com",
+            "time": "2015-09-25 11:16:52"
         }
     ],
     "packages-dev": [],

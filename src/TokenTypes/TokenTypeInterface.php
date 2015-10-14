@@ -12,14 +12,15 @@
 namespace League\OAuth2\Server\TokenTypes;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 interface TokenTypeInterface
 {
     /**
      * Generate a response
      *
-     * @return array
+     * @return ResponseInterface
      */
     public function generateResponse();
 
@@ -48,14 +49,14 @@ interface TokenTypeInterface
     /**
      * Determine the access token in the authorization header
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param ServerRequestInterface $request
      *
      * @return string
      */
-    public function determineAccessTokenInHeader(Request $request);
+    public function determineAccessTokenInHeader(ServerRequestInterface $request);
 
     /**
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return ResponseInterface
      */
     public function generateHttpResponse();
 }
