@@ -25,22 +25,6 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
-    public function testCompleteFlowMissingClientSecret()
-    {
-        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
-
-        $_POST = [
-            'grant_type' => 'password',
-            'client_id' =>  'testapp',
-        ];
-
-        $server = new AuthorizationServer();
-        $grant = new PasswordGrant();
-
-        $server->addGrantType($grant);
-        $server->issueAccessToken();
-    }
-
     public function testCompleteFlowInvalidClient()
     {
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
