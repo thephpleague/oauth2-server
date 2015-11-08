@@ -19,17 +19,11 @@ class InvalidGrantException extends OAuthException
     /**
      * {@inheritdoc}
      */
-    public $httpStatusCode = 400;
-
-    /**
-     * {@inheritdoc}
-     */
     public $errorType = 'invalid_grant';
 
     /**
      * {@inheritdoc}
      */
-
     public function __construct($parameter)
     {
         $this->parameter = $parameter;

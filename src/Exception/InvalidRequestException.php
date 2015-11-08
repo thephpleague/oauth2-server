@@ -19,17 +19,11 @@ class InvalidRequestException extends OAuthException
     /**
      * {@inheritdoc}
      */
-    public $httpStatusCode = 400;
-
-    /**
-     * {@inheritdoc}
-     */
     public $errorType = 'invalid_request';
 
     /**
      * {@inheritdoc}
      */
-
     public function __construct($parameter, $redirectUri = null)
     {
         $this->parameter = $parameter;

@@ -19,11 +19,6 @@ class UnauthorizedClientException extends OAuthException
     /**
      * {@inheritdoc}
      */
-    public $httpStatusCode = 400;
-
-    /**
-     * {@inheritdoc}
-     */
     public $errorType = 'unauthorized_client';
 
     /**
