@@ -24,7 +24,8 @@ class BearerTokenType extends AbstractTokenType
         $values = [
             'access_token' => $this->accessToken->getIdentifier(),
             'token_type'   => 'Bearer',
-            'expires_in'   => $this->accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp()
+            'expires_in'   =>
+                $this->accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp()
         ];
 
         if (!is_null($this->getParam('refresh_token'))) {

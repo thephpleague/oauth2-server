@@ -29,12 +29,12 @@ class InvalidRequestException extends OAuthException
     /**
      * {@inheritdoc}
      */
-
     public function __construct($parameter, $redirectUri = null, $description = null)
     {
         parent::__construct(
             sprintf(
-                'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the "%s" parameter.',
+                'The request is missing a required parameter, includes an invalid parameter value, ' .
+                'includes a parameter more than once, or is otherwise malformed. Check the "%s" parameter.',
                 $parameter
             )
         );

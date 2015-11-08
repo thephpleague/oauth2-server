@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server\Storage;
 
-
 /**
  * MacTokenInterface
  */

@@ -126,8 +126,7 @@ class ClientCredentialsGrant extends AbstractGrant
      */
     public function canRespondToRequest(ServerRequestInterface $request)
     {
-        if (
-            isset($request->getParsedBody()['grant_type'])
+        if (isset($request->getParsedBody()['grant_type'])
             && $request->getParsedBody()['grant_type'] === 'client_credentials'
         ) {
             return true;

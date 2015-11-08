@@ -93,8 +93,10 @@ class RefreshTokenGrant extends AbstractGrant
             throw new Exception\InvalidRequestException('client_id');
         }
 
-        $clientSecret = $this->server->getRequest()->request->get('client_secret',
-            $this->server->getRequest()->getPassword());
+        $clientSecret = $this->server->getRequest()->request->get(
+            'client_secret',
+            $this->server->getRequest()->getPassword()
+        );
         if (is_null($clientSecret)) {
             throw new Exception\InvalidRequestException('client_secret');
         }
@@ -108,7 +110,9 @@ class RefreshTokenGrant extends AbstractGrant
         );
 
         if (($client instanceof ClientEntity) === false) {
-            $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
+            $this->server->getEventEmitter()->emit(
+                new Event\ClientAuthenticationFailedEvent($this->server->getRequest())
+            );
             throw new Exception\InvalidClientException();
         }
 

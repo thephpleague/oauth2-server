@@ -80,7 +80,9 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
         }, $paramsRaw);
 
         // Validate parameters
-        if ($params->has('id') === false || $params->has('ts') === false || $params->has('nonce') === false || $params->has('mac') === false) {
+        if ($params->has('id') === false || $params->has('ts') === false
+            || $params->has('nonce') === false || $params->has('mac') === false
+        ) {
             return;
         }
 
@@ -117,7 +119,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
         $calculatedSignature = base64_encode(hash_hmac('sha256', implode("\n", $calculatedSignatureParts), $macKey));
 
         // Return the access token if the signature matches
-        return ($this->hash_equals($calculatedSignature, $signature)) ? $accessToken : null;
+        return ($this->hashEquals($calculatedSignature, $signature)) ? $accessToken : null;
     }
 
     /**
@@ -126,7 +128,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
      * @param  string $userString
      * @return bool
      */
-    private function hash_equals($knownString, $userString)
+    private function hashEquals($knownString, $userString)
     {
         if (function_exists('\hash_equals')) {
             return \hash_equals($knownString, $userString);
