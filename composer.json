@@ -1,5 +1,5 @@
 {
-	"name": "saga64/oauth2-server",
+	"name": "league/oauth2-server",
 	"description": "A lightweight and powerful OAuth 2.0 authorization and resource server library with support for all the core specification grants. This library will allow you to secure your API with OAuth and allow your applications users to approve apps that want to access their data from your API.",
 	"homepage": "http://oauth2.thephpleague.com/",
 	"license": "MIT",
@@ -12,6 +12,12 @@
 		"phpunit/phpunit": "4.3.*",
 		"mockery/mockery": "0.9.*"
 	},
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/thephpleague/oauth2-server.git"
+		}
+	],
 	"keywords": [
 		"oauth",
 		"oauth2",
