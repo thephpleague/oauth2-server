@@ -62,7 +62,7 @@ class InvalidTokenException extends OAuthException
             case 'Bearer':
                 $headers[] = 'WWW-Authenticate: ' . $authScheme . ' ' .
                     'error = "invalid_token", ' . 
-                    'error_description="There is no access token present."';
+                    'error_description="Token is expired, invalid, malformed, or just bad."';
             break;
         }
 
