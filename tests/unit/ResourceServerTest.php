@@ -53,7 +53,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
 
     public function testDetermineAccessTokenMissingToken()
     {
-        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\NoTokenException');
 
         $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
         $sessionStorage->shouldReceive('setServer');
@@ -110,7 +110,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
             $scopeStorage
         );
 
-        $this->setExpectedException('League\OAuth2\Server\Exception\AccessDeniedException');
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidTokenException');
         $server->isValidRequest(false, 'foobar');
     }
 
@@ -169,7 +169,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException League\OAuth2\Server\Exception\AccessDeniedException
+     * @expectedException League\OAuth2\Server\Exception\InvalidTokenException
      */
     public function testIsValidExpiredToken()
     {

@@ -111,35 +111,62 @@ class OAuthException extends \Exception
                 break;
         }
 
-        // Add "WWW-Authenticate" header
-        //
-        // RFC 6749, section 5.2.:
-        // "If the client attempted to authenticate via the 'Authorization'
-        // request header field, the authorization server MUST
-        // respond with an HTTP 401 (Unauthorized) status code and
-        // include the "WWW-Authenticate" response header field
-        // matching the authentication scheme used by the client.
-        // @codeCoverageIgnoreStart
-        if ($this->errorType === 'invalid_client') {
-            $authScheme = null;
-            $request = new Request();
-            if ($request->getUser() !== null) {
-                $authScheme = 'Basic';
-            } else {
-                $authHeader = $request->headers->get('Authorization');
-                if ($authHeader !== null) {
-                    if (strpos($authHeader, 'Bearer') === 0) {
-                        $authScheme = 'Bearer';
-                    } elseif (strpos($authHeader, 'Basic') === 0) {
-                        $authScheme = 'Basic';
-                    }
-                }
-            }
-            if ($authScheme !== null) {
-                $headers[] = 'WWW-Authenticate: '.$authScheme.' realm=""';
-            }
-        }
         // @codeCoverageIgnoreEnd
         return $headers;
+    }
+
+    /**
+     * determineAuthScheme guesses the auth scheme used during this request.
+     * Intended use of this function is when requests to resources fail
+     * because of no access token or a bad access token.
+     * 
+     * @return string|null null if one couldn't be guessed, 
+     * or the string name of the scheme that we found
+     */
+    protected function determineAuthScheme()
+    {
+        $authScheme = null;
+        
+        $request = $this->getRequest();
+
+        if ($request->getUser() !== null) {
+            $authScheme = 'Basic';
+        } else {
+            $authHeader = $request->headers->get('Authorization');
+            if ($authHeader !== null) {
+                if (strpos($authHeader, 'Bearer') === 0) {
+                    $authScheme = 'Bearer';
+                } elseif (strpos($authHeader, 'Basic') === 0) {
+                    $authScheme = 'Basic';
+                }
+            }
+        }
+
+        return $authScheme;
+    }
+
+    /**
+     * getRequest returns the Request object that this exception
+     * can use to get more info about the current request.
+     * 
+     * @return Request
+     */
+    public function getRequest()
+    {
+        if (!isset($this->request)) {
+            $this->request = Request::createFromGlobals();
+        }
+        return $this->request;
+    }
+
+    /**
+     * setRequest sets the request object to use for information
+     * about the request.
+     * 
+     * @param Request $request
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
     }
 }
