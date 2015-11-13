@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server\Repositories;
 
+use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+
 /**
  * Refresh token interface
  */
@@ -19,11 +21,11 @@ interface RefreshTokenRepositoryInterface extends RepositoryInterface
     /**
      * Return a new instance of \League\OAuth2\Server\Entity\RefreshTokenEntity
      *
-     * @param string $token
+     * @param string $token Refresh token string
      *
-     * @return \League\OAuth2\Server\Entity\RefreshTokenEntity
+     * @return \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface
      */
-    public function get($token);
+    public function getRefreshTokenEntityByTokenString($token);
 
     /**
      * Create a new refresh token_name
@@ -32,16 +34,14 @@ interface RefreshTokenRepositoryInterface extends RepositoryInterface
      * @param integer $expireTime
      * @param string  $accessToken
      *
-     * @return \League\OAuth2\Server\Entity\RefreshTokenEntity
+     * @return \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface
      */
-    public function create($token, $expireTime, $accessToken);
+    public function persistNewRefreshTokenEntity($token, $expireTime, $accessToken);
 
     /**
      * Delete the refresh token
      *
-     * @param \League\OAuth2\Server\Entity\RefreshTokenEntity $token
-     *
-     * @return void
+     * @param \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface $token
      */
-    public function delete(RefreshTokenEntity $token);
+    public function deleteRefreshTokenEntity(RefreshTokenEntityInterface $token);
 }

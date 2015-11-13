@@ -26,5 +26,5 @@ interface ClientRepositoryInterface extends RepositoryInterface
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface
      */
-    public function get($clientIdentifier, $clientSecret = null, $redirectUri = null, $grantType = null);
+    public function getClientEntity($clientIdentifier, $grantType, $clientSecret = null, $redirectUri = null);
 }

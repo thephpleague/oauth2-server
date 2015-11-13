@@ -1,15 +1,16 @@
 <?php
-namespace League\OAuth2\Server\Repositories;
 
-use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
+namespace League\OAuth2\Server\Repositories;
 
 interface UserRepositoryInterface extends RepositoryInterface
 {
     /**
-     * Get a user
+     * Get a user entity
+     *
      * @param string $username
      * @param string $password
-     * @return UserEntityInterface
+     *
+     * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
      */
-    public function getByCredentials($username, $password);
+    public function getUserEntityByUserCredentials($username, $password);
 }

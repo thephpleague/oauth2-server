@@ -22,11 +22,11 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     /**
      * Get an instance of Entity\AccessTokenEntity
      *
-     * @param string $tokenIdentifier The access token identifier
+     * @param string $token The access token identifier
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
      */
-    public function get($tokenIdentifier);
+    public function getAccessTokenEntityByTokenString($token);
 
     /**
      * Get the scopes for an access token
@@ -35,14 +35,14 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[]
      */
-    public function getScopes(AccessTokenEntityInterface $token);
+    public function getScopeEntitiesAssociatedWithAccessToken(AccessTokenEntityInterface $token);
 
     /**
-     * Creates a new access token
+     * Persists a new access token to storage
      *
      * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessTokenEntity
      */
-    public function create(AccessTokenEntityInterface $accessTokenEntity);
+    public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity);
 
     /**
      * Associate a scope with an access token
@@ -50,12 +50,15 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
      * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessTokenEntityInterface
      * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface       $scope
      */
-    public function associateScope(AccessTokenEntityInterface $accessTokenEntityInterface, ScopeEntityInterface $scope);
+    public function associateScopeWithAccessToken(
+        AccessTokenEntityInterface $accessTokenEntityInterface,
+        ScopeEntityInterface $scope
+    );
 
     /**
      * Delete an access token
      *
      * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessToken
      */
-    public function delete(AccessTokenEntityInterface $accessToken);
+    public function deleteAccessToken(AccessTokenEntityInterface $accessToken);
 }

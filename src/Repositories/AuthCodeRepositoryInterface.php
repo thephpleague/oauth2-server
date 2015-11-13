@@ -25,24 +25,23 @@ interface AuthCodeRepositoryInterface extends RepositoryInterface
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface
      */
-    public function get($code);
+    public function getAuthCodeEntityByCodeString($code);
 
     /**
-     * Create an auth code.
+     * Persist a new authorization code
      *
-     * @param string  $token       The token ID
+     * @param string  $code        The authorization code string
      * @param integer $expireTime  Token expire time
-     * @param integer $sessionId   Session identifier
      * @param string  $redirectUri Client redirect uri
      *
      * @return void
      */
-    public function create($token, $expireTime, $sessionId, $redirectUri);
+    public function persistNewAuthCode($code, $expireTime, $redirectUri);
 
     /**
      * Delete an access token
      *
      * @param \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface $token The access token to delete
      */
-    public function delete(AuthCodeEntityInterface $token);
+    public function deleteAuthCodeEntity(AuthCodeEntityInterface $token);
 }

@@ -19,11 +19,11 @@ interface ScopeRepositoryInterface extends RepositoryInterface
     /**
      * Return information about a scope
      *
-     * @param string $scopeIdentifier The scope identifier
-     * @param string $grantType       The grant type used in the request (default = "null")
-     * @param string $clientId        The client sending the request (default = "null")
+     * @param string $identifier The scope identifier
+     * @param string $grantType  The grant type used in the request
+     * @param string $clientId   The client sending the request
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface
      */
-    public function get($scopeIdentifier, $grantType = null, $clientId = null);
+    public function getScopeEntityByIdentifier($identifier, $grantType, $clientId = null);
 }
