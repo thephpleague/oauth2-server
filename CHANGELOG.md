@@ -1,5 +1,22 @@
 # Changelog
 
+## 4.1.4 (released 2015-11-13)
+
+* Fix for determining access token in header (Issue #328)
+* Refresh tokens are now returned for MAC responses (Issue #356)
+* Added integration list to readme (Issue #341)
+* Expose parameter passed to exceptions (Issue #345)
+* Removed duplicate routing setup code (Issue #346)
+* Docs fix (Issues #347, #360, #380)
+* Examples fix (Issues #348, #358)
+* Fix typo in docblock (Issue #352)
+* Improved timeouts for MAC tokens (Issue #364)
+* `hash_hmac()` should output raw binary data, not hexits (Issue #370)
+* Improved regex for matching all Base64 characters (Issue #371)
+* Fix incorrect signature parameter (Issue #372)
+* AuthCodeGrant and RefreshTokenGrant don't require client_secret (Issue #377)
+* Added priority argument to event listener (Issue #388)
+
 ## 4.1.3 (released 2015-03-22)
 
 * Docblock, namespace and inconsistency fixes (Issue #303)
