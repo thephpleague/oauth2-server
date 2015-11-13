@@ -9,17 +9,17 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
-namespace League\OAuth2\Server\TokenTypes;
+namespace League\OAuth2\Server\ResponseTypes;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 
-class BearerTokenType extends AbstractTokenType
+class BearerTokenResponse extends AbstractResponseType
 {
     /**
      * {@inheritdoc}
      */
-    public function generateResponse()
+    public function generateHttpResponse()
     {
         $values = [
             'access_token' => $this->accessToken->getIdentifier(),
