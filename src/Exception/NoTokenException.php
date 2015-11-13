@@ -35,7 +35,7 @@ class NoTokenException extends OAuthException
     /**
      * Throw a new exception
      *
-     * @param string $msg Exception Message
+     * @param string $typeName The token type that should be used
      */
     public function __construct($typeName)
     {
