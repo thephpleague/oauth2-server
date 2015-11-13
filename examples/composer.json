@@ -1,13 +1,17 @@
 {
-	"name": "",
-	"require": {
-		"alexbilbie/proton": "~1.4",
-		"ircmaxell/password-compat": "~1.0"
-	},
-	"autoload": {
-		"psr-4": {
-			"League\\OAuth2\\Server\\": "../src/",
-			"OAuth2ServerExamples\\": "src/"
-		}
-	}
+    "repositories": [
+        {
+            "type": "path",
+            "url": ".."
+        }
+    ],
+    "require": {
+        "slim/slim": "3.0.0-RC2",
+        "league/oauth2-server": "dev-v5-one"
+    },
+    "autoload": {
+        "psr-4": {
+            "OAuth2ServerExamples\\": "src/"
+        }
+    }
 }
