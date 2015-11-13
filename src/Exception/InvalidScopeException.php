@@ -19,17 +19,11 @@ class InvalidScopeException extends OAuthException
     /**
      * {@inheritdoc}
      */
-    public $httpStatusCode = 400;
-
-    /**
-     * {@inheritdoc}
-     */
     public $errorType = 'invalid_scope';
 
     /**
      * {@inheritdoc}
      */
-
     public function __construct($parameter, $redirectUri = null)
     {
         $this->parameter = $parameter;

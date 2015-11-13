@@ -19,11 +19,6 @@ class InvalidRefreshException extends OAuthException
     /**
      * {@inheritdoc}
      */
-    public $httpStatusCode = 400;
-
-    /**
-     * {@inheritdoc}
-     */
     public $errorType = 'invalid_request';
 
     /**

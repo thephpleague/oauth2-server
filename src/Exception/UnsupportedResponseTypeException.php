@@ -19,11 +19,6 @@ class UnsupportedResponseTypeException extends OAuthException
     /**
      * {@inheritdoc}
      */
-    public $httpStatusCode = 400;
-
-    /**
-     * {@inheritdoc}
-     */
     public $errorType = 'unsupported_response_type';
 
     /**
@@ -32,7 +27,13 @@ class UnsupportedResponseTypeException extends OAuthException
     public function __construct($parameter, $redirectUri = null)
     {
         $this->parameter = $parameter;
-        parent::__construct('The authorization server does not support obtaining an access token using this method.');
+        parent::__construct(
+            sprintf(
+                'The authorization server does not support obtaining an access token using "%s" method.',
+                $parameter
+            )
+        );
+
         $this->redirectUri = $redirectUri;
     }
 }

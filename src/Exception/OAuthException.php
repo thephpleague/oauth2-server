@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Exception class
  */
-class OAuthException extends \Exception
+abstract class OAuthException extends \Exception
 {
     /**
      * The HTTP status code for this exception that should be sent in the response
