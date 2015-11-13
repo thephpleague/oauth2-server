@@ -19,7 +19,7 @@ class NoTokenException extends OAuthException
     /**
      * The HTTP status code for this exception that should be sent in the response
      */
-    public $httpStatusCode = 400;
+    public $httpStatusCode = 401;
 
     /**
      * The exception type
