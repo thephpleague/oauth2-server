@@ -110,11 +110,6 @@ class ResourceServer extends AbstractServer
                                 ? $accessToken
                                 : $this->determineAccessToken($headerOnly);
 
-        if (empty($accessTokenString)) {
-            //invalid_request
-            throw new NoTokenException();
-        }
-
         // Set the access token
         $this->accessToken = $this->getAccessTokenStorage()->get($accessTokenString);
 
