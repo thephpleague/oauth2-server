@@ -15,6 +15,15 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Bearer extends AbstractTokenType implements TokenTypeInterface
 {
+
+    /**
+     * {$inheritdoc}
+     */
+    public function getTypeName()
+    {
+        return 'Bearer';
+    }
+
     /**
      * {@inheritdoc}
      */

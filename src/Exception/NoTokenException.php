@@ -27,13 +27,20 @@ class NoTokenException extends OAuthException
     public $errorType = 'invalid_request';
 
     /**
+     * The token type
+     * @var string
+     */
+    private $typeName;
+
+    /**
      * Throw a new exception
      *
      * @param string $msg Exception Message
      */
-    public function __construct($msg = 'No access token present')
+    public function __construct($typeName)
     {
-        parent::__construct($msg);
+        parent::__construct('No ' . $typeName . ' token present in request.');
+        $this->typeName = $typeName;
     }
 
     /**
@@ -56,13 +63,7 @@ class NoTokenException extends OAuthException
         // matching the authentication scheme used by the client.
         // @codeCoverageIgnoreStart
 
-        $authScheme = $this->determineAuthScheme();    
-
-        switch ($authScheme) {
-            case 'Bearer':
-                $headers[] = 'WWW-Authenticate: ' . $authScheme;
-            break;
-        }
+        $headers[] = 'WWW-Authenticate: ' . $this->typeName;
         
         // @codeCoverageIgnoreEnd
         

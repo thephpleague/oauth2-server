@@ -20,6 +20,15 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class MAC extends AbstractTokenType implements TokenTypeInterface
 {
+
+    /**
+     * {$inheritdoc}
+     */
+    public function getTypeName()
+    {
+        return 'MAC';
+    }
+
     /**
      * {@inheritdoc}
      */

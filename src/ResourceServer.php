@@ -139,7 +139,7 @@ class ResourceServer extends AbstractServer
      *
      * @param bool $headerOnly Limit Access Token to Authorization header
      *
-     * @throws \League\OAuth2\Server\Exception\InvalidRequestException Thrown if there is no access token presented
+     * @throws \League\OAuth2\Server\Exception\NoTokenException Thrown if there is no access token presented
      *
      * @return string
      */
@@ -154,7 +154,7 @@ class ResourceServer extends AbstractServer
         }
 
         if (empty($accessToken)) {
-            throw new NoTokenException('access token');
+            throw new NoTokenException($this->getTokenType()->getTypeName());
         }
 
         return $accessToken;
