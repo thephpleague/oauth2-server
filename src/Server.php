@@ -5,15 +5,10 @@ namespace League\OAuth2\Server;
 use DateInterval;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
-//use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-//use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
-//use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use League\OAuth2\Server\Repositories\RepositoryInterface;
-//use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-//use League\OAuth2\Server\Repositories\UserRepositoryInterface;
-use League\OAuth2\Server\TokenTypes\BearerTokenType;
-use League\OAuth2\Server\TokenTypes\TokenTypeInterface;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\ServerRequestFactory;
 
@@ -27,9 +22,9 @@ class Server implements EmitterAwareInterface
     protected $enabledGrantTypes = [];
 
     /**
-     * @var TokenTypeInterface[]
+     * @var ResponseTypeInterface[]
      */
-    protected $grantTypeTokenTypes = [];
+    protected $grantResponseTypes = [];
 
     /**
      * @var DateInterval[]
@@ -37,9 +32,9 @@ class Server implements EmitterAwareInterface
     protected $grantTypeAccessTokenTTL = [];
 
     /**
-     * @var TokenTypeInterface
+     * @var ResponseTypeInterface
      */
-    protected $defaultTokenType;
+    protected $defaultResponseType;
 
     /**
      * @var DateInterval
@@ -52,27 +47,22 @@ class Server implements EmitterAwareInterface
     protected $scopeDelimiterString = ' ';
 
     /**
-     * @var RepositoryInterface[]
-     */
-//    protected $repositories = [];
-
-    /**
      * New server instance
      */
     public function __construct()
     {
-        $this->setDefaultTokenType(new BearerTokenType());
-        $this->setDefaultAccessTokenTTL(new DateInterval('PT01H')); // default of 1 hour
+        $this->setDefaultResponseType(new BearerTokenResponse());
+        $this->setDefaultAccessTokenTTL(new DateInterval('PT01H')); // default token TTL of 1 hour
     }
 
     /**
      * Set the default token type that grants will return
      *
-     * @param TokenTypeInterface $defaultTokenType
+     * @param ResponseTypeInterface $defaultTokenType
      */
-    public function setDefaultTokenType(TokenTypeInterface $defaultTokenType)
+    public function setDefaultResponseType(ResponseTypeInterface $defaultTokenType)
     {
-        $this->defaultTokenType = $defaultTokenType;
+        $this->defaultResponseType = $defaultTokenType;
     }
 
     /**
@@ -99,22 +89,22 @@ class Server implements EmitterAwareInterface
      * Enable a grant type on the server
      *
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
-     * @param TokenTypeInterface                             $tokenType
+     * @param ResponseTypeInterface                             $responseType
      * @param DateInterval                                   $accessTokenTTL
      */
     public function enableGrantType(
         GrantTypeInterface $grantType,
-        TokenTypeInterface $tokenType = null,
+        ResponseTypeInterface $responseType = null,
         DateInterval $accessTokenTTL = null
     ) {
         $grantType->setEmitter($this->getEmitter());
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
 
         // Set grant response type
-        if ($tokenType instanceof TokenTypeInterface) {
-            $this->grantTypeTokenTypes[$grantType->getIdentifier()] = $tokenType;
+        if ($responseType instanceof ResponseTypeInterface) {
+            $this->grantResponseTypes[$grantType->getIdentifier()] = $responseType;
         } else {
-            $this->grantTypeTokenTypes[$grantType->getIdentifier()] = $this->defaultTokenType;
+            $this->grantResponseTypes[$grantType->getIdentifier()] = $this->defaultResponseType;
         }
 
         // Set grant access token TTL
@@ -130,8 +120,8 @@ class Server implements EmitterAwareInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
-     * @return \League\OAuth2\Server\TokenTypes\TokenTypeInterface
-     * @throws \League\OAuth2\Server\Exception\InvalidGrantException
+     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
     public function respondToRequest(ServerRequestInterface $request = null)
     {
@@ -139,46 +129,24 @@ class Server implements EmitterAwareInterface
             $request = ServerRequestFactory::fromGlobals();
         }
 
-        $response = null;
+        $tokenResponse = null;
         foreach ($this->enabledGrantTypes as $grantType) {
             if ($grantType->canRespondToRequest($request)) {
-                $response = $grantType->respondToRequest(
+                $tokenResponse = $grantType->respondToRequest(
                     $request,
-                    $this->grantTypeTokenTypes[$grantType->getIdentifier()],
+                    $this->grantResponseTypes[$grantType->getIdentifier()],
                     $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()],
                     $this->scopeDelimiterString
                 );
             }
         }
 
-        if ($response === null) {
-            // do something here
+        if ($tokenResponse instanceof ResponseTypeInterface) {
+            return $tokenResponse->generateHttpResponse();
+        } else {
+            $response = OAuthServerException::unsupportedGrantType()->generateHttpResponse();
         }
 
         return $response;
     }
-
-    /**
-     * @param \League\OAuth2\Server\Repositories\RepositoryInterface $repository
-     */
-    /*public function addRepository(RepositoryInterface $repository)
-    {
-        switch ($repository) {
-            case ($repository instanceof AccessTokenRepositoryInterface):
-                $this->repositories[AccessTokenRepositoryInterface::class] = $repository;
-                break;
-            case ($repository instanceof ClientRepositoryInterface):
-                $this->repositories[ClientRepositoryInterface::class] = $repository;
-                break;
-            case ($repository instanceof ScopeRepositoryInterface):
-                $this->repositories[ScopeRepositoryInterface::class] = $repository;
-                break;
-            case ($repository instanceof UserRepositoryInterface):
-                $this->repositories[UserRepositoryInterface::class] = $repository;
-                break;
-            case ($repository instanceof AuthCodeRepositoryInterface):
-                $this->repositories[AuthCodeRepositoryInterface::class] = $repository;
-                break;
-        }
-    }*/
 }

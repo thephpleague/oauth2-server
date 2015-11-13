@@ -11,10 +11,10 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\Event\Emitter;
+use League\Event\EmitterInterface;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntity;
-use League\OAuth2\Server\Exception;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -102,7 +102,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param string                $redirectUri
      *
      * @return \League\OAuth2\Server\Entities\ScopeEntity[]
-     * @throws \League\OAuth2\Server\Exception\InvalidScopeException
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
     public function validateScopes(
         $scopeParamValue,
@@ -119,14 +119,14 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         $scopes = [];
         foreach ($scopesList as $scopeItem) {
-            $scope = $this->scopeRepository->get(
+            $scope = $this->scopeRepository->getScopeEntityByIdentifier(
                 $scopeItem,
                 $this->getIdentifier(),
                 $client->getIdentifier()
             );
 
             if (($scope instanceof ScopeEntity) === false) {
-                throw new Exception\InvalidScopeException($scopeItem, $redirectUri);
+                throw OAuthServerException::invalidScope($scopeItem, null, null, $redirectUri);
             }
 
             $scopes[] = $scope;
@@ -136,9 +136,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param Emitter $emitter
+     * @inheritdoc
      */
-    public function setEmitter(Emitter $emitter)
+    public function setEmitter(EmitterInterface $emitter)
     {
         $this->emitter = $emitter;
     }

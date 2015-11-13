@@ -12,8 +12,8 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
-use League\Event\Emitter;
-use League\OAuth2\Server\TokenTypes\TokenTypeInterface;
+use League\Event\EmitterInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -38,16 +38,16 @@ interface GrantTypeInterface
     /**
      * Return an access token
      *
-     * @param \Psr\Http\Message\ServerRequestInterface            $request
-     * @param \League\OAuth2\Server\TokenTypes\TokenTypeInterface $tokenType
-     * @param \DateInterval                                       $accessTokenTTL
-     * @param string                                              $scopeDelimiter
+     * @param \Psr\Http\Message\ServerRequestInterface                  $request
+     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $tokenType
+     * @param \DateInterval                                             $accessTokenTTL
+     * @param string                                                    $scopeDelimiter
      *
-     * @return \League\OAuth2\Server\TokenTypes\TokenTypeInterface
+     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        TokenTypeInterface $tokenType,
+        ResponseTypeInterface $tokenType,
         DateInterval $accessTokenTTL,
         $scopeDelimiter = ' '
     );
@@ -69,7 +69,7 @@ interface GrantTypeInterface
     /**
      * Set the event emitter
      *
-     * @param \League\Event\Emitter $emitter
+     * @param \League\Event\EmitterInterface $emitter
      */
-    public function setEmitter(Emitter $emitter);
+    public function setEmitter(EmitterInterface $emitter);
 }

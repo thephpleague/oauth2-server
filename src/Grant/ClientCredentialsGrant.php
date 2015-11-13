@@ -15,8 +15,8 @@ use DateInterval;
 use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
-use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\TokenTypes\TokenTypeInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\Utils\SecureKey;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -33,47 +33,37 @@ class ClientCredentialsGrant extends AbstractGrant
     protected $identifier = 'client_credentials';
 
     /**
-     * Return an access token
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface            $request
-     * @param \League\OAuth2\Server\TokenTypes\TokenTypeInterface $tokenType
-     * @param \DateInterval                                       $accessTokenTTL
-     * @param string                                              $scopeDelimiter
-     *
-     * @return \League\OAuth2\Server\TokenTypes\TokenTypeInterface
-     * @throws \League\OAuth2\Server\Exception\InvalidClientException
-     * @throws \League\OAuth2\Server\Exception\InvalidRequestException
-     * @throws \League\OAuth2\Server\Exception\InvalidScopeException
+     * @inheritdoc
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        TokenTypeInterface $tokenType,
+        ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL,
         $scopeDelimiter = ' '
     ) {
         // Get the required params
         $clientId = isset($request->getParsedBody()['client_id'])
             ? $request->getParsedBody()['client_id'] // $_POST['client_id']
-            : isset($request->getServerParams()['PHP_AUTH_USER'])
+            : (isset($request->getServerParams()['PHP_AUTH_USER'])
                 ? $request->getServerParams()['PHP_AUTH_USER'] // $_SERVER['PHP_AUTH_USER']
-                : null;
+                : null);
 
         if (is_null($clientId)) {
-            throw new Exception\InvalidRequestException('client_id');
+            throw OAuthServerException::invalidRequest('client_id', null, '`%s` parameter is missing');
         }
 
         $clientSecret = isset($request->getParsedBody()['client_secret'])
             ? $request->getParsedBody()['client_secret'] // $_POST['client_id']
-            : isset($request->getServerParams()['PHP_AUTH_PW'])
+            : (isset($request->getServerParams()['PHP_AUTH_PW'])
                 ? $request->getServerParams()['PHP_AUTH_PW'] // $_SERVER['PHP_AUTH_USER']
-                : null;
+                : null);
 
         if (is_null($clientSecret)) {
-            throw new Exception\InvalidRequestException('client_secret');
+            throw OAuthServerException::invalidRequest('client_secret', null, '`%s` parameter is missing');
         }
 
         // Validate client ID and client secret
-        $client = $this->clientRepository->get(
+        $client = $this->clientRepository->getClientEntity(
             $clientId,
             $clientSecret,
             null,
@@ -82,7 +72,7 @@ class ClientCredentialsGrant extends AbstractGrant
 
         if (($client instanceof ClientEntityInterface) === false) {
             $this->emitter->emit(new Event('client.authentication.failed', $request));
-            throw new Exception\InvalidClientException();
+            throw OAuthServerException::invalidClient();
         }
 
         // Validate any scopes that are in the request
@@ -104,12 +94,12 @@ class ClientCredentialsGrant extends AbstractGrant
         }
 
         // Save the token
-        $this->accessTokenRepository->create($accessToken);
+        $this->accessTokenRepository->persistNewAccessToken($accessToken);
 
         // Inject access token into token type
-        $tokenType->setAccessToken($accessToken);
+        $responseType->setAccessToken($accessToken);
 
-        return $tokenType;
+        return $responseType;
     }
 
     /**
