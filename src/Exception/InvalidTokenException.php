@@ -60,7 +60,7 @@ class InvalidTokenException extends OAuthException
 
         switch ($authScheme) {
             case 'Bearer':
-                $headers[] = 'WWW-Authenticate: ' . $authScheme . 
+                $headers[] = 'WWW-Authenticate: ' . $authScheme . ' ' .
                     'error = "invalid_token", ' . 
                     'error_description="There is no access token present."';
             break;
