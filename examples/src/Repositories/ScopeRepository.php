@@ -7,15 +7,9 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 class ScopeRepository implements ScopeRepositoryInterface
 {
     /**
-     * Return information about a scope
-     *
-     * @param string $scopeIdentifier The scope identifier
-     * @param string $grantType       The grant type used in the request (default = "null")
-     * @param string $clientId        The client sending the request (default = "null")
-     *
-     * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface
+     * @inheritdoc
      */
-    public function get($scopeIdentifier, $grantType = null, $clientId = null)
+    public function getScopeEntityByIdentifier($scopeIdentifier, $grantType, $clientId = null)
     {
         $scopes = [
             'basic' => [

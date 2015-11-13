@@ -7,16 +7,9 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 class ClientRepository implements ClientRepositoryInterface
 {
     /**
-     * Get a client
-     *
-     * @param string $clientIdentifier The client's identifier
-     * @param string $clientSecret     The client's secret (default = "null")
-     * @param string $redirectUri      The client's redirect URI (default = "null")
-     * @param string $grantType        The grant type used (default = "null")
-     *
-     * @return \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface
+     * @inheritdoc
      */
-    public function get($clientIdentifier, $clientSecret = null, $redirectUri = null, $grantType = null)
+    public function getClientEntity($clientIdentifier, $clientSecret = null, $redirectUri = null, $grantType = null)
     {
         $clients = [
             'myawesomeapp' => [
