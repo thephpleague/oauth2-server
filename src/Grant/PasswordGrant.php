@@ -123,9 +123,14 @@ class PasswordGrant extends AbstractGrant
         if (is_null($password)) {
             throw new Exception\InvalidRequestException('password');
         }
-
+        
+        $type_login = $this->server->getRequest()->request->get('type_login', null);
+        if (is_null($type_login)) {
+            throw new Exception\InvalidRequestException('type_login');
+        }
+        
         // Check if user's username and password are correct
-        $userId = call_user_func($this->getVerifyCredentialsCallback(), $username, $password);
+        $userId = call_user_func($this->getVerifyCredentialsCallback(), $username, $password, $type_login);
 
         if ($userId === false) {
             $this->server->getEventEmitter()->emit(new Event\UserAuthenticationFailedEvent($this->server->getRequest()));
