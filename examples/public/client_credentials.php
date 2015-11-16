@@ -1,6 +1,6 @@
 <?php
 
-use League\OAuth2\Server\Exception\OAuthException;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Server;
 
@@ -27,14 +27,13 @@ $server->enableGrantType(new ClientCredentialsGrant($clientRepository, $scopeRep
 
 // App
 $app = new App([Server::class => $server]);
-unset($app->getContainer()['errorHandler']);
 
 $app->post('/access_token', function (Request $request, Response $response) {
     /** @var Server $server */
     $server = $this->getContainer()->get(Server::class);
     try {
         return $server->respondToRequest($request);
-    } catch (OAuthException $e) {
+    } catch (OAuthServerException $e) {
         return $e->generateHttpResponse();
     } catch (\Exception $e) {
         return $response->withStatus(500)->write($e->getMessage());
