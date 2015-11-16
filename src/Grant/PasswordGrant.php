@@ -12,20 +12,18 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
-use League\Event\Emitter;
 use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
-use League\OAuth2\Server\Exception;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
-use League\OAuth2\Server\TokenTypes\TokenTypeInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\Utils\SecureKey;
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Password grant class
@@ -33,84 +31,58 @@ use Symfony\Component\HttpFoundation\Request;
 class PasswordGrant extends AbstractGrant
 {
     /**
-     * Grant identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'password';
-
-    /**
-     * Callback to authenticate a user's name and password
-     *
-     * @var callable
-     */
-    protected $callback;
-
-    /**
      * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
      */
-    protected $userRepository;
+    private $userRepository;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
-     */
-    protected $refreshTokenRepository;
-
-    /**
-     * @param \League\Event\Emitter                                              $emitter
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface       $clientRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface        $scopeRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface  $accessTokenRepository
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
-     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface        $userRepository
+     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
+     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
      */
     public function __construct(
-        Emitter $emitter,
+        UserRepositoryInterface $userRepository,
         ClientRepositoryInterface $clientRepository,
         ScopeRepositoryInterface $scopeRepository,
-        AccessTokenRepositoryInterface $accessTokenRepository,
-        UserRepositoryInterface $userRepository,
-        RefreshTokenRepositoryInterface $refreshTokenRepository = null
+        AccessTokenRepositoryInterface $accessTokenRepository
     ) {
         $this->userRepository = $userRepository;
-        $this->refreshTokenRepository = $refreshTokenRepository;
-        parent::__construct($emitter, $clientRepository, $scopeRepository, $accessTokenRepository);
+        parent::__construct($clientRepository, $scopeRepository, $accessTokenRepository);
     }
 
     /**
-     * Return an access token
-     *
-     * @param \Symfony\Component\HttpFoundation\Request           $request
-     * @param \League\OAuth2\Server\TokenTypes\TokenTypeInterface $tokenType
-     * @param \DateInterval                                       $accessTokenTTL
-     * @param string                                              $scopeDelimiter
-     *
-     * @return \League\OAuth2\Server\TokenTypes\TokenTypeInterface
-     * @throws \League\OAuth2\Server\Exception\InvalidClientException
-     * @throws \League\OAuth2\Server\Exception\InvalidCredentialsException
-     * @throws \League\OAuth2\Server\Exception\InvalidRequestException
-     * @throws \League\OAuth2\Server\Exception\InvalidScopeException
+     * @inheritdoc
      */
-    public function getAccessTokenAsType(
-        Request $request,
-        TokenTypeInterface $tokenType,
+    public function respondToRequest(
+        ServerRequestInterface $request,
+        ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL,
         $scopeDelimiter = ' '
     ) {
         // Get the required params
-        $clientId = $request->request->get('client_id', $request->getUser());
+        $clientId = isset($request->getParsedBody()['client_id'])
+            ? $request->getParsedBody()['client_id'] // $_POST['client_id']
+            : (isset($request->getServerParams()['PHP_AUTH_USER'])
+                ? $request->getServerParams()['PHP_AUTH_USER'] // $_SERVER['PHP_AUTH_USER']
+                : null);
+
         if (is_null($clientId)) {
-            throw new Exception\InvalidRequestException('client_id');
+            throw OAuthServerException::invalidRequest('client_id', null, '`%s` parameter is missing');
         }
 
-        $clientSecret = $request->request->get('client_secret',
-            $request->getPassword());
+        $clientSecret = isset($request->getParsedBody()['client_secret'])
+            ? $request->getParsedBody()['client_secret'] // $_POST['client_id']
+            : (isset($request->getServerParams()['PHP_AUTH_PW'])
+                ? $request->getServerParams()['PHP_AUTH_PW'] // $_SERVER['PHP_AUTH_USER']
+                : null);
+
         if (is_null($clientSecret)) {
-            throw new Exception\InvalidRequestException('client_secret');
+            throw OAuthServerException::invalidRequest('client_secret', null, '`%s` parameter is missing');
         }
 
         // Validate client ID and client secret
-        $client = $this->clientRepository->get(
+        $client = $this->clientRepository->getClientEntity(
             $clientId,
             $clientSecret,
             null,
@@ -119,62 +91,77 @@ class PasswordGrant extends AbstractGrant
 
         if (($client instanceof ClientEntityInterface) === false) {
             $this->emitter->emit(new Event('client.authentication.failed', $request));
-            throw new Exception\InvalidClientException();
+            throw OAuthServerException::invalidClient();
         }
 
-        $username = $request->request->get('username', null);
+        // Username
+        $username = isset($request->getParsedBody()['username'])
+            ? $request->getParsedBody()['username'] // $_POST['username']
+            : (isset($request->getServerParams()['PHP_AUTH_USER'])
+                ? $request->getServerParams()['PHP_AUTH_USER'] // $_SERVER['PHP_AUTH_USER']
+                : null);
+
         if (is_null($username)) {
-            throw new Exception\InvalidRequestException('username');
+            throw OAuthServerException::invalidRequest('username', null, '`%s` parameter is missing');
         }
 
-        $password = $request->request->get('password', null);
+        // Password
+        $password = isset($request->getParsedBody()['password'])
+            ? $request->getParsedBody()['password'] // $_POST['password']
+            : (isset($request->getServerParams()['PHP_AUTH_USER'])
+                ? $request->getServerParams()['PHP_AUTH_USER'] // $_SERVER['PHP_AUTH_USER']
+                : null);
+
         if (is_null($password)) {
-            throw new Exception\InvalidRequestException('password');
+            throw OAuthServerException::invalidRequest('password', null, '`%s` parameter is missing');
         }
 
-        // Check if user's username and password are correct
-        $user = $this->userRepository->getByCredentials($username, $password);
-
-        if (($user instanceof UserEntityInterface) === false) {
+        // Verify user's username and password
+        $userEntity = $this->userRepository->getUserEntityByUserCredentials($username, $password);
+        if (($userEntity instanceof UserEntityInterface) === false) {
             $this->emitter->emit(new Event('user.authentication.failed', $request));
-            throw new Exception\InvalidCredentialsException();
+            throw OAuthServerException::invalidCredentials();
         }
 
         // Validate any scopes that are in the request
-        $scopeParamValue = $request->request->get('scope', '');
-        $scopes = $this->validateScopes($scopeParamValue, $scopeDelimiter, $client);
+        $scopeParam = isset($request->getParsedBody()['scope'])
+            ? $request->getParsedBody()['scope'] // $_POST['scope']
+            : '';
+        $scopes = $this->validateScopes($scopeParam, $scopeDelimiter, $client);
 
         // Generate an access token
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier(SecureKey::generate());
-        $expirationDateTime = (new \DateTime())->add($accessTokenTTL);
-        $accessToken->setExpiryDateTime($expirationDateTime);
-        $accessToken->setOwner('user', $user->getIdentifier());
+        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
         $accessToken->setClient($client);
+        $accessToken->setOwner('user', $userEntity->getIdentifier());
 
-        // Associate scopes with the access token
+        // Associate scopes with the session and access token
         foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
         }
 
-        $tokenType->setAccessToken($accessToken);
+        // Save the token
+        $this->accessTokenRepository->persistNewAccessToken($accessToken);
 
-        // Associate a refresh token if set
-        if ($this->refreshTokenRepository instanceof RefreshTokenRepositoryInterface) {
-//            $refreshToken = new RefreshTokenEntity($this->server);
-//            $refreshToken->setId(SecureKey::generate());
-//            $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
-//            $refreshToken->setAccessToken($accessToken);
-//            $this->server->getTokenType()->setParam('refresh_token', $refreshToken->getId());
-//            $tokenType->setParam('refresh_token', $refreshToken);
+        // Inject access token into token type
+        $responseType->setAccessToken($accessToken);
+
+        return $responseType;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function canRespondToRequest(ServerRequestInterface $request)
+    {
+        if (
+            isset($request->getParsedBody()['grant_type'])
+            && $request->getParsedBody()['grant_type'] === 'password'
+        ) {
+            return true;
         }
 
-        // Save the access token
-        $this->accessTokenRepository->create($accessToken);
-
-        // Inject the access token into token type
-        $tokenType->setAccessToken($accessToken);
-
-        return $tokenType;
+        return false;
     }
 }
