@@ -1,22 +1,25 @@
 <?php
 namespace OAuth2ServerExamples\Repositories;
 
-use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use OAuth2ServerExamples\Entities\UserEntity;
 
 class UserRepository implements UserRepositoryInterface
 {
     /**
-     * Get a user
+     * Get a user entity
      *
      * @param string $username
      * @param string $password
      *
-     * @return UserEntityInterface
+     * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
      */
-    public function getByCredentials($username, $password)
+    public function getUserEntityByUserCredentials($username, $password)
     {
-        return new UserEntity();
+        if ($username === 'alex' && $password === 'whisky') {
+            return new UserEntity();
+        }
+
+        return null;
     }
 }
