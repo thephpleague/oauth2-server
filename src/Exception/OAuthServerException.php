@@ -48,98 +48,6 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * @return int
-     */
-    public function getHttpStatusCode()
-    {
-        return $this->httpStatusCode;
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getErrorType()
-    {
-        return $this->errorType;
-    }
-
-    /**
-     * Get all headers that have to be send with the error response
-     *
-     * @return array Array with header values
-     */
-    public function getHttpHeaders()
-    {
-        $headers = [
-            'Content-type' => 'application/json'
-        ];
-
-        // Add "WWW-Authenticate" header
-        //
-        // RFC 6749, section 5.2.:
-        // "If the client attempted to authenticate via the 'Authorization'
-        // request header field, the authorization server MUST
-        // respond with an HTTP 401 (Unauthorized) status code and
-        // include the "WWW-Authenticate" response header field
-        // matching the authentication scheme used by the client.
-        // @codeCoverageIgnoreStart
-        if ($this->errorType === 'invalid_client') {
-            $authScheme = null;
-            $request = new ServerRequest();
-            if ($request->getServerParams()['PHP_AUTH_USER'] !== null) {
-                $authScheme = 'Basic';
-            } else {
-                $authHeader = $request->getHeader('authorization');
-                if ($authHeader !== null) {
-                    if (strpos($authHeader, 'Bearer') === 0) {
-                        $authScheme = 'Bearer';
-                    } elseif (strpos($authHeader, 'Basic') === 0) {
-                        $authScheme = 'Basic';
-                    }
-                }
-            }
-            if ($authScheme !== null) {
-                $headers[] = 'WWW-Authenticate: ' . $authScheme . ' realm="OAuth"';
-            }
-        }
-
-        // @codeCoverageIgnoreEnd
-        return $headers;
-    }
-
-    /**
-     * Generate a HTTP response
-     * @return ResponseInterface
-     */
-    public function generateHttpResponse()
-    {
-        $headers = $this->getHttpHeaders();
-
-        $payload = [
-            'error'   => $this->errorType,
-            'message' => $this->getMessage()
-        ];
-
-        if ($this->hint !== null) {
-            $payload['hint'] = $this->hint;
-        }
-
-        if ($this->redirectUri !== null) {
-            $headers['Location'] = RedirectUri::make($this->redirectUri, $payload);
-        }
-
-        $response = new Response(
-            'php://memory',
-            $this->getHttpStatusCode(),
-            $headers
-        );
-        $response->getBody()->write(json_encode($payload));
-
-        return $response;
-    }
-
-    /**
      * Invalid grant type error
      *
      * @param null|string $localizedError
@@ -243,5 +151,112 @@ class OAuthServerException extends \Exception
             : sprintf($localizedHint, $scope);
 
         return new static($errorMessage, 'invalid_scope', 400, $hint, $redirectUri);
+    }
+
+    /**
+     * Invalid credentials error
+     *
+     * @return static
+     */
+    public static function invalidCredentials()
+    {
+        return new static('The user credentials were incorrect.', 'invalid_credentials', 401);
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrorType()
+    {
+        return $this->errorType;
+    }
+
+    /**
+     * Generate a HTTP response
+     *
+     * @return ResponseInterface
+     */
+    public function generateHttpResponse()
+    {
+        $headers = $this->getHttpHeaders();
+
+        $payload = [
+            'error'   => $this->errorType,
+            'message' => $this->getMessage()
+        ];
+
+        if ($this->hint !== null) {
+            $payload['hint'] = $this->hint;
+        }
+
+        if ($this->redirectUri !== null) {
+            $headers['Location'] = RedirectUri::make($this->redirectUri, $payload);
+        }
+
+        $response = new Response(
+            'php://memory',
+            $this->getHttpStatusCode(),
+            $headers
+        );
+        $response->getBody()->write(json_encode($payload));
+
+        return $response;
+    }
+
+    /**
+     * Get all headers that have to be send with the error response
+     *
+     * @return array Array with header values
+     */
+    public function getHttpHeaders()
+    {
+        $headers = [
+            'Content-type' => 'application/json'
+        ];
+
+        // Add "WWW-Authenticate" header
+        //
+        // RFC 6749, section 5.2.:
+        // "If the client attempted to authenticate via the 'Authorization'
+        // request header field, the authorization server MUST
+        // respond with an HTTP 401 (Unauthorized) status code and
+        // include the "WWW-Authenticate" response header field
+        // matching the authentication scheme used by the client.
+        // @codeCoverageIgnoreStart
+        if ($this->errorType === 'invalid_client') {
+            $authScheme = null;
+            $request = new ServerRequest();
+            if (
+                isset($request->getServerParams()['PHP_AUTH_USER']) &&
+                $request->getServerParams()['PHP_AUTH_USER'] !== null
+            ) {
+                $authScheme = 'Basic';
+            } else {
+                $authHeader = $request->getHeader('authorization');
+                if ($authHeader !== []) {
+                    if (strpos($authHeader[0], 'Bearer') === 0) {
+                        $authScheme = 'Bearer';
+                    } elseif (strpos($authHeader[0], 'Basic') === 0) {
+                        $authScheme = 'Basic';
+                    }
+                }
+            }
+            if ($authScheme !== null) {
+                $headers[] = 'WWW-Authenticate: ' . $authScheme . ' realm="OAuth"';
+            }
+        }
+
+        // @codeCoverageIgnoreEnd
+        return $headers;
+    }
+
+    /**
+     * Returns the HTTP status code to send when the exceptions is output
+     *
+     * @return int
+     */
+    public function getHttpStatusCode()
+    {
+        return $this->httpStatusCode;
     }
 }
