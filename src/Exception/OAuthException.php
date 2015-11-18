@@ -13,11 +13,12 @@ namespace League\OAuth2\Server\Exception;
 
 use League\OAuth2\Server\Util\RedirectUri;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 /**
  * Exception class
  */
-class OAuthException extends \Exception
+class OAuthException extends \Exception implements HttpExceptionInterface
 {
     /**
      * The HTTP status code for this exception that should be sent in the response
@@ -141,5 +142,25 @@ class OAuthException extends \Exception
         }
         // @codeCoverageIgnoreEnd
         return $headers;
+    }
+
+    /**
+     * Return HTTP status code
+     *
+     * @return int
+     */
+    public function getStatusCode()
+    {
+        return $this->httpStatusCode;
+    }
+
+    /**
+     * Alias of function getHttpHeaders
+     *
+     * @return array Array with header values
+     */
+    public function getHeaders()
+    {
+        return $this->getHttpHeaders();
     }
 }
