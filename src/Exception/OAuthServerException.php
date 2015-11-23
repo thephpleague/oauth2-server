@@ -174,11 +174,26 @@ class OAuthServerException extends \Exception
     /**
      * Generate a HTTP response
      *
+     * @param ResponseInterface|null $response
+     *
      * @return ResponseInterface
      */
-    public function generateHttpResponse()
+    public function getResponse(ResponseInterface $response = null)
     {
+        if ($response === null) {
+            $response = new Response('php://memory');
+        }
+
         $headers = $this->getHttpHeaders();
+
+        if ($this->redirectUri !== null) {
+            $headers['Location'] = RedirectUri::make($this->redirectUri, $payload);
+        }
+
+        $response = $response->withStatus($this->getHttpStatusCode());
+        foreach ($headers as $header => $content) {
+            $response = $response->withHeader($header, $content);
+        }
 
         $payload = [
             'error'   => $this->errorType,
@@ -189,18 +204,7 @@ class OAuthServerException extends \Exception
             $payload['hint'] = $this->hint;
         }
 
-        if ($this->redirectUri !== null) {
-            $headers['Location'] = RedirectUri::make($this->redirectUri, $payload);
-        }
-
-        $response = new Response(
-            'php://memory',
-            $this->getHttpStatusCode(),
-            $headers
-        );
-        $response->getBody()->write(json_encode($payload));
-
-        return $response;
+        return $response->write(json_encode($payload));
     }
 
     /**

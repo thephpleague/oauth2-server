@@ -1,5 +1,9 @@
 <?php
 
+namespace OAuth2ServerExamples;
+
+use Exception;
+
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Server;
@@ -17,13 +21,12 @@ include(__DIR__ . '/../vendor/autoload.php');
 // Setup the authorization server
 $server = new Server();
 
-// Init our repositories
-$clientRepository = new ClientRepository();
-$scopeRepository = new ScopeRepository();
-$accessTokenRepository = new AccessTokenRepository();
-
 // Enable the client credentials grant on the server
-$server->enableGrantType(new ClientCredentialsGrant($clientRepository, $scopeRepository, $accessTokenRepository));
+$server->enableGrantType(new ClientCredentialsGrant(
+    new ClientRepository(),
+    new ScopeRepository(),
+    new AccessTokenRepository()
+));
 
 // App
 $app = new App([Server::class => $server]);
@@ -32,10 +35,10 @@ $app->post('/access_token', function (Request $request, Response $response) {
     /** @var Server $server */
     $server = $this->getContainer()->get(Server::class);
     try {
-        return $server->respondToRequest($request);
+        return $server->handleTokenRequest($request, $response);
     } catch (OAuthServerException $e) {
-        return $e->generateHttpResponse();
-    } catch (\Exception $e) {
+        return $e->getResponse($response);
+    } catch (Exception $e) {
         return $response->withStatus(500)->write($e->getMessage());
     }
 });
