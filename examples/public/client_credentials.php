@@ -13,8 +13,8 @@ use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
 
 use Slim\App;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 include(__DIR__ . '/../vendor/autoload.php');
 
@@ -31,7 +31,7 @@ $server->enableGrantType(new ClientCredentialsGrant(
 // App
 $app = new App([Server::class => $server]);
 
-$app->post('/access_token', function (Request $request, Response $response) {
+$app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) {
     /** @var Server $server */
     $server = $this->getContainer()->get(Server::class);
     try {
