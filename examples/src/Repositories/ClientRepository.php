@@ -9,7 +9,7 @@ class ClientRepository implements ClientRepositoryInterface
     /**
      * @inheritdoc
      */
-    public function getClientEntity($clientIdentifier, $clientSecret = null, $redirectUri = null, $grantType = null)
+    public function getClientEntity($clientIdentifier, $grantType, $clientSecret = null, $redirectUri = null)
     {
         $clients = [
             'myawesomeapp' => [
