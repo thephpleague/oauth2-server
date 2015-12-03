@@ -8,7 +8,7 @@
 .travis.yml export-ignore
 .scrutinizer.yml export-ignore
 /codeception.yml export-ignore
-/phpunit.xml export-ignore
+/phpunit.xml.dist export-ignore
 /CHANGELOG.md export-ignore
 /CONTRIBUTING.md export-ignore
 /README.md export-ignore
