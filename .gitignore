@@ -1,5 +1,6 @@
 /vendor
 /composer.lock
+phpunit.xml
 .idea
 /examples/vendor
 /tests/_output
