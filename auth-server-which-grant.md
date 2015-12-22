@@ -10,9 +10,9 @@ This page was originally posted at [http://alexbilbie.com/2013/02/a-guide-to-oau
 
 ---
 
-OAuth 2.0 by it’s nature is a very flexible standard and can be adapted to work in many different scenarios. The [core specification](http://tools.ietf.org/html/rfc6749) describes four authorisation grants:
+OAuth 2.0 by it’s nature is a very flexible standard and can be adapted to work in many different scenarios. The [core specification](http://tools.ietf.org/html/rfc6749) describes four authorization grants:
 
-* Authorisation code grant
+* Authorization code grant
 * Implicit grant
 * Resource owner credentials grant
 * Client credentials grant
@@ -33,10 +33,10 @@ As a refresher here is a quick glossary of OAuth terms (taken from the core spec
 
 * **Resource owner (a.k.a. the User)** - An entity capable of granting access to a protected resource. When the resource owner is a person, it is referred to as an end-user.
 * **Resource server (a.k.a. the API server)** - The server hosting the protected resources, capable of accepting and responding to protected resource requests using access tokens.
-* **Client** - An application making protected resource requests on behalf of the resource owner and with its authorisation. The term client does not imply any particular implementation characteristics (e.g. whether the application executes on a server, a desktop, or other devices).
-* **Authorisation server** - The server issuing access tokens to the client after successfully authenticating the resource owner and obtaining authorisation.
+* **Client** - An application making protected resource requests on behalf of the resource owner and with its authorization. The term client does not imply any particular implementation characteristics (e.g. whether the application executes on a server, a desktop, or other devices).
+* **Authorization server** - The server issuing access tokens to the client after successfully authenticating the resource owner and obtaining authorization.
 
-## Authorisation code grant ([section 4.1](http://tools.ietf.org/html/rfc6749#section-4.1))
+## Authorization code grant ([section 4.1](http://tools.ietf.org/html/rfc6749#section-4.1))
 
 **To enable this grant:**
 
@@ -45,11 +45,11 @@ $authCodeGrant = new \League\OAuth2\Server\Grant\AuthCodeGrant();
 $server->addGrantType($authCodeGrant);
 ~~~
 
-The authorisation code grant is the grant that most people think of when OAuth is described.
+The authorization code grant is the grant that most people think of when OAuth is described.
 
 If you’ve ever signed into a website or application with your Twitter/Facebook/Google/(insert major Internet company here) account then you’ll have experienced using this grant.
 
-Essentially a user will click on a “sign in with Facebook” (or other <abbr title="Identity Provider">IdP</abbr>) and then be redirected from the application/website (the “client”) to the IdP authorisation server. The user will then sign in to the IdP with their credentials, and then - if they haven’t already - authorise the client to allow it to use the user’s data (such as their name, email address, etc). If they authorise the request the user will be redirected back to the client with a token (called the authorisation code) in the query string (e.g. `http://client.com/redirect?code=XYZ123`) which the client will capture and exchange for an access token in the background.
+Essentially a user will click on a “sign in with Facebook” (or other <abbr title="Identity Provider">IdP</abbr>) and then be redirected from the application/website (the “client”) to the IdP authorization server. The user will then sign in to the IdP with their credentials, and then - if they haven’t already - authorise the client to allow it to use the user’s data (such as their name, email address, etc). If they authorise the request the user will be redirected back to the client with a token (called the authorization code) in the query string (e.g. `http://client.com/redirect?code=XYZ123`) which the client will capture and exchange for an access token in the background.
 
 This grant is suitable where the resource owner is a user and they are using a client which is allows a user to interact with a website in a browser. An obvious example is the client being another website, but desktop applications such as Spotify or Reeder use embedded browsers.
 
@@ -57,13 +57,13 @@ Some mobile applications use this flow and again use an embedded browser (or red
 
 In this grant the access token is kept private from the resource owner.
 
-If you have a mobile application that is for your own service (such as the official Spotify or Facebook apps on iOS) it isn’t appropriate to use this grant as the app itself should already be trusted by your authorisation server and so the _resource owner credentials grant would be more appropriate.
+If you have a mobile application that is for your own service (such as the official Spotify or Facebook apps on iOS) it isn’t appropriate to use this grant as the app itself should already be trusted by your authorization server and so the _resource owner credentials grant would be more appropriate.
 
 ## Implicit grant ([section 4.2](http://tools.ietf.org/html/rfc6749#section-4.2))
 
 **Not currently supported. [See #249](https://github.com/thephpleague/oauth2-server/issues/249)**
 
-The implicit grant is similar to the authentication code grant described above. The user will be redirected in a browser to the IdP authorisation server, sign in, authorise the request but instead of being returned to the client with an authentication code they are redirected with an access token straight away.
+The implicit grant is similar to the authentication code grant described above. The user will be redirected in a browser to the IdP authorization server, sign in, authorise the request but instead of being returned to the client with an authentication code they are redirected with an access token straight away.
 
 The purpose of the implicit grant is for use by clients which are not capable of keeping the client’s own credentials secret; for example a JavaScript only application.
 
@@ -82,9 +82,9 @@ $passwordGrant->setVerifyCredentialsCallback(function ($username, $password) {
 $server->addGrantType($passwordGrant);
 ~~~
 
-When this grant is implemented the client itself will ask the user for their username and password (as opposed to being redirected to an IdP authorisation server to authenticate) and then send these to the authorisation server along with the client’s own credentials.  If the authentication is successful then the client will be issued with an access token.
+When this grant is implemented the client itself will ask the user for their username and password (as opposed to being redirected to an IdP authorization server to authenticate) and then send these to the authorization server along with the client’s own credentials.  If the authentication is successful then the client will be issued with an access token.
 
-This grant is suitable for trusted clients such as a service’s own mobile client (for example Spotify’s iOS app). You could also use this in software where it’s not easy to implement the authorisation code - for example we bolted this authorisation grant into [OwnCloud](http://owncloud.org/) so we could retrieve details about a user that we couldn’t access over LDAP from the university’s Active Directory server.
+This grant is suitable for trusted clients such as a service’s own mobile client (for example Spotify’s iOS app). You could also use this in software where it’s not easy to implement the authorization code - for example we bolted this authorization grant into [OwnCloud](http://owncloud.org/) so we could retrieve details about a user that we couldn’t access over LDAP from the university’s Active Directory server.
 
 ## Client credentials grant  ([section 4.4](http://tools.ietf.org/html/rfc6749#section-4.4))
 
@@ -112,6 +112,6 @@ $server->addGrantType($refreshTokenGrant);
 
 The OAuth 2.0 specification also details a fifth grant which can be used to “refresh” (i.e. renew) an access token which has expired.
 
-Authorisation servers which support this grant will also issue a “refresh token” when it returns an access token to a client. When the access token expires instead of sending the user back through the authorisation code grant the client can use to the refresh token to retrieve a new access token with the same permissions as the old one.
+Authorization servers which support this grant will also issue a “refresh token” when it returns an access token to a client. When the access token expires instead of sending the user back through the authorization code grant the client can use to the refresh token to retrieve a new access token with the same permissions as the old one.
 
 A problem with the grant is that it means the client has to maintain state of each token and then either on a cron job keep access tokens up to date or when it tries to make a request and it fails then go and update the access token and repeat the request.
