@@ -57,5 +57,10 @@
         "psr-4": {
             "LeagueTests\\": "tests/unit/"
         }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-V5-WIP": "5.0-dev"
+        }
     }
 }
