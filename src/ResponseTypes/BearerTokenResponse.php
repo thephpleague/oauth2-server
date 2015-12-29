@@ -12,6 +12,7 @@
 namespace League\OAuth2\Server\ResponseTypes;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 
 class BearerTokenResponse extends AbstractResponseType
@@ -19,8 +20,12 @@ class BearerTokenResponse extends AbstractResponseType
     /**
      * {@inheritdoc}
      */
-    public function generateHttpResponse()
+    public function getResponse(ResponseInterface $response = null)
     {
+        if ($response === null) {
+            $response = new Response('php://memory');
+        }
+
         $values = [
             'access_token' => $this->accessToken->getIdentifier(),
             'token_type'   => 'Bearer',
@@ -31,18 +36,11 @@ class BearerTokenResponse extends AbstractResponseType
             $values['refresh_token'] = $this->getParam('refresh_token');
         }
 
-        $response = new Response(
-            'php://memory',
-            200,
-            [
-                'pragma'        => 'no-cache',
-                'cache-control' => 'no-store',
-                'content-type'  => 'application/json;charset=UTF-8'
-            ]
-        );
-        $response->getBody()->write(json_encode($values));
-
-        return $response;
+        return $response->withStatus(200)
+            ->withHeader('pragma', 'no-cache')
+            ->withHeader('cache-control', 'no-store')
+            ->withHeader('content-type', 'application/json;charset=UTF-8')
+            ->write(json_encode($values));
     }
 
     /**

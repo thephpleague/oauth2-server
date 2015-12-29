@@ -10,6 +10,7 @@ use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\ServerRequestFactory;
 
 class Server implements EmitterAwareInterface
@@ -123,10 +124,14 @@ class Server implements EmitterAwareInterface
      * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
-    public function respondToRequest(ServerRequestInterface $request = null)
+    public function handleTokenRequest(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
         if ($request === null) {
             $request = ServerRequestFactory::fromGlobals();
+        }
+
+        if ($response === null) {
+            $response = new Response('php://memory');
         }
 
         $tokenResponse = null;
@@ -142,11 +147,9 @@ class Server implements EmitterAwareInterface
         }
 
         if ($tokenResponse instanceof ResponseTypeInterface) {
-            return $tokenResponse->generateHttpResponse();
-        } else {
-            $response = OAuthServerException::unsupportedGrantType()->generateHttpResponse();
+            return $tokenResponse->getResponse($response);
         }
 
-        return $response;
+        return OAuthServerException::unsupportedGrantType()->getResponse($response);
     }
 }

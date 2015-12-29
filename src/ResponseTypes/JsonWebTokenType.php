@@ -94,21 +94,20 @@ class JsonWebTokenType extends AbstractTokenType
     }
 
     /**
-     * @return \Symfony\Component\HttpFoundation\Response
+     * {@inheritdoc}
      */
-    public function generateHttpResponse()
+    public function getResponse(ResponseInterface $response = null)
     {
-        return new Response(
-            json_encode([
-                $this->generateResponse()
-            ]),
-            200,
-            [
-                'Content-type'  => 'application/json',
-                'Cache-Control' => 'no-store',
-                'Pragma'        => 'no-cache'
-            ]
-        );
+        if ($response === null) {
+            $response = new Response('php://memory');
+        }
+
+        return $response
+            ->withStatus(200)
+            ->withHeader('pragma', 'no-cache')
+            ->withHeader('cache-control', 'no-store')
+            ->withHeader('content-type', 'application/json;charset=UTF-8')
+            ->write(json_encode($this->generateResponse()));
     }
 
     /**
