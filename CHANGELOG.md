@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.5 (released 2016-01-04)
+
+* Enable Symfony 3.0 support (#412)
+
 ## 4.1.4 (released 2015-11-13)
 
 * Fix for determining access token in header (Issue #328)
