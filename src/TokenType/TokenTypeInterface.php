@@ -18,6 +18,13 @@ use Symfony\Component\HttpFoundation\Request;
 interface TokenTypeInterface
 {
     /**
+     * The name of the token type
+     * 
+     * @return string
+     */
+    public function getTypeName();
+
+    /**
      * Generate a response
      *
      * @return array

@@ -12,8 +12,8 @@
 namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Exception\AccessDeniedException;
-use League\OAuth2\Server\Exception\InvalidRequestException;
+use League\OAuth2\Server\Exception\NoTokenException;
+use League\OAuth2\Server\Exception\InvalidTokenException;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
 use League\OAuth2\Server\Storage\ClientInterface;
 use League\OAuth2\Server\Storage\ScopeInterface;
@@ -99,8 +99,8 @@ class ResourceServer extends AbstractServer
      * @param bool                                                $headerOnly Limit Access Token to Authorization header
      * @param \League\OAuth2\Server\Entity\AccessTokenEntity|null $accessToken Access Token
      *
-     * @throws \League\OAuth2\Server\Exception\AccessDeniedException
-     * @throws \League\OAuth2\Server\Exception\InvalidRequestException
+     * @throws \League\OAuth2\Server\Exception\NoTokenException
+     * @throws \League\OAuth2\Server\Exception\InvalidTokenException
      *
      * @return bool
      */
@@ -115,13 +115,15 @@ class ResourceServer extends AbstractServer
 
         // Ensure the access token exists
         if (!$this->accessToken instanceof AccessTokenEntity) {
-            throw new AccessDeniedException();
+            //invalid_token
+            throw new InvalidTokenException();
         }
 
         // Check the access token hasn't expired
         // Ensure the auth code hasn't expired
         if ($this->accessToken->isExpired() === true) {
-            throw new AccessDeniedException();
+            //invalid_token
+            throw new InvalidTokenException();
         }
 
         return true;
@@ -132,7 +134,7 @@ class ResourceServer extends AbstractServer
      *
      * @param bool $headerOnly Limit Access Token to Authorization header
      *
-     * @throws \League\OAuth2\Server\Exception\InvalidRequestException Thrown if there is no access token presented
+     * @throws \League\OAuth2\Server\Exception\NoTokenException Thrown if there is no access token presented
      *
      * @return string
      */
@@ -147,7 +149,7 @@ class ResourceServer extends AbstractServer
         }
 
         if (empty($accessToken)) {
-            throw new InvalidRequestException('access token');
+            throw new NoTokenException($this->getTokenType()->getTypeName());
         }
 
         return $accessToken;
