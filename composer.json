@@ -6,7 +6,10 @@
     "require": {
         "php": ">=5.5.9",
         "league/event": "~2.1",
-        "zendframework/zend-diactoros": "~1.1"
+        "zendframework/zend-diactoros": "~1.1",
+        "namshi/jose": "^6.0",
+        "defuse/php-encryption": "^1.2"
+
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*",
@@ -48,6 +51,9 @@
         "lncd/oauth2": "*",
         "league/oauth2server": "*"
     },
+    "bin": [
+        "bin/generate-crypto-key"
+    ],
     "autoload": {
         "psr-4": {
             "League\\OAuth2\\Server\\": "src/"
