@@ -16,6 +16,7 @@ use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
+use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -134,18 +135,25 @@ class PasswordGrant extends AbstractGrant
         $accessToken->setIdentifier(SecureKey::generate());
         $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
         $accessToken->setClient($client);
-        $accessToken->setOwner('user', $userEntity->getIdentifier());
+        $accessToken->setUserIdentifier($userEntity->getIdentifier());
 
         // Associate scopes with the session and access token
         foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
         }
 
-        // Save the token
+        // Persist the token
         $this->accessTokenRepository->persistNewAccessToken($accessToken);
 
-        // Inject access token into token type
+        // Generate a refresh token
+        $refreshToken = new RefreshTokenEntity();
+        $refreshToken->setIdentifier(SecureKey::generate());
+        $refreshToken->setExpiryDateTime((new \DateTime())->add(new DateInterval('P1M')));
+        $refreshToken->setAccessToken($accessToken);
+
+        // Inject tokens into response
         $responseType->setAccessToken($accessToken);
+        $responseType->setRefreshToken($refreshToken);
 
         return $responseType;
     }
