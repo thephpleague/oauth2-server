@@ -11,12 +11,23 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entity\AccessTokenEntity;
-use League\OAuth2\Server\Entity\ClientEntity;
-use League\OAuth2\Server\Entity\RefreshTokenEntity;
-use League\OAuth2\Server\Event;
-use League\OAuth2\Server\Exception;
-use League\OAuth2\Server\Util\SecureKey;
+use DateInterval;
+use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\ValidationData;
+use League\OAuth2\Server\Entities\AccessTokenEntity;
+use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
+use League\OAuth2\Server\Entities\RefreshTokenEntity;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\Utils\SecureKey;
+use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Refresh token grant
@@ -24,120 +35,105 @@ use League\OAuth2\Server\Util\SecureKey;
 class RefreshTokenGrant extends AbstractGrant
 {
     /**
-     * {@inheritdoc}
+     * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
      */
-    protected $identifier = 'refresh_token';
+    private $refreshTokenRepository;
+    /**
+     * @var string
+     */
+    private $pathToPublicKey;
 
     /**
-     * Refresh token TTL (default = 604800 | 1 week)
-     *
-     * @var integer
+     * @param string                                                             $pathToPublicKey
+     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface       $clientRepository
+     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface        $scopeRepository
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface  $accessTokenRepository
+     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      */
-    protected $refreshTokenTTL = 604800;
-
-    /**
-     * Rotate token (default = true)
-     *
-     * @var integer
-     */
-    protected $refreshTokenRotate = true;
-
-    /**
-     * Set the TTL of the refresh token
-     *
-     * @param int $refreshTokenTTL
-     *
-     * @return void
-     */
-    public function setRefreshTokenTTL($refreshTokenTTL)
-    {
-        $this->refreshTokenTTL = $refreshTokenTTL;
+    public function __construct(
+        $pathToPublicKey,
+        ClientRepositoryInterface $clientRepository,
+        ScopeRepositoryInterface $scopeRepository,
+        AccessTokenRepositoryInterface $accessTokenRepository,
+        RefreshTokenRepositoryInterface $refreshTokenRepository
+    ) {
+        $this->pathToPublicKey = $pathToPublicKey;
+        $this->refreshTokenRepository = $refreshTokenRepository;
+        parent::__construct($clientRepository, $scopeRepository, $accessTokenRepository);
     }
 
     /**
-     * Get the TTL of the refresh token
-     *
-     * @return int
+     * @inheritdoc
      */
-    public function getRefreshTokenTTL()
-    {
-        return $this->refreshTokenTTL;
-    }
+    public function respondToRequest(
+        ServerRequestInterface $request,
+        ResponseTypeInterface $responseType,
+        DateInterval $tokenTTL,
+        $scopeDelimiter = ' '
+    ) {
+        // Get the required params
+        $clientId = isset($request->getParsedBody()['client_id'])
+            ? $request->getParsedBody()['client_id'] // $_POST['client_id']
+            : (isset($request->getServerParams()['PHP_AUTH_USER'])
+                ? $request->getServerParams()['PHP_AUTH_USER'] // $_SERVER['PHP_AUTH_USER']
+                : null);
 
-    /**
-     * Set the rotation boolean of the refresh token
-     * @param bool $refreshTokenRotate
-     */
-    public function setRefreshTokenRotation($refreshTokenRotate = true)
-    {
-        $this->refreshTokenRotate = $refreshTokenRotate;
-    }
-
-    /**
-     * Get rotation boolean of the refresh token
-     *
-     * @return bool
-     */
-    public function shouldRotateRefreshTokens()
-    {
-        return $this->refreshTokenRotate;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function completeFlow()
-    {
-        $clientId = $this->server->getRequest()->request->get('client_id', $this->server->getRequest()->getUser());
         if (is_null($clientId)) {
-            throw new Exception\InvalidRequestException('client_id');
+            throw OAuthServerException::invalidRequest('client_id', null, '`%s` parameter is missing');
         }
 
-        $clientSecret = $this->server->getRequest()->request->get('client_secret',
-            $this->server->getRequest()->getPassword());
+        $clientSecret = isset($request->getParsedBody()['client_secret'])
+            ? $request->getParsedBody()['client_secret'] // $_POST['client_id']
+            : (isset($request->getServerParams()['PHP_AUTH_PW'])
+                ? $request->getServerParams()['PHP_AUTH_PW'] // $_SERVER['PHP_AUTH_USER']
+                : null);
+
         if (is_null($clientSecret)) {
-            throw new Exception\InvalidRequestException('client_secret');
+            throw OAuthServerException::invalidRequest('client_secret', null, '`%s` parameter is missing');
+        }
+
+        $refreshTokenJwt = isset($request->getParsedBody()['refresh_token'])
+            ? $request->getParsedBody()['refresh_token']
+            : null;
+
+        if ($refreshTokenJwt === null) {
+            throw OAuthServerException::invalidRequest('refresh_token', null, '`%s` parameter is missing');
         }
 
         // Validate client ID and client secret
-        $client = $this->server->getClientStorage()->get(
+        $client = $this->clientRepository->getClientEntity(
             $clientId,
             $clientSecret,
             null,
             $this->getIdentifier()
         );
 
-        if (($client instanceof ClientEntity) === false) {
-            $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
-            throw new Exception\InvalidClientException();
-        }
-
-        $oldRefreshTokenParam = $this->server->getRequest()->request->get('refresh_token', null);
-        if ($oldRefreshTokenParam === null) {
-            throw new Exception\InvalidRequestException('refresh_token');
+        if (($client instanceof ClientEntityInterface) === false) {
+            $this->emitter->emit(new Event('client.authentication.failed', $request));
+            throw OAuthServerException::invalidClient();
         }
 
         // Validate refresh token
-        $oldRefreshToken = $this->server->getRefreshTokenStorage()->get($oldRefreshTokenParam);
-
-        if (($oldRefreshToken instanceof RefreshTokenEntity) === false) {
-            throw new Exception\InvalidRefreshException();
+        $oldRefreshToken = (new Parser())->parse($refreshTokenJwt);
+        if ($oldRefreshToken->verify(new Sha256(), new Key($this->pathToPublicKey)) === false) {
+            throw OAuthServerException::invalidRefreshToken();
         }
 
-        // Ensure the old refresh token hasn't expired
-        if ($oldRefreshToken->isExpired() === true) {
-            throw new Exception\InvalidRefreshException();
+        $validation = new ValidationData();
+        $validation->setAudience($client->getIdentifier());
+        $validation->setCurrentTime(time());
+        if ($oldRefreshToken->validate($validation) === false) {
+            throw OAuthServerException::invalidRefreshToken();
         }
-
-        $oldAccessToken = $oldRefreshToken->getAccessToken();
 
         // Get the scopes for the original session
-        $session = $oldAccessToken->getSession();
-        $scopes = $this->formatScopes($session->getScopes());
+        $scopes = $oldRefreshToken->getClaim('scopes');
 
         // Get and validate any requested scopes
-        $requestedScopesString = $this->server->getRequest()->request->get('scope', '');
-        $requestedScopes = $this->validateScopes($requestedScopesString, $client);
+        $scopeParam = isset($request->getParsedBody()['scope'])
+            ? $request->getParsedBody()['scope'] // $_POST['scope']
+            : '';
+        $requestedScopes = $this->validateScopes($scopeParam, $scopeDelimiter, $client);
 
         // If no new scopes are requested then give the access token the original session scopes
         if (count($requestedScopes) === 0) {
@@ -146,48 +142,52 @@ class RefreshTokenGrant extends AbstractGrant
             // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
             //  the request doesn't include any new scopes
             foreach ($requestedScopes as $requestedScope) {
-                if (!isset($scopes[$requestedScope->getId()])) {
-                    throw new Exception\InvalidScopeException($requestedScope->getId());
+                if (!isset($scopes[$requestedScope->getIdentifier()])) {
+                    throw OAuthServerException::invalidScope($requestedScope->getIdentifier());
                 }
             }
 
             $newScopes = $requestedScopes;
         }
 
-        // Generate a new access token and assign it the correct sessions
-        $newAccessToken = new AccessTokenEntity($this->server);
-        $newAccessToken->setId(SecureKey::generate());
-        $newAccessToken->setExpireTime($this->getAccessTokenTTL() + time());
-        $newAccessToken->setSession($session);
-
-        foreach ($newScopes as $newScope) {
-            $newAccessToken->associateScope($newScope);
+        // Generate a new access token
+        $accessToken = new AccessTokenEntity();
+        $accessToken->setIdentifier(SecureKey::generate());
+        $accessToken->setExpiryDateTime((new \DateTime())->add($tokenTTL));
+        $accessToken->setClient($client);
+        $accessToken->setUserIdentifier($oldRefreshToken->getClaim('uid'));
+        foreach ($newScopes as $scope) {
+            $accessToken->addScope($scope);
         }
 
         // Expire the old token and save the new one
-        $oldAccessToken->expire();
-        $newAccessToken->save();
+        $this->accessTokenRepository->revokeAccessToken($oldRefreshToken->getClaim('accessToken'));
 
-        $this->server->getTokenType()->setSession($session);
-        $this->server->getTokenType()->setParam('access_token', $newAccessToken->getId());
-        $this->server->getTokenType()->setParam('expires_in', $this->getAccessTokenTTL());
+        // Generate a new refresh token
+        $refreshToken = new RefreshTokenEntity();
+        $refreshToken->setIdentifier(SecureKey::generate());
+        $refreshToken->setExpiryDateTime((new \DateTime())->add(new DateInterval('P1M')));
+        $refreshToken->setAccessToken($accessToken);
 
-        if ($this->shouldRotateRefreshTokens()) {
-            // Expire the old refresh token
-            $oldRefreshToken->expire();
+        // Persist the tokens
+        $this->accessTokenRepository->persistNewAccessToken($accessToken);
+        $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
-            // Generate a new refresh token
-            $newRefreshToken = new RefreshTokenEntity($this->server);
-            $newRefreshToken->setId(SecureKey::generate());
-            $newRefreshToken->setExpireTime($this->getRefreshTokenTTL() + time());
-            $newRefreshToken->setAccessToken($newAccessToken);
-            $newRefreshToken->save();
+        // Inject tokens into response
+        $responseType->setAccessToken($accessToken);
+        $responseType->setRefreshToken($refreshToken);
 
-            $this->server->getTokenType()->setParam('refresh_token', $newRefreshToken->getId());
-        } else {
-            $this->server->getTokenType()->setParam('refresh_token', $oldRefreshToken->getId());
-        }
+        return $responseType;
+    }
 
-        return $this->server->getTokenType()->generateResponse();
+    /**
+     * @inheritdoc
+     */
+    public function canRespondToRequest(ServerRequestInterface $request)
+    {
+        return (
+            isset($request->getParsedBody()['grant_type'])
+            && $request->getParsedBody()['grant_type'] === 'refresh_token'
+        );
     }
 }
