@@ -11,6 +11,10 @@
 
 namespace League\OAuth2\Server\ResponseTypes;
 
+use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
+use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 
@@ -21,14 +25,34 @@ class BearerTokenResponse extends AbstractResponseType
      */
     public function generateHttpResponse()
     {
-        $values = [
-            'access_token' => $this->accessToken->getIdentifier(),
+        $jwtAccessToken = (new Builder())->setAudience($this->accessToken->getClient()->getIdentifier())
+            ->setId($this->accessToken->getIdentifier(), true)
+            ->setIssuedAt(time())
+            ->setNotBefore(time())
+            ->setExpiration($this->accessToken->getExpiryDateTime()->getTimestamp())
+            ->set('uid', $this->accessToken->getUserIdentifier())
+            ->set('scopes', $this->accessToken->getScopes())
+            ->sign(new Sha256(), new Key($this->pathToPrivateKey))
+            ->getToken();
+
+        $responseParams = [
             'token_type'   => 'Bearer',
-            'expires_in'   => $this->accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp()
+            'expires_in'   => $this->accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp(),
+            'access_token' => (string) $jwtAccessToken,
         ];
 
-        if (!is_null($this->getParam('refresh_token'))) {
-            $values['refresh_token'] = $this->getParam('refresh_token');
+        if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
+            $jwtRefreshToken = (new Builder())->setAudience($this->accessToken->getClient()->getIdentifier())
+                ->setId($this->refreshToken->getIdentifier())
+                ->setIssuedAt(time())
+                ->setNotBefore(time())
+                ->setExpiration($this->refreshToken->getExpiryDateTime()->getTimestamp())
+                ->set('accessToken', $this->accessToken->getIdentifier())
+                ->set('scopes', $this->accessToken->getScopes())
+                ->sign(new Sha256(), new Key($this->pathToPrivateKey))
+                ->getToken();
+
+            $responseParams['refresh_token'] = (string) $jwtRefreshToken;
         }
 
         $response = new Response(
@@ -40,7 +64,7 @@ class BearerTokenResponse extends AbstractResponseType
                 'content-type'  => 'application/json;charset=UTF-8'
             ]
         );
-        $response->getBody()->write(json_encode($values));
+        $response->getBody()->write(json_encode($responseParams));
 
         return $response;
     }
@@ -52,8 +76,6 @@ class BearerTokenResponse extends AbstractResponseType
     {
         $header = $request->getHeader('authorization');
         $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
-
-        // ^(?:\s+)?Bearer\s([a-zA-Z0-9-._~+/=]*)
 
         return ($accessToken === 'Bearer') ? '' : $accessToken;
     }
