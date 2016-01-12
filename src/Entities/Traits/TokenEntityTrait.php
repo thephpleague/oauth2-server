@@ -18,14 +18,9 @@ trait TokenEntityTrait
     protected $expiryDateTime;
 
     /**
-     * @var string
-     */
-    protected $ownerType;
-
-    /**
      * @var string|int
      */
-    protected $ownerIdentifier;
+    protected $userIdentifier;
 
     /**
      * @var ClientEntityInterface
@@ -34,6 +29,7 @@ trait TokenEntityTrait
 
     /**
      * Associate a scope with the token
+     *
      * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface $scope
      */
     public function addScope(ScopeEntityInterface $scope)
@@ -43,7 +39,9 @@ trait TokenEntityTrait
 
     /**
      * Get an associated scope by the scope's identifier
+     *
      * @param string $identifier
+     *
      * @return ScopeEntityInterface|null  The scope or null if not found
      */
     public function getScopeWithIdentifier($identifier)
@@ -57,7 +55,7 @@ trait TokenEntityTrait
      */
     public function getScopes()
     {
-        return $this->scopes;
+        return array_values($this->scopes);
     }
 
     /**
@@ -71,6 +69,7 @@ trait TokenEntityTrait
 
     /**
      * Set the date time when the token expires
+     *
      * @param DateTime $dateTime
      */
     public function setExpiryDateTime(DateTime $dateTime)
@@ -79,32 +78,22 @@ trait TokenEntityTrait
     }
 
     /**
-     * Set the token's owner
-     * @param string     $type       The type of the owner (e.g. "user", "client" or something more specific)
-     * @param string|int $identifier The identifier of the owner
+     * Set the identifier of the user associated with the token
+     *
+     * @param string|int $identifier The identifier of the user
      */
-    public function setOwner($type, $identifier)
+    public function setUserIdentifier($identifier)
     {
-        $this->ownerType = $type;
-        $this->ownerIdentifier = $identifier;
+        $this->userIdentifier = $identifier;
     }
 
     /**
-     * Get the token owner's type
-     * @return string  The type of owner (e.g. "user", "client" or something more specific)
-     */
-    public function getOwnerType()
-    {
-        return $this->ownerType;
-    }
-
-    /**
-     * Get the token owner's identifier
+     * Get the token user's identifier
      * @return string|int
      */
-    public function getOwnerIdentifier()
+    public function getUserIdentifier()
     {
-        return $this->ownerIdentifier;
+        return $this->userIdentifier;
     }
 
     /**
@@ -118,6 +107,7 @@ trait TokenEntityTrait
 
     /**
      * Set the client that the token was issued to
+     *
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
      */
     public function setClient(ClientEntityInterface $client)
