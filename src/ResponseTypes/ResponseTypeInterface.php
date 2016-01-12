@@ -12,6 +12,7 @@
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -23,21 +24,9 @@ interface ResponseTypeInterface
     public function setAccessToken(AccessTokenEntityInterface $accessToken);
 
     /**
-     * Set a key/value response pair
-     *
-     * @param string $key
-     * @param mixed  $value
+     * @param \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface $refreshToken
      */
-    public function setParam($key, $value);
-
-    /**
-     * Get a key from the response array
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getParam($key);
+    public function setRefreshToken(RefreshTokenEntityInterface $refreshToken);
 
     /**
      * Determine the access token in the authorization header
