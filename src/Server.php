@@ -48,10 +48,12 @@ class Server implements EmitterAwareInterface
 
     /**
      * New server instance
+     *
+     * @param string $pathToPrivateKey
      */
-    public function __construct()
+    public function __construct($pathToPrivateKey)
     {
-        $this->setDefaultResponseType(new BearerTokenResponse());
+        $this->setDefaultResponseType(new BearerTokenResponse($pathToPrivateKey));
         $this->setDefaultAccessTokenTTL(new DateInterval('PT01H')); // default token TTL of 1 hour
     }
 
@@ -89,7 +91,7 @@ class Server implements EmitterAwareInterface
      * Enable a grant type on the server
      *
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
-     * @param ResponseTypeInterface                             $responseType
+     * @param ResponseTypeInterface                          $responseType
      * @param DateInterval                                   $accessTokenTTL
      */
     public function enableGrantType(
