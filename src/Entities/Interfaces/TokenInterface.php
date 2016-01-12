@@ -28,23 +28,17 @@ interface TokenInterface
     public function setExpiryDateTime(\DateTime $dateTime);
 
     /**
-     * Set the token's owner
-     * @param string     $type       The type of the owner (e.g. "user", "client" or something more specific)
-     * @param string|int $identifier The identifier of the owner
+     * Set the identifier of the user associated with the token
+     *
+     * @param string|int $identifier The identifier of the user
      */
-    public function setOwner($type, $identifier);
+    public function setUserIdentifier($identifier);
 
     /**
-     * Get the token owner's type
-     * @return string  The type of owner (e.g. "user", "client" or something more specific)
-     */
-    public function getOwnerType();
-
-    /**
-     * Get the token owner's identifier
+     * Get the token user's identifier
      * @return string|int
      */
-    public function getOwnerIdentifier();
+    public function getUserIdentifier();
 
     /**
      * Get the client that the token was issued to
