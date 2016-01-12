@@ -12,31 +12,12 @@
 namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 
 /**
  * Access token interface
  */
 interface AccessTokenRepositoryInterface extends RepositoryInterface
 {
-    /**
-     * Get an instance of Entity\AccessTokenEntity
-     *
-     * @param string $token The access token identifier
-     *
-     * @return \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
-     */
-    public function getAccessTokenEntityByTokenString($token);
-
-    /**
-     * Get the scopes for an access token
-     *
-     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $token
-     *
-     * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[]
-     */
-    public function getScopeEntitiesAssociatedWithAccessToken(AccessTokenEntityInterface $token);
-
     /**
      * Persists a new access token to permanent storage
      *
@@ -45,20 +26,18 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity);
 
     /**
-     * Associate a scope with an access token
+     * Revoke an access token
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessTokenEntityInterface
-     * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface       $scope
+     * @param string $tokenId
      */
-    public function associateScopeWithAccessToken(
-        AccessTokenEntityInterface $accessTokenEntityInterface,
-        ScopeEntityInterface $scope
-    );
+    public function revokeAccessToken($tokenId);
 
     /**
-     * Delete an access token
+     * Check if the access token has been revoked
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessToken
+     * @param string $tokenId
+     *
+     * @return bool Return true if this token has been revoked
      */
-    public function deleteAccessToken(AccessTokenEntityInterface $accessToken);
+    public function isAccessTokenRevoked($tokenId);
 }
