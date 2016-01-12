@@ -38,7 +38,7 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     public function getScopeEntitiesAssociatedWithAccessToken(AccessTokenEntityInterface $token);
 
     /**
-     * Persists a new access token to storage
+     * Persists a new access token to permanent storage
      *
      * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessTokenEntity
      */
