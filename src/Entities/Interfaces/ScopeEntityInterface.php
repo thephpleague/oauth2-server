@@ -1,7 +1,7 @@
 <?php
 namespace League\OAuth2\Server\Entities\Interfaces;
 
-interface ScopeEntityInterface
+interface ScopeEntityInterface extends \JsonSerializable
 {
     /**
      * Get the scope's identifier
