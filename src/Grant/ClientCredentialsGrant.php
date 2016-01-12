@@ -86,7 +86,7 @@ class ClientCredentialsGrant extends AbstractGrant
         $accessToken->setIdentifier(SecureKey::generate());
         $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
         $accessToken->setClient($client);
-        $accessToken->setOwner('client', $client->getIdentifier());
+        $accessToken->setUserIdentifier($client->getIdentifier());
 
         // Associate scopes with the session and access token
         foreach ($scopes as $scope) {
@@ -103,26 +103,13 @@ class ClientCredentialsGrant extends AbstractGrant
     }
 
     /**
-     * The grant type should return true if it is able to respond to this request.
-     *
-     * For example most grant types will check that the $_POST['grant_type'] property matches it's identifier property.
-     *
-     * Some grants, such as the authorization code grant can respond to multiple requests
-     *  - i.e. a client requesting an authorization code and requesting an access token
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     *
-     * @return boolean
+     * @inheritdoc
      */
     public function canRespondToRequest(ServerRequestInterface $request)
     {
-        if (
-            isset($request->getParsedBody()['grant_type'])
+        return (
+            array_key_exists('grant_type', $request->getParsedBody())
             && $request->getParsedBody()['grant_type'] === 'client_credentials'
-        ) {
-            return true;
-        }
-
-        return false;
+        );
     }
 }
