@@ -155,13 +155,9 @@ class PasswordGrant extends AbstractGrant
      */
     public function canRespondToRequest(ServerRequestInterface $request)
     {
-        if (
+        return (
             isset($request->getParsedBody()['grant_type'])
             && $request->getParsedBody()['grant_type'] === 'password'
-        ) {
-            return true;
-        }
-
-        return false;
+        );
     }
 }
