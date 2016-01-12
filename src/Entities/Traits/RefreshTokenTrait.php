@@ -1,6 +1,7 @@
 <?php
 namespace League\OAuth2\Server\Entities\Traits;
 
+use DateTime;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 
 trait RefreshTokenTrait
@@ -8,23 +9,45 @@ trait RefreshTokenTrait
     /**
      * @var AccessTokenEntityInterface
      */
-    protected $originalAccessToken;
+    protected $accessToken;
 
     /**
-     * Set the original access token that the refresh token was associated with
-     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessToken
+     * @var DateTime
      */
-    public function setOriginalAccessToken(AccessTokenEntityInterface $accessToken)
+    protected $expiryDateTime;
+
+    /**
+     * @inheritdoc
+     */
+    public function setAccessToken(AccessTokenEntityInterface $accessToken)
     {
-        $this->originalAccessToken = $accessToken;
+        $this->accessToken = $accessToken;
     }
 
     /**
-     * Get the access token that the refresh token was originally associated with
-     * @return \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
+     * @inheritdoc
      */
-    public function getOriginalAccessToken()
+    public function getAccessToken()
     {
-        return $this->originalAccessToken;
+        return $this->accessToken;
+    }
+
+    /**
+     * Get the token's expiry date time
+     * @return DateTime
+     */
+    public function getExpiryDateTime()
+    {
+        return $this->expiryDateTime;
+    }
+
+    /**
+     * Set the date time when the token expires
+     *
+     * @param DateTime $dateTime
+     */
+    public function setExpiryDateTime(DateTime $dateTime)
+    {
+        $this->expiryDateTime = $dateTime;
     }
 }
