@@ -12,15 +12,14 @@
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 
 abstract class AbstractResponseType implements ResponseTypeInterface
 {
     /**
-     * Response array for JSON serialization
-     *
-     * @var array
+     * @var string
      */
-    protected $response = [];
+    protected $pathToPrivateKey;
 
     /**
      * @var \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
@@ -28,19 +27,16 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     protected $accessToken;
 
     /**
-     * {@inheritdoc}
+     * @var \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface
      */
-    public function setParam($key, $value)
-    {
-        $this->response[$key] = $value;
-    }
+    protected $refreshToken;
 
     /**
-     * {@inheritdoc}
+     * @param string $pathToPrivateKey
      */
-    public function getParam($key)
+    public function __construct($pathToPrivateKey)
     {
-        return isset($this->response[$key]) ? $this->response[$key] : null;
+        $this->pathToPrivateKey = $pathToPrivateKey;
     }
 
     /**
@@ -49,5 +45,13 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     public function setAccessToken(AccessTokenEntityInterface $accessToken)
     {
         $this->accessToken = $accessToken;
+    }
+
+    /**
+     * @param \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface $refreshToken
+     */
+    public function setRefreshToken(RefreshTokenEntityInterface $refreshToken)
+    {
+        $this->refreshToken = $refreshToken;
     }
 }
