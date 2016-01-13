@@ -20,6 +20,7 @@ use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -37,18 +38,26 @@ class PasswordGrant extends AbstractGrant
     private $userRepository;
 
     /**
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface        $userRepository
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
+     */
+    private $refreshTokenRepository;
+
+    /**
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
+     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface       $clientRepository
+     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface        $scopeRepository
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface  $accessTokenRepository
+     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      */
     public function __construct(
         UserRepositoryInterface $userRepository,
         ClientRepositoryInterface $clientRepository,
         ScopeRepositoryInterface $scopeRepository,
-        AccessTokenRepositoryInterface $accessTokenRepository
+        AccessTokenRepositoryInterface $accessTokenRepository,
+        RefreshTokenRepositoryInterface $refreshTokenRepository
     ) {
         $this->userRepository = $userRepository;
+        $this->refreshTokenRepository = $refreshTokenRepository;
         parent::__construct($clientRepository, $scopeRepository, $accessTokenRepository);
     }
 
@@ -58,7 +67,7 @@ class PasswordGrant extends AbstractGrant
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        DateInterval $accessTokenTTL,
+        DateInterval $tokenTTL,
         $scopeDelimiter = ' '
     ) {
         // Get the required params
@@ -133,7 +142,7 @@ class PasswordGrant extends AbstractGrant
         // Generate an access token
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier(SecureKey::generate());
-        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
+        $accessToken->setExpiryDateTime((new \DateTime())->add($tokenTTL));
         $accessToken->setClient($client);
         $accessToken->setUserIdentifier($userEntity->getIdentifier());
 
@@ -142,14 +151,15 @@ class PasswordGrant extends AbstractGrant
             $accessToken->addScope($scope);
         }
 
-        // Persist the token
-        $this->accessTokenRepository->persistNewAccessToken($accessToken);
-
         // Generate a refresh token
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier(SecureKey::generate());
         $refreshToken->setExpiryDateTime((new \DateTime())->add(new DateInterval('P1M')));
         $refreshToken->setAccessToken($accessToken);
+
+        // Persist the tokens
+        $this->accessTokenRepository->persistNewAccessToken($accessToken);
+        $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
         // Inject tokens into response
         $responseType->setAccessToken($accessToken);
