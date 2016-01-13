@@ -124,10 +124,14 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         $validation = new ValidationData();
-        $validation->setAudience($client->getIdentifier());
-        $validation->setCurrentTime(time());
+        $validation->setAudience($client->getIdentifier()); // Validates refresh token hasn't expired
+        $validation->setCurrentTime(time()); // Validates token hasn't expired
         if ($oldRefreshToken->validate($validation) === false) {
-            throw OAuthServerException::invalidRefreshToken();
+            throw OAuthServerException::invalidRefreshToken('Token has expired or is not linked to client');
+        }
+
+        if ($oldRefreshToken->getClaim('type') !== 'refreshToken') {
+            throw OAuthServerException::invalidRefreshToken('Token is not a refresh token');
         }
 
         // Get the scopes for the original session
@@ -159,7 +163,7 @@ class RefreshTokenGrant extends AbstractGrant
         $accessToken->setIdentifier(SecureKey::generate());
         $accessToken->setExpiryDateTime((new \DateTime())->add($tokenTTL));
         $accessToken->setClient($client);
-        $accessToken->setUserIdentifier($oldRefreshToken->getClaim('uid'));
+        $accessToken->setUserIdentifier($oldRefreshToken->getClaim('sub'));
         foreach ($newScopes as $scope) {
             $accessToken->addScope($scope);
         }
