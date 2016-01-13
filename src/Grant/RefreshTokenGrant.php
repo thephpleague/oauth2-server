@@ -114,9 +114,13 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         // Validate refresh token
-        $oldRefreshToken = (new Parser())->parse($refreshTokenJwt);
+        try {
+            $oldRefreshToken = (new Parser())->parse($refreshTokenJwt);
+        } catch (\InvalidArgumentException $e) {
+            throw OAuthServerException::invalidRefreshToken('Cannot parse refresh token');
+        }
         if ($oldRefreshToken->verify(new Sha256(), new Key($this->pathToPublicKey)) === false) {
-            throw OAuthServerException::invalidRefreshToken();
+            throw OAuthServerException::invalidRefreshToken('Cannot validate refresh token signature');
         }
 
         $validation = new ValidationData();
@@ -142,7 +146,7 @@ class RefreshTokenGrant extends AbstractGrant
             // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
             //  the request doesn't include any new scopes
             foreach ($requestedScopes as $requestedScope) {
-                if (!isset($scopes[$requestedScope->getIdentifier()])) {
+                if (in_array($requestedScope->getIdentifier(), $scopes) === false) {
                     throw OAuthServerException::invalidScope($requestedScope->getIdentifier());
                 }
             }
