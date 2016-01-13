@@ -30,7 +30,7 @@ class BearerTokenResponse extends AbstractResponseType
             ->setIssuedAt(time())
             ->setNotBefore(time())
             ->setExpiration($this->accessToken->getExpiryDateTime()->getTimestamp())
-            ->set('uid', $this->accessToken->getUserIdentifier())
+            ->setSubject($this->accessToken->getUserIdentifier())
             ->set('scopes', $this->accessToken->getScopes())
             ->sign(new Sha256(), new Key($this->pathToPrivateKey))
             ->getToken();
@@ -47,7 +47,8 @@ class BearerTokenResponse extends AbstractResponseType
                 ->setIssuedAt(time())
                 ->setNotBefore(time())
                 ->setExpiration($this->refreshToken->getExpiryDateTime()->getTimestamp())
-                ->set('uid', $this->accessToken->getUserIdentifier())
+                ->set('type', 'refreshToken')
+                ->setSubject($this->accessToken->getUserIdentifier())
                 ->set('scopes', $this->accessToken->getScopes())
                 ->set('accessToken', $this->accessToken->getIdentifier())
                 ->sign(new Sha256(), new Key($this->pathToPrivateKey))
