@@ -4,3 +4,5 @@ phpunit.xml
 .idea
 /examples/vendor
 /tests/_output
+examples/public.key
+examples/private.key

@@ -2,51 +2,39 @@
 namespace OAuth2ServerExamples\Repositories;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
-
     /**
-     * @inheritdoc
-     */
-    public function getAccessTokenEntityByTokenString($tokenIdentifier)
-    {
-        // TODO: Implement get() method.
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getScopeEntitiesAssociatedWithAccessToken(AccessTokenEntityInterface $token)
-    {
-        // TODO: Implement getScopes() method.
-    }
-
-    /**
-     * @inheritdoc
+     * Persists a new access token to permanent storage
+     *
+     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessTokenEntity
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
-        // TODO: Implement create() method.
+        // TODO: Implement persistNewAccessToken() method.
     }
 
     /**
-     * @inheritdoc
+     * Revoke an access token
+     *
+     * @param string $tokenId
      */
-    public function associateScopeWithAccessToken(
-        AccessTokenEntityInterface $accessTokenEntityInterface,
-        ScopeEntityInterface $scope
-    ) {
-        // TODO: Implement associateScope() method.
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function deleteAccessToken(AccessTokenEntityInterface $accessToken)
+    public function revokeAccessToken($tokenId)
     {
-        // TODO: Implement delete() method.
+        // TODO: Implement revokeAccessToken() method.
+    }
+
+    /**
+     * Check if the access token has been revoked
+     *
+     * @param string $tokenId
+     *
+     * @return bool Return true if this token has been revoked
+     */
+    public function isAccessTokenRevoked($tokenId)
+    {
+        // TODO: Implement isAccessTokenRevoked() method.
     }
 }
