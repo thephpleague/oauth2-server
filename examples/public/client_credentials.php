@@ -15,7 +15,7 @@ use Slim\Http\Response;
 include(__DIR__ . '/../vendor/autoload.php');
 
 // Setup the authorization server
-$server = new Server();
+$server = new Server('file://' . __DIR__ . '/../private.key');
 
 // Init our repositories
 $clientRepository = new ClientRepository();
@@ -30,7 +30,7 @@ $app = new App([Server::class => $server]);
 
 $app->post('/access_token', function (Request $request, Response $response) {
     /** @var Server $server */
-    $server = $this->getContainer()->get(Server::class);
+    $server = $this->get(Server::class);
     try {
         return $server->respondToRequest($request);
     } catch (OAuthServerException $e) {

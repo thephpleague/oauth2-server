@@ -6,8 +6,8 @@
         }
     ],
     "require": {
-        "slim/slim": "3.0.0-RC2",
-        "league/oauth2-server": "dev-v5-one"
+        "slim/slim": "3.0.*",
+        "league/oauth2-server": "dev-V5-WIP"
     },
     "autoload": {
         "psr-4": {

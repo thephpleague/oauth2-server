@@ -6,6 +6,7 @@ use League\OAuth2\Server\Server;
 
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
+use OAuth2ServerExamples\Repositories\RefreshTokenRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
 use OAuth2ServerExamples\Repositories\UserRepository;
 
@@ -16,28 +17,31 @@ use Slim\Http\Response;
 include(__DIR__ . '/../vendor/autoload.php');
 
 // Setup the authorization server
-$server = new Server();
+$server = new Server('file://' . __DIR__ . '/../private.key');
 
 // Init our repositories
+$userRepository = new UserRepository();
 $clientRepository = new ClientRepository();
 $scopeRepository = new ScopeRepository();
 $accessTokenRepository = new AccessTokenRepository();
-$userRepository = new UserRepository();
+$refreshTokenRepository = new RefreshTokenRepository();
 
 // Enable the client credentials grant on the server
-$server->enableGrantType(new PasswordGrant(
+$passwordGrant = new PasswordGrant(
     $userRepository,
     $clientRepository,
     $scopeRepository,
-    $accessTokenRepository
-));
+    $accessTokenRepository,
+    $refreshTokenRepository
+);
+$server->enableGrantType($passwordGrant);
 
 // App
 $app = new App([Server::class => $server]);
 
 $app->post('/access_token', function (Request $request, Response $response) {
     /** @var Server $server */
-    $server = $this->getContainer()->get(Server::class);
+    $server = $this->get(Server::class);
     try {
         return $server->respondToRequest($request);
     } catch (OAuthServerException $e) {
