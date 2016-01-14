@@ -25,6 +25,7 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\Utils\KeyCrypt;
 use League\OAuth2\Server\Utils\SecureKey;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\EventDispatcher\Event;
@@ -92,11 +93,11 @@ class RefreshTokenGrant extends AbstractGrant
             throw OAuthServerException::invalidRequest('client_secret', null, '`%s` parameter is missing');
         }
 
-        $refreshTokenJwt = isset($request->getParsedBody()['refresh_token'])
+        $encryptedRefreshToken = isset($request->getParsedBody()['refresh_token'])
             ? $request->getParsedBody()['refresh_token']
             : null;
 
-        if ($refreshTokenJwt === null) {
+        if ($encryptedRefreshToken === null) {
             throw OAuthServerException::invalidRequest('refresh_token', null, '`%s` parameter is missing');
         }
 
@@ -115,27 +116,23 @@ class RefreshTokenGrant extends AbstractGrant
 
         // Validate refresh token
         try {
-            $oldRefreshToken = (new Parser())->parse($refreshTokenJwt);
-        } catch (\InvalidArgumentException $e) {
-            throw OAuthServerException::invalidRefreshToken('Cannot parse refresh token');
-        }
-        if ($oldRefreshToken->verify(new Sha256(), new Key($this->pathToPublicKey)) === false) {
-            throw OAuthServerException::invalidRefreshToken('Cannot validate refresh token signature');
+            $oldRefreshToken = KeyCrypt::decrypt($encryptedRefreshToken, $this->pathToPublicKey);
+        } catch (\LogicException $e) {
+            throw OAuthServerException::invalidRefreshToken('Cannot parse refresh token: ' . $e->getMessage());
         }
 
-        $validation = new ValidationData();
-        $validation->setAudience($client->getIdentifier()); // Validates refresh token hasn't expired
-        $validation->setCurrentTime(time()); // Validates token hasn't expired
-        if ($oldRefreshToken->validate($validation) === false) {
-            throw OAuthServerException::invalidRefreshToken('Token has expired or is not linked to client');
+        $oldRefreshTokenData = json_decode($oldRefreshToken, true);
+        if ($oldRefreshTokenData['client_id'] !== $client->getIdentifier()) {
+            throw OAuthServerException::invalidRefreshToken('Token is not linked to client' . ' got: ' . $client->getIdentifier() . ' expected: '. $oldRefreshTokenData['client_id']);
         }
 
-        if ($oldRefreshToken->getClaim('type') !== 'refreshToken') {
-            throw OAuthServerException::invalidRefreshToken('Token is not a refresh token');
+        if ($oldRefreshTokenData['expire_time'] < time()) {
+            throw OAuthServerException::invalidRefreshToken('Token has expired');
         }
 
-        // Get the scopes for the original session
-        $scopes = $oldRefreshToken->getClaim('scopes');
+        if ($this->refreshTokenRepository->isRefreshTokenRevoked($oldRefreshTokenData['refresh_token_id']) === true) {
+            throw OAuthServerException::invalidRefreshToken('Token has been revoked');
+        }
 
         // Get and validate any requested scopes
         $scopeParam = isset($request->getParsedBody()['scope'])
@@ -145,12 +142,12 @@ class RefreshTokenGrant extends AbstractGrant
 
         // If no new scopes are requested then give the access token the original session scopes
         if (count($requestedScopes) === 0) {
-            $newScopes = $scopes;
+            $newScopes = $oldRefreshTokenData['scopes'];
         } else {
             // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
             //  the request doesn't include any new scopes
             foreach ($requestedScopes as $requestedScope) {
-                if (in_array($requestedScope->getIdentifier(), $scopes) === false) {
+                if (in_array($requestedScope->getIdentifier(), $oldRefreshTokenData['scopes']) === false) {
                     throw OAuthServerException::invalidScope($requestedScope->getIdentifier());
                 }
             }
@@ -163,7 +160,7 @@ class RefreshTokenGrant extends AbstractGrant
         $accessToken->setIdentifier(SecureKey::generate());
         $accessToken->setExpiryDateTime((new \DateTime())->add($tokenTTL));
         $accessToken->setClient($client);
-        $accessToken->setUserIdentifier($oldRefreshToken->getClaim('sub'));
+        $accessToken->setUserIdentifier($oldRefreshTokenData['user_id']);
         foreach ($newScopes as $scope) {
             $accessToken->addScope($scope);
         }
