@@ -15,6 +15,7 @@ use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 
@@ -43,19 +44,21 @@ class BearerTokenResponse extends AbstractResponseType
         ];
 
         if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
-            $jwtRefreshToken = (new Builder())->setAudience($this->accessToken->getClient()->getIdentifier())
-                ->setId($this->refreshToken->getIdentifier())
-                ->setIssuedAt(time())
-                ->setNotBefore(time())
-                ->setExpiration($this->refreshToken->getExpiryDateTime()->getTimestamp())
-                ->set('type', 'refreshToken')
-                ->setSubject($this->accessToken->getUserIdentifier())
-                ->set('scopes', $this->accessToken->getScopes())
-                ->set('accessToken', $this->accessToken->getIdentifier())
-                ->sign(new Sha256(), new Key($this->pathToPrivateKey))
-                ->getToken();
+            $refreshToken = KeyCrypt::encrypt(
+                json_encode(
+                    [
+                        'client_id'        => $this->accessToken->getClient()->getIdentifier(),
+                        'refresh_token_id' => $this->refreshToken->getIdentifier(),
+                        'access_token_id'  => $this->accessToken->getIdentifier(),
+                        'scopes'           => $this->accessToken->getScopes(),
+                        'user_id'          => $this->accessToken->getUserIdentifier(),
+                        'expire_time'      => $this->refreshToken->getExpiryDateTime()->getTimestamp(),
+                    ]
+                ),
+                $this->pathToPrivateKey
+            );
 
-            $responseParams['refresh_token'] = (string) $jwtRefreshToken;
+            $responseParams['refresh_token'] = $refreshToken;
         }
 
         $response = new Response(
