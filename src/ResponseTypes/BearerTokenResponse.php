@@ -25,7 +25,8 @@ class BearerTokenResponse extends AbstractResponseType
      */
     public function generateHttpResponse()
     {
-        $jwtAccessToken = (new Builder())->setAudience($this->accessToken->getClient()->getIdentifier())
+        $jwtAccessToken = (new Builder())
+            ->setAudience($this->accessToken->getClient()->getIdentifier())
             ->setId($this->accessToken->getIdentifier(), true)
             ->setIssuedAt(time())
             ->setNotBefore(time())
