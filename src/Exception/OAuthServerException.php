@@ -172,7 +172,14 @@ class OAuthServerException extends \Exception
      */
     public static function serverError($hint)
     {
-        return new static('\'The authorization server encountered an unexpected condition which prevented it from fulfilling the request.', 'server_errror', 500, $hint);
+        return new static(
+            'The authorization server encountered an unexpected condition which prevented it from fulfilling'
+            . 'the request.',
+            'server_error',
+            500,
+            $hint
+        );
+    }
     }
 
     /**
