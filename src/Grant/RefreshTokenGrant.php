@@ -165,8 +165,9 @@ class RefreshTokenGrant extends AbstractGrant
             $accessToken->addScope($scope);
         }
 
-        // Expire the old token and save the new one
-        $this->accessTokenRepository->revokeAccessToken($oldRefreshToken->getClaim('accessToken'));
+        // Expire the old tokens and save the new one
+        $this->accessTokenRepository->revokeAccessToken($oldRefreshTokenData['access_token_id']);
+        $this->refreshTokenRepository->revokeRefreshToken($oldRefreshTokenData['refresh_token_id']);
 
         // Generate a new refresh token
         $refreshToken = new RefreshTokenEntity();
