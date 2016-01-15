@@ -148,7 +148,7 @@
             "dist": {
                 "type": "path",
                 "url": "../",
-                "reference": "59080a831926d6291fbc7854ff8d25427c374263",
+                "reference": "dce1620f60d9f1a44a9ec99b6168810a8030c20c",
                 "shasum": null
             },
             "require": {
@@ -168,9 +168,6 @@
                 "mockery/mockery": "0.9.*",
                 "phpunit/phpunit": "4.8.*"
             },
-            "bin": [
-                "bin/generate-crypto-key"
-            ],
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -219,16 +216,16 @@
         },
         {
             "name": "namshi/jose",
-            "version": "6.0.3",
+            "version": "6.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/namshi/jose.git",
-                "reference": "e214c25ce0deed923ef6b299fbad87a822b51b2c"
+                "reference": "0ae1eae2be4f7e31a649ab9e3b782c3aedf81ebd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/namshi/jose/zipball/e214c25ce0deed923ef6b299fbad87a822b51b2c",
-                "reference": "e214c25ce0deed923ef6b299fbad87a822b51b2c",
+                "url": "https://api.github.com/repos/namshi/jose/zipball/0ae1eae2be4f7e31a649ab9e3b782c3aedf81ebd",
+                "reference": "0ae1eae2be4f7e31a649ab9e3b782c3aedf81ebd",
                 "shasum": ""
             },
             "require": {
@@ -238,12 +235,12 @@
                 "ext-openssl": "*",
                 "ext-pcre": "*",
                 "ext-spl": "*",
-                "php": ">=5.4.8",
-                "phpseclib/phpseclib": "1.0.0"
+                "php": ">=5.5",
+                "phpseclib/phpseclib": "2.0.*"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.5",
-                "satooshi/php-coveralls": "dev-master"
+                "phpunit/phpunit": "^4.5|^5.0",
+                "satooshi/php-coveralls": "^1.0"
             },
             "type": "library",
             "autoload": {
@@ -260,6 +257,10 @@
                 {
                     "name": "Alessandro Nadalin",
                     "email": "alessandro.nadalin@gmail.com"
+                },
+                {
+                    "name": "Alessandro Cinelli (cirpo)",
+                    "email": "alessandro.cinelli@gmail.com"
                 }
             ],
             "description": "JSON Object Signing and Encryption library for PHP.",
@@ -271,7 +272,7 @@
                 "jwt",
                 "token"
             ],
-            "time": "2015-11-13 08:01:01"
+            "time": "2016-01-13 10:17:13"
         },
         {
             "name": "nikic/fast-route",
@@ -318,20 +319,20 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "1.0.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "844134df95e42b93ed5506a2d11ca5accda99412"
+                "reference": "a74aa9efbe61430fcb60157c8e025a48ec8ff604"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/844134df95e42b93ed5506a2d11ca5accda99412",
-                "reference": "844134df95e42b93ed5506a2d11ca5accda99412",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/a74aa9efbe61430fcb60157c8e025a48ec8ff604",
+                "reference": "a74aa9efbe61430fcb60157c8e025a48ec8ff604",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.0.0"
+                "php": ">=5.3.3"
             },
             "require-dev": {
                 "phing/phing": "~2.7",
@@ -341,22 +342,16 @@
             },
             "suggest": {
                 "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
+                "ext-libsodium": "SSH2/SFTP can make use of some algorithms provided by the libsodium-php extension.",
                 "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
                 "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations.",
                 "pear-pear/PHP_Compat": "Install PHP_Compat to get phpseclib working on PHP < 5.0.0."
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "Crypt": "phpseclib/",
-                    "File": "phpseclib/",
-                    "Math": "phpseclib/",
-                    "Net": "phpseclib/",
-                    "System": "phpseclib/"
-                },
-                "files": [
-                    "phpseclib/Crypt/Random.php"
-                ]
+                "psr-4": {
+                    "phpseclib\\": "phpseclib/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "include-path": [
@@ -408,7 +403,7 @@
                 "x.509",
                 "x509"
             ],
-            "time": "2015-08-04 02:22:12"
+            "time": "2015-08-04 04:48:03"
         },
         {
             "name": "pimple/pimple",
