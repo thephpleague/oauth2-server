@@ -36,7 +36,7 @@ The following versions of PHP are supported:
 
 ## Documentation
 
-The library documentation can be found at [http://oauth2.thephpleague.com)(http://oauth2.thephpleague.com). 
+The library documentation can be found at [http://oauth2.thephpleague.com](http://oauth2.thephpleague.com). 
 You can contribute to this documentation in the [gh-pages branch](https://github.com/thephpleague/oauth2-server/tree/gh-pages/).
 
 ## Changelog
