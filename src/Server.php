@@ -2,6 +2,7 @@
 
 namespace League\OAuth2\Server;
 
+use DateInterval;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -93,7 +94,7 @@ class Server implements EmitterAwareInterface
      *
      * @param DateInterval $defaultAccessTokenTTL
      */
-    public function setDefaultAccessTokenTTL(\DateInterval $defaultAccessTokenTTL)
+    public function setDefaultAccessTokenTTL(DateInterval $defaultAccessTokenTTL)
     {
         $this->defaultAccessTokenTTL = $defaultAccessTokenTTL;
     }
@@ -205,9 +206,9 @@ class Server implements EmitterAwareInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Psr\Http\Message\ResponseInterface      $response
+     * @param callable                                 $next
      *
      * @return \Psr\Http\Message\ResponseInterface
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
