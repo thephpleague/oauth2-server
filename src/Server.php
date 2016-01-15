@@ -122,8 +122,8 @@ class Server implements EmitterAwareInterface
     /**
      * Return an access token response
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface      $response
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request
+     * @param \Psr\Http\Message\ResponseInterface|null      $response
      *
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
