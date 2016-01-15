@@ -38,7 +38,9 @@ interface ResponseTypeInterface
     public function determineAccessTokenInHeader(ServerRequestInterface $request);
 
     /**
+     * @param ResponseInterface $response
+     *
      * @return ResponseInterface
      */
-    public function generateHttpResponse();
+    public function generateHttpResponse(ResponseInterface $response);
 }

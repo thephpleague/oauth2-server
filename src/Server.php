@@ -9,7 +9,9 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 class Server implements EmitterAwareInterface
@@ -121,14 +123,19 @@ class Server implements EmitterAwareInterface
      * Return an access token response
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Psr\Http\Message\ResponseInterface      $response
      *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @return \Psr\Http\Message\ResponseInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
-    public function respondToRequest(ServerRequestInterface $request = null)
+    public function respondToRequest(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
-        if ($request === null) {
+        if (!$request instanceof ServerRequestInterface) {
             $request = ServerRequestFactory::fromGlobals();
+        }
+
+        if (!$response instanceof ResponseInterface) {
+            $response = new Response();
         }
 
         $tokenResponse = null;
@@ -143,12 +150,30 @@ class Server implements EmitterAwareInterface
             }
         }
 
-        if ($tokenResponse instanceof ResponseTypeInterface) {
-            return $tokenResponse->generateHttpResponse();
-        } else {
-            $response = OAuthServerException::unsupportedGrantType()->generateHttpResponse();
+        if (!$tokenResponse instanceof ResponseTypeInterface) {
+            return OAuthServerException::unsupportedGrantType()->generateHttpResponse($response);
         }
 
-        return $response;
+        return $tokenResponse->generateHttpResponse($response);
+    }
+
+    /**
+     * PSR7 middleware callable
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Psr\Http\Message\ResponseInterface      $response
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
+        $response = $this->respondToRequest($request, $response);
+
+        if (in_array($response->getStatusCode(), [400, 401, 500])) {
+            return $response;
+        }
+
+        return $next($request, $response);
     }
 }
