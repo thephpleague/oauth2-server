@@ -2,7 +2,6 @@
 
 namespace League\OAuth2\Server;
 
-use DateInterval;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -34,6 +33,11 @@ class Server implements EmitterAwareInterface
     protected $grantTypeAccessTokenTTL = [];
 
     /**
+     * @var string
+     */
+    protected $defaultPrivateKeyPath;
+
+    /**
      * @var ResponseTypeInterface
      */
     protected $defaultResponseType;
@@ -51,12 +55,13 @@ class Server implements EmitterAwareInterface
     /**
      * New server instance
      *
-     * @param string $pathToPrivateKey
+     * @param string       $defaultPrivateKeyPath
+     * @param DateInterval $defaultAccessTokenTTL
      */
-    public function __construct($pathToPrivateKey)
+    public function __construct($defaultPrivateKeyPath, \DateInterval $defaultAccessTokenTTL = null)
     {
-        $this->setDefaultResponseType(new BearerTokenResponse($pathToPrivateKey));
-        $this->setDefaultAccessTokenTTL(new DateInterval('PT01H')); // default token TTL of 1 hour
+        $this->defaultPrivateKeyPath = $defaultPrivateKeyPath;
+        $this->defaultAccessTokenTTL = $defaultAccessTokenTTL;
     }
 
     /**
@@ -70,6 +75,44 @@ class Server implements EmitterAwareInterface
     }
 
     /**
+     * Get the default token type that grants will return
+     *
+     * @return ResponseTypeInterface
+     */
+    protected function getDefaultResponseType()
+    {
+        if (!$this->defaultResponseType instanceof ResponseTypeInterface) {
+            $this->defaultResponseType = new BearerTokenResponse($this->defaultPrivateKeyPath);
+        }
+
+        return $this->defaultResponseType;
+    }
+
+    /**
+     * Set the default TTL of access tokens
+     *
+     * @param DateInterval $defaultAccessTokenTTL
+     */
+    public function setDefaultAccessTokenTTL(\DateInterval $defaultAccessTokenTTL)
+    {
+        $this->defaultAccessTokenTTL = $defaultAccessTokenTTL;
+    }
+
+    /**
+     * Get the default TTL of access tokens
+     *
+     * @return DateInterval
+     */
+    protected function getDefaultAccessTokenTTL()
+    {
+        if (!$this->defaultAccessTokenTTL instanceof \DateInterval) {
+            $this->defaultAccessTokenTTL = new \DateInterval('PT01H'); // default token TTL of 1 hour
+        }
+
+        return $this->defaultAccessTokenTTL;
+    }
+
+    /**
      * Set the delimiter string used to separate scopes in a request
      *
      * @param string $scopeDelimiterString
@@ -80,13 +123,13 @@ class Server implements EmitterAwareInterface
     }
 
     /**
-     * Set the default TTL of access tokens
+     * Get the delimiter string used to separate scopes in a request
      *
-     * @param DateInterval $defaultAccessTokenTTL
+     * @return string
      */
-    public function setDefaultAccessTokenTTL(DateInterval $defaultAccessTokenTTL)
+    protected function getScopeDelimiterString()
     {
-        $this->defaultAccessTokenTTL = $defaultAccessTokenTTL;
+        return $this->scopeDelimiterString;
     }
 
     /**
@@ -99,7 +142,7 @@ class Server implements EmitterAwareInterface
     public function enableGrantType(
         GrantTypeInterface $grantType,
         ResponseTypeInterface $responseType = null,
-        DateInterval $accessTokenTTL = null
+        \DateInterval $accessTokenTTL = null
     ) {
         $grantType->setEmitter($this->getEmitter());
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
@@ -108,14 +151,14 @@ class Server implements EmitterAwareInterface
         if ($responseType instanceof ResponseTypeInterface) {
             $this->grantResponseTypes[$grantType->getIdentifier()] = $responseType;
         } else {
-            $this->grantResponseTypes[$grantType->getIdentifier()] = $this->defaultResponseType;
+            $this->grantResponseTypes[$grantType->getIdentifier()] = $this->getDefaultResponseType();
         }
 
         // Set grant access token TTL
-        if ($accessTokenTTL instanceof DateInterval) {
+        if ($accessTokenTTL instanceof \DateInterval) {
             $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
         } else {
-            $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $this->defaultAccessTokenTTL;
+            $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $this->getDefaultAccessTokenTTL();
         }
     }
 
@@ -145,7 +188,7 @@ class Server implements EmitterAwareInterface
                     $request,
                     $this->grantResponseTypes[$grantType->getIdentifier()],
                     $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()],
-                    $this->scopeDelimiterString
+                    $this->getScopeDelimiterString()
                 );
             }
         }
