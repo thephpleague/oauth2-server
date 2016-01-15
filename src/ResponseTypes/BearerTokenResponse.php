@@ -16,6 +16,7 @@ use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 
@@ -24,7 +25,7 @@ class BearerTokenResponse extends AbstractResponseType
     /**
      * {@inheritdoc}
      */
-    public function generateHttpResponse()
+    public function generateHttpResponse(ResponseInterface $response)
     {
         $jwtAccessToken = (new Builder())
             ->setAudience($this->accessToken->getClient()->getIdentifier())
@@ -61,16 +62,12 @@ class BearerTokenResponse extends AbstractResponseType
             $responseParams['refresh_token'] = $refreshToken;
         }
 
-        $response = new Response(
-            'php://memory',
-            200,
-            [
-                'pragma'        => 'no-cache',
-                'cache-control' => 'no-store',
-                'content-type'  => 'application/json;charset=UTF-8'
-            ]
-        );
-        $response->getBody()->write(json_encode($responseParams));
+        $response
+            ->withStatus(200)
+            ->withHeader('pragma', 'no-cache')
+            ->withHeader('cache-control', 'no-store')
+            ->withHeader('content-type', 'application/json;charset=UTF-8')
+            ->getBody()->write(json_encode($responseParams));
 
         return $response;
     }

@@ -43,9 +43,9 @@ $app->post('/access_token', function (Request $request, Response $response) {
     /** @var Server $server */
     $server = $this->get(Server::class);
     try {
-        return $server->respondToRequest($request);
+        return $server->respondToRequest($request, $response);
     } catch (OAuthServerException $e) {
-        return $e->generateHttpResponse();
+        return $e->generateHttpResponse($response);
     } catch (\Exception $e) {
         return $response->withStatus(500)->write(
             sprintf('<h1>%s</h1><p>%s</p>', get_class($e), $e->getMessage())

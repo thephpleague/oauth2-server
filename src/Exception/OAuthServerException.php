@@ -204,8 +204,12 @@ class OAuthServerException extends \Exception
      *
      * @return ResponseInterface
      */
-    public function generateHttpResponse()
+    public function generateHttpResponse(ResponseInterface $response = null)
     {
+        if (!$response instanceof ResponseInterface) {
+            $response = new Response();
+        }
+
         $headers = $this->getHttpHeaders();
 
         $payload = [
@@ -221,12 +225,13 @@ class OAuthServerException extends \Exception
             $headers['Location'] = RedirectUri::make($this->redirectUri, $payload);
         }
 
-        $response = new Response(
-            'php://memory',
-            $this->getHttpStatusCode(),
-            $headers
-        );
-        $response->getBody()->write(json_encode($payload));
+        foreach ($headers as $header => $content) {
+            $response->withHeader($header, $content);
+        }
+
+        $response
+            ->withStatus($this->getHttpStatusCode())
+            ->getBody()->write(json_encode($payload));
 
         return $response;
     }
@@ -254,8 +259,7 @@ class OAuthServerException extends \Exception
         if ($this->errorType === 'invalid_client') {
             $authScheme = null;
             $request = new ServerRequest();
-            if (
-                isset($request->getServerParams()['PHP_AUTH_USER']) &&
+            if (isset($request->getServerParams()['PHP_AUTH_USER']) &&
                 $request->getServerParams()['PHP_AUTH_USER'] !== null
             ) {
                 $authScheme = 'Basic';
