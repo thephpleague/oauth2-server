@@ -226,14 +226,12 @@ class OAuthServerException extends \Exception
         }
 
         foreach ($headers as $header => $content) {
-            $response->withHeader($header, $content);
+            $response = $response->withHeader($header, $content);
         }
 
-        $response
+        return $response
             ->withStatus($this->getHttpStatusCode())
             ->getBody()->write(json_encode($payload));
-
-        return $response;
     }
 
     /**
