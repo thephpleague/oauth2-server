@@ -280,6 +280,8 @@ class OAuthServerException extends \Exception
                 if ($authHeader !== []) {
                     if (strpos($authHeader[0], 'Bearer') === 0) {
                         $authScheme = 'Bearer';
+                    } elseif (strpos($authHeader[0], 'MAC') === 0) {
+                        $authScheme = 'MAC';
                     } elseif (strpos($authHeader[0], 'Basic') === 0) {
                         $authScheme = 'Basic';
                     }
