@@ -11,71 +11,90 @@
 
 namespace League\OAuth2\Server\Utils;
 
+use phpseclib\Crypt\Base;
+use phpseclib\Crypt\RSA;
+
 class KeyCrypt
 {
+    /**
+     * Encryption/decryption algorigthm.
+     *
+     * @var \phpseclib\Crypt\Base
+     */
+    protected static $cryptAlgo;
+
+    /**
+     * Set encryption/decryption algorithm.
+     *
+     * @param \phpseclib\Crypt\Base $algorithm
+     */
+    public static function setAlgorithm(Base $algorithm)
+    {
+        self::$cryptAlgo = $algorithm;
+    }
+
+    /**
+     * Get encryption/decryption algorithm.
+     *
+     * @return \phpseclib\Crypt\Base
+     */
+    public static function getAlgorithm()
+    {
+        if (!self::$cryptAlgo) {
+            self::$cryptAlgo = new RSA();
+            self::$cryptAlgo->setEncryptionMode(CRYPT_RSA_ENCRYPTION_OAEP);
+            self::$cryptAlgo->setHash('sha256');
+            self::$cryptAlgo->setMGFHash('sha256');
+        }
+
+        return self::$cryptAlgo;
+    }
+
     /**
      * Encrypt data with a private key
      *
      * @param string $unencryptedData
-     * @param string $pathToPrivateKey
+     * @param string $privateKey
      *
      * @return string
+     *
+     * @throws \LogicException
      */
-    public static function encrypt($unencryptedData, $pathToPrivateKey)
+    public static function encrypt($unencryptedData, $privateKey)
     {
-        $privateKey = openssl_pkey_get_private($pathToPrivateKey);
-        $privateKeyDetails = @openssl_pkey_get_details($privateKey);
-        if ($privateKeyDetails === null) {
-            throw new \LogicException(sprintf('Could not get details of private key: %s', $pathToPrivateKey));
+        if (!self::getAlgorithm()->loadKey($privateKey)) {
+            throw new \LogicException('Could not assign private key');
         }
 
-        $chunkSize = ceil($privateKeyDetails['bits'] / 8) - 11;
-        $output = '';
-
-        while ($unencryptedData) {
-            $chunk = substr($unencryptedData, 0, $chunkSize);
-            $unencryptedData = substr($unencryptedData, $chunkSize);
-            if (openssl_private_encrypt($chunk, $encrypted, $privateKey) === false) {
-                throw new \LogicException('Failed to encrypt data');
-            }
-            $output .= $encrypted;
+        $encryptedData = self::getAlgorithm()->encrypt($unencryptedData);
+        if (!$encryptedData) {
+            throw new \LogicException('Failed to encrypt data');
         }
-        openssl_free_key($privateKey);
 
-        return base64_encode($output);
+        return base64_encode($encryptedData);
     }
 
     /**
      * Decrypt data with a public key
      *
      * @param string $encryptedData
-     * @param string $pathToPublicKey
+     * @param string $publicKey
      *
      * @return string
+     *
+     * @throws \LogicException
      */
-    public static function decrypt($encryptedData, $pathToPublicKey)
+    public static function decrypt($encryptedData, $publicKey)
     {
-        $publicKey = openssl_pkey_get_public($pathToPublicKey);
-        $publicKeyDetails = @openssl_pkey_get_details($publicKey);
-        if ($publicKeyDetails === null) {
-            throw new \LogicException(sprintf('Could not get details of public key: %s', $pathToPublicKey));
+        if (!self::getAlgorithm()->loadKey($publicKey)) {
+            throw new \LogicException('Could not assign public key');
         }
 
-        $chunkSize = ceil($publicKeyDetails['bits'] / 8);
-        $output = '';
-
-        $encryptedData = base64_decode($encryptedData);
-
-        while ($encryptedData) {
-            $chunk = substr($encryptedData, 0, $chunkSize);
-            $encryptedData = substr($encryptedData, $chunkSize);
-            if (openssl_public_decrypt($chunk, $decrypted, $publicKey) === false) {
-                throw new \LogicException('Failed to decrypt data');
-            }
-            $output .= $decrypted;
+        $unencryptedData = self::getAlgorithm()->decrypt(base64_decode($encryptedData));
+        if (!$encryptedData) {
+            throw new \LogicException('Failed to decrypt data');
         }
-        openssl_free_key($publicKey);
 
-        return $output;
+        return $unencryptedData;
     }
 }
