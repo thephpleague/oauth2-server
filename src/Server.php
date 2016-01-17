@@ -77,7 +77,11 @@ class Server implements EmitterAwareInterface
     protected function getDefaultResponseType()
     {
         if (!$this->defaultResponseType instanceof ResponseTypeInterface) {
-            $this->defaultResponseType = new BearerTokenResponse($this->defaultPrivateKeyPath);
+            $this->defaultResponseType = new BearerTokenResponse(
+                $this->defaultPrivateKeyPath,
+                $this->defaultPublicKeyPath,
+                $this->accessTokenRepository
+            );
         }
 
         return $this->defaultResponseType;
@@ -96,6 +100,10 @@ class Server implements EmitterAwareInterface
         ResponseTypeInterface $responseType = null,
         \DateInterval $accessTokenTTL
     ) {
+        $grantType->setAccessTokenRepository($this->accessTokenRepository);
+        $grantType->setClientRepository($this->clientRepository);
+        $grantType->setScopeRepository($this->scopeRepository);
+
         $grantType->setEmitter($this->getEmitter());
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
 
