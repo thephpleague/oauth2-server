@@ -44,14 +44,8 @@ class Server implements EmitterAwareInterface
     protected $defaultResponseType;
 
     /**
-     * @var DateInterval
-     */
-    protected $defaultAccessTokenTTL;
-
-    /**
      * @var string
      */
-    protected $scopeDelimiterString = ' ';
 
     /**
      * New server instance
@@ -90,29 +84,6 @@ class Server implements EmitterAwareInterface
     }
 
     /**
-     * Set the default TTL of access tokens
-     *
-     * @param DateInterval $defaultAccessTokenTTL
-     */
-    public function setDefaultAccessTokenTTL(DateInterval $defaultAccessTokenTTL)
-    {
-        $this->defaultAccessTokenTTL = $defaultAccessTokenTTL;
-    }
-
-    /**
-     * Get the default TTL of access tokens
-     *
-     * @return DateInterval
-     */
-    protected function getDefaultAccessTokenTTL()
-    {
-        if (!$this->defaultAccessTokenTTL instanceof \DateInterval) {
-            $this->defaultAccessTokenTTL = new \DateInterval('PT01H'); // default token TTL of 1 hour
-        }
-
-        return $this->defaultAccessTokenTTL;
-    }
-
     /**
      * Enable a grant type on the server
      *
@@ -123,7 +94,7 @@ class Server implements EmitterAwareInterface
     public function enableGrantType(
         GrantTypeInterface $grantType,
         ResponseTypeInterface $responseType = null,
-        \DateInterval $accessTokenTTL = null
+        \DateInterval $accessTokenTTL
     ) {
         $grantType->setEmitter($this->getEmitter());
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
