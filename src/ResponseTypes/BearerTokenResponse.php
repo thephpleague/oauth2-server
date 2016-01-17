@@ -79,7 +79,7 @@ class BearerTokenResponse extends AbstractResponseType
     public function determineAccessTokenInHeader(ServerRequestInterface $request)
     {
         $header = $request->getHeader('authorization');
-        $jwt = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
+        $jwt = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header[0]));
 
         try {
             // Attempt to parse and validate the JWT
