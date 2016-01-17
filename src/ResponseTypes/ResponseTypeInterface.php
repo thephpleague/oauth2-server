@@ -29,11 +29,12 @@ interface ResponseTypeInterface
     public function setRefreshToken(RefreshTokenEntityInterface $refreshToken);
 
     /**
-     * Determine the access token in the authorization header
+     * Determine the access token in the authorization header and append OAUth properties to the request
+     *  as attributes
      *
      * @param ServerRequestInterface $request
      *
-     * @return string
+     * @return ServerRequestInterface
      */
     public function determineAccessTokenInHeader(ServerRequestInterface $request);
 
