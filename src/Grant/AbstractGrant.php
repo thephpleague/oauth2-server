@@ -71,6 +71,16 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $scopeRepository;
 
     /**
+     * @var string
+     */
+    protected $pathToPrivateKey;
+
+    /**
+     * @var string
+     */
+    protected $pathToPublicKey;
+
+    /**
      * @param ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository)
@@ -92,6 +102,22 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setScopeRepository(ScopeRepositoryInterface $scopeRepository)
     {
         $this->scopeRepository = $scopeRepository;
+    }
+
+    /**
+     * @param string $pathToPrivateKey
+     */
+    public function setPathToPrivateKey($pathToPrivateKey)
+    {
+        $this->pathToPrivateKey = $pathToPrivateKey;
+    }
+
+    /**
+     * @param string $pathToPublicKey
+     */
+    public function setPathToPublicKey($pathToPublicKey)
+    {
+        $this->pathToPublicKey = $pathToPublicKey;
     }
 
     /**

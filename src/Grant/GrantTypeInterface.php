@@ -95,4 +95,17 @@ interface GrantTypeInterface
      */
     public function setScopeRepository(ScopeRepositoryInterface $scopeRepository);
 
+    /**
+     * Set the path to the private key
+     *
+     * @param string $pathToPrivateKey
+     */
+    public function setPathToPrivateKey($pathToPrivateKey);
+
+    /**
+     * Set the path to the public key
+     *
+     * @param string $pathToPublicKey
+     */
+    public function setPathToPublicKey($pathToPublicKey);
 }
