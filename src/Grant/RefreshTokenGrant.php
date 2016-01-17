@@ -74,7 +74,7 @@ class RefreshTokenGrant extends AbstractGrant
     ) {
         $client = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
-        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request), $scopeDelimiter, $client);
+        $scopes = $this->validateScopes($request, $scopeDelimiter, $client);
 
         // If no new scopes are requested then give the access token the original session scopes
         if (count($scopes) === 0) {

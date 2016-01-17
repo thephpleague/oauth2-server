@@ -100,6 +100,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function setEmitter(EmitterInterface $emitter)
+    {
+        $this->emitter = $emitter;
+    }
+
+    /**
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface
@@ -143,6 +151,48 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @param \Psr\Http\Message\ServerRequestInterface                        $request
+     * @param string                                                          $scopeDelimiterString
+     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
+     * @param string                                                          $redirectUri
+     *
+     * @return \League\OAuth2\Server\Entities\ScopeEntity[]
+     *
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    public function validateScopes(
+        ServerRequestInterface $request,
+        $scopeDelimiterString,
+        ClientEntityInterface $client,
+        $redirectUri = null
+    ) {
+        $requestedScopes = $this->getRequestParameter('scope', $request);
+        $scopesList = array_filter(
+            explode($scopeDelimiterString, trim($requestedScopes)),
+            function ($scope) {
+                return !empty($scope);
+            }
+        );
+
+        $scopes = [];
+        foreach ($scopesList as $scopeItem) {
+            $scope = $this->scopeRepository->getScopeEntityByIdentifier(
+                $scopeItem,
+                $this->getIdentifier(),
+                $client->getIdentifier()
+            );
+
+            if (($scope instanceof ScopeEntity) === false) {
+                throw OAuthServerException::invalidScope($scopeItem, null, null, $redirectUri);
+            }
+
+            $scopes[] = $scope;
+        }
+
+        return $scopes;
+    }
+
+    /**
      * Retrieve request parameter.
      *
      * @param string                                   $parameter
@@ -168,54 +218,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected function getServerParameter($parameter, ServerRequestInterface $request, $default = null)
     {
         return (isset($request->getServerParams()[$parameter])) ? $request->getServerParams()[$parameter] : $default;
-    }
-
-    /**
-     * @param string                $scopeParamValue      A string containing a delimited set of scope identifiers
-     * @param string                $scopeDelimiterString The delimiter between the scopes in the value string
-     * @param ClientEntityInterface $client
-     * @param string                $redirectUri
-     *
-     * @return \League\OAuth2\Server\Entities\ScopeEntity[]
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
-     */
-    public function validateScopes(
-        $scopeParamValue,
-        $scopeDelimiterString,
-        ClientEntityInterface $client,
-        $redirectUri = null
-    ) {
-        $scopesList = array_filter(
-            explode($scopeDelimiterString, trim($scopeParamValue)),
-            function ($scope) {
-                return !empty($scope);
-            }
-        );
-
-        $scopes = [];
-        foreach ($scopesList as $scopeItem) {
-            $scope = $this->scopeRepository->getScopeEntityByIdentifier(
-                $scopeItem,
-                $this->getIdentifier(),
-                $client->getIdentifier()
-            );
-
-            if (($scope instanceof ScopeEntity) === false) {
-                throw OAuthServerException::invalidScope($scopeItem, null, null, $redirectUri);
-            }
-
-            $scopes[] = $scope;
-        }
-
-        return $scopes;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setEmitter(EmitterInterface $emitter)
-    {
-        $this->emitter = $emitter;
     }
 
     /**
