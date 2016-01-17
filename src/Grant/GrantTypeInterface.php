@@ -13,6 +13,9 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use League\Event\EmitterInterface;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -41,15 +44,13 @@ interface GrantTypeInterface
      * @param \Psr\Http\Message\ServerRequestInterface                  $request
      * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
      * @param \DateInterval                                             $tokenTTL
-     * @param string                                                    $scopeDelimiter
      *
      * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        DateInterval $tokenTTL,
-        $scopeDelimiter = ' '
+        DateInterval $tokenTTL
     );
 
     /**
@@ -72,4 +73,39 @@ interface GrantTypeInterface
      * @param \League\Event\EmitterInterface $emitter
      */
     public function setEmitter(EmitterInterface $emitter);
+
+    /**
+     * Set the client repository
+     *
+     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface $clientRepository
+     */
+    public function setClientRepository(ClientRepositoryInterface $clientRepository);
+
+    /**
+     * Set the access token repository
+     *
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     */
+    public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository);
+
+    /**
+     * Set the scope repository
+     *
+     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface $scopeRepository
+     */
+    public function setScopeRepository(ScopeRepositoryInterface $scopeRepository);
+
+    /**
+     * Set the path to the private key
+     *
+     * @param string $pathToPrivateKey
+     */
+    public function setPathToPrivateKey($pathToPrivateKey);
+
+    /**
+     * Set the path to the public key
+     *
+     * @param string $pathToPublicKey
+     */
+    public function setPathToPublicKey($pathToPublicKey);
 }

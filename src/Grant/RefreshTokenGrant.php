@@ -12,10 +12,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ServerRequestInterface;
@@ -34,32 +31,16 @@ class RefreshTokenGrant extends AbstractGrant
     protected $identifier = 'refresh_token';
 
     /**
-     * @var string
-     */
-    private $pathToPublicKey;
-
-    /**
      * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
      */
     private $refreshTokenRepository;
 
     /**
-     * @param string                                                             $pathToPublicKey
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface       $clientRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface        $scopeRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface  $accessTokenRepository
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      */
     public function __construct(
-        $pathToPublicKey,
-        ClientRepositoryInterface $clientRepository,
-        ScopeRepositoryInterface $scopeRepository,
-        AccessTokenRepositoryInterface $accessTokenRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository
     ) {
-        parent::__construct($clientRepository, $scopeRepository, $accessTokenRepository);
-
-        $this->pathToPublicKey = $pathToPublicKey;
         $this->refreshTokenRepository = $refreshTokenRepository;
     }
 
@@ -69,12 +50,11 @@ class RefreshTokenGrant extends AbstractGrant
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $tokenTTL,
-        $scopeDelimiter = ' '
+        \DateInterval $tokenTTL
     ) {
-        $client = $this->validateClient($request);
+        $client          = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
-        $scopes = $this->validateScopes($request, $scopeDelimiter, $client);
+        $scopes          = $this->validateScopes($request, $scopeDelimiter, $client);
 
         // If no new scopes are requested then give the access token the original session scopes
         if (count($scopes) === 0) {
@@ -137,7 +117,7 @@ class RefreshTokenGrant extends AbstractGrant
             throw OAuthServerException::invalidRefreshToken(
                 'Token is not linked to client,' .
                 ' got: ' . $clientId .
-                ' expected: '. $refreshTokenData['client_id']
+                ' expected: ' . $refreshTokenData['client_id']
             );
         }
 

@@ -29,6 +29,8 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 abstract class AbstractGrant implements GrantTypeInterface
 {
+    const SCOPE_DELIMITER_STRING = ' ';
+
     /**
      * Grant identifier
      *
@@ -69,18 +71,61 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $scopeRepository;
 
     /**
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     * @var string
      */
-    public function __construct(
-        ClientRepositoryInterface $clientRepository,
-        ScopeRepositoryInterface $scopeRepository,
-        AccessTokenRepositoryInterface $accessTokenRepository
-    ) {
+    protected $pathToPrivateKey;
+
+    /**
+     * @var string
+     */
+    protected $pathToPublicKey;
+
+    /**
+     * @param ClientRepositoryInterface $clientRepository
+     */
+    public function setClientRepository(ClientRepositoryInterface $clientRepository)
+    {
         $this->clientRepository = $clientRepository;
-        $this->scopeRepository = $scopeRepository;
+    }
+
+    /**
+     * @param AccessTokenRepositoryInterface $accessTokenRepository
+     */
+    public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository)
+    {
         $this->accessTokenRepository = $accessTokenRepository;
+    }
+
+    /**
+     * @param ScopeRepositoryInterface $scopeRepository
+     */
+    public function setScopeRepository(ScopeRepositoryInterface $scopeRepository)
+    {
+        $this->scopeRepository = $scopeRepository;
+    }
+
+    /**
+     * @param string $pathToPrivateKey
+     */
+    public function setPathToPrivateKey($pathToPrivateKey)
+    {
+        $this->pathToPrivateKey = $pathToPrivateKey;
+    }
+
+    /**
+     * @param string $pathToPublicKey
+     */
+    public function setPathToPublicKey($pathToPublicKey)
+    {
+        $this->pathToPublicKey = $pathToPublicKey;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setEmitter(EmitterInterface $emitter)
+    {
+        $this->emitter = $emitter;
     }
 
     /**
@@ -97,14 +142,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function respondsWith()
     {
         return $this->respondsWith;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setEmitter(EmitterInterface $emitter)
-    {
-        $this->emitter = $emitter;
     }
 
     /**
@@ -152,7 +189,6 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * @param \Psr\Http\Message\ServerRequestInterface                        $request
-     * @param string                                                          $scopeDelimiterString
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
      * @param string                                                          $redirectUri
      *
@@ -162,13 +198,12 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateScopes(
         ServerRequestInterface $request,
-        $scopeDelimiterString,
         ClientEntityInterface $client,
         $redirectUri = null
     ) {
         $requestedScopes = $this->getRequestParameter('scope', $request);
         $scopesList = array_filter(
-            explode($scopeDelimiterString, trim($requestedScopes)),
+            explode(self::SCOPE_DELIMITER_STRING, trim($requestedScopes)),
             function ($scope) {
                 return !empty($scope);
             }

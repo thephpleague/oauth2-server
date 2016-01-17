@@ -12,6 +12,7 @@
 namespace League\OAuth2\Server\ResponseTypes;
 
 use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
@@ -78,8 +79,28 @@ class BearerTokenResponse extends AbstractResponseType
     public function determineAccessTokenInHeader(ServerRequestInterface $request)
     {
         $header = $request->getHeader('authorization');
-        $accessToken = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
+        $jwt = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
 
-        return ($accessToken === 'Bearer') ? '' : $accessToken;
+        try {
+            // Attempt to parse and validate the JWT
+            $token = (new Parser())->parse($jwt);
+            if ($token->verify(new Sha256(), $this->pathToPublicKey) === false) {
+                return $request;
+            }
+
+            // Check if token has been revoked
+            if ($this->accessTokenRepository->isAccessTokenRevoked($token->getClaim('jwt'))) {
+                return $request;
+            }
+
+            // Return the request with additional attributes
+            return $request->withAttribute('oauth_access_token', $token->getClaim('jti'))
+                ->withAttribute('oauth_client_id', $token->getClaim('aud'))
+                ->withAttribute('oauth_user_id', $token->getClaim('sub'))
+                ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
+        } catch (\InvalidArgumentException $e) {
+            // JWT couldn't be parsed so return the request as is
+            return $request;
+        }
     }
 }

@@ -8,7 +8,6 @@ use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\RefreshTokenRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
-use OAuth2ServerExamples\Repositories\UserRepository;
 
 use Slim\App;
 use Slim\Http\Request;
@@ -16,28 +15,33 @@ use Slim\Http\Response;
 
 include(__DIR__ . '/../vendor/autoload.php');
 
-// Setup the authorization server
-$server = new Server('file://' . __DIR__ . '/../private.key');
 
-// Init our repositories
-$userRepository = new UserRepository();
-$clientRepository = new ClientRepository();
-$scopeRepository = new ScopeRepository();
-$accessTokenRepository = new AccessTokenRepository();
-$refreshTokenRepository = new RefreshTokenRepository();
-
-// Enable the client credentials grant on the server
-$refreshTokenGrant = new RefreshTokenGrant(
-    'file://' . __DIR__ . '/../public.key',
-    $clientRepository,
-    $scopeRepository,
-    $accessTokenRepository,
-    $refreshTokenRepository
-);
-$server->enableGrantType($refreshTokenGrant);
 
 // App
-$app = new App([Server::class => $server]);
+$app = new App([Server::class => function () {
+    // Init our repositories
+    $clientRepository = new ClientRepository();
+    $scopeRepository = new ScopeRepository();
+    $accessTokenRepository = new AccessTokenRepository();
+    $refreshTokenRepository = new RefreshTokenRepository();
+
+    $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
+    $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
+
+    // Setup the authorization server
+    $server = new Server(
+        $clientRepository,
+        $accessTokenRepository,
+        $scopeRepository,
+        $privateKeyPath,
+        $publicKeyPath
+    );
+
+    // Enable the refresh token grant on the server
+    $server->enableGrantType(new RefreshTokenGrant($refreshTokenRepository), new \DateInterval('PT1H'));
+
+    return $server;
+}]);
 
 $app->post('/access_token', function (Request $request, Response $response) {
     /** @var Server $server */

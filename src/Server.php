@@ -7,6 +7,9 @@ use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -36,131 +39,101 @@ class Server implements EmitterAwareInterface
     /**
      * @var string
      */
-    protected $defaultPrivateKeyPath;
+    protected $privateKeyPath;
 
     /**
      * @var ResponseTypeInterface
      */
-    protected $defaultResponseType;
-
-    /**
-     * @var DateInterval
-     */
-    protected $defaultAccessTokenTTL;
+    protected $responseType;
 
     /**
      * @var string
      */
-    protected $scopeDelimiterString = ' ';
+    private $publicKeyPath;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\ClientRepositoryInterface
+     */
+    private $clientRepository;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
+     */
+    private $accessTokenRepository;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\ScopeRepositoryInterface
+     */
+    private $scopeRepository;
 
     /**
      * New server instance
      *
-     * @param string       $defaultPrivateKeyPath
-     * @param DateInterval $defaultAccessTokenTTL
+     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
+     * @param string                                                            $privateKeyPath
+     * @param string                                                            $publicKeyPath
+     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface    $responseType
      */
-    public function __construct($defaultPrivateKeyPath, \DateInterval $defaultAccessTokenTTL = null)
-    {
-        $this->defaultPrivateKeyPath = $defaultPrivateKeyPath;
-        $this->defaultAccessTokenTTL = $defaultAccessTokenTTL;
+    public function __construct(
+        ClientRepositoryInterface $clientRepository,
+        AccessTokenRepositoryInterface $accessTokenRepository,
+        ScopeRepositoryInterface $scopeRepository,
+        $privateKeyPath,
+        $publicKeyPath,
+        ResponseTypeInterface $responseType = null
+    ) {
+        $this->clientRepository = $clientRepository;
+        $this->accessTokenRepository = $accessTokenRepository;
+        $this->scopeRepository = $scopeRepository;
+        $this->privateKeyPath = $privateKeyPath;
+        $this->publicKeyPath = $publicKeyPath;
+        $this->responseType = $responseType;
     }
 
     /**
-     * Set the default token type that grants will return
-     *
-     * @param ResponseTypeInterface $defaultTokenType
-     */
-    public function setDefaultResponseType(ResponseTypeInterface $defaultTokenType)
-    {
-        $this->defaultResponseType = $defaultTokenType;
-    }
-
-    /**
-     * Get the default token type that grants will return
+     * Get the token type that grants will return in the HTTP response
      *
      * @return ResponseTypeInterface
      */
-    protected function getDefaultResponseType()
+    public function getResponseType()
     {
-        if (!$this->defaultResponseType instanceof ResponseTypeInterface) {
-            $this->defaultResponseType = new BearerTokenResponse($this->defaultPrivateKeyPath);
+        if (!$this->responseType instanceof ResponseTypeInterface) {
+            $this->responseType = new BearerTokenResponse(
+                $this->privateKeyPath,
+                $this->publicKeyPath,
+                $this->accessTokenRepository
+            );
         }
 
-        return $this->defaultResponseType;
-    }
-
-    /**
-     * Set the default TTL of access tokens
-     *
-     * @param DateInterval $defaultAccessTokenTTL
-     */
-    public function setDefaultAccessTokenTTL(DateInterval $defaultAccessTokenTTL)
-    {
-        $this->defaultAccessTokenTTL = $defaultAccessTokenTTL;
-    }
-
-    /**
-     * Get the default TTL of access tokens
-     *
-     * @return DateInterval
-     */
-    protected function getDefaultAccessTokenTTL()
-    {
-        if (!$this->defaultAccessTokenTTL instanceof \DateInterval) {
-            $this->defaultAccessTokenTTL = new \DateInterval('PT01H'); // default token TTL of 1 hour
-        }
-
-        return $this->defaultAccessTokenTTL;
-    }
-
-    /**
-     * Set the delimiter string used to separate scopes in a request
-     *
-     * @param string $scopeDelimiterString
-     */
-    public function setScopeDelimiterString($scopeDelimiterString)
-    {
-        $this->scopeDelimiterString = $scopeDelimiterString;
-    }
-
-    /**
-     * Get the delimiter string used to separate scopes in a request
-     *
-     * @return string
-     */
-    protected function getScopeDelimiterString()
-    {
-        return $this->scopeDelimiterString;
+        return $this->responseType;
     }
 
     /**
      * Enable a grant type on the server
      *
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
-     * @param ResponseTypeInterface                          $responseType
      * @param DateInterval                                   $accessTokenTTL
      */
     public function enableGrantType(
         GrantTypeInterface $grantType,
-        ResponseTypeInterface $responseType = null,
-        \DateInterval $accessTokenTTL = null
+        \DateInterval $accessTokenTTL
     ) {
+        $grantType->setAccessTokenRepository($this->accessTokenRepository);
+        $grantType->setClientRepository($this->clientRepository);
+        $grantType->setScopeRepository($this->scopeRepository);
+        $grantType->setPathToPrivateKey($this->privateKeyPath);
+        $grantType->setPathToPublicKey($this->publicKeyPath);
+
         $grantType->setEmitter($this->getEmitter());
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
 
         // Set grant response type
-        if ($responseType instanceof ResponseTypeInterface) {
-            $this->grantResponseTypes[$grantType->getIdentifier()] = $responseType;
-        } else {
-            $this->grantResponseTypes[$grantType->getIdentifier()] = $this->getDefaultResponseType();
-        }
+        $this->grantResponseTypes[$grantType->getIdentifier()] = $this->getResponseType();
 
         // Set grant access token TTL
-        if ($accessTokenTTL instanceof \DateInterval) {
-            $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
-        } else {
-            $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $this->getDefaultAccessTokenTTL();
-        }
+        $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
     }
 
     /**
@@ -188,8 +161,7 @@ class Server implements EmitterAwareInterface
                 $tokenResponse = $grantType->respondToRequest(
                     $request,
                     $this->grantResponseTypes[$grantType->getIdentifier()],
-                    $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()],
-                    $this->getScopeDelimiterString()
+                    $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
                 );
             }
         }

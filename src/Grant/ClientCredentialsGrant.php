@@ -11,8 +11,6 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
-use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -34,8 +32,7 @@ class ClientCredentialsGrant extends AbstractGrant
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $tokenTTL,
-        $scopeDelimiter = ' '
+        \DateInterval $tokenTTL
     ) {
         // Validate request
         $client = $this->validateClient($request);

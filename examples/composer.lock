@@ -148,7 +148,7 @@
             "dist": {
                 "type": "path",
                 "url": "../",
-                "reference": "dce1620f60d9f1a44a9ec99b6168810a8030c20c",
+                "reference": "168e7640c6e8217b7e961151de522810b3edce6e",
                 "shasum": null
             },
             "require": {
