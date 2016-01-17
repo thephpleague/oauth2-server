@@ -114,26 +114,6 @@ class Server implements EmitterAwareInterface
     }
 
     /**
-     * Set the delimiter string used to separate scopes in a request
-     *
-     * @param string $scopeDelimiterString
-     */
-    public function setScopeDelimiterString($scopeDelimiterString)
-    {
-        $this->scopeDelimiterString = $scopeDelimiterString;
-    }
-
-    /**
-     * Get the delimiter string used to separate scopes in a request
-     *
-     * @return string
-     */
-    protected function getScopeDelimiterString()
-    {
-        return $this->scopeDelimiterString;
-    }
-
-    /**
      * Enable a grant type on the server
      *
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
@@ -188,8 +168,7 @@ class Server implements EmitterAwareInterface
                 $tokenResponse = $grantType->respondToRequest(
                     $request,
                     $this->grantResponseTypes[$grantType->getIdentifier()],
-                    $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()],
-                    $this->getScopeDelimiterString()
+                    $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
                 );
             }
         }
