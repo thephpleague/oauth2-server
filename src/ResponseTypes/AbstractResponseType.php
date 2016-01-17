@@ -13,6 +13,7 @@ namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 
 abstract class AbstractResponseType implements ResponseTypeInterface
 {
@@ -20,6 +21,11 @@ abstract class AbstractResponseType implements ResponseTypeInterface
      * @var string
      */
     protected $pathToPrivateKey;
+
+    /**
+     * @var string
+     */
+    protected $pathToPublicKey;
 
     /**
      * @var \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
@@ -32,11 +38,23 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     protected $refreshToken;
 
     /**
-     * @param string $pathToPrivateKey
+     * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
      */
-    public function __construct($pathToPrivateKey)
-    {
+    protected $accessTokenRepository;
+
+    /**
+     * @param string                                                            $pathToPrivateKey
+     * @param string                                                            $pathToPublicKey
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     */
+    public function __construct(
+        $pathToPrivateKey,
+        $pathToPublicKey,
+        AccessTokenRepositoryInterface $accessTokenRepository
+    ) {
         $this->pathToPrivateKey = $pathToPrivateKey;
+        $this->pathToPublicKey = $pathToPublicKey;
+        $this->accessTokenRepository = $accessTokenRepository;
     }
 
     /**
