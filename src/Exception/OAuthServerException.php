@@ -202,7 +202,9 @@ class OAuthServerException extends \Exception
     /**
      * Generate a HTTP response
      *
-     * @return ResponseInterface
+     * @param \Psr\Http\Message\ResponseInterface $response
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public function generateHttpResponse(ResponseInterface $response = null)
     {
