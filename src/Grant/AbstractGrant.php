@@ -29,6 +29,8 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 abstract class AbstractGrant implements GrantTypeInterface
 {
+    const SCOPE_DELIMITER_STRING = ' ';
+
     /**
      * Grant identifier
      *
@@ -181,7 +183,6 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * @param string                $scopeParamValue      A string containing a delimited set of scope identifiers
-     * @param string                $scopeDelimiterString The delimiter between the scopes in the value string
      * @param ClientEntityInterface $client
      * @param string                $redirectUri
      *
@@ -190,12 +191,11 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateScopes(
         $scopeParamValue,
-        $scopeDelimiterString,
         ClientEntityInterface $client,
         $redirectUri = null
     ) {
         $scopesList = array_filter(
-            explode($scopeDelimiterString, trim($scopeParamValue)),
+            explode(self::SCOPE_DELIMITER_STRING, trim($scopeParamValue)),
             function ($scope) {
                 return !empty($scope);
             }
