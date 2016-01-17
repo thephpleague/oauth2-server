@@ -97,7 +97,7 @@ class Server implements EmitterAwareInterface
      *
      * @return ResponseTypeInterface
      */
-    protected function getDefaultResponseType()
+    public function getDefaultResponseType()
     {
         if (!$this->defaultResponseType instanceof ResponseTypeInterface) {
             $this->defaultResponseType = new BearerTokenResponse(
