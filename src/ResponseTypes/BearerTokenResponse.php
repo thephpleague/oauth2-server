@@ -85,12 +85,12 @@ class BearerTokenResponse extends AbstractResponseType
             // Attempt to parse and validate the JWT
             $token = (new Parser())->parse($jwt);
             if ($token->verify(new Sha256(), $this->pathToPublicKey) === false) {
-                return $request;
+                return $request->withAttribute('oauth_access_token_error', 'Access token could not be verified');
             }
 
             // Check if token has been revoked
-            if ($this->accessTokenRepository->isAccessTokenRevoked($token->getClaim('jwt'))) {
-                return $request;
+            if ($this->accessTokenRepository->isAccessTokenRevoked($token->getClaim('jti'))) {
+                return $request->withAttribute('oauth_access_token_error', 'Access token has been revoked');
             }
 
             // Return the request with additional attributes
@@ -100,7 +100,7 @@ class BearerTokenResponse extends AbstractResponseType
                 ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
         } catch (\InvalidArgumentException $e) {
             // JWT couldn't be parsed so return the request as is
-            return $request;
+            return $request->withAttribute('oauth_access_token_error', $e->getMessage());
         }
     }
 }
