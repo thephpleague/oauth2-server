@@ -31,24 +31,16 @@ class RefreshTokenGrant extends AbstractGrant
     protected $identifier = 'refresh_token';
 
     /**
-     * @var string
-     */
-    private $pathToPublicKey;
-
-    /**
      * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
      */
     private $refreshTokenRepository;
 
     /**
-     * @param string                                                             $pathToPublicKey
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      */
     public function __construct(
-        $pathToPublicKey,
         RefreshTokenRepositoryInterface $refreshTokenRepository
     ) {
-        $this->pathToPublicKey = $pathToPublicKey;
         $this->refreshTokenRepository = $refreshTokenRepository;
     }
 
