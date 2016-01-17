@@ -7,6 +7,9 @@ use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -46,27 +49,47 @@ class Server implements EmitterAwareInterface
     /**
      * @var string
      */
+    private $defaultPublicKeyPath;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\ClientRepositoryInterface
+     */
+    private $clientRepository;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
+     */
+    private $accessTokenRepository;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\ScopeRepositoryInterface
+     */
+    private $scopeRepository;
 
     /**
      * New server instance
      *
-     * @param string       $defaultPrivateKeyPath
-     * @param DateInterval $defaultAccessTokenTTL
+     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
+     * @param string                                                            $defaultPrivateKeyPath
+     * @param string                                                            $defaultPublicKeyPath
+     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface    $responseType
      */
-    public function __construct($defaultPrivateKeyPath, \DateInterval $defaultAccessTokenTTL = null)
-    {
+    public function __construct(
+        ClientRepositoryInterface $clientRepository,
+        AccessTokenRepositoryInterface $accessTokenRepository,
+        ScopeRepositoryInterface $scopeRepository,
+        $defaultPrivateKeyPath,
+        $defaultPublicKeyPath,
+        ResponseTypeInterface $responseType = null
+    ) {
         $this->defaultPrivateKeyPath = $defaultPrivateKeyPath;
-        $this->defaultAccessTokenTTL = $defaultAccessTokenTTL;
-    }
-
-    /**
-     * Set the default token type that grants will return
-     *
-     * @param ResponseTypeInterface $defaultTokenType
-     */
-    public function setDefaultResponseType(ResponseTypeInterface $defaultTokenType)
-    {
-        $this->defaultResponseType = $defaultTokenType;
+        $this->defaultPublicKeyPath = $defaultPublicKeyPath;
+        $this->clientRepository = $clientRepository;
+        $this->accessTokenRepository = $accessTokenRepository;
+        $this->scopeRepository = $scopeRepository;
+        $this->defaultResponseType = $responseType;
     }
 
     /**
