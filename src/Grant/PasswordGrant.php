@@ -63,8 +63,8 @@ class PasswordGrant extends AbstractGrant
     ) {
         // Validate request
         $client = $this->validateClient($request);
-        $user = $this->validateUser($request);
-        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request), $client);
+        $user   = $this->validateUser($request);
+        $scopes = $this->validateScopes($request, $scopeDelimiter, $client);
 
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($tokenTTL, $client, $user->getIdentifier(), $scopes);
