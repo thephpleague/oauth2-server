@@ -57,7 +57,8 @@ class BearerTokenResponse extends AbstractResponseType
                         'expire_time'      => $this->refreshToken->getExpiryDateTime()->getTimestamp(),
                     ]
                 ),
-                file_get_contents($this->pathToPrivateKey)
+                file_get_contents($this->pathToPrivateKey),
+                $this->privateKeyPassword
             );
 
             $responseParams['refresh_token'] = $refreshToken;

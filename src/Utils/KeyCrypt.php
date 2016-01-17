@@ -55,13 +55,16 @@ class KeyCrypt
      *
      * @param string $unencryptedData
      * @param string $privateKey
+     * @param string $privateKeyPassword
      *
      * @return string
      *
      * @throws \LogicException
      */
-    public static function encrypt($unencryptedData, $privateKey)
+    public static function encrypt($unencryptedData, $privateKey, $privateKeyPassword = '')
     {
+        self::getAlgorithm()->setPassword($privateKeyPassword !== '' ? $privateKeyPassword : false);
+
         if (!self::getAlgorithm()->loadKey($privateKey)) {
             throw new \LogicException('Could not assign private key');
         }
@@ -86,6 +89,8 @@ class KeyCrypt
      */
     public static function decrypt($encryptedData, $publicKey)
     {
+        self::getAlgorithm()->setPassword(false);
+
         if (!self::getAlgorithm()->loadKey($publicKey)) {
             throw new \LogicException('Could not assign public key');
         }

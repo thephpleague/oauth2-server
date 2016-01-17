@@ -31,8 +31,8 @@ $app = new App([
             $clientRepository,
             $accessTokenRepository,
             $scopeRepository,
-            $privateKeyPath,
-            $publicKeyPath
+            $publicKeyPath,
+            $privateKeyPath
         );
 
         // Enable the client credentials grant on the server with a token TTL of 1 hour

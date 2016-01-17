@@ -42,6 +42,11 @@ class Server implements EmitterAwareInterface
     protected $privateKeyPath;
 
     /**
+     * @var string
+     */
+    protected $privateKeyPassword;
+
+    /**
      * @var ResponseTypeInterface
      */
     protected $responseType;
@@ -72,23 +77,26 @@ class Server implements EmitterAwareInterface
      * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
      * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
      * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
-     * @param string                                                            $privateKeyPath
      * @param string                                                            $publicKeyPath
+     * @param string                                                            $privateKeyPath
+     * @param string                                                            $privateKeyPassword
      * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface    $responseType
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
         AccessTokenRepositoryInterface $accessTokenRepository,
         ScopeRepositoryInterface $scopeRepository,
-        $privateKeyPath,
         $publicKeyPath,
+        $privateKeyPath,
+        $privateKeyPassword = '',
         ResponseTypeInterface $responseType = null
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
         $this->scopeRepository = $scopeRepository;
-        $this->privateKeyPath = $privateKeyPath;
         $this->publicKeyPath = $publicKeyPath;
+        $this->privateKeyPath = $privateKeyPath;
+        $this->privateKeyPassword = $privateKeyPassword;
         $this->responseType = $responseType;
     }
 
@@ -101,9 +109,10 @@ class Server implements EmitterAwareInterface
     {
         if (!$this->responseType instanceof ResponseTypeInterface) {
             $this->responseType = new BearerTokenResponse(
-                $this->privateKeyPath,
+                $this->accessTokenRepository,
                 $this->publicKeyPath,
-                $this->accessTokenRepository
+                $this->privateKeyPath,
+                $this->privateKeyPassword
             );
         }
 
@@ -123,10 +132,11 @@ class Server implements EmitterAwareInterface
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
-        $grantType->setPathToPrivateKey($this->privateKeyPath);
         $grantType->setPathToPublicKey($this->publicKeyPath);
-
+        $grantType->setPathToPrivateKey($this->privateKeyPath);
+        $grantType->privateKeyPassword($this->privateKeyPassword);
         $grantType->setEmitter($this->getEmitter());
+
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
 
         // Set grant response type
