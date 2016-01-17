@@ -69,18 +69,27 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $scopeRepository;
 
     /**
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     * @param ClientRepositoryInterface $clientRepository
      */
-    public function __construct(
-        ClientRepositoryInterface $clientRepository,
-        ScopeRepositoryInterface $scopeRepository,
-        AccessTokenRepositoryInterface $accessTokenRepository
-    ) {
+    public function setClientRepository(ClientRepositoryInterface $clientRepository)
+    {
         $this->clientRepository = $clientRepository;
-        $this->scopeRepository = $scopeRepository;
+    }
+
+    /**
+     * @param AccessTokenRepositoryInterface $accessTokenRepository
+     */
+    public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository)
+    {
         $this->accessTokenRepository = $accessTokenRepository;
+    }
+
+    /**
+     * @param ScopeRepositoryInterface $scopeRepository
+     */
+    public function setScopeRepository(ScopeRepositoryInterface $scopeRepository)
+    {
+        $this->scopeRepository = $scopeRepository;
     }
 
     /**
