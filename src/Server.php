@@ -44,7 +44,7 @@ class Server implements EmitterAwareInterface
     /**
      * @var ResponseTypeInterface
      */
-    protected $defaultResponseType;
+    protected $responseType;
 
     /**
      * @var string
@@ -87,27 +87,27 @@ class Server implements EmitterAwareInterface
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
         $this->scopeRepository = $scopeRepository;
-        $this->defaultResponseType = $responseType;
         $this->privateKeyPath = $privateKeyPath;
         $this->publicKeyPath = $publicKeyPath;
+        $this->responseType = $responseType;
     }
 
     /**
-     * Get the default token type that grants will return
+     * Get the token type that grants will return in the HTTP response
      *
      * @return ResponseTypeInterface
      */
-    public function getDefaultResponseType()
+    public function getResponseType()
     {
-        if (!$this->defaultResponseType instanceof ResponseTypeInterface) {
-            $this->defaultResponseType = new BearerTokenResponse(
-                $this->defaultPrivateKeyPath,
-                $this->defaultPublicKeyPath,
+        if (!$this->responseType instanceof ResponseTypeInterface) {
+            $this->responseType = new BearerTokenResponse(
+                $this->privateKeyPath,
+                $this->publicKeyPath,
                 $this->accessTokenRepository
             );
         }
 
-        return $this->defaultResponseType;
+        return $this->responseType;
     }
 
     /**
@@ -130,7 +130,7 @@ class Server implements EmitterAwareInterface
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
 
         // Set grant response type
-        $this->grantResponseTypes[$grantType->getIdentifier()] = $this->getDefaultResponseType();
+        $this->grantResponseTypes[$grantType->getIdentifier()] = $this->getResponseType();
 
         // Set grant access token TTL
         $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
