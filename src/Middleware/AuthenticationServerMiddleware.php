@@ -7,7 +7,7 @@ use League\OAuth2\Server\Server;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ResourceServerMiddleware
+class AuthenticationServerMiddleware
 {
     /**
      * @var \League\OAuth2\Server\Server
@@ -15,7 +15,7 @@ class ResourceServerMiddleware
     private $server;
 
     /**
-     * ResourceServerMiddleware constructor.
+     * AuthenticationServerMiddleware constructor.
      *
      * @param \League\OAuth2\Server\Server $server
      */
@@ -33,18 +33,16 @@ class ResourceServerMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($request->hasHeader('authorization') === false) {
-            $exception = OAuthServerException::accessDenied('Missing authorization header');
-
+        try {
+            $response = $server->respondToRequest($request, $response);
+        } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
+        } catch (\Exception $exception) {
+            return $response->withStatus(500)->write($exception->getMessage());
         }
 
-        $request = $this->server->getResponseType()->determineAccessTokenInHeader($request);
-
-        if ($request->getAttribute('oauth_access_token') === null) {
-            $exception = OAuthServerException::accessDenied($request->getAttribute('oauth_access_token_error'));
-
-            return $exception->generateHttpResponse($response);
+        if (in_array($response->getStatusCode(), [400, 401, 500])) {
+            return $response;
         }
 
         // Pass the request and response on to the next responder in the chain

@@ -1,7 +1,6 @@
 <?php
 
-use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Grant\PasswordGrant;
+use League\OAuth2\Server\Middleware\AuthenticationServerMiddleware;
 use League\OAuth2\Server\Server;
 
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
@@ -18,12 +17,15 @@ include(__DIR__ . '/../vendor/autoload.php');
 
 // App
 $app = new App([
+    'settings'    => [
+        'displayErrorDetails' => true,
+    ],
     Server::class => function () {
 
         // Init our repositories
         $clientRepository = new ClientRepository();
-        $scopeRepository = new ScopeRepository();
         $accessTokenRepository = new AccessTokenRepository();
+        $scopeRepository = new ScopeRepository();
         $userRepository = new UserRepository();
         $refreshTokenRepository = new RefreshTokenRepository();
 
@@ -39,9 +41,13 @@ $app = new App([
             $publicKeyPath
         );
 
-        // Enable the password grant on the server with a token TTL of 1 hour
+        // Enable the grants
         $server->enableGrantType(
             new PasswordGrant($userRepository, $refreshTokenRepository),
+            new \DateInterval('PT1H')
+        );
+        $server->enableGrantType(
+            new RefreshTokenGrant($refreshTokenRepository),
             new \DateInterval('PT1H')
         );
 
@@ -49,16 +55,7 @@ $app = new App([
     }
 ]);
 
-$app->post('/access_token', function (Request $request, Response $response) {
-    /** @var Server $server */
-    $server = $this->get(Server::class);
-    try {
-        return $server->respondToRequest($request, $response);
-    } catch (OAuthServerException $e) {
-        return $e->generateHttpResponse($response);
-    } catch (\Exception $e) {
-        return $response->withStatus(500)->write($e->getMessage());
-    }
-});
+$app->post('/access_token', function () {
+})->add(new AuthenticationServerMiddleware($app->getContainer()->get(Server::class)));
 
 $app->run();

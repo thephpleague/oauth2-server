@@ -172,24 +172,4 @@ class Server implements EmitterAwareInterface
 
         return $tokenResponse->generateHttpResponse($response);
     }
-
-    /**
-     * PSR7 middleware callable
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface      $response
-     * @param callable                                 $next
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
-    {
-        $response = $this->respondToRequest($request, $response);
-
-        if (in_array($response->getStatusCode(), [400, 401, 500])) {
-            return $response;
-        }
-
-        return $next($request, $response);
-    }
 }
