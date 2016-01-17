@@ -58,12 +58,11 @@ class RefreshTokenGrant extends AbstractGrant
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $tokenTTL,
-        $scopeDelimiter = ' '
+        \DateInterval $tokenTTL
     ) {
         $client = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
-        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request), $scopeDelimiter, $client);
+        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request), $client);
 
         // If no new scopes are requested then give the access token the original session scopes
         if (count($scopes) === 0) {

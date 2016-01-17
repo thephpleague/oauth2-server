@@ -59,13 +59,12 @@ class PasswordGrant extends AbstractGrant
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $tokenTTL,
-        $scopeDelimiter = ' '
+        \DateInterval $tokenTTL
     ) {
         // Validate request
         $client = $this->validateClient($request);
         $user = $this->validateUser($request);
-        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request), $scopeDelimiter, $client);
+        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request), $client);
 
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($tokenTTL, $client, $user->getIdentifier(), $scopes);

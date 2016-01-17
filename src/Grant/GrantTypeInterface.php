@@ -41,15 +41,13 @@ interface GrantTypeInterface
      * @param \Psr\Http\Message\ServerRequestInterface                  $request
      * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
      * @param \DateInterval                                             $tokenTTL
-     * @param string                                                    $scopeDelimiter
      *
      * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        DateInterval $tokenTTL,
-        $scopeDelimiter = ' '
+        DateInterval $tokenTTL
     );
 
     /**
