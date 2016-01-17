@@ -200,7 +200,7 @@ class OAuthServerException extends \Exception
      */
     public static function accessDenied($hint = null)
     {
-        return new static('The resource owner or authorization server denied the request.', 401, $hint);
+        return new static('The server denied the request.', 401, $hint);
     }
 
     /**
