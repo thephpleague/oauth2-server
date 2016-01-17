@@ -88,16 +88,13 @@ class Server implements EmitterAwareInterface
     }
 
     /**
-    /**
      * Enable a grant type on the server
      *
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
-     * @param ResponseTypeInterface                          $responseType
      * @param DateInterval                                   $accessTokenTTL
      */
     public function enableGrantType(
         GrantTypeInterface $grantType,
-        ResponseTypeInterface $responseType = null,
         \DateInterval $accessTokenTTL
     ) {
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
@@ -108,18 +105,10 @@ class Server implements EmitterAwareInterface
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
 
         // Set grant response type
-        if ($responseType instanceof ResponseTypeInterface) {
-            $this->grantResponseTypes[$grantType->getIdentifier()] = $responseType;
-        } else {
-            $this->grantResponseTypes[$grantType->getIdentifier()] = $this->getDefaultResponseType();
-        }
+        $this->grantResponseTypes[$grantType->getIdentifier()] = $this->getDefaultResponseType();
 
         // Set grant access token TTL
-        if ($accessTokenTTL instanceof \DateInterval) {
-            $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
-        } else {
-            $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $this->getDefaultAccessTokenTTL();
-        }
+        $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
     }
 
     /**
