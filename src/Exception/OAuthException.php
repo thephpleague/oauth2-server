@@ -132,6 +132,8 @@ class OAuthException extends \Exception
                         $authScheme = 'Bearer';
                     } elseif (strpos($authHeader, 'Basic') === 0) {
                         $authScheme = 'Basic';
+                    } elseif (strpos($authHeader, 'MAC') === 0) {
+                        $authScheme = 'MAC';
                     }
                 }
             }
