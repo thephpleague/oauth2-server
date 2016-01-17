@@ -125,7 +125,7 @@ class RefreshTokenGrant extends AbstractGrant
             throw OAuthServerException::invalidRefreshToken(
                 'Token is not linked to client,' .
                 ' got: ' . $clientId .
-                ' expected: '. $refreshTokenData['client_id']
+                ' expected: ' . $refreshTokenData['client_id']
             );
         }
 
