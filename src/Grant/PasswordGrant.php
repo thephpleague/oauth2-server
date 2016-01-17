@@ -12,13 +12,9 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\Event;
-use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -47,20 +43,12 @@ class PasswordGrant extends AbstractGrant
 
     /**
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface       $clientRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface        $scopeRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface  $accessTokenRepository
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      */
     public function __construct(
         UserRepositoryInterface $userRepository,
-        ClientRepositoryInterface $clientRepository,
-        ScopeRepositoryInterface $scopeRepository,
-        AccessTokenRepositoryInterface $accessTokenRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository
     ) {
-        parent::__construct($clientRepository, $scopeRepository, $accessTokenRepository);
-
         $this->userRepository = $userRepository;
         $this->refreshTokenRepository = $refreshTokenRepository;
     }
