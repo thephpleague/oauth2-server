@@ -11,12 +11,12 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use League\Event\Event;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Refresh token grant
@@ -54,7 +54,7 @@ class RefreshTokenGrant extends AbstractGrant
     ) {
         $client          = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
-        $scopes          = $this->validateScopes($request, $scopeDelimiter, $client);
+        $scopes          = $this->validateScopes($request, $client);
 
         // If no new scopes are requested then give the access token the original session scopes
         if (count($scopes) === 0) {
