@@ -16,28 +16,38 @@ use Slim\Http\Response;
 
 include(__DIR__ . '/../vendor/autoload.php');
 
-// Setup the authorization server
-$server = new Server('file://' . __DIR__ . '/../private.key');
-
-// Init our repositories
-$userRepository = new UserRepository();
-$clientRepository = new ClientRepository();
-$scopeRepository = new ScopeRepository();
-$accessTokenRepository = new AccessTokenRepository();
-$refreshTokenRepository = new RefreshTokenRepository();
-
-// Enable the client credentials grant on the server
-$passwordGrant = new PasswordGrant(
-    $userRepository,
-    $clientRepository,
-    $scopeRepository,
-    $accessTokenRepository,
-    $refreshTokenRepository
-);
-$server->enableGrantType($passwordGrant);
-
 // App
-$app = new App([Server::class => $server]);
+$app = new App([
+    Server::class => function () {
+
+        // Init our repositories
+        $clientRepository = new ClientRepository();
+        $scopeRepository = new ScopeRepository();
+        $accessTokenRepository = new AccessTokenRepository();
+        $userRepository = new UserRepository();
+        $refreshTokenRepository = new RefreshTokenRepository();
+
+        $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
+        $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
+
+        // Setup the authorization server
+        $server = new Server(
+            $clientRepository,
+            $accessTokenRepository,
+            $scopeRepository,
+            $privateKeyPath,
+            $publicKeyPath
+        );
+
+        // Enable the client credentials grant on the server with a token TTL of 1 hour
+        $server->enableGrantType(
+            new PasswordGrant($userRepository, $refreshTokenRepository),
+            new \DateInterval('PT1H')
+        );
+
+        return $server;
+    }
+]);
 
 $app->post('/access_token', function (Request $request, Response $response) {
     /** @var Server $server */
