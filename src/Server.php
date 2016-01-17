@@ -39,7 +39,7 @@ class Server implements EmitterAwareInterface
     /**
      * @var string
      */
-    protected $defaultPrivateKeyPath;
+    protected $privateKeyPath;
 
     /**
      * @var ResponseTypeInterface
@@ -49,7 +49,7 @@ class Server implements EmitterAwareInterface
     /**
      * @var string
      */
-    private $defaultPublicKeyPath;
+    private $publicKeyPath;
 
     /**
      * @var \League\OAuth2\Server\Repositories\ClientRepositoryInterface
@@ -72,24 +72,24 @@ class Server implements EmitterAwareInterface
      * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
      * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
      * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
-     * @param string                                                            $defaultPrivateKeyPath
-     * @param string                                                            $defaultPublicKeyPath
+     * @param string                                                            $privateKeyPath
+     * @param string                                                            $publicKeyPath
      * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface    $responseType
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
         AccessTokenRepositoryInterface $accessTokenRepository,
         ScopeRepositoryInterface $scopeRepository,
-        $defaultPrivateKeyPath,
-        $defaultPublicKeyPath,
+        $privateKeyPath,
+        $publicKeyPath,
         ResponseTypeInterface $responseType = null
     ) {
-        $this->defaultPrivateKeyPath = $defaultPrivateKeyPath;
-        $this->defaultPublicKeyPath = $defaultPublicKeyPath;
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
         $this->scopeRepository = $scopeRepository;
         $this->defaultResponseType = $responseType;
+        $this->privateKeyPath = $privateKeyPath;
+        $this->publicKeyPath = $publicKeyPath;
     }
 
     /**
@@ -123,6 +123,8 @@ class Server implements EmitterAwareInterface
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
+        $grantType->setPathToPrivateKey($this->privateKeyPath);
+        $grantType->setPathToPublicKey($this->publicKeyPath);
 
         $grantType->setEmitter($this->getEmitter());
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
