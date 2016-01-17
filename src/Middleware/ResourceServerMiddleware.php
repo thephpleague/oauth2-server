@@ -43,7 +43,7 @@ class ResourceServerMiddleware
         $request = $this->server->getResponseType()->determineAccessTokenInHeader($request);
 
         if ($request->getAttribute('oauth_access_token') === null) {
-            $exception = OAuthServerException::accessDenied('Access token was invalid');
+            $exception = OAuthServerException::accessDenied($request->getAttribute('oauth_access_token_error'));
 
             return $exception->generateHttpResponse($response);
         }
