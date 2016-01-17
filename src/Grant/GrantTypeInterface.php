@@ -13,6 +13,9 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use League\Event\EmitterInterface;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -70,4 +73,26 @@ interface GrantTypeInterface
      * @param \League\Event\EmitterInterface $emitter
      */
     public function setEmitter(EmitterInterface $emitter);
+
+    /**
+     * Set the client repository
+     *
+     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface $clientRepository
+     */
+    public function setClientRepository(ClientRepositoryInterface $clientRepository);
+
+    /**
+     * Set the access token repository
+     *
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     */
+    public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository);
+
+    /**
+     * Set the scope repository
+     *
+     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface $scopeRepository
+     */
+    public function setScopeRepository(ScopeRepositoryInterface $scopeRepository);
+
 }
