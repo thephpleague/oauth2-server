@@ -11,8 +11,8 @@
 
 namespace League\OAuth2\Server\Utils;
 
-use League\OAuth2\Server\Utils\KeyAlgorithm\DefaultAlgorithm;
-use League\OAuth2\Server\Utils\KeyAlgorithm\KeyAlgorithmInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
+
 
 /**
  * SecureKey class
@@ -20,39 +20,28 @@ use League\OAuth2\Server\Utils\KeyAlgorithm\KeyAlgorithmInterface;
 class SecureKey
 {
     /**
-     * @var KeyAlgorithmInterface
-     */
-    protected static $algorithm;
-
-    /**
      * Generate a new unique code
      *
      * @param integer $len Length of the generated code
      *
      * @return string
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
     public static function generate($len = 40)
     {
-        return self::getAlgorithm()->generate($len);
-    }
-
-    /**
-     * @param KeyAlgorithmInterface $algorithm
-     */
-    public static function setAlgorithm(KeyAlgorithmInterface $algorithm)
-    {
-        self::$algorithm = $algorithm;
-    }
-
-    /**
-     * @return KeyAlgorithmInterface
-     */
-    public static function getAlgorithm()
-    {
-        if (is_null(self::$algorithm)) {
-            self::$algorithm = new DefaultAlgorithm();
+        try {
+            $string = random_bytes($len);
+        } catch (\TypeError $e) {
+            // Well, it's an integer, so this IS unexpected.
+            throw OAuthServerException::serverError("An unexpected error has occurred");
+        } catch (\Error $e) {
+            // This is also unexpected because 32 is a reasonable integer.
+            throw OAuthServerException::serverError("An unexpected error has occurred");
+        } catch (\Exception $e) {
+            // If you get this message, the CSPRNG failed hard.
+            throw OAuthServerException::serverError("Could not generate a random string. Is our OS secure?");
         }
 
-        return self::$algorithm;
+        return bin2hex($string);
     }
 }
