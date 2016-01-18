@@ -207,7 +207,7 @@ class AuthorizationServer extends AbstractServer
     /**
      * Get the scope delimiter
      *
-     * @return string The scope delimiter (default: ",")
+     * @return string The scope delimiter (default: " ")
      */
     public function getScopeDelimiter()
     {
