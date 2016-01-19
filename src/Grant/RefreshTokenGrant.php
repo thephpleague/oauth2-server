@@ -105,7 +105,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         // Validate refresh token
         try {
-            $refreshToken = KeyCrypt::decrypt($encryptedRefreshToken, $this->pathToPublicKey);
+            $refreshToken = KeyCrypt::decrypt($encryptedRefreshToken, file_get_contents($this->pathToPublicKey));
         } catch (\LogicException $e) {
             throw OAuthServerException::invalidRefreshToken('Cannot parse refresh token: ' . $e->getMessage());
         }

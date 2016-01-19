@@ -15,33 +15,34 @@ use Slim\Http\Response;
 
 include(__DIR__ . '/../vendor/autoload.php');
 
-
-
 // App
-$app = new App([Server::class => function () {
-    // Init our repositories
-    $clientRepository = new ClientRepository();
-    $scopeRepository = new ScopeRepository();
-    $accessTokenRepository = new AccessTokenRepository();
-    $refreshTokenRepository = new RefreshTokenRepository();
+$app = new App([
+    Server::class => function () {
 
-    $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
-    $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
+        // Init our repositories
+        $clientRepository = new ClientRepository();
+        $scopeRepository = new ScopeRepository();
+        $accessTokenRepository = new AccessTokenRepository();
+        $refreshTokenRepository = new RefreshTokenRepository();
 
-    // Setup the authorization server
-    $server = new Server(
-        $clientRepository,
-        $accessTokenRepository,
-        $scopeRepository,
-        $privateKeyPath,
-        $publicKeyPath
-    );
+        $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
+        $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
 
-    // Enable the refresh token grant on the server
-    $server->enableGrantType(new RefreshTokenGrant($refreshTokenRepository), new \DateInterval('PT1H'));
+        // Setup the authorization server
+        $server = new Server(
+            $clientRepository,
+            $accessTokenRepository,
+            $scopeRepository,
+            $publicKeyPath,
+            $privateKeyPath
+        );
 
-    return $server;
-}]);
+        // Enable the refresh token grant on the server
+        $server->enableGrantType(new RefreshTokenGrant($refreshTokenRepository), new \DateInterval('PT1H'));
+
+        return $server;
+    }
+]);
 
 $app->post('/access_token', function (Request $request, Response $response) {
     /** @var Server $server */

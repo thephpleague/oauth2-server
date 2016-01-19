@@ -37,8 +37,8 @@ $app = new App([
             $clientRepository,
             $accessTokenRepository,
             $scopeRepository,
-            $privateKeyPath,
-            $publicKeyPath
+            $publicKeyPath,
+            $privateKeyPath
         );
 
         // Enable the grants

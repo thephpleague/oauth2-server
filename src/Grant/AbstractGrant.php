@@ -78,6 +78,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * @var string
      */
+    protected $privateKeyPassphrase;
+
+    /**
+     * @var string
+     */
     protected $pathToPublicKey;
 
     /**
@@ -110,6 +115,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setPathToPrivateKey($pathToPrivateKey)
     {
         $this->pathToPrivateKey = $pathToPrivateKey;
+    }
+
+    /**
+     * @param string $privateKeyPassphrase
+     */
+    public function setPrivateKeyPassphrase($privateKeyPassphrase)
+    {
+        $this->privateKeyPassphrase = $privateKeyPassphrase;
     }
 
     /**

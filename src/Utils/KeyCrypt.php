@@ -11,71 +11,113 @@
 
 namespace League\OAuth2\Server\Utils;
 
+use phpseclib\Crypt\Base;
+use phpseclib\Crypt\RSA;
+
 class KeyCrypt
 {
+    /**
+     * Cipher algorigthm.
+     *
+     * @var \phpseclib\Crypt\Base
+     */
+    protected static $cipher;
+
+    /**
+     * Set cipher algorithm.
+     *
+     * @param \phpseclib\Crypt\Base|\phpseclib\Crypt\RSA $algorithm
+     *
+     * @throws \InvalidArgumentException
+     */
+    public static function setCipher($cipher)
+    {
+        if (!$cipher instanceof Base && !$cipher instanceof RSA) {
+            throw new \InvalidArgumentException('Unsupported encryption cipher algorithm');
+        }
+
+        self::$cipher = $cipher;
+    }
+
+    /**
+     * Get cipher algorithm.
+     *
+     * @return \phpseclib\Crypt\Base
+     */
+    public static function getCipher()
+    {
+        if (!self::$cipher) {
+            self::$cipher = new RSA();
+            self::$cipher->setEncryptionMode(CRYPT_RSA_ENCRYPTION_OAEP);
+            self::$cipher->setHash('sha256');
+            self::$cipher->setMGFHash('sha256');
+        }
+
+        return self::$cipher;
+    }
+
     /**
      * Encrypt data with a private key
      *
      * @param string $unencryptedData
-     * @param string $pathToPrivateKey
+     * @param string $privateKey
+     * @param string $privateKeyPassphrase
      *
      * @return string
+     *
+     * @throws \LogicException
      */
-    public static function encrypt($unencryptedData, $pathToPrivateKey)
+    public static function encrypt($unencryptedData, $privateKey, $privateKeyPassphrase = '')
     {
-        $privateKey = openssl_pkey_get_private($pathToPrivateKey);
-        $privateKeyDetails = @openssl_pkey_get_details($privateKey);
-        if ($privateKeyDetails === null) {
-            throw new \LogicException(sprintf('Could not get details of private key: %s', $pathToPrivateKey));
-        }
+        $cipher = self::getCipher();
 
-        $chunkSize = ceil($privateKeyDetails['bits'] / 8) - 11;
-        $output = '';
+        if ($cipher instanceof RSA) {
+            $cipher->setPassword($privateKeyPassphrase !== '' ? $privateKeyPassphrase : false);
 
-        while ($unencryptedData) {
-            $chunk = substr($unencryptedData, 0, $chunkSize);
-            $unencryptedData = substr($unencryptedData, $chunkSize);
-            if (openssl_private_encrypt($chunk, $encrypted, $privateKey) === false) {
-                throw new \LogicException('Failed to encrypt data');
+            if (!$cipher->loadKey($privateKey)) {
+                throw new \LogicException('Could not assign private key');
             }
-            $output .= $encrypted;
+        } else {
+            $cipher->setKey($privateKey);
         }
-        openssl_free_key($privateKey);
 
-        return base64_encode($output);
+        $encryptedData = $cipher->encrypt($unencryptedData);
+        if (!$encryptedData) {
+            throw new \LogicException('Failed to encrypt data');
+        }
+
+        return base64_encode($encryptedData);
     }
 
     /**
      * Decrypt data with a public key
      *
      * @param string $encryptedData
-     * @param string $pathToPublicKey
+     * @param string $publicKey
      *
      * @return string
+     *
+     * @throws \LogicException
      */
-    public static function decrypt($encryptedData, $pathToPublicKey)
+    public static function decrypt($encryptedData, $publicKey)
     {
-        $publicKey = openssl_pkey_get_public($pathToPublicKey);
-        $publicKeyDetails = @openssl_pkey_get_details($publicKey);
-        if ($publicKeyDetails === null) {
-            throw new \LogicException(sprintf('Could not get details of public key: %s', $pathToPublicKey));
-        }
+        $cipher = self::getCipher();
 
-        $chunkSize = ceil($publicKeyDetails['bits'] / 8);
-        $output = '';
+        if ($cipher instanceof RSA) {
+            $cipher->setPassword(false);
 
-        $encryptedData = base64_decode($encryptedData);
-
-        while ($encryptedData) {
-            $chunk = substr($encryptedData, 0, $chunkSize);
-            $encryptedData = substr($encryptedData, $chunkSize);
-            if (openssl_public_decrypt($chunk, $decrypted, $publicKey) === false) {
-                throw new \LogicException('Failed to decrypt data');
+            if (!$cipher->loadKey($publicKey)) {
+                throw new \LogicException('Could not assign public key');
             }
-            $output .= $decrypted;
+        } else {
+            $cipher->setKey($publicKey);
         }
-        openssl_free_key($publicKey);
 
-        return $output;
+        $unencryptedData = $cipher->decrypt(base64_decode($encryptedData));
+        if (!$encryptedData) {
+            throw new \LogicException('Failed to decrypt data');
+        }
+
+        return $unencryptedData;
     }
 }
