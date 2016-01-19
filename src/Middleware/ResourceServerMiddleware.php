@@ -33,18 +33,12 @@ class ResourceServerMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($request->hasHeader('authorization') === false) {
-            $exception = OAuthServerException::accessDenied('Missing authorization header');
-
+        try {
+            $request = $this->server->getResponseType()->determineAccessTokenInHeader($request);
+        } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
-        }
-
-        $request = $this->server->getResponseType()->determineAccessTokenInHeader($request);
-
-        if ($request->getAttribute('oauth_access_token') === null) {
-            $exception = OAuthServerException::accessDenied($request->getAttribute('oauth_access_token_error'));
-
-            return $exception->generateHttpResponse($response);
+        } catch (\Exception $exception) {
+            return $response->withStatus(500)->write($exception->getMessage());
         }
 
         // Pass the request and response on to the next responder in the chain
