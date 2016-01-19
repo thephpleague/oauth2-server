@@ -17,37 +17,43 @@ use phpseclib\Crypt\RSA;
 class KeyCrypt
 {
     /**
-     * Encryption/decryption algorigthm.
+     * Cipher algorigthm.
      *
      * @var \phpseclib\Crypt\Base
      */
-    protected static $cryptAlgo;
+    protected static $cipher;
 
     /**
-     * Set encryption/decryption algorithm.
+     * Set cipher algorithm.
      *
-     * @param \phpseclib\Crypt\Base $algorithm
+     * @param \phpseclib\Crypt\Base|\phpseclib\Crypt\RSA $algorithm
+     *
+     * @throws \InvalidArgumentException
      */
-    public static function setAlgorithm(Base $algorithm)
+    public static function setCipher($cipher)
     {
-        self::$cryptAlgo = $algorithm;
+        if (!$cipher instanceof Base && !$cipher instanceof RSA) {
+            throw new \InvalidArgumentException('Unsupported encryption cipher algorithm');
+        }
+
+        self::$cipher = $cipher;
     }
 
     /**
-     * Get encryption/decryption algorithm.
+     * Get cipher algorithm.
      *
      * @return \phpseclib\Crypt\Base
      */
-    public static function getAlgorithm()
+    public static function getCipher()
     {
-        if (!self::$cryptAlgo) {
-            self::$cryptAlgo = new RSA();
-            self::$cryptAlgo->setEncryptionMode(CRYPT_RSA_ENCRYPTION_OAEP);
-            self::$cryptAlgo->setHash('sha256');
-            self::$cryptAlgo->setMGFHash('sha256');
+        if (!self::$cipher) {
+            self::$cipher = new RSA();
+            self::$cipher->setEncryptionMode(CRYPT_RSA_ENCRYPTION_OAEP);
+            self::$cipher->setHash('sha256');
+            self::$cipher->setMGFHash('sha256');
         }
 
-        return self::$cryptAlgo;
+        return self::$cipher;
     }
 
     /**
@@ -55,21 +61,27 @@ class KeyCrypt
      *
      * @param string $unencryptedData
      * @param string $privateKey
-     * @param string $privateKeyPassword
+     * @param string $privateKeyPassphrase
      *
      * @return string
      *
      * @throws \LogicException
      */
-    public static function encrypt($unencryptedData, $privateKey, $privateKeyPassword = '')
+    public static function encrypt($unencryptedData, $privateKey, $privateKeyPassphrase = '')
     {
-        self::getAlgorithm()->setPassword($privateKeyPassword !== '' ? $privateKeyPassword : false);
+        $cipher = self::getCipher();
 
-        if (!self::getAlgorithm()->loadKey($privateKey)) {
-            throw new \LogicException('Could not assign private key');
+        if ($cipher instanceof RSA) {
+            $cipher->setPassword($privateKeyPassphrase !== '' ? $privateKeyPassphrase : false);
+
+            if (!$cipher->loadKey($privateKey)) {
+                throw new \LogicException('Could not assign private key');
+            }
+        } else {
+            $cipher->setKey($privateKey);
         }
 
-        $encryptedData = self::getAlgorithm()->encrypt($unencryptedData);
+        $encryptedData = $cipher->encrypt($unencryptedData);
         if (!$encryptedData) {
             throw new \LogicException('Failed to encrypt data');
         }
@@ -89,13 +101,19 @@ class KeyCrypt
      */
     public static function decrypt($encryptedData, $publicKey)
     {
-        self::getAlgorithm()->setPassword(false);
+        $cipher = self::getCipher();
 
-        if (!self::getAlgorithm()->loadKey($publicKey)) {
-            throw new \LogicException('Could not assign public key');
+        if ($cipher instanceof RSA) {
+            $cipher->setPassword(false);
+
+            if (!$cipher->loadKey($publicKey)) {
+                throw new \LogicException('Could not assign public key');
+            }
+        } else {
+            $cipher->setKey($publicKey);
         }
 
-        $unencryptedData = self::getAlgorithm()->decrypt(base64_decode($encryptedData));
+        $unencryptedData = $cipher->decrypt(base64_decode($encryptedData));
         if (!$encryptedData) {
             throw new \LogicException('Failed to decrypt data');
         }

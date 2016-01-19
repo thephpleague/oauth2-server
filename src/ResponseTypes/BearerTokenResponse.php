@@ -58,7 +58,7 @@ class BearerTokenResponse extends AbstractResponseType
                     ]
                 ),
                 file_get_contents($this->pathToPrivateKey),
-                $this->privateKeyPassword
+                $this->privateKeyPassphrase
             );
 
             $responseParams['refresh_token'] = $refreshToken;

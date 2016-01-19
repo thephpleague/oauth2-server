@@ -25,7 +25,7 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     /**
      * @var string
      */
-    protected $privateKeyPassword;
+    protected $privateKeyPassphrase;
 
     /**
      * @var string
@@ -51,17 +51,17 @@ abstract class AbstractResponseType implements ResponseTypeInterface
      * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
      * @param string                                                            $pathToPublicKey
      * @param string                                                            $pathToPrivateKey
-     * @param string                                                            $privateKeyPassword
+     * @param string                                                            $privateKeyPassphrase
      */
     public function __construct(
         AccessTokenRepositoryInterface $accessTokenRepository,
         $pathToPublicKey,
         $pathToPrivateKey,
-        $privateKeyPassword = ''
+        $privateKeyPassphrase = ''
     ) {
         $this->pathToPublicKey = $pathToPublicKey;
         $this->pathToPrivateKey = $pathToPrivateKey;
-        $this->privateKeyPassword = $privateKeyPassword;
+        $this->privateKeyPassphrase = $privateKeyPassphrase;
         $this->accessTokenRepository = $accessTokenRepository;
     }
 

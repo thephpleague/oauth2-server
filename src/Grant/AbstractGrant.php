@@ -78,7 +78,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * @var string
      */
-    protected $privateKeyPassword;
+    protected $privateKeyPassphrase;
 
     /**
      * @var string
@@ -118,11 +118,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param string $privateKeyPassword
+     * @param string $privateKeyPassphrase
      */
-    public function setPrivateKeyPassword($privateKeyPassword)
+    public function setPrivateKeyPassphrase($privateKeyPassphrase)
     {
-        $this->privateKeyPassword = $privateKeyPassword;
+        $this->privateKeyPassphrase = $privateKeyPassphrase;
     }
 
     /**

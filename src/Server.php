@@ -44,7 +44,7 @@ class Server implements EmitterAwareInterface
     /**
      * @var string
      */
-    protected $privateKeyPassword;
+    protected $privateKeyPassphrase;
 
     /**
      * @var ResponseTypeInterface
@@ -79,7 +79,7 @@ class Server implements EmitterAwareInterface
      * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
      * @param string                                                            $publicKeyPath
      * @param string                                                            $privateKeyPath
-     * @param string                                                            $privateKeyPassword
+     * @param string                                                            $privateKeyPassphrase
      * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface    $responseType
      */
     public function __construct(
@@ -88,7 +88,7 @@ class Server implements EmitterAwareInterface
         ScopeRepositoryInterface $scopeRepository,
         $publicKeyPath,
         $privateKeyPath,
-        $privateKeyPassword = '',
+        $privateKeyPassphrase = '',
         ResponseTypeInterface $responseType = null
     ) {
         $this->clientRepository = $clientRepository;
@@ -96,7 +96,7 @@ class Server implements EmitterAwareInterface
         $this->scopeRepository = $scopeRepository;
         $this->publicKeyPath = $publicKeyPath;
         $this->privateKeyPath = $privateKeyPath;
-        $this->privateKeyPassword = $privateKeyPassword;
+        $this->privateKeyPassphrase = $privateKeyPassphrase;
         $this->responseType = $responseType;
     }
 
@@ -112,7 +112,7 @@ class Server implements EmitterAwareInterface
                 $this->accessTokenRepository,
                 $this->publicKeyPath,
                 $this->privateKeyPath,
-                $this->privateKeyPassword
+                $this->privateKeyPassphrase
             );
         }
 
@@ -134,7 +134,7 @@ class Server implements EmitterAwareInterface
         $grantType->setScopeRepository($this->scopeRepository);
         $grantType->setPathToPublicKey($this->publicKeyPath);
         $grantType->setPathToPrivateKey($this->privateKeyPath);
-        $grantType->privateKeyPassword($this->privateKeyPassword);
+        $grantType->setPrivateKeyPassphrase($this->privateKeyPassphrase);
         $grantType->setEmitter($this->getEmitter());
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
