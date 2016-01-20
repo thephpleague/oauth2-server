@@ -38,7 +38,9 @@ class ResourceServerMiddleware
         } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
         } catch (\Exception $exception) {
-            return $response->withStatus(500)->write($exception->getMessage());
+            $response->getBody()->write($exception->getMessage());
+
+            return $response->withStatus(500);
         }
 
         // Pass the request and response on to the next responder in the chain

@@ -38,7 +38,9 @@ class AuthenticationServerMiddleware
         } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
         } catch (\Exception $exception) {
-            return $response->withStatus(500)->write($exception->getMessage());
+            $response->getBody()->write($exception->getMessage());
+
+            return $response->withStatus(500);
         }
 
         if (in_array($response->getStatusCode(), [400, 401, 500])) {
