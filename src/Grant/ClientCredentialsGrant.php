@@ -32,14 +32,15 @@ class ClientCredentialsGrant extends AbstractGrant
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $tokenTTL
+        \DateInterval $accessTokenTTL,
+        \DateInterval $refreshTokenTTL
     ) {
         // Validate request
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($request, $client);
 
         // Issue and persist access token
-        $accessToken = $this->issueAccessToken($tokenTTL, $client, $client->getIdentifier(), $scopes);
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $client->getIdentifier(), $scopes);
         $this->accessTokenRepository->persistNewAccessToken($accessToken);
 
         // Inject access token into response type

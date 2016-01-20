@@ -283,15 +283,16 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @param \DateInterval                                    $tokenTTL
      * @param \League\OAuth2\Server\Entities\AccessTokenEntity $accessToken
      *
      * @return \League\OAuth2\Server\Entities\RefreshTokenEntity
      */
-    protected function issueRefreshToken(AccessTokenEntity $accessToken)
+    protected function issueRefreshToken(\DateInterval $tokenTTL, AccessTokenEntity $accessToken)
     {
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier(SecureKey::generate());
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('P1M')));
+        $refreshToken->setExpiryDateTime((new \DateTime())->add($tokenTTL));
         $refreshToken->setAccessToken($accessToken);
 
         return $refreshToken;
