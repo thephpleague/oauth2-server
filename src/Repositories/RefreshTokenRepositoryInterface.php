@@ -21,9 +21,9 @@ interface RefreshTokenRepositoryInterface extends RepositoryInterface
     /**
      * Create a new refresh token_name
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface $refreshTokenEntityInterface
+     * @param \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface $refreshTokenEntity
      */
-    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntityInterface);
+    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity);
 
     /**
      * Revoke the refresh token

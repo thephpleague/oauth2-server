@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\Event\EmitterInterface;
+use League\Event\EmitterAwareTrait;
 use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
@@ -29,6 +29,8 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 abstract class AbstractGrant implements GrantTypeInterface
 {
+    use EmitterAwareTrait;
+
     const SCOPE_DELIMITER_STRING = ' ';
 
     /**
@@ -59,11 +61,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @var AccessTokenRepositoryInterface
      */
     protected $accessTokenRepository;
-
-    /**
-     * @var \League\Event\Emitter
-     */
-    protected $emitter;
 
     /**
      * @var ScopeRepositoryInterface
@@ -121,14 +118,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @inheritdoc
-     */
-    public function setEmitter(EmitterInterface $emitter)
-    {
-        $this->emitter = $emitter;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getIdentifier()
@@ -179,7 +168,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         );
 
         if (!$client instanceof ClientEntityInterface) {
-            $this->emitter->emit(new Event('client.authentication.failed', $request));
+            $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
 
             throw OAuthServerException::invalidClient();
         }

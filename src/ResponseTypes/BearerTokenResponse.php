@@ -28,12 +28,14 @@ class BearerTokenResponse extends AbstractResponseType
      */
     public function generateHttpResponse(ResponseInterface $response)
     {
+        $expireDateTime = $this->accessToken->getExpiryDateTime()->getTimestamp();
+
         $jwtAccessToken = (new Builder())
             ->setAudience($this->accessToken->getClient()->getIdentifier())
             ->setId($this->accessToken->getIdentifier(), true)
             ->setIssuedAt(time())
             ->setNotBefore(time())
-            ->setExpiration($this->accessToken->getExpiryDateTime()->getTimestamp())
+            ->setExpiration($expireDateTime)
             ->setSubject($this->accessToken->getUserIdentifier())
             ->set('scopes', $this->accessToken->getScopes())
             ->sign(new Sha256(), new Key($this->pathToPrivateKey))
@@ -41,7 +43,7 @@ class BearerTokenResponse extends AbstractResponseType
 
         $responseParams = [
             'token_type'   => 'Bearer',
-            'expires_in'   => $this->accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp(),
+            'expires_in'   => $expireDateTime - (new \DateTime)->getTimestamp(),
             'access_token' => (string) $jwtAccessToken,
         ];
 
@@ -54,7 +56,7 @@ class BearerTokenResponse extends AbstractResponseType
                         'access_token_id'  => $this->accessToken->getIdentifier(),
                         'scopes'           => $this->accessToken->getScopes(),
                         'user_id'          => $this->accessToken->getUserIdentifier(),
-                        'expire_time'      => $this->refreshToken->getExpiryDateTime()->getTimestamp(),
+                        'expire_time'      => $expireDateTime,
                     ]
                 ),
                 $this->pathToPrivateKey
