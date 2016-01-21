@@ -51,6 +51,8 @@ class PasswordGrant extends AbstractGrant
     ) {
         $this->userRepository = $userRepository;
         $this->refreshTokenRepository = $refreshTokenRepository;
+
+        $this->refreshTokenTTL = new \DateInterval('P1M');
     }
 
     /**
@@ -59,8 +61,7 @@ class PasswordGrant extends AbstractGrant
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL,
-        \DateInterval $refreshTokenTTL
+        \DateInterval $accessTokenTTL
     ) {
         // Validate request
         $client = $this->validateClient($request);
@@ -69,7 +70,7 @@ class PasswordGrant extends AbstractGrant
 
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $scopes);
-        $refreshToken = $this->issueRefreshToken($refreshTokenTTL, $accessToken);
+        $refreshToken = $this->issueRefreshToken($accessToken);
         $this->accessTokenRepository->persistNewAccessToken($accessToken);
         $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 

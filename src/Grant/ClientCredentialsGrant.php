@@ -32,8 +32,7 @@ class ClientCredentialsGrant extends AbstractGrant
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL,
-        \DateInterval $refreshTokenTTL
+        \DateInterval $accessTokenTTL
     ) {
         // Validate request
         $client = $this->validateClient($request);

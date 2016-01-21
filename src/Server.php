@@ -7,6 +7,7 @@ use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
+use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -29,7 +30,7 @@ class Server implements EmitterAwareInterface
     /**
      * @var DateInterval[]
      */
-    protected $grantTypeTokensTTL = [];
+    protected $grantTypeAccessTokenTTL = [];
 
     /**
      * @var string
@@ -91,14 +92,10 @@ class Server implements EmitterAwareInterface
      * Enable a grant type on the server
      *
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
-     * @param DateInterval|null                              $accessTokenTTL
-     * @param DateInterval|null                              $refreshTokenTTL
+     * @param DateInterval                                   $accessTokenTTL
      */
-    public function enableGrantType(
-        GrantTypeInterface $grantType,
-        \DateInterval $accessTokenTTL,
-        \DateInterval $refreshTokenTTL = null
-    ) {
+    public function enableGrantType(GrantTypeInterface $grantType, \DateInterval $accessTokenTTL)
+    {
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
@@ -108,10 +105,7 @@ class Server implements EmitterAwareInterface
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
 
-        $this->grantTypeTokensTTL[$grantType->getIdentifier()] = [
-            'access'  => $accessTokenTTL,
-            'refresh' => $refreshTokenTTL !== null ? $refreshTokenTTL : new \DateInterval('P1M'),
-        ];
+        $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
     }
 
     /**
@@ -139,8 +133,7 @@ class Server implements EmitterAwareInterface
                 $tokenResponse = $grantType->respondToRequest(
                     $request,
                     $this->getResponseType(),
-                    $this->grantTypeTokensTTL[$grantType->getIdentifier()]['access'],
-                    $this->grantTypeTokensTTL[$grantType->getIdentifier()]['refresh']
+                    $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
                 );
             }
         }
