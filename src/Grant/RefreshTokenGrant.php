@@ -48,7 +48,7 @@ class RefreshTokenGrant extends AbstractGrant
      *
      * @var boolean
      */
-    protected $requireClientSecret = true;
+    protected $requireClientSecret = false;
 
     /**
      * Set the TTL of the refresh token

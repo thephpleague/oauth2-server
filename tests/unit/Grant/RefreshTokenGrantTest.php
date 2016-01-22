@@ -49,6 +49,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $server = new AuthorizationServer();
         $grant = new RefreshTokenGrant();
 
+        $grant->setRequireClientSecret(true);
         $server->addGrantType($grant);
         $server->issueAccessToken();
     }
