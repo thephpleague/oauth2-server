@@ -25,7 +25,7 @@ In addition it supports the following token types:
 * MAC tokens
 * JSON web tokens (coming soon)
 
-You can define you own token types too.
+You can define your own token types too.
 
 ## Requirements
 
