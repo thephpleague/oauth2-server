@@ -12,6 +12,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareTrait;
+use League\Event\EmitterInterface;
 use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
@@ -78,6 +79,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $pathToPublicKey;
 
     /**
+     * @var \DateInterval
+     */
+    protected $refreshTokenTTL;
+
+    /**
      * @param ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository)
@@ -115,6 +121,22 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setPathToPublicKey($pathToPublicKey)
     {
         $this->pathToPublicKey = $pathToPublicKey;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setEmitter(EmitterInterface $emitter = null)
+    {
+        $this->emitter = $emitter;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
+    {
+        $this->refreshTokenTTL = $refreshTokenTTL;
     }
 
     /**
@@ -280,7 +302,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     {
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier(SecureKey::generate());
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('P1M')));
+        $refreshToken->setExpiryDateTime((new \DateTime())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
 
         return $refreshToken;
