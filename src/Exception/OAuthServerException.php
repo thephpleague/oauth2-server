@@ -2,7 +2,6 @@
 
 namespace League\OAuth2\Server\Exception;
 
-use League\OAuth2\Server\Utils\RedirectUri;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -185,6 +184,7 @@ class OAuthServerException extends \Exception
     /**
      * Invalid refresh token
      *
+     * @param string|null $hint
      * @return static
      */
     public static function invalidRefreshToken($hint = null)
