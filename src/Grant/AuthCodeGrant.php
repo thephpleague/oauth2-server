@@ -1,303 +1,136 @@
 <?php
-/**
- * OAuth 2.0 Auth code grant
- *
- * @package     league/oauth2-server
- * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) Alex Bilbie
- * @license     http://mit-license.org/
- * @link        https://github.com/thephpleague/oauth2-server
- */
 
 namespace League\OAuth2\Server\Grant;
 
-use League\Event\Emitter;
-use League\Event\Event;
-use League\OAuth2\Server\Entities\AccessTokenEntity;
-use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
-use League\OAuth2\Server\Exception\InvalidClientException;
-use League\OAuth2\Server\Exception\InvalidRequestException;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\TokenTypes\TokenTypeInterface;
-use League\OAuth2\Server\Utils\SecureKey;
-use Symfony\Component\HttpFoundation\Request;
 use DateInterval;
+use DateTime;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Auth code grant class
- */
 class AuthCodeGrant extends AbstractGrant
 {
     /**
-     * @var \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface
+     * @inheritdoc
      */
-    protected $authCodeRepository;
-
-    /**
-     * @param \League\Event\Emitter                                              $emitter
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface       $clientRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface        $scopeRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface  $accessTokenRepository
-     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface     $authCodeRepository
-     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
-     */
-    public function __construct(
-        Emitter $emitter,
-        ClientRepositoryInterface $clientRepository,
-        ScopeRepositoryInterface $scopeRepository,
-        AccessTokenRepositoryInterface $accessTokenRepository,
-        AuthCodeRepositoryInterface $authCodeRepository,
-        RefreshTokenRepositoryInterface $refreshTokenRepository = null
+    public function respondToRequest(
+        ServerRequestInterface $request,
+        ResponseTypeInterface $responseType,
+        DateInterval $tokenTTL,
+        $scopeDelimiter = ' '
     ) {
-        $this->authCodeRepository = $authCodeRepository;
-        $this->refreshTokenRepository = $refreshTokenRepository;
-        parent::__construct($emitter, $clientRepository, $scopeRepository, $accessTokenRepository);
+        if (
+            isset($request->getQueryParams()['response_type'])
+            && $request->getQueryParams()['response_type'] === 'code'
+            && isset($request->getQueryParams()['client_id'])
+        ) {
+            return $this->respondToAuthorizationRequest($request, $scopeDelimiter, $tokenTTL);
+        } elseif (
+            isset($request->getParsedBody()['grant_type'])
+            && $request->getParsedBody()['grant_type'] === 'authorization_code'
+        ) {
+            return $this->respondToAccessTokenRequest($request, $responseType, $tokenTTL);
+        } else {
+            throw OAuthServerException::serverError('respondToRequest() should not have been called');
+        }
     }
 
     /**
-     * Grant identifier
+     * Respond to an authorization request
      *
-     * @var string
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param string                                   $scopeDelimiter
+     * @param DateTime                                 $tokenTTL
      */
-    protected $identifier = 'authorization_code';
-
-    /**
-     * Response type
-     *
-     * @var string
-     */
-    protected $responseType = 'code';
-
-    /**
-     * AuthServer instance
-     *
-     * @var \League\OAuth2\Server\AuthorizationServer
-     */
-    protected $server = null;
-
-    /**
-     * Access token expires in override
-     *
-     * @var int
-     */
-    protected $accessTokenTTL = null;
-
-    /**
-     * The TTL of the auth token
-     *
-     * @var integer
-     */
-    protected $authTokenTTL = 600;
-
-    /**
-     * Override the default access token expire time
-     *
-     * @param int $authTokenTTL
-     *
-     * @return void
-     */
-    public function setAuthTokenTTL($authTokenTTL)
-    {
-        $this->authTokenTTL = $authTokenTTL;
-    }
-
-    /**
-     * Check authorize parameters
-     *
-     * @return array Authorize request parameters
-     *
-     * @throws
-     */
-    /*public function checkAuthorizeParams()
-    {
+    protected function respondToAuthorizationRequest(
+        ServerRequestInterface $request,
+        $scopeDelimiter = ' ',
+        DateTime $tokenTTL
+    ) {
         // Get required params
-        $clientId = $request->query->get('client_id', null);
+        /*$clientId = array_key_exists('client_id', $request->getQueryParams())
+            ? $request->getQueryParams()['client_id'] // $_GET['client_id']
+            : null;
+
         if (is_null($clientId)) {
-            throw new InvalidRequestException('client_id');
+            throw OAuthServerException::invalidRequest('client_id', null, '`%s` parameter is missing');
         }
 
-        $redirectUri = $request->query->get('redirect_uri', null);
+        $redirectUri = array_key_exists('redirect_uri', $request->getQueryParams())
+            ? $request->getQueryParams()['redirect_uri'] // $_GET['redirect_uri']
+            : null;
+
         if (is_null($redirectUri)) {
-            throw new InvalidRequestException('redirect_uri');
+            throw OAuthServerException::invalidRequest('redirect_uri', null, '`%s` parameter is missing');
         }
 
         // Validate client ID and redirect URI
-        $client = $this->server->getClientStorage()->get(
+        $client = $this->clientRepository->getClientEntity(
             $clientId,
+            $this->getIdentifier(),
             null,
-            $redirectUri,
-            $this->getIdentifier()
-        );
-
-        if (($client instanceof ClientEntity) === false) {
-            $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($request));
-            throw new Exception\InvalidClientException();
-        }
-
-        $state = $request->query->get('state', null);
-        if ($this->server->stateParamRequired() === true && is_null($state)) {
-            throw new InvalidRequestException('state', $redirectUri);
-        }
-
-        $responseType = $request->query->get('response_type', null);
-        if (is_null($responseType)) {
-            throw new InvalidRequestException('response_type', $redirectUri);
-        }
-
-        // Ensure response type is one that is recognised
-        if (!in_array($responseType, $this->server->getResponseTypes())) {
-            throw new Exception\UnsupportedResponseTypeException($responseType, $redirectUri);
-        }
-
-        // Validate any scopes that are in the request
-        $scopeParam = $request->query->get('scope', '');
-        $scopes = $this->validateScopes($scopeParam, $client, $redirectUri);
-
-        return [
-            'client'        => $client,
-            'redirect_uri'  => $redirectUri,
-            'state'         => $state,
-            'response_type' => $responseType,
-            'scopes'        => $scopes
-        ];
-    }*/
-
-    /**
-     * Parse a new authorize request
-     *
-     * @param string $type       The session owner's type
-     * @param string $typeId     The session owner's ID
-     * @param array  $authParams The authorize request $_GET parameters
-     *
-     * @return string An authorisation code
-     */
-    /*public function newAuthorizeRequest($type, $typeId, $authParams = [])
-    {
-        // Create a new session
-        $session = new SessionEntity($this->server);
-        $session->setOwner($type, $typeId);
-        $session->associateClient($authParams['client']);
-        $session->save();
-
-        // Create a new auth code
-        $authCode = new AuthCodeEntity($this->server);
-        $authCode->setId(SecureKey::generate());
-        $authCode->setRedirectUri($authParams['redirect_uri']);
-        $authCode->setExpireTime(time() + $this->authTokenTTL);
-
-        foreach ($authParams['scopes'] as $scope) {
-            $authCode->associateScope($scope);
-        }
-
-        $authCode->setSession($session);
-        $authCode->save();
-
-        return $authCode->generateRedirectUri($authParams['state']);
-    }*/
-
-    /**
-     * Return an access token
-     *
-     * @param \Symfony\Component\HttpFoundation\Request           $request
-     * @param \League\OAuth2\Server\TokenTypes\TokenTypeInterface $tokenType
-     * @param \DateInterval                                       $accessTokenTTL
-     * @param string                                              $scopeDelimiter
-     *
-     * @return \League\OAuth2\Server\TokenTypes\TokenTypeInterface
-     * @throws \League\OAuth2\Server\Exception\InvalidClientException
-     * @throws \League\OAuth2\Server\Exception\InvalidGrantException
-     * @throws \League\OAuth2\Server\Exception\InvalidRequestException
-     */
-    public function getAccessTokenAsType(
-        Request $request,
-        TokenTypeInterface $tokenType,
-        DateInterval $accessTokenTTL,
-        $scopeDelimiter = ' '
-    ) {
-        // Get the required params
-        $clientId = $request->request->get('client_id', $request->getUser());
-        if (is_null($clientId)) {
-            throw new InvalidRequestException('client_id', '');
-        }
-
-        $clientSecret = $request->request->get('client_secret',
-            $request->getPassword());
-        if (is_null($clientSecret)) {
-            throw new InvalidRequestException('client_secret');
-        }
-
-        $redirectUri = $request->request->get('redirect_uri', null);
-        if (is_null($redirectUri)) {
-            throw new InvalidRequestException('redirect_uri');
-        }
-
-        // Validate client ID and client secret
-        $client = $this->clientRepository->get(
-            $clientId,
-            $clientSecret,
-            $redirectUri,
-            $this->getIdentifier()
+            $redirectUri
         );
 
         if (($client instanceof ClientEntityInterface) === false) {
-            $this->emitter->emit(new Event('client.authentication.failed', $request));
-            throw new InvalidClientException();
+            throw OAuthServerException::invalidClient();
         }
 
-        // Validate the auth code
-        $authCode = $request->request->get('code', null);
-        if (is_null($authCode)) {
-            throw new InvalidRequestException('code');
-        }
+        $state = array_key_exists('state', $request->getQueryParams())
+            ? $request->getQueryParams()['state'] // $_GET['state']
+            : null;
 
-        $code = $this->authCodeRepository->get($authCode);
-        if (($code instanceof AuthCodeEntityInterface) === false) {
-            throw new InvalidRequestException('code');
-        }
+        // Validate any scopes that are in the request
+        $scopeParam = array_key_exists('scope', $request->getQueryParams())
+            ? $request->getQueryParams()['scope'] // $_GET['scope']
+            : '';
+        $scopes = $this->validateScopes($scopeParam, $scopeDelimiter, $client);
 
-        // Ensure the auth code hasn't expired
-        if ($code->isExpired() === true) {
-            throw new InvalidRequestException('code');
-        }
+        // Create a new authorization code
+        $authCode = new AuthCodeEntity();
+        $authCode->setIdentifier(SecureKey::generate());
+        $authCode->setExpiryDateTime((new \DateTime())->add($authCodeTTL));
+        $authCode->setClient($client);
+        $authCode->setUserIdentifier($userEntity->getIdentifier());
 
-        // Check redirect URI presented matches redirect URI originally used in authorize request
-        if ($code->getRedirectUri() !== $redirectUri) {
-            throw new InvalidRequestException('redirect_uri');
-        }
+        // Associate scopes with the session and access token
+        foreach ($scopes as $scope) {
+            $authCode->addScope($scope);
+        }*/
+    }
 
-        // Generate the access token
-        $accessToken = new AccessTokenEntity($this->server);
-        $accessToken->setIdentifier(SecureKey::generate());
-        $expirationDateTime = (new \DateTime())->add($accessTokenTTL);
-        $accessToken->setExpiryDateTime($expirationDateTime);
-        $accessToken->setClient($client);
+    /**
+     * Respond to an access token request
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface                  $request
+     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
+     * @param \DateInterval                                             $accessTokenTTL
+     *
+     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     */
+    protected function respondToAccessTokenRequest(
+        ServerRequestInterface $request,
+        ResponseTypeInterface $responseType,
+        DateInterval $accessTokenTTL
+    ) {
 
-        foreach ($code->getScopes() as $scope) {
-            $accessToken->addScope($scope);
-        }
+    }
 
-        $tokenType->setAccessToken($accessToken);
-
-        // Associate a refresh token if set
-        if ($this->refreshTokenRepository instanceof RefreshTokenRepositoryInterface) {
-//            $refreshToken = new RefreshTokenEntity($this->server);
-//            $refreshToken->setId(SecureKey::generate());
-//            $refreshToken->setExpireTime($this->server->getGrantType('refresh_token')->getRefreshTokenTTL() + time());
-//            $tokenType->setParam('refresh_token', $refreshToken->getId());
-//            $refreshToken->setAccessToken($accessToken);
-        }
-
-        // Expire the auth code
-        $this->authCodeRepository->delete($code);
-
-        // Save the access token
-        $this->accessTokenRepository->create($accessToken);
-
-        return $tokenType;
+    /**
+     * @inheritdoc
+     */
+    public function canRespondToRequest(ServerRequestInterface $request)
+    {
+        return (
+            (
+                strtoupper($request->getMethod()) === 'GET'
+                && isset($request->getQueryParams()['response_type'])
+                && $request->getQueryParams()['response_type'] === 'code'
+                && isset($request->getQueryParams()['client_id'])
+            ) || (
+                isset($request->getParsedBody()['grant_type'])
+                && $request->getParsedBody()['grant_type'] === 'authorization_code'
+            )
+        );
     }
 }
