@@ -7,6 +7,7 @@ use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
+use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -25,11 +26,6 @@ class Server implements EmitterAwareInterface
      * @var \League\OAuth2\Server\Grant\GrantTypeInterface[]
      */
     protected $enabledGrantTypes = [];
-
-    /**
-     * @var ResponseTypeInterface[]
-     */
-    protected $grantResponseTypes = [];
 
     /**
      * @var DateInterval[]
@@ -93,46 +89,22 @@ class Server implements EmitterAwareInterface
     }
 
     /**
-     * Get the token type that grants will return in the HTTP response
-     *
-     * @return ResponseTypeInterface
-     */
-    public function getResponseType()
-    {
-        if (!$this->responseType instanceof ResponseTypeInterface) {
-            $this->responseType = new BearerTokenResponse(
-                $this->privateKeyPath,
-                $this->publicKeyPath,
-                $this->accessTokenRepository
-            );
-        }
-
-        return $this->responseType;
-    }
-
-    /**
      * Enable a grant type on the server
      *
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
      * @param DateInterval                                   $accessTokenTTL
      */
-    public function enableGrantType(
-        GrantTypeInterface $grantType,
-        \DateInterval $accessTokenTTL
-    ) {
+    public function enableGrantType(GrantTypeInterface $grantType, \DateInterval $accessTokenTTL)
+    {
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
         $grantType->setPathToPrivateKey($this->privateKeyPath);
         $grantType->setPathToPublicKey($this->publicKeyPath);
-
         $grantType->setEmitter($this->getEmitter());
+
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
 
-        // Set grant response type
-        $this->grantResponseTypes[$grantType->getIdentifier()] = $this->getResponseType();
-
-        // Set grant access token TTL
         $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
     }
 
@@ -160,7 +132,7 @@ class Server implements EmitterAwareInterface
             if ($grantType->canRespondToRequest($request)) {
                 $tokenResponse = $grantType->respondToRequest(
                     $request,
-                    $this->grantResponseTypes[$grantType->getIdentifier()],
+                    $this->getResponseType(),
                     $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
                 );
             }
@@ -171,5 +143,23 @@ class Server implements EmitterAwareInterface
         }
 
         return $tokenResponse->generateHttpResponse($response);
+    }
+
+    /**
+     * Get the token type that grants will return in the HTTP response
+     *
+     * @return ResponseTypeInterface
+     */
+    public function getResponseType()
+    {
+        if (!$this->responseType instanceof ResponseTypeInterface) {
+            $this->responseType = new BearerTokenResponse(
+                $this->privateKeyPath,
+                $this->publicKeyPath,
+                $this->accessTokenRepository
+            );
+        }
+
+        return $this->responseType;
     }
 }

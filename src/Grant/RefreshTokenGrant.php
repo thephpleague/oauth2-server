@@ -42,6 +42,8 @@ class RefreshTokenGrant extends AbstractGrant
         RefreshTokenRepositoryInterface $refreshTokenRepository
     ) {
         $this->refreshTokenRepository = $refreshTokenRepository;
+
+        $this->refreshTokenTTL = new \DateInterval('P1M');
     }
 
     /**
@@ -50,8 +52,9 @@ class RefreshTokenGrant extends AbstractGrant
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $tokenTTL
+        \DateInterval $accessTokenTTL
     ) {
+        // Validate request
         $client          = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
         $scopes          = $this->validateScopes($request, $client);
@@ -75,9 +78,9 @@ class RefreshTokenGrant extends AbstractGrant
         $this->accessTokenRepository->revokeAccessToken($oldRefreshToken['access_token_id']);
         $this->refreshTokenRepository->revokeRefreshToken($oldRefreshToken['refresh_token_id']);
 
-        $accessToken = $this->issueAccessToken($tokenTTL, $client, $oldRefreshToken['user_id'], $scopes);
+        // Issue and persist new tokens
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $oldRefreshToken['user_id'], $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
-
         $this->accessTokenRepository->persistNewAccessToken($accessToken);
         $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
