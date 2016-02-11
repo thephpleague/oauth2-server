@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use DateInterval;
 use League\Event\EmitterInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -24,6 +23,13 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 interface GrantTypeInterface
 {
+    /**
+     * Set refresh token TTL
+     *
+     * @param \DateInterval $refreshTokenTTL
+     */
+    public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL);
+
     /**
      * Return the identifier
      *
@@ -43,14 +49,14 @@ interface GrantTypeInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface                  $request
      * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param \DateInterval                                             $tokenTTL
+     * @param \DateInterval                                             $accessTokenTTL
      *
      * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        DateInterval $tokenTTL
+        \DateInterval $accessTokenTTL
     );
 
     /**

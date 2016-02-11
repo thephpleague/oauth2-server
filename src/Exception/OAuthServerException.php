@@ -2,10 +2,10 @@
 
 namespace League\OAuth2\Server\Exception;
 
-use League\OAuth2\Server\Utils\RedirectUri;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
+use Zend\Diactoros\Uri;
 
 class OAuthServerException extends \Exception
 {
@@ -184,6 +184,7 @@ class OAuthServerException extends \Exception
     /**
      * Invalid refresh token
      *
+     * @param string|null $hint
      * @return static
      */
     public static function invalidRefreshToken($hint = null)
@@ -236,16 +237,21 @@ class OAuthServerException extends \Exception
         }
 
         if ($this->redirectUri !== null) {
-            $headers['Location'] = RedirectUri::make($this->redirectUri, $payload);
+            $redirectUri = new Uri($this->redirectUri);
+            parse_str($redirectUri->getQuery(), $redirectPayload);
+
+            $headers['Location'] = (string) $redirectUri->withQuery(http_build_query(
+                array_merge($redirectPayload, $payload)
+            ));
         }
 
         foreach ($headers as $header => $content) {
             $response = $response->withHeader($header, $content);
         }
 
-        $response = $response->withStatus($this->getHttpStatusCode());
         $response->getBody()->write(json_encode($payload));
-        return $response;
+
+        return $response->withStatus($this->getHttpStatusCode());
     }
 
     /**

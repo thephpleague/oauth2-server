@@ -34,11 +34,13 @@ class AuthenticationServerMiddleware
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         try {
-            $response = $server->respondToRequest($request, $response);
+            $response = $this->server->respondToRequest($request, $response);
         } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
         } catch (\Exception $exception) {
-            return $response->withStatus(500)->write($exception->getMessage());
+            $response->getBody()->write($exception->getMessage());
+
+            return $response->withStatus(500);
         }
 
         if (in_array($response->getStatusCode(), [400, 401, 500])) {
