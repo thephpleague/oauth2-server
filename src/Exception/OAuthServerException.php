@@ -243,9 +243,9 @@ class OAuthServerException extends \Exception
             $response = $response->withHeader($header, $content);
         }
 
-        $response = $response->withStatus($this->getHttpStatusCode());
         $response->getBody()->write(json_encode($payload));
-        return $response;
+
+        return $response->withStatus($this->getHttpStatusCode());
     }
 
     /**

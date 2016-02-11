@@ -16,10 +16,10 @@ use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response;
 
 class BearerTokenResponse extends AbstractResponseType
 {
@@ -78,6 +78,8 @@ class BearerTokenResponse extends AbstractResponseType
      */
     public function determineAccessTokenInHeader(ServerRequestInterface $request)
     {
+        $request = parent::determineAccessTokenInHeader($request);
+
         $header = $request->getHeader('authorization');
         $jwt = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header[0]));
 
@@ -85,12 +87,12 @@ class BearerTokenResponse extends AbstractResponseType
             // Attempt to parse and validate the JWT
             $token = (new Parser())->parse($jwt);
             if ($token->verify(new Sha256(), $this->pathToPublicKey) === false) {
-                return $request->withAttribute('oauth_access_token_error', 'Access token could not be verified');
+                throw OAuthServerException::accessDenied('Access token could not be verified');
             }
 
             // Check if token has been revoked
             if ($this->accessTokenRepository->isAccessTokenRevoked($token->getClaim('jti'))) {
-                return $request->withAttribute('oauth_access_token_error', 'Access token has been revoked');
+                throw OAuthServerException::accessDenied('Access token has been revoked');
             }
 
             // Return the request with additional attributes
@@ -98,9 +100,9 @@ class BearerTokenResponse extends AbstractResponseType
                 ->withAttribute('oauth_client_id', $token->getClaim('aud'))
                 ->withAttribute('oauth_user_id', $token->getClaim('sub'))
                 ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $exception) {
             // JWT couldn't be parsed so return the request as is
-            return $request->withAttribute('oauth_access_token_error', $e->getMessage());
+            throw OAuthServerException::accessDenied($exception->getMessage());
         }
     }
 }
