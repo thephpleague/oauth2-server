@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ff6f832d21c141662627622e68079ca5",
-    "content-hash": "f08d5c7c3ede910150d75ad3c56d1b46",
+    "hash": "143453cc35e7f499b130b6460222dc5a",
+    "content-hash": "1ea46581fb6db25f323a37a45ef74f95",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -145,9 +145,14 @@
         {
             "name": "league/oauth2-server",
             "version": "dev-V5-WIP",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/oauth2-server.git",
+                "reference": "95919a688e29c911d1e4e83112cacd18f719700f"
+            },
             "dist": {
                 "type": "path",
-                "url": "../",
+                "url": "https://api.github.com/repos/thephpleague/oauth2-server/zipball/95919a688e29c911d1e4e83112cacd18f719700f",
                 "reference": "168e7640c6e8217b7e961151de522810b3edce6e",
                 "shasum": null
             },
@@ -213,6 +218,58 @@
                 "secure",
                 "server"
             ]
+        },
+        {
+            "name": "league/plates",
+            "version": "3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/plates.git",
+                "reference": "2d8569e9f140a70d6a05db38006926f7547cb802"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/plates/zipball/2d8569e9f140a70d6a05db38006926f7547cb802",
+                "reference": "2d8569e9f140a70d6a05db38006926f7547cb802",
+                "shasum": ""
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "~1.4.0",
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\Plates\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonathan Reinink",
+                    "email": "jonathan@reinink.ca",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Plates, the native PHP template system that's fast, easy to use and easy to extend.",
+            "homepage": "http://platesphp.com",
+            "keywords": [
+                "league",
+                "package",
+                "templates",
+                "templating",
+                "views"
+            ],
+            "time": "2015-07-09 02:14:40"
         },
         {
             "name": "namshi/jose",

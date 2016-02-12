@@ -20,13 +20,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class ClientCredentialsGrant extends AbstractGrant
 {
     /**
-     * Grant identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'client_credentials';
-
-    /**
      * @inheritdoc
      */
     public function respondToRequest(
@@ -46,5 +39,13 @@ class ClientCredentialsGrant extends AbstractGrant
         $responseType->setAccessToken($accessToken);
 
         return $responseType;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIdentifier()
+    {
+        return 'client_credentials';
     }
 }

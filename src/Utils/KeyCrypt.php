@@ -51,6 +51,8 @@ class KeyCrypt
      * @param string $encryptedData
      * @param string $pathToPublicKey
      *
+     * @throws \LogicException
+     *
      * @return string
      */
     public static function decrypt($encryptedData, $pathToPublicKey)

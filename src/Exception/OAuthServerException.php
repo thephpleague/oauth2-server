@@ -197,13 +197,20 @@ class OAuthServerException extends \Exception
     /**
      * Access denied
      *
-     * @param null|string $hint
+     * @param string|null $hint
+     * @param string|null $redirectUri
      *
      * @return static
      */
-    public static function accessDenied($hint = null)
+    public static function accessDenied($hint = null, $redirectUri = null)
     {
-        return new static('The server denied the request.', 'access_denied', 401, $hint);
+        return new static(
+            'The resource owner or authorization server denied the request.',
+            'access_denied',
+            401,
+            $hint,
+            $redirectUri
+        );
     }
 
     /**

@@ -15,6 +15,7 @@ use League\Event\EmitterAwareTrait;
 use League\Event\EmitterInterface;
 use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
+use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Entities\ScopeEntity;
@@ -33,13 +34,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     use EmitterAwareTrait;
 
     const SCOPE_DELIMITER_STRING = ' ';
-
-    /**
-     * Grant identifier
-     *
-     * @var string
-     */
-    protected $identifier = '';
 
     /**
      * Grant responds with
@@ -142,28 +136,26 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function getIdentifier()
-    {
-        return $this->identifier;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function respondsWith()
     {
         return $this->respondsWith;
     }
 
     /**
+     * Validate the client
+     *
      * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param bool                                     $validateSecret
+     * @param bool                                     $validateRedirectUri
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface
-     *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
-    protected function validateClient(ServerRequestInterface $request)
-    {
+    protected function validateClient(
+        ServerRequestInterface $request,
+        $validateSecret = true,
+        $validateRedirectUri = false
+    ) {
         $clientId = $this->getRequestParameter(
             'client_id',
             $request,
@@ -178,15 +170,20 @@ abstract class AbstractGrant implements GrantTypeInterface
             $request,
             $this->getServerParameter('PHP_AUTH_PW', $request)
         );
-        if (is_null($clientSecret)) {
+        if (is_null($clientSecret) && $validateSecret === true) {
             throw OAuthServerException::invalidRequest('client_secret', null, '`%s` parameter is missing');
         }
 
+        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
+        if (is_null($redirectUri) && $validateRedirectUri === true) {
+            throw OAuthServerException::invalidRequest('redirect_uri', null, '`%s` parameter is missing');
+        }
+
         $client = $this->clientRepository->getClientEntity(
-            $this->getIdentifier(),
             $clientId,
             $clientSecret,
-            null
+            $redirectUri,
+            $this->getIdentifier()
         );
 
         if (!$client instanceof ClientEntityInterface) {
@@ -199,6 +196,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * Validate scopes in the request
+     *
      * @param \Psr\Http\Message\ServerRequestInterface                        $request
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
      * @param string                                                          $redirectUri
@@ -249,9 +248,36 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function getRequestParameter($parameter, ServerRequestInterface $request, $default = null)
     {
-        return (is_array($request->getParsedBody()) && isset($request->getParsedBody()[$parameter]))
-            ? $request->getParsedBody()[$parameter]
-            : $default;
+        $requestParameters = (array) $request->getParsedBody();
+        return isset($requestParameters[$parameter]) ? $requestParameters[$parameter] : $default;
+    }
+
+    /**
+     * Retrieve query string parameter.
+     *
+     * @param string                                   $parameter
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param mixed                                    $default
+     *
+     * @return null|string
+     */
+    protected function getQueryStringParameter($parameter, ServerRequestInterface $request, $default = null)
+    {
+        return isset($request->getQueryParams()[$parameter]) ? $request->getQueryParams()[$parameter] : $default;
+    }
+
+    /**
+     * Retrieve cookie parameter.
+     *
+     * @param string                                   $parameter
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param mixed                                    $default
+     *
+     * @return null|string
+     */
+    protected function getCookieParameter($parameter, ServerRequestInterface $request, $default = null)
+    {
+        return isset($request->getCookieParams()[$parameter]) ? $request->getCookieParams()[$parameter] : $default;
     }
 
     /**
@@ -265,10 +291,12 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function getServerParameter($parameter, ServerRequestInterface $request, $default = null)
     {
-        return (isset($request->getServerParams()[$parameter])) ? $request->getServerParams()[$parameter] : $default;
+        return isset($request->getServerParams()[$parameter]) ? $request->getServerParams()[$parameter] : $default;
     }
 
     /**
+     * Issue an access token
+     *
      * @param \DateInterval                                                   $tokenTTL
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
      * @param string                                                          $userIdentifier
@@ -296,6 +324,39 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * Issue an auth code
+     *
+     * @param \DateInterval                                                   $tokenTTL
+     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
+     * @param string                                                          $userIdentifier
+     * @param string                                                          $redirectUri
+     * @param array                                                           $scopes
+     *
+     * @return \League\OAuth2\Server\Entities\AuthCodeEntity
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    protected function issueAuthCode(
+        \DateInterval $tokenTTL,
+        ClientEntityInterface $client,
+        $userIdentifier,
+        $redirectUri,
+        array $scopes = []
+    ) {
+        $authCode = new AuthCodeEntity();
+        $authCode->setIdentifier(SecureKey::generate());
+        $authCode->setExpiryDateTime((new \DateTime())->add($tokenTTL));
+        $authCode->setClient($client);
+        $authCode->setUserIdentifier($userIdentifier);
+        $authCode->setRedirectUri($redirectUri);
+
+        foreach ($scopes as $scope) {
+            $authCode->addScope($scope);
+        }
+
+        return $authCode;
+    }
+
+    /**
      * @param \League\OAuth2\Server\Entities\AccessTokenEntity $accessToken
      *
      * @return \League\OAuth2\Server\Entities\RefreshTokenEntity
@@ -315,10 +376,11 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function canRespondToRequest(ServerRequestInterface $request)
     {
+        $requestParameters = (array) $request->getParsedBody();
+
         return (
-            is_array($request->getParsedBody())
-            && isset($request->getParsedBody()['grant_type'])
-            && $request->getParsedBody()['grant_type'] === $this->identifier
+            array_key_exists('grant_type', $requestParameters)
+            && $requestParameters['grant_type'] === $this->getIdentifier()
         );
     }
 }

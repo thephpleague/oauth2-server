@@ -2,6 +2,7 @@
 
 namespace League\OAuth2\Server;
 
+use DateInterval;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -26,7 +27,7 @@ class Server implements EmitterAwareInterface
     protected $enabledGrantTypes = [];
 
     /**
-     * @var DateInterval[]
+     * @var \DateInterval[]
      */
     protected $grantTypeAccessTokenTTL = [];
 
@@ -90,9 +91,9 @@ class Server implements EmitterAwareInterface
      * Enable a grant type on the server
      *
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
-     * @param DateInterval                                   $accessTokenTTL
+     * @param \DateInterval                                  $accessTokenTTL
      */
-    public function enableGrantType(GrantTypeInterface $grantType, \DateInterval $accessTokenTTL)
+    public function enableGrantType(GrantTypeInterface $grantType, DateInterval $accessTokenTTL)
     {
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
@@ -136,7 +137,11 @@ class Server implements EmitterAwareInterface
             }
         }
 
-        if (!$tokenResponse instanceof ResponseTypeInterface) {
+        if ($tokenResponse instanceof ResponseInterface) {
+            return $tokenResponse;
+        }
+
+        if ($tokenResponse instanceof ResponseTypeInterface === false) {
             return OAuthServerException::unsupportedGrantType()->generateHttpResponse($response);
         }
 
@@ -144,11 +149,25 @@ class Server implements EmitterAwareInterface
     }
 
     /**
+     * Determine the access token validity
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     *
+     * @return \Psr\Http\Message\ServerRequestInterface
+     *
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    public function validateRequest(ServerRequestInterface $request)
+    {
+        return $this->getResponseType()->determineAccessTokenInHeader($request);
+    }
+
+    /**
      * Get the token type that grants will return in the HTTP response
      *
      * @return ResponseTypeInterface
      */
-    public function getResponseType()
+    protected function getResponseType()
     {
         if (!$this->responseType instanceof ResponseTypeInterface) {
             $this->responseType = new BearerTokenResponse(

@@ -65,12 +65,13 @@ class BearerTokenResponse extends AbstractResponseType
             $responseParams['refresh_token'] = $refreshToken;
         }
 
-        $response
+        $response = $response
             ->withStatus(200)
             ->withHeader('pragma', 'no-cache')
             ->withHeader('cache-control', 'no-store')
-            ->withHeader('content-type', 'application/json;charset=UTF-8')
-            ->getBody()->write(json_encode($responseParams));
+            ->withHeader('content-type', 'application/json; charset=UTF-8');
+
+        $response->getBody()->write(json_encode($responseParams));
 
         return $response;
     }

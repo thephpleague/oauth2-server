@@ -25,13 +25,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class PasswordGrant extends AbstractGrant
 {
     /**
-     * Grant identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'password';
-
-    /**
      * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
      */
     private $userRepository;
@@ -108,5 +101,13 @@ class PasswordGrant extends AbstractGrant
         }
 
         return $user;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIdentifier()
+    {
+        return 'password';
     }
 }
