@@ -315,16 +315,12 @@ class AuthCodeGrant extends AbstractGrant
         ResponseTypeInterface $responseType,
         \DateInterval $accessTokenTTL
     ) {
-        $requestParameters = (array) $request->getParsedBody();
-
-        if (array_key_exists('response_type', $requestParameters)
-            && $requestParameters['response_type'] === 'code'
-            && array_key_exists('client_id', $requestParameters)
+        if (array_key_exists('response_type', $request->getQueryParams())
+            && $request->getQueryParams()['response_type'] === 'code'
+            && array_key_exists('client_id', $request->getQueryParams())
         ) {
             return $this->respondToAuthorizationRequest($request);
-        } elseif (array_key_exists('grant_type', $requestParameters)
-            && $requestParameters['grant_type'] === $this->getIdentifier()
-        ) {
+        } elseif (parent::canRespondToRequest($request)) {
             return $this->respondToAccessTokenRequest($request, $responseType, $accessTokenTTL);
         } else {
             throw OAuthServerException::serverError('respondToRequest() should not have been called');
@@ -336,13 +332,11 @@ class AuthCodeGrant extends AbstractGrant
      */
     public function canRespondToRequest(ServerRequestInterface $request)
     {
-        $requestParameters = (array) $request->getParsedBody();
-
         return (
             (
-                array_key_exists('response_type', $requestParameters)
-                && $requestParameters['response_type'] === 'code'
-                && array_key_exists('client_id', $requestParameters)
+                array_key_exists('response_type', $request->getQueryParams())
+                && $request->getQueryParams()['response_type'] === 'code'
+                && isset($request->getQueryParams()['client_id'])
             )
             || parent::canRespondToRequest($request)
         );
