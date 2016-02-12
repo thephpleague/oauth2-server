@@ -36,13 +36,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     const SCOPE_DELIMITER_STRING = ' ';
 
     /**
-     * Grant responds with
-     *
-     * @var string
-     */
-    protected $respondsWith = 'token';
-
-    /**
      * @var ServerRequestInterface
      */
     protected $request;
@@ -131,14 +124,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
     {
         $this->refreshTokenTTL = $refreshTokenTTL;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function respondsWith()
-    {
-        return $this->respondsWith;
     }
 
     /**
