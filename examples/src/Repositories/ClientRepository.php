@@ -15,7 +15,7 @@ class ClientRepository implements ClientRepositoryInterface
             'myawesomeapp' => [
                 'secret'       => password_hash('abc123', PASSWORD_BCRYPT),
                 'name'         => 'My Awesome App',
-                'redirect_uri' => ''
+                'redirect_uri' => 'http://foo/bar'
             ]
         ];
 
@@ -30,7 +30,7 @@ class ClientRepository implements ClientRepositoryInterface
         }
 
         // Check if redirect URI is valid
-        if ($redirectUri !== null && $redirectUri !== $clients[$clientIdentifier]['redirectUri']) {
+        if ($redirectUri !== null && $redirectUri !== $clients[$clientIdentifier]['redirect_uri']) {
             return null;
         }
 
