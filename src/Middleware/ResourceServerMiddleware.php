@@ -6,6 +6,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Server;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Stream;
 
 class ResourceServerMiddleware
 {
@@ -34,13 +35,14 @@ class ResourceServerMiddleware
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         try {
-            $request = $this->server->getResponseType()->determineAccessTokenInHeader($request);
+            $request = $this->server->validateRequest($request);
         } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
         } catch (\Exception $exception) {
-            $response->getBody()->write($exception->getMessage());
+            $body = new Stream('php://temp', 'r+');
+            $body->write($exception->getMessage());
 
-            return $response->withStatus(500);
+            return $response->withStatus(500)->withBody($body);
         }
 
         // Pass the request and response on to the next responder in the chain
