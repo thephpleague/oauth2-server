@@ -2,6 +2,7 @@
 
 namespace League\OAuth2\Server;
 
+use DateInterval;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -92,7 +93,7 @@ class Server implements EmitterAwareInterface
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
      * @param DateInterval                                   $accessTokenTTL
      */
-    public function enableGrantType(GrantTypeInterface $grantType, \DateInterval $accessTokenTTL)
+    public function enableGrantType(GrantTypeInterface $grantType, DateInterval $accessTokenTTL)
     {
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
