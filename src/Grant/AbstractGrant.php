@@ -143,14 +143,20 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * Validate the client
+     *
      * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param bool                                     $validateSecret
+     * @param bool                                     $validateRedirectUri
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface
-     *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
-    protected function validateClient(ServerRequestInterface $request)
-    {
+    protected function validateClient(
+        ServerRequestInterface $request,
+        $validateSecret = true,
+        $validateRedirectUri = false
+    ) {
         $clientId = $this->getRequestParameter(
             'client_id',
             $request,
@@ -165,14 +171,19 @@ abstract class AbstractGrant implements GrantTypeInterface
             $request,
             $this->getServerParameter('PHP_AUTH_PW', $request)
         );
-        if (is_null($clientSecret)) {
+        if (is_null($clientSecret) && $validateSecret === true) {
             throw OAuthServerException::invalidRequest('client_secret', null, '`%s` parameter is missing');
+        }
+
+        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
+        if (is_null($redirectUri) && $validateRedirectUri === true) {
+            throw OAuthServerException::invalidRequest('redirect_uri', null, '`%s` parameter is missing');
         }
 
         $client = $this->clientRepository->getClientEntity(
             $clientId,
             $clientSecret,
-            null,
+            $redirectUri,
             $this->getIdentifier()
         );
 
