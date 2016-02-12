@@ -60,7 +60,8 @@ class OAuthServerException extends \Exception
         $localizedHint = null
     ) {
         $errorMessage = (is_null($localizedError))
-            ? 'The provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.'
+            ? 'The provided authorization grant is invalid, expired, revoked, does not match ' .
+                'the redirection URI used in the authorization request, or was issued to another client.'
             : $localizedError;
         $hint = (is_null($localizedHint))
             ? 'Check the `grant_type` parameter'
@@ -106,7 +107,8 @@ class OAuthServerException extends \Exception
         $localizedHint = null
     ) {
         $errorMessage = (is_null($localizedError))
-            ? 'The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed.'
+            ? 'The request is missing a required parameter, includes an invalid parameter value, ' .
+                'includes a parameter more than once, or is otherwise malformed.'
             : $localizedError;
         $hint = (is_null($localizedHint))
             ? sprintf('Check the `%s` parameter', $parameter)

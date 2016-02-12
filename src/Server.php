@@ -2,7 +2,6 @@
 
 namespace League\OAuth2\Server;
 
-use DateInterval;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;

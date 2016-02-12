@@ -13,7 +13,6 @@ namespace League\OAuth2\Server\Storage;
 
 use League\OAuth2\Server\Repositories\RepositoryInterface;
 
-
 /**
  * MacTokenInterface
  */
@@ -21,15 +20,17 @@ interface MacTokenInterface extends RepositoryInterface
 {
     /**
      * Create a MAC key linked to an access token
-     * @param  string $macKey
-     * @param  string $accessToken
-     * @return void
+     *
+     * @param string $macKey
+     * @param string $accessToken
      */
     public function persistMacTokenEntity($macKey, $accessToken);
 
     /**
      * Get a MAC key by access token
+     *
      * @param  string $accessToken
+     *
      * @return string
      */
     public function getMacKeyByAccessTokenString($accessToken);

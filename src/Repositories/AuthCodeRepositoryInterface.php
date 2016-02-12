@@ -33,8 +33,6 @@ interface AuthCodeRepositoryInterface extends RepositoryInterface
      * @param string  $code        The authorization code string
      * @param integer $expireTime  Token expire time
      * @param string  $redirectUri Client redirect uri
-     *
-     * @return void
      */
     public function persistNewAuthCode($code, $expireTime, $redirectUri);
 
