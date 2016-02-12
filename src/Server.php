@@ -137,7 +137,11 @@ class Server implements EmitterAwareInterface
             }
         }
 
-        if (!$tokenResponse instanceof ResponseTypeInterface) {
+        if ($tokenResponse instanceof ResponseInterface) {
+            return $tokenResponse;
+        }
+
+        if ($tokenResponse instanceof ResponseTypeInterface === false) {
             return OAuthServerException::unsupportedGrantType()->generateHttpResponse($response);
         }
 
