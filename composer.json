@@ -65,5 +65,8 @@
         "branch-alias": {
             "dev-V5-WIP": "5.0-dev"
         }
+    },
+    "suggest": {
+        "league/plates": "Required for parsing authorization code templates"
     }
 }
