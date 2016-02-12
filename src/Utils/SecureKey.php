@@ -31,6 +31,7 @@ class SecureKey
     {
         try {
             $string = random_bytes($len);
+            // @codeCoverageIgnoreStart
         } catch (\TypeError $e) {
             // Well, it's an integer, so this IS unexpected.
             throw OAuthServerException::serverError("An unexpected error has occurred");
@@ -41,6 +42,7 @@ class SecureKey
             // If you get this message, the CSPRNG failed hard.
             throw OAuthServerException::serverError("Could not generate a random string. Is our OS secure?");
         }
+        // @codeCoverageIgnoreEnd
 
         return bin2hex($string);
     }
