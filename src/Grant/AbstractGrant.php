@@ -249,13 +249,15 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function getRequestParameter($parameter, ServerRequestInterface $request, $default = null)
     {
-        return (isset($request->getParsedBody()[$parameter])) ? $request->getParsedBody()[$parameter] : $default;
+        return (is_array($request->getParsedBody()) && isset($request->getParsedBody()[$parameter]))
+            ? $request->getParsedBody()[$parameter]
+            : $default;
     }
 
     /**
      * Retrieve server parameter.
      *
-     * @param string|array                             $parameter
+     * @param string                                   $parameter
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param mixed                                    $default
      *
@@ -314,7 +316,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function canRespondToRequest(ServerRequestInterface $request)
     {
         return (
-            isset($request->getParsedBody()['grant_type'])
+            is_array($request->getParsedBody())
+            && isset($request->getParsedBody()['grant_type'])
             && $request->getParsedBody()['grant_type'] === $this->identifier
         );
     }
