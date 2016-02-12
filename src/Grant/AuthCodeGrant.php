@@ -74,6 +74,7 @@ class AuthCodeGrant extends AbstractGrant
         $this->pathToAuthorizeTemplate = ($pathToLoginTemplate === null)
             ? __DIR__ . '/../ResponseTypes/DefaultTemplates/authorize_client.php'
             : $this->pathToAuthorizeTemplate;
+        $this->refreshTokenTTL = new \DateInterval('P1M');
     }
 
 
@@ -234,7 +235,7 @@ class AuthCodeGrant extends AbstractGrant
                         'auth_code_id' => $authCode->getIdentifier(),
                         'scopes'       => $authCode->getScopes(),
                         'user_id'      => $authCode->getUserIdentifier(),
-                        'expire_time'  => $this->authCodeTTL->format('U'),
+                        'expire_time'  => (new \DateTime())->add($this->authCodeTTL)->format('U'),
                     ]
                 ),
                 $this->pathToPrivateKey
@@ -272,7 +273,7 @@ class AuthCodeGrant extends AbstractGrant
 
         // Validate the authorization code
         try {
-            $authCodePayload = json_decode(KeyCrypt::decrypt($encryptedAuthCode, $this->pathToPrivateKey));
+            $authCodePayload = json_decode(KeyCrypt::decrypt($encryptedAuthCode, $this->pathToPublicKey));
             if (time() > $authCodePayload->expire_time) {
                 throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
             }
@@ -285,7 +286,7 @@ class AuthCodeGrant extends AbstractGrant
                 throw OAuthServerException::invalidRequest('code', 'Authorization code was not issued to this client');
             }
         } catch (\LogicException  $e) {
-            throw OAuthServerException::invalidRequest('code');
+            throw OAuthServerException::invalidRequest('code', null, 'Cannot decrypt the authorization code');
         }
 
         // Issue and persist access + refresh tokens
