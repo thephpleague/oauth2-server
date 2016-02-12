@@ -39,4 +39,10 @@ interface RefreshTokenEntityInterface
      * @return \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
      */
     public function getAccessToken();
+
+    /**
+     * Has the token expired?
+     * @return bool
+     */
+    public function isExpired();
 }

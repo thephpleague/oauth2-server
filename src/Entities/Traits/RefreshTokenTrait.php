@@ -50,4 +50,13 @@ trait RefreshTokenTrait
     {
         $this->expiryDateTime = $dateTime;
     }
+
+    /**
+     * Has the token expired?
+     * @return bool
+     */
+    public function isExpired()
+    {
+        return (new DateTime()) > $this->getExpiryDateTime();
+    }
 }
