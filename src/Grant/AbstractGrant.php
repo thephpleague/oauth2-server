@@ -15,6 +15,7 @@ use League\Event\EmitterAwareTrait;
 use League\Event\EmitterInterface;
 use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
+use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Entities\ScopeEntity;
@@ -319,6 +320,39 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         return $accessToken;
+    }
+
+    /**
+     * Issue an auth code
+     *
+     * @param \DateInterval                                                   $tokenTTL
+     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
+     * @param string                                                          $userIdentifier
+     * @param string                                                          $redirectUri
+     * @param array                                                           $scopes
+     *
+     * @return \League\OAuth2\Server\Entities\AuthCodeEntity
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    protected function issueAuthCode(
+        \DateInterval $tokenTTL,
+        ClientEntityInterface $client,
+        $userIdentifier,
+        $redirectUri,
+        array $scopes = []
+    ) {
+        $authCode = new AuthCodeEntity();
+        $authCode->setIdentifier(SecureKey::generate());
+        $authCode->setExpiryDateTime((new \DateTime())->add($tokenTTL));
+        $authCode->setClient($client);
+        $authCode->setUserIdentifier($userIdentifier);
+        $authCode->setRedirectUri($redirectUri);
+
+        foreach ($scopes as $scope) {
+            $authCode->addScope($scope);
+        }
+
+        return $authCode;
     }
 
     /**
