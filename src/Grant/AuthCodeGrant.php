@@ -310,14 +310,41 @@ class AuthCodeGrant extends AbstractGrant
     /**
      * @inheritdoc
      */
+    public function respondToRequest(
+        ServerRequestInterface $request,
+        ResponseTypeInterface $responseType,
+        \DateInterval $accessTokenTTL
+    ) {
+        $requestParameters = (array) $request->getParsedBody();
+
+        if (array_key_exists('response_type', $requestParameters)
+            && $requestParameters['response_type'] === 'code'
+            && array_key_exists('client_id', $requestParameters)
+        ) {
+            return $this->respondToAuthorizationRequest($request);
+        } elseif (array_key_exists('grant_type', $requestParameters)
+            && $requestParameters['grant_type'] === $this->getIdentifier()
+        ) {
+            return $this->respondToAccessTokenRequest($request, $responseType, $accessTokenTTL);
+        } else {
+            throw OAuthServerException::serverError('respondToRequest() should not have been called');
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function canRespondToRequest(ServerRequestInterface $request)
     {
+        $requestParameters = (array) $request->getParsedBody();
+
         return (
             (
-                isset($request->getQueryParams()['response_type'])
-                && $request->getQueryParams()['response_type'] === 'code'
-                && isset($request->getQueryParams()['client_id'])
-            ) || (parent::canRespondToRequest($request))
+                array_key_exists('response_type', $requestParameters)
+                && $requestParameters['response_type'] === 'code'
+                && array_key_exists('client_id', $requestParameters)
+            )
+            || parent::canRespondToRequest($request)
         );
     }
 
@@ -329,29 +356,5 @@ class AuthCodeGrant extends AbstractGrant
     public function getIdentifier()
     {
         return 'authorization_code';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function respondToRequest(
-        ServerRequestInterface $request,
-        ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
-    ) {
-        if (
-            isset($request->getQueryParams()['response_type'])
-            && $request->getQueryParams()['response_type'] === 'code'
-            && isset($request->getQueryParams()['client_id'])
-        ) {
-            return $this->respondToAuthorizationRequest($request);
-        } elseif (
-            isset($request->getParsedBody()['grant_type'])
-            && $request->getParsedBody()['grant_type'] === 'authorization_code'
-        ) {
-            return $this->respondToAccessTokenRequest($request, $responseType, $accessTokenTTL);
-        } else {
-            throw OAuthServerException::serverError('respondToRequest() should not have been called');
-        }
     }
 }
