@@ -3,57 +3,63 @@
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Server;
-
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\RefreshTokenRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
-
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Zend\Diactoros\Stream;
 
 include(__DIR__ . '/../vendor/autoload.php');
 
+$app = new App([
+    'settings'    => [
+        'displayErrorDetails' => true,
+    ],
+    Server::class => function () {
+        // Init our repositories
+        $clientRepository = new ClientRepository();
+        $accessTokenRepository = new AccessTokenRepository();
+        $scopeRepository = new ScopeRepository();
+        $refreshTokenRepository = new RefreshTokenRepository();
 
+        $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
+        $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
 
-// App
-$app = new App([Server::class => function () {
-    // Init our repositories
-    $clientRepository = new ClientRepository();
-    $scopeRepository = new ScopeRepository();
-    $accessTokenRepository = new AccessTokenRepository();
-    $refreshTokenRepository = new RefreshTokenRepository();
+        // Setup the authorization server
+        $server = new Server(
+            $clientRepository,
+            $accessTokenRepository,
+            $scopeRepository,
+            $privateKeyPath,
+            $publicKeyPath
+        );
 
-    $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
-    $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
+        // Enable the refresh token grant on the server with a token TTL of 1 hour
+        $server->enableGrantType(
+            new RefreshTokenGrant($refreshTokenRepository),
+            new \DateInterval('PT1H')
+        );
 
-    // Setup the authorization server
-    $server = new Server(
-        $clientRepository,
-        $accessTokenRepository,
-        $scopeRepository,
-        $privateKeyPath,
-        $publicKeyPath
-    );
+        return $server;
+    }
+]);
 
-    // Enable the refresh token grant on the server
-    $server->enableGrantType(new RefreshTokenGrant($refreshTokenRepository), new \DateInterval('PT1H'));
+$app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
+    /* @var \League\OAuth2\Server\Server $server */
+    $server = $app->getContainer()->get(Server::class);
 
-    return $server;
-}]);
-
-$app->post('/access_token', function (Request $request, Response $response) {
-    /** @var Server $server */
-    $server = $this->get(Server::class);
     try {
         return $server->respondToRequest($request, $response);
-    } catch (OAuthServerException $e) {
-        return $e->generateHttpResponse($response);
-    } catch (\Exception $e) {
-        return $response->withStatus(500)->write(
-            sprintf('<h1>%s</h1><p>%s</p>', get_class($e), $e->getMessage())
-        );
+    } catch (OAuthServerException $exception) {
+        return $exception->generateHttpResponse($response);
+    } catch (\Exception $exception) {
+        $body = new Stream('php://temp', 'r+');
+        $body->write($exception->getMessage());
+
+        return $response->withStatus(500)->withBody($body);
     }
 });
 

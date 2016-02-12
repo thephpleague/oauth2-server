@@ -16,10 +16,10 @@ Send the following cURL request:
 curl -X "POST" "http://localhost:4444/client_credentials.php/access_token" \
 	-H "Content-Type: application/x-www-form-urlencoded" \
 	-H "Accept: 1.0" \
+	--data-urlencode "grant_type=client_credentials" \
 	--data-urlencode "client_id=myawesomeapp" \
-	--data-urlencode "scope=basic email" \
 	--data-urlencode "client_secret=abc123" \
-	--data-urlencode "grant_type=client_credentials"
+	--data-urlencode "scope=basic email"
 ```
 
 ## Testing the password grant example
@@ -30,12 +30,12 @@ Send the following cURL request:
 curl -X "POST" "http://localhost:4444/password.php/access_token" \
 	-H "Content-Type: application/x-www-form-urlencoded" \
 	-H "Accept: 1.0" \
+	--data-urlencode "grant_type=password" \
 	--data-urlencode "client_id=myawesomeapp" \
-	--data-urlencode "scope=basic email" \
+	--data-urlencode "client_secret=abc123" \
 	--data-urlencode "username=alex" \
 	--data-urlencode "password=whisky" \
-	--data-urlencode "client_secret=abc123" \
-	--data-urlencode "grant_type=password"
+	--data-urlencode "scope=basic email"
 ```
 
 ## Testing the refresh token grant example
@@ -51,4 +51,3 @@ curl -X "POST" "http://localhost:4444/refresh_token.php/access_token" \
 	--data-urlencode "client_secret=abc123" \
 	--data-urlencode "refresh_token={{REFRESH_TOKEN}}"
 ```
-

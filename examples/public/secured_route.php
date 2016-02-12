@@ -1,48 +1,54 @@
 <?php
 
-use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Server;
-
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
-
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Zend\Diactoros\Stream;
 
 include(__DIR__ . '/../vendor/autoload.php');
 
-// App
 $app = new App([
     'settings'    => [
         'displayErrorDetails' => true,
     ],
     Server::class => function () {
-
         // Init our repositories
         $clientRepository = new ClientRepository();
-        $scopeRepository = new ScopeRepository();
         $accessTokenRepository = new AccessTokenRepository();
+        $scopeRepository = new ScopeRepository();
 
         $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
         $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
 
         // Setup the authorization server
-        $server = new Server(
+        return new Server(
             $clientRepository,
             $accessTokenRepository,
             $scopeRepository,
             $privateKeyPath,
             $publicKeyPath
         );
-
-        return $server;
     }
 ]);
 
-$app->add(new ResourceServerMiddleware($app->getContainer()->get(Server::class)));
-$app->post('/api/example', function (Request $request, Response $response) {
+$app->get('/user', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
+    $server = $app->getContainer()->get(Server::class);
+    $body = new Stream('php://temp', 'r+');
+
+    try {
+        $request = $server->validateRequest($request);
+    } catch (OAuthServerException $exception) {
+        return $exception->generateHttpResponse($response);
+    } catch (\Exception $exception) {
+        $body->write($exception->getMessage());
+
+        return $response->withStatus(500)->withBody($body);
+    }
 
     $params = [];
 
@@ -58,9 +64,9 @@ $app->post('/api/example', function (Request $request, Response $response) {
         $params['email'] = 'alex@example.com';
     }
 
-    $response->getBody()->write(json_encode($params));
+    $body->write(json_encode($params));
 
-    return $response;
+    return $response->withBody($body);
 });
 
 $app->run();
