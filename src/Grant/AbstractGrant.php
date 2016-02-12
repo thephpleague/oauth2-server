@@ -265,6 +265,20 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * Retrieve cookie parameter.
+     *
+     * @param string                                   $parameter
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param mixed                                    $default
+     *
+     * @return null|string
+     */
+    protected function getCookieParameter($parameter, ServerRequestInterface $request, $default = null)
+    {
+        return (isset($request->getCookieParams()[$parameter])) ? $request->getCookieParams()[$parameter] : $default;
+    }
+
+    /**
      * Retrieve server parameter.
      *
      * @param string|array                             $parameter
