@@ -3,23 +3,19 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
+use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\AuthorizeClientResponseTypeInterface;
-use League\OAuth2\Server\ResponseTypes\LoginUserResponseTypeInterface;
+use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
+use League\Plates\Engine;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
 
 class AuthCodeGrant extends AbstractGrant
 {
-    /**
-     * @var \League\OAuth2\Server\ResponseTypes\LoginUserResponseTypeInterface
-     */
-    private $loginUserResponseType;
-
     /**
      * @var \DateInterval
      */
@@ -28,27 +24,41 @@ class AuthCodeGrant extends AbstractGrant
      * @var \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface
      */
     private $authCodeRepository;
-    /**
-     * @var \League\OAuth2\Server\ResponseTypes\AuthorizeClientResponseTypeInterface
-     */
-    private $authorizeClientResponseType;
 
     /**
-     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface           $authCodeRepository
-     * @param \DateInterval                                                            $authCodeTTL
-     * @param \League\OAuth2\Server\ResponseTypes\LoginUserResponseTypeInterface       $loginUserResponseType
-     * @param \League\OAuth2\Server\ResponseTypes\AuthorizeClientResponseTypeInterface $authorizeClientResponseType
+     * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
+     */
+    private $userRepository;
+
+    /**
+     * @var null|string
+     */
+    private $pathToLoginTemplate;
+
+    /**
+     * @var null|string
+     */
+    private $pathToAuthorizeTemplate;
+
+    /**
+     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface $authCodeRepository
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface     $userRepository
+     * @param \DateInterval                                                  $authCodeTTL
+     * @param string|null                                                    $pathToLoginTemplate
+     * @param string|null                                                    $pathToAuthorizeTemplate
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
+        UserRepositoryInterface $userRepository,
         \DateInterval $authCodeTTL,
-        LoginUserResponseTypeInterface $loginUserResponseType,
-        AuthorizeClientResponseTypeInterface $authorizeClientResponseType
+        $pathToLoginTemplate = null,
+        $pathToAuthorizeTemplate = null
     ) {
         $this->authCodeRepository = $authCodeRepository;
+        $this->userRepository = $userRepository;
         $this->authCodeTTL = $authCodeTTL;
-        $this->loginUserResponseType = $loginUserResponseType;
-        $this->authorizeClientResponseType = $authorizeClientResponseType;
+        $this->pathToLoginTemplate = $pathToLoginTemplate;
+        $this->pathToAuthorizeTemplate = $pathToAuthorizeTemplate;
     }
 
 
@@ -92,29 +102,97 @@ class AuthCodeGrant extends AbstractGrant
 
         $scopes = $this->validateScopes($request, $client, $redirectUri);
         $queryString = http_build_query($request->getQueryParams());
+        $postbackUri = new Uri(
+            sprintf(
+                '//%s%s',
+                $request->getServerParams()['HTTP_HOST'],
+                $request->getServerParams()['REQUEST_URI']
+            )
+        );
+
+        $userId = null;
+        $userHasApprovedClient = $userHasApprovedClient = $this->getRequestParameter('action', null);
 
         // Check if the user has been validated
-        $userIdCookieParam = $this->getCookieParameter('oauth_user_id', $request, null);
-        if ($userIdCookieParam === null) {
-            return $this->loginUserResponseType->handle($client, $scopes, $queryString, $this->pathToPrivateKey);
-        } else {
+        $oauthCookie = $this->getCookieParameter('oauth_authorize_request', $request, null);
+        if ($oauthCookie !== null) {
             try {
-                $userId = KeyCrypt::decrypt($userIdCookieParam, $this->pathToPublicKey);
+                $oauthCookiePayload = json_decode(KeyCrypt::decrypt($oauthCookie, $this->pathToPublicKey));
+                $userId = $oauthCookiePayload->user_id;
+                $userHasApprovedClient = $oauthCookiePayload->client_is_authorized;
             } catch (\LogicException $e) {
                 throw OAuthServerException::serverError($e->getMessage());
             }
         }
 
-        // Check the user has approved the request
-        $userApprovedCookieParam = $this->getCookieParameter('oauth_user_approved_client', $request, null);
-        if ($userApprovedCookieParam === null) {
-            return $this->authorizeClientResponseType->handle($client, $scopes, $queryString, $this->pathToPrivateKey);
-        } else {
-            try {
-                $userApprovedClient = KeyCrypt::decrypt($userApprovedCookieParam, $this->pathToPublicKey);
-            } catch (\LogicException $e) {
-                throw OAuthServerException::serverError($e->getMessage());
+        // The username + password might be available in $_POST
+        $usernameParameter = $this->getRequestParameter('username', null);
+        $passwordParameter = $this->getRequestParameter('password', null);
+
+        $loginError = null;
+
+        // Assert if the user has logged in already
+        if ($userId === null && $usernameParameter !== null && $passwordParameter !== null) {
+            $userEntity = $this->userRepository->getUserEntityByUserCredentials(
+                $usernameParameter,
+                $passwordParameter
+            );
+
+            if ($userEntity instanceof UserEntityInterface) {
+                $userId = $userEntity->getIdentifier();
+            } else {
+                $loginError = 'Incorrect username or password';
             }
+        }
+
+        // The user hasn't logged in yet so show a login form
+        if ($userId === null) {
+            $engine = new Engine();
+            $html = $engine->render(
+                ($this->pathToLoginTemplate === null)
+                    ? __DIR__ . '/../ResponseTypes/DefaultTemplates/login_user.php'
+                    : $this->pathToLoginTemplate,
+                [
+                    'error'        => $loginError,
+                    'postback_uri' => (string) $postbackUri->withQuery($queryString),
+                ]
+            );
+
+            return new Response\HtmlResponse($html);
+        }
+
+
+        // The user hasn't approved the client yet so show an authorize form
+        if ($userId !== null && $userHasApprovedClient === null) {
+            $engine = new Engine();
+            $html = $engine->render(
+                ($this->pathToLoginTemplate === null)
+                    ? __DIR__ . '/../ResponseTypes/DefaultTemplates/authorize_client.php'
+                    : $this->pathToAuthorizeTemplate,
+                [
+                    'client'       => $client,
+                    'scopes'       => $scopes,
+                    'postback_uri' => (string) $postbackUri->withQuery($queryString),
+                ]
+            );
+
+            return new Response\HtmlResponse(
+                $html,
+                200,
+                [
+                    'Set-Cookie' => sprintf(
+                        'oauth_authorize_request=%s; Expires=%s',
+                        KeyCrypt::encrypt(
+                            json_encode([
+                                'user_id'              => $userId,
+                                'client_is_authorized' => null,
+                            ]),
+                            $this->pathToPrivateKey
+                        ),
+                        (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
+                    ),
+                ]
+            );
         }
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
@@ -125,7 +203,7 @@ class AuthCodeGrant extends AbstractGrant
             $redirectPayload['state'] = $stateParameter;
         }
 
-        if ($userApprovedClient === 1) {
+        if ($userHasApprovedClient === true) {
             $authCode = $this->issueAuthCode(
                 $this->authCodeTTL,
                 $client,
@@ -137,13 +215,7 @@ class AuthCodeGrant extends AbstractGrant
 
             $redirectPayload['code'] = $authCode->getIdentifier();
 
-            return new Response(
-                'php://memory',
-                302,
-                [
-                    'Location' => $redirectUri->withQuery(http_build_query($redirectPayload)),
-                ]
-            );
+            return new Response\RedirectResponse($redirectUri->withQuery(http_build_query($redirectPayload)));
         }
 
         $exception = OAuthServerException::accessDenied('The user denied the request', (string) $redirectUri);
