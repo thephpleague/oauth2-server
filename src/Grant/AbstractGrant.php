@@ -240,6 +240,20 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * Retrieve query string parameter.
+     *
+     * @param string                                   $parameter
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param mixed                                    $default
+     *
+     * @return null|string
+     */
+    protected function getQueryStringParameter($parameter, ServerRequestInterface $request, $default = null)
+    {
+        return (isset($request->getQueryParams()[$parameter])) ? $request->getQueryParams()[$parameter] : $default;
+    }
+
+    /**
      * Retrieve server parameter.
      *
      * @param string|array                             $parameter
