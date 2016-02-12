@@ -1,6 +1,7 @@
 <?php
 
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Server;
 
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
@@ -42,7 +43,7 @@ $app = new App([
 
         // Enable the password grant on the server with a token TTL of 1 hour
         $server->enableGrantType(
-            new \League\OAuth2\Server\Grant\AuthCodeGrant(
+            new AuthCodeGrant(
                 $authCodeRepository,
                 $refreshTokenRepository,
                 $userRepository,
