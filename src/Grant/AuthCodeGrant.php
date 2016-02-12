@@ -3,6 +3,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
+use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
@@ -11,6 +12,7 @@ use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
 use League\Plates\Engine;
+use League\Event\Event;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
@@ -66,8 +68,12 @@ class AuthCodeGrant extends AbstractGrant
         $this->refreshTokenRepository = $refreshTokenRepository;
         $this->userRepository = $userRepository;
         $this->authCodeTTL = $authCodeTTL;
-        $this->pathToLoginTemplate = $pathToLoginTemplate;
-        $this->pathToAuthorizeTemplate = $pathToAuthorizeTemplate;
+        $this->pathToLoginTemplate = ($pathToLoginTemplate === null)
+            ? __DIR__ . '/../ResponseTypes/DefaultTemplates/login_user.php'
+            : $this->pathToLoginTemplate;
+        $this->pathToAuthorizeTemplate = ($pathToLoginTemplate === null)
+            ? __DIR__ . '/../ResponseTypes/DefaultTemplates/authorize_client.php'
+            : $this->pathToAuthorizeTemplate;
     }
 
 
@@ -103,7 +109,7 @@ class AuthCodeGrant extends AbstractGrant
             $this->getIdentifier()
         );
 
-        if (!$client instanceof ClientEntityInterface) {
+        if ($client instanceof ClientEntityInterface === false) {
             $this->emitter->emit(new Event('client.authentication.failed', $request));
 
             throw OAuthServerException::invalidClient();
@@ -120,23 +126,27 @@ class AuthCodeGrant extends AbstractGrant
         );
 
         $userId = null;
-        $userHasApprovedClient = $userHasApprovedClient = $this->getRequestParameter('action', null);
+        $userHasApprovedClient = null;
+        if ($this->getRequestParameter('action', $request, null) !== null) {
+            $userHasApprovedClient = ($this->getRequestParameter('action', $request) === 'approve');
+        }
 
-        // Check if the user has been validated
+        // Check if the user has been authenticated
         $oauthCookie = $this->getCookieParameter('oauth_authorize_request', $request, null);
         if ($oauthCookie !== null) {
             try {
                 $oauthCookiePayload = json_decode(KeyCrypt::decrypt($oauthCookie, $this->pathToPublicKey));
-                $userId = $oauthCookiePayload->user_id;
-                $userHasApprovedClient = $oauthCookiePayload->client_is_authorized;
+                if (is_object($oauthCookiePayload)) {
+                    $userId = $oauthCookiePayload->user_id;
+                }
             } catch (\LogicException $e) {
                 throw OAuthServerException::serverError($e->getMessage());
             }
         }
 
         // The username + password might be available in $_POST
-        $usernameParameter = $this->getRequestParameter('username', null);
-        $passwordParameter = $this->getRequestParameter('password', null);
+        $usernameParameter = $this->getRequestParameter('username', $request, null);
+        $passwordParameter = $this->getRequestParameter('password', $request, null);
 
         $loginError = null;
 
@@ -156,11 +166,9 @@ class AuthCodeGrant extends AbstractGrant
 
         // The user hasn't logged in yet so show a login form
         if ($userId === null) {
-            $engine = new Engine();
+            $engine = new Engine(dirname($this->pathToLoginTemplate));
             $html = $engine->render(
-                ($this->pathToLoginTemplate === null)
-                    ? __DIR__ . '/../ResponseTypes/DefaultTemplates/login_user.php'
-                    : $this->pathToLoginTemplate,
+                'login_user',
                 [
                     'error'        => $loginError,
                     'postback_uri' => (string) $postbackUri->withQuery($queryString),
@@ -173,11 +181,9 @@ class AuthCodeGrant extends AbstractGrant
 
         // The user hasn't approved the client yet so show an authorize form
         if ($userId !== null && $userHasApprovedClient === null) {
-            $engine = new Engine();
+            $engine = new Engine(dirname($this->pathToAuthorizeTemplate));
             $html = $engine->render(
-                ($this->pathToLoginTemplate === null)
-                    ? __DIR__ . '/../ResponseTypes/DefaultTemplates/authorize_client.php'
-                    : $this->pathToAuthorizeTemplate,
+                'authorize_client',
                 [
                     'client'       => $client,
                     'scopes'       => $scopes,
@@ -191,13 +197,12 @@ class AuthCodeGrant extends AbstractGrant
                 [
                     'Set-Cookie' => sprintf(
                         'oauth_authorize_request=%s; Expires=%s',
-                        KeyCrypt::encrypt(
+                        urlencode(KeyCrypt::encrypt(
                             json_encode([
-                                'user_id'              => $userId,
-                                'client_is_authorized' => null,
+                                'user_id' => $userId,
                             ]),
                             $this->pathToPrivateKey
-                        ),
+                        )),
                         (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
                     ),
                 ]
@@ -308,8 +313,7 @@ class AuthCodeGrant extends AbstractGrant
     {
         return (
             (
-                strtoupper($request->getMethod()) === 'GET'
-                && isset($request->getQueryParams()['response_type'])
+                isset($request->getQueryParams()['response_type'])
                 && $request->getQueryParams()['response_type'] === 'code'
                 && isset($request->getQueryParams()['client_id'])
             ) || (parent::canRespondToRequest($request))
