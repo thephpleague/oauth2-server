@@ -31,9 +31,8 @@ class RefreshTokenGrant extends AbstractGrant
     /**
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      */
-    public function __construct(
-        RefreshTokenRepositoryInterface $refreshTokenRepository
-    ) {
+    public function __construct(RefreshTokenRepositoryInterface $refreshTokenRepository)
+    {
         $this->refreshTokenRepository = $refreshTokenRepository;
 
         $this->refreshTokenTTL = new \DateInterval('P1M');
@@ -60,7 +59,7 @@ class RefreshTokenGrant extends AbstractGrant
             // the request doesn't include any new scopes
             foreach ($scopes as $scope) {
                 if (in_array($scope->getIdentifier(), $oldRefreshToken['scopes']) === false) {
-                    $this->emitter->emit(new Event('scope.selection.failed', $request));
+                    $this->getEmitter()->emit(new Event('scope.selection.failed', $request));
 
                     throw OAuthServerException::invalidScope($scope->getIdentifier());
                 }
@@ -108,7 +107,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         $refreshTokenData = json_decode($refreshToken, true);
         if ($refreshTokenData['client_id'] !== $clientId) {
-            $this->emitter->emit(new Event('refresh_token.client.failed', $request));
+            $this->getEmitter()->emit(new Event('refresh_token.client.failed', $request));
 
             throw OAuthServerException::invalidRefreshToken(
                 'Token is not linked to client,' .

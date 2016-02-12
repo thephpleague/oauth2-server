@@ -11,7 +11,7 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\Event\EmitterInterface;
+use League\Event\EmitterAwareInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -21,7 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Grant type interface
  */
-interface GrantTypeInterface
+interface GrantTypeInterface extends EmitterAwareInterface
 {
     /**
      * Set refresh token TTL
@@ -72,13 +72,6 @@ interface GrantTypeInterface
      * @return boolean
      */
     public function canRespondToRequest(ServerRequestInterface $request);
-
-    /**
-     * Set the event emitter
-     *
-     * @param \League\Event\EmitterInterface $emitter
-     */
-    public function setEmitter(EmitterInterface $emitter);
 
     /**
      * Set the client repository
