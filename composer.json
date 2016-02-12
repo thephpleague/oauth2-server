@@ -7,7 +7,6 @@
         "php": ">=5.5.9",
         "league/event": "~2.1",
         "zendframework/zend-diactoros": "~1.1",
-        "namshi/jose": "^6.0",
         "lcobucci/jwt": "^3.1",
         "paragonie/random_compat": "^1.1"
     },
