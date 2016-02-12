@@ -186,6 +186,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * Validate scopes in the request
+     *
      * @param \Psr\Http\Message\ServerRequestInterface                        $request
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
      * @param string                                                          $redirectUri
@@ -268,6 +270,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * Issue an access token
+     *
      * @param \DateInterval                                                   $tokenTTL
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
      * @param string                                                          $userIdentifier
