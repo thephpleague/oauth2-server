@@ -1,5 +1,7 @@
 <?php
 
+use League\OAuth2\Server\Grant\PasswordGrant;
+use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Middleware\AuthenticationServerMiddleware;
 use League\OAuth2\Server\Server;
 
@@ -10,8 +12,6 @@ use OAuth2ServerExamples\Repositories\ScopeRepository;
 use OAuth2ServerExamples\Repositories\UserRepository;
 
 use Slim\App;
-use Slim\Http\Request;
-use Slim\Http\Response;
 
 include(__DIR__ . '/../vendor/autoload.php');
 

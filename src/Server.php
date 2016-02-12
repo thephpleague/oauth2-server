@@ -27,7 +27,7 @@ class Server implements EmitterAwareInterface
     protected $enabledGrantTypes = [];
 
     /**
-     * @var DateInterval[]
+     * @var \DateInterval[]
      */
     protected $grantTypeAccessTokenTTL = [];
 
@@ -91,7 +91,7 @@ class Server implements EmitterAwareInterface
      * Enable a grant type on the server
      *
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
-     * @param DateInterval                                   $accessTokenTTL
+     * @param \DateInterval                                  $accessTokenTTL
      */
     public function enableGrantType(GrantTypeInterface $grantType, DateInterval $accessTokenTTL)
     {
@@ -149,11 +149,25 @@ class Server implements EmitterAwareInterface
     }
 
     /**
+     * Determine the access token validity
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     *
+     * @return \Psr\Http\Message\ServerRequestInterface
+     *
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    public function validateRequest(ServerRequestInterface $request)
+    {
+        return $this->getResponseType()->determineAccessTokenInHeader($request);
+    }
+
+    /**
      * Get the token type that grants will return in the HTTP response
      *
      * @return ResponseTypeInterface
      */
-    public function getResponseType()
+    protected function getResponseType()
     {
         if (!$this->responseType instanceof ResponseTypeInterface) {
             $this->responseType = new BearerTokenResponse(
