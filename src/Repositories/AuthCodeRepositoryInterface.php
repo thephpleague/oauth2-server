@@ -19,27 +19,27 @@ use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
 interface AuthCodeRepositoryInterface extends RepositoryInterface
 {
     /**
-     * Get the auth code
+     * Persists a new auth code to permanent storage
      *
-     * @param string $code
+     * @param \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface $authCodeEntityInterface
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface
+     * @return
      */
-    public function getAuthCodeEntityByCodeString($code);
+    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntityInterface);
 
     /**
-     * Persist a new authorization code
+     * Revoke an auth code
      *
-     * @param string  $code        The authorization code string
-     * @param integer $expireTime  Token expire time
-     * @param string  $redirectUri Client redirect uri
+     * @param string $codeId
      */
-    public function persistNewAuthCode($code, $expireTime, $redirectUri);
+    public function revokeAuthCode($codeId);
 
     /**
-     * Delete an access token
+     * Check if the auth code has been revoked
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface $token The access token to delete
+     * @param string $codeId
+     *
+     * @return bool Return true if this code has been revoked
      */
-    public function deleteAuthCodeEntity(AuthCodeEntityInterface $token);
+    public function isAuthCodeRevoked($codeId);
 }
