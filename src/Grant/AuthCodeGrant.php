@@ -3,10 +3,10 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
-use League\OAuth2\Server\Entities\ClientEntity;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
@@ -42,20 +42,28 @@ class AuthCodeGrant extends AbstractGrant
     private $pathToAuthorizeTemplate;
 
     /**
-     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface $authCodeRepository
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface     $userRepository
-     * @param \DateInterval                                                  $authCodeTTL
-     * @param string|null                                                    $pathToLoginTemplate
-     * @param string|null                                                    $pathToAuthorizeTemplate
+     * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
+     */
+    private $refreshTokenRepository;
+
+    /**
+     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface     $authCodeRepository
+     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
+     * @param \DateInterval                                                      $authCodeTTL
+     * @param string|null                                                        $pathToLoginTemplate
+     * @param string|null                                                        $pathToAuthorizeTemplate
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
+        RefreshTokenRepositoryInterface $refreshTokenRepository,
         UserRepositoryInterface $userRepository,
         \DateInterval $authCodeTTL,
         $pathToLoginTemplate = null,
         $pathToAuthorizeTemplate = null
     ) {
         $this->authCodeRepository = $authCodeRepository;
+        $this->refreshTokenRepository = $refreshTokenRepository;
         $this->userRepository = $userRepository;
         $this->authCodeTTL = $authCodeTTL;
         $this->pathToLoginTemplate = $pathToLoginTemplate;
@@ -242,6 +250,7 @@ class AuthCodeGrant extends AbstractGrant
      * @param \DateInterval                                             $accessTokenTTL
      *
      * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
     protected function respondToAccessTokenRequest(
         ServerRequestInterface $request,
@@ -250,37 +259,44 @@ class AuthCodeGrant extends AbstractGrant
     ) {
         // Validate request
         $client = $this->validateClient($request);
-        $scopes = $this->validateScopes($request, $client);
-        $encryptedAuthcode = $this->getRequestParameter('code', $request, null);
+        $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
 
-        if ($encryptedAuthcode === null) {
+        if ($encryptedAuthCode === null) {
             throw OAuthServerException::invalidRequest('code');
         }
 
         // Validate the authorization code
         try {
-            $authCodePayload = json_decode(KeyCrypt::decrypt($encryptedAuthcode, $this->pathToPrivateKey));
+            $authCodePayload = json_decode(KeyCrypt::decrypt($encryptedAuthCode, $this->pathToPrivateKey));
             if (time() > $authCodePayload->expire_time) {
                 throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
+            }
+
+            if ($this->authCodeRepository->isAuthCodeRevoked($authCodePayload->auth_code_id) === true) {
+                throw OAuthServerException::invalidRequest('code', 'Authorization code has been revoked');
+            }
+
+            if ($authCodePayload->client_id !== $client->getIdentifier()) {
+                throw OAuthServerException::invalidRequest('code', 'Authorization code was not issued to this client');
             }
         } catch (\LogicException  $e) {
             throw OAuthServerException::invalidRequest('code');
         }
 
-        $client = new ClientEntity();
-        $client->setIdentifier($authCodePayload->client_id);
-
-        // Issue and persist access token
+        // Issue and persist access + refresh tokens
         $accessToken = $this->issueAccessToken(
             $accessTokenTTL,
             $client,
             $authCodePayload->user_id,
             $authCodePayload->scopes
         );
+        $refreshToken = $this->issueRefreshToken($accessToken);
         $this->accessTokenRepository->persistNewAccessToken($accessToken);
+        $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
-        // Inject access token into response type
+        // Inject tokens into response type
         $responseType->setAccessToken($accessToken);
+        $responseType->setRefreshToken($refreshToken);
 
         return $responseType;
     }

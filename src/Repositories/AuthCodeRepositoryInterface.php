@@ -21,11 +21,9 @@ interface AuthCodeRepositoryInterface extends RepositoryInterface
     /**
      * Persists a new auth code to permanent storage
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface $authCodeEntityInterface
-     *
-     * @return
+     * @param \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface $authCodeEntity
      */
-    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntityInterface);
+    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity);
 
     /**
      * Revoke an auth code
