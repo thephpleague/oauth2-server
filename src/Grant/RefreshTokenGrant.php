@@ -24,13 +24,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class RefreshTokenGrant extends AbstractGrant
 {
     /**
-     * Grant identifier
-     *
-     * @var string
-     */
-    protected $identifier = 'refresh_token';
-
-    /**
      * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
      */
     private $refreshTokenRepository;
@@ -133,5 +126,13 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         return $refreshTokenData;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIdentifier()
+    {
+        return 'refresh_token';
     }
 }

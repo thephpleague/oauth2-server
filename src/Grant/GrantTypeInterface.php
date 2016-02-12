@@ -31,7 +31,7 @@ interface GrantTypeInterface
     public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL);
 
     /**
-     * Return the identifier
+     * Return the grant identifier that can be used in matching up requests
      *
      * @return string
      */

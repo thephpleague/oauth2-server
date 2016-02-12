@@ -32,13 +32,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     const SCOPE_DELIMITER_STRING = ' ';
 
     /**
-     * Grant identifier
-     *
-     * @var string
-     */
-    protected $identifier = '';
-
-    /**
      * Grant responds with
      *
      * @var string
@@ -139,14 +132,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
     {
         $this->refreshTokenTTL = $refreshTokenTTL;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
-    {
-        return $this->identifier;
     }
 
     /**
@@ -317,7 +302,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     {
         return (
             isset($request->getParsedBody()['grant_type'])
-            && $request->getParsedBody()['grant_type'] === $this->identifier
+            && $request->getParsedBody()['grant_type'] === $this->getIdentifier()
         );
     }
 }
