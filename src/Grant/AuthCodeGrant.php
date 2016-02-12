@@ -3,6 +3,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
+use League\OAuth2\Server\Entities\ClientEntity;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
@@ -213,7 +214,18 @@ class AuthCodeGrant extends AbstractGrant
             );
             $this->authCodeRepository->persistNewAuthCode($authCode);
 
-            $redirectPayload['code'] = $authCode->getIdentifier();
+            $redirectPayload['code'] = KeyCrypt::encrypt(
+                json_encode(
+                    [
+                        'client_id'    => $authCode->getClient()->getIdentifier(),
+                        'auth_code_id' => $authCode->getIdentifier(),
+                        'scopes'       => $authCode->getScopes(),
+                        'user_id'      => $authCode->getUserIdentifier(),
+                        'expire_time'  => $this->authCodeTTL->format('U'),
+                    ]
+                ),
+                $this->pathToPrivateKey
+            );
 
             return new Response\RedirectResponse($redirectUri->withQuery(http_build_query($redirectPayload)));
         }
@@ -236,7 +248,41 @@ class AuthCodeGrant extends AbstractGrant
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
     ) {
+        // Validate request
+        $client = $this->validateClient($request);
+        $scopes = $this->validateScopes($request, $client);
+        $encryptedAuthcode = $this->getRequestParameter('code', $request, null);
 
+        if ($encryptedAuthcode === null) {
+            throw OAuthServerException::invalidRequest('code');
+        }
+
+        // Validate the authorization code
+        try {
+            $authCodePayload = json_decode(KeyCrypt::decrypt($encryptedAuthcode, $this->pathToPrivateKey));
+            if (time() > $authCodePayload->expire_time) {
+                throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
+            }
+        } catch (\LogicException  $e) {
+            throw OAuthServerException::invalidRequest('code');
+        }
+
+        $client = new ClientEntity();
+        $client->setIdentifier($authCodePayload->client_id);
+
+        // Issue and persist access token
+        $accessToken = $this->issueAccessToken(
+            $accessTokenTTL,
+            $client,
+            $authCodePayload->user_id,
+            $authCodePayload->scopes
+        );
+        $this->accessTokenRepository->persistNewAccessToken($accessToken);
+
+        // Inject access token into response type
+        $responseType->setAccessToken($accessToken);
+
+        return $responseType;
     }
 
     /**
