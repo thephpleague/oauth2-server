@@ -42,7 +42,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function determineAccessTokenInHeader(Request $request)
+    public function validateAccessToken(Request $request)
     {
         if ($request->headers->has('Authorization') === false) {
             return;

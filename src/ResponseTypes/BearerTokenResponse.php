@@ -79,9 +79,9 @@ class BearerTokenResponse extends AbstractResponseType
     /**
      * {@inheritdoc}
      */
-    public function determineAccessTokenInHeader(ServerRequestInterface $request)
+    public function validateAccessToken(ServerRequestInterface $request)
     {
-        $request = parent::determineAccessTokenInHeader($request);
+        $request = parent::validateAccessToken($request);
 
         $header = $request->getHeader('authorization');
         $jwt = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header[0]));

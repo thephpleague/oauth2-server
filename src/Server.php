@@ -157,9 +157,9 @@ class Server implements EmitterAwareInterface
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
-    public function validateRequest(ServerRequestInterface $request)
+    public function validateAuthenticatedRequest(ServerRequestInterface $request)
     {
-        return $this->getResponseType()->determineAccessTokenInHeader($request);
+        return $this->getResponseType()->validateAccessToken($request);
     }
 
     /**

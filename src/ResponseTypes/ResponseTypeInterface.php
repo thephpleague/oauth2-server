@@ -36,7 +36,7 @@ interface ResponseTypeInterface
      *
      * @return ServerRequestInterface
      */
-    public function determineAccessTokenInHeader(ServerRequestInterface $request);
+    public function validateAccessToken(ServerRequestInterface $request);
 
     /**
      * @param ResponseInterface $response

@@ -35,7 +35,7 @@ class ResourceServerMiddleware
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         try {
-            $request = $this->server->validateRequest($request);
+            $request = $this->server->validateAuthenticatedRequest($request);
         } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
         } catch (\Exception $exception) {
