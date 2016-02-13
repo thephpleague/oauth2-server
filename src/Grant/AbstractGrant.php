@@ -35,13 +35,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     const SCOPE_DELIMITER_STRING = ' ';
 
     /**
-     * Grant responds with
-     *
-     * @var string
-     */
-    protected $respondsWith = 'token';
-
-    /**
      * @var ServerRequestInterface
      */
     protected $request;
@@ -130,14 +123,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
     {
         $this->refreshTokenTTL = $refreshTokenTTL;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function respondsWith()
-    {
-        return $this->respondsWith;
     }
 
     /**
@@ -382,13 +367,16 @@ abstract class AbstractGrant implements GrantTypeInterface
     {
         try {
             return bin2hex(random_bytes($length));
+            // @codeCoverageIgnoreStart
         } catch (\TypeError $e) {
             throw OAuthServerException::serverError('An unexpected error has occurred');
         } catch (\Error $e) {
             throw OAuthServerException::serverError('An unexpected error has occurred');
         } catch (\Exception $e) {
+            // If you get this message, the CSPRNG failed hard.
             throw OAuthServerException::serverError('Could not generate a random string');
         }
+        // @codeCoverageIgnoreEnd
     }
 
     /**

@@ -38,13 +38,6 @@ interface GrantTypeInterface extends EmitterAwareInterface
     public function getIdentifier();
 
     /**
-     * Details what the grant responds with
-     *
-     * @return string
-     */
-    public function respondsWith();
-
-    /**
      * Respond to an incoming request
      *
      * @param \Psr\Http\Message\ServerRequestInterface                  $request
