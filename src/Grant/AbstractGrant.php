@@ -21,8 +21,11 @@ use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use OAuth2ServerExamples\Repositories\AuthCodeRepository;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -53,6 +56,16 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @var ScopeRepositoryInterface
      */
     protected $scopeRepository;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface
+     */
+    private $authCodeRepository;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
+     */
+    private $refreshTokenRepository;
 
     /**
      * @var string
@@ -94,6 +107,22 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     */
+    public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository)
+    {
+        $this->refreshTokenRepository = $refreshTokenRepository;
+    }
+
+    /**
+     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface $authCodeRepository
+     */
+    public function setAuthCodeRepository(AuthCodeRepositoryInterface $authCodeRepository)
+    {
+        $this->authCodeRepository = $authCodeRepository;
+    }
+
+    /**
      * @param string $pathToPrivateKey
      */
     public function setPathToPrivateKey($pathToPrivateKey)
@@ -126,20 +155,31 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @return AuthCodeRepositoryInterface
+     */
+    protected function getAuthCodeRepository()
+    {
+        return $this->authCodeRepository;
+    }
+
+    /**
+     * @return RefreshTokenRepositoryInterface
+     */
+    protected function getRefreshTokenRepository()
+    {
+        return $this->refreshTokenRepository;
+    }
+
+    /**
      * Validate the client
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param bool                                     $validateSecret
-     * @param bool                                     $validateRedirectUri
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
-    protected function validateClient(
-        ServerRequestInterface $request,
-        $validateSecret = true,
-        $validateRedirectUri = false
-    ) {
+    protected function validateClient(ServerRequestInterface $request)
+    {
         $clientId = $this->getRequestParameter(
             'client_id',
             $request,
@@ -149,30 +189,34 @@ abstract class AbstractGrant implements GrantTypeInterface
             throw OAuthServerException::invalidRequest('client_id', null, '`%s` parameter is missing');
         }
 
+        $client = $this->clientRepository->getClientEntity(
+            $clientId,
+            $this->getIdentifier()
+        );
+
+        if (!$client instanceof ClientEntityInterface) {
+            throw OAuthServerException::invalidClient();
+        }
+
+        // If the client is confidential require the client secret
         $clientSecret = $this->getRequestParameter(
             'client_secret',
             $request,
             $this->getServerParameter('PHP_AUTH_PW', $request)
         );
-        if (is_null($clientSecret) && $validateSecret === true) {
+
+        if ($client->canKeepASecret() && is_null($clientSecret)) {
             throw OAuthServerException::invalidRequest('client_secret', null, '`%s` parameter is missing');
         }
 
-        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
-        if (is_null($redirectUri) && $validateRedirectUri === true) {
-            throw OAuthServerException::invalidRequest('redirect_uri', null, '`%s` parameter is missing');
+        if ($client->canKeepASecret() && $client->validateSecret($clientSecret) === false) {
+            $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
+            throw OAuthServerException::invalidClient();
         }
 
-        $client = $this->clientRepository->getClientEntity(
-            $clientId,
-            $clientSecret,
-            $redirectUri,
-            $this->getIdentifier()
-        );
-
-        if (!$client instanceof ClientEntityInterface) {
-            $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
-
+        // If a redirect URI is provided ensure it matches what is pre-registered
+        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
+        if ($redirectUri !== null && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)) {
             throw OAuthServerException::invalidClient();
         }
 
@@ -303,6 +347,8 @@ abstract class AbstractGrant implements GrantTypeInterface
             $accessToken->addScope($scope);
         }
 
+        $this->accessTokenRepository->persistNewAccessToken($accessToken);
+
         return $accessToken;
     }
 
@@ -336,6 +382,8 @@ abstract class AbstractGrant implements GrantTypeInterface
             $authCode->addScope($scope);
         }
 
+        $this->authCodeRepository->persistNewAuthCode($authCode);
+
         return $authCode;
     }
 
@@ -350,6 +398,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         $refreshToken->setIdentifier($this->generateUniqueIdentifier());
         $refreshToken->setExpiryDateTime((new \DateTime())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
+
+        $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
         return $refreshToken;
     }

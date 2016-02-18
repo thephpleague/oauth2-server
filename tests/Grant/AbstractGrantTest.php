@@ -10,33 +10,56 @@ use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Grant\AbstractGrant;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use Zend\Diactoros\ServerRequest;
 
 class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetSet()
     {
-        $clientRepositoryMock = $this->getMock(ClientRepositoryInterface::class);
-        $accessTokenRepositoryMock = $this->getMock(AccessTokenRepositoryInterface::class);
-        $scopeRepositoryMock = $this->getMock(ScopeRepositoryInterface::class);
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setPathToPrivateKey('./private.key');
+        $grantMock->setPathToPublicKey('./public.key');
+        $grantMock->setEmitter(new Emitter());
+    }
+
+    public function testValidateClientPublic()
+    {
+        $client = new ClientEntity();
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
-        $grantMock->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grantMock->setScopeRepository($scopeRepositoryMock);
-        $grantMock->setPathToPrivateKey('./private.key');
-        $grantMock->setPathToPublicKey('./public.key');
-        $grantMock->setEmitter(new Emitter());
-        $grantMock->setRefreshTokenTTL(new \DateInterval('PT1H'));
+
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withParsedBody(
+            [
+                'client_id' => 'foo',
+            ]
+        );
+        $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
+        $validateClientMethod->setAccessible(true);
+
+        $result = $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
+        $this->assertEquals($client, $result);
     }
 
-    public function testValidateClient()
+    public function testValidateClientConfidential()
     {
         $client = new ClientEntity();
+        $client->setSecret('bar');
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -89,6 +112,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
     public function testValidateClientMissingClientSecret()
     {
         $client = new ClientEntity();
+        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -112,11 +136,66 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
      */
-    public function testValidateClientMissingRedirectUri()
+    public function testValidateClientInvalidClientSecret()
     {
         $client = new ClientEntity();
+        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setClientRepository($clientRepositoryMock);
+
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withParsedBody([
+            'client_id' => 'foo',
+            'client_secret' => 'foo',
+        ]);
+
+        $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
+        $validateClientMethod->setAccessible(true);
+
+        $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
+    }
+
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    public function testValidateClientInvalidRedirectUri()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setClientRepository($clientRepositoryMock);
+
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withParsedBody([
+            'client_id'     => 'foo',
+            'redirect_uri'  =>  'http://bar/foo'
+        ]);
+
+        $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
+        $validateClientMethod->setAccessible(true);
+
+        $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
+    }
+
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    public function testValidateClientBadClient()
+    {
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn(null);
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -133,7 +212,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
 
-        $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
+        $validateClientMethod->invoke($grantMock, $serverRequest, true);
     }
 
     public function testCanRespondToRequest()
@@ -151,9 +230,12 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testIssueRefreshToken()
     {
+        $refreshTokenRepoMock = $this->getMock(RefreshTokenRepositoryInterface::class);
+
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setRefreshTokenTTL(new \DateInterval('PT1M'));
+        $grantMock->setRefreshTokenRepository($refreshTokenRepoMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
         $issueRefreshTokenMethod = $abstractGrantReflection->getMethod('issueRefreshToken');
@@ -169,8 +251,11 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testIssueAccessToken()
     {
+        $accessTokenRepoMock = $this->getMock(AccessTokenRepositoryInterface::class);
+
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setAccessTokenRepository($accessTokenRepoMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
         $issueAccessTokenMethod = $abstractGrantReflection->getMethod('issueAccessToken');
@@ -190,8 +275,11 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testIssueAuthCode()
     {
+        $authCodeRepoMock = $this->getMock(AuthCodeRepositoryInterface::class);
+
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setAuthCodeRepository($authCodeRepoMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
         $issueAuthCodeMethod = $abstractGrantReflection->getMethod('issueAuthCode');
@@ -285,5 +373,16 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         $grantMock->validateScopes($serverRequest, new ClientEntity());
+    }
+
+    public function testGenerateUniqueIdentifier()
+    {
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $method = $abstractGrantReflection->getMethod('generateUniqueIdentifier');
+        $method->setAccessible(true);
+
+        $this->assertTrue(is_string($method->invoke($grantMock)));
     }
 }

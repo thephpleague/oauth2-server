@@ -30,11 +30,6 @@ class PasswordGrant extends AbstractGrant
     private $userRepository;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
-     */
-    private $refreshTokenRepository;
-
-    /**
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      */
@@ -43,7 +38,7 @@ class PasswordGrant extends AbstractGrant
         RefreshTokenRepositoryInterface $refreshTokenRepository
     ) {
         $this->userRepository = $userRepository;
-        $this->refreshTokenRepository = $refreshTokenRepository;
+        $this->setRefreshTokenRepository($refreshTokenRepository);
 
         $this->refreshTokenTTL = new \DateInterval('P1M');
     }
@@ -64,8 +59,6 @@ class PasswordGrant extends AbstractGrant
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
-        $this->accessTokenRepository->persistNewAccessToken($accessToken);
-        $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
         // Inject tokens into response
         $responseType->setAccessToken($accessToken);
