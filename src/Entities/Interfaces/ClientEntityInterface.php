@@ -11,6 +11,7 @@ interface ClientEntityInterface
 
     /**
      * Set the client's identifier
+     *
      * @param $identifier
      */
     public function setIdentifier($identifier);
@@ -23,7 +24,42 @@ interface ClientEntityInterface
 
     /**
      * Set the client's name
+     *
      * @param string $name
      */
     public function setName($name);
+
+    /**
+     * @param string $secret
+     */
+    public function setSecret($secret);
+
+    /**
+     * Validate the secret provided by the client
+     *
+     * @param string $submittedSecret
+     *
+     * @return boolean
+     */
+    public function validateSecret($submittedSecret);
+
+    /**
+     * Set the client's redirect uri
+     *
+     * @param string $redirectUri
+     */
+    public function setRedirectUri($redirectUri);
+
+    /**
+     * Returns the registered redirect URI
+     *
+     * @return string
+     */
+    public function getRedirectUri();
+
+    /**
+     * Returns true if the client is capable of keeping it's secrets secret
+     * @return boolean
+     */
+    public function canKeepASecret();
 }
