@@ -89,26 +89,7 @@ class AuthCodeGrant extends AbstractGrant
     protected function respondToAuthorizationRequest(
         ServerRequestInterface $request
     ) {
-        $clientId = $this->getQueryStringParameter(
-            'client_id',
-            $request,
-            $this->getServerParameter('PHP_AUTH_USER', $request)
-        );
-        if (is_null($clientId)) {
-            throw OAuthServerException::invalidRequest('client_id', null, '`%s` parameter is missing');
-        }
-
-        $redirectUri = $this->getQueryStringParameter('redirect_uri', $request, null);
-        if (is_null($redirectUri)) {
-            throw OAuthServerException::invalidRequest('redirect_uri', null, '`%s` parameter is missing');
-        }
-
-        $client = $this->clientRepository->getClientEntity(
-            $clientId,
-            null,
-            $redirectUri,
-            $this->getIdentifier()
-        );
+        $client = $this->validateClient($request);
 
         if ($client instanceof ClientEntityInterface === false) {
             $this->emitter->emit(new Event('client.authentication.failed', $request));
@@ -116,7 +97,7 @@ class AuthCodeGrant extends AbstractGrant
             throw OAuthServerException::invalidClient();
         }
 
-        $scopes = $this->validateScopes($request, $client, $redirectUri);
+        $scopes = $this->validateScopes($request, $client, $client->getRedirectUri());
         $queryString = http_build_query($request->getQueryParams());
         $postbackUri = new Uri(
             sprintf(
@@ -168,8 +149,9 @@ class AuthCodeGrant extends AbstractGrant
         // The user hasn't logged in yet so show a login form
         if ($userId === null) {
             $engine = new Engine(dirname($this->pathToLoginTemplate));
+            $pathParts = explode(DIRECTORY_SEPARATOR, $this->pathToLoginTemplate);
             $html = $engine->render(
-                'login_user',
+                end($pathParts),
                 [
                     'error'        => $loginError,
                     'postback_uri' => (string) $postbackUri->withQuery($queryString),
@@ -183,8 +165,9 @@ class AuthCodeGrant extends AbstractGrant
         // The user hasn't approved the client yet so show an authorize form
         if ($userId !== null && $userHasApprovedClient === null) {
             $engine = new Engine(dirname($this->pathToAuthorizeTemplate));
+            $pathParts = explode(DIRECTORY_SEPARATOR, $this->pathToAuthorizeTemplate);
             $html = $engine->render(
-                'authorize_client',
+                end($pathParts),
                 [
                     'client'       => $client,
                     'scopes'       => $scopes,
@@ -212,7 +195,7 @@ class AuthCodeGrant extends AbstractGrant
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
 
-        $redirectUri = new Uri($redirectUri);
+        $redirectUri = new Uri($client->getRedirectUri());
         parse_str($redirectUri->getQuery(), $redirectPayload);
         if ($stateParameter !== null) {
             $redirectPayload['state'] = $stateParameter;
@@ -263,6 +246,12 @@ class AuthCodeGrant extends AbstractGrant
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
     ) {
+        // The redirect URI is required in this request
+        $redirectUri = $this->getQueryStringParameter('redirect_uri', $request, null);
+        if (is_null($redirectUri)) {
+            throw OAuthServerException::invalidRequest('redirect_uri', null, '`%s` parameter is missing');
+        }
+
         // Validate request
         $client = $this->validateClient($request);
         $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
