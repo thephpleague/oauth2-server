@@ -39,7 +39,7 @@ trait ClientEntityTrait
      */
     public function canKeepASecret()
     {
-        return $this->secret === null;
+        return $this->secret !== null;
     }
 
     /**
