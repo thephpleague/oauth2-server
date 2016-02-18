@@ -7,6 +7,7 @@ use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
 
 class StubResponseType extends AbstractResponseType
 {
@@ -55,6 +56,6 @@ class StubResponseType extends AbstractResponseType
      */
     public function generateHttpResponse(ResponseInterface $response)
     {
-        // TODO: Implement generateHttpResponse() method.
+        return new Response();
     }
 }

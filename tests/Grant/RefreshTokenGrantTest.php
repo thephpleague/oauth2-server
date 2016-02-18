@@ -43,6 +43,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
 
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);

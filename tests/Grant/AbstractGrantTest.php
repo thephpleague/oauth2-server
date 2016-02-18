@@ -12,6 +12,9 @@ use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use Zend\Diactoros\ServerRequest;
 
 class AbstractGrantTest extends \PHPUnit_Framework_TestCase
@@ -191,7 +194,6 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateClientBadClient()
     {
-        $client = new ClientEntity();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn(null);
 
@@ -228,9 +230,12 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testIssueRefreshToken()
     {
+        $refreshTokenRepoMock = $this->getMock(RefreshTokenRepositoryInterface::class);
+
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setRefreshTokenTTL(new \DateInterval('PT1M'));
+        $grantMock->setRefreshTokenRepository($refreshTokenRepoMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
         $issueRefreshTokenMethod = $abstractGrantReflection->getMethod('issueRefreshToken');
@@ -246,8 +251,11 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testIssueAccessToken()
     {
+        $accessTokenRepoMock = $this->getMock(AccessTokenRepositoryInterface::class);
+
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setAccessTokenRepository($accessTokenRepoMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
         $issueAccessTokenMethod = $abstractGrantReflection->getMethod('issueAccessToken');
@@ -267,8 +275,11 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testIssueAuthCode()
     {
+        $authCodeRepoMock = $this->getMock(AuthCodeRepositoryInterface::class);
+
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setAuthCodeRepository($authCodeRepoMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
         $issueAuthCodeMethod = $abstractGrantReflection->getMethod('issueAuthCode');
