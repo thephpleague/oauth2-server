@@ -25,7 +25,6 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\Utils\SecureKey;
 use OAuth2ServerExamples\Repositories\AuthCodeRepository;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -339,7 +338,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         array $scopes = []
     ) {
         $accessToken = new AccessTokenEntity();
-        $accessToken->setIdentifier(SecureKey::generate());
+        $accessToken->setIdentifier($this->generateUniqueIdentifier());
         $accessToken->setExpiryDateTime((new \DateTime())->add($tokenTTL));
         $accessToken->setClient($client);
         $accessToken->setUserIdentifier($userIdentifier);
@@ -373,7 +372,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         array $scopes = []
     ) {
         $authCode = new AuthCodeEntity();
-        $authCode->setIdentifier(SecureKey::generate());
+        $authCode->setIdentifier($this->generateUniqueIdentifier());
         $authCode->setExpiryDateTime((new \DateTime())->add($tokenTTL));
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
@@ -396,13 +395,38 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected function issueRefreshToken(AccessTokenEntity $accessToken)
     {
         $refreshToken = new RefreshTokenEntity();
-        $refreshToken->setIdentifier(SecureKey::generate());
+        $refreshToken->setIdentifier($this->generateUniqueIdentifier());
         $refreshToken->setExpiryDateTime((new \DateTime())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
 
         $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
         return $refreshToken;
+    }
+
+    /**
+     * Generate a new unique identifier
+     *
+     * @param int $length
+     *
+     * @return string
+     *
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    protected function generateUniqueIdentifier($length = 40)
+    {
+        try {
+            return bin2hex(random_bytes($length));
+            // @codeCoverageIgnoreStart
+        } catch (\TypeError $e) {
+            throw OAuthServerException::serverError('An unexpected error has occurred');
+        } catch (\Error $e) {
+            throw OAuthServerException::serverError('An unexpected error has occurred');
+        } catch (\Exception $e) {
+            // If you get this message, the CSPRNG failed hard.
+            throw OAuthServerException::serverError('Could not generate a random string');
+        }
+        // @codeCoverageIgnoreEnd
     }
 
     /**

@@ -374,4 +374,15 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $grantMock->validateScopes($serverRequest, new ClientEntity());
     }
+
+    public function testGenerateUniqueIdentifier()
+    {
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $method = $abstractGrantReflection->getMethod('generateUniqueIdentifier');
+        $method->setAccessible(true);
+
+        $this->assertTrue(is_string($method->invoke($grantMock)));
+    }
 }
