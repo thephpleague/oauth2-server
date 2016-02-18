@@ -21,9 +21,12 @@ use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Utils\SecureKey;
+use OAuth2ServerExamples\Repositories\AuthCodeRepository;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -54,6 +57,16 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @var ScopeRepositoryInterface
      */
     protected $scopeRepository;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface
+     */
+    private $authCodeRepository;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
+     */
+    private $refreshTokenRepository;
 
     /**
      * @var string
@@ -95,6 +108,22 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     */
+    public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository)
+    {
+        $this->refreshTokenRepository = $refreshTokenRepository;
+    }
+
+    /**
+     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface $authCodeRepository
+     */
+    public function setAuthCodeRepository(AuthCodeRepositoryInterface $authCodeRepository)
+    {
+        $this->authCodeRepository = $authCodeRepository;
+    }
+
+    /**
      * @param string $pathToPrivateKey
      */
     public function setPathToPrivateKey($pathToPrivateKey)
@@ -124,6 +153,22 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
     {
         $this->refreshTokenTTL = $refreshTokenTTL;
+    }
+
+    /**
+     * @return AuthCodeRepositoryInterface
+     */
+    protected function getAuthCodeRepository()
+    {
+        return $this->authCodeRepository;
+    }
+
+    /**
+     * @return RefreshTokenRepositoryInterface
+     */
+    protected function getRefreshTokenRepository()
+    {
+        return $this->refreshTokenRepository;
     }
 
     /**
@@ -303,6 +348,8 @@ abstract class AbstractGrant implements GrantTypeInterface
             $accessToken->addScope($scope);
         }
 
+        $this->accessTokenRepository->persistNewAccessToken($accessToken);
+
         return $accessToken;
     }
 
@@ -336,6 +383,8 @@ abstract class AbstractGrant implements GrantTypeInterface
             $authCode->addScope($scope);
         }
 
+        $this->authCodeRepository->persistNewAuthCode($authCode);
+
         return $authCode;
     }
 
@@ -350,6 +399,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         $refreshToken->setIdentifier(SecureKey::generate());
         $refreshToken->setExpiryDateTime((new \DateTime())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
+
+        $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
         return $refreshToken;
     }

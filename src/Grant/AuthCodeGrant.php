@@ -23,10 +23,6 @@ class AuthCodeGrant extends AbstractGrant
      * @var \DateInterval
      */
     private $authCodeTTL;
-    /**
-     * @var \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface
-     */
-    private $authCodeRepository;
 
     /**
      * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
@@ -43,10 +39,6 @@ class AuthCodeGrant extends AbstractGrant
      */
     private $pathToAuthorizeTemplate;
 
-    /**
-     * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
-     */
-    private $refreshTokenRepository;
 
     /**
      * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface     $authCodeRepository
@@ -64,8 +56,8 @@ class AuthCodeGrant extends AbstractGrant
         $pathToLoginTemplate = null,
         $pathToAuthorizeTemplate = null
     ) {
-        $this->authCodeRepository = $authCodeRepository;
-        $this->refreshTokenRepository = $refreshTokenRepository;
+        $this->setAuthCodeRepository($authCodeRepository);
+        $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->userRepository = $userRepository;
         $this->authCodeTTL = $authCodeTTL;
         $this->pathToLoginTemplate = ($pathToLoginTemplate === null)
@@ -209,7 +201,6 @@ class AuthCodeGrant extends AbstractGrant
                 $redirectUri,
                 $scopes
             );
-            $this->authCodeRepository->persistNewAuthCode($authCode);
 
             $redirectPayload['code'] = KeyCrypt::encrypt(
                 json_encode(
@@ -267,7 +258,7 @@ class AuthCodeGrant extends AbstractGrant
                 throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
             }
 
-            if ($this->authCodeRepository->isAuthCodeRevoked($authCodePayload->auth_code_id) === true) {
+            if ($this->getAuthCodeRepository()->isAuthCodeRevoked($authCodePayload->auth_code_id) === true) {
                 throw OAuthServerException::invalidRequest('code', 'Authorization code has been revoked');
             }
 
@@ -286,8 +277,6 @@ class AuthCodeGrant extends AbstractGrant
             $authCodePayload->scopes
         );
         $refreshToken = $this->issueRefreshToken($accessToken);
-        $this->accessTokenRepository->persistNewAccessToken($accessToken);
-        $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
         // Inject tokens into response type
         $responseType->setAccessToken($accessToken);

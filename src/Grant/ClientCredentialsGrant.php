@@ -33,7 +33,6 @@ class ClientCredentialsGrant extends AbstractGrant
 
         // Issue and persist access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $client->getIdentifier(), $scopes);
-        $this->accessTokenRepository->persistNewAccessToken($accessToken);
 
         // Inject access token into response type
         $responseType->setAccessToken($accessToken);
