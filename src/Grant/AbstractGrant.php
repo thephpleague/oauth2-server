@@ -130,17 +130,12 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Validate the client
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param bool                                     $validateSecret
-     * @param bool                                     $validateRedirectUri
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
-    protected function validateClient(
-        ServerRequestInterface $request,
-        $validateSecret = true,
-        $validateRedirectUri = false
-    ) {
+    protected function validateClient(ServerRequestInterface $request)
+    {
         $clientId = $this->getRequestParameter(
             'client_id',
             $request,
@@ -150,30 +145,34 @@ abstract class AbstractGrant implements GrantTypeInterface
             throw OAuthServerException::invalidRequest('client_id', null, '`%s` parameter is missing');
         }
 
+        $client = $this->clientRepository->getClientEntity(
+            $clientId,
+            $this->getIdentifier()
+        );
+
+        if (!$client instanceof ClientEntityInterface) {
+            throw OAuthServerException::invalidClient();
+        }
+
+        // If the client is confidential require the client secret
         $clientSecret = $this->getRequestParameter(
             'client_secret',
             $request,
             $this->getServerParameter('PHP_AUTH_PW', $request)
         );
-        if (is_null($clientSecret) && $validateSecret === true) {
+
+        if ($client->canKeepASecret() && is_null($clientSecret)) {
             throw OAuthServerException::invalidRequest('client_secret', null, '`%s` parameter is missing');
         }
 
-        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
-        if (is_null($redirectUri) && $validateRedirectUri === true) {
-            throw OAuthServerException::invalidRequest('redirect_uri', null, '`%s` parameter is missing');
+        if ($client->canKeepASecret() && $client->validateSecret($clientSecret) === false) {
+            $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
+            throw OAuthServerException::invalidClient();
         }
 
-        $client = $this->clientRepository->getClientEntity(
-            $clientId,
-            $clientSecret,
-            $redirectUri,
-            $this->getIdentifier()
-        );
-
-        if (!$client instanceof ClientEntityInterface) {
-            $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
-
+        // If a redirect URI is provided ensure it matches what is pre-registered
+        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
+        if ($redirectUri !== null && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)) {
             throw OAuthServerException::invalidClient();
         }
 
