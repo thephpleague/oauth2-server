@@ -4,11 +4,11 @@ namespace LeagueTests;
 
 use League\OAuth2\Server\Entities\ClientEntity;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Server;
 use LeagueTests\Stubs\StubResponseType;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class ServerTest extends \PHPUnit_Framework_TestCase

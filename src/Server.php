@@ -62,7 +62,7 @@ class Server implements EmitterAwareInterface
     private $scopeRepository;
 
     /**
-     * New server instance
+     * New server instance.
      *
      * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
      * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
@@ -88,7 +88,7 @@ class Server implements EmitterAwareInterface
     }
 
     /**
-     * Enable a grant type on the server
+     * Enable a grant type on the server.
      *
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
      * @param \DateInterval                                  $accessTokenTTL
@@ -108,13 +108,14 @@ class Server implements EmitterAwareInterface
     }
 
     /**
-     * Return an access token response
+     * Return an access token response.
      *
      * @param \Psr\Http\Message\ServerRequestInterface|null $request
      * @param \Psr\Http\Message\ResponseInterface|null      $response
      *
-     * @return \Psr\Http\Message\ResponseInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public function respondToRequest(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
@@ -149,13 +150,13 @@ class Server implements EmitterAwareInterface
     }
 
     /**
-     * Determine the access token validity
+     * Determine the access token validity.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
-     * @return \Psr\Http\Message\ServerRequestInterface
-     *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \Psr\Http\Message\ServerRequestInterface
      */
     public function validateRequest(ServerRequestInterface $request)
     {
@@ -163,7 +164,7 @@ class Server implements EmitterAwareInterface
     }
 
     /**
-     * Get the token type that grants will return in the HTTP response
+     * Get the token type that grants will return in the HTTP response.
      *
      * @return ResponseTypeInterface
      */

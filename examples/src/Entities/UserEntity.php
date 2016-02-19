@@ -7,7 +7,8 @@ use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 class UserEntity implements UserEntityInterface
 {
     /**
-     * Return the user's identifier
+     * Return the user's identifier.
+     *
      * @return mixed
      */
     public function getIdentifier()

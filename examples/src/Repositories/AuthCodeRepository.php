@@ -7,9 +7,8 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 
 class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
-
     /**
-     * Persists a new auth code to permanent storage
+     * Persists a new auth code to permanent storage.
      *
      * @param \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface $authCodeEntity
      */
@@ -19,7 +18,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     }
 
     /**
-     * Revoke an auth code
+     * Revoke an auth code.
      *
      * @param string $codeId
      */
@@ -29,7 +28,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     }
 
     /**
-     * Check if the auth code has been revoked
+     * Check if the auth code has been revoked.
      *
      * @param string $codeId
      *

@@ -4,16 +4,14 @@ use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Middleware\AuthenticationServerMiddleware;
 use League\OAuth2\Server\Server;
-
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\RefreshTokenRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
 use OAuth2ServerExamples\Repositories\UserRepository;
-
 use Slim\App;
 
-include(__DIR__ . '/../vendor/autoload.php');
+include __DIR__.'/../vendor/autoload.php';
 
 // App
 $app = new App([
@@ -29,8 +27,8 @@ $app = new App([
         $userRepository = new UserRepository();
         $refreshTokenRepository = new RefreshTokenRepository();
 
-        $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
-        $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
+        $privateKeyPath = 'file://'.__DIR__.'/../private.key';
+        $publicKeyPath = 'file://'.__DIR__.'/../public.key';
 
         // Setup the authorization server
         $server = new Server(
@@ -52,7 +50,7 @@ $app = new App([
         );
 
         return $server;
-    }
+    },
 ]);
 
 $app->post('/access_token', function () {

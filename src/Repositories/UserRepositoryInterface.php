@@ -5,7 +5,7 @@ namespace League\OAuth2\Server\Repositories;
 interface UserRepositoryInterface extends RepositoryInterface
 {
     /**
-     * Get a user entity
+     * Get a user entity.
      *
      * @param string $username
      * @param string $password

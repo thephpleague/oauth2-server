@@ -3,6 +3,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
+use League\Event\Event;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -12,7 +13,6 @@ use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
 use League\Plates\Engine;
-use League\Event\Event;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
@@ -39,7 +39,6 @@ class AuthCodeGrant extends AbstractGrant
      */
     private $pathToAuthorizeTemplate;
 
-
     /**
      * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface     $authCodeRepository
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
@@ -61,22 +60,22 @@ class AuthCodeGrant extends AbstractGrant
         $this->userRepository = $userRepository;
         $this->authCodeTTL = $authCodeTTL;
         $this->pathToLoginTemplate = ($pathToLoginTemplate === null)
-            ? __DIR__ . '/../ResponseTypes/DefaultTemplates/login_user.php'
+            ? __DIR__.'/../ResponseTypes/DefaultTemplates/login_user.php'
             : $this->pathToLoginTemplate;
         $this->pathToAuthorizeTemplate = ($pathToLoginTemplate === null)
-            ? __DIR__ . '/../ResponseTypes/DefaultTemplates/authorize_client.php'
+            ? __DIR__.'/../ResponseTypes/DefaultTemplates/authorize_client.php'
             : $this->pathToAuthorizeTemplate;
         $this->refreshTokenTTL = new \DateInterval('P1M');
     }
 
-
     /**
-     * Respond to an authorization request
+     * Respond to an authorization request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
-     * @return \Psr\Http\Message\ResponseInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \Psr\Http\Message\ResponseInterface
      */
     protected function respondToAuthorizationRequest(
         ServerRequestInterface $request
@@ -153,7 +152,6 @@ class AuthCodeGrant extends AbstractGrant
             return new Response\HtmlResponse($html);
         }
 
-
         // The user hasn't approved the client yet so show an authorize form
         if ($userId !== null && $userHasApprovedClient === null) {
             $engine = new Engine(dirname($this->pathToAuthorizeTemplate));
@@ -219,18 +217,20 @@ class AuthCodeGrant extends AbstractGrant
         }
 
         $exception = OAuthServerException::accessDenied('The user denied the request', (string) $redirectUri);
+
         return $exception->generateHttpResponse();
     }
 
     /**
-     * Respond to an access token request
+     * Respond to an access token request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface                  $request
      * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
      * @param \DateInterval                                             $accessTokenTTL
      *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */
     protected function respondToAccessTokenRequest(
         ServerRequestInterface $request,
@@ -286,21 +286,20 @@ class AuthCodeGrant extends AbstractGrant
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function canRespondToRequest(ServerRequestInterface $request)
     {
-        return (
+        return
             (
                 isset($request->getQueryParams()['response_type'])
                 && $request->getQueryParams()['response_type'] === 'code'
                 && isset($request->getQueryParams()['client_id'])
-            ) || (parent::canRespondToRequest($request))
-        );
+            ) || (parent::canRespondToRequest($request));
     }
 
     /**
-     * Return the grant identifier that can be used in matching up requests
+     * Return the grant identifier that can be used in matching up requests.
      *
      * @return string
      */
@@ -310,7 +309,7 @@ class AuthCodeGrant extends AbstractGrant
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function respondToRequest(
         ServerRequestInterface $request,

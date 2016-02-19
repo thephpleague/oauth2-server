@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Password grant
+ * OAuth 2.0 Password grant.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\Event;
@@ -20,7 +19,7 @@ use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Password grant class
+ * Password grant class.
  */
 class PasswordGrant extends AbstractGrant
 {
@@ -44,7 +43,7 @@ class PasswordGrant extends AbstractGrant
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function respondToRequest(
         ServerRequestInterface $request,
@@ -53,7 +52,7 @@ class PasswordGrant extends AbstractGrant
     ) {
         // Validate request
         $client = $this->validateClient($request);
-        $user   = $this->validateUser($request);
+        $user = $this->validateUser($request);
         $scopes = $this->validateScopes($request, $client);
 
         // Issue and persist new tokens
@@ -70,9 +69,9 @@ class PasswordGrant extends AbstractGrant
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
-     *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
      */
     protected function validateUser(ServerRequestInterface $request)
     {
@@ -97,7 +96,7 @@ class PasswordGrant extends AbstractGrant
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getIdentifier()
     {

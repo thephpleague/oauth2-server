@@ -10,11 +10,11 @@ use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Grant\AbstractGrant;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use Zend\Diactoros\ServerRequest;
 
 class AbstractGrantTest extends \PHPUnit_Framework_TestCase
@@ -151,7 +151,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody([
-            'client_id' => 'foo',
+            'client_id'     => 'foo',
             'client_secret' => 'foo',
         ]);
 
@@ -180,7 +180,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody([
             'client_id'     => 'foo',
-            'redirect_uri'  =>  'http://bar/foo'
+            'redirect_uri'  => 'http://bar/foo',
         ]);
 
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
