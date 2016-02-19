@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Response Type Interface
+ * OAuth 2.0 Response Type Interface.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
@@ -30,7 +29,7 @@ interface ResponseTypeInterface
 
     /**
      * Determine the access token in the authorization header and append OAUth properties to the request
-     *  as attributes
+     *  as attributes.
      *
      * @param ServerRequestInterface $request
      *

@@ -1,20 +1,19 @@
 <?php
 /**
- * Public/private key encryption
+ * Public/private key encryption.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Utils;
 
 class KeyCrypt
 {
     /**
-     * Encrypt data with a private key
+     * Encrypt data with a private key.
      *
      * @param string $unencryptedData
      * @param string $pathToPrivateKey
@@ -48,7 +47,7 @@ class KeyCrypt
     }
 
     /**
-     * Decrypt data with a public key
+     * Decrypt data with a public key.
      *
      * @param string $encryptedData
      * @param string $pathToPublicKey

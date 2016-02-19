@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Refresh token grant
+ * OAuth 2.0 Refresh token grant.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\Event;
@@ -20,7 +19,7 @@ use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Refresh token grant
+ * Refresh token grant.
  */
 class RefreshTokenGrant extends AbstractGrant
 {
@@ -35,7 +34,7 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function respondToRequest(
         ServerRequestInterface $request,
@@ -52,6 +51,7 @@ class RefreshTokenGrant extends AbstractGrant
             $scopes = array_map(function ($scopeId) {
                 $scope = new ScopeEntity();
                 $scope->setIdentifier($scopeId);
+
                 return $scope;
             }, $oldRefreshToken['scopes']);
         } else {
@@ -87,9 +87,9 @@ class RefreshTokenGrant extends AbstractGrant
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param string                                   $clientId
      *
-     * @return array
-     *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return array
      */
     protected function validateOldRefreshToken(ServerRequestInterface $request, $clientId)
     {
@@ -102,7 +102,7 @@ class RefreshTokenGrant extends AbstractGrant
         try {
             $refreshToken = KeyCrypt::decrypt($encryptedRefreshToken, $this->pathToPublicKey);
         } catch (\LogicException $e) {
-            throw OAuthServerException::invalidRefreshToken('Cannot parse refresh token: ' . $e->getMessage());
+            throw OAuthServerException::invalidRefreshToken('Cannot parse refresh token: '.$e->getMessage());
         }
 
         $refreshTokenData = json_decode($refreshToken, true);
@@ -110,9 +110,9 @@ class RefreshTokenGrant extends AbstractGrant
             $this->getEmitter()->emit(new Event('refresh_token.client.failed', $request));
 
             throw OAuthServerException::invalidRefreshToken(
-                'Token is not linked to client,' .
-                ' got: ' . $clientId .
-                ' expected: ' . $refreshTokenData['client_id']
+                'Token is not linked to client,'.
+                ' got: '.$clientId.
+                ' expected: '.$refreshTokenData['client_id']
             );
         }
 
@@ -128,7 +128,7 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getIdentifier()
     {

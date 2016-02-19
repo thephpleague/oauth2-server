@@ -1,4 +1,5 @@
 <?php
+
 namespace OAuth2ServerExamples\Repositories;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
@@ -7,7 +8,7 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
     /**
-     * Persists a new access token to permanent storage
+     * Persists a new access token to permanent storage.
      *
      * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessTokenEntity
      */
@@ -17,7 +18,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     }
 
     /**
-     * Revoke an access token
+     * Revoke an access token.
      *
      * @param string $tokenId
      */
@@ -27,7 +28,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     }
 
     /**
-     * Check if the access token has been revoked
+     * Check if the access token has been revoked.
      *
      * @param string $tokenId
      *

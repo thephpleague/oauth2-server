@@ -1,4 +1,5 @@
 <?php
+
 namespace League\OAuth2\Server\Entities;
 
 use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
@@ -6,8 +7,7 @@ use League\OAuth2\Server\Entities\Traits\EntityTrait;
 use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
 
 /**
- * Class AuthCodeEntity
- * @package League\OAuth2\Server
+ * Class AuthCodeEntity.
  */
 class AuthCodeEntity implements AuthCodeEntityInterface
 {

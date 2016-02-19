@@ -1,4 +1,5 @@
 <?php
+
 namespace OAuth2ServerExamples\Repositories;
 
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
@@ -7,7 +8,7 @@ use OAuth2ServerExamples\Entities\UserEntity;
 class UserRepository implements UserRepositoryInterface
 {
     /**
-     * Get a user entity
+     * Get a user entity.
      *
      * @param string $username
      * @param string $password
@@ -20,6 +21,6 @@ class UserRepository implements UserRepositoryInterface
             return new UserEntity();
         }
 
-        return null;
+        return;
     }
 }

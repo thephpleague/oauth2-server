@@ -3,16 +3,14 @@
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Server;
-
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
-
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-include(__DIR__ . '/../vendor/autoload.php');
+include __DIR__.'/../vendor/autoload.php';
 
 // App
 $app = new App([
@@ -23,8 +21,8 @@ $app = new App([
         $scopeRepository = new ScopeRepository();
         $accessTokenRepository = new AccessTokenRepository();
 
-        $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
-        $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
+        $privateKeyPath = 'file://'.__DIR__.'/../private.key';
+        $publicKeyPath = 'file://'.__DIR__.'/../public.key';
 
         // Setup the authorization server
         $server = new Server(
@@ -39,7 +37,7 @@ $app = new App([
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1H'));
 
         return $server;
-    }
+    },
 ]);
 
 $app->post('/access_token', function (Request $request, Response $response) {

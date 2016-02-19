@@ -1,4 +1,5 @@
 <?php
+
 namespace League\OAuth2\Server\Entities;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;

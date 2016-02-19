@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Abstract grant
+ * OAuth 2.0 Abstract grant.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareTrait;
@@ -29,7 +28,7 @@ use OAuth2ServerExamples\Repositories\AuthCodeRepository;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Abstract grant class
+ * Abstract grant class.
  */
 abstract class AbstractGrant implements GrantTypeInterface
 {
@@ -139,7 +138,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setEmitter(EmitterInterface $emitter = null)
     {
@@ -147,7 +146,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
     {
@@ -171,12 +170,13 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Validate the client
+     * Validate the client.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface
      */
     protected function validateClient(ServerRequestInterface $request)
     {
@@ -224,15 +224,15 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Validate scopes in the request
+     * Validate scopes in the request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface                        $request
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
      * @param string                                                          $redirectUri
      *
-     * @return \League\OAuth2\Server\Entities\ScopeEntity[]
-     *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \League\OAuth2\Server\Entities\ScopeEntity[]
      */
     public function validateScopes(
         ServerRequestInterface $request,
@@ -322,7 +322,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Issue an access token
+     * Issue an access token.
      *
      * @param \DateInterval                                                   $tokenTTL
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
@@ -353,7 +353,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Issue an auth code
+     * Issue an auth code.
      *
      * @param \DateInterval                                                   $tokenTTL
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
@@ -361,8 +361,9 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param string                                                          $redirectUri
      * @param array                                                           $scopes
      *
-     * @return \League\OAuth2\Server\Entities\AuthCodeEntity
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \League\OAuth2\Server\Entities\AuthCodeEntity
      */
     protected function issueAuthCode(
         \DateInterval $tokenTTL,
@@ -405,13 +406,13 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Generate a new unique identifier
+     * Generate a new unique identifier.
      *
      * @param int $length
      *
-     * @return string
-     *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return string
      */
     protected function generateUniqueIdentifier($length = 40)
     {
@@ -430,13 +431,12 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function canRespondToRequest(ServerRequestInterface $request)
     {
-        return (
+        return
             isset($request->getParsedBody()['grant_type'])
-            && $request->getParsedBody()['grant_type'] === $this->getIdentifier()
-        );
+            && $request->getParsedBody()['grant_type'] === $this->getIdentifier();
     }
 }

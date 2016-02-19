@@ -1,4 +1,5 @@
 <?php
+
 namespace League\OAuth2\Server\Entities\Traits;
 
 trait ClientEntityTrait
@@ -19,7 +20,7 @@ trait ClientEntityTrait
     protected $redirectUri;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -27,7 +28,7 @@ trait ClientEntityTrait
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setName($name)
     {
@@ -35,7 +36,7 @@ trait ClientEntityTrait
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function canKeepASecret()
     {
@@ -43,7 +44,7 @@ trait ClientEntityTrait
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setSecret($secret)
     {
@@ -51,7 +52,7 @@ trait ClientEntityTrait
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function validateSecret($submittedSecret)
     {
@@ -59,7 +60,7 @@ trait ClientEntityTrait
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setRedirectUri($redirectUri)
     {
@@ -67,7 +68,7 @@ trait ClientEntityTrait
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRedirectUri()
     {

@@ -30,7 +30,7 @@ class OAuthServerException extends \Exception
     private $redirectUri;
 
     /**
-     * Throw a new exception
+     * Throw a new exception.
      *
      * @param string      $message        Error message
      * @param string      $errorType      Error type
@@ -48,7 +48,7 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Invalid grant type error
+     * Invalid grant type error.
      *
      * @param null|string $localizedError
      * @param null|string $localizedHint
@@ -60,7 +60,7 @@ class OAuthServerException extends \Exception
         $localizedHint = null
     ) {
         $errorMessage = (is_null($localizedError))
-            ? 'The provided authorization grant is invalid, expired, revoked, does not match ' .
+            ? 'The provided authorization grant is invalid, expired, revoked, does not match '.
                 'the redirection URI used in the authorization request, or was issued to another client.'
             : $localizedError;
         $hint = (is_null($localizedHint))
@@ -71,7 +71,7 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Unsupported grant type error
+     * Unsupported grant type error.
      *
      * @param null|string $localizedError
      * @param null|string $localizedHint
@@ -93,9 +93,9 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Invalid request error
+     * Invalid request error.
      *
-     * @param string      $parameter The invalid parameter
+     * @param string      $parameter      The invalid parameter
      * @param null|string $localizedError
      * @param null|string $localizedHint
      *
@@ -107,7 +107,7 @@ class OAuthServerException extends \Exception
         $localizedHint = null
     ) {
         $errorMessage = (is_null($localizedError))
-            ? 'The request is missing a required parameter, includes an invalid parameter value, ' .
+            ? 'The request is missing a required parameter, includes an invalid parameter value, '.
                 'includes a parameter more than once, or is otherwise malformed.'
             : $localizedError;
         $hint = (is_null($localizedHint))
@@ -118,7 +118,7 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Invalid client error
+     * Invalid client error.
      *
      * @param null|string $localizedError
      *
@@ -134,7 +134,7 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Invalid scope error
+     * Invalid scope error.
      *
      * @param string      $scope          The bad scope
      * @param null|string $localizedError A localized error message
@@ -156,7 +156,7 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Invalid credentials error
+     * Invalid credentials error.
      *
      * @return static
      */
@@ -166,7 +166,7 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Server error
+     * Server error.
      *
      * @param $hint
      *
@@ -176,7 +176,7 @@ class OAuthServerException extends \Exception
     {
         return new static(
             'The authorization server encountered an unexpected condition which prevented it from fulfilling'
-            . 'the request.',
+            .'the request.',
             'server_error',
             500,
             $hint
@@ -184,9 +184,10 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Invalid refresh token
+     * Invalid refresh token.
      *
      * @param string|null $hint
+     *
      * @return static
      */
     public static function invalidRefreshToken($hint = null)
@@ -195,7 +196,7 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Access denied
+     * Access denied.
      *
      * @param string|null $hint
      * @param string|null $redirectUri
@@ -222,7 +223,7 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Generate a HTTP response
+     * Generate a HTTP response.
      *
      * @param \Psr\Http\Message\ResponseInterface $response
      *
@@ -238,7 +239,7 @@ class OAuthServerException extends \Exception
 
         $payload = [
             'error'   => $this->errorType,
-            'message' => $this->getMessage()
+            'message' => $this->getMessage(),
         ];
 
         if ($this->hint !== null) {
@@ -264,14 +265,14 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Get all headers that have to be send with the error response
+     * Get all headers that have to be send with the error response.
      *
      * @return array Array with header values
      */
     public function getHttpHeaders()
     {
         $headers = [
-            'Content-type' => 'application/json'
+            'Content-type' => 'application/json',
         ];
 
         // Add "WWW-Authenticate" header
@@ -303,7 +304,7 @@ class OAuthServerException extends \Exception
                 }
             }
             if ($authScheme !== null) {
-                $headers[] = 'WWW-Authenticate: ' . $authScheme . ' realm="OAuth"';
+                $headers[] = 'WWW-Authenticate: '.$authScheme.' realm="OAuth"';
             }
         }
 
@@ -312,7 +313,7 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Returns the HTTP status code to send when the exceptions is output
+     * Returns the HTTP status code to send when the exceptions is output.
      *
      * @return int
      */

@@ -11,7 +11,9 @@ use Zend\Diactoros\Response;
 
 class StubResponseType extends AbstractResponseType
 {
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     public function getAccessToken()
     {

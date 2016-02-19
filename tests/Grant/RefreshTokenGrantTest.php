@@ -5,7 +5,6 @@ namespace LeagueTests\Grant;
 use League\OAuth2\Server\Entities\ClientEntity;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
-use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -14,7 +13,6 @@ use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
-use OAuth2ServerExamples\Repositories\RefreshTokenRepository;
 use Zend\Diactoros\ServerRequest;
 
 class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
