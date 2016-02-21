@@ -80,7 +80,19 @@ class AuthCodeGrant extends AbstractGrant
     protected function respondToAuthorizationRequest(
         ServerRequestInterface $request
     ) {
-        $client = $this->validateClient($request);
+        $clientId = $this->getQueryStringParameter(
+            'client_id',
+            $request,
+            $this->getServerParameter('PHP_AUTH_USER', $request)
+        );
+        if (is_null($clientId)) {
+            throw OAuthServerException::invalidRequest('client_id', null, '`%s` parameter is missing');
+        }
+
+        $client = $this->clientRepository->getClientEntity(
+            $clientId,
+            $this->getIdentifier()
+        );
 
         if ($client instanceof ClientEntityInterface === false) {
             $this->emitter->emit(new Event('client.authentication.failed', $request));
