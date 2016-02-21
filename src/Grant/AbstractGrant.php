@@ -186,7 +186,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             $this->getServerParameter('PHP_AUTH_USER', $request)
         );
         if (is_null($clientId)) {
-            throw OAuthServerException::invalidRequest('client_id', null, '`%s` parameter is missing');
+            throw OAuthServerException::invalidRequest('client_id', '`%s` parameter is missing');
         }
 
         $client = $this->clientRepository->getClientEntity(
@@ -206,7 +206,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         );
 
         if ($client->canKeepASecret() && is_null($clientSecret)) {
-            throw OAuthServerException::invalidRequest('client_secret', null, '`%s` parameter is missing');
+            throw OAuthServerException::invalidRequest('client_secret', '`%s` parameter is missing');
         }
 
         if ($client->canKeepASecret() && $client->validateSecret($clientSecret) === false) {
@@ -256,7 +256,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             );
 
             if (($scope instanceof ScopeEntity) === false) {
-                throw OAuthServerException::invalidScope($scopeItem, null, null, $redirectUri);
+                throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
             }
 
             $scopes[] = $scope;

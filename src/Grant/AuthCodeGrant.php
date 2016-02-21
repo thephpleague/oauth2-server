@@ -60,10 +60,10 @@ class AuthCodeGrant extends AbstractGrant
         $this->userRepository = $userRepository;
         $this->authCodeTTL = $authCodeTTL;
         $this->pathToLoginTemplate = ($pathToLoginTemplate === null)
-            ? __DIR__.'/../ResponseTypes/DefaultTemplates/login_user.php'
+            ? __DIR__ . '/../ResponseTypes/DefaultTemplates/login_user.php'
             : $this->pathToLoginTemplate;
         $this->pathToAuthorizeTemplate = ($pathToLoginTemplate === null)
-            ? __DIR__.'/../ResponseTypes/DefaultTemplates/authorize_client.php'
+            ? __DIR__ . '/../ResponseTypes/DefaultTemplates/authorize_client.php'
             : $this->pathToAuthorizeTemplate;
         $this->refreshTokenTTL = new \DateInterval('P1M');
     }
@@ -86,7 +86,7 @@ class AuthCodeGrant extends AbstractGrant
             $this->getServerParameter('PHP_AUTH_USER', $request)
         );
         if (is_null($clientId)) {
-            throw OAuthServerException::invalidRequest('client_id', null, '`%s` parameter is missing');
+            throw OAuthServerException::invalidRequest('client_id');
         }
 
         $client = $this->clientRepository->getClientEntity(
@@ -252,7 +252,7 @@ class AuthCodeGrant extends AbstractGrant
         // The redirect URI is required in this request
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request, null);
         if (is_null($redirectUri)) {
-            throw OAuthServerException::invalidRequest('redirect_uri', null, '`%s` parameter is missing');
+            throw OAuthServerException::invalidRequest('redirect_uri');
         }
 
         // Validate request
@@ -278,7 +278,7 @@ class AuthCodeGrant extends AbstractGrant
                 throw OAuthServerException::invalidRequest('code', 'Authorization code was not issued to this client');
             }
         } catch (\LogicException  $e) {
-            throw OAuthServerException::invalidRequest('code', null, 'Cannot decrypt the authorization code');
+            throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code');
         }
 
         // Issue and persist access + refresh tokens
