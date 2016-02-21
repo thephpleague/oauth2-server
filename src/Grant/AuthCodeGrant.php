@@ -59,13 +59,21 @@ class AuthCodeGrant extends AbstractGrant
         $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->userRepository = $userRepository;
         $this->authCodeTTL = $authCodeTTL;
-        $this->pathToLoginTemplate = ($pathToLoginTemplate === null)
-            ? __DIR__ . '/../ResponseTypes/DefaultTemplates/login_user.php'
-            : $this->pathToLoginTemplate;
-        $this->pathToAuthorizeTemplate = ($pathToLoginTemplate === null)
-            ? __DIR__ . '/../ResponseTypes/DefaultTemplates/authorize_client.php'
-            : $this->pathToAuthorizeTemplate;
         $this->refreshTokenTTL = new \DateInterval('P1M');
+
+        $this->pathToLoginTemplate =  __DIR__ . '/../ResponseTypes/DefaultTemplates/login_user';
+        if ($pathToLoginTemplate !== null) {
+            $this->pathToLoginTemplate = (substr($pathToLoginTemplate, -4) === '.php')
+                ? substr($pathToLoginTemplate, 0, -4)
+                : $pathToLoginTemplate;
+        }
+
+        $this->pathToAuthorizeTemplate = __DIR__ . '/../ResponseTypes/DefaultTemplates/authorize_client';
+        if ($pathToAuthorizeTemplate !== null) {
+            $this->pathToAuthorizeTemplate = (substr($pathToAuthorizeTemplate, -4) === '.php')
+                ? substr($pathToAuthorizeTemplate, 0, -4)
+                : $pathToAuthorizeTemplate;
+        }
     }
 
     /**
@@ -95,7 +103,7 @@ class AuthCodeGrant extends AbstractGrant
         );
 
         if ($client instanceof ClientEntityInterface === false) {
-            $this->emitter->emit(new Event('client.authentication.failed', $request));
+            $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
 
             throw OAuthServerException::invalidClient();
         }
@@ -329,13 +337,12 @@ class AuthCodeGrant extends AbstractGrant
         \DateInterval $accessTokenTTL
     ) {
         if (
-            isset($request->getQueryParams()['response_type'])
+            array_key_exists('response_type', $request->getQueryParams())
             && $request->getQueryParams()['response_type'] === 'code'
-            && isset($request->getQueryParams()['client_id'])
         ) {
             return $this->respondToAuthorizationRequest($request);
         } elseif (
-            isset($request->getParsedBody()['grant_type'])
+            array_key_exists('grant_type', $request->getParsedBody())
             && $request->getParsedBody()['grant_type'] === 'authorization_code'
         ) {
             return $this->respondToAccessTokenRequest($request, $responseType, $accessTokenTTL);
