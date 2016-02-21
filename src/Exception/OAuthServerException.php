@@ -286,4 +286,12 @@ class OAuthServerException extends \Exception
     {
         return $this->httpStatusCode;
     }
+
+    /**
+     * @return null|string
+     */
+    public function getHint()
+    {
+        return $this->hint;
+    }
 }

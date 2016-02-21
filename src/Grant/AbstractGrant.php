@@ -16,6 +16,7 @@ use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
+use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -344,6 +345,11 @@ abstract class AbstractGrant implements GrantTypeInterface
         $accessToken->setUserIdentifier($userIdentifier);
 
         foreach ($scopes as $scope) {
+            if (is_string($scope)) {
+                $s = new ScopeEntity();
+                $s->setIdentifier($scope);
+                $scope = $s;
+            }
             $accessToken->addScope($scope);
         }
 
@@ -435,8 +441,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function canRespondToRequest(ServerRequestInterface $request)
     {
-        return
-            isset($request->getParsedBody()['grant_type'])
-            && $request->getParsedBody()['grant_type'] === $this->getIdentifier();
+        return isset($request->getParsedBody()['grant_type'])
+        && $request->getParsedBody()['grant_type'] === $this->getIdentifier();
     }
 }

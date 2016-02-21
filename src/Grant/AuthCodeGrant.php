@@ -61,7 +61,7 @@ class AuthCodeGrant extends AbstractGrant
         $this->authCodeTTL = $authCodeTTL;
         $this->refreshTokenTTL = new \DateInterval('P1M');
 
-        $this->pathToLoginTemplate =  __DIR__ . '/../ResponseTypes/DefaultTemplates/login_user';
+        $this->pathToLoginTemplate = __DIR__ . '/../ResponseTypes/DefaultTemplates/login_user';
         if ($pathToLoginTemplate !== null) {
             $this->pathToLoginTemplate = (substr($pathToLoginTemplate, -4) === '.php')
                 ? substr($pathToLoginTemplate, 0, -4)
@@ -105,6 +105,11 @@ class AuthCodeGrant extends AbstractGrant
         if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
 
+            throw OAuthServerException::invalidClient();
+        }
+
+        $redirectUriParameter = $this->getQueryStringParameter('redirect_uri', $request, $client->getRedirectUri());
+        if ($redirectUriParameter !== $client->getRedirectUri()) {
             throw OAuthServerException::invalidClient();
         }
 
@@ -224,6 +229,7 @@ class AuthCodeGrant extends AbstractGrant
                 json_encode(
                     [
                         'client_id'    => $authCode->getClient()->getIdentifier(),
+                        'redirect_uri' => $authCode->getRedirectUri(),
                         'auth_code_id' => $authCode->getIdentifier(),
                         'scopes'       => $authCode->getScopes(),
                         'user_id'      => $authCode->getUserIdentifier(),
@@ -258,7 +264,7 @@ class AuthCodeGrant extends AbstractGrant
         DateInterval $accessTokenTTL
     ) {
         // The redirect URI is required in this request
-        $redirectUri = $this->getQueryStringParameter('redirect_uri', $request, null);
+        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
         if (is_null($redirectUri)) {
             throw OAuthServerException::invalidRequest('redirect_uri');
         }
@@ -284,6 +290,10 @@ class AuthCodeGrant extends AbstractGrant
 
             if ($authCodePayload->client_id !== $client->getIdentifier()) {
                 throw OAuthServerException::invalidRequest('code', 'Authorization code was not issued to this client');
+            }
+
+            if ($authCodePayload->redirect_uri !== $redirectUri) {
+                throw OAuthServerException::invalidRequest('redirect_uri', 'Invalid redirect URI');
             }
         } catch (\LogicException  $e) {
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code');
@@ -341,13 +351,8 @@ class AuthCodeGrant extends AbstractGrant
             && $request->getQueryParams()['response_type'] === 'code'
         ) {
             return $this->respondToAuthorizationRequest($request);
-        } elseif (
-            array_key_exists('grant_type', $request->getParsedBody())
-            && $request->getParsedBody()['grant_type'] === 'authorization_code'
-        ) {
-            return $this->respondToAccessTokenRequest($request, $responseType, $accessTokenTTL);
-        } else {
-            throw OAuthServerException::serverError('respondToRequest() should not have been called');
         }
+
+        return $this->respondToAccessTokenRequest($request, $responseType, $accessTokenTTL);
     }
 }
