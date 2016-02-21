@@ -140,11 +140,10 @@ class OAuthServerException extends \Exception
     {
         return new static(
             'The authorization server encountered an unexpected condition which prevented it from fulfilling'
-            . 'the request.',
+            . ' the request: ' . $hint,
             7,
             'server_error',
-            500,
-            $hint
+            500
         );
     }
 
@@ -172,8 +171,8 @@ class OAuthServerException extends \Exception
     {
         return new static(
             'The resource owner or authorization server denied the request.',
-            'access_denied',
             9,
+            'access_denied',
             401,
             $hint,
             $redirectUri
