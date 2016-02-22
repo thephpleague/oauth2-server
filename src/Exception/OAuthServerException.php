@@ -191,10 +191,12 @@ class OAuthServerException extends \Exception
      * Generate a HTTP response.
      *
      * @param \Psr\Http\Message\ResponseInterface $response
+     * @param bool                                $useFragment True if errors should be in the URI fragment instead of
+     *                                                         query string
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function generateHttpResponse(ResponseInterface $response = null)
+    public function generateHttpResponse(ResponseInterface $response = null, $useFragment = false)
     {
         if (!$response instanceof ResponseInterface) {
             $response = new Response();
@@ -215,9 +217,15 @@ class OAuthServerException extends \Exception
             $redirectUri = new Uri($this->redirectUri);
             parse_str($redirectUri->getQuery(), $redirectPayload);
 
-            $headers['Location'] = (string) $redirectUri->withQuery(http_build_query(
-                array_merge($redirectPayload, $payload)
-            ));
+            if ($useFragment === true) {
+                $headers['Location'] = (string) $redirectUri->withFragment(http_build_query(
+                    array_merge($redirectPayload, $payload)
+                ));
+            } else {
+                $headers['Location'] = (string) $redirectUri->withQuery(http_build_query(
+                    array_merge($redirectPayload, $payload)
+                ));
+            }
         }
 
         foreach ($headers as $header => $content) {
