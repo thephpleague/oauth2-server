@@ -16,7 +16,6 @@ use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;

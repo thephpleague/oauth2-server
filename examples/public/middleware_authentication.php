@@ -11,7 +11,7 @@ use OAuth2ServerExamples\Repositories\ScopeRepository;
 use OAuth2ServerExamples\Repositories\UserRepository;
 use Slim\App;
 
-include __DIR__.'/../vendor/autoload.php';
+include __DIR__ . '/../vendor/autoload.php';
 
 // App
 $app = new App([
@@ -27,8 +27,8 @@ $app = new App([
         $userRepository = new UserRepository();
         $refreshTokenRepository = new RefreshTokenRepository();
 
-        $privateKeyPath = 'file://'.__DIR__.'/../private.key';
-        $publicKeyPath = 'file://'.__DIR__.'/../public.key';
+        $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
+        $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
 
         // Setup the authorization server
         $server = new Server(

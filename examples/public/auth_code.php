@@ -13,7 +13,7 @@ use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-include __DIR__.'/../vendor/autoload.php';
+include __DIR__ . '/../vendor/autoload.php';
 
 // App
 $app = new App([
@@ -27,8 +27,8 @@ $app = new App([
         $refreshTokenRepository = new RefreshTokenRepository();
         $authCodeRepository = new AuthCodeRepository();
 
-        $privateKeyPath = 'file://'.__DIR__.'/../private.key';
-        $publicKeyPath = 'file://'.__DIR__.'/../public.key';
+        $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
+        $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
 
         // Setup the authorization server
         $server = new Server(

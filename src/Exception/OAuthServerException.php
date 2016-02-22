@@ -50,6 +50,7 @@ class OAuthServerException extends \Exception
 
     /**
      * Invalid grant type error.
+     *
      * @return static
      */
     public static function invalidGrantType()

@@ -10,9 +10,7 @@
  */
 namespace League\OAuth2\Server\ResponseTypes;
 
-use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
