@@ -2,8 +2,6 @@
 
 namespace League\OAuth2\Server\Entities\Interfaces;
 
-use Lcobucci\JWT\Builder;
-
 interface AccessTokenEntityInterface extends TokenInterface
 {
     /**

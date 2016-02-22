@@ -7,16 +7,15 @@ use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
 class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
@@ -46,8 +45,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $request = new ServerRequest(
             [],
-            []
-            ,
+            [],
             null,
             null,
             'php://input',
@@ -90,8 +88,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'HTTP_HOST'   => 'auth-server.tld',
                 'REQUEST_URI' => '/authorize',
             ],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -148,8 +145,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'HTTP_HOST'   => 'auth-server.tld',
                 'REQUEST_URI' => '/authorize',
             ],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -211,8 +207,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'HTTP_HOST'   => 'auth-server.tld',
                 'REQUEST_URI' => '/authorize',
             ],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -263,8 +258,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'HTTP_HOST'   => 'auth-server.tld',
                 'REQUEST_URI' => '/authorize',
             ],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -287,7 +281,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            /** @var StubResponseType $response */
+            /* @var StubResponseType $response */
             $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getMessage(), 'Client authentication failed');
@@ -319,8 +313,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'HTTP_HOST'   => 'auth-server.tld',
                 'REQUEST_URI' => '/authorize',
             ],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -334,7 +327,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             [
                 'response_type' => 'code',
                 'client_id'     => 'foo',
-                'redirect_uri'  =>  'sdfsdf'
+                'redirect_uri'  =>  'sdfsdf',
             ],
             [
                 'username' => 'alex',
@@ -344,7 +337,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            /** @var StubResponseType $response */
+            /* @var StubResponseType $response */
             $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getMessage(), 'Client authentication failed');
@@ -383,8 +376,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'HTTP_HOST'   => 'auth-server.tld',
                 'REQUEST_URI' => '/authorize',
             ],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -436,8 +428,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'HTTP_HOST'   => 'auth-server.tld',
                 'REQUEST_URI' => '/authorize',
             ],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -491,8 +482,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'HTTP_HOST'   => 'auth-server.tld',
                 'REQUEST_URI' => '/authorize',
             ],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -547,8 +537,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'HTTP_HOST'   => 'auth-server.tld',
                 'REQUEST_URI' => '/authorize',
             ],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -607,8 +596,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $request = new ServerRequest(
             [],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -667,8 +655,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $request = new ServerRequest(
             [],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -680,7 +667,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        /** @var StubResponseType $response */
+        /* @var StubResponseType $response */
         $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
     }
 
@@ -714,8 +701,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $request = new ServerRequest(
             [],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -730,7 +716,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        /** @var StubResponseType $response */
+        /* @var StubResponseType $response */
         $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
     }
 
@@ -766,8 +752,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $request = new ServerRequest(
             [],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -795,7 +780,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            /** @var StubResponseType $response */
+            /* @var StubResponseType $response */
             $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code has expired');
@@ -837,8 +822,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $request = new ServerRequest(
             [],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -866,7 +850,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            /** @var StubResponseType $response */
+            /* @var StubResponseType $response */
             $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code has been revoked');
@@ -905,8 +889,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $request = new ServerRequest(
             [],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -934,7 +917,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            /** @var StubResponseType $response */
+            /* @var StubResponseType $response */
             $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code was not issued to this client');
@@ -973,8 +956,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $request = new ServerRequest(
             [],
-            []
-            ,
+            [],
             null,
             'POST',
             'php://input',
@@ -990,7 +972,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            /** @var StubResponseType $response */
+            /* @var StubResponseType $response */
             $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Cannot decrypt the authorization code');
