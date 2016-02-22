@@ -208,14 +208,16 @@ class AuthCodeGrant extends AbstractGrant
             );
         }
 
-        $stateParameter = $this->getQueryStringParameter('state', $request);
-
+        // The user has either approved or denied the client, so redirect them back
         $redirectUri = new Uri($client->getRedirectUri());
         parse_str($redirectUri->getQuery(), $redirectPayload);
+
+        $stateParameter = $this->getQueryStringParameter('state', $request);
         if ($stateParameter !== null) {
             $redirectPayload['state'] = $stateParameter;
         }
 
+        // THe user approved the client, redirect them back with an auth code
         if ($userHasApprovedClient === true) {
             $authCode = $this->issueAuthCode(
                 $this->authCodeTTL,
@@ -242,6 +244,7 @@ class AuthCodeGrant extends AbstractGrant
             return new Response\RedirectResponse($redirectUri->withQuery(http_build_query($redirectPayload)));
         }
 
+        // The user denied the client, redirect them back with an error
         $exception = OAuthServerException::accessDenied('The user denied the request', (string) $redirectUri);
 
         return $exception->generateHttpResponse();
