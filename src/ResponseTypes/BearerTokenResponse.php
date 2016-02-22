@@ -29,16 +29,7 @@ class BearerTokenResponse extends AbstractResponseType
     {
         $expireDateTime = $this->accessToken->getExpiryDateTime()->getTimestamp();
 
-        $jwtAccessToken = (new Builder())
-            ->setAudience($this->accessToken->getClient()->getIdentifier())
-            ->setId($this->accessToken->getIdentifier(), true)
-            ->setIssuedAt(time())
-            ->setNotBefore(time())
-            ->setExpiration($expireDateTime)
-            ->setSubject($this->accessToken->getUserIdentifier())
-            ->set('scopes', $this->accessToken->getScopes())
-            ->sign(new Sha256(), new Key($this->pathToPrivateKey))
-            ->getToken();
+        $jwtAccessToken = $this->accessToken->convertToJWT($this->pathToPrivateKey);
 
         $responseParams = [
             'token_type'   => 'Bearer',
