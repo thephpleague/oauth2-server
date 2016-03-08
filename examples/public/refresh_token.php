@@ -44,7 +44,7 @@ $app = new App([
         );
 
         return $server;
-    }
+    },
 ]);
 
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {

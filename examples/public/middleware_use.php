@@ -69,7 +69,7 @@ $app->post('/access_token', function () {
 })->add(new AuthenticationServerMiddleware($app->getContainer()->get(Server::class)));
 
 // Secured API
-$app->group('/api', function() {
+$app->group('/api', function () {
     $this->get('/user', function (ServerRequestInterface $request, ResponseInterface $response) {
         $params = [];
 
@@ -77,7 +77,7 @@ $app->group('/api', function() {
             $params = [
                 'id'   => 1,
                 'name' => 'Alex',
-                'city' => 'London'
+                'city' => 'London',
             ];
         }
 
