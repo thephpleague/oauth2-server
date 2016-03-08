@@ -337,7 +337,7 @@ class AuthCodeGrant extends AbstractGrant
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function canRespondToRequest(ServerRequestInterface $request)
     {
