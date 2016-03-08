@@ -12,7 +12,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Zend\Diactoros\Stream;
 
-include(__DIR__ . '/../vendor/autoload.php');
+include __DIR__ . '/../vendor/autoload.php';
 
 $app = new App([
     'settings'    => [

@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Grant type interface
+ * OAuth 2.0 Grant type interface.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareInterface;
@@ -19,33 +18,26 @@ use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Grant type interface
+ * Grant type interface.
  */
 interface GrantTypeInterface extends EmitterAwareInterface
 {
     /**
-     * Set refresh token TTL
+     * Set refresh token TTL.
      *
      * @param \DateInterval $refreshTokenTTL
      */
     public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL);
 
     /**
-     * Return the grant identifier that can be used in matching up requests
+     * Return the grant identifier that can be used in matching up requests.
      *
      * @return string
      */
     public function getIdentifier();
 
     /**
-     * Details what the grant responds with
-     *
-     * @return string
-     */
-    public function respondsWith();
-
-    /**
-     * Respond to an incoming request
+     * Respond to an incoming request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface                  $request
      * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
@@ -69,40 +61,40 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
-     * @return boolean
+     * @return bool
      */
     public function canRespondToRequest(ServerRequestInterface $request);
 
     /**
-     * Set the client repository
+     * Set the client repository.
      *
      * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository);
 
     /**
-     * Set the access token repository
+     * Set the access token repository.
      *
      * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
      */
     public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository);
 
     /**
-     * Set the scope repository
+     * Set the scope repository.
      *
      * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface $scopeRepository
      */
     public function setScopeRepository(ScopeRepositoryInterface $scopeRepository);
 
     /**
-     * Set the path to the private key
+     * Set the path to the private key.
      *
      * @param string $pathToPrivateKey
      */
     public function setPathToPrivateKey($pathToPrivateKey);
 
     /**
-     * Set the path to the public key
+     * Set the path to the public key.
      *
      * @param string $pathToPublicKey
      */

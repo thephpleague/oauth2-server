@@ -11,7 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Zend\Diactoros\Stream;
 
-include(__DIR__ . '/../vendor/autoload.php');
+include __DIR__ . '/../vendor/autoload.php';
 
 $app = new App([
     'settings'    => [
@@ -42,7 +42,7 @@ $app = new App([
         );
 
         return $server;
-    }
+    },
 ]);
 
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {

@@ -1,20 +1,19 @@
 <?php
 /**
- * Public/private key encryption
+ * Public/private key encryption.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Utils;
 
 class KeyCrypt
 {
     /**
-     * Encrypt data with a private key
+     * Encrypt data with a private key.
      *
      * @param string $unencryptedData
      * @param string $pathToPrivateKey
@@ -36,7 +35,9 @@ class KeyCrypt
             $chunk = substr($unencryptedData, 0, $chunkSize);
             $unencryptedData = substr($unencryptedData, $chunkSize);
             if (openssl_private_encrypt($chunk, $encrypted, $privateKey) === false) {
+                // @codeCoverageIgnoreStart
                 throw new \LogicException('Failed to encrypt data');
+                // @codeCoverageIgnoreEnd
             }
             $output .= $encrypted;
         }
@@ -46,7 +47,7 @@ class KeyCrypt
     }
 
     /**
-     * Decrypt data with a public key
+     * Decrypt data with a public key.
      *
      * @param string $encryptedData
      * @param string $pathToPublicKey
@@ -72,7 +73,9 @@ class KeyCrypt
             $chunk = substr($encryptedData, 0, $chunkSize);
             $encryptedData = substr($encryptedData, $chunkSize);
             if (openssl_public_decrypt($chunk, $decrypted, $publicKey) === false) {
+                // @codeCoverageIgnoreStart
                 throw new \LogicException('Failed to decrypt data');
+                // @codeCoverageIgnoreEnd
             }
             $output .= $decrypted;
         }

@@ -30,17 +30,18 @@ class OAuthServerException extends \Exception
     private $redirectUri;
 
     /**
-     * Throw a new exception
+     * Throw a new exception.
      *
      * @param string      $message        Error message
+     * @param int         $code           Error code
      * @param string      $errorType      Error type
      * @param int         $httpStatusCode HTTP status code to send (default = 400)
      * @param null|string $hint           A helper hint
      * @param null|string $redirectUri    A HTTP URI to redirect the user back to
      */
-    public function __construct($message, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null)
+    public function __construct($message, $code, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null)
     {
-        parent::__construct($message);
+        parent::__construct($message, $code);
         $this->httpStatusCode = $httpStatusCode;
         $this->errorType = $errorType;
         $this->hint = $hint;
@@ -48,125 +49,89 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Invalid grant type error
-     *
-     * @param null|string $localizedError
-     * @param null|string $localizedHint
+     * Invalid grant type error.
      *
      * @return static
      */
-    public static function invalidGrantType(
-        $localizedError = null,
-        $localizedHint = null
-    ) {
-        $errorMessage = (is_null($localizedError))
-            ? 'The provided authorization grant is invalid, expired, revoked, does not match ' .
-                'the redirection URI used in the authorization request, or was issued to another client.'
-            : $localizedError;
-        $hint = (is_null($localizedHint))
-            ? 'Check the `grant_type` parameter'
-            : $localizedHint;
+    public static function invalidGrantType()
+    {
+        $errorMessage = 'The provided authorization grant is invalid, expired, revoked, does not match ' .
+            'the redirection URI used in the authorization request, or was issued to another client.';
+        $hint = 'Check the `grant_type` parameter';
 
-        return new static($errorMessage, 'invalid_grant', 400, $hint);
+        return new static($errorMessage, 1, 'invalid_grant', 400, $hint);
     }
 
     /**
-     * Unsupported grant type error
-     *
-     * @param null|string $localizedError
-     * @param null|string $localizedHint
+     * Unsupported grant type error.
      *
      * @return static
      */
-    public static function unsupportedGrantType(
-        $localizedError = null,
-        $localizedHint = null
-    ) {
-        $errorMessage = (is_null($localizedError))
-            ? 'The authorization grant type is not supported by the authorization server.'
-            : $localizedError;
-        $hint = (is_null($localizedHint))
-            ? 'Check the `grant_type` parameter'
-            : $localizedHint;
+    public static function unsupportedGrantType()
+    {
+        $errorMessage = 'The authorization grant type is not supported by the authorization server.';
+        $hint = 'Check the `grant_type` parameter';
 
-        return new static($errorMessage, 'unsupported_grant_type', 400, $hint);
+        return new static($errorMessage, 2, 'unsupported_grant_type', 400, $hint);
     }
 
     /**
-     * Invalid request error
+     * Invalid request error.
      *
      * @param string      $parameter The invalid parameter
-     * @param null|string $localizedError
-     * @param null|string $localizedHint
+     * @param string|null $hint
      *
      * @return static
      */
-    public static function invalidRequest(
-        $parameter,
-        $localizedError = null,
-        $localizedHint = null
-    ) {
-        $errorMessage = (is_null($localizedError))
-            ? 'The request is missing a required parameter, includes an invalid parameter value, ' .
-                'includes a parameter more than once, or is otherwise malformed.'
-            : $localizedError;
-        $hint = (is_null($localizedHint))
-            ? sprintf('Check the `%s` parameter', $parameter)
-            : sprintf($localizedHint, $parameter);
-
-        return new static($errorMessage, 'invalid_request', 400, $hint);
-    }
-
-    /**
-     * Invalid client error
-     *
-     * @param null|string $localizedError
-     *
-     * @return static
-     */
-    public static function invalidClient($localizedError = null)
+    public static function invalidRequest($parameter, $hint = null)
     {
-        $errorMessage = (is_null($localizedError))
-            ? 'Client authentication failed'
-            : $localizedError;
+        $errorMessage = 'The request is missing a required parameter, includes an invalid parameter value, ' .
+            'includes a parameter more than once, or is otherwise malformed.';
+        $hint = ($hint === null) ? sprintf('Check the `%s` parameter', $parameter) : $hint;
 
-        return new static($errorMessage, 'invalid_client', 401);
+        return new static($errorMessage, 3, 'invalid_request', 400, $hint);
     }
 
     /**
-     * Invalid scope error
-     *
-     * @param string      $scope          The bad scope
-     * @param null|string $localizedError A localized error message
-     * @param null|string $localizedHint  A localized error hint
-     * @param null|string $redirectUri    A HTTP URI to redirect the user back to
+     * Invalid client error.
      *
      * @return static
      */
-    public static function invalidScope($scope, $localizedError = null, $localizedHint = null, $redirectUri = null)
+    public static function invalidClient()
     {
-        $errorMessage = (is_null($localizedError))
-            ? 'The requested scope is invalid, unknown, or malformed'
-            : $localizedError;
-        $hint = (is_null($localizedHint))
-            ? sprintf('Check the `%s` scope', $scope)
-            : sprintf($localizedHint, $scope);
+        $errorMessage = 'Client authentication failed';
 
-        return new static($errorMessage, 'invalid_scope', 400, $hint, $redirectUri);
+        return new static($errorMessage, 4, 'invalid_client', 401);
     }
 
     /**
-     * Invalid credentials error
+     * Invalid scope error.
+     *
+     * @param string      $scope       The bad scope
+     * @param null|string $redirectUri A HTTP URI to redirect the user back to
+     *
+     * @return static
+     */
+    public static function invalidScope($scope, $redirectUri = null)
+    {
+        $errorMessage = 'The requested scope is invalid, unknown, or malformed';
+        $hint = sprintf('Check the `%s` scope', $scope);
+
+        return new static($errorMessage, 5, 'invalid_scope', 400, $hint, $redirectUri);
+    }
+
+    /**
+     * Invalid credentials error.
      *
      * @return static
      */
     public static function invalidCredentials()
     {
-        return new static('The user credentials were incorrect.', 'invalid_credentials', 401);
+        return new static('The user credentials were incorrect.', 6, 'invalid_credentials', 401);
     }
 
     /**
-     * Server error
+     * Server error.
      *
      * @param $hint
      *
@@ -176,26 +141,27 @@ class OAuthServerException extends \Exception
     {
         return new static(
             'The authorization server encountered an unexpected condition which prevented it from fulfilling'
-            . 'the request.',
+            . ' the request: ' . $hint,
+            7,
             'server_error',
-            500,
-            $hint
+            500
         );
     }
 
     /**
-     * Invalid refresh token
+     * Invalid refresh token.
      *
      * @param string|null $hint
+     *
      * @return static
      */
     public static function invalidRefreshToken($hint = null)
     {
-        return new static('The refresh token is invalid.', 'invalid_request', 400, $hint);
+        return new static('The refresh token is invalid.', 8, 'invalid_request', 400, $hint);
     }
 
     /**
-     * Access denied
+     * Access denied.
      *
      * @param string|null $hint
      * @param string|null $redirectUri
@@ -206,6 +172,7 @@ class OAuthServerException extends \Exception
     {
         return new static(
             'The resource owner or authorization server denied the request.',
+            9,
             'access_denied',
             401,
             $hint,
@@ -222,13 +189,15 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Generate a HTTP response
+     * Generate a HTTP response.
      *
      * @param \Psr\Http\Message\ResponseInterface $response
+     * @param bool                                $useFragment True if errors should be in the URI fragment instead of
+     *                                                         query string
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function generateHttpResponse(ResponseInterface $response = null)
+    public function generateHttpResponse(ResponseInterface $response = null, $useFragment = false)
     {
         if (!$response instanceof ResponseInterface) {
             $response = new Response();
@@ -238,7 +207,7 @@ class OAuthServerException extends \Exception
 
         $payload = [
             'error'   => $this->errorType,
-            'message' => $this->getMessage()
+            'message' => $this->getMessage(),
         ];
 
         if ($this->hint !== null) {
@@ -249,9 +218,15 @@ class OAuthServerException extends \Exception
             $redirectUri = new Uri($this->redirectUri);
             parse_str($redirectUri->getQuery(), $redirectPayload);
 
-            $headers['Location'] = (string) $redirectUri->withQuery(http_build_query(
-                array_merge($redirectPayload, $payload)
-            ));
+            if ($useFragment === true) {
+                $headers['Location'] = (string) $redirectUri->withFragment(http_build_query(
+                    array_merge($redirectPayload, $payload)
+                ));
+            } else {
+                $headers['Location'] = (string) $redirectUri->withQuery(http_build_query(
+                    array_merge($redirectPayload, $payload)
+                ));
+            }
         }
 
         foreach ($headers as $header => $content) {
@@ -264,14 +239,14 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Get all headers that have to be send with the error response
+     * Get all headers that have to be send with the error response.
      *
      * @return array Array with header values
      */
     public function getHttpHeaders()
     {
         $headers = [
-            'Content-type' => 'application/json'
+            'Content-type' => 'application/json',
         ];
 
         // Add "WWW-Authenticate" header
@@ -312,12 +287,20 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Returns the HTTP status code to send when the exceptions is output
+     * Returns the HTTP status code to send when the exceptions is output.
      *
      * @return int
      */
     public function getHttpStatusCode()
     {
         return $this->httpStatusCode;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getHint()
+    {
+        return $this->hint;
     }
 }

@@ -1,16 +1,19 @@
 <?php
+
 namespace League\OAuth2\Server\Entities\Interfaces;
 
 interface ScopeEntityInterface extends \JsonSerializable
 {
     /**
-     * Get the scope's identifier
+     * Get the scope's identifier.
+     *
      * @return string
      */
     public function getIdentifier();
 
     /**
-     * Set the scope's identifier
+     * Set the scope's identifier.
+     *
      * @param $identifier
      */
     public function setIdentifier($identifier);

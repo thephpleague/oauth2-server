@@ -14,7 +14,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Zend\Diactoros\Stream;
 
-include(__DIR__ . '/../vendor/autoload.php');
+include __DIR__ . '/../vendor/autoload.php';
 
 $app = new App([
     'settings'    => [
@@ -55,6 +55,22 @@ $app = new App([
         return $server;
     },
 ]);
+
+$app->any('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
+    /* @var \League\OAuth2\Server\Server $server */
+    $server = $app->getContainer()->get(Server::class);
+
+    try {
+        return $server->respondToRequest($request, $response);
+    } catch (OAuthServerException $exception) {
+        return $exception->generateHttpResponse($response);
+    } catch (\Exception $exception) {
+        $body = new Stream('php://temp', 'r+');
+        $body->write($exception->getMessage());
+
+        return $response->withStatus(500)->withBody($body);
+    }
+});
 
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
     /* @var \League\OAuth2\Server\Server $server */
