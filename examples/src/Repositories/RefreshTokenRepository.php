@@ -7,9 +7,8 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
-
     /**
-     * Create a new refresh token_name
+     * Create a new refresh token_name.
      *
      * @param \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface $refreshTokenEntityInterface
      */
@@ -19,7 +18,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     }
 
     /**
-     * Revoke the refresh token
+     * Revoke the refresh token.
      *
      * @param string $tokenId
      */
@@ -29,7 +28,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     }
 
     /**
-     * Check if the refresh token has been revoked
+     * Check if the refresh token has been revoked.
      *
      * @param string $tokenId
      *

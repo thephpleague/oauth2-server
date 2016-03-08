@@ -1,19 +1,16 @@
 <?php
 /**
- * OAuth 2.0 Bearer Token Type
+ * OAuth 2.0 Bearer Token Type.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\ResponseTypes;
 
-use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -30,20 +27,11 @@ class BearerTokenResponse extends AbstractResponseType
     {
         $expireDateTime = $this->accessToken->getExpiryDateTime()->getTimestamp();
 
-        $jwtAccessToken = (new Builder())
-            ->setAudience($this->accessToken->getClient()->getIdentifier())
-            ->setId($this->accessToken->getIdentifier(), true)
-            ->setIssuedAt(time())
-            ->setNotBefore(time())
-            ->setExpiration($expireDateTime)
-            ->setSubject($this->accessToken->getUserIdentifier())
-            ->set('scopes', $this->accessToken->getScopes())
-            ->sign(new Sha256(), new Key($this->pathToPrivateKey))
-            ->getToken();
+        $jwtAccessToken = $this->accessToken->convertToJWT($this->pathToPrivateKey);
 
         $responseParams = [
             'token_type'   => 'Bearer',
-            'expires_in'   => $expireDateTime - (new \DateTime)->getTimestamp(),
+            'expires_in'   => $expireDateTime - (new \DateTime())->getTimestamp(),
             'access_token' => (string) $jwtAccessToken,
         ];
 

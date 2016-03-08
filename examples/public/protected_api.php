@@ -2,16 +2,14 @@
 
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Server;
-
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
-
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-include(__DIR__ . '/../vendor/autoload.php');
+include __DIR__ . '/../vendor/autoload.php';
 
 // App
 $app = new App([
@@ -38,7 +36,7 @@ $app = new App([
         );
 
         return $server;
-    }
+    },
 ]);
 
 $app->add(new ResourceServerMiddleware($app->getContainer()->get(Server::class)));
@@ -50,7 +48,7 @@ $app->post('/api/example', function (Request $request, Response $response) {
         $params = [
             'id'   => 1,
             'name' => 'Alex',
-            'city' => 'London'
+            'city' => 'London',
         ];
     }
 

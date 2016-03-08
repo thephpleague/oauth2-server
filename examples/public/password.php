@@ -3,18 +3,16 @@
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Server;
-
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\RefreshTokenRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
 use OAuth2ServerExamples\Repositories\UserRepository;
-
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-include(__DIR__ . '/../vendor/autoload.php');
+include __DIR__ . '/../vendor/autoload.php';
 
 // App
 $app = new App([
@@ -46,7 +44,7 @@ $app = new App([
         );
 
         return $server;
-    }
+    },
 ]);
 
 $app->post('/access_token', function (Request $request, Response $response) {

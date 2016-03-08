@@ -1,18 +1,13 @@
 <?php
 
-namespace OAuth2ServerExamples\Entities;
+namespace LeagueTests\Stubs;
 
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 
 class UserEntity implements UserEntityInterface
 {
-    /**
-     * Return the user's identifier.
-     *
-     * @return mixed
-     */
     public function getIdentifier()
     {
-        return 1;
+        return 123;
     }
 }

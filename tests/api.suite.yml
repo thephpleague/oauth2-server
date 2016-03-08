@@ -1,8 +1,0 @@
-class_name: ApiTester
-modules:
-  enabled: [PhpBrowser, REST]
-  config:
-    PhpBrowser:
-      url: 'http://localhost:7777/'
-    REST:
-      url: 'http://localhost:7777/'

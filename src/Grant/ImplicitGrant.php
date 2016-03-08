@@ -2,13 +2,10 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use DateInterval;
 use League\Event\Event;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
-use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
@@ -17,13 +14,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
 
-class AuthCodeGrant extends AbstractGrant
+class ImplicitGrant extends AbstractGrant
 {
-    /**
-     * @var \DateInterval
-     */
-    private $authCodeTTL;
-
     /**
      * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
      */
@@ -40,25 +32,16 @@ class AuthCodeGrant extends AbstractGrant
     private $pathToAuthorizeTemplate;
 
     /**
-     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface     $authCodeRepository
-     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
-     * @param \DateInterval                                                      $authCodeTTL
-     * @param string|null                                                        $pathToLoginTemplate
-     * @param string|null                                                        $pathToAuthorizeTemplate
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface $userRepository
+     * @param string|null                                                $pathToLoginTemplate
+     * @param string|null                                                $pathToAuthorizeTemplate
      */
     public function __construct(
-        AuthCodeRepositoryInterface $authCodeRepository,
-        RefreshTokenRepositoryInterface $refreshTokenRepository,
         UserRepositoryInterface $userRepository,
-        \DateInterval $authCodeTTL,
         $pathToLoginTemplate = null,
         $pathToAuthorizeTemplate = null
     ) {
-        $this->setAuthCodeRepository($authCodeRepository);
-        $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->userRepository = $userRepository;
-        $this->authCodeTTL = $authCodeTTL;
         $this->refreshTokenTTL = new \DateInterval('P1M');
 
         $this->pathToLoginTemplate = __DIR__ . '/../ResponseTypes/DefaultTemplates/login_user';
@@ -77,16 +60,31 @@ class AuthCodeGrant extends AbstractGrant
     }
 
     /**
-     * Respond to an authorization request.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
-     *
-     * @return \Psr\Http\Message\ResponseInterface
+     * {@inheritdoc}
      */
-    protected function respondToAuthorizationRequest(
-        ServerRequestInterface $request
+    public function canRespondToRequest(ServerRequestInterface $request)
+    {
+        return (array_key_exists('response_type', $request->getQueryParams())
+            && $request->getQueryParams()['response_type'] === 'token');
+    }
+
+    /**
+     * Return the grant identifier that can be used in matching up requests.
+     *
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return 'implicit';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function respondToRequest(
+        ServerRequestInterface $request,
+        ResponseTypeInterface $responseType,
+        \DateInterval $accessTokenTTL
     ) {
         $clientId = $this->getQueryStringParameter(
             'client_id',
@@ -110,6 +108,8 @@ class AuthCodeGrant extends AbstractGrant
 
         $redirectUriParameter = $this->getQueryStringParameter('redirect_uri', $request, $client->getRedirectUri());
         if ($redirectUriParameter !== $client->getRedirectUri()) {
+            $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
+
             throw OAuthServerException::invalidClient();
         }
 
@@ -210,153 +210,32 @@ class AuthCodeGrant extends AbstractGrant
 
         // The user has either approved or denied the client, so redirect them back
         $redirectUri = new Uri($client->getRedirectUri());
-        parse_str($redirectUri->getQuery(), $redirectPayload);
+        $redirectPayload = [];
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
         if ($stateParameter !== null) {
             $redirectPayload['state'] = $stateParameter;
         }
 
-        // THe user approved the client, redirect them back with an auth code
+        // THe user approved the client, redirect them back with an access token
         if ($userHasApprovedClient === true) {
-            $authCode = $this->issueAuthCode(
-                $this->authCodeTTL,
+            $accessToken = $this->issueAccessToken(
+                $accessTokenTTL,
                 $client,
                 $userId,
-                $redirectUri,
                 $scopes
             );
 
-            $redirectPayload['code'] = KeyCrypt::encrypt(
-                json_encode(
-                    [
-                        'client_id'    => $authCode->getClient()->getIdentifier(),
-                        'redirect_uri' => $authCode->getRedirectUri(),
-                        'auth_code_id' => $authCode->getIdentifier(),
-                        'scopes'       => $authCode->getScopes(),
-                        'user_id'      => $authCode->getUserIdentifier(),
-                        'expire_time'  => (new \DateTime())->add($this->authCodeTTL)->format('U'),
-                    ]
-                ),
-                $this->pathToPrivateKey
-            );
+            $redirectPayload['access_token'] = $accessToken->convertToJWT($this->pathToPrivateKey);
+            $redirectPayload['token_type'] = 'bearer';
+            $redirectPayload['expires_in'] = time() - $accessToken->getExpiryDateTime()->getTimestamp();
 
-            return new Response\RedirectResponse($redirectUri->withQuery(http_build_query($redirectPayload)));
+            return new Response\RedirectResponse($redirectUri->withFragment(http_build_query($redirectPayload)));
         }
 
         // The user denied the client, redirect them back with an error
         $exception = OAuthServerException::accessDenied('The user denied the request', (string) $redirectUri);
 
-        return $exception->generateHttpResponse();
-    }
-
-    /**
-     * Respond to an access token request.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface                  $request
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param \DateInterval                                             $accessTokenTTL
-     *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
-     *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
-     */
-    protected function respondToAccessTokenRequest(
-        ServerRequestInterface $request,
-        ResponseTypeInterface $responseType,
-        DateInterval $accessTokenTTL
-    ) {
-        // The redirect URI is required in this request
-        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
-        if (is_null($redirectUri)) {
-            throw OAuthServerException::invalidRequest('redirect_uri');
-        }
-
-        // Validate request
-        $client = $this->validateClient($request);
-        $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
-
-        if ($encryptedAuthCode === null) {
-            throw OAuthServerException::invalidRequest('code');
-        }
-
-        // Validate the authorization code
-        try {
-            $authCodePayload = json_decode(KeyCrypt::decrypt($encryptedAuthCode, $this->pathToPublicKey));
-            if (time() > $authCodePayload->expire_time) {
-                throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
-            }
-
-            if ($this->getAuthCodeRepository()->isAuthCodeRevoked($authCodePayload->auth_code_id) === true) {
-                throw OAuthServerException::invalidRequest('code', 'Authorization code has been revoked');
-            }
-
-            if ($authCodePayload->client_id !== $client->getIdentifier()) {
-                throw OAuthServerException::invalidRequest('code', 'Authorization code was not issued to this client');
-            }
-
-            if ($authCodePayload->redirect_uri !== $redirectUri) {
-                throw OAuthServerException::invalidRequest('redirect_uri', 'Invalid redirect URI');
-            }
-        } catch (\LogicException  $e) {
-            throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code');
-        }
-
-        // Issue and persist access + refresh tokens
-        $accessToken = $this->issueAccessToken(
-            $accessTokenTTL,
-            $client,
-            $authCodePayload->user_id,
-            $authCodePayload->scopes
-        );
-        $refreshToken = $this->issueRefreshToken($accessToken);
-
-        // Inject tokens into response type
-        $responseType->setAccessToken($accessToken);
-        $responseType->setRefreshToken($refreshToken);
-
-        return $responseType;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function respondToRequest(
-        ServerRequestInterface $request,
-        ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
-    ) {
-        if (
-            array_key_exists('response_type', $request->getQueryParams())
-            && $request->getQueryParams()['response_type'] === 'code'
-        ) {
-            return $this->respondToAuthorizationRequest($request);
-        }
-
-        return $this->respondToAccessTokenRequest($request, $responseType, $accessTokenTTL);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function canRespondToRequest(ServerRequestInterface $request)
-    {
-        return
-            (
-                array_key_exists('response_type', $request->getQueryParams())
-                && $request->getQueryParams()['response_type'] === 'code'
-                && isset($request->getQueryParams()['client_id'])
-            )
-            || parent::canRespondToRequest($request);
-    }
-
-    /**
-     * Return the grant identifier that can be used in matching up requests.
-     *
-     * @return string
-     */
-    public function getIdentifier()
-    {
-        return 'authorization_code';
+        return $exception->generateHttpResponse(null, true);
     }
 }

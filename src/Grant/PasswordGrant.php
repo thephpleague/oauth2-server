@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Password grant
+ * OAuth 2.0 Password grant.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\Event;
@@ -20,7 +19,7 @@ use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Password grant class
+ * Password grant class.
  */
 class PasswordGrant extends AbstractGrant
 {
@@ -28,11 +27,6 @@ class PasswordGrant extends AbstractGrant
      * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
      */
     private $userRepository;
-
-    /**
-     * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
-     */
-    private $refreshTokenRepository;
 
     /**
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
@@ -43,13 +37,13 @@ class PasswordGrant extends AbstractGrant
         RefreshTokenRepositoryInterface $refreshTokenRepository
     ) {
         $this->userRepository = $userRepository;
-        $this->refreshTokenRepository = $refreshTokenRepository;
+        $this->setRefreshTokenRepository($refreshTokenRepository);
 
         $this->refreshTokenTTL = new \DateInterval('P1M');
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function respondToRequest(
         ServerRequestInterface $request,
@@ -58,14 +52,12 @@ class PasswordGrant extends AbstractGrant
     ) {
         // Validate request
         $client = $this->validateClient($request);
-        $user   = $this->validateUser($request);
+        $user = $this->validateUser($request);
         $scopes = $this->validateScopes($request, $client);
 
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
-        $this->accessTokenRepository->persistNewAccessToken($accessToken);
-        $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
         // Inject tokens into response
         $responseType->setAccessToken($accessToken);
@@ -77,9 +69,9 @@ class PasswordGrant extends AbstractGrant
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
-     *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
      */
     protected function validateUser(ServerRequestInterface $request)
     {
@@ -104,7 +96,7 @@ class PasswordGrant extends AbstractGrant
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getIdentifier()
     {
