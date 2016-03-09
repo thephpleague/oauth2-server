@@ -12,7 +12,7 @@ namespace League\OAuth2\Server\TemplateRenderer;
 
 use Twig_Environment;
 
-class PlatesRenderer implements RendererInterface
+class TwigRenderer implements RendererInterface
 {
     /**
      * @var \Twig_Environment
