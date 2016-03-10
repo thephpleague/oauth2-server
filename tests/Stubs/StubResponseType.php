@@ -45,8 +45,9 @@ class StubResponseType extends AbstractResponseType
     /**
      * @param ServerRequestInterface $request
      *
-     * @return \Psr\Http\Message\ServerRequestInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \Psr\Http\Message\ServerRequestInterface
      */
     public function determineAccessTokenInHeader(ServerRequestInterface $request)
     {
