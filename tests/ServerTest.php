@@ -131,7 +131,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $server->validateRequest(new ServerRequest());
+            $server->validateAuthenticatedRequest(new ServerRequest());
         } catch (OAuthServerException $e) {
             $this->assertEquals('Missing "Authorization" header', $e->getHint());
         }

@@ -95,7 +95,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
 
-        $request = $responseType->determineAccessTokenInHeader($request);
+        $request = $responseType->validateAccessToken($request);
 
         $this->assertEquals('abcdef', $request->getAttribute('oauth_access_token_id'));
         $this->assertEquals('clientName', $request->getAttribute('oauth_client_id'));
@@ -138,7 +138,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token . 'foo'));
 
         try {
-            $responseType->determineAccessTokenInHeader($request);
+            $responseType->validateAccessToken($request);
         } catch (OAuthServerException $e) {
             $this->assertEquals(
                 'Access token could not be verified',
@@ -184,7 +184,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
 
         try {
-            $responseType->determineAccessTokenInHeader($request);
+            $responseType->validateAccessToken($request);
         } catch (OAuthServerException $e) {
             $this->assertEquals(
                 'Access token has been revoked',
@@ -207,7 +207,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $request = $request->withHeader('authorization', 'Bearer blah');
 
         try {
-            $responseType->determineAccessTokenInHeader($request);
+            $responseType->validateAccessToken($request);
         } catch (OAuthServerException $e) {
             $this->assertEquals(
                 'The JWT string must have two dots',

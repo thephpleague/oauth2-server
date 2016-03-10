@@ -49,7 +49,7 @@ class StubResponseType extends AbstractResponseType
      *
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    public function determineAccessTokenInHeader(ServerRequestInterface $request)
+    public function validateAccessToken(ServerRequestInterface $request)
     {
         if ($request->getHeader('authorization')[0] === 'Basic test') {
             return $request->withAttribute('oauth_access_token_id', 'test');
