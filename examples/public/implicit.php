@@ -1,11 +1,12 @@
 <?php
 
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Server;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
+use OAuth2ServerExamples\Repositories\UserRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -20,8 +21,9 @@ $app = new App([
     Server::class => function () {
         // Init our repositories
         $clientRepository = new ClientRepository();
-        $accessTokenRepository = new AccessTokenRepository();
         $scopeRepository = new ScopeRepository();
+        $accessTokenRepository = new AccessTokenRepository();
+        $userRepository = new UserRepository();
 
         $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
         $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
@@ -35,9 +37,9 @@ $app = new App([
             $publicKeyPath
         );
 
-        // Enable the client credentials grant on the server with a token TTL of 1 hour
+        // Enable the implicit grant on the server with a token TTL of 1 hour
         $server->enableGrantType(
-            new ClientCredentialsGrant(),
+            new ImplicitGrant($userRepository),
             new \DateInterval('PT1H')
         );
 
@@ -45,7 +47,7 @@ $app = new App([
     },
 ]);
 
-$app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
+$app->any('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
     /* @var \League\OAuth2\Server\Server $server */
     $server = $app->getContainer()->get(Server::class);
 
