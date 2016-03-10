@@ -276,7 +276,9 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function getRequestParameter($parameter, ServerRequestInterface $request, $default = null)
     {
-        return (isset($request->getParsedBody()[$parameter])) ? $request->getParsedBody()[$parameter] : $default;
+        $requestParameters = (array) $request->getParsedBody();
+
+        return isset($requestParameters[$parameter]) ? $requestParameters[$parameter] : $default;
     }
 
     /**
@@ -290,7 +292,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function getQueryStringParameter($parameter, ServerRequestInterface $request, $default = null)
     {
-        return (isset($request->getQueryParams()[$parameter])) ? $request->getQueryParams()[$parameter] : $default;
+        return isset($request->getQueryParams()[$parameter]) ? $request->getQueryParams()[$parameter] : $default;
     }
 
     /**
@@ -304,13 +306,13 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function getCookieParameter($parameter, ServerRequestInterface $request, $default = null)
     {
-        return (isset($request->getCookieParams()[$parameter])) ? $request->getCookieParams()[$parameter] : $default;
+        return isset($request->getCookieParams()[$parameter]) ? $request->getCookieParams()[$parameter] : $default;
     }
 
     /**
      * Retrieve server parameter.
      *
-     * @param string|array                             $parameter
+     * @param string                                   $parameter
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param mixed                                    $default
      *
@@ -318,7 +320,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function getServerParameter($parameter, ServerRequestInterface $request, $default = null)
     {
-        return (isset($request->getServerParams()[$parameter])) ? $request->getServerParams()[$parameter] : $default;
+        return isset($request->getServerParams()[$parameter]) ? $request->getServerParams()[$parameter] : $default;
     }
 
     /**
@@ -440,7 +442,11 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function canRespondToRequest(ServerRequestInterface $request)
     {
-        return isset($request->getParsedBody()['grant_type'])
-        && $request->getParsedBody()['grant_type'] === $this->getIdentifier();
+        $requestParameters = (array) $request->getParsedBody();
+
+        return (
+            array_key_exists('grant_type', $requestParameters)
+            && $requestParameters['grant_type'] === $this->getIdentifier()
+        );
     }
 }

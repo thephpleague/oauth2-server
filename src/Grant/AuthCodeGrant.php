@@ -292,29 +292,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function canRespondToRequest(ServerRequestInterface $request)
-    {
-        return
-            (
-                isset($request->getQueryParams()['response_type'])
-                && $request->getQueryParams()['response_type'] === 'code'
-                && isset($request->getQueryParams()['client_id'])
-            ) || (parent::canRespondToRequest($request));
-    }
-
-    /**
-     * Return the grant identifier that can be used in matching up requests.
-     *
-     * @return string
-     */
-    public function getIdentifier()
-    {
-        return 'authorization_code';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function respondToRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
@@ -328,5 +305,29 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         return $this->respondToAccessTokenRequest($request, $responseType, $accessTokenTTL);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canRespondToRequest(ServerRequestInterface $request)
+    {
+        return
+            (
+                array_key_exists('response_type', $request->getQueryParams())
+                && $request->getQueryParams()['response_type'] === 'code'
+                && isset($request->getQueryParams()['client_id'])
+            )
+            || parent::canRespondToRequest($request);
+    }
+
+    /**
+     * Return the grant identifier that can be used in matching up requests.
+     *
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return 'authorization_code';
     }
 }
