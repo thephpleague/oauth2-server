@@ -11,6 +11,7 @@
             <directory suffix=".php">src</directory>
             <exclude>
                 <directory suffix=".php">src/ResponseTypes/DefaultTemplates</directory>
+                <directory suffix=".php">src/TemplateRenderer</directory>
             </exclude>
         </whitelist>
     </filter>
