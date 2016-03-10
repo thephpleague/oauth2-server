@@ -3,6 +3,7 @@
 namespace League\OAuth2\Server\Entities;
 
 use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
