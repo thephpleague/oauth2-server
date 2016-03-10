@@ -77,7 +77,7 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function determineAccessTokenInHeader(ServerRequestInterface $request)
+    public function validateAccessToken(ServerRequestInterface $request)
     {
         if ($request->hasHeader('authorization') === false) {
             throw OAuthServerException::accessDenied('Missing "Authorization" header');

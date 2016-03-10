@@ -158,9 +158,9 @@ class Server implements EmitterAwareInterface
      *
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    public function validateRequest(ServerRequestInterface $request)
+    public function validateAuthenticatedRequest(ServerRequestInterface $request)
     {
-        return $this->getResponseType()->determineAccessTokenInHeader($request);
+        return $this->getResponseType()->validateAccessToken($request);
     }
 
     /**
