@@ -35,6 +35,7 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             new Response(),
             function () {
                 $this->assertEquals('test', func_get_args()[0]->getAttribute('oauth_access_token_id'));
+
                 return func_get_args()[1];
             }
         );
@@ -69,5 +70,4 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(401, $response->getStatusCode());
     }
-
 }

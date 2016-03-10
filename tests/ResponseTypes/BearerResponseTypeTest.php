@@ -10,7 +10,6 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
@@ -136,7 +135,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $json = json_decode($response->getBody()->getContents());
 
         $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token.'foo'));
+        $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token . 'foo'));
 
         try {
             $responseType->determineAccessTokenInHeader($request);

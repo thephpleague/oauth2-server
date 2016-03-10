@@ -44,7 +44,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             [],
             [],
             [
-                'response_type' => 'token'
+                'response_type' => 'token',
             ]
         );
 
