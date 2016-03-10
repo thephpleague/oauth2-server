@@ -38,11 +38,13 @@ class ResourceServerMiddleware
             $request = $this->server->validateRequest($request);
         } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
+            // @codeCoverageIgnoreStart
         } catch (\Exception $exception) {
             $body = new Stream('php://temp', 'r+');
             $body->write($exception->getMessage());
 
             return $response->withStatus(500)->withBody($body);
+            // @codeCoverageIgnoreEnd
         }
 
         // Pass the request and response on to the next responder in the chain

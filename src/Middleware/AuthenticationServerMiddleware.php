@@ -38,11 +38,13 @@ class AuthenticationServerMiddleware
             $response = $this->server->respondToRequest($request, $response);
         } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
+            // @codeCoverageIgnoreStart
         } catch (\Exception $exception) {
             $body = new Stream('php://temp', 'r+');
             $body->write($exception->getMessage());
 
             return $response->withStatus(500)->withBody($body);
+            // @codeCoverageIgnoreEnd
         }
 
         if (in_array($response->getStatusCode(), [400, 401, 500])) {
