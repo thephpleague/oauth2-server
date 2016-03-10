@@ -5,6 +5,7 @@ namespace LeagueTests\ResponseTypes;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\ClientEntity;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
+use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
@@ -28,10 +29,14 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
 
+        $scope = new ScopeEntity();
+        $scope->setIdentifier('basic');
+
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->addScope($scope);
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
