@@ -87,7 +87,8 @@ class BearerTokenResponse extends AbstractResponseType
             }
 
             // Return the request with additional attributes
-            return $request->withAttribute('oauth_access_token', $token->getClaim('jti'))
+            return $request
+                ->withAttribute('oauth_access_token_id', $token->getClaim('jti'))
                 ->withAttribute('oauth_client_id', $token->getClaim('aud'))
                 ->withAttribute('oauth_user_id', $token->getClaim('sub'))
                 ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
