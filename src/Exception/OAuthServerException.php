@@ -49,20 +49,6 @@ class OAuthServerException extends \Exception
     }
 
     /**
-     * Invalid grant type error.
-     *
-     * @return static
-     */
-    public static function invalidGrantType()
-    {
-        $errorMessage = 'The provided authorization grant is invalid, expired, revoked, does not match ' .
-            'the redirection URI used in the authorization request, or was issued to another client.';
-        $hint = 'Check the `grant_type` parameter';
-
-        return new static($errorMessage, 1, 'invalid_grant', 400, $hint);
-    }
-
-    /**
      * Unsupported grant type error.
      *
      * @return static
@@ -206,7 +192,7 @@ class OAuthServerException extends \Exception
         $headers = $this->getHttpHeaders();
 
         $payload = [
-            'error'   => $this->errorType,
+            'error'   => $this->getErrorType(),
             'message' => $this->getMessage(),
         ];
 

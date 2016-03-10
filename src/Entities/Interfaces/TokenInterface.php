@@ -68,15 +68,6 @@ interface TokenInterface
     public function addScope(ScopeEntityInterface $scope);
 
     /**
-     * Get an associated scope by the scope's identifier.
-     *
-     * @param string $identifier
-     *
-     * @return ScopeEntityInterface|null The scope or null if not found
-     */
-    public function getScopeWithIdentifier($identifier);
-
-    /**
      * Return an array of scopes associated with the token.
      *
      * @return ScopeEntityInterface[]

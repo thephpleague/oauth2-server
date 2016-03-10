@@ -47,10 +47,6 @@ class AuthenticationServerMiddleware
             // @codeCoverageIgnoreEnd
         }
 
-        if (in_array($response->getStatusCode(), [400, 401, 500])) {
-            return $response;
-        }
-
         // Pass the request and response on to the next responder in the chain
         return $next($request, $response);
     }

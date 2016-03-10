@@ -39,18 +39,6 @@ trait TokenEntityTrait
     }
 
     /**
-     * Get an associated scope by the scope's identifier.
-     *
-     * @param string $identifier
-     *
-     * @return ScopeEntityInterface|null The scope or null if not found
-     */
-    public function getScopeWithIdentifier($identifier)
-    {
-        return (isset($this->scopes[$identifier])) ? $this->scopes[$identifier] : null;
-    }
-
-    /**
      * Return an array of scopes associated with the token.
      *
      * @return ScopeEntityInterface[]
