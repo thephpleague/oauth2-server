@@ -64,6 +64,9 @@
         }
     },
     "suggest": {
-        "league/plates": "Required for parsing authorization code templates"
+        "league/plates": "Used for parsing authorization code templates",
+        "twig/twig": "Used for parsing authorization code templates",
+        "smarty/smarty": "Used for parsing authorization code templates",
+        "mustache/mustache": "Used for parsing authorization code templates"
     }
 }

@@ -8,13 +8,13 @@ use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
-use League\Plates\Engine;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
 
-class ImplicitGrant extends AbstractGrant
+class ImplicitGrant extends AbstractAuthorizeGrant
 {
     /**
      * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
@@ -22,41 +22,22 @@ class ImplicitGrant extends AbstractGrant
     private $userRepository;
 
     /**
-     * @var null|string
-     */
-    private $pathToLoginTemplate;
-
-    /**
-     * @var null|string
-     */
-    private $pathToAuthorizeTemplate;
-
-    /**
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface $userRepository
-     * @param string|null                                                $pathToLoginTemplate
-     * @param string|null                                                $pathToAuthorizeTemplate
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface    $userRepository
+     * @param string|null                                                   $loginTemplate
+     * @param string|null                                                   $authorizeTemplate
+     * @param \League\OAuth2\Server\TemplateRenderer\RendererInterface|null $templateRenderer
      */
     public function __construct(
         UserRepositoryInterface $userRepository,
-        $pathToLoginTemplate = null,
-        $pathToAuthorizeTemplate = null
+        $loginTemplate = null,
+        $authorizeTemplate = null,
+        RendererInterface $templateRenderer = null
     ) {
         $this->userRepository = $userRepository;
         $this->refreshTokenTTL = new \DateInterval('P1M');
-
-        $this->pathToLoginTemplate = __DIR__ . '/../ResponseTypes/DefaultTemplates/login_user';
-        if ($pathToLoginTemplate !== null) {
-            $this->pathToLoginTemplate = (substr($pathToLoginTemplate, -4) === '.php')
-                ? substr($pathToLoginTemplate, 0, -4)
-                : $pathToLoginTemplate;
-        }
-
-        $this->pathToAuthorizeTemplate = __DIR__ . '/../ResponseTypes/DefaultTemplates/authorize_client';
-        if ($pathToAuthorizeTemplate !== null) {
-            $this->pathToAuthorizeTemplate = (substr($pathToAuthorizeTemplate, -4) === '.php')
-                ? substr($pathToAuthorizeTemplate, 0, -4)
-                : $pathToAuthorizeTemplate;
-        }
+        $this->loginTemplate = $loginTemplate;
+        $this->authorizeTemplate = $authorizeTemplate;
+        $this->templateRenderer = $templateRenderer;
     }
 
     /**
@@ -164,31 +145,21 @@ class ImplicitGrant extends AbstractGrant
 
         // The user hasn't logged in yet so show a login form
         if ($userId === null) {
-            $engine = new Engine(dirname($this->pathToLoginTemplate));
-            $pathParts = explode(DIRECTORY_SEPARATOR, $this->pathToLoginTemplate);
-            $html = $engine->render(
-                end($pathParts),
-                [
-                    'error'        => $loginError,
-                    'postback_uri' => (string) $postbackUri->withQuery($queryString),
-                ]
-            );
+            $html = $this->renderLoginTemplate([
+                'error'        => $loginError,
+                'postback_uri' => (string) $postbackUri->withQuery($queryString),
+            ]);
 
             return new Response\HtmlResponse($html);
         }
 
         // The user hasn't approved the client yet so show an authorize form
         if ($userId !== null && $userHasApprovedClient === null) {
-            $engine = new Engine(dirname($this->pathToAuthorizeTemplate));
-            $pathParts = explode(DIRECTORY_SEPARATOR, $this->pathToAuthorizeTemplate);
-            $html = $engine->render(
-                end($pathParts),
-                [
-                    'client'       => $client,
-                    'scopes'       => $scopes,
-                    'postback_uri' => (string) $postbackUri->withQuery($queryString),
-                ]
-            );
+            $html = $this->renderAuthorizeTemplate([
+                'client'       => $client,
+                'scopes'       => $scopes,
+                'postback_uri' => (string) $postbackUri->withQuery($queryString),
+            ]);
 
             return new Response\HtmlResponse(
                 $html,
