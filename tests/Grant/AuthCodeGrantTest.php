@@ -515,6 +515,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
+        $client->setName('Test Client');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
