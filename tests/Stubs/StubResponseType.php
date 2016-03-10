@@ -4,6 +4,7 @@ namespace LeagueTests\Stubs;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -44,11 +45,16 @@ class StubResponseType extends AbstractResponseType
     /**
      * @param ServerRequestInterface $request
      *
-     * @return ServerRequestInterface
+     * @return \Psr\Http\Message\ServerRequestInterface
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
     public function determineAccessTokenInHeader(ServerRequestInterface $request)
     {
-        // TODO: Implement determineAccessTokenInHeader() method.
+        if ($request->getHeader('authorization')[0] === 'Basic test') {
+            return $request->withAttribute('oauth_access_token_id', 'test');
+        }
+
+        throw OAuthServerException::accessDenied();
     }
 
     /**
