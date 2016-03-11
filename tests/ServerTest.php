@@ -33,9 +33,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
 
-        $response = $server->respondToRequest();
-        $this->assertTrue($response instanceof ResponseInterface);
-        $this->assertEquals(400, $response->getStatusCode());
+        try {
+            $server->respondToRequest();
+        } catch (OAuthServerException $e) {
+            $this->assertEquals('unsupported_grant_type', $e->getErrorType());
+            $this->assertEquals(400, $e->getHttpStatusCode());
+        }
     }
 
     public function testRespondToRequest()
