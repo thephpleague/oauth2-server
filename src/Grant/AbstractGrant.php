@@ -226,7 +226,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate scopes in the request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface                        $request
+     * @param string                                                          $scopes
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
      * @param string                                                          $redirectUri
      *
@@ -235,13 +235,12 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @return \League\OAuth2\Server\Entities\ScopeEntity[]
      */
     public function validateScopes(
-        ServerRequestInterface $request,
+        $scopes,
         ClientEntityInterface $client,
         $redirectUri = null
     ) {
-        $requestedScopes = $this->getRequestParameter('scope', $request);
         $scopesList = array_filter(
-            explode(self::SCOPE_DELIMITER_STRING, trim($requestedScopes)),
+            explode(self::SCOPE_DELIMITER_STRING, trim($scopes)),
             function ($scope) {
                 return !empty($scope);
             }
