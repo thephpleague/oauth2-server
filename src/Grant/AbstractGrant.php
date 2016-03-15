@@ -11,7 +11,6 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareTrait;
-use League\Event\EmitterInterface;
 use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\AuthCodeEntity;
