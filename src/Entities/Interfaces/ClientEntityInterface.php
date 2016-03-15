@@ -38,13 +38,11 @@ interface ClientEntityInterface
     public function setSecret($secret);
 
     /**
-     * Validate the secret provided by the client.
+     * Get the hashed client secret
      *
-     * @param string $submittedSecret
-     *
-     * @return bool
+     * @return string
      */
-    public function validateSecret($submittedSecret);
+    public function getSecret();
 
     /**
      * Set the client's redirect uri.
