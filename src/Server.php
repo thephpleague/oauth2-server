@@ -37,14 +37,14 @@ class Server implements EmitterAwareInterface
     protected $privateKeyPath;
 
     /**
-     * @var ResponseTypeInterface
-     */
-    protected $responseType;
-
-    /**
      * @var string
      */
     private $publicKeyPath;
+
+    /**
+     * @var ResponseTypeInterface
+     */
+    protected $responseType;
 
     /**
      * @var \League\OAuth2\Server\Repositories\ClientRepositoryInterface

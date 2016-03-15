@@ -37,7 +37,8 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     /**
      * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
      */
-    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository) {
+    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository)
+    {
         $this->accessTokenRepository = $accessTokenRepository;
     }
 
