@@ -197,7 +197,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             throw OAuthServerException::invalidRequest('client_secret', '`%s` parameter is missing');
         }
 
-        if ($client->canKeepASecret() && $client->validateSecret($clientSecret) === false) {
+        if ($client->canKeepASecret() && password_verify($clientSecret, $client->getSecret()) === false) {
             $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
             throw OAuthServerException::invalidClient();
         }
