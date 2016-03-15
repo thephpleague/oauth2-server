@@ -53,7 +53,7 @@ class ClientEntity implements ClientEntityInterface
      */
     public function setSecret($secret)
     {
-        $this->secret = $secret;
+        $this->secret = password_hash($secret, PASSWORD_DEFAULT);
     }
 
     /**
@@ -78,5 +78,15 @@ class ClientEntity implements ClientEntityInterface
     public function getRedirectUri()
     {
         return $this->redirectUri;
+    }
+
+    /**
+     * Get the hashed client secret
+     *
+     * @return string
+     */
+    public function getSecret()
+    {
+        return $this->secret;
     }
 }
