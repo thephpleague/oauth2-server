@@ -2,8 +2,8 @@
 
 namespace OAuth2ServerExamples\Repositories;
 
-use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use OAuth2ServerExamples\Entities\ScopeEntity;
 
 class ScopeRepository implements ScopeRepositoryInterface
 {
@@ -22,7 +22,7 @@ class ScopeRepository implements ScopeRepositoryInterface
         ];
 
         if (array_key_exists($scopeIdentifier, $scopes) === false) {
-            return;
+            return null;
         }
 
         $scope = new ScopeEntity();

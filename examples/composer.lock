@@ -145,21 +145,16 @@
         {
             "name": "league/oauth2-server",
             "version": "dev-V5-WIP",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thephpleague/oauth2-server.git",
-                "reference": "95919a688e29c911d1e4e83112cacd18f719700f"
-            },
             "dist": {
                 "type": "path",
-                "url": "https://api.github.com/repos/thephpleague/oauth2-server/zipball/95919a688e29c911d1e4e83112cacd18f719700f",
-                "reference": "168e7640c6e8217b7e961151de522810b3edce6e",
+                "url": "../",
+                "reference": "d635b3484bdf41b494b6e6107f88ad61f9859af7",
                 "shasum": null
             },
             "require": {
                 "lcobucci/jwt": "^3.1",
                 "league/event": "~2.1",
-                "namshi/jose": "^6.0",
+                "paragonie/random_compat": "^1.1",
                 "php": ">=5.5.9",
                 "zendframework/zend-diactoros": "~1.1"
             },
@@ -168,10 +163,14 @@
                 "lncd/oauth2": "*"
             },
             "require-dev": {
-                "codeception/codeception": "~2.0",
-                "flow/jsonpath": "0.2.*",
-                "mockery/mockery": "0.9.*",
-                "phpunit/phpunit": "4.8.*"
+                "league/plates": "^3.1",
+                "phpunit/phpunit": "^4.8"
+            },
+            "suggest": {
+                "league/plates": "Used for parsing authorization code templates",
+                "mustache/mustache": "Used for parsing authorization code templates",
+                "smarty/smarty": "Used for parsing authorization code templates",
+                "twig/twig": "Used for parsing authorization code templates"
             },
             "type": "library",
             "extra": {
@@ -186,7 +185,7 @@
             },
             "autoload-dev": {
                 "psr-4": {
-                    "LeagueTests\\": "tests/unit/"
+                    "LeagueTests\\": "tests/"
                 }
             },
             "license": [
@@ -272,66 +271,6 @@
             "time": "2015-07-09 02:14:40"
         },
         {
-            "name": "namshi/jose",
-            "version": "6.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/namshi/jose.git",
-                "reference": "0ae1eae2be4f7e31a649ab9e3b782c3aedf81ebd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/namshi/jose/zipball/0ae1eae2be4f7e31a649ab9e3b782c3aedf81ebd",
-                "reference": "0ae1eae2be4f7e31a649ab9e3b782c3aedf81ebd",
-                "shasum": ""
-            },
-            "require": {
-                "ext-date": "*",
-                "ext-hash": "*",
-                "ext-json": "*",
-                "ext-openssl": "*",
-                "ext-pcre": "*",
-                "ext-spl": "*",
-                "php": ">=5.5",
-                "phpseclib/phpseclib": "2.0.*"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.5|^5.0",
-                "satooshi/php-coveralls": "^1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Namshi\\JOSE": "src/",
-                    "Namshi\\JOSE\\Test": "test/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Alessandro Nadalin",
-                    "email": "alessandro.nadalin@gmail.com"
-                },
-                {
-                    "name": "Alessandro Cinelli (cirpo)",
-                    "email": "alessandro.cinelli@gmail.com"
-                }
-            ],
-            "description": "JSON Object Signing and Encryption library for PHP.",
-            "keywords": [
-                "JSON Web Signature",
-                "JSON Web Token",
-                "JWS",
-                "json",
-                "jwt",
-                "token"
-            ],
-            "time": "2016-01-13 10:17:13"
-        },
-        {
             "name": "nikic/fast-route",
             "version": "v0.6.0",
             "source": {
@@ -375,92 +314,52 @@
             "time": "2015-06-18 19:15:47"
         },
         {
-            "name": "phpseclib/phpseclib",
-            "version": "2.0.0",
+            "name": "paragonie/random_compat",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "a74aa9efbe61430fcb60157c8e025a48ec8ff604"
+                "url": "https://github.com/paragonie/random_compat.git",
+                "reference": "b3313b618f4edd76523572531d5d7e22fe747430"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/a74aa9efbe61430fcb60157c8e025a48ec8ff604",
-                "reference": "a74aa9efbe61430fcb60157c8e025a48ec8ff604",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/b3313b618f4edd76523572531d5d7e22fe747430",
+                "reference": "b3313b618f4edd76523572531d5d7e22fe747430",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": ">=5.2.0"
             },
             "require-dev": {
-                "phing/phing": "~2.7",
-                "phpunit/phpunit": "~4.0",
-                "sami/sami": "~2.0",
-                "squizlabs/php_codesniffer": "~2.0"
+                "phpunit/phpunit": "4.*|5.*"
             },
             "suggest": {
-                "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
-                "ext-libsodium": "SSH2/SFTP can make use of some algorithms provided by the libsodium-php extension.",
-                "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
-                "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations.",
-                "pear-pear/PHP_Compat": "Install PHP_Compat to get phpseclib working on PHP < 5.0.0."
+                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "phpseclib\\": "phpseclib/"
-                }
+                "files": [
+                    "lib/random.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                "phpseclib/"
-            ],
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Jim Wigginton",
-                    "email": "terrafrost@php.net",
-                    "role": "Lead Developer"
-                },
-                {
-                    "name": "Patrick Monnerat",
-                    "email": "pm@datasphere.ch",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Andreas Fischer",
-                    "email": "bantu@phpbb.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Hans-Jürgen Petrich",
-                    "email": "petrich@tronic-media.com",
-                    "role": "Developer"
+                    "name": "Paragon Initiative Enterprises",
+                    "email": "security@paragonie.com",
+                    "homepage": "https://paragonie.com"
                 }
             ],
-            "description": "PHP Secure Communications Library - Pure-PHP implementations of RSA, AES, SSH2, SFTP, X.509 etc.",
-            "homepage": "http://phpseclib.sourceforge.net",
+            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
             "keywords": [
-                "BigInteger",
-                "aes",
-                "asn.1",
-                "asn1",
-                "blowfish",
-                "crypto",
-                "cryptography",
-                "encryption",
-                "rsa",
-                "security",
-                "sftp",
-                "signature",
-                "signing",
-                "ssh",
-                "twofish",
-                "x.509",
-                "x509"
+                "csprng",
+                "pseudorandom",
+                "random"
             ],
-            "time": "2015-08-04 04:48:03"
+            "time": "2016-03-11 19:54:08"
         },
         {
             "name": "pimple/pimple",

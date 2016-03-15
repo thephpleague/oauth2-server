@@ -2,8 +2,8 @@
 
 namespace OAuth2ServerExamples\Repositories;
 
-use League\OAuth2\Server\Entities\ClientEntity;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use OAuth2ServerExamples\Entities\ClientEntity;
 
 class ClientRepository implements ClientRepositoryInterface
 {
@@ -22,22 +22,14 @@ class ClientRepository implements ClientRepositoryInterface
 
         // Check if client is registered
         if (array_key_exists($clientIdentifier, $clients) === false) {
-            return;
-        }
-
-        // Check if client secret is valid
-        if ($clientSecret !== null && password_verify($clientSecret, $clients[$clientIdentifier]['secret']) === false) {
-            return;
-        }
-
-        // Check if redirect URI is valid
-        if ($redirectUri !== null && $redirectUri !== $clients[$clientIdentifier]['redirect_uri']) {
-            return;
+            return null;
         }
 
         $client = new ClientEntity();
         $client->setIdentifier($clientIdentifier);
         $client->setName($clients[$clientIdentifier]['name']);
+        $client->setRedirectUri($clients[$clientIdentifier]['redirect_uri']);
+        $client->setSecret($clients[$clientIdentifier]['secret']);
 
         return $client;
     }
