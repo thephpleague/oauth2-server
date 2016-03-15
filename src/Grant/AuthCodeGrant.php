@@ -273,17 +273,27 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             if ($authCodePayload->redirect_uri !== $redirectUri) {
                 throw OAuthServerException::invalidRequest('redirect_uri', 'Invalid redirect URI');
             }
+
+            $scopes = [];
+            foreach ($authCodePayload->scopes as $scopeId) {
+                $scope = $this->scopeRepository->getScopeEntityByIdentifier(
+                    $scopeId,
+                    $this->getIdentifier(),
+                    $client->getIdentifier()
+                );
+
+                if (!$scope) {
+                    throw OAuthServerException::invalidScope($scopeId);
+                }
+
+                $scopes[] = $scope;
+            }
         } catch (\LogicException  $e) {
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code');
         }
 
         // Issue and persist access + refresh tokens
-        $accessToken = $this->issueAccessToken(
-            $accessTokenTTL,
-            $client,
-            $authCodePayload->user_id,
-            $authCodePayload->scopes
-        );
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
 
         // Inject tokens into response type

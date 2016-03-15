@@ -2,17 +2,20 @@
 
 namespace LeagueTests\Grant;
 
-use League\OAuth2\Server\Entities\ClientEntity;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\Utils\KeyCrypt;
+use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use Psr\Http\Message\ResponseInterface;
@@ -577,6 +580,10 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
@@ -590,6 +597,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');

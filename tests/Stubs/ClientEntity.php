@@ -1,9 +1,14 @@
 <?php
 
-namespace League\OAuth2\Server\Entities\Traits;
+namespace LeagueTests\Stubs;
 
-trait ClientEntityTrait
+use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
+use League\OAuth2\Server\Entities\Traits\EntityTrait;
+
+class ClientEntity implements ClientEntityInterface
 {
+    use EntityTrait;
+
     /**
      * @var string
      */

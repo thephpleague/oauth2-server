@@ -2,7 +2,6 @@
 
 namespace LeagueTests;
 
-use League\OAuth2\Server\Entities\ClientEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -14,6 +13,7 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\Server;
+use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\StubResponseType;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\ServerRequest;

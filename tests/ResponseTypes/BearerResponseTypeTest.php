@@ -3,12 +3,12 @@
 namespace LeagueTests\ResponseTypes;
 
 use League\OAuth2\Server\Entities\AccessTokenEntity;
-use League\OAuth2\Server\Entities\ClientEntity;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
-use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\ScopeEntity;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
