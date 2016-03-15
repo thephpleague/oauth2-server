@@ -15,6 +15,7 @@ use League\Event\EmitterInterface;
 use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\AuthCodeEntity;
+use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
@@ -324,22 +325,22 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an access token.
      *
-     * @param \DateInterval                                                    $tokenTTL
+     * @param \DateInterval                                                    $accessTokenTTL
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface  $client
      * @param string                                                           $userIdentifier
      * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[] $scopes
      *
-     * @return \League\OAuth2\Server\Entities\AccessTokenEntity
+     * @return \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
      */
     protected function issueAccessToken(
-        \DateInterval $tokenTTL,
+        \DateInterval $accessTokenTTL,
         ClientEntityInterface $client,
         $userIdentifier,
         array $scopes = []
     ) {
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier($this->generateUniqueIdentifier());
-        $accessToken->setExpiryDateTime((new \DateTime())->add($tokenTTL));
+        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
         $accessToken->setClient($client);
         $accessToken->setUserIdentifier($userIdentifier);
 
@@ -355,18 +356,16 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an auth code.
      *
-     * @param \DateInterval                                                    $tokenTTL
+     * @param \DateInterval                                                    $authCodeTTL
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface  $client
      * @param string                                                           $userIdentifier
      * @param string                                                           $redirectUri
      * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[] $scopes
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
-     *
-     * @return \League\OAuth2\Server\Entities\AuthCodeEntity
+     * @return \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface
      */
     protected function issueAuthCode(
-        \DateInterval $tokenTTL,
+        \DateInterval $authCodeTTL,
         ClientEntityInterface $client,
         $userIdentifier,
         $redirectUri,
@@ -374,7 +373,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     ) {
         $authCode = new AuthCodeEntity();
         $authCode->setIdentifier($this->generateUniqueIdentifier());
-        $authCode->setExpiryDateTime((new \DateTime())->add($tokenTTL));
+        $authCode->setExpiryDateTime((new \DateTime())->add($authCodeTTL));
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
         $authCode->setRedirectUri($redirectUri);
@@ -389,11 +388,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param \League\OAuth2\Server\Entities\AccessTokenEntity $accessToken
+     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessToken
      *
-     * @return \League\OAuth2\Server\Entities\RefreshTokenEntity
+     * @return \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface
      */
-    protected function issueRefreshToken(AccessTokenEntity $accessToken)
+    protected function issueRefreshToken(AccessTokenEntityInterface $accessToken)
     {
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier($this->generateUniqueIdentifier());
