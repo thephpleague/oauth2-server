@@ -17,11 +17,6 @@ use Zend\Diactoros\Uri;
 class ImplicitGrant extends AbstractAuthorizeGrant
 {
     /**
-     * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
-     */
-    private $userRepository;
-
-    /**
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface    $userRepository
      * @param string|null                                                   $loginTemplate
      * @param string|null                                                   $authorizeTemplate
@@ -33,7 +28,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         $authorizeTemplate = null,
         RendererInterface $templateRenderer = null
     ) {
-        $this->userRepository = $userRepository;
+        $this->setUserRepository($userRepository);
         $this->refreshTokenTTL = new \DateInterval('P1M');
         $this->loginTemplate = $loginTemplate;
         $this->authorizeTemplate = $authorizeTemplate;
