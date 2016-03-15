@@ -24,6 +24,7 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -58,12 +59,17 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * @var \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface
      */
-    private $authCodeRepository;
+    protected $authCodeRepository;
 
     /**
      * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
      */
-    private $refreshTokenRepository;
+    protected $refreshTokenRepository;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
+     */
+    protected $userRepository;
 
     /**
      * @var string
@@ -121,6 +127,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface $userRepository
+     */
+    public function setUserRepository(UserRepositoryInterface $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
+    /**
      * @param string $pathToPrivateKey
      */
     public function setPathToPrivateKey($pathToPrivateKey)
@@ -139,33 +153,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function setEmitter(EmitterInterface $emitter = null)
-    {
-        $this->emitter = $emitter;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
     {
         $this->refreshTokenTTL = $refreshTokenTTL;
-    }
-
-    /**
-     * @return AuthCodeRepositoryInterface
-     */
-    protected function getAuthCodeRepository()
-    {
-        return $this->authCodeRepository;
-    }
-
-    /**
-     * @return RefreshTokenRepositoryInterface
-     */
-    protected function getRefreshTokenRepository()
-    {
-        return $this->refreshTokenRepository;
     }
 
     /**

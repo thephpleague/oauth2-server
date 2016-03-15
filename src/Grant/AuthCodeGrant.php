@@ -25,11 +25,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private $authCodeTTL;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
-     */
-    private $userRepository;
-
-    /**
      * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface     $authCodeRepository
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
@@ -49,7 +44,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     ) {
         $this->setAuthCodeRepository($authCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
-        $this->userRepository = $userRepository;
+        $this->setUserRepository($userRepository);
         $this->authCodeTTL = $authCodeTTL;
         $this->refreshTokenTTL = new \DateInterval('P1M');
         $this->loginTemplate = $loginTemplate;
@@ -262,7 +257,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
             }
 
-            if ($this->getAuthCodeRepository()->isAuthCodeRevoked($authCodePayload->auth_code_id) === true) {
+            if ($this->authCodeRepository->isAuthCodeRevoked($authCodePayload->auth_code_id) === true) {
                 throw OAuthServerException::invalidRequest('code', 'Authorization code has been revoked');
             }
 

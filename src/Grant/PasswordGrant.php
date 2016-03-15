@@ -24,11 +24,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class PasswordGrant extends AbstractGrant
 {
     /**
-     * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
-     */
-    private $userRepository;
-
-    /**
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      */
@@ -36,7 +31,7 @@ class PasswordGrant extends AbstractGrant
         UserRepositoryInterface $userRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository
     ) {
-        $this->userRepository = $userRepository;
+        $this->setUserRepository($userRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
 
         $this->refreshTokenTTL = new \DateInterval('P1M');
