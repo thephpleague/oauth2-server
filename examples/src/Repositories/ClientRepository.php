@@ -22,7 +22,7 @@ class ClientRepository implements ClientRepositoryInterface
 
         // Check if client is registered
         if (array_key_exists($clientIdentifier, $clients) === false) {
-            return null;
+            return;
         }
 
         $client = new ClientEntity();
