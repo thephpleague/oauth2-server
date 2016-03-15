@@ -73,16 +73,4 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     {
         $this->refreshToken = $refreshToken;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validateAccessToken(ServerRequestInterface $request)
-    {
-        if ($request->hasHeader('authorization') === false) {
-            throw OAuthServerException::accessDenied('Missing "Authorization" header');
-        }
-
-        return $request;
-    }
 }
