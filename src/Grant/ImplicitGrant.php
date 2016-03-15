@@ -17,11 +17,6 @@ use Zend\Diactoros\Uri;
 class ImplicitGrant extends AbstractAuthorizeGrant
 {
     /**
-     * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
-     */
-    private $userRepository;
-
-    /**
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface    $userRepository
      * @param string|null                                                   $loginTemplate
      * @param string|null                                                   $authorizeTemplate
@@ -33,7 +28,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         $authorizeTemplate = null,
         RendererInterface $templateRenderer = null
     ) {
-        $this->userRepository = $userRepository;
+        $this->setUserRepository($userRepository);
         $this->refreshTokenTTL = new \DateInterval('P1M');
         $this->loginTemplate = $loginTemplate;
         $this->authorizeTemplate = $authorizeTemplate;
@@ -94,7 +89,11 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidClient();
         }
 
-        $scopes = $this->validateScopes($request, $client, $client->getRedirectUri());
+        $scopes = $this->validateScopes(
+            $this->getQueryStringParameter('scope', $request),
+            $client,
+            $client->getRedirectUri()
+        );
         $queryString = http_build_query($request->getQueryParams());
         $postbackUri = new Uri(
             sprintf(
@@ -197,7 +196,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $scopes
             );
 
-            $redirectPayload['access_token'] = $accessToken->convertToJWT($this->pathToPrivateKey);
+            $redirectPayload['access_token'] = (string) $accessToken->convertToJWT($this->pathToPrivateKey);
             $redirectPayload['token_type'] = 'bearer';
             $redirectPayload['expires_in'] = time() - $accessToken->getExpiryDateTime()->getTimestamp();
 

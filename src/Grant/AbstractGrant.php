@@ -11,20 +11,19 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareTrait;
-use League\Event\EmitterInterface;
 use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
+use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
-use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use OAuth2ServerExamples\Repositories\AuthCodeRepository;
+use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -59,12 +58,17 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * @var \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface
      */
-    private $authCodeRepository;
+    protected $authCodeRepository;
 
     /**
      * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
      */
-    private $refreshTokenRepository;
+    protected $refreshTokenRepository;
+
+    /**
+     * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
+     */
+    protected $userRepository;
 
     /**
      * @var string
@@ -122,6 +126,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface $userRepository
+     */
+    public function setUserRepository(UserRepositoryInterface $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
+    /**
      * @param string $pathToPrivateKey
      */
     public function setPathToPrivateKey($pathToPrivateKey)
@@ -140,33 +152,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function setEmitter(EmitterInterface $emitter = null)
-    {
-        $this->emitter = $emitter;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
     {
         $this->refreshTokenTTL = $refreshTokenTTL;
-    }
-
-    /**
-     * @return AuthCodeRepositoryInterface
-     */
-    protected function getAuthCodeRepository()
-    {
-        return $this->authCodeRepository;
-    }
-
-    /**
-     * @return RefreshTokenRepositoryInterface
-     */
-    protected function getRefreshTokenRepository()
-    {
-        return $this->refreshTokenRepository;
     }
 
     /**
@@ -226,22 +214,21 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate scopes in the request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface                        $request
+     * @param string                                                          $scopes
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
      * @param string                                                          $redirectUri
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
-     * @return \League\OAuth2\Server\Entities\ScopeEntity[]
+     * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[]
      */
     public function validateScopes(
-        ServerRequestInterface $request,
+        $scopes,
         ClientEntityInterface $client,
         $redirectUri = null
     ) {
-        $requestedScopes = $this->getRequestParameter('scope', $request);
         $scopesList = array_filter(
-            explode(self::SCOPE_DELIMITER_STRING, trim($requestedScopes)),
+            explode(self::SCOPE_DELIMITER_STRING, trim($scopes)),
             function ($scope) {
                 return !empty($scope);
             }
@@ -255,7 +242,7 @@ abstract class AbstractGrant implements GrantTypeInterface
                 $client->getIdentifier()
             );
 
-            if (($scope instanceof ScopeEntity) === false) {
+            if (($scope instanceof ScopeEntityInterface) === false) {
                 throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
             }
 
@@ -326,10 +313,10 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an access token.
      *
-     * @param \DateInterval                                                   $tokenTTL
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
-     * @param string                                                          $userIdentifier
-     * @param array                                                           $scopes
+     * @param \DateInterval                                                    $tokenTTL
+     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface  $client
+     * @param string                                                           $userIdentifier
+     * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[] $scopes
      *
      * @return \League\OAuth2\Server\Entities\AccessTokenEntity
      */
@@ -346,11 +333,6 @@ abstract class AbstractGrant implements GrantTypeInterface
         $accessToken->setUserIdentifier($userIdentifier);
 
         foreach ($scopes as $scope) {
-            if (is_string($scope)) {
-                $s = new ScopeEntity();
-                $s->setIdentifier($scope);
-                $scope = $s;
-            }
             $accessToken->addScope($scope);
         }
 
@@ -362,11 +344,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an auth code.
      *
-     * @param \DateInterval                                                   $tokenTTL
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
-     * @param string                                                          $userIdentifier
-     * @param string                                                          $redirectUri
-     * @param array                                                           $scopes
+     * @param \DateInterval                                                    $tokenTTL
+     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface  $client
+     * @param string                                                           $userIdentifier
+     * @param string                                                           $redirectUri
+     * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[] $scopes
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *

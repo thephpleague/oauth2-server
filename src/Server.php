@@ -128,7 +128,8 @@ class Server implements EmitterAwareInterface
         }
 
         $tokenResponse = null;
-        foreach ($this->enabledGrantTypes as $grantType) {
+        while ($tokenResponse === null && $grantType = array_shift($this->enabledGrantTypes)) {
+            /** @var \League\OAuth2\Server\Grant\GrantTypeInterface $grantType */
             if ($grantType->canRespondToRequest($request)) {
                 $tokenResponse = $grantType->respondToRequest(
                     $request,
@@ -142,11 +143,11 @@ class Server implements EmitterAwareInterface
             return $tokenResponse;
         }
 
-        if ($tokenResponse instanceof ResponseTypeInterface === false) {
-            return OAuthServerException::unsupportedGrantType()->generateHttpResponse($response);
+        if ($tokenResponse instanceof ResponseTypeInterface) {
+            return $tokenResponse->generateHttpResponse($response);
         }
 
-        return $tokenResponse->generateHttpResponse($response);
+        throw OAuthServerException::unsupportedGrantType();
     }
 
     /**

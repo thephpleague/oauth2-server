@@ -4,17 +4,17 @@ namespace LeagueTests\Grant;
 
 use League\Event\Emitter;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
-use League\OAuth2\Server\Entities\ClientEntity;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
-use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\ScopeEntity;
 use Zend\Diactoros\ServerRequest;
 
 class AbstractGrantTest extends \PHPUnit_Framework_TestCase
@@ -343,14 +343,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setScopeRepository($scopeRepositoryMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'scope' => 'basic   ',
-            ]
-        );
-
-        $this->assertEquals([$scope], $grantMock->validateScopes($serverRequest, new ClientEntity()));
+        $this->assertEquals([$scope], $grantMock->validateScopes('basic   ', new ClientEntity()));
     }
 
     /**
@@ -365,14 +358,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setScopeRepository($scopeRepositoryMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'scope' => 'basic   ',
-            ]
-        );
-
-        $grantMock->validateScopes($serverRequest, new ClientEntity());
+        $grantMock->validateScopes('basic   ', new ClientEntity());
     }
 
     public function testGenerateUniqueIdentifier()

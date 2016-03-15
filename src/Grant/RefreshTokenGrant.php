@@ -11,7 +11,6 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\Event;
-use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -44,13 +43,20 @@ class RefreshTokenGrant extends AbstractGrant
         // Validate request
         $client = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
-        $scopes = $this->validateScopes($request, $client);
+        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request), $client);
 
         // If no new scopes are requested then give the access token the original session scopes
         if (count($scopes) === 0) {
-            $scopes = array_map(function ($scopeId) {
-                $scope = new ScopeEntity();
-                $scope->setIdentifier($scopeId);
+            $scopes = array_map(function ($scopeId) use ($client) {
+                $scope = $this->scopeRepository->getScopeEntityByIdentifier(
+                    $scopeId,
+                    $this->getIdentifier(),
+                    $client->getIdentifier()
+                );
+
+                if (!$scope) {
+                    throw OAuthServerException::invalidScope($scopeId);
+                }
 
                 return $scope;
             }, $oldRefreshToken['scopes']);
@@ -68,13 +74,13 @@ class RefreshTokenGrant extends AbstractGrant
 
         // Expire old tokens
         $this->accessTokenRepository->revokeAccessToken($oldRefreshToken['access_token_id']);
-        $this->getRefreshTokenRepository()->revokeRefreshToken($oldRefreshToken['refresh_token_id']);
+        $this->refreshTokenRepository->revokeRefreshToken($oldRefreshToken['refresh_token_id']);
 
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $oldRefreshToken['user_id'], $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
         $this->accessTokenRepository->persistNewAccessToken($accessToken);
-        $this->getRefreshTokenRepository()->persistNewRefreshToken($refreshToken);
+        $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
         // Inject tokens into response
         $responseType->setAccessToken($accessToken);
@@ -120,7 +126,7 @@ class RefreshTokenGrant extends AbstractGrant
             throw OAuthServerException::invalidRefreshToken('Token has expired');
         }
 
-        if ($this->getRefreshTokenRepository()->isRefreshTokenRevoked($refreshTokenData['refresh_token_id']) === true) {
+        if ($this->refreshTokenRepository->isRefreshTokenRevoked($refreshTokenData['refresh_token_id']) === true) {
             throw OAuthServerException::invalidRefreshToken('Token has been revoked');
         }
 
