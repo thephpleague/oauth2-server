@@ -14,7 +14,6 @@ use League\Event\Event;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
-use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -55,7 +54,9 @@ class RefreshTokenGrant extends AbstractGrant
                 );
 
                 if (!$scope) {
+                    // @codeCoverageIgnoreStart
                     throw OAuthServerException::invalidScope($scopeId);
+                    // @codeCoverageIgnoreEnd
                 }
 
                 return $scope;
@@ -106,7 +107,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         // Validate refresh token
         try {
-            $refreshToken = KeyCrypt::decrypt($encryptedRefreshToken, $this->pathToPublicKey);
+            $refreshToken = $this->decrypt($encryptedRefreshToken);
         } catch (\LogicException $e) {
             throw OAuthServerException::invalidRefreshToken('Cannot parse refresh token: ' . $e->getMessage());
         }

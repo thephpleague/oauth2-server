@@ -9,7 +9,6 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\TemplateRenderer\RendererInterface;
-use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
@@ -113,7 +112,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         $oauthCookie = $this->getCookieParameter('oauth_authorize_request', $request, null);
         if ($oauthCookie !== null) {
             try {
-                $oauthCookiePayload = json_decode(KeyCrypt::decrypt($oauthCookie, $this->pathToPublicKey));
+                $oauthCookiePayload = json_decode($this->decrypt($oauthCookie));
                 if (is_object($oauthCookiePayload)) {
                     $userId = $oauthCookiePayload->user_id;
                 }
@@ -166,11 +165,10 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 [
                     'Set-Cookie' => sprintf(
                         'oauth_authorize_request=%s; Expires=%s',
-                        urlencode(KeyCrypt::encrypt(
+                        urlencode($this->encrypt(
                             json_encode([
                                 'user_id' => $userId,
-                            ]),
-                            $this->pathToPrivateKey
+                            ])
                         )),
                         (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
                     ),
@@ -196,7 +194,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $scopes
             );
 
-            $redirectPayload['access_token'] = (string) $accessToken->convertToJWT($this->pathToPrivateKey);
+            $redirectPayload['access_token'] = (string) $accessToken->convertToJWT($this->privateKeyPath);
             $redirectPayload['token_type'] = 'bearer';
             $redirectPayload['expires_in'] = time() - $accessToken->getExpiryDateTime()->getTimestamp();
 

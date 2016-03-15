@@ -12,6 +12,7 @@ namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareTrait;
 use League\Event\Event;
+use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
@@ -32,6 +33,7 @@ use Psr\Http\Message\ServerRequestInterface;
 abstract class AbstractGrant implements GrantTypeInterface
 {
     use EmitterAwareTrait;
+    use CryptTrait;
 
     const SCOPE_DELIMITER_STRING = ' ';
 
@@ -41,17 +43,17 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $request;
 
     /**
-     * @var ClientRepositoryInterface
+     * @var \League\OAuth2\Server\Repositories\ClientRepositoryInterface
      */
     protected $clientRepository;
 
     /**
-     * @var AccessTokenRepositoryInterface
+     * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
      */
     protected $accessTokenRepository;
 
     /**
-     * @var ScopeRepositoryInterface
+     * @var \League\OAuth2\Server\Repositories\ScopeRepositoryInterface
      */
     protected $scopeRepository;
 
@@ -69,16 +71,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
      */
     protected $userRepository;
-
-    /**
-     * @var string
-     */
-    protected $pathToPrivateKey;
-
-    /**
-     * @var string
-     */
-    protected $pathToPublicKey;
 
     /**
      * @var \DateInterval
@@ -110,14 +102,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
-     */
-    public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository)
-    {
-        $this->refreshTokenRepository = $refreshTokenRepository;
-    }
-
-    /**
      * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface $authCodeRepository
      */
     public function setAuthCodeRepository(AuthCodeRepositoryInterface $authCodeRepository)
@@ -126,27 +110,19 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     */
+    public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository)
+    {
+        $this->refreshTokenRepository = $refreshTokenRepository;
+    }
+
+    /**
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface $userRepository
      */
     public function setUserRepository(UserRepositoryInterface $userRepository)
     {
         $this->userRepository = $userRepository;
-    }
-
-    /**
-     * @param string $pathToPrivateKey
-     */
-    public function setPathToPrivateKey($pathToPrivateKey)
-    {
-        $this->pathToPrivateKey = $pathToPrivateKey;
-    }
-
-    /**
-     * @param string $pathToPublicKey
-     */
-    public function setPathToPublicKey($pathToPublicKey)
-    {
-        $this->pathToPublicKey = $pathToPublicKey;
     }
 
     /**
