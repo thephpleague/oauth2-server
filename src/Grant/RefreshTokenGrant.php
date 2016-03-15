@@ -11,7 +11,6 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\Event;
-use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -48,9 +47,16 @@ class RefreshTokenGrant extends AbstractGrant
 
         // If no new scopes are requested then give the access token the original session scopes
         if (count($scopes) === 0) {
-            $scopes = array_map(function ($scopeId) {
-                $scope = new ScopeEntity();
-                $scope->setIdentifier($scopeId);
+            $scopes = array_map(function ($scopeId) use ($client) {
+                $scope = $this->scopeRepository->getScopeEntityByIdentifier(
+                    $scopeId,
+                    $this->getIdentifier(),
+                    $client->getIdentifier()
+                );
+
+                if (!$scope) {
+                    throw OAuthServerException::invalidScope($scopeId);
+                }
 
                 return $scope;
             }, $oldRefreshToken['scopes']);

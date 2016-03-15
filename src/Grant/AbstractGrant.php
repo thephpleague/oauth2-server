@@ -16,15 +16,14 @@ use League\Event\Event;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
+use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
-use League\OAuth2\Server\Entities\ScopeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use OAuth2ServerExamples\Repositories\AuthCodeRepository;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -232,7 +231,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
-     * @return \League\OAuth2\Server\Entities\ScopeEntity[]
+     * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[]
      */
     public function validateScopes(
         $scopes,
@@ -254,7 +253,7 @@ abstract class AbstractGrant implements GrantTypeInterface
                 $client->getIdentifier()
             );
 
-            if (($scope instanceof ScopeEntity) === false) {
+            if (($scope instanceof ScopeEntityInterface) === false) {
                 throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
             }
 
@@ -325,10 +324,10 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an access token.
      *
-     * @param \DateInterval                                                   $tokenTTL
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
-     * @param string                                                          $userIdentifier
-     * @param array                                                           $scopes
+     * @param \DateInterval                                                    $tokenTTL
+     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface  $client
+     * @param string                                                           $userIdentifier
+     * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[] $scopes
      *
      * @return \League\OAuth2\Server\Entities\AccessTokenEntity
      */
@@ -345,11 +344,6 @@ abstract class AbstractGrant implements GrantTypeInterface
         $accessToken->setUserIdentifier($userIdentifier);
 
         foreach ($scopes as $scope) {
-            if (is_string($scope)) {
-                $s = new ScopeEntity();
-                $s->setIdentifier($scope);
-                $scope = $s;
-            }
             $accessToken->addScope($scope);
         }
 
@@ -361,11 +355,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an auth code.
      *
-     * @param \DateInterval                                                   $tokenTTL
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
-     * @param string                                                          $userIdentifier
-     * @param string                                                          $redirectUri
-     * @param array                                                           $scopes
+     * @param \DateInterval                                                    $tokenTTL
+     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface  $client
+     * @param string                                                           $userIdentifier
+     * @param string                                                           $redirectUri
+     * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[] $scopes
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
