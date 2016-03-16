@@ -71,7 +71,7 @@ trait CryptTrait
         while ($unencryptedData) {
             $chunk = substr($unencryptedData, 0, $chunkSize);
             $unencryptedData = substr($unencryptedData, $chunkSize);
-            if (openssl_private_encrypt($chunk, $encrypted, $privateKey) === false) {
+            if (openssl_private_encrypt($chunk, $encrypted, $privateKey, OPENSSL_PKCS1_OAEP_PADDING) === false) {
                 // @codeCoverageIgnoreStart
                 throw new \LogicException('Failed to encrypt data');
                 // @codeCoverageIgnoreEnd
@@ -108,7 +108,7 @@ trait CryptTrait
         while ($encryptedData) {
             $chunk = substr($encryptedData, 0, $chunkSize);
             $encryptedData = substr($encryptedData, $chunkSize);
-            if (openssl_public_decrypt($chunk, $decrypted, $publicKey) === false) {
+            if (openssl_public_decrypt($chunk, $decrypted, $publicKey, OPENSSL_PKCS1_OAEP_PADDING) === false) {
                 // @codeCoverageIgnoreStart
                 throw new \LogicException('Failed to decrypt data');
                 // @codeCoverageIgnoreEnd
