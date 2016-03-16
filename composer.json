@@ -6,13 +6,14 @@
     "require": {
         "php": ">=5.5.9",
         "league/event": "~2.1",
-        "zendframework/zend-diactoros": "~1.1",
+        "psr/http-message": "~1.0",
         "lcobucci/jwt": "^3.1",
         "paragonie/random_compat": "^1.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",
-        "league/plates": "^3.1"
+        "league/plates": "^3.1",
+        "zendframework/zend-diactoros": "~1.1"
     },
     "repositories": [
         {
