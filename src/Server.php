@@ -37,14 +37,14 @@ class Server implements EmitterAwareInterface
     protected $privateKeyPath;
 
     /**
-     * @var ResponseTypeInterface
-     */
-    protected $responseType;
-
-    /**
      * @var string
      */
     private $publicKeyPath;
+
+    /**
+     * @var ResponseTypeInterface
+     */
+    protected $responseType;
 
     /**
      * @var \League\OAuth2\Server\Repositories\ClientRepositoryInterface
@@ -82,9 +82,17 @@ class Server implements EmitterAwareInterface
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
         $this->scopeRepository = $scopeRepository;
-        $this->privateKeyPath = $privateKeyPath;
-        $this->publicKeyPath = $publicKeyPath;
         $this->responseType = $responseType;
+
+        if (strpos($privateKeyPath, 'file://') !== 0) {
+            $privateKeyPath = 'file://' . $privateKeyPath;
+        }
+        $this->privateKeyPath = $privateKeyPath;
+
+        if (strpos($publicKeyPath, 'file://') !== 0) {
+            $publicKeyPath = 'file://' . $publicKeyPath;
+        }
+        $this->publicKeyPath = $publicKeyPath;
     }
 
     /**
@@ -98,8 +106,8 @@ class Server implements EmitterAwareInterface
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
-        $grantType->setPathToPrivateKey($this->privateKeyPath);
-        $grantType->setPathToPublicKey($this->publicKeyPath);
+        $grantType->setPrivateKeyPath($this->privateKeyPath);
+        $grantType->setPublicKeyPath($this->publicKeyPath);
         $grantType->setEmitter($this->getEmitter());
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
@@ -172,12 +180,11 @@ class Server implements EmitterAwareInterface
     protected function getResponseType()
     {
         if (!$this->responseType instanceof ResponseTypeInterface) {
-            $this->responseType = new BearerTokenResponse(
-                $this->privateKeyPath,
-                $this->publicKeyPath,
-                $this->accessTokenRepository
-            );
+            $this->responseType = new BearerTokenResponse($this->accessTokenRepository);
         }
+
+        $this->responseType->setPrivateKeyPath($this->privateKeyPath);
+        $this->responseType->setPublicKeyPath($this->publicKeyPath);
 
         return $this->responseType;
     }

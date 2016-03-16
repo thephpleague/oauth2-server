@@ -12,8 +12,8 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
-use League\OAuth2\Server\Utils\KeyCrypt;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
@@ -22,6 +22,16 @@ use Zend\Diactoros\ServerRequest;
 
 class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * CryptTrait stub
+     */
+    protected $cryptStub;
+
+    public function setUp()
+    {
+        $this->cryptStub = new CryptTraitStub;
+    }
+
     public function testGetIdentifier()
     {
         $grant = new AuthCodeGrant(
@@ -82,8 +92,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ''
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -96,9 +106,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => KeyCrypt::encrypt(
-                    json_encode(['user_id' => 123]),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
+                    json_encode(['user_id' => 123])
                 ),
             ],
             [
@@ -139,8 +148,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ''
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -153,9 +162,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => KeyCrypt::encrypt(
-                    json_encode(['user_id' => 123]),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
+                    json_encode(['user_id' => 123])
                 ),
             ],
             [
@@ -201,8 +209,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ''
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -215,9 +223,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => KeyCrypt::encrypt(
-                    json_encode(['user_id' => 123]),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
+                    json_encode(['user_id' => 123])
                 ),
             ],
             [
@@ -252,8 +259,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -266,9 +273,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => KeyCrypt::encrypt(
-                    json_encode(['user_id' => 123]),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
+                    json_encode(['user_id' => 123])
                 ),
             ],
             [
@@ -307,8 +313,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -321,9 +327,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => KeyCrypt::encrypt(
-                    json_encode(['user_id' => 123]),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
+                    json_encode(['user_id' => 123])
                 ),
             ],
             [
@@ -370,8 +375,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ''
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -422,8 +427,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ''
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -436,9 +441,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => KeyCrypt::encrypt(
-                    json_encode(['user_id' => null]),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
+                    json_encode(['user_id' => null])
                 ),
             ],
             [
@@ -476,8 +480,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -490,9 +494,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => KeyCrypt::encrypt(
-                    json_encode(['user_id' => null]),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
+                    json_encode(['user_id' => null])
                 ),
             ],
             [
@@ -532,8 +535,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -546,9 +549,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => KeyCrypt::encrypt(
-                    json_encode(['user_id' => 123]),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
+                    json_encode(['user_id' => 123])
                 ),
             ],
             [
@@ -599,8 +601,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [],
@@ -615,7 +617,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
-                'code'         => KeyCrypt::encrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
                             'auth_code_id' => uniqid(),
@@ -625,8 +627,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                             'scopes'       => ['foo'],
                             'redirect_uri' => 'http://foo/bar',
                         ]
-                    ),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                    )
                 ),
             ]
         );
@@ -658,8 +659,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [],
@@ -704,8 +705,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [],
@@ -755,8 +756,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [],
@@ -771,7 +772,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
-                'code'         => KeyCrypt::encrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
                             'auth_code_id' => uniqid(),
@@ -781,8 +782,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                             'scopes'       => ['foo'],
                             'redirect_uri' => 'http://foo/bar',
                         ]
-                    ),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                    )
                 ),
             ]
         );
@@ -825,8 +825,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [],
@@ -841,7 +841,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
-                'code'         => KeyCrypt::encrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
                             'auth_code_id' => uniqid(),
@@ -851,8 +851,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                             'scopes'       => ['foo'],
                             'redirect_uri' => 'http://foo/bar',
                         ]
-                    ),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                    )
                 ),
             ]
         );
@@ -892,8 +891,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [],
@@ -908,7 +907,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
-                'code'         => KeyCrypt::encrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
                             'auth_code_id' => uniqid(),
@@ -918,8 +917,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                             'scopes'       => ['foo'],
                             'redirect_uri' => 'http://foo/bar',
                         ]
-                    ),
-                    'file://' . __DIR__ . '/../Utils/private.key'
+                    )
                 ),
             ]
         );
@@ -959,8 +957,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
-        $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
+        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [],

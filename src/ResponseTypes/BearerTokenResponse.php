@@ -14,7 +14,6 @@ use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -27,7 +26,7 @@ class BearerTokenResponse extends AbstractResponseType
     {
         $expireDateTime = $this->accessToken->getExpiryDateTime()->getTimestamp();
 
-        $jwtAccessToken = $this->accessToken->convertToJWT($this->pathToPrivateKey);
+        $jwtAccessToken = $this->accessToken->convertToJWT($this->privateKeyPath);
 
         $responseParams = [
             'token_type'   => 'Bearer',
@@ -36,7 +35,7 @@ class BearerTokenResponse extends AbstractResponseType
         ];
 
         if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
-            $refreshToken = KeyCrypt::encrypt(
+            $refreshToken = $this->encrypt(
                 json_encode(
                     [
                         'client_id'        => $this->accessToken->getClient()->getIdentifier(),
@@ -46,8 +45,7 @@ class BearerTokenResponse extends AbstractResponseType
                         'user_id'          => $this->accessToken->getUserIdentifier(),
                         'expire_time'      => $expireDateTime,
                     ]
-                ),
-                $this->pathToPrivateKey
+                )
             );
 
             $responseParams['refresh_token'] = $refreshToken;
@@ -79,7 +77,7 @@ class BearerTokenResponse extends AbstractResponseType
         try {
             // Attempt to parse and validate the JWT
             $token = (new Parser())->parse($jwt);
-            if ($token->verify(new Sha256(), $this->pathToPublicKey) === false) {
+            if ($token->verify(new Sha256(), $this->publicKeyPath) === false) {
                 throw OAuthServerException::accessDenied('Access token could not be verified');
             }
 

@@ -19,11 +19,9 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
-        $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Utils/private.key',
-            'file://' . __DIR__ . '/../Utils/public.key',
-            $accessTokenRepositoryMock
-        );
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -65,11 +63,9 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
-        $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Utils/private.key',
-            'file://' . __DIR__ . '/../Utils/public.key',
-            $accessTokenRepositoryMock
-        );
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -107,11 +103,9 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
-        $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Utils/private.key',
-            'file://' . __DIR__ . '/../Utils/public.key',
-            $accessTokenRepositoryMock
-        );
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -153,11 +147,9 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock->expects($this->once())->method('isAccessTokenRevoked')->willReturn(true);
 
 
-        $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Utils/private.key',
-            'file://' . __DIR__ . '/../Utils/public.key',
-            $accessTokenRepositoryMock
-        );
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -197,11 +189,9 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
-        $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Utils/private.key',
-            'file://' . __DIR__ . '/../Utils/public.key',
-            $accessTokenRepositoryMock
-        );
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', 'Bearer blah');

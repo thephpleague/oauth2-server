@@ -12,7 +12,6 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\TemplateRenderer\RendererInterface;
-use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
@@ -113,7 +112,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $oauthCookie = $this->getCookieParameter('oauth_authorize_request', $request, null);
         if ($oauthCookie !== null) {
             try {
-                $oauthCookiePayload = json_decode(KeyCrypt::decrypt($oauthCookie, $this->pathToPublicKey));
+                $oauthCookiePayload = json_decode($this->decrypt($oauthCookie));
                 if (is_object($oauthCookiePayload)) {
                     $userId = $oauthCookiePayload->user_id;
                 }
@@ -166,11 +165,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 [
                     'Set-Cookie' => sprintf(
                         'oauth_authorize_request=%s; Expires=%s',
-                        urlencode(KeyCrypt::encrypt(
+                        urlencode($this->encrypt(
                             json_encode([
                                 'user_id' => $userId,
-                            ]),
-                            $this->pathToPrivateKey
+                            ])
                         )),
                         (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
                     ),
@@ -197,7 +195,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $scopes
             );
 
-            $redirectPayload['code'] = KeyCrypt::encrypt(
+            $redirectPayload['code'] = $this->encrypt(
                 json_encode(
                     [
                         'client_id'    => $authCode->getClient()->getIdentifier(),
@@ -207,8 +205,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                         'user_id'      => $authCode->getUserIdentifier(),
                         'expire_time'  => (new \DateTime())->add($this->authCodeTTL)->format('U'),
                     ]
-                ),
-                $this->pathToPrivateKey
+                )
             );
 
             return new Response\RedirectResponse($redirectUri->withQuery(http_build_query($redirectPayload)));
@@ -252,7 +249,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // Validate the authorization code
         try {
-            $authCodePayload = json_decode(KeyCrypt::decrypt($encryptedAuthCode, $this->pathToPublicKey));
+            $authCodePayload = json_decode($this->decrypt($encryptedAuthCode));
             if (time() > $authCodePayload->expire_time) {
                 throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
             }
@@ -278,7 +275,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 );
 
                 if (!$scope) {
+                    // @codeCoverageIgnoreStart
                     throw OAuthServerException::invalidScope($scopeId);
+                    // @codeCoverageIgnoreEnd
                 }
 
                 $scopes[] = $scope;
