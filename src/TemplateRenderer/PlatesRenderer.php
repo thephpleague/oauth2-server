@@ -12,7 +12,7 @@ namespace League\OAuth2\Server\TemplateRenderer;
 
 use League\Plates\Engine;
 
-class PlatesRenderer implements RendererInterface
+class PlatesRenderer extends AbstractRenderer
 {
     /**
      * @var \League\Plates\Engine
@@ -23,16 +23,20 @@ class PlatesRenderer implements RendererInterface
      * PlatesRenderer constructor.
      *
      * @param \League\Plates\Engine $engine
+     * @param string                $loginTemplate
+     * @param string                $authorizeTemplate
      */
-    public function __construct(Engine $engine)
+    public function __construct(Engine $engine, $loginTemplate, $authorizeTemplate)
     {
+        parent::__construct($loginTemplate, $authorizeTemplate);
+
         $this->engine = $engine;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function render($template, array $data = [])
+    protected function render($template, array $data = [])
     {
         if ($this->engine->getFileExtension()) {
             $template = preg_replace(sprintf('/\.%s$/', $this->engine->getFileExtension()), '', $template);

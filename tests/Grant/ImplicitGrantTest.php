@@ -18,22 +18,14 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetIdentifier()
     {
-        $grant = new ImplicitGrant(
-            $this->getMock(UserRepositoryInterface::class),
-            'foo/bar.php',
-            'foo/bar.php'
-        );
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
 
         $this->assertEquals('implicit', $grant->getIdentifier());
     }
 
     public function testCanRespondToRequest()
     {
-        $grant = new ImplicitGrant(
-            $this->getMock(UserRepositoryInterface::class),
-            'foo/bar.php',
-            'foo/bar.php'
-        );
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
 
         $request = new ServerRequest(
             [],
@@ -65,7 +57,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
-        $grant = new ImplicitGrant($userRepositoryMock, 'foo', 'foo');
+        $grant = new ImplicitGrant($userRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
@@ -106,11 +98,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testRespondToAuthorizationRequestMissingClientId()
     {
-        $grant = new ImplicitGrant(
-            $this->getMock(UserRepositoryInterface::class),
-            'foo/bar.php',
-            'foo/bar.php'
-        );
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
         $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
 
@@ -151,11 +139,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
-        $grant = new ImplicitGrant(
-            $this->getMock(UserRepositoryInterface::class),
-            'foo/bar.php',
-            'foo/bar.php'
-        );
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
         $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
@@ -205,11 +189,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
-        $grant = new ImplicitGrant(
-            $this->getMock(UserRepositoryInterface::class),
-            'foo/bar.php',
-            'foo/bar.php'
-        );
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
         $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');
@@ -265,11 +245,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
-        $grant = new ImplicitGrant(
-            $this->getMock(UserRepositoryInterface::class),
-            'foo/bar.php',
-            'foo/bar.php'
-        );
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
         $grant->setPathToPrivateKey('file://' . __DIR__ . '/../Utils/private.key');

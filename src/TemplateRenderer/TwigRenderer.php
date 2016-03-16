@@ -10,9 +10,7 @@
  */
 namespace League\OAuth2\Server\TemplateRenderer;
 
-use Twig_Environment;
-
-class TwigRenderer implements RendererInterface
+class TwigRenderer extends AbstractRenderer
 {
     /**
      * @var \Twig_Environment
@@ -20,19 +18,23 @@ class TwigRenderer implements RendererInterface
     private $environment;
 
     /**
-     * TwigRenderer constructor.
+     * PlatesRenderer constructor.
      *
      * @param \Twig_Environment $environment
+     * @param string            $loginTemplate
+     * @param string            $authorizeTemplate
      */
-    public function __construct(Twig_Environment $environment)
+    public function __construct(\Twig_Environment $environment, $loginTemplate, $authorizeTemplate)
     {
+        parent::__construct($loginTemplate, $authorizeTemplate);
+
         $this->environment = $environment;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function render($template, array $data = [])
+    protected function render($template, array $data = [])
     {
         return $this->environment->loadTemplate($template)->render($data);
     }
