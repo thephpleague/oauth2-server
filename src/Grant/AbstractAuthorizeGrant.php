@@ -39,4 +39,17 @@ abstract class AbstractAuthorizeGrant extends AbstractGrant
 
         return $this->templateRenderer;
     }
+
+    /**
+     * @param string $uri
+     * @param array  $params
+     * @param string $queryDelimiter
+     *
+     * @return string
+     */
+    public function makeRedirectUri($uri, $params = [], $queryDelimiter = '?')
+    {
+        $uri .= (strstr($uri, $queryDelimiter) === false) ? $queryDelimiter : '&';
+        return $uri . http_build_query($params);
+    }
 }

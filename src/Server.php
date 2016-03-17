@@ -5,6 +5,8 @@ namespace League\OAuth2\Server;
 use DateInterval;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
+use League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface;
+use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -14,8 +16,6 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
 
 class Server implements EmitterAwareInterface
 {
@@ -62,14 +62,20 @@ class Server implements EmitterAwareInterface
     private $scopeRepository;
 
     /**
+     * @var \League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface
+     */
+    private $authorizationValidator;
+
+    /**
      * New server instance.
      *
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
-     * @param string                                                            $privateKeyPath
-     * @param string                                                            $publicKeyPath
-     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface    $responseType
+     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface                  $clientRepository
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface             $accessTokenRepository
+     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface                   $scopeRepository
+     * @param string                                                                        $privateKeyPath
+     * @param string                                                                        $publicKeyPath
+     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface                $responseType
+     * @param null|\League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface $authorizationValidator
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
@@ -77,7 +83,8 @@ class Server implements EmitterAwareInterface
         ScopeRepositoryInterface $scopeRepository,
         $privateKeyPath,
         $publicKeyPath,
-        ResponseTypeInterface $responseType = null
+        ResponseTypeInterface $responseType = null,
+        AuthorizationValidatorInterface $authorizationValidator = null
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
@@ -85,6 +92,7 @@ class Server implements EmitterAwareInterface
         $this->privateKeyPath = $privateKeyPath;
         $this->publicKeyPath = $publicKeyPath;
         $this->responseType = $responseType;
+        $this->authorizationValidator = $authorizationValidator;
     }
 
     /**
@@ -98,8 +106,8 @@ class Server implements EmitterAwareInterface
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
-        $grantType->setPathToPrivateKey($this->privateKeyPath);
-        $grantType->setPathToPublicKey($this->publicKeyPath);
+        $grantType->setPrivateKeyPath($this->privateKeyPath);
+        $grantType->setPublicKeyPath($this->publicKeyPath);
         $grantType->setEmitter($this->getEmitter());
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
@@ -117,37 +125,29 @@ class Server implements EmitterAwareInterface
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function respondToRequest(ServerRequestInterface $request = null, ResponseInterface $response = null)
+    public function respondToRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
-        if (!$request instanceof ServerRequestInterface) {
-            $request = ServerRequestFactory::fromGlobals();
-        }
-
-        if (!$response instanceof ResponseInterface) {
-            $response = new Response();
-        }
-
-        $tokenResponse = null;
-        while ($tokenResponse === null && $grantType = array_shift($this->enabledGrantTypes)) {
-            /** @var \League\OAuth2\Server\Grant\GrantTypeInterface $grantType */
-            if ($grantType->canRespondToRequest($request)) {
-                $tokenResponse = $grantType->respondToRequest(
-                    $request,
-                    $this->getResponseType(),
-                    $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
-                );
+        try {
+            $tokenResponse = null;
+            while ($tokenResponse === null && $grantType = array_shift($this->enabledGrantTypes)) {
+                /** @var \League\OAuth2\Server\Grant\GrantTypeInterface $grantType */
+                if ($grantType->canRespondToRequest($request)) {
+                    $tokenResponse = $grantType->respondToRequest(
+                        $request,
+                        $this->getResponseType(),
+                        $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
+                    );
+                }
             }
-        }
 
-        if ($tokenResponse instanceof ResponseInterface) {
-            return $tokenResponse;
-        }
+            if ($tokenResponse instanceof ResponseTypeInterface) {
+                return $tokenResponse->generateHttpResponse($response);
+            }
 
-        if ($tokenResponse instanceof ResponseTypeInterface) {
-            return $tokenResponse->generateHttpResponse($response);
+            throw OAuthServerException::unsupportedGrantType();
+        } catch (OAuthServerException $e) {
+            return $e->generateHttpResponse($response);
         }
-
-        throw OAuthServerException::unsupportedGrantType();
     }
 
     /**
@@ -161,7 +161,7 @@ class Server implements EmitterAwareInterface
      */
     public function validateAuthenticatedRequest(ServerRequestInterface $request)
     {
-        return $this->getResponseType()->validateAccessToken($request);
+        return $this->getAuthorizationValidator()->validateAuthorization($request);
     }
 
     /**
@@ -172,13 +172,27 @@ class Server implements EmitterAwareInterface
     protected function getResponseType()
     {
         if (!$this->responseType instanceof ResponseTypeInterface) {
-            $this->responseType = new BearerTokenResponse(
-                $this->privateKeyPath,
-                $this->publicKeyPath,
-                $this->accessTokenRepository
-            );
+            $this->responseType = new BearerTokenResponse($this->accessTokenRepository);
         }
 
+        $this->responseType->setPublicKeyPath($this->publicKeyPath);
+        $this->responseType->setPrivateKeyPath($this->privateKeyPath);
+
         return $this->responseType;
+    }
+
+    /**
+     * @return \League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface
+     */
+    protected function getAuthorizationValidator()
+    {
+        if (!$this->authorizationValidator instanceof AuthorizationValidatorInterface) {
+            $this->authorizationValidator = new BearerTokenValidator($this->accessTokenRepository);
+        }
+
+        $this->authorizationValidator->setPublicKeyPath($this->publicKeyPath);
+        $this->authorizationValidator->setPrivateKeyPath($this->privateKeyPath);
+
+        return $this->authorizationValidator;
     }
 }

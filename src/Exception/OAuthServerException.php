@@ -3,9 +3,6 @@
 namespace League\OAuth2\Server\Exception;
 
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Uri;
 
 class OAuthServerException extends \Exception
 {
@@ -183,12 +180,8 @@ class OAuthServerException extends \Exception
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function generateHttpResponse(ResponseInterface $response = null, $useFragment = false)
+    public function generateHttpResponse(ResponseInterface $response, $useFragment = false)
     {
-        if (!$response instanceof ResponseInterface) {
-            $response = new Response();
-        }
-
         $headers = $this->getHttpHeaders();
 
         $payload = [
@@ -201,18 +194,13 @@ class OAuthServerException extends \Exception
         }
 
         if ($this->redirectUri !== null) {
-            $redirectUri = new Uri($this->redirectUri);
-            parse_str($redirectUri->getQuery(), $redirectPayload);
-
             if ($useFragment === true) {
-                $headers['Location'] = (string) $redirectUri->withFragment(http_build_query(
-                    array_merge($redirectPayload, $payload)
-                ));
+                $this->redirectUri .= (strstr($this->redirectUri, '#') === false) ? '#' : '&';
             } else {
-                $headers['Location'] = (string) $redirectUri->withQuery(http_build_query(
-                    array_merge($redirectPayload, $payload)
-                ));
+                $this->redirectUri .= (strstr($this->redirectUri, '?') === false) ? '?' : '&';
             }
+
+            return $response->withStatus(302)->withHeader('Location', $this->redirectUri . http_build_query($payload));
         }
 
         foreach ($headers as $header => $content) {
@@ -245,29 +233,14 @@ class OAuthServerException extends \Exception
         // matching the authentication scheme used by the client.
         // @codeCoverageIgnoreStart
         if ($this->errorType === 'invalid_client') {
-            $authScheme = null;
-            $request = new ServerRequest();
-            if (isset($request->getServerParams()['PHP_AUTH_USER']) &&
-                $request->getServerParams()['PHP_AUTH_USER'] !== null
+            $authScheme = 'Basic';
+            if (array_key_exists('HTTP_AUTHORIZATION', $_SERVER) !== false
+                && strpos($_SERVER['HTTP_AUTHORIZATION'], 'Bearer') === 0
             ) {
-                $authScheme = 'Basic';
-            } else {
-                $authHeader = $request->getHeader('authorization');
-                if ($authHeader !== []) {
-                    if (strpos($authHeader[0], 'Bearer') === 0) {
-                        $authScheme = 'Bearer';
-                    } elseif (strpos($authHeader[0], 'MAC') === 0) {
-                        $authScheme = 'MAC';
-                    } elseif (strpos($authHeader[0], 'Basic') === 0) {
-                        $authScheme = 'Basic';
-                    }
-                }
+                $authScheme = 'Bearer';
             }
-            if ($authScheme !== null) {
-                $headers[] = 'WWW-Authenticate: ' . $authScheme . ' realm="OAuth"';
-            }
+            $headers[] = 'WWW-Authenticate: ' . $authScheme . ' realm="OAuth"';
         }
-
         // @codeCoverageIgnoreEnd
         return $headers;
     }

@@ -12,6 +12,7 @@ namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareTrait;
 use League\Event\Event;
+use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
@@ -32,7 +33,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 abstract class AbstractGrant implements GrantTypeInterface
 {
-    use EmitterAwareTrait;
+    use EmitterAwareTrait, CryptTrait;
 
     const SCOPE_DELIMITER_STRING = ' ';
 
@@ -70,16 +71,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
      */
     protected $userRepository;
-
-    /**
-     * @var string
-     */
-    protected $pathToPrivateKey;
-
-    /**
-     * @var string
-     */
-    protected $pathToPublicKey;
 
     /**
      * @var \DateInterval
@@ -132,22 +123,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setUserRepository(UserRepositoryInterface $userRepository)
     {
         $this->userRepository = $userRepository;
-    }
-
-    /**
-     * @param string $pathToPrivateKey
-     */
-    public function setPathToPrivateKey($pathToPrivateKey)
-    {
-        $this->pathToPrivateKey = $pathToPrivateKey;
-    }
-
-    /**
-     * @param string $pathToPublicKey
-     */
-    public function setPathToPublicKey($pathToPublicKey)
-    {
-        $this->pathToPublicKey = $pathToPublicKey;
     }
 
     /**

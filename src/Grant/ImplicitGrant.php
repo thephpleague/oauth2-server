@@ -7,12 +7,11 @@ use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
+use League\OAuth2\Server\ResponseTypes\HtmlResponse;
+use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\TemplateRenderer\AbstractRenderer;
-use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Uri;
 
 class ImplicitGrant extends AbstractAuthorizeGrant
 {
@@ -86,13 +85,11 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $client,
             $client->getRedirectUri()
         );
-        $queryString = http_build_query($request->getQueryParams());
-        $postbackUri = new Uri(
-            sprintf(
-                '//%s%s',
-                $request->getServerParams()['HTTP_HOST'],
-                $request->getServerParams()['REQUEST_URI']
-            )
+
+        $postbackUri = sprintf(
+            '//%s%s',
+            $request->getServerParams()['HTTP_HOST'],
+            $request->getServerParams()['REQUEST_URI']
         );
 
         $userId = null;
@@ -105,7 +102,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         $oauthCookie = $this->getCookieParameter('oauth_authorize_request', $request, null);
         if ($oauthCookie !== null) {
             try {
-                $oauthCookiePayload = json_decode(KeyCrypt::decrypt($oauthCookie, $this->pathToPublicKey));
+                $oauthCookiePayload = json_decode($this->decrypt($oauthCookie));
                 if (is_object($oauthCookiePayload)) {
                     $userId = $oauthCookiePayload->user_id;
                 }
@@ -138,10 +135,16 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         if ($userId === null) {
             $html = $this->getTemplateRenderer()->renderLogin([
                 'error'        => $loginError,
-                'postback_uri' => (string) $postbackUri->withQuery($queryString),
+                'postback_uri' => $this->makeRedirectUri(
+                    $postbackUri,
+                    $request->getQueryParams()
+                ),
             ]);
 
-            return new Response\HtmlResponse($html);
+            $htmlResponse = new HtmlResponse($this->accessTokenRepository);
+            $htmlResponse->setStatusCode(403);
+            $htmlResponse->setHtml($html);
+            return $htmlResponse;
         }
 
         // The user hasn't approved the client yet so show an authorize form
@@ -149,25 +152,26 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $html = $this->getTemplateRenderer()->renderAuthorize([
                 'client'       => $client,
                 'scopes'       => $scopes,
-                'postback_uri' => (string) $postbackUri->withQuery($queryString),
+                'postback_uri' => $this->makeRedirectUri(
+                    $postbackUri,
+                    $request->getQueryParams()
+                )
             ]);
 
-            return new Response\HtmlResponse(
-                $html,
-                200,
-                [
-                    'Set-Cookie' => sprintf(
-                        'oauth_authorize_request=%s; Expires=%s',
-                        urlencode(KeyCrypt::encrypt(
-                            json_encode([
-                                'user_id' => $userId,
-                            ]),
-                            $this->pathToPrivateKey
-                        )),
-                        (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
-                    ),
-                ]
-            );
+            $htmlResponse = new HtmlResponse($this->accessTokenRepository);
+            $htmlResponse->setStatusCode(200);
+            $htmlResponse->setHtml($html);
+            $htmlResponse->setHeader('set-cookie', sprintf(
+                'oauth_authorize_request=%s; Expires=%s',
+                urlencode($this->encrypt(
+                    json_encode([
+                        'user_id' => $userId,
+                    ])
+                )),
+                (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
+            ));
+
+            return $htmlResponse;
         }
 
         // The user has either approved or denied the client, so redirect them back
@@ -188,11 +192,18 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $scopes
             );
 
-            $redirectPayload['access_token'] = (string) $accessToken->convertToJWT($this->pathToPrivateKey);
+            $redirectPayload['access_token'] = (string) $accessToken->convertToJWT($this->privateKeyPath);
             $redirectPayload['token_type'] = 'bearer';
             $redirectPayload['expires_in'] = time() - $accessToken->getExpiryDateTime()->getTimestamp();
 
-            return new Response\RedirectResponse($redirectUri->withFragment(http_build_query($redirectPayload)));
+            $response = new RedirectResponse($this->accessTokenRepository);
+            $response->setRedirectUri(
+                $this->makeRedirectUri(
+                    $redirectUri,
+                    $redirectPayload,
+                    '#'
+                )
+            );
         }
 
         // The user denied the client, redirect them back with an error
