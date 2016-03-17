@@ -176,7 +176,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         }
 
         // The user has either approved or denied the client, so redirect them back
-        $redirectUri = new Uri($client->getRedirectUri());
+        $redirectUri = $client->getRedirectUri();
         $redirectPayload = [];
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
@@ -208,8 +208,6 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         }
 
         // The user denied the client, redirect them back with an error
-        $exception = OAuthServerException::accessDenied('The user denied the request', (string) $redirectUri);
-
-        return $exception->generateHttpResponse(null, true);
+        throw OAuthServerException::accessDenied('The user denied the request', (string) $redirectUri);
     }
 }

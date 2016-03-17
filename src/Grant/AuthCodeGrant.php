@@ -282,7 +282,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 );
 
                 if (!$scope) {
+                    // @codeCoverageIgnoreStart
                     throw OAuthServerException::invalidScope($scopeId);
+                    // @codeCoverageIgnoreEnd
                 }
 
                 $scopes[] = $scope;

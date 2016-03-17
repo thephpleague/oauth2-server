@@ -7,10 +7,12 @@ use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
+use League\OAuth2\Server\ResponseTypes\HtmlResponse;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
-use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
 class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
@@ -22,7 +24,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->cryptStub = new CryptTraitStub;
+        $this->cryptStub = new CryptTraitStub();
     }
 
     public function testGetIdentifier()
@@ -52,6 +54,10 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($grant->canRespondToRequest($request));
     }
 
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     * @expectedExceptionCode 9
+     */
     public function testRespondToAuthorizationRequest()
     {
         $client = new ClientEntity();
@@ -95,10 +101,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-
-        $this->assertTrue($response instanceof ResponseInterface);
-        $this->assertTrue(strstr($response->getHeader('location')[0], 'http://foo/bar') !== false);
+        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
     }
 
     /**
@@ -122,10 +125,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
-                    json_encode(['user_id' => 123]),
-                    'file://' . __DIR__ . '/../Stubs/private.key'
-                ),
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
             ],
             [
                 'response_type' => 'token',
@@ -137,9 +137,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-
-        $this->assertTrue($response instanceof ResponseInterface);
+        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
     }
 
     public function testRespondToAuthorizationRequestBadClient()
@@ -164,10 +162,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
-                    json_encode(['user_id' => 123]),
-                    'file://' . __DIR__ . '/../Stubs/private.key'
-                ),
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
             ],
             [
                 'response_type' => 'token',
@@ -214,10 +209,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
-                    json_encode(['user_id' => 123]),
-                    'file://' . __DIR__ . '/../Stubs/private.key'
-                ),
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
             ],
             [
                 'response_type' => 'token',
@@ -283,9 +275,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-
-        $this->assertTrue($response instanceof ResponseInterface);
+        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
     }
 
     public function testRespondToAuthorizationRequestTryLogin()
@@ -299,8 +289,12 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
         $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
         $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
@@ -315,10 +309,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
-                    json_encode(['user_id' => null]),
-                    'file://' . __DIR__ . '/../Stubs/private.key'
-                ),
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => null])),
             ],
             [
                 'response_type' => 'token',
@@ -332,9 +323,10 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-        $this->assertTrue($response instanceof ResponseInterface);
-        $this->assertTrue(strstr($response->getHeader('content-type')[0], 'text/html') !== false);
-        $this->assertTrue(strstr($response->getBody()->getContents(), 'Incorrect username or password') !== false);
+        $this->assertTrue($response instanceof HtmlResponse);
+
+        $response = $response->generateHttpResponse(new Response);
+        $this->assertTrue(strstr((string) $response->getBody(), 'Incorrect username or password') !== false);
     }
 
     public function testRespondToAuthorizationRequestShowAuthorizeForm()
@@ -348,8 +340,12 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
         $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
         $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
@@ -364,10 +360,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
-                    json_encode(['user_id' => 123]),
-                    'file://' . __DIR__ . '/../Stubs/private.key'
-                ),
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
             ],
             [
                 'response_type' => 'code',
@@ -381,10 +374,16 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
         $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response instanceof ResponseInterface);
+        $this->assertTrue($response instanceof HtmlResponse);
+
+        $response = $response->generateHttpResponse(new Response);
         $this->assertTrue(strstr($response->getHeader('set-cookie')[0], 'oauth_authorize_request') !== false);
     }
 
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     * @expectedExceptionCode 9
+     */
     public function testRespondToAuthorizationRequestUserDenied()
     {
         $client = new ClientEntity();
@@ -412,10 +411,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(
-                    json_encode(['user_id' => 123]),
-                    'file://' . __DIR__ . '/../Stubs/private.key'
-                ),
+                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
             ],
             [
                 'response_type' => 'code',
@@ -429,10 +425,6 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-
-        $this->assertTrue($response instanceof ResponseInterface);
-        $this->assertTrue(strstr($response->getHeader('location')[0], 'http://foo/bar') !== false);
-        $this->assertTrue(strstr($response->getHeader('location')[0], 'access_denied') !== false);
+        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
     }
 }

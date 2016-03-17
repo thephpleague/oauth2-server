@@ -108,7 +108,7 @@ trait CryptTrait
         while ($encryptedData) {
             $chunk = substr($encryptedData, 0, $chunkSize);
             $encryptedData = substr($encryptedData, $chunkSize);
-            if (openssl_public_decrypt($chunk, $decrypted, $publicKey, OPENSSL_PKCS1_OAEP_PADDING) === false) {
+            if (openssl_public_decrypt($chunk, $decrypted, $publicKey/*, OPENSSL_PKCS1_OAEP_PADDING*/) === false) {
                 // @codeCoverageIgnoreStart
                 throw new \LogicException('Failed to decrypt data');
                 // @codeCoverageIgnoreEnd

@@ -15,8 +15,10 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\Server;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\StubResponseType;
+use LeagueTests\Stubs\UserEntity;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\ServerRequest;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequestFactory;
 
 class ServerTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,7 +36,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
 
         try {
-            $server->respondToRequest();
+            $server->respondToRequest(ServerRequestFactory::fromGlobals(), new Response);
         } catch (OAuthServerException $e) {
             $this->assertEquals('unsupported_grant_type', $e->getErrorType());
             $this->assertEquals(400, $e->getHttpStatusCode());
@@ -60,7 +62,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $_POST['grant_type'] = 'client_credentials';
         $_POST['client_id'] = 'foo';
         $_POST['client_secret'] = 'bar';
-        $response = $server->respondToRequest();
+        $response = $server->respondToRequest(ServerRequestFactory::fromGlobals(), new Response);
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -77,16 +79,19 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            '',
-            '',
+            'file://' . __DIR__ . '/Stubs/private.key',
+            'file://' . __DIR__ . '/Stubs/public.key',
             new StubResponseType()
         );
+
+        $userRepository = $this->getMock(UserRepositoryInterface::class);
+        $userRepository->method('getUserEntityByUserCredentials')->willReturn(new UserEntity());
 
         $server->enableGrantType(
             new AuthCodeGrant(
                 $this->getMock(AuthCodeRepositoryInterface::class),
                 $this->getMock(RefreshTokenRepositoryInterface::class),
-                $this->getMock(UserRepositoryInterface::class),
+                $userRepository,
                 new \DateInterval('PT1H')
             ),
             new \DateInterval('PT1M')
@@ -97,9 +102,13 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $_GET['response_type'] = 'code';
         $_GET['client_id'] = $client->getIdentifier();
         $_GET['redirect_uri'] = $client->getRedirectUri();
-        $response = $server->respondToRequest();
-        $this->assertEquals(200, $response->getStatusCode());
+        $_POST['action'] = 'approve';
+        $_POST['username'] = 'user';
+        $_POST['password'] = 'pass';
+        $response = $server->respondToRequest(ServerRequestFactory::fromGlobals(), new Response);
         $this->assertTrue($response instanceof ResponseInterface);
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertTrue(strstr($response->getHeaderLine('location'), 'code=') !== false);
     }
 
     public function testGetResponseType()
@@ -134,7 +143,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $server->validateAuthenticatedRequest(new ServerRequest());
+            $server->validateAuthenticatedRequest(ServerRequestFactory::fromGlobals());
         } catch (OAuthServerException $e) {
             $this->assertEquals('Missing "Authorization" header', $e->getHint());
         }

@@ -2,6 +2,7 @@
 
 namespace LeagueTests\ResponseTypes;
 
+use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -19,11 +20,9 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
-        $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            $accessTokenRepositoryMock
-        );
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -64,12 +63,11 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
     public function testDetermineAccessTokenInHeaderValidToken()
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
 
-        $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            $accessTokenRepositoryMock
-        );
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -89,13 +87,16 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents());
+        $json = json_decode((string) $response->getBody());
+
+        $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
+        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
 
-        $request = $responseType->validateAccessToken($request);
+        $request = $authorizationValidator->validateAuthorization($request);
 
         $this->assertEquals('abcdef', $request->getAttribute('oauth_access_token_id'));
         $this->assertEquals('clientName', $request->getAttribute('oauth_client_id'));
@@ -106,12 +107,11 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
     public function testDetermineAccessTokenInHeaderInvalidJWT()
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
 
-        $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            $accessTokenRepositoryMock
-        );
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -131,14 +131,17 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents());
+        $json = json_decode((string) $response->getBody());
+
+        $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
+        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token . 'foo'));
 
         try {
-            $responseType->validateAccessToken($request);
+            $authorizationValidator->validateAuthorization($request);
         } catch (OAuthServerException $e) {
             $this->assertEquals(
                 'Access token could not be verified',
@@ -150,14 +153,11 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
     public function testDetermineAccessTokenInHeaderRevokedToken()
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->expects($this->once())->method('isAccessTokenRevoked')->willReturn(true);
+        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(true);
 
-
-        $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            $accessTokenRepositoryMock
-        );
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -177,14 +177,17 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents());
+        $json = json_decode((string) $response->getBody());
+
+        $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
+        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
 
         try {
-            $responseType->validateAccessToken($request);
+            $authorizationValidator->validateAuthorization($request);
         } catch (OAuthServerException $e) {
             $this->assertEquals(
                 'Access token has been revoked',
@@ -197,17 +200,19 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
-        $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            $accessTokenRepositoryMock
-        );
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+
+        $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
+        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', 'Bearer blah');
 
         try {
-            $responseType->validateAccessToken($request);
+            $authorizationValidator->validateAuthorization($request);
         } catch (OAuthServerException $e) {
             $this->assertEquals(
                 'The JWT string must have two dots',

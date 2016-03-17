@@ -10,6 +10,7 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use Zend\Diactoros\ServerRequest;
@@ -23,7 +24,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->cryptStub = new CryptTraitStub;
+        $this->cryptStub = new CryptTraitStub();
     }
 
     public function testGetIdentifier()
@@ -69,8 +70,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                     'user_id'          => 123,
                     'expire_time'      => time() + 3600,
                 ]
-            ),
-            'file://' . __DIR__ . '/../Stubs/private.key'
+            )
         );
 
         $serverRequest = new ServerRequest();
@@ -125,8 +125,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                     'user_id'          => 123,
                     'expire_time'      => time() + 3600,
                 ]
-            ),
-            'file://' . __DIR__ . '/../Stubs/private.key'
+            )
         );
 
         $serverRequest = new ServerRequest();
@@ -186,8 +185,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                     'user_id'          => 123,
                     'expire_time'      => time() + 3600,
                 ]
-            ),
-            'file://' . __DIR__ . '/../Stubs/private.key'
+            )
         );
 
         $serverRequest = new ServerRequest();
@@ -308,8 +306,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                     'user_id'          => 123,
                     'expire_time'      => time() + 3600,
                 ]
-            ),
-            'file://' . __DIR__ . '/../Stubs/private.key'
+            )
         );
 
         $serverRequest = new ServerRequest();
@@ -356,8 +353,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                     'user_id'          => 123,
                     'expire_time'      => time() - 3600,
                 ]
-            ),
-            'file://' . __DIR__ . '/../Stubs/private.key'
+            )
         );
 
         $serverRequest = new ServerRequest();
@@ -405,8 +401,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                     'user_id'          => 123,
                     'expire_time'      => time() + 3600,
                 ]
-            ),
-            'file://' . __DIR__ . '/../Stubs/private.key'
+            )
         );
 
         $serverRequest = new ServerRequest();
