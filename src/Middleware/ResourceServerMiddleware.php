@@ -40,6 +40,7 @@ class ResourceServerMiddleware
             // @codeCoverageIgnoreStart
         } catch (\Exception $exception) {
             $response->getBody()->write($exception->getMessage());
+
             return $response->withStatus(500);
             // @codeCoverageIgnoreEnd
         }
