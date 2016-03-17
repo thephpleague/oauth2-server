@@ -10,16 +10,16 @@ use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\HtmlResponse;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
-use League\OAuth2\Server\TemplateRenderer\AbstractRenderer;
+use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ImplicitGrant extends AbstractAuthorizeGrant
 {
     /**
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface   $userRepository
-     * @param \League\OAuth2\Server\TemplateRenderer\AbstractRenderer|null $templateRenderer
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface    $userRepository
+     * @param \League\OAuth2\Server\TemplateRenderer\RendererInterface|null $templateRenderer
      */
-    public function __construct(UserRepositoryInterface $userRepository, AbstractRenderer $templateRenderer = null)
+    public function __construct(UserRepositoryInterface $userRepository, RendererInterface $templateRenderer = null)
     {
         $this->setUserRepository($userRepository);
         $this->refreshTokenTTL = new \DateInterval('P1M');
