@@ -5,8 +5,8 @@
     "license": "MIT",
     "require": {
         "php": ">=5.5.9",
-        "league/event": "~2.1",
-        "zendframework/zend-diactoros": "~1.1",
+        "league/event": "^2.1",
+        "zendframework/zend-diactoros": "^1.1",
         "lcobucci/jwt": "^3.1",
         "paragonie/random_compat": "^1.1"
     },
