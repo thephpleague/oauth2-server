@@ -20,8 +20,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Utils/private.key',
-            'file://' . __DIR__ . '/../Utils/public.key',
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
             $accessTokenRepositoryMock
         );
 
@@ -66,8 +66,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Utils/private.key',
-            'file://' . __DIR__ . '/../Utils/public.key',
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
             $accessTokenRepositoryMock
         );
 
@@ -108,8 +108,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Utils/private.key',
-            'file://' . __DIR__ . '/../Utils/public.key',
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
             $accessTokenRepositoryMock
         );
 
@@ -154,8 +154,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 
 
         $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Utils/private.key',
-            'file://' . __DIR__ . '/../Utils/public.key',
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
             $accessTokenRepositoryMock
         );
 
@@ -198,8 +198,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Utils/private.key',
-            'file://' . __DIR__ . '/../Utils/public.key',
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
             $accessTokenRepositoryMock
         );
 

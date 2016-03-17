@@ -7,9 +7,9 @@ interface AccessTokenEntityInterface extends TokenInterface
     /**
      * Generate a JWT from the access token
      *
-     * @param string $pathToPrivateKey
+     * @param string $privateKeyPath
      *
      * @return string
      */
-    public function convertToJWT($pathToPrivateKey);
+    public function convertToJWT($privateKeyPath);
 }
