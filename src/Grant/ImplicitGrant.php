@@ -144,6 +144,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $htmlResponse = new HtmlResponse($this->accessTokenRepository);
             $htmlResponse->setStatusCode(403);
             $htmlResponse->setHtml($html);
+
             return $htmlResponse;
         }
 
@@ -155,7 +156,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 'postback_uri' => $this->makeRedirectUri(
                     $postbackUri,
                     $request->getQueryParams()
-                )
+                ),
             ]);
 
             $htmlResponse = new HtmlResponse($this->accessTokenRepository);

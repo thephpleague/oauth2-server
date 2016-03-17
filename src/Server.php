@@ -69,12 +69,12 @@ class Server implements EmitterAwareInterface
     /**
      * New server instance.
      *
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface                  $clientRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface             $accessTokenRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface                   $scopeRepository
-     * @param string                                                                        $privateKeyPath
-     * @param string                                                                        $publicKeyPath
-     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface                $responseType
+     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface                       $clientRepository
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface                  $accessTokenRepository
+     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface                        $scopeRepository
+     * @param string                                                                             $privateKeyPath
+     * @param string                                                                             $publicKeyPath
+     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface                     $responseType
      * @param null|\League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface $authorizationValidator
      */
     public function __construct(
