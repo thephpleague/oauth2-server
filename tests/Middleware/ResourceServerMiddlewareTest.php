@@ -2,10 +2,6 @@
 
 namespace LeagueTests\Middleware;
 
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Key;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Token;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
