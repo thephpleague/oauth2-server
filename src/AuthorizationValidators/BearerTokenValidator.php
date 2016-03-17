@@ -2,12 +2,12 @@
 
 namespace League\OAuth2\Server\AuthorizationValidators;
 
-use League\OAuth2\Server\CryptTrait;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class BearerTokenValidator implements AuthorizationValidatorInterface
 {

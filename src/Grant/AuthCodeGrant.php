@@ -146,6 +146,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $htmlResponse = new HtmlResponse($this->accessTokenRepository);
             $htmlResponse->setStatusCode(403);
             $htmlResponse->setHtml($html);
+
             return $htmlResponse;
         }
 
