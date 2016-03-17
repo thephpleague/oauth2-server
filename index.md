@@ -24,8 +24,6 @@ Out of the box it supports all of the grants defined in the [OAuth 2.0 Authoriza
 
 You can also easily make your own [custom grants]().
 
-Both JWT bearer token and MAC token response types are supported too.
-
 This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](https://twitter.com/alexbilbie).
 
 ## Changelog
