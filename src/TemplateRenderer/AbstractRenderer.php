@@ -10,7 +10,7 @@
  */
 namespace League\OAuth2\Server\TemplateRenderer;
 
-abstract class AbstractRenderer
+abstract class AbstractRenderer implements RendererInterface
 {
     /**
      * @var string
