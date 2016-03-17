@@ -10,9 +10,7 @@
  */
 namespace League\OAuth2\Server\TemplateRenderer;
 
-use Smarty;
-
-class SmartyRenderer implements RendererInterface
+class SmartyRenderer extends AbstractRenderer
 {
     /**
      * Smarty class.
@@ -22,17 +20,23 @@ class SmartyRenderer implements RendererInterface
     private $smarty;
 
     /**
+     * PlatesRenderer constructor.
+     *
      * @param \Smarty $smarty
+     * @param string  $loginTemplate
+     * @param string  $authorizeTemplate
      */
-    public function __construct(Smarty $smarty)
+    public function __construct(\Smarty $smarty, $loginTemplate, $authorizeTemplate)
     {
+        parent::__construct($loginTemplate, $authorizeTemplate);
+
         $this->smarty = $smarty;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function render($template, array $data = [])
+    protected function render($template, array $data = [])
     {
         $this->smarty->assign($data);
 

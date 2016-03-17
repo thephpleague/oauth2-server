@@ -11,7 +11,7 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
-use League\OAuth2\Server\TemplateRenderer\RendererInterface;
+use League\OAuth2\Server\TemplateRenderer\AbstractRenderer;
 use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
@@ -29,26 +29,20 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
      * @param \DateInterval                                                      $authCodeTTL
-     * @param string|null                                                        $loginTemplate
-     * @param string|null                                                        $authorizeTemplate
-     * @param \League\OAuth2\Server\TemplateRenderer\RendererInterface|null      $templateRenderer
+     * @param \League\OAuth2\Server\TemplateRenderer\AbstractRenderer|null       $templateRenderer
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         UserRepositoryInterface $userRepository,
         \DateInterval $authCodeTTL,
-        $loginTemplate = null,
-        $authorizeTemplate = null,
-        RendererInterface $templateRenderer = null
+        AbstractRenderer $templateRenderer = null
     ) {
         $this->setAuthCodeRepository($authCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->setUserRepository($userRepository);
         $this->authCodeTTL = $authCodeTTL;
         $this->refreshTokenTTL = new \DateInterval('P1M');
-        $this->loginTemplate = $loginTemplate;
-        $this->authorizeTemplate = $authorizeTemplate;
         $this->templateRenderer = $templateRenderer;
     }
 
@@ -144,7 +138,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // The user hasn't logged in yet so show a login form
         if ($userId === null) {
-            $html = $this->renderLoginTemplate([
+            $html = $this->getTemplateRenderer()->renderLogin([
                 'error'        => $loginError,
                 'postback_uri' => (string) $postbackUri->withQuery($queryString),
             ]);
@@ -154,7 +148,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // The user hasn't approved the client yet so show an authorize form
         if ($userId !== null && $userHasApprovedClient === null) {
-            $html = $this->renderAuthorizeTemplate([
+            $html = $this->getTemplateRenderer()->renderAuthorize([
                 'client'       => $client,
                 'scopes'       => $scopes,
                 'postback_uri' => (string) $postbackUri->withQuery($queryString),

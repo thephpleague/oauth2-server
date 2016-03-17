@@ -10,9 +10,7 @@
  */
 namespace League\OAuth2\Server\TemplateRenderer;
 
-use Mustache_Engine;
-
-class MustacheRenderer implements RendererInterface
+class MustacheRenderer extends AbstractRenderer
 {
     /**
      * @var \Mustache_Engine
@@ -20,12 +18,16 @@ class MustacheRenderer implements RendererInterface
     private $engine;
 
     /**
-     * TwigRenderer constructor.
+     * PlatesRenderer constructor.
      *
      * @param \Mustache_Engine $engine
+     * @param string           $loginTemplate
+     * @param string           $authorizeTemplate
      */
-    public function __construct(Mustache_Engine $engine)
+    public function __construct(\Mustache_Engine $engine, $loginTemplate, $authorizeTemplate)
     {
+        parent::__construct($loginTemplate, $authorizeTemplate);
+
         $this->engine = $engine;
     }
 

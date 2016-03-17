@@ -28,9 +28,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $this->getMock(UserRepositoryInterface::class),
-            new \DateInterval('PT10M'),
-            'foo/bar.php',
-            'foo/bar.php'
+            new \DateInterval('PT10M')
         );
 
         $this->assertEquals('authorization_code', $grant->getIdentifier());
@@ -77,9 +75,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
-            new \DateInterval('PT10M'),
-            '',
-            ''
+            new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
@@ -134,9 +130,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
-            new \DateInterval('PT10M'),
-            '',
-            ''
+            new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
@@ -196,9 +190,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
-            new \DateInterval('PT10M'),
-            '',
-            ''
+            new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
@@ -365,9 +357,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
-            new \DateInterval('PT10M'),
-            '',
-            ''
+            new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');
@@ -417,9 +407,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
-            new \DateInterval('PT10M'),
-            '',
-            ''
+            new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setPathToPublicKey('file://' . __DIR__ . '/../Utils/public.key');

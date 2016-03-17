@@ -8,7 +8,7 @@ use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
-use League\OAuth2\Server\TemplateRenderer\RendererInterface;
+use League\OAuth2\Server\TemplateRenderer\AbstractRenderer;
 use League\OAuth2\Server\Utils\KeyCrypt;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
@@ -17,21 +17,13 @@ use Zend\Diactoros\Uri;
 class ImplicitGrant extends AbstractAuthorizeGrant
 {
     /**
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface    $userRepository
-     * @param string|null                                                   $loginTemplate
-     * @param string|null                                                   $authorizeTemplate
-     * @param \League\OAuth2\Server\TemplateRenderer\RendererInterface|null $templateRenderer
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface   $userRepository
+     * @param \League\OAuth2\Server\TemplateRenderer\AbstractRenderer|null $templateRenderer
      */
-    public function __construct(
-        UserRepositoryInterface $userRepository,
-        $loginTemplate = null,
-        $authorizeTemplate = null,
-        RendererInterface $templateRenderer = null
-    ) {
+    public function __construct(UserRepositoryInterface $userRepository, AbstractRenderer $templateRenderer = null)
+    {
         $this->setUserRepository($userRepository);
         $this->refreshTokenTTL = new \DateInterval('P1M');
-        $this->loginTemplate = $loginTemplate;
-        $this->authorizeTemplate = $authorizeTemplate;
         $this->templateRenderer = $templateRenderer;
     }
 
@@ -144,7 +136,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         // The user hasn't logged in yet so show a login form
         if ($userId === null) {
-            $html = $this->renderLoginTemplate([
+            $html = $this->getTemplateRenderer()->renderLogin([
                 'error'        => $loginError,
                 'postback_uri' => (string) $postbackUri->withQuery($queryString),
             ]);
@@ -154,7 +146,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         // The user hasn't approved the client yet so show an authorize form
         if ($userId !== null && $userHasApprovedClient === null) {
-            $html = $this->renderAuthorizeTemplate([
+            $html = $this->getTemplateRenderer()->renderAuthorize([
                 'client'       => $client,
                 'scopes'       => $scopes,
                 'postback_uri' => (string) $postbackUri->withQuery($queryString),
