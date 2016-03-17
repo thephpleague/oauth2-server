@@ -6,7 +6,6 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Server;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Stream;
 
 class AuthenticationServerMiddleware
 {
@@ -40,10 +39,8 @@ class AuthenticationServerMiddleware
             return $exception->generateHttpResponse($response);
             // @codeCoverageIgnoreStart
         } catch (\Exception $exception) {
-            $body = new Stream('php://temp', 'r+');
-            $body->write($exception->getMessage());
-
-            return $response->withStatus(500)->withBody($body);
+            $response->getBody()->write($exception->getMessage());
+            return $response->withStatus(500);
             // @codeCoverageIgnoreEnd
         }
 
