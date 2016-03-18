@@ -13,7 +13,7 @@ use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\HtmlResponse;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
-use League\OAuth2\Server\TemplateRenderer\AbstractRenderer;
+use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class AuthCodeGrant extends AbstractAuthorizeGrant
@@ -28,14 +28,14 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
      * @param \DateInterval                                                      $authCodeTTL
-     * @param \League\OAuth2\Server\TemplateRenderer\AbstractRenderer|null       $templateRenderer
+     * @param \League\OAuth2\Server\TemplateRenderer\RendererInterface|null      $templateRenderer
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         UserRepositoryInterface $userRepository,
         \DateInterval $authCodeTTL,
-        AbstractRenderer $templateRenderer = null
+        RendererInterface $templateRenderer = null
     ) {
         $this->setAuthCodeRepository($authCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
@@ -282,7 +282,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 );
 
                 if (!$scope) {
+                    // @codeCoverageIgnoreStart
                     throw OAuthServerException::invalidScope($scopeId);
+                    // @codeCoverageIgnoreEnd
                 }
 
                 $scopes[] = $scope;

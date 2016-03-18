@@ -89,14 +89,14 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * Set the path to the private key.
      *
-     * @param string $pathToPrivateKey
+     * @param string $privateKeyPath
      */
-    public function setPrivateKeyPath($pathToPrivateKey);
+    public function setPrivateKeyPath($privateKeyPath);
 
     /**
      * Set the path to the public key.
      *
-     * @param string $pathToPublicKey
+     * @param string $publicKeyPath
      */
-    public function setPublicKeyPath($pathToPublicKey);
+    public function setPublicKeyPath($publicKeyPath);
 }

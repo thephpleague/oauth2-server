@@ -16,11 +16,11 @@ class AccessTokenEntity implements AccessTokenEntityInterface
     /**
      * Generate a JWT from the access token
      *
-     * @param string $pathToPrivateKey
+     * @param string $privateKeyPath
      *
      * @return string
      */
-    public function convertToJWT($pathToPrivateKey)
+    public function convertToJWT($privateKeyPath)
     {
         return (new Builder())
             ->setAudience($this->getClient()->getIdentifier())
@@ -30,7 +30,7 @@ class AccessTokenEntity implements AccessTokenEntityInterface
             ->setExpiration($this->getExpiryDateTime()->getTimestamp())
             ->setSubject($this->getUserIdentifier())
             ->set('scopes', $this->getScopes())
-            ->sign(new Sha256(), new Key($pathToPrivateKey))
+            ->sign(new Sha256(), new Key($privateKeyPath))
             ->getToken();
     }
 }

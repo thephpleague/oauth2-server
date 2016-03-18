@@ -54,7 +54,9 @@ class RefreshTokenGrant extends AbstractGrant
                 );
 
                 if (!$scope) {
+                    // @codeCoverageIgnoreStart
                     throw OAuthServerException::invalidScope($scopeId);
+                    // @codeCoverageIgnoreEnd
                 }
 
                 return $scope;

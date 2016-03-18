@@ -2,11 +2,13 @@
 
 namespace LeagueTests\Middleware;
 
+use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Server;
+use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\StubResponseType;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -21,13 +23,24 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            '',
-            '',
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
             new StubResponseType()
         );
 
+        $client = new ClientEntity();
+        $client->setIdentifier('clientName');
+
+        $accessToken = new AccessTokenEntity();
+        $accessToken->setIdentifier('test');
+        $accessToken->setUserIdentifier(123);
+        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setClient($client);
+
+        $token = $accessToken->convertToJWT('file://' . __DIR__ . '/../Stubs/private.key');
+
         $request = new ServerRequest();
-        $request = $request->withHeader('authorization', 'Basic test');
+        $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
