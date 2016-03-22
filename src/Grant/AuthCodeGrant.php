@@ -123,7 +123,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         if ($userId === null && $usernameParameter !== null && $passwordParameter !== null) {
             $userEntity = $this->userRepository->getUserEntityByUserCredentials(
                 $usernameParameter,
-                $passwordParameter
+                $passwordParameter,
+                $this->getIdentifier(),
+                $scopes
             );
 
             if ($userEntity instanceof UserEntityInterface) {

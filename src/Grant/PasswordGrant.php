@@ -11,6 +11,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\Event;
+use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
@@ -47,8 +48,8 @@ class PasswordGrant extends AbstractGrant
     ) {
         // Validate request
         $client = $this->validateClient($request);
-        $user = $this->validateUser($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request), $client);
+        $user = $this->validateUser($request, $scopes);
 
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $scopes);
@@ -64,11 +65,12 @@ class PasswordGrant extends AbstractGrant
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @param ScopeEntityInterface[]                   $scopes
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
-    protected function validateUser(ServerRequestInterface $request)
+    protected function validateUser(ServerRequestInterface $request, array $scopes)
     {
         $username = $this->getRequestParameter('username', $request);
         if (is_null($username)) {
@@ -80,7 +82,12 @@ class PasswordGrant extends AbstractGrant
             throw OAuthServerException::invalidRequest('password', '`%s` parameter is missing');
         }
 
-        $user = $this->userRepository->getUserEntityByUserCredentials($username, $password);
+        $user = $this->userRepository->getUserEntityByUserCredentials(
+            $username,
+            $password,
+            $this->getIdentifier(),
+            $scopes
+        );
         if (!$user instanceof UserEntityInterface) {
             $this->getEmitter()->emit(new Event('user.authentication.failed', $request));
 
