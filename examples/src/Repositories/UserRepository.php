@@ -10,7 +10,6 @@ use OAuth2ServerExamples\Entities\UserEntity;
 
 class UserRepository implements UserRepositoryInterface
 {
-
     /**
      * Get a user entity.
      *
@@ -37,6 +36,6 @@ class UserRepository implements UserRepositoryInterface
             return new UserEntity();
         }
 
-        return null;
+        return;
     }
 }
