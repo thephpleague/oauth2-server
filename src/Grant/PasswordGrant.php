@@ -64,11 +64,11 @@ class PasswordGrant extends AbstractGrant
 
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request
-     *
      * @param ScopeEntityInterface[]                   $scopes
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
      */
     protected function validateUser(ServerRequestInterface $request, array &$scopes)
     {
