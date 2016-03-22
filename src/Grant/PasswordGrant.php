@@ -11,6 +11,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\Event;
+use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -49,7 +50,7 @@ class PasswordGrant extends AbstractGrant
         // Validate request
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request), $client);
-        $user = $this->validateUser($request, $scopes);
+        $user = $this->validateUser($request, $client, $scopes);
 
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $scopes);
@@ -63,14 +64,14 @@ class PasswordGrant extends AbstractGrant
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param ScopeEntityInterface[]                   $scopes
-     *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @param \Psr\Http\Message\ServerRequestInterface                        $request
+     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
+     * @param ScopeEntityInterface[]                                          $scopes
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
-    protected function validateUser(ServerRequestInterface $request, array &$scopes)
+    protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client, array &$scopes)
     {
         $username = $this->getRequestParameter('username', $request);
         if (is_null($username)) {
@@ -86,6 +87,7 @@ class PasswordGrant extends AbstractGrant
             $username,
             $password,
             $this->getIdentifier(),
+            $client,
             $scopes
         );
         if (!$user instanceof UserEntityInterface) {

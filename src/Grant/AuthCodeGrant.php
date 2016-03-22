@@ -125,6 +125,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $usernameParameter,
                 $passwordParameter,
                 $this->getIdentifier(),
+                $client,
                 $scopes
             );
 
