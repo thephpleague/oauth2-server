@@ -45,11 +45,4 @@ interface ClientEntityInterface
      * @return string
      */
     public function getRedirectUri();
-
-    /**
-     * Returns true if the client is capable of keeping it's secrets secret.
-     *
-     * @return bool
-     */
-    public function canKeepASecret();
 }
