@@ -12,7 +12,7 @@ interface UserRepositoryInterface extends RepositoryInterface
      *
      * @param string                                                          $username
      * @param string                                                          $password
-     * @param string                                                          $grantType The grant type used
+     * @param string                                                          $grantType    The grant type used
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $clientEntity
      * @param ScopeEntityInterface[]                                          $scopes
      *
