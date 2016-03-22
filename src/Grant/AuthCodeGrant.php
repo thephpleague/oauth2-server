@@ -73,7 +73,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
-
             throw OAuthServerException::invalidClient();
         }
 

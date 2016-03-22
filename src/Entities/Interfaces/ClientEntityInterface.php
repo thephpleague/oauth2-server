@@ -33,18 +33,6 @@ interface ClientEntityInterface
     public function setName($name);
 
     /**
-     * @param string $secret
-     */
-    public function setSecret($secret);
-
-    /**
-     * Get the hashed client secret
-     *
-     * @return string
-     */
-    public function getSecret();
-
-    /**
      * Set the client's redirect uri.
      *
      * @param string $redirectUri

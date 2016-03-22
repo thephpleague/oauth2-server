@@ -111,10 +111,8 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateClientMissingClientSecret()
     {
-        $client = new ClientEntity();
-        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('getClientEntity')->willReturn(null);
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -138,10 +136,8 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateClientInvalidClientSecret()
     {
-        $client = new ClientEntity();
-        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('getClientEntity')->willReturn(null);
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);

@@ -153,15 +153,6 @@ abstract class AbstractGrant implements GrantTypeInterface
             throw OAuthServerException::invalidRequest('client_id', '`%s` parameter is missing');
         }
 
-        $client = $this->clientRepository->getClientEntity(
-            $clientId,
-            $this->getIdentifier()
-        );
-
-        if (!$client instanceof ClientEntityInterface) {
-            throw OAuthServerException::invalidClient();
-        }
-
         // If the client is confidential require the client secret
         $clientSecret = $this->getRequestParameter(
             'client_secret',
@@ -169,11 +160,13 @@ abstract class AbstractGrant implements GrantTypeInterface
             $this->getServerParameter('PHP_AUTH_PW', $request)
         );
 
-        if ($client->canKeepASecret() && is_null($clientSecret)) {
-            throw OAuthServerException::invalidRequest('client_secret', '`%s` parameter is missing');
-        }
+        $client = $this->clientRepository->getClientEntity(
+            $clientId,
+            $this->getIdentifier(),
+            $clientSecret
+        );
 
-        if ($client->canKeepASecret() && password_verify($clientSecret, $client->getSecret()) === false) {
+        if (!$client instanceof ClientEntityInterface) {
             $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
             throw OAuthServerException::invalidClient();
         }
