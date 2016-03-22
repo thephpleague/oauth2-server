@@ -70,7 +70,7 @@ class PasswordGrant extends AbstractGrant
      * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
-    protected function validateUser(ServerRequestInterface $request, array $scopes)
+    protected function validateUser(ServerRequestInterface $request, array &$scopes)
     {
         $username = $this->getRequestParameter('username', $request);
         if (is_null($username)) {
