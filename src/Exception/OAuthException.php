@@ -122,7 +122,7 @@ class OAuthException extends \Exception
         // @codeCoverageIgnoreStart
         if ($this->errorType === 'invalid_client') {
             $authScheme = null;
-            $request = new Request();
+            $request = Request::createFromGlobals();
             if ($request->getUser() !== null) {
                 $authScheme = 'Basic';
             } else {
