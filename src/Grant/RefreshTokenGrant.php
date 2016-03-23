@@ -10,9 +10,9 @@
  */
 namespace League\OAuth2\Server\Grant;
 
-use League\Event\Event;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -66,8 +66,6 @@ class RefreshTokenGrant extends AbstractGrant
             // the request doesn't include any new scopes
             foreach ($scopes as $scope) {
                 if (in_array($scope->getIdentifier(), $oldRefreshToken['scopes']) === false) {
-                    $this->getEmitter()->emit(new Event('scope.selection.failed', $request));
-
                     throw OAuthServerException::invalidScope($scope->getIdentifier());
                 }
             }
@@ -114,8 +112,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         $refreshTokenData = json_decode($refreshToken, true);
         if ($refreshTokenData['client_id'] !== $clientId) {
-            $this->getEmitter()->emit(new Event('refresh_token.client.failed', $request));
-
+            $this->getEmitter()->emit(new RequestEvent('refresh_token.client.failed', $request));
             throw OAuthServerException::invalidRefreshToken(
                 'Token is not linked to client,' .
                 ' got: ' . $clientId .

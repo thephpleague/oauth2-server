@@ -17,6 +17,7 @@ use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
+use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -92,7 +93,7 @@ class PasswordGrant extends AbstractGrant
             $scopes
         );
         if (!$user instanceof UserEntityInterface) {
-            $this->getEmitter()->emit(new Event('user.authentication.failed', $request));
+            $this->getEmitter()->emit(new RequestEvent('user.authentication.failed', $request));
 
             throw OAuthServerException::invalidCredentials();
         }

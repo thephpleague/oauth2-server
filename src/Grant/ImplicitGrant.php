@@ -2,11 +2,11 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\Event\Event;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
+use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\HtmlResponse;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -68,14 +68,14 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         );
 
         if ($client instanceof ClientEntityInterface === false) {
-            $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
+            $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
 
             throw OAuthServerException::invalidClient();
         }
 
         $redirectUriParameter = $this->getQueryStringParameter('redirect_uri', $request, $client->getRedirectUri());
         if ($redirectUriParameter !== $client->getRedirectUri()) {
-            $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
+            $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
 
             throw OAuthServerException::invalidClient();
         }

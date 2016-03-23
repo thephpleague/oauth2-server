@@ -3,13 +3,13 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
-use League\Event\Event;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
+use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\HtmlResponse;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -72,7 +72,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         );
 
         if ($client instanceof ClientEntityInterface === false) {
-            $this->getEmitter()->emit(new Event('client.authentication.failed', $request));
+            $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
             throw OAuthServerException::invalidClient();
         }
 
