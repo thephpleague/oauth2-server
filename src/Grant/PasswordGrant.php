@@ -51,7 +51,10 @@ class PasswordGrant extends AbstractGrant
         // Validate request
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request), $client);
-        $user = $this->validateUser($request, $client, $scopes);
+        $user = $this->validateUser($request, $client);
+
+        // Finalize the requested scopes
+        $scopes = $this->scopeRepository->finalizeScopes($scopes, $client, $user->getIdentifier());
 
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $scopes);
@@ -67,13 +70,12 @@ class PasswordGrant extends AbstractGrant
     /**
      * @param \Psr\Http\Message\ServerRequestInterface                        $request
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
-     * @param ScopeEntityInterface[]                                          $scopes
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
      */
-    protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client, array &$scopes)
+    protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client)
     {
         $username = $this->getRequestParameter('username', $request);
         if (is_null($username)) {
@@ -89,8 +91,7 @@ class PasswordGrant extends AbstractGrant
             $username,
             $password,
             $this->getIdentifier(),
-            $client,
-            $scopes
+            $client
         );
         if (!$user instanceof UserEntityInterface) {
             $this->getEmitter()->emit(new RequestEvent('user.authentication.failed', $request));

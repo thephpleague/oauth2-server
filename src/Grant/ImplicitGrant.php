@@ -189,6 +189,10 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         // THe user approved the client, redirect them back with an access token
         if ($userHasApprovedClient === true) {
+
+            // Finalize the requested scopes
+            $scopes = $this->scopeRepository->finalizeScopes($scopes, $client, $userId);
+
             $accessToken = $this->issueAccessToken(
                 $accessTokenTTL,
                 $client,
