@@ -3,7 +3,6 @@
 namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 
 interface UserRepositoryInterface extends RepositoryInterface
 {
@@ -14,7 +13,6 @@ interface UserRepositoryInterface extends RepositoryInterface
      * @param string                                                          $password
      * @param string                                                          $grantType    The grant type used
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $clientEntity
-     * @param ScopeEntityInterface[]                                          $scopes
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
      */
@@ -22,7 +20,6 @@ interface UserRepositoryInterface extends RepositoryInterface
         $username,
         $password,
         $grantType,
-        ClientEntityInterface $clientEntity,
-        array &$scopes
+        ClientEntityInterface $clientEntity
     );
 }
