@@ -39,5 +39,5 @@ interface ScopeRepositoryInterface extends RepositoryInterface
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[]
      */
-    public function finalizeScopes(array $scopes = [], ClientEntityInterface $clientEntity, $userIdentifier = null);
+    public function finalizeScopes(array $scopes, ClientEntityInterface $clientEntity, $userIdentifier = null);
 }
