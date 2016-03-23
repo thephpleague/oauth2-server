@@ -123,8 +123,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $usernameParameter,
                 $passwordParameter,
                 $this->getIdentifier(),
-                $client,
-                $scopes
+                $client
             );
 
             if ($userEntity instanceof UserEntityInterface) {

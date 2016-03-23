@@ -87,6 +87,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
         $grant = new AuthCodeGrant(
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
@@ -95,6 +98,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
         $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
@@ -410,6 +414,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
         $grant = new AuthCodeGrant(
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
@@ -418,6 +425,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
         $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 

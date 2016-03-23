@@ -30,7 +30,7 @@ interface ScopeRepositoryInterface extends RepositoryInterface
     public function getScopeEntityByIdentifier($identifier, $grantType, $clientId = null);
 
     /**
-     * Given a client and user validate the set of scopes requested are valid and optionally
+     * Given a client (and optional user identifier) validate the set of scopes requested are valid and optionally
      * append additional scopes or remove requested scopes.
      *
      * @param ScopeEntityInterface[]                                          $scopes

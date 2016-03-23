@@ -48,10 +48,13 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $clientRepository = $this->getMock(ClientRepositoryInterface::class);
         $clientRepository->method('getClientEntity')->willReturn(new ClientEntity());
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
         $server = new Server(
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
+            $scopeRepositoryMock,
             '',
             '',
             new StubResponseType()
@@ -75,10 +78,13 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $clientRepository = $this->getMock(ClientRepositoryInterface::class);
         $clientRepository->method('getClientEntity')->willReturn($client);
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
         $server = new Server(
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
+            $scopeRepositoryMock,
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key',
             new StubResponseType()
