@@ -12,6 +12,8 @@
             <path id="Line-decoration-1" d="M368,328 L371,317.2 L365,317.2 L368,328 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
             <path d="M368,445 L368,512" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
             <path id="Line-decoration-1" d="M368,512 L371,501.2 L365,501.2 L368,512 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path d="M96,445 L96,534.022469" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path id="Line-decoration-1" d="M96,534.022469 L99,523.222469 L93,523.222469 L96,534.022469 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
             <path d="M492.5,477 L550,477" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
             <path id="Line-decoration-1" d="M550,477 L539.2,474 L539.2,480 L550,477 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
             <path d="M458.5,387 L491.5,387" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square"></path>
@@ -25,8 +27,6 @@
             <path id="Line-decoration-1" d="M550,202.5 L539.2,199.5 L539.2,205.5 L550,202.5 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
             <path d="M96,328 L96,241" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
             <path id="Line-decoration-1" d="M96,241 L93,251.8 L99,251.8 L96,241 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
-            <path d="M96,533 L96,445" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A" transform="translate(96.000000, 489.000000) scale(1, -1) translate(-96.000000, -489.000000) "></path>
-            <path id="Line-decoration-1" d="M96,445 L93,455.8 L99,455.8 L96,445 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
             <g id="Start" transform="translate(298.000000, 8.000000)">
                 <rect id="Rectangle-1" stroke="#4A4A4A" stroke-width="2" fill="#EB524C" x="0" y="0" width="141" height="67" rx="10"></rect>
                 <text font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#FFFFFF">
@@ -86,15 +86,15 @@
                     <tspan x="31.3828125" y="68">third party client?</tspan>
                 </text>
             </g>
-            <text id="Client" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
-                <tspan x="476.055176" y="193">Client</tspan>
+            <text id="Machine" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                <tspan x="468.493164" y="192">Machine</tspan>
             </text>
             <text id="User" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
                 <tspan x="379.93457" y="298">User</tspan>
             </text>
             <text id="User-agent-based" font-family="Helvetica-Bold, Helvetica" font-size="12" font-weight="bold" fill="#4A4A4A">
-                <tspan x="196.319336" y="359">User-agent-based</tspan>
-                <tspan x="236.333008" y="373">app</tspan>
+                <tspan x="180.319336" y="363">User-agent-based</tspan>
+                <tspan x="220.333008" y="377">app</tspan>
             </text>
             <text id="First-party" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
                 <tspan x="200.269043" y="560">First party</tspan>
