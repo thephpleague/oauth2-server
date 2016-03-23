@@ -7,7 +7,6 @@ title: Introduction
 
 [![Author](http://img.shields.io/badge/author-@alexbilbie-red.svg?style=flat-square)](https://twitter.com/alexbilbie)
 [![Source Code](http://img.shields.io/badge/source-thephpleague%2Foauth2--server-blue.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server)
-[![GitHub tag](https://img.shields.io/github/tag/thephpleague/oauth2-server.svg)](https://github.com/thephpleague/oauth2-server/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://img.shields.io/travis/thephpleague/oauth2-server/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/oauth2-server)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-server.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-server)
