@@ -86,7 +86,7 @@ $server->enableGrantType(
 
 ## Implementation
 
-The client will request an access token so create an `/access_token` endpoint.
+The client will request an access token so create an `/oauth2` endpoint.
 
 {% highlight php %}
 $app->post('/oauth2', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
