@@ -69,14 +69,12 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
-
             throw OAuthServerException::invalidClient();
         }
 
         $redirectUriParameter = $this->getQueryStringParameter('redirect_uri', $request, $client->getRedirectUri());
         if ($redirectUriParameter !== $client->getRedirectUri()) {
             $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
-
             throw OAuthServerException::invalidClient();
         }
 
@@ -114,7 +112,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         // The username + password might be available in $_POST
         $usernameParameter = $this->getRequestParameter('username', $request, null);
         $passwordParameter = $this->getRequestParameter('password', $request, null);
-
+        
         $loginError = null;
 
         // Assert if the user has logged in already
@@ -190,7 +188,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         if ($userHasApprovedClient === true) {
 
             // Finalize the requested scopes
-            $scopes = $this->scopeRepository->finalizeScopes($scopes, $client, $userId);
+            $scopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $userId);
 
             $accessToken = $this->issueAccessToken(
                 $accessTokenTTL,

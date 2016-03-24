@@ -47,11 +47,7 @@ class RefreshTokenGrant extends AbstractGrant
         // If no new scopes are requested then give the access token the original session scopes
         if (count($scopes) === 0) {
             $scopes = array_map(function ($scopeId) use ($client) {
-                $scope = $this->scopeRepository->getScopeEntityByIdentifier(
-                    $scopeId,
-                    $this->getIdentifier(),
-                    $client->getIdentifier()
-                );
+                $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
 
                 if (!$scope) {
                     // @codeCoverageIgnoreStart

@@ -78,6 +78,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $redirectUriParameter = $this->getQueryStringParameter('redirect_uri', $request, $client->getRedirectUri());
         if ($redirectUriParameter !== $client->getRedirectUri()) {
+            $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
             throw OAuthServerException::invalidClient();
         }
 
@@ -124,8 +125,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $usernameParameter,
                 $passwordParameter,
                 $this->getIdentifier(),
-                $client,
-                $scopes
+                $client
             );
 
             if ($userEntity instanceof UserEntityInterface) {
@@ -134,7 +134,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $loginError = 'Incorrect username or password';
             }
         }
-
+        
         // The user hasn't logged in yet so show a login form
         if ($userId === null) {
             $html = $this->getTemplateRenderer()->renderLogin([
@@ -192,7 +192,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         if ($userHasApprovedClient === true) {
 
             // Finalize the requested scopes
-            $scopes = $this->scopeRepository->finalizeScopes($scopes, $client, $userId);
+            $scopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $userId);
 
             $authCode = $this->issueAuthCode(
                 $this->authCodeTTL,
@@ -281,11 +281,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
             $scopes = [];
             foreach ($authCodePayload->scopes as $scopeId) {
-                $scope = $this->scopeRepository->getScopeEntityByIdentifier(
-                    $scopeId,
-                    $this->getIdentifier(),
-                    $client->getIdentifier()
-                );
+                $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
 
                 if (!$scope) {
                     // @codeCoverageIgnoreStart

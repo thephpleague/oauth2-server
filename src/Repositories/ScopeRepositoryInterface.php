@@ -21,23 +21,27 @@ interface ScopeRepositoryInterface extends RepositoryInterface
     /**
      * Return information about a scope.
      *
-     * @param string      $identifier The scope identifier
-     * @param string      $grantType  The grant type used in the request
-     * @param string|null $clientId   The client sending the request
+     * @param string $identifier The scope identifier
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface
      */
-    public function getScopeEntityByIdentifier($identifier, $grantType, $clientId = null);
+    public function getScopeEntityByIdentifier($identifier);
 
     /**
-     * Given a client (and optional user identifier) validate the set of scopes requested are valid and optionally
+     * Given a client, grant type and optional user identifier validate the set of scopes requested are valid and optionally
      * append additional scopes or remove requested scopes.
      *
      * @param ScopeEntityInterface[]                                          $scopes
+     * @param string                                                          $grantType
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $clientEntity
      * @param null|string                                                     $userIdentifier
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[]
      */
-    public function finalizeScopes(array $scopes, ClientEntityInterface $clientEntity, $userIdentifier = null);
+    public function finalizeScopes(
+        array $scopes,
+        $grantType,
+        ClientEntityInterface $clientEntity,
+        $userIdentifier = null
+    );
 }

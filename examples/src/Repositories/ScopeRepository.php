@@ -2,6 +2,8 @@
 
 namespace OAuth2ServerExamples\Repositories;
 
+use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
+use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use OAuth2ServerExamples\Entities\ScopeEntity;
 
@@ -10,7 +12,7 @@ class ScopeRepository implements ScopeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getScopeEntityByIdentifier($scopeIdentifier, $grantType, $clientId = null)
+    public function getScopeEntityByIdentifier($scopeIdentifier)
     {
         $scopes = [
             'basic' => [
@@ -29,5 +31,18 @@ class ScopeRepository implements ScopeRepositoryInterface
         $scope->setIdentifier($scopeIdentifier);
 
         return $scope;
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function finalizeScopes(
+        array $scopes,
+        $grantType,
+        ClientEntityInterface $clientEntity,
+        $userIdentifier = null
+    ) {
+        return $scopes;
     }
 }
