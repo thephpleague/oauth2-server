@@ -12,13 +12,6 @@ interface ClientEntityInterface
     public function getIdentifier();
 
     /**
-     * Set the client's identifier.
-     *
-     * @param $identifier
-     */
-    public function setIdentifier($identifier);
-
-    /**
      * Get the client's name.
      *
      * @return string
@@ -26,18 +19,11 @@ interface ClientEntityInterface
     public function getName();
 
     /**
-     * Set the client's name.
+     * Get the hashed client secret
      *
-     * @param string $name
+     * @return string
      */
-    public function setName($name);
-
-    /**
-     * Set the client's redirect uri.
-     *
-     * @param string $redirectUri
-     */
-    public function setRedirectUri($redirectUri);
+    public function getSecret();
 
     /**
      * Returns the registered redirect URI.
