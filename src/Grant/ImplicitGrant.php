@@ -112,7 +112,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         // The username + password might be available in $_POST
         $usernameParameter = $this->getRequestParameter('username', $request, null);
         $passwordParameter = $this->getRequestParameter('password', $request, null);
-        
+
         $loginError = null;
 
         // Assert if the user has logged in already

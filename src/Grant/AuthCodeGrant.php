@@ -134,7 +134,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $loginError = 'Incorrect username or password';
             }
         }
-        
+
         // The user hasn't logged in yet so show a login form
         if ($userId === null) {
             $html = $this->getTemplateRenderer()->renderLogin([
