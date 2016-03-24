@@ -7,7 +7,7 @@ Getting Started:
     Framework Integrations: '/framework-integrations/'
     V4 Docs: '/V4-docs/'
 Authorization Server:
-    'Which grant?': '/authorization-server/which-grant/'
+    'Which Grant?': '/authorization-server/which-grant/'
     'Client Credentials Grant': '/authorization-server/client-credentials-grant/'
     'Password Grant': '/authorization-server/resource-owner-password-credentials-grant/'
     'Authorization Code Grant': '/authorization-server/auth-code-grant/'
@@ -16,18 +16,13 @@ Authorization Server:
 #    'Creating custom grants': '/authorization-server/custom-grants/'
     'Domain Events': '/authorization-server/events/'
 Resource Server:
-#    'Securing your API': '/resource-server/securing-your-api/'
+    'Securing your API': '/resource-server/securing-your-api/'
 Middleware:
-#    'TODO': '/a'
-Response Types:
-#    'Bearer Token Response': '/a'
-#    'MAC Token Response': '/a'
-#    'Custom Response': '/a'
+    'PSR7 Middleware': '/psr7-middleware/'
 Respository Interfaces:
-#    'Access Token Repository Interface': '/a'
-#    'Client Repository Interface': '/a'
-#    'Refresh Token Repository Interface': '/a'
-#    'Scope Repository Interface': '/a'
-#    'Auth Code Repository Interface': '/a'
-#    'User Repository Interface': '/a'
-#    'Mac Token Interface': '/a'
+    'Access Token Repository Interface': '/a'
+    'Client Repository Interface': '/a'
+    'Refresh Token Repository Interface': '/a'
+    'Scope Repository Interface': '/a'
+    'Auth Code Repository Interface': '/a'
+    'User Repository Interface': '/a'
