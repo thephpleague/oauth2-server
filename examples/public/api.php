@@ -7,7 +7,6 @@ use OAuth2ServerExamples\Repositories\ScopeRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Zend\Diactoros\Stream;
 
 include __DIR__ . '/../vendor/autoload.php';
 
