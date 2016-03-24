@@ -23,6 +23,16 @@ abstract class AbstractAuthorizeGrant extends AbstractGrant
     protected $templateRenderer;
 
     /**
+     * Set the template renderer
+     *
+     * @param RendererInterface $templateRenderer
+     */
+    public function setTemplateRenderer(RendererInterface $templateRenderer)
+    {
+        $this->templateRenderer = $templateRenderer;
+    }
+
+    /**
      * Retrieve template renderer.
      *
      * @return \League\OAuth2\Server\TemplateRenderer\RendererInterface
