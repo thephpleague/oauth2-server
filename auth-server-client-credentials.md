@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Authorization server with client credentials grant
+title: Client credentials grant
 permalink: /authorization-server/client-credentials-grant/
 ---
 
