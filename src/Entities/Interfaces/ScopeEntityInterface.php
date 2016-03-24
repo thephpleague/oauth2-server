@@ -10,5 +10,4 @@ interface ScopeEntityInterface extends \JsonSerializable
      * @return string
      */
     public function getIdentifier();
-
 }
