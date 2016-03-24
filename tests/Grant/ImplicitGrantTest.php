@@ -9,6 +9,7 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\HtmlResponse;
+use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\StubResponseType;
@@ -55,10 +56,6 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($grant->canRespondToRequest($request));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 9
-     */
     public function testRespondToAuthorizationRequest()
     {
         $client = new ClientEntity();
@@ -106,7 +103,9 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+
+        $this->assertTrue($response instanceof RedirectResponse);
     }
 
     /**
