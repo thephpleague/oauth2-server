@@ -10,11 +10,4 @@ interface ScopeEntityInterface extends \JsonSerializable
      * @return string
      */
     public function getIdentifier();
-
-    /**
-     * Set the scope's identifier.
-     *
-     * @param $identifier
-     */
-    public function setIdentifier($identifier);
 }
