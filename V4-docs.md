@@ -1,7 +1,7 @@
 ---
 layout: default
 title: V4 Docs
-permalink: /v4-docs/
+permalink: /V4-docs/
 ---
 
 # V4 Docs
