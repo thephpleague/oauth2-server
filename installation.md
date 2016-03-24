@@ -18,7 +18,7 @@ The following versions of PHP are supported:
 In your project root just run:
 
 {% highlight shell %}
-$ composer require league/oauth2-server
+$ $ composer require league/oauth2-server:5.0.0-RC1
 {% endhighlight %}
 
 Ensure that you’ve set up your project to [autoload Composer-installed packages](https://getcomposer.org/doc/00-intro.md#autoloading).
