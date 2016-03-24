@@ -209,6 +209,8 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                     '#'
                 )
             );
+
+            return $response;
         }
 
         // The user denied the client, redirect them back with an error
