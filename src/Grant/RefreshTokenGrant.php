@@ -96,7 +96,7 @@ class RefreshTokenGrant extends AbstractGrant
     {
         $encryptedRefreshToken = $this->getRequestParameter('refresh_token', $request);
         if (is_null($encryptedRefreshToken)) {
-            throw OAuthServerException::invalidRequest('refresh_token', '`%s` parameter is missing');
+            throw OAuthServerException::invalidRequest('refresh_token');
         }
 
         // Validate refresh token
