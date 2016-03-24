@@ -21,7 +21,9 @@ Out of the box it supports all of the grants defined in the [OAuth 2.0 Authoriza
 * Resource owner password credentials grant
 * Refresh grant
 
+<!--
 You can also easily make your own [custom grants]().
+-->
 
 This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](https://twitter.com/alexbilbie).
 
@@ -35,4 +37,6 @@ The latest release is [![GitHub tag](https://img.shields.io/github/tag/thephplea
 
 Please ask questions on the [Github issues page](https://github.com/thephpleague/oauth2-server/issues).
 
-For commercial support and custom implementations please visit [Protobytes](https://protobytes.uk/oauth).
+<!--
+For commercial support and custom implementations please visit [Glynde Labs](https://glyndelabs.com).
+-->
