@@ -3,3 +3,6 @@ composer.lock
 .idea
 build
 vendor
+examples
+src
+phpunit.xml

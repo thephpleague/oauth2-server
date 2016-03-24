@@ -1,64 +1,89 @@
 ---
 layout: default
-title: Authorization server with resource owner password credentials grant
+title: Resource owner password credentials grant
 permalink: /authorization-server/resource-owner-password-credentials-grant/
 ---
 
-# Authorization server with resource owner password credentials grant
+# Resource owner password credentials grant
+
+This grant is a great user experience for <u>trusted</u> first party clients both on the web and in native applications.
+
+## Flow
+
+The client will ask the user for their authorization credentials (ususally a username and password).
+
+The client then sends a POST request with following body parameters to the authorization server:
+
+* `grant_type` with the value `password`
+* `client_id` with the the client's ID
+* `client_secret` with the client's secret
+* `scope` with a space-delimited list of requested scope permissions.
+* `username` with the user's username
+* `password` with the user's password
+
+The authorization server will respond with a JSON object containing the following properties:
+
+* `token_type` with the value `Bearer`
+* `expires_in` with an integer representing the TTL of the access token
+* `access_token` a JWT signed with the authorization server's private key
+* `refresh_token` an encrypted payload that can be used to refresh the access token when it expires.
 
 ## Setup
 
-Wherever you intialise your objects, initialize a new instance of the authorization server and bind the storage interfaces and authorization code grant:
+Wherever you initialize your objects, initialize a new instance of the authorization server and bind the storage interfaces and authorization code grant:
 
-~~~ php
-$server = new \League\OAuth2\Server\AuthorizationServer;
+{% highlight php %}
+// Init our repositories
+$clientRepository = new ClientRepository();
+$accessTokenRepository = new AccessTokenRepository();
+$scopeRepository = new ScopeRepository();
+$userRepository = new UserRepository();
+$refreshTokenRepository = new RefreshTokenRepository();
 
-$server->setSessionStorage(new Storage\SessionStorage);
-$server->setAccessTokenStorage(new Storage\AccessTokenStorage);
-$server->setClientStorage(new Storage\ClientStorage);
-$server->setScopeStorage(new Storage\ScopeStorage);
+// Path to public and private keys
+$privateKeyPath = 'file://path/to/private.key';
+$publicKeyPath = 'file://path/to/public.key';
+        
+// Setup the authorization server
+$server = new \League\OAuth2\Server\Server(
+    $clientRepository,
+    $accessTokenRepository,
+    $scopeRepository,
+    $privateKeyPath,
+    $publicKeyPath
+);
 
-$passwordGrant = new \League\OAuth2\Server\Grant\PasswordGrant();
-$passwordGrant->setVerifyCredentialsCallback(function ($username, $password) {
-    // implement logic here to validate a username and password, return an ID if valid, otherwise return false
-});
-
-$server->addGrantType($passwordGrant);
-~~~
-
+// Enable the password grant on the server with an access token TTL of 1 hour
+$server->enableGrantType(
+    new \League\OAuth2\Server\Grant\PasswordGrant(
+        $userRepository, 
+        $refreshTokenRepository
+    ),
+    new \DateInterval('PT1H')
+);
+{% endhighlight %}
 
 ## Implementation
 
 The client will request an access token so create an `/access_token` endpoint.
 
-~~~ php
-$router->post('/access_token', function (Request $request) use ($server) {
+{% highlight php %}
+$app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
 
+    /* @var \League\OAuth2\Server\Server $server */
+    $server = $app->getContainer()->get(Server::class);
+
+    // Try to respond to the request 
     try {
-
-        $response = $server->issueAccessToken();
-        return new Response(
-            json_encode($response),
-            200,
-            [
-                'Content-type'  =>  'application/json',
-                'Cache-Control' =>  'no-store',
-                'Pragma'        =>  'no-store'
-            ]
-        );
-
-    } catch (OAuthException $e) {
-
-        return new Response(
-            json_encode([
-                'error'     =>  $e->errorType,
-                'message'   =>  $e->getMessage()
-            ]),
-            $e->httpStatusCode,
-            $e->getHttpHeaders()
-        );
-
+        return $server->respondToRequest($request, $response);
+        
+    } catch (\League\OAuth2\Server\Exception\OAuthServerException $exception) {
+        return $exception->generateHttpResponse($response);
+        
+    } catch (\Exception $exception) {
+        $body = new Stream('php://temp', 'r+');
+        $body->write($exception->getMessage());
+        return $response->withStatus(500)->withBody($body);
     }
-
 });
-~~~
+{% endhighlight %}

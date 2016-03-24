@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="700px" height="639px" viewBox="0 0 700 639" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.6.1 (26313) - http://www.bohemiancoding.com/sketch -->
+    <title>Which Grant?</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Which-Grant?">
+            <path d="M368,75 L368,144" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path id="Line-decoration-1" d="M368,144 L371,133.2 L365,133.2 L368,144 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path d="M368,260 L368,328" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path id="Line-decoration-1" d="M368,328 L371,317.2 L365,317.2 L368,328 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path d="M368,445 L368,512" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path id="Line-decoration-1" d="M368,512 L371,501.2 L365,501.2 L368,512 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path d="M96,445 L96,534.022469" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path id="Line-decoration-1" d="M96,534.022469 L99,523.222469 L93,523.222469 L96,534.022469 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path d="M492.5,477 L550,477" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path id="Line-decoration-1" d="M550,477 L539.2,474 L539.2,480 L550,477 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path d="M458.5,387 L491.5,387" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M492,387 L492,572" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M459.5,572 L491.5,572" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square"></path>
+            <path d="M277.5,387 L186.5,387" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path id="Line-decoration-1" d="M186.5,387 L197.3,390 L197.3,384 L186.5,387 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path d="M277,573 L170,573" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path id="Line-decoration-1" d="M170,573 L180.8,576 L180.8,570 L170,573 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path d="M458.5,202.5 L550,202.5" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path id="Line-decoration-1" d="M550,202.5 L539.2,199.5 L539.2,205.5 L550,202.5 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path d="M96,328 L96,241" id="Line" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <path id="Line-decoration-1" d="M96,241 L93,251.8 L99,251.8 L96,241 Z" stroke="#4A4A4A" stroke-width="2" stroke-linecap="square" fill="#4A4A4A"></path>
+            <g id="Start" transform="translate(298.000000, 8.000000)">
+                <rect id="Rectangle-1" stroke="#4A4A4A" stroke-width="2" fill="#EB524C" x="0" y="0" width="141" height="67" rx="10"></rect>
+                <text font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#FFFFFF">
+                    <tspan x="54.5517578" y="39">Start</tspan>
+                </text>
+            </g>
+            <g id="Client-Credentials-Grant" transform="translate(552.000000, 169.000000)">
+                <rect id="Rectangle-1" stroke="#1B242E" stroke-width="2" fill="#2B3D50" x="0" y="0" width="141" height="67" rx="10"></rect>
+                <text id="Client-Credentials-G" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#FFFFFF">
+                    <tspan x="11.4863281" y="31">Client Credentials</tspan>
+                    <tspan x="52.3310547" y="48">Grant</tspan>
+                </text>
+            </g>
+            <g id="Auth-Code-Grant" transform="translate(552.000000, 445.000000)">
+                <rect id="Rectangle-1" stroke="#1B242E" stroke-width="2" fill="#2B3D50" x="0" y="0" width="141" height="67" rx="10"></rect>
+                <text id="Authorization-Code-G" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#FFFFFF">
+                    <tspan x="25.8964844" y="31">Authorization</tspan>
+                    <tspan x="32.8862305" y="48">Code Grant</tspan>
+                </text>
+            </g>
+            <g id="Implicit-Grant" transform="translate(26.000000, 171.000000)">
+                <rect id="Rectangle-1" stroke="#1B242E" stroke-width="2" fill="#2B3D50" x="0" y="0" width="141" height="67" rx="10"></rect>
+                <text font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#FFFFFF">
+                    <tspan x="25.3828125" y="37">Implicit Grant</tspan>
+                </text>
+            </g>
+            <g id="Password-Grant" transform="translate(26.000000, 536.000000)">
+                <rect id="Rectangle-1" stroke="#1B242E" stroke-width="2" fill="#2B3D50" x="0" y="0" width="141" height="67" rx="10"></rect>
+                <text font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#FFFFFF">
+                    <tspan x="16.8173828" y="37">Password Grant</tspan>
+                </text>
+            </g>
+            <g id="Access-Token-Owner?" transform="translate(278.000000, 145.000000)">
+                <polygon id="Polygon-1" stroke="#4A4A4A" stroke-width="2" fill="#FFFFFF" points="90 0 180 57.5 90 115 0 57.5 "></polygon>
+                <text id="Access-token-owner?" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                    <tspan x="44.8657227" y="55">Access token</tspan>
+                    <tspan x="65.1103516" y="72">owner?</tspan>
+                </text>
+            </g>
+            <g id="Client-Type" transform="translate(278.000000, 330.000000)">
+                <polygon id="Polygon-1" stroke="#4A4A4A" stroke-width="2" fill="#FFFFFF" points="90 0 180 57.5 90 115 0 57.5 "></polygon>
+                <text id="Client-type?" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                    <tspan x="50.4414062" y="61">Client type?</tspan>
+                </text>
+            </g>
+            <g id="First-Party-Third-Party" transform="translate(278.000000, 515.000000)">
+                <polygon id="Polygon-1" stroke="#4A4A4A" stroke-width="2" fill="#FFFFFF" points="90 0 180 57.5 90 115 0 57.5 "></polygon>
+                <text id="First-party-or-third" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                    <tspan x="47.3242188" y="51">First party or</tspan>
+                    <tspan x="31.3828125" y="68">third party client?</tspan>
+                </text>
+            </g>
+            <g id="First-Party-Third-Party-Copy" transform="translate(6.000000, 329.000000)">
+                <polygon id="Polygon-1" stroke="#4A4A4A" stroke-width="2" fill="#FFFFFF" points="90 0 180 57.5 90 115 0 57.5 "></polygon>
+                <text id="First-party-or-third" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                    <tspan x="47.3242188" y="51">First party or</tspan>
+                    <tspan x="31.3828125" y="68">third party client?</tspan>
+                </text>
+            </g>
+            <text id="Machine" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                <tspan x="468.493164" y="192">Machine</tspan>
+            </text>
+            <text id="User" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                <tspan x="379.93457" y="298">User</tspan>
+            </text>
+            <text id="User-agent-based" font-family="Helvetica-Bold, Helvetica" font-size="12" font-weight="bold" fill="#4A4A4A">
+                <tspan x="180.319336" y="363">User-agent-based</tspan>
+                <tspan x="220.333008" y="377">app</tspan>
+            </text>
+            <text id="First-party" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                <tspan x="200.269043" y="560">First party</tspan>
+            </text>
+            <text id="First-party" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                <tspan x="19.269043" y="486">First party</tspan>
+            </text>
+            <text id="Third-party" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                <tspan x="504.441406" y="550">Third party</tspan>
+            </text>
+            <text id="Third-party" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                <tspan x="14.4414062" y="291">Third party</tspan>
+            </text>
+            <text id="Web-app" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                <tspan x="506.95752" y="418">Web app</tspan>
+            </text>
+            <text id="Native-app" font-family="Helvetica-Bold, Helvetica" font-size="14" font-weight="bold" fill="#4A4A4A">
+                <tspan x="290.100098" y="483">Native app</tspan>
+            </text>
+        </g>
+    </g>
+</svg>
