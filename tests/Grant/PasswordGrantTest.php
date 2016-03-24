@@ -4,6 +4,7 @@ namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Exception\UnknownUserException;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -146,7 +147,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
-        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn(null);
+        $userRepositoryMock->method('getUserEntityByUserCredentials')->willThrowException(new UnknownUserException());
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 

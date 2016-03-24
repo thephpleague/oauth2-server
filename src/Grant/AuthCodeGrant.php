@@ -4,8 +4,8 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Exception\UnknownUserException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
@@ -121,39 +121,34 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // Assert if the user has logged in already
         if ($userId === null && $usernameParameter !== null && $passwordParameter !== null) {
-            $userEntity = $this->userRepository->getUserEntityByUserCredentials(
-                $usernameParameter,
-                $passwordParameter,
-                $this->getIdentifier(),
-                $client
-            );
+            try {
+                $userEntity = $this->userRepository->getUserEntityByUserCredentials(
+                    $usernameParameter,
+                    $passwordParameter,
+                    $this->getIdentifier(),
+                    $client
+                );
 
-            if ($userEntity instanceof UserEntityInterface) {
                 $userId = $userEntity->getIdentifier();
-            } else {
-                $loginError = 'Incorrect username or password';
+            } catch (UnknownUserException $e) {
+                $html = $this->getTemplateRenderer()->renderLogin([
+                    'error'        => 'Incorrect username or password',
+                    'postback_uri' => $this->makeRedirectUri(
+                        $postbackUri,
+                        $request->getQueryParams()
+                    ),
+                ]);
+
+                $htmlResponse = new HtmlResponse($this->accessTokenRepository);
+                $htmlResponse->setStatusCode(403);
+                $htmlResponse->setHtml($html);
+
+                return $htmlResponse;
             }
         }
 
-        // The user hasn't logged in yet so show a login form
-        if ($userId === null) {
-            $html = $this->getTemplateRenderer()->renderLogin([
-                'error'        => $loginError,
-                'postback_uri' => $this->makeRedirectUri(
-                    $postbackUri,
-                    $request->getQueryParams()
-                ),
-            ]);
-
-            $htmlResponse = new HtmlResponse($this->accessTokenRepository);
-            $htmlResponse->setStatusCode(403);
-            $htmlResponse->setHtml($html);
-
-            return $htmlResponse;
-        }
-
         // The user hasn't approved the client yet so show an authorize form
-        if ($userId !== null && $userHasApprovedClient === null) {
+        if ($userHasApprovedClient === null) {
             $html = $this->getTemplateRenderer()->renderAuthorize([
                 'client'       => $client,
                 'scopes'       => $scopes,

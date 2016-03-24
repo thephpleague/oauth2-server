@@ -3,6 +3,7 @@
 namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Exception\UnknownUserException;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -296,7 +297,10 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
+        $failedLoginRepo = $this->getMock(UserRepositoryInterface::class);
+        $failedLoginRepo->method('getUserEntityByUserCredentials')->willThrowException(new UnknownUserException());
+
+        $grant = new ImplicitGrant($failedLoginRepo);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');

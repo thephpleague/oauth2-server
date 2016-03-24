@@ -11,8 +11,8 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Exception\UnknownUserException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
@@ -76,28 +76,26 @@ class PasswordGrant extends AbstractGrant
     protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client)
     {
         $username = $this->getRequestParameter('username', $request);
-        if (is_null($username)) {
+        if ($username === null) {
             throw OAuthServerException::invalidRequest('username', '`%s` parameter is missing');
         }
 
         $password = $this->getRequestParameter('password', $request);
-        if (is_null($password)) {
+        if ($password === null) {
             throw OAuthServerException::invalidRequest('password', '`%s` parameter is missing');
         }
 
-        $user = $this->userRepository->getUserEntityByUserCredentials(
-            $username,
-            $password,
-            $this->getIdentifier(),
-            $client
-        );
-        if (!$user instanceof UserEntityInterface) {
+        try {
+            return $this->userRepository->getUserEntityByUserCredentials(
+                $username,
+                $password,
+                $this->getIdentifier(),
+                $client
+            );
+        } catch (UnknownUserException $e) {
             $this->getEmitter()->emit(new RequestEvent('user.authentication.failed', $request));
-
             throw OAuthServerException::invalidCredentials();
         }
-
-        return $user;
     }
 
     /**
