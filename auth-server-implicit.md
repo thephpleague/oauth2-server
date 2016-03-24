@@ -1,20 +1,22 @@
 ---
 layout: default
-title: Authorization code grant
-permalink: /authorization-server/auth-code-grant/
+title: Implicit grant
+permalink: /authorization-server/implicit-grant/
 ---
 
-# Authorization code grant
+# Implicit grant
 
-The authorization code grant should be very familiar if you've ever signed into a web app using your Facebook or Google account.
+The implicit grant is similar to the authorization code grant with two distinct differences. 
+
+It is intended to be used for user-agent-based clients (e.g. single page web apps) that can't keep a client secret because all of the application code and storage is easily accessible.
+
+Secondly instead of the authorization server returning an authorization code which is exchanged for an access token, the authorization server returns an access token.
 
 ## Flow
-
-### Part One
-
+    
 The client will redirect the user to the authorization server with the following parameters in the query string:
 
-* `response_type` with the value `code`
+* `response_type` with the value `token`
 * `client_id` with the client identifier
 * `redirect_uri` with the client redirect URI. This parameter is optional, but if not send the user will be redirected to a pre-registered redirect URI.
 * `scope` a space delimited list of scopes
@@ -26,25 +28,11 @@ The user will then be asked to login to the authorization server and approve the
 
 If the user approves the client they will be redirected back to the authorization server with the following parameters in the query string:
 
-* `code` with the authorization code
-* `state` with the state parameter sent in the original request
-
-### Part Two
-
-The client will now send a POST request to the authorization server with the following parameters:
-
-* `grant_type` with the value of `authorization_code`
-* `client_id` with the client identifier
-* `client_secret` with the client secret
-* `redirect_uri` with the same redirect URI the user was redirect back to
-* `code` with the authorization code from the query string (remember to url decode it first)
-
-The authorization server will respond with a JSON object containing the following properties:
-
 * `token_type` with the value `Bearer`
 * `expires_in` with an integer representing the TTL of the access token
 * `access_token` a JWT signed with the authorization server's private key
-* `refresh_token` an encrypted payload that can be used to refresh the access token when it expires.
+
+****Note**** this grant does not return a refresh token.
 
 ## Setup
 
@@ -55,8 +43,6 @@ Wherever you initialize your objects, initialize a new instance of the authoriza
 $clientRepository = new ClientRepository();
 $scopeRepository = new ScopeRepository();
 $accessTokenRepository = new AccessTokenRepository();
-$authCodeRepository = new AuthCodeRepository();
-$refreshTokenRepository = new RefreshTokenRepository();
 $userRepository = new UserRepository();
 
 // Path to public and private keys
@@ -72,14 +58,9 @@ $server = new \League\OAuth2\Server\Server(
     $publicKeyPath
 );
 
-// Enable the authentication code grant on the server with a token TTL of 1 hour
+// Enable the implicit grant on the server with a token TTL of 1 hour
 $server->enableGrantType(
-    new \League\OAuth2\Server\Grant\AuthCodeGrant(
-        $authCodeRepository,
-        $refreshTokenRepository,
-        $userRepository,
-        new \DateInterval('PT10M')
-    ),
+    new ImplicitGrant($userRepository),
     new \DateInterval('PT1H')
 );
 {% endhighlight %}
@@ -136,7 +117,7 @@ $renderer = new \League\OAuth2\Server\TemplateRenderer\PlatesRenderer(
     'login_template_name',
     'authorize_template_name'
 );
-$authCodeGrant->setTemplateRenderer($renderer);
+$implicitGrant->setTemplateRenderer($renderer);
 {% endhighlight %}
 
 ### Using Twig with custom templates
@@ -147,7 +128,7 @@ $renderer = new \League\OAuth2\Server\TemplateRenderer\TwigRenderer(
     'login_template_name',
     'authorize_template_name'
 );
-$authCodeGrant->setTemplateRenderer($renderer);
+$implicitGrant->setTemplateRenderer($renderer);
 {% endhighlight %}
 
 ### Using Smarty with custom templates
@@ -158,7 +139,7 @@ $renderer = new \League\OAuth2\Server\TemplateRenderer\SmartyRenderer(
     'login_template_name',
     'authorize_template_name'
 );
-$authCodeGrant->setTemplateRenderer($renderer);
+$implicitGrant->setTemplateRenderer($renderer);
 {% endhighlight %}
 
 ### Using Mustache with custom templates
@@ -169,5 +150,5 @@ $renderer = new \League\OAuth2\Server\TemplateRenderer\MustacheRenderer(
     'login_template_name',
     'authorize_template_name'
 );
-$authCodeGrant->setTemplateRenderer($renderer);
+$implicitGrant->setTemplateRenderer($renderer);
 {% endhighlight %}
