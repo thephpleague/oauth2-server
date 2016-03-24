@@ -11,8 +11,8 @@ Authorization Server:
     'Client Credentials Grant': '/authorization-server/client-credentials-grant/'
     'Password Grant': '/authorization-server/resource-owner-password-credentials-grant/'
     'Authorization Code Grant': '/authorization-server/auth-code-grant/'
-#    'Implict Grant': '/authorization-server/auth-code-grant/'
-#    'Refresh Token Grant': '/authorization-server/refresh-token-grant/'
+    'Implict Grant': '/authorization-server/implicit-grant/'
+    'Refresh Token Grant': '/authorization-server/refresh-token-grant/'
 #    'Creating custom grants': '/authorization-server/custom-grants/'
     'Domain Events': '/authorization-server/events/'
 Resource Server:
