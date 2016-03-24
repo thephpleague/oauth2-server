@@ -10,7 +10,7 @@ use OAuth2ServerExamples\Entities\UserEntity;
 class UserRepository implements UserRepositoryInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getUserEntityByUserCredentials(
         $username,
