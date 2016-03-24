@@ -546,6 +546,63 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $server->issueAccessToken();
     }
 
+    public function testCompleteFlowRedirectClientIdMismatch()
+    {
+        $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
+
+        $_POST = [
+            'grant_type'    =>  'authorization_code',
+            'client_id'     =>  'failface',
+            'client_secret' =>  'foobar',
+            'redirect_uri'  =>  'http://foo/bar',
+            'code'          =>  'foobar',
+        ];
+
+        $server = new AuthorizationServer();
+        $grant = new AuthCodeGrant();
+
+        $clientStorage = M::mock('League\OAuth2\Server\Storage\ClientInterface');
+        $clientStorage->shouldReceive('setServer');
+        $clientStorage->shouldReceive('getBySession')->andReturn(
+            (new ClientEntity($server))->hydrate(['id' => 'testapp'])
+        );
+        $clientStorage->shouldReceive('get')->andReturn(
+            (new ClientEntity($server))->hydrate(['id' => 'failface'])
+        );
+
+        $sessionStorage = M::mock('League\OAuth2\Server\Storage\SessionInterface');
+        $sessionStorage->shouldReceive('setServer');
+        $sessionStorage->shouldReceive('create');
+        $sessionStorage->shouldReceive('getScopes')->andReturn([]);
+        $sessionStorage->shouldReceive('getByAuthCode')->andReturn(
+            (new SessionEntity($server))->setId('foobar')
+        );
+
+        $accessTokenStorage = M::mock('League\OAuth2\Server\Storage\AccessTokenInterface');
+        $accessTokenStorage->shouldReceive('setServer');
+        $accessTokenStorage->shouldReceive('create');
+        $accessTokenStorage->shouldReceive('getScopes')->andReturn([]);
+
+        $scopeStorage = M::mock('League\OAuth2\Server\Storage\ScopeInterface');
+        $scopeStorage->shouldReceive('setServer');
+        $scopeStorage->shouldReceive('get')->andReturn(null);
+
+        $authCodeStorage = M::mock('League\OAuth2\Server\Storage\AuthCodeInterface');
+        $authCodeStorage->shouldReceive('setServer');
+        $authCodeStorage->shouldReceive('get')->andReturn(
+            (new AuthCodeEntity($server))->setId('foobar')->setExpireTime(time() + 300)->setRedirectUri('http://foo/bar')
+        );
+
+        $server->setClientStorage($clientStorage);
+        $server->setScopeStorage($scopeStorage);
+        $server->setSessionStorage($sessionStorage);
+        $server->setAccessTokenStorage($accessTokenStorage);
+        $server->setAuthCodeStorage($authCodeStorage);
+
+        $server->addGrantType($grant);
+        $server->issueAccessToken();
+    }
+
     public function testCompleteFlow()
     {
         $_POST = [
