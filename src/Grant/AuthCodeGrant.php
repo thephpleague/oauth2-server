@@ -293,6 +293,8 @@ class AuthCodeGrant extends AbstractGrant
         $accessToken->setSession($session);
         $accessToken->save();
 
+        $session->applyScopes();
+
         if (isset($refreshToken) && $this->server->hasGrantType('refresh_token')) {
             $refreshToken->setAccessToken($accessToken);
             $refreshToken->save();
