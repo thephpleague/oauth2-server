@@ -70,7 +70,7 @@ class OAuthServerException extends \Exception
     {
         $errorMessage = 'The request is missing a required parameter, includes an invalid parameter value, ' .
             'includes a parameter more than once, or is otherwise malformed.';
-        $hint = ($hint === null) ? sprintf('Check the `%s` parameter', $parameter) : $hint;
+        $hint = ($hint !== null) ? sprintf('Check the `%s` parameter', $parameter) : $hint;
 
         return new static($errorMessage, 3, 'invalid_request', 400, $hint);
     }
