@@ -14,6 +14,8 @@ interface UserRepositoryInterface extends RepositoryInterface
      * @param string                                                          $grantType    The grant type used
      * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $clientEntity
      *
+     * @throws \League\OAuth2\Server\Exception\UnknownUserException
+     *
      * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
      */
     public function getUserEntityByUserCredentials(
