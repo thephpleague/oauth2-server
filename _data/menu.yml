@@ -18,9 +18,8 @@ Authorization Server:
 Resource Server:
     'Securing your API': '/resource-server/securing-your-api/'
 Respository Interfaces:
-    'Access Token Repository Interface': '/a'
     'Client Repository Interface': '/a'
     'Refresh Token Repository Interface': '/a'
     'Scope Repository Interface': '/a'
     'Auth Code Repository Interface': '/a'
-    'User Repository Interface': '/a'
+    'User Repository Interface': '/a'    'Access Token Repository Interface': '/access-token-repository-interface/'
