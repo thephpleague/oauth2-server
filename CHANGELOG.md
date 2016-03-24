@@ -1,5 +1,30 @@
 # Changelog
 
+## 5.0.0-RC1 (release 2016-03-24)
+
+Version 5 is a complete code rewrite.
+
+* JWT support
+* PSR-7 support
+* Improved exception errors
+* Replace all occurrences of the term "Storage" with "Repository"
+* Simplify repositories
+* Entities conform to interfaces and use traits
+* Auth code grant updated
+    * Allow support for public clients
+    * Add support for #439
+* Client credentials grant updated
+* Password grant updated
+    * Allow support for public clients
+* Refresh token grant updated
+* Implement Implicit grant
+* Bearer token output type
+* Remove MAC token output type
+* Authorization server rewrite
+* Resource server class moved to PSR-7 middleware
+* Tests
+* Much much better documentation
+
 ## 4.1.5 (released 2016-01-04)
 
 * Enable Symfony 3.0 support (#412)
