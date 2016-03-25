@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Middleware;
 
+use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Middleware\AuthenticationServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -23,9 +24,12 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
+        $accessRepositoryMock = $this->getMock(AccessTokenRepositoryInterface::class);
+        $accessRepositoryMock->method('createNewToken')->willReturn(new AccessTokenEntity());
+
         $server = new Server(
             $clientRepository,
-            $this->getMock(AccessTokenRepositoryInterface::class),
+            $accessRepositoryMock,
             $scopeRepositoryMock,
             '',
             '',

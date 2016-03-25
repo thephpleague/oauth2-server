@@ -12,7 +12,6 @@ namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\CryptTrait;
-use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
@@ -291,11 +290,11 @@ abstract class AbstractGrant implements GrantTypeInterface
         $userIdentifier,
         array $scopes = []
     ) {
-        $accessToken = new AccessTokenEntity();
-        $accessToken->setIdentifier($this->generateUniqueIdentifier());
-        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
+        $accessToken = $this->accessTokenRepository->createNewToken($client, $scopes, $userIdentifier);
         $accessToken->setClient($client);
         $accessToken->setUserIdentifier($userIdentifier);
+        $accessToken->setIdentifier($this->generateUniqueIdentifier());
+        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
 
         foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
