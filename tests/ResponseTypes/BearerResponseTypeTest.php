@@ -3,6 +3,7 @@
 namespace LeagueTests\ResponseTypes;
 
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
+use League\OAuth2\Server\BearerWasValidated;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -90,6 +91,13 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $json = json_decode((string) $response->getBody());
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
+        $authorizationValidator->addListener(
+            'validated',
+            function (BearerWasValidated $event) use ($accessToken) {
+                $this->assertEquals($accessToken->getIdentifier(), $event->getToken()->getClaim('jti'));
+            }
+        );
+
         $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
         $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 

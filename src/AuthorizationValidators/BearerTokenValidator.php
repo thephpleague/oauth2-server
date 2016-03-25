@@ -4,6 +4,8 @@ namespace League\OAuth2\Server\AuthorizationValidators;
 
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use League\Event\EmitterTrait;
+use League\OAuth2\Server\BearerWasValidated;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -11,7 +13,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class BearerTokenValidator implements AuthorizationValidatorInterface
 {
-    use CryptTrait;
+    use CryptTrait, EmitterTrait;
 
     /**
      * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
@@ -53,11 +55,15 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             }
 
             // Return the request with additional attributes
-            return $request
+            $request = $request
                 ->withAttribute('oauth_access_token_id', $token->getClaim('jti'))
                 ->withAttribute('oauth_client_id', $token->getClaim('aud'))
                 ->withAttribute('oauth_user_id', $token->getClaim('sub'))
                 ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
+
+            $this->getEmitter()->emit(new BearerWasValidated($token));
+
+            return $request;
         } catch (\InvalidArgumentException $exception) {
             // JWT couldn't be parsed so return the request as is
             throw OAuthServerException::accessDenied($exception->getMessage());

@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Grant;
 
+use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
@@ -48,6 +49,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('createNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock
             ->expects($this->once())
             ->method('persistNewAccessToken')->willReturnSelf();
@@ -102,6 +104,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('createNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
