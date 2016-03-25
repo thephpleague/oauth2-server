@@ -2,6 +2,8 @@
 
 namespace LeagueTests;
 
+use League\OAuth2\Server\Entities\AccessTokenEntity;
+use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -51,9 +53,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
+        $accessTokenRepositoryMock = $this->getMock(AccessTokenRepositoryInterface::class);
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+
         $server = new Server(
             $clientRepository,
-            $this->getMock(AccessTokenRepositoryInterface::class),
+            $accessTokenRepositoryMock,
             $scopeRepositoryMock,
             '',
             '',
@@ -93,9 +98,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $userRepository = $this->getMock(UserRepositoryInterface::class);
         $userRepository->method('getUserEntityByUserCredentials')->willReturn(new UserEntity());
 
+        $authCodeRepoMock = $this->getMock(AuthCodeRepositoryInterface::class);
+        $authCodeRepoMock->expects($this->once())->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
+
         $server->enableGrantType(
             new AuthCodeGrant(
-                $this->getMock(AuthCodeRepositoryInterface::class),
+                $authCodeRepoMock,
                 $this->getMock(RefreshTokenRepositoryInterface::class),
                 $userRepository,
                 new \DateInterval('PT1H')
