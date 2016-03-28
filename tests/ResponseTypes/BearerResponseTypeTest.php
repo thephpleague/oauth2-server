@@ -18,9 +18,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 {
     public function testGenerateHttpResponse()
     {
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-
-        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType = new BearerTokenResponse();
         $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
         $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
@@ -62,10 +60,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testDetermineAccessTokenInHeaderValidToken()
     {
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
-
-        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType = new BearerTokenResponse();
         $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
         $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
@@ -88,6 +83,9 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 
         $response = $responseType->generateHttpResponse(new Response());
         $json = json_decode((string) $response->getBody());
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
@@ -152,10 +150,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testDetermineAccessTokenInHeaderRevokedToken()
     {
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(true);
-
-        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType = new BearerTokenResponse();
         $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
         $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
@@ -179,6 +174,9 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $response = $responseType->generateHttpResponse(new Response());
         $json = json_decode((string) $response->getBody());
 
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(true);
+
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
         $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
@@ -198,11 +196,11 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testDetermineAccessTokenInHeaderInvalidToken()
     {
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-
-        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType = new BearerTokenResponse();
         $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
         $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');

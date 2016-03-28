@@ -13,7 +13,6 @@ namespace League\OAuth2\Server\ResponseTypes;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 
 abstract class AbstractResponseType implements ResponseTypeInterface
 {
@@ -28,19 +27,6 @@ abstract class AbstractResponseType implements ResponseTypeInterface
      * @var \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface
      */
     protected $refreshToken;
-
-    /**
-     * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
-     */
-    protected $accessTokenRepository;
-
-    /**
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
-     */
-    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository)
-    {
-        $this->accessTokenRepository = $accessTokenRepository;
-    }
 
     /**
      * {@inheritdoc}

@@ -145,7 +145,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 ),
             ]);
 
-            $htmlResponse = new HtmlResponse($this->accessTokenRepository);
+            $htmlResponse = new HtmlResponse();
             $htmlResponse->setStatusCode(403);
             $htmlResponse->setHtml($html);
 
@@ -163,7 +163,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 ),
             ]);
 
-            $htmlResponse = new HtmlResponse($this->accessTokenRepository);
+            $htmlResponse = new HtmlResponse();
             $htmlResponse->setStatusCode(200);
             $htmlResponse->setHtml($html);
             $htmlResponse->setHeader('set-cookie', sprintf(
@@ -215,7 +215,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 )
             );
 
-            $response = new RedirectResponse($this->accessTokenRepository);
+            $response = new RedirectResponse();
             $response->setRedirectUri(
                 $this->makeRedirectUri(
                     $redirectUri,
