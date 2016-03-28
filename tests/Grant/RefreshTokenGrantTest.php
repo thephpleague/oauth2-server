@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Grant;
 
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
@@ -61,8 +62,8 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
@@ -116,8 +117,8 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
@@ -176,8 +177,8 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
@@ -224,8 +225,8 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
@@ -257,8 +258,8 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = 'foobar';
 
@@ -297,8 +298,8 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
@@ -344,8 +345,8 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
@@ -392,8 +393,8 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(

@@ -5,6 +5,7 @@ namespace League\OAuth2\Server\Entities;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
 use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
@@ -16,11 +17,11 @@ class AccessTokenEntity implements AccessTokenEntityInterface
     /**
      * Generate a JWT from the access token
      *
-     * @param string $privateKeyPath
+     * @param \League\OAuth2\Server\CryptKey $privateKey
      *
      * @return string
      */
-    public function convertToJWT($privateKeyPath)
+    public function convertToJWT(CryptKey $privateKey)
     {
         return (new Builder())
             ->setAudience($this->getClient()->getIdentifier())
@@ -30,7 +31,7 @@ class AccessTokenEntity implements AccessTokenEntityInterface
             ->setExpiration($this->getExpiryDateTime()->getTimestamp())
             ->setSubject($this->getUserIdentifier())
             ->set('scopes', $this->getScopes())
-            ->sign(new Sha256(), new Key($privateKeyPath))
+            ->sign(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()))
             ->getToken();
     }
 }

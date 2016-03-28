@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Utils;
 
+use League\OAuth2\Server\CryptKey;
 use LeagueTests\Stubs\CryptTraitStub;
 
 class CryptTraitTest extends \PHPUnit_Framework_TestCase
@@ -31,7 +32,7 @@ class CryptTraitTest extends \PHPUnit_Framework_TestCase
      */
     public function testBadPrivateKey()
     {
-        $this->cryptStub->setPrivateKeyPath(__DIR__ . '/Stubs/public.key');
+        $this->cryptStub->setPrivateKey(new CryptKey(__DIR__ . '/Stubs/public.key'));
         $this->cryptStub->doEncrypt('');
     }
 
@@ -40,7 +41,7 @@ class CryptTraitTest extends \PHPUnit_Framework_TestCase
      */
     public function testBadPublicKey()
     {
-        $this->cryptStub->setPublicKeyPath(__DIR__ . '/Stubs/private.key');
+        $this->cryptStub->setPublicKey(new CryptKey(__DIR__ . '/Stubs/private.key'));
         $this->cryptStub->doDecrypt('');
     }
 }

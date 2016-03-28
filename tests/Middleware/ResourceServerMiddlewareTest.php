@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Middleware;
 
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -37,7 +38,7 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
 
-        $token = $accessToken->convertToJWT('file://' . __DIR__ . '/../Stubs/private.key');
+        $token = $accessToken->convertToJWT(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));

@@ -32,19 +32,19 @@ class Server implements EmitterAwareInterface
     protected $grantTypeAccessTokenTTL = [];
 
     /**
-     * @var string
+     * @var \League\OAuth2\Server\CryptKey
      */
-    protected $privateKeyPath;
+    protected $privateKey;
+
+    /**
+     * @var \League\OAuth2\Server\CryptKey
+     */
+    protected $publicKey;
 
     /**
      * @var ResponseTypeInterface
      */
     protected $responseType;
-
-    /**
-     * @var string
-     */
-    private $publicKeyPath;
 
     /**
      * @var \League\OAuth2\Server\Repositories\ClientRepositoryInterface
@@ -72,8 +72,8 @@ class Server implements EmitterAwareInterface
      * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface                       $clientRepository
      * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface                  $accessTokenRepository
      * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface                        $scopeRepository
-     * @param string                                                                             $privateKeyPath
-     * @param string                                                                             $publicKeyPath
+     * @param \League\OAuth2\Server\CryptKey|string                                              $privateKey
+     * @param \League\OAuth2\Server\CryptKey|string                                              $publicKey
      * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface                     $responseType
      * @param null|\League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface $authorizationValidator
      */
@@ -81,16 +81,25 @@ class Server implements EmitterAwareInterface
         ClientRepositoryInterface $clientRepository,
         AccessTokenRepositoryInterface $accessTokenRepository,
         ScopeRepositoryInterface $scopeRepository,
-        $privateKeyPath,
-        $publicKeyPath,
+        $privateKey,
+        $publicKey,
         ResponseTypeInterface $responseType = null,
         AuthorizationValidatorInterface $authorizationValidator = null
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
         $this->scopeRepository = $scopeRepository;
-        $this->privateKeyPath = $privateKeyPath;
-        $this->publicKeyPath = $publicKeyPath;
+
+        if (!$privateKey instanceof CryptKey) {
+            $privateKey = new CryptKey($privateKey);
+        }
+        $this->privateKey = $privateKey;
+
+        if (!$publicKey instanceof CryptKey) {
+            $publicKey = new CryptKey($publicKey);
+        }
+        $this->publicKey = $publicKey;
+
         $this->responseType = $responseType;
         $this->authorizationValidator = $authorizationValidator;
     }
@@ -106,8 +115,8 @@ class Server implements EmitterAwareInterface
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
-        $grantType->setPrivateKeyPath($this->privateKeyPath);
-        $grantType->setPublicKeyPath($this->publicKeyPath);
+        $grantType->setPrivateKey($this->privateKey);
+        $grantType->setPublicKey($this->publicKey);
         $grantType->setEmitter($this->getEmitter());
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
@@ -118,8 +127,8 @@ class Server implements EmitterAwareInterface
     /**
      * Return an access token response.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface|null $request
-     * @param \Psr\Http\Message\ResponseInterface|null      $response
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Psr\Http\Message\ResponseInterface      $response
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
@@ -171,8 +180,7 @@ class Server implements EmitterAwareInterface
             $this->responseType = new BearerTokenResponse($this->accessTokenRepository);
         }
 
-        $this->responseType->setPublicKeyPath($this->publicKeyPath);
-        $this->responseType->setPrivateKeyPath($this->privateKeyPath);
+        $this->responseType->setPrivateKey($this->privateKey);
 
         return $this->responseType;
     }
@@ -186,8 +194,7 @@ class Server implements EmitterAwareInterface
             $this->authorizationValidator = new BearerTokenValidator($this->accessTokenRepository);
         }
 
-        $this->authorizationValidator->setPublicKeyPath($this->publicKeyPath);
-        $this->authorizationValidator->setPrivateKeyPath($this->privateKeyPath);
+        $this->authorizationValidator->setPublicKey($this->publicKey);
 
         return $this->authorizationValidator;
     }

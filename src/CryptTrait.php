@@ -13,41 +13,33 @@ namespace League\OAuth2\Server;
 trait CryptTrait
 {
     /**
-     * @var string
+     * @var \League\OAuth2\Server\CryptKey
      */
-    protected $privateKeyPath;
+    protected $privateKey;
 
     /**
-     * @var string
+     * @var \League\OAuth2\Server\CryptKey
      */
-    protected $publicKeyPath;
+    protected $publicKey;
 
     /**
      * Set path to private key.
      *
-     * @param string $privateKeyPath
+     * @param \League\OAuth2\Server\CryptKey $privateKey
      */
-    public function setPrivateKeyPath($privateKeyPath)
+    public function setPrivateKey(CryptKey $privateKey)
     {
-        if (strpos($privateKeyPath, 'file://') !== 0) {
-            $privateKeyPath = 'file://' . $privateKeyPath;
-        }
-
-        $this->privateKeyPath = $privateKeyPath;
+        $this->privateKey = $privateKey;
     }
 
     /**
      * Set path to public key.
      *
-     * @param string $publicKeyPath
+     * @param \League\OAuth2\Server\CryptKey $publicKey
      */
-    public function setPublicKeyPath($publicKeyPath)
+    public function setPublicKey(CryptKey $publicKey)
     {
-        if (strpos($publicKeyPath, 'file://') !== 0) {
-            $publicKeyPath = 'file://' . $publicKeyPath;
-        }
-
-        $this->publicKeyPath = $publicKeyPath;
+        $this->publicKey = $publicKey;
     }
 
     /**
@@ -59,10 +51,12 @@ trait CryptTrait
      */
     protected function encrypt($unencryptedData)
     {
-        $privateKey = openssl_pkey_get_private($this->privateKeyPath);
+        $privateKey = openssl_pkey_get_private($this->privateKey->getKeyPath(), $this->privateKey->getPassPhrase());
         $privateKeyDetails = @openssl_pkey_get_details($privateKey);
         if ($privateKeyDetails === null) {
-            throw new \LogicException(sprintf('Could not get details of private key: %s', $this->privateKeyPath));
+            throw new \LogicException(
+                sprintf('Could not get details of private key: %s', $this->privateKey->getKeyPath())
+            );
         }
 
         $chunkSize = ceil($privateKeyDetails['bits'] / 8) - 11;
@@ -78,7 +72,7 @@ trait CryptTrait
             }
             $output .= $encrypted;
         }
-        openssl_free_key($privateKey);
+        openssl_pkey_free($privateKey);
 
         return base64_encode($output);
     }
@@ -94,10 +88,12 @@ trait CryptTrait
      */
     protected function decrypt($encryptedData)
     {
-        $publicKey = openssl_pkey_get_public($this->publicKeyPath);
+        $publicKey = openssl_pkey_get_public($this->publicKey->getKeyPath());
         $publicKeyDetails = @openssl_pkey_get_details($publicKey);
         if ($publicKeyDetails === null) {
-            throw new \LogicException(sprintf('Could not get details of public key: %s', $this->publicKeyPath));
+            throw new \LogicException(
+                sprintf('Could not get details of public key: %s', $this->publicKey->getKeyPath())
+            );
         }
 
         $chunkSize = ceil($publicKeyDetails['bits'] / 8);
@@ -115,7 +111,7 @@ trait CryptTrait
             }
             $output .= $decrypted;
         }
-        openssl_free_key($publicKey);
+        openssl_pkey_free($publicKey);
 
         return $output;
     }

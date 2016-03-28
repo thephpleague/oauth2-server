@@ -3,6 +3,7 @@
 namespace LeagueTests\Grant;
 
 use League\Event\Emitter;
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
@@ -23,8 +24,8 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setPrivateKeyPath('./private.key');
-        $grantMock->setPublicKeyPath('./public.key');
+        $grantMock->setPrivateKey(new CryptKey(__DIR__ . '/../Stubs/private.key'));
+        $grantMock->setPublicKey(new CryptKey(__DIR__ . '/../Stubs/public.key'));
         $grantMock->setEmitter(new Emitter());
     }
 

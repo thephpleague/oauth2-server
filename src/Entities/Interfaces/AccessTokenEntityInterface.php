@@ -2,14 +2,16 @@
 
 namespace League\OAuth2\Server\Entities\Interfaces;
 
+use League\OAuth2\Server\CryptKey;
+
 interface AccessTokenEntityInterface extends TokenInterface
 {
     /**
      * Generate a JWT from the access token
      *
-     * @param string $privateKeyPath
+     * @param \League\OAuth2\Server\CryptKey $privateKey
      *
      * @return string
      */
-    public function convertToJWT($privateKeyPath);
+    public function convertToJWT(CryptKey $privateKey);
 }
