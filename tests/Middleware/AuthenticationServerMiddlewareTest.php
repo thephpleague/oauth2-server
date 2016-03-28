@@ -27,8 +27,8 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $scopeRepositoryMock,
-            '',
-            '',
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
             new StubResponseType()
         );
 
@@ -60,8 +60,8 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            '',
-            '',
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
             new StubResponseType()
         );
 

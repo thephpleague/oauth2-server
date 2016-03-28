@@ -28,8 +28,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $this->getMock(ClientRepositoryInterface::class),
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            '',
-            '',
+            'file://' . __DIR__ . '/Stubs/private.key',
+            'file://' . __DIR__ . '/Stubs/public.key',
             new StubResponseType()
         );
 
@@ -55,8 +55,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $scopeRepositoryMock,
-            '',
-            '',
+            'file://' . __DIR__ . '/Stubs/private.key',
+            'file://' . __DIR__ . '/Stubs/public.key',
             new StubResponseType()
         );
 
@@ -125,8 +125,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            '',
-            ''
+            'file://' . __DIR__ . '/Stubs/private.key',
+            'file://' . __DIR__ . '/Stubs/public.key'
         );
 
         $abstractGrantReflection = new \ReflectionClass($server);
@@ -144,8 +144,8 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            '',
-            ''
+            'file://' . __DIR__ . '/Stubs/private.key',
+            'file://' . __DIR__ . '/Stubs/public.key'
         );
 
         try {
