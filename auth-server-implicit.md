@@ -6,14 +6,14 @@ permalink: /authorization-server/implicit-grant/
 
 # Implicit grant
 
-The implicit grant is similar to the authorization code grant with two distinct differences. 
+The implicit grant is similar to the authorization code grant with two distinct differences.
 
 It is intended to be used for user-agent-based clients (e.g. single page web apps) that can't keep a client secret because all of the application code and storage is easily accessible.
 
 Secondly instead of the authorization server returning an authorization code which is exchanged for an access token, the authorization server returns an access token.
 
 ## Flow
-    
+
 The client will redirect the user to the authorization server with the following parameters in the query string:
 
 * `response_type` with the value `token`
@@ -46,16 +46,18 @@ $accessTokenRepository = new AccessTokenRepository();
 $userRepository = new UserRepository();
 
 // Path to public and private keys
-$privateKeyPath = 'file://path/to/private.key';
-$publicKeyPath = 'file://path/to/public.key';
-        
+$privateKey = 'file://path/to/private.key';
+// Private key with passphrase if needed
+//$privateKey = new CryptKey('file://path/to/private.key', 'passphrase');
+$publicKey = 'file://path/to/public.key';
+
 // Setup the authorization server
 $server = new \League\OAuth2\Server\Server(
     $clientRepository,
     $accessTokenRepository,
     $scopeRepository,
-    $privateKeyPath,
-    $publicKeyPath
+    $privateKey,
+    $publicKey
 );
 
 // Enable the implicit grant on the server with a token TTL of 1 hour
@@ -75,13 +77,13 @@ $app->post('/oauth2', function (ServerRequestInterface $request, ResponseInterfa
     /* @var \League\OAuth2\Server\Server $server */
     $server = $app->getContainer()->get(Server::class);
 
-    // Try to respond to the request 
+    // Try to respond to the request
     try {
         return $server->respondToRequest($request, $response);
-        
+
     } catch (\League\OAuth2\Server\Exception\OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
-        
+
     } catch (\Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
