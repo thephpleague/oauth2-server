@@ -11,8 +11,10 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\MessageEncryption;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\ResponseTypes\Dto\EncryptedRefreshToken;
 use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -22,12 +24,21 @@ use Psr\Http\Message\ServerRequestInterface;
 class RefreshTokenGrant extends AbstractGrant
 {
     /**
-     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     * @var MessageEncryption
      */
-    public function __construct(RefreshTokenRepositoryInterface $refreshTokenRepository)
-    {
+    private $messageEncryption;
+
+    /**
+     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     * @param MessageEncryption                                                  $messageEncryption
+     */
+    public function __construct(
+        RefreshTokenRepositoryInterface $refreshTokenRepository,
+        MessageEncryption $messageEncryption
+    ) {
         $this->setRefreshTokenRepository($refreshTokenRepository);
 
+        $this->messageEncryption = $messageEncryption;
         $this->refreshTokenTTL = new \DateInterval('P1M');
     }
 
@@ -74,8 +85,24 @@ class RefreshTokenGrant extends AbstractGrant
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $oldRefreshToken['user_id'], $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
+        $expireDateTime = $accessToken->getExpiryDateTime()->getTimestamp();
 
-        return $responseFactory->newAccessRefreshTokenResponse($accessToken, $refreshToken);
+        $encryptedRefreshToken = new EncryptedRefreshToken(
+            $this->messageEncryption->encrypt(
+                json_encode(
+                    [
+                        'client_id'        => $accessToken->getClient()->getIdentifier(),
+                        'refresh_token_id' => $refreshToken->getIdentifier(),
+                        'access_token_id'  => $accessToken->getIdentifier(),
+                        'scopes'           => $accessToken->getScopes(),
+                        'user_id'          => $accessToken->getUserIdentifier(),
+                        'expire_time'      => $expireDateTime,
+                    ]
+                )
+            )
+        );
+
+        return $responseFactory->newRefreshTokenResponse($accessToken, $encryptedRefreshToken);
     }
 
     /**
@@ -95,7 +122,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         // Validate refresh token
         try {
-            $refreshToken = $this->decrypt($encryptedRefreshToken);
+            $refreshToken = $this->messageEncryption->decrypt($encryptedRefreshToken);
         } catch (\LogicException $e) {
             throw OAuthServerException::invalidRefreshToken('Cannot parse refresh token: ' . $e->getMessage());
         }

@@ -1,30 +1,29 @@
 <?php
 
-namespace League\OAuth2\Server;
+namespace League\OAuth2\Server\Jwt;
 
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 
-class AccessTokenToJwtConverter
+class AccessTokenConverter implements AccessTokenConverterInterface
 {
-    /**
-     * @var Builder
-     */
-    private $builder;
     /**
      * @var string
      */
     private $privateKeyPath;
+    /**
+     * @var Builder
+     */
+    private $builder;
 
     /**
-     * @param Builder $builder
      * @param $privateKeyPath
      */
-    public function __construct(Builder $builder, $privateKeyPath)
+    public function __construct($privateKeyPath)
     {
-        $this->builder = $builder;
+        $this->builder = new Builder();
         $this->privateKeyPath = $privateKeyPath;
     }
 
@@ -33,7 +32,7 @@ class AccessTokenToJwtConverter
      *
      * @param AccessTokenEntityInterface $accessTokenEntity
      *
-     * @return string
+     * @return Builder
      */
     public function convert(AccessTokenEntityInterface $accessTokenEntity)
     {
@@ -45,7 +44,6 @@ class AccessTokenToJwtConverter
             ->setExpiration($accessTokenEntity->getExpiryDateTime()->getTimestamp())
             ->setSubject($accessTokenEntity->getUserIdentifier())
             ->set('scopes', $accessTokenEntity->getScopes())
-            ->sign(new Sha256(), new Key($this->privateKeyPath))
-            ->getToken();
+            ->sign(new Sha256(), new Key($this->privateKeyPath));
     }
 }

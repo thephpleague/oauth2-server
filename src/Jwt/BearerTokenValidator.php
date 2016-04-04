@@ -1,33 +1,39 @@
 <?php
 
-namespace League\OAuth2\Server\AuthorizationValidators;
+namespace League\OAuth2\Server\Jwt;
 
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\Event\EmitterTrait;
+use League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface;
 use League\OAuth2\Server\BearerWasValidated;
-use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class BearerTokenValidator implements AuthorizationValidatorInterface
 {
-    use CryptTrait, EmitterTrait;
+    use EmitterTrait;
 
     /**
      * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
      */
     private $accessTokenRepository;
+    /**
+     * @var
+     */
+    private $publicKeyPath;
 
     /**
      * BearerTokenValidator constructor.
      *
      * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     * @param $publicKeyPath
      */
-    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository)
+    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository, $publicKeyPath)
     {
         $this->accessTokenRepository = $accessTokenRepository;
+        $this->publicKeyPath = $publicKeyPath;
     }
 
     /**

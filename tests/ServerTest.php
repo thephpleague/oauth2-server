@@ -5,14 +5,18 @@ namespace LeagueTests;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Jwt\AccessTokenConverter;
+use League\OAuth2\Server\Jwt\BearerTokenValidator;
+use League\OAuth2\Server\MessageEncryption;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\ResponseFactory;
+use League\OAuth2\Server\ResponseFactory;
 use League\OAuth2\Server\Server;
+use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\UserEntity;
 use Psr\Http\Message\ResponseInterface;
@@ -27,9 +31,14 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $this->getMock(ClientRepositoryInterface::class),
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            '',
-            '',
-            new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key')
+            new ResponseFactory(
+                new AccessTokenConverter('file://' . __DIR__ . '/Stubs/private.key'),
+                $this->getMock(RendererInterface::class)
+            ),
+            new BearerTokenValidator(
+                $this->getMock(AccessTokenRepositoryInterface::class),
+                'file://' . __DIR__ . '/Stubs/public.key'
+            )
         );
 
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
@@ -54,9 +63,14 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $scopeRepositoryMock,
-            '',
-            '',
-            new ResponseFactory('file://' . __DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key')
+            new ResponseFactory(
+                new AccessTokenConverter('file://' . __DIR__ . '/Stubs/private.key'),
+                $this->getMock(RendererInterface::class)
+            ),
+            new BearerTokenValidator(
+                $this->getMock(AccessTokenRepositoryInterface::class),
+                'file://' . __DIR__ . '/Stubs/public.key'
+            )
         );
 
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
@@ -84,9 +98,14 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $scopeRepositoryMock,
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key',
-            new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key')
+            new ResponseFactory(
+                new AccessTokenConverter('file://' . __DIR__ . '/Stubs/private.key'),
+                $this->getMock(RendererInterface::class)
+            ),
+            new BearerTokenValidator(
+                $this->getMock(AccessTokenRepositoryInterface::class),
+                'file://' . __DIR__ . '/Stubs/public.key'
+            )
         );
 
         $userRepository = $this->getMock(UserRepositoryInterface::class);
@@ -97,6 +116,10 @@ class ServerTest extends \PHPUnit_Framework_TestCase
                 $this->getMock(AuthCodeRepositoryInterface::class),
                 $this->getMock(RefreshTokenRepositoryInterface::class),
                 $userRepository,
+                new MessageEncryption(
+                    'file://' . __DIR__ . '/Stubs/private.key',
+                    'file://' . __DIR__ . '/Stubs/public.key'
+                ),
                 new \DateInterval('PT1H')
             ),
             new \DateInterval('PT1M')
@@ -124,8 +147,14 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            '',
-            ''
+            new ResponseFactory(
+                new AccessTokenConverter('file://' . __DIR__ . '/Stubs/private.key'),
+                $this->getMock(RendererInterface::class)
+            ),
+            new BearerTokenValidator(
+                $this->getMock(AccessTokenRepositoryInterface::class),
+                'file://' . __DIR__ . '/Stubs/public.key'
+            )
         );
 
         try {

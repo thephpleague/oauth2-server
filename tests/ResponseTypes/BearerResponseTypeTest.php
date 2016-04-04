@@ -2,14 +2,13 @@
 
 namespace LeagueTests\ResponseTypes;
 
-use Lcobucci\JWT\Builder;
-use League\OAuth2\Server\AccessTokenToJwtConverter;
-use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
-use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Jwt\AccessTokenConverter;
+use League\OAuth2\Server\Jwt\BearerTokenResponse;
+use League\OAuth2\Server\Jwt\BearerTokenValidator;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use League\OAuth2\Server\ResponseTypes\Dto\EncryptedRefreshToken;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use Psr\Http\Message\ResponseInterface;
@@ -32,17 +31,10 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
 
-        $refreshToken = new RefreshTokenEntity();
-        $refreshToken->setIdentifier('abcdef');
-        $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
-
         $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            new AccessTokenToJwtConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
+            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
             $accessToken,
-            $refreshToken
+            new EncryptedRefreshToken('encrypted')
         );
 
         $response = $responseType->generateHttpResponse(new Response());
@@ -72,17 +64,10 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
 
-        $refreshToken = new RefreshTokenEntity();
-        $refreshToken->setIdentifier('abcdef');
-        $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
-
         $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            new AccessTokenToJwtConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
+            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
             $accessToken,
-            $refreshToken
+            new EncryptedRefreshToken('encrypted')
         );
 
         $response = $responseType->generateHttpResponse(new Response());
@@ -91,9 +76,10 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
 
-        $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
-        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $authorizationValidator = new BearerTokenValidator(
+            $accessTokenRepositoryMock,
+            'file://' . __DIR__ . '/../Stubs/public.key'
+        );
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
@@ -120,25 +106,19 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
 
-        $refreshToken = new RefreshTokenEntity();
-        $refreshToken->setIdentifier('abcdef');
-        $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
-
         $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            new AccessTokenToJwtConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
+            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
             $accessToken,
-            $refreshToken
+            new EncryptedRefreshToken('encrypted')
         );
 
         $response = $responseType->generateHttpResponse(new Response());
         $json = json_decode((string) $response->getBody());
 
-        $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
-        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $authorizationValidator = new BearerTokenValidator(
+            $accessTokenRepositoryMock,
+            'file://' . __DIR__ . '/../Stubs/public.key'
+        );
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token . 'foo'));
@@ -164,17 +144,10 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
 
-        $refreshToken = new RefreshTokenEntity();
-        $refreshToken->setIdentifier('abcdef');
-        $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
-
         $responseType = new BearerTokenResponse(
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            new AccessTokenToJwtConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
+            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
             $accessToken,
-            $refreshToken
+            new EncryptedRefreshToken('encrypted')
         );
 
         $response = $responseType->generateHttpResponse(new Response());
@@ -183,9 +156,10 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(true);
 
-        $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
-        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $authorizationValidator = new BearerTokenValidator(
+            $accessTokenRepositoryMock,
+            'file://' . __DIR__ . '/../Stubs/public.key'
+        );
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
@@ -204,9 +178,10 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
-        $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
-        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $authorizationValidator = new BearerTokenValidator(
+            $accessTokenRepositoryMock,
+            'file://' . __DIR__ . '/../Stubs/public.key'
+        );
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', 'Bearer blah');

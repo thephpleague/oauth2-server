@@ -5,23 +5,30 @@ namespace League\OAuth2\Server\Grant;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\MessageEncryption;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\ResponseTypes\Dto\AuthorizeData;
+use League\OAuth2\Server\ResponseTypes\Dto\LoginData;
 use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
-use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ImplicitGrant extends AbstractAuthorizeGrant
+class ImplicitGrant extends AbstractGrant
 {
     /**
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface    $userRepository
-     * @param \League\OAuth2\Server\TemplateRenderer\RendererInterface|null $templateRenderer
+     * @var MessageEncryption
      */
-    public function __construct(UserRepositoryInterface $userRepository, RendererInterface $templateRenderer = null)
+    private $messageEncryption;
+
+    /**
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface $userRepository
+     * @param MessageEncryption                                          $messageEncryption
+     */
+    public function __construct(UserRepositoryInterface $userRepository, MessageEncryption $messageEncryption)
     {
         $this->setUserRepository($userRepository);
         $this->refreshTokenTTL = new \DateInterval('P1M');
-        $this->templateRenderer = $templateRenderer;
+        $this->messageEncryption = $messageEncryption;
     }
 
     /**
@@ -98,7 +105,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         $oauthCookie = $this->getCookieParameter('oauth_authorize_request', $request, null);
         if ($oauthCookie !== null) {
             try {
-                $oauthCookiePayload = json_decode($this->decrypt($oauthCookie));
+                $oauthCookiePayload = json_decode($this->messageEncryption->decrypt($oauthCookie));
                 if (is_object($oauthCookiePayload)) {
                     $userId = $oauthCookiePayload->user_id;
                 }
@@ -131,39 +138,22 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         // The user hasn't logged in yet so show a login form
         if ($userId === null) {
-            $html = $this->getTemplateRenderer()->renderLogin([
-                'error'        => $loginError,
-                'postback_uri' => $this->makeRedirectUri(
-                    $postbackUri,
-                    $request->getQueryParams()
-                ),
-            ]);
-
-            return $responseFactory->newHtmlResponse($html, 403);
+            return $responseFactory->newHtmlLoginResponse(
+                new LoginData($loginError, $postbackUri, $request->getQueryParams())
+            );
         }
 
         // The user hasn't approved the client yet so show an authorize form
         if ($userId !== null && $userHasApprovedClient === null) {
-            $html = $this->getTemplateRenderer()->renderAuthorize([
-                'client'       => $client,
-                'scopes'       => $scopes,
-                'postback_uri' => $this->makeRedirectUri(
-                    $postbackUri,
-                    $request->getQueryParams()
-                ),
-            ]);
+            $encryptedUserId = $this->messageEncryption->encrypt(
+                json_encode([
+                    'user_id' => $userId,
+                ])
+            );
 
-            return $responseFactory->newHtmlResponse($html, 200, [
-                'set-cookie' => sprintf(
-                    'oauth_authorize_request=%s; Expires=%s',
-                    urlencode($this->encrypt(
-                        json_encode([
-                            'user_id' => $userId,
-                        ])
-                    )),
-                    (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
-                ),
-            ]);
+            return $responseFactory->newHtmlAuthorizeResponse(
+                new AuthorizeData($client, $scopes, $postbackUri, $request->getQueryParams(), $encryptedUserId)
+            );
         }
 
         // The user has either approved or denied the client, so redirect them back

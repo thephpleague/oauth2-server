@@ -13,9 +13,11 @@ namespace League\OAuth2\Server\Grant;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\MessageEncryption;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\ResponseTypes\Dto\EncryptedRefreshToken;
 use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -25,17 +27,27 @@ use Psr\Http\Message\ServerRequestInterface;
 class PasswordGrant extends AbstractGrant
 {
     /**
+     * @var MessageEncryption
+     */
+    private $messageEncryption;
+
+    /**
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
+     * @param MessageEncryption                                                  $messageEncryption
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      */
     public function __construct(
         UserRepositoryInterface $userRepository,
+        MessageEncryption $messageEncryption,
         RefreshTokenRepositoryInterface $refreshTokenRepository
     ) {
         $this->setUserRepository($userRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
 
         $this->refreshTokenTTL = new \DateInterval('P1M');
+        $this->messageEncryption = $messageEncryption;
+        $this->refreshTokenRepository = $refreshTokenRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -57,8 +69,24 @@ class PasswordGrant extends AbstractGrant
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
+        $expireDateTime = $accessToken->getExpiryDateTime()->getTimestamp();
 
-        return $responseFactory->newAccessRefreshTokenResponse($accessToken, $refreshToken);
+        $encryptedRefreshToken = new EncryptedRefreshToken(
+            $this->messageEncryption->encrypt(
+                json_encode(
+                    [
+                        'client_id'        => $accessToken->getClient()->getIdentifier(),
+                        'refresh_token_id' => $refreshToken->getIdentifier(),
+                        'access_token_id'  => $accessToken->getIdentifier(),
+                        'scopes'           => $accessToken->getScopes(),
+                        'user_id'          => $accessToken->getUserIdentifier(),
+                        'expire_time'      => $expireDateTime,
+                    ]
+                )
+            )
+        );
+
+        return $responseFactory->newRefreshTokenResponse($accessToken, $encryptedRefreshToken);
     }
 
     /**

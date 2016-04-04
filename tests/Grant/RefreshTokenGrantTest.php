@@ -3,34 +3,48 @@
 namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
+use League\OAuth2\Server\Jwt\AccessTokenConverter;
+use League\OAuth2\Server\Jwt\BearerTokenResponse;
+use League\OAuth2\Server\MessageEncryption;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
-use League\OAuth2\Server\ResponseTypes\ResponseFactory;
+use League\OAuth2\Server\ResponseFactory;
+use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use LeagueTests\Stubs\ClientEntity;
-use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\ScopeEntity;
 use Zend\Diactoros\ServerRequest;
 
 class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * CryptTrait stub
+     * @var MessageEncryption
      */
-    protected $cryptStub;
+    protected $messageEncryption;
+    /**
+     * @var ResponseFactory
+     */
+    private $responseFactory;
 
     public function setUp()
     {
-        $this->cryptStub = new CryptTraitStub();
+        $this->messageEncryption = new MessageEncryption(
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key'
+        );
+
+        $this->responseFactory = new ResponseFactory(
+            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
+            $this->getMock(RendererInterface::class)
+        );
     }
 
     public function testGetIdentifier()
     {
         $refreshTokenRepositoryMock = $this->getMock(RefreshTokenRepositoryInterface::class);
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
         $this->assertEquals('refresh_token', $grant->getIdentifier());
     }
 
@@ -56,14 +70,12 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('persistNewRefreshToken')->willReturnSelf();
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
-        $oldRefreshToken = $this->cryptStub->doEncrypt(
+        $oldRefreshToken = $this->messageEncryption->encrypt(
             json_encode(
                 [
                     'client_id'        => 'foo',
@@ -85,7 +97,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $responseType = $grant->respondToRequest($serverRequest, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT5M'));
+        $responseType = $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
         $this->assertTrue($responseType instanceof BearerTokenResponse);
     }
 
@@ -108,14 +120,12 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
-        $oldRefreshToken = $this->cryptStub->doEncrypt(
+        $oldRefreshToken = $this->messageEncryption->encrypt(
             json_encode(
                 [
                     'client_id'        => 'foo',
@@ -138,7 +148,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $responseType = $grant->respondToRequest($serverRequest, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT5M'));
+        $responseType = $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
 
         $this->assertTrue($responseType instanceof BearerTokenResponse);
     }
@@ -166,14 +176,12 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
-        $oldRefreshToken = $this->cryptStub->doEncrypt(
+        $oldRefreshToken = $this->messageEncryption->encrypt(
             json_encode(
                 [
                     'client_id'        => 'foo',
@@ -196,7 +204,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
     }
 
     /**
@@ -214,11 +222,9 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
@@ -228,7 +234,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
     }
 
     /**
@@ -246,11 +252,9 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $oldRefreshToken = 'foobar';
 
@@ -263,7 +267,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
     }
 
     /**
@@ -285,13 +289,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
-        $oldRefreshToken = $this->cryptStub->doEncrypt(
+        $oldRefreshToken = $this->messageEncryption->encrypt(
             json_encode(
                 [
                     'client_id'        => 'bar',
@@ -313,7 +315,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
     }
 
     /**
@@ -331,13 +333,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
-        $oldRefreshToken = $this->cryptStub->doEncrypt(
+        $oldRefreshToken = $this->messageEncryption->encrypt(
             json_encode(
                 [
                     'client_id'        => 'foo',
@@ -359,7 +359,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
     }
 
     /**
@@ -378,13 +378,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('isRefreshTokenRevoked')->willReturn(true);
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
-        $oldRefreshToken = $this->cryptStub->doEncrypt(
+        $oldRefreshToken = $this->messageEncryption->encrypt(
             json_encode(
                 [
                     'client_id'        => 'foo',
@@ -406,6 +404,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
     }
 }

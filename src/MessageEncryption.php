@@ -10,36 +10,32 @@
  */
 namespace League\OAuth2\Server;
 
-trait CryptTrait
+final class MessageEncryption
 {
-    protected $privateKeyPath;
+    /**
+     * @var string
+     */
+    private $privateKeyPath;
 
     /**
      * @var string
      */
-    protected $publicKeyPath;
+    private $publicKeyPath;
 
     /**
      * Set path to private key.
      *
      * @param string $privateKeyPath
+     * @param $publicKeyPath
      */
-    public function setPrivateKeyPath($privateKeyPath)
+    public function __construct($privateKeyPath, $publicKeyPath)
     {
         if (strpos($privateKeyPath, 'file://') !== 0) {
             $privateKeyPath = 'file://' . $privateKeyPath;
         }
 
         $this->privateKeyPath = $privateKeyPath;
-    }
 
-    /**
-     * Set path to public key.
-     *
-     * @param string $publicKeyPath
-     */
-    public function setPublicKeyPath($publicKeyPath)
-    {
         if (strpos($publicKeyPath, 'file://') !== 0) {
             $publicKeyPath = 'file://' . $publicKeyPath;
         }
@@ -54,7 +50,7 @@ trait CryptTrait
      *
      * @return string
      */
-    protected function encrypt($unencryptedData)
+    public function encrypt($unencryptedData)
     {
         $privateKey = openssl_pkey_get_private($this->privateKeyPath);
         $privateKeyDetails = @openssl_pkey_get_details($privateKey);
@@ -89,7 +85,7 @@ trait CryptTrait
      *
      * @return string
      */
-    protected function decrypt($encryptedData)
+    public function decrypt($encryptedData)
     {
         $publicKey = openssl_pkey_get_public($this->publicKeyPath);
         $publicKeyDetails = @openssl_pkey_get_details($publicKey);

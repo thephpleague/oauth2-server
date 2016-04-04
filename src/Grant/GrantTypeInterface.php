@@ -85,18 +85,4 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface $scopeRepository
      */
     public function setScopeRepository(ScopeRepositoryInterface $scopeRepository);
-
-    /**
-     * Set the path to the private key.
-     *
-     * @param string $privateKeyPath
-     */
-    public function setPrivateKeyPath($privateKeyPath);
-
-    /**
-     * Set the path to the public key.
-     *
-     * @param string $publicKeyPath
-     */
-    public function setPublicKeyPath($publicKeyPath);
 }

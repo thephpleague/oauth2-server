@@ -6,41 +6,49 @@ use DateInterval;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\MessageEncryption;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\ResponseTypes\Dto\AuthorizeData;
+use League\OAuth2\Server\ResponseTypes\Dto\CodeData;
+use League\OAuth2\Server\ResponseTypes\Dto\EncryptedRefreshToken;
+use League\OAuth2\Server\ResponseTypes\Dto\LoginData;
 use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
-use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class AuthCodeGrant extends AbstractAuthorizeGrant
+class AuthCodeGrant extends AbstractGrant
 {
     /**
      * @var \DateInterval
      */
     private $authCodeTTL;
+    /**
+     * @var MessageEncryption
+     */
+    private $messageEncryption;
 
     /**
      * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface     $authCodeRepository
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
+     * @param MessageEncryption                                                  $messageEncryption
      * @param \DateInterval                                                      $authCodeTTL
-     * @param \League\OAuth2\Server\TemplateRenderer\RendererInterface|null      $templateRenderer
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         UserRepositoryInterface $userRepository,
-        \DateInterval $authCodeTTL,
-        RendererInterface $templateRenderer = null
+        MessageEncryption $messageEncryption,
+        \DateInterval $authCodeTTL
     ) {
         $this->setAuthCodeRepository($authCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->setUserRepository($userRepository);
         $this->authCodeTTL = $authCodeTTL;
+        $this->messageEncryption = $messageEncryption;
         $this->refreshTokenTTL = new \DateInterval('P1M');
-        $this->templateRenderer = $templateRenderer;
     }
 
     /**
@@ -104,7 +112,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $oauthCookie = $this->getCookieParameter('oauth_authorize_request', $request, null);
         if ($oauthCookie !== null) {
             try {
-                $oauthCookiePayload = json_decode($this->decrypt($oauthCookie));
+                $oauthCookiePayload = json_decode($this->messageEncryption->decrypt($oauthCookie));
                 if (is_object($oauthCookiePayload)) {
                     $userId = $oauthCookiePayload->user_id;
                 }
@@ -137,52 +145,30 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // The user hasn't logged in yet so show a login form
         if ($userId === null) {
-            $html = $this->getTemplateRenderer()->renderLogin([
-                'error'        => $loginError,
-                'postback_uri' => $this->makeRedirectUri(
-                    $postbackUri,
-                    $request->getQueryParams()
-                ),
-            ]);
-
-            return $responseFactory->newHtmlResponse($html, 403);
+            return $responseFactory->newHtmlLoginResponse(
+                new LoginData($loginError, $postbackUri, $request->getQueryParams())
+            );
         }
 
         // The user hasn't approved the client yet so show an authorize form
         if ($userId !== null && $userHasApprovedClient === null) {
-            $html = $this->getTemplateRenderer()->renderAuthorize([
-                'client'       => $client,
-                'scopes'       => $scopes,
-                'postback_uri' => $this->makeRedirectUri(
-                    $postbackUri,
-                    $request->getQueryParams()
-                ),
-            ]);
+            $encryptedUserId = $this->messageEncryption->encrypt(
+                json_encode([
+                    'user_id' => $userId,
+                ])
+            );
 
-            return $responseFactory->newHtmlResponse($html, 200, [
-                'set-cookie' => sprintf(
-                    'oauth_authorize_request=%s; Expires=%s',
-                    urlencode($this->encrypt(
-                        json_encode([
-                            'user_id' => $userId,
-                        ])
-                    )),
-                    (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
-                ),
-            ]);
+            return $responseFactory->newHtmlAuthorizeResponse(
+                new AuthorizeData($client, $scopes, $postbackUri, $request->getQueryParams(), $encryptedUserId)
+            );
         }
 
         // The user has either approved or denied the client, so redirect them back
         $redirectUri = $client->getRedirectUri();
-        $redirectPayload = [];
-
-        $stateParameter = $this->getQueryStringParameter('state', $request);
-        if ($stateParameter !== null) {
-            $redirectPayload['state'] = $stateParameter;
-        }
 
         // THe user approved the client, redirect them back with an auth code
         if ($userHasApprovedClient === true) {
+            $stateParameter = $this->getQueryStringParameter('state', $request);
 
             // Finalize the requested scopes
             $scopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $userId);
@@ -195,7 +181,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $scopes
             );
 
-            $redirectPayload['code'] = $this->encrypt(
+            $code = $this->messageEncryption->encrypt(
                 json_encode(
                     [
                         'client_id'    => $authCode->getClient()->getIdentifier(),
@@ -208,11 +194,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 )
             );
 
-            return $responseFactory->newRedirectResponse(
-                $this->makeRedirectUri(
-                    $redirectUri,
-                    $redirectPayload
-                )
+            return $responseFactory->newAuthCodeRedirectResponse(
+                new CodeData($redirectUri, $code, $stateParameter)
             );
         }
 
@@ -252,7 +235,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // Validate the authorization code
         try {
-            $authCodePayload = json_decode($this->decrypt($encryptedAuthCode));
+            $authCodePayload = json_decode($this->messageEncryption->decrypt($encryptedAuthCode));
             if (time() > $authCodePayload->expire_time) {
                 throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
             }
@@ -288,8 +271,24 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         // Issue and persist access + refresh tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
+        $expireDateTime = $accessToken->getExpiryDateTime()->getTimestamp();
 
-        return $responseFactory->newAccessRefreshTokenResponse($accessToken, $refreshToken);
+        $encryptedRefreshToken = new EncryptedRefreshToken(
+            $this->messageEncryption->encrypt(
+                json_encode(
+                    [
+                        'client_id'        => $accessToken->getClient()->getIdentifier(),
+                        'refresh_token_id' => $refreshToken->getIdentifier(),
+                        'access_token_id'  => $accessToken->getIdentifier(),
+                        'scopes'           => $accessToken->getScopes(),
+                        'user_id'          => $accessToken->getUserIdentifier(),
+                        'expire_time'      => $expireDateTime,
+                    ]
+                )
+            )
+        );
+
+        return $responseFactory->newRefreshTokenResponse($accessToken, $encryptedRefreshToken);
     }
 
     /**

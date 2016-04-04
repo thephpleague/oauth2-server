@@ -6,7 +6,6 @@ use DateInterval;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface;
-use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -22,7 +21,7 @@ class Server implements EmitterAwareInterface
     use EmitterAwareTrait;
 
     /**
-     * @var \League\OAuth2\Server\Grant\GrantTypeInterface[]
+     * @var GrantTypeInterface[]
      */
     protected $enabledGrantTypes = [];
 
@@ -42,55 +41,44 @@ class Server implements EmitterAwareInterface
     protected $responseFactory;
 
     /**
-     * @var string
-     */
-    private $publicKeyPath;
-
-    /**
-     * @var \League\OAuth2\Server\Repositories\ClientRepositoryInterface
+     * @var ClientRepositoryInterface
      */
     private $clientRepository;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
+     * @var AccessTokenRepositoryInterface
      */
     private $accessTokenRepository;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\ScopeRepositoryInterface
+     * @var ScopeRepositoryInterface
      */
     private $scopeRepository;
 
     /**
-     * @var \League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface
+     * @var AuthorizationValidatorInterface
      */
     private $authorizationValidator;
 
     /**
      * New server instance.
      *
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface                       $clientRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface                  $accessTokenRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface                        $scopeRepository
-     * @param string                                                                             $privateKeyPath
-     * @param string                                                                             $publicKeyPath
-     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface                  $responseFactory
-     * @param null|\League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface $authorizationValidator
+     * @param ClientRepositoryInterface       $clientRepository
+     * @param AccessTokenRepositoryInterface  $accessTokenRepository
+     * @param ScopeRepositoryInterface        $scopeRepository
+     * @param ResponseFactoryInterface        $responseFactory
+     * @param AuthorizationValidatorInterface $authorizationValidator
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
         AccessTokenRepositoryInterface $accessTokenRepository,
         ScopeRepositoryInterface $scopeRepository,
-        $privateKeyPath,
-        $publicKeyPath,
-        ResponseFactoryInterface $responseFactory = null,
-        AuthorizationValidatorInterface $authorizationValidator = null
+        ResponseFactoryInterface $responseFactory,
+        AuthorizationValidatorInterface $authorizationValidator
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
         $this->scopeRepository = $scopeRepository;
-        $this->privateKeyPath = $privateKeyPath;
-        $this->publicKeyPath = $publicKeyPath;
         $this->responseFactory = $responseFactory;
         $this->authorizationValidator = $authorizationValidator;
     }
@@ -106,8 +94,6 @@ class Server implements EmitterAwareInterface
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
-        $grantType->setPrivateKeyPath($this->privateKeyPath);
-        $grantType->setPublicKeyPath($this->publicKeyPath);
         $grantType->setEmitter($this->getEmitter());
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
@@ -157,21 +143,6 @@ class Server implements EmitterAwareInterface
      */
     public function validateAuthenticatedRequest(ServerRequestInterface $request)
     {
-        return $this->getAuthorizationValidator()->validateAuthorization($request);
-    }
-
-    /**
-     * @return \League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface
-     */
-    protected function getAuthorizationValidator()
-    {
-        if (!$this->authorizationValidator instanceof AuthorizationValidatorInterface) {
-            $this->authorizationValidator = new BearerTokenValidator($this->accessTokenRepository);
-        }
-
-        $this->authorizationValidator->setPublicKeyPath($this->publicKeyPath);
-        $this->authorizationValidator->setPrivateKeyPath($this->privateKeyPath);
-
-        return $this->authorizationValidator;
+        return $this->authorizationValidator->validateAuthorization($request);
     }
 }

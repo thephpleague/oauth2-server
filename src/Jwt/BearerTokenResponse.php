@@ -8,43 +8,38 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-namespace League\OAuth2\Server\ResponseTypes;
+namespace League\OAuth2\Server\Jwt;
 
-use League\OAuth2\Server\AccessTokenToJwtConverter;
-use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\ResponseTypes\Dto\EncryptedRefreshToken;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class BearerTokenResponse implements ResponseTypeInterface
 {
-    use CryptTrait;
     /**
      * @var \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
      */
     protected $accessToken;
-
     /**
-     * @var \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface
+     * @var EncryptedRefreshToken
      */
     protected $refreshToken;
     /**
-     * @var AccessTokenToJwtConverter
+     * @var AccessTokenConverter
      */
     private $accessTokenToJwtConverter;
 
     /**
-     * {@inheritdoc}
+     * @param AccessTokenConverterInterface $accessTokenToJwtConverter
+     * @param AccessTokenEntityInterface    $accessToken
+     * @param EncryptedRefreshToken         $refreshToken
      */
     public function __construct(
-        $privateKeyPath,
-        $publicKeyPath,
-        AccessTokenToJwtConverter $accessTokenToJwtConverter,
+        AccessTokenConverterInterface $accessTokenToJwtConverter,
         AccessTokenEntityInterface $accessToken,
-        RefreshTokenEntityInterface $refreshToken = null
+        EncryptedRefreshToken $refreshToken = null
     ) {
-        $this->setPrivateKeyPath($privateKeyPath);
-        $this->setPublicKeyPath($publicKeyPath);
         $this->accessTokenToJwtConverter = $accessTokenToJwtConverter;
         $this->accessToken = $accessToken;
         $this->refreshToken = $refreshToken;
@@ -57,7 +52,7 @@ class BearerTokenResponse implements ResponseTypeInterface
     {
         $expireDateTime = $this->accessToken->getExpiryDateTime()->getTimestamp();
 
-        $jwtAccessToken = $this->accessTokenToJwtConverter->convert($this->accessToken);
+        $jwtAccessToken = $this->accessTokenToJwtConverter->convert($this->accessToken)->getToken();
 
         $responseParams = [
             'token_type'   => 'Bearer',
@@ -65,21 +60,8 @@ class BearerTokenResponse implements ResponseTypeInterface
             'access_token' => (string) $jwtAccessToken,
         ];
 
-        if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
-            $refreshToken = $this->encrypt(
-                json_encode(
-                    [
-                        'client_id'        => $this->accessToken->getClient()->getIdentifier(),
-                        'refresh_token_id' => $this->refreshToken->getIdentifier(),
-                        'access_token_id'  => $this->accessToken->getIdentifier(),
-                        'scopes'           => $this->accessToken->getScopes(),
-                        'user_id'          => $this->accessToken->getUserIdentifier(),
-                        'expire_time'      => $expireDateTime,
-                    ]
-                )
-            );
-
-            $responseParams['refresh_token'] = $refreshToken;
+        if ($this->refreshToken instanceof EncryptedRefreshToken) {
+            $responseParams['refresh_token'] = (string) $this->refreshToken;
         }
 
         $response = $response

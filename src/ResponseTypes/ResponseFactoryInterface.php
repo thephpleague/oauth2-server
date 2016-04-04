@@ -2,7 +2,10 @@
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\ResponseTypes\Dto\AuthorizeData;
+use League\OAuth2\Server\ResponseTypes\Dto\CodeData;
+use League\OAuth2\Server\ResponseTypes\Dto\EncryptedRefreshToken;
+use League\OAuth2\Server\ResponseTypes\Dto\LoginData;
 
 interface ResponseFactoryInterface
 {
@@ -14,38 +17,47 @@ interface ResponseFactoryInterface
     public function newAccessTokenResponse(AccessTokenEntityInterface $accessTokenEntity);
 
     /**
-     * @param AccessTokenEntityInterface  $accessTokenEntity
-     * @param RefreshTokenEntityInterface $refreshTokenEntity
+     * @param AccessTokenEntityInterface $accessTokenEntity
+     * @param EncryptedRefreshToken      $encryptedRefreshToken
      *
      * @return ResponseTypeInterface
      */
-    public function newAccessRefreshTokenResponse(
+    public function newRefreshTokenResponse(
         AccessTokenEntityInterface $accessTokenEntity,
-        RefreshTokenEntityInterface $refreshTokenEntity
+        EncryptedRefreshToken $encryptedRefreshToken
     );
 
     /**
      * @param AccessTokenEntityInterface $accessTokenEntity
-     * @param $redirectUri
-     * @param $state
+     * @param string                     $redirectUri
+     * @param string                     $state
      *
      * @return ResponseTypeInterface
      */
-    public function newAccessTokenRedirectResponse(AccessTokenEntityInterface $accessTokenEntity, $redirectUri, $state);
+    public function newAccessTokenRedirectResponse(
+        AccessTokenEntityInterface $accessTokenEntity,
+        $redirectUri,
+        $state
+    );
 
     /**
-     * @param string $html
-     * @param int    $statusCode
-     * @param array  $headers
+     * @param LoginData $loginData
      *
      * @return ResponseTypeInterface
      */
-    public function newHtmlResponse($html, $statusCode = 200, array $headers = []);
+    public function newHtmlLoginResponse(LoginData $loginData);
 
     /**
-     * @param $redirectUri
+     * @param AuthorizeData $authorizeData
      *
      * @return ResponseTypeInterface
      */
-    public function newRedirectResponse($redirectUri);
+    public function newHtmlAuthorizeResponse(AuthorizeData $authorizeData);
+
+    /**
+     * @param CodeData $authCodeData
+     *
+     * @return ResponseTypeInterface
+     */
+    public function newAuthCodeRedirectResponse(CodeData $authCodeData);
 }

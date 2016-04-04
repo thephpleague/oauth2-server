@@ -8,10 +8,10 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-namespace League\OAuth2\Server\ResponseTypes;
+namespace League\OAuth2\Server\Jwt;
 
-use League\OAuth2\Server\AccessTokenToJwtConverter;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class BearerRedirectResponse implements ResponseTypeInterface
@@ -29,18 +29,18 @@ class BearerRedirectResponse implements ResponseTypeInterface
      */
     protected $accessToken;
     /**
-     * @var AccessTokenToJwtConverter
+     * @var AccessTokenConverter
      */
     private $accessTokenToJwtConverter;
 
     /**
-     * @param AccessTokenToJwtConverter  $accessTokenToJwtConverter
-     * @param AccessTokenEntityInterface $accessToken
-     * @param string                     $redirectUri
-     * @param string                     $state
+     * @param AccessTokenConverterInterface $accessTokenToJwtConverter
+     * @param AccessTokenEntityInterface    $accessToken
+     * @param string                        $redirectUri
+     * @param string                        $state
      */
     public function __construct(
-        AccessTokenToJwtConverter $accessTokenToJwtConverter,
+        AccessTokenConverterInterface $accessTokenToJwtConverter,
         AccessTokenEntityInterface $accessToken,
         $redirectUri,
         $state
@@ -56,7 +56,7 @@ class BearerRedirectResponse implements ResponseTypeInterface
      */
     public function generateHttpResponse(ResponseInterface $response)
     {
-        $jwtAccessToken = $this->accessTokenToJwtConverter->convert($this->accessToken);
+        $jwtAccessToken = $this->accessTokenToJwtConverter->convert($this->accessToken)->getToken();
 
         $redirectPayload = [];
 

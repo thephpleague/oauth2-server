@@ -4,15 +4,18 @@ namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ImplicitGrant;
+use League\OAuth2\Server\Jwt\AccessTokenConverter;
+use League\OAuth2\Server\Jwt\BearerRedirectResponse;
+use League\OAuth2\Server\MessageEncryption;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\BearerRedirectResponse;
+use League\OAuth2\Server\ResponseFactory;
 use League\OAuth2\Server\ResponseTypes\HtmlResponse;
-use League\OAuth2\Server\ResponseTypes\ResponseFactory;
+use League\OAuth2\Server\TemplateRenderer\PlatesRenderer;
+use League\Plates\Engine;
 use LeagueTests\Stubs\ClientEntity;
-use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\UserEntity;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -20,25 +23,41 @@ use Zend\Diactoros\ServerRequest;
 class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * CryptTrait stub
+     * @var MessageEncryption
      */
-    protected $cryptStub;
+    protected $messageEncryption;
+    /**
+     * @var ResponseFactory
+     */
+    private $responseFactory;
 
     public function setUp()
     {
-        $this->cryptStub = new CryptTraitStub();
+        $this->messageEncryption = new MessageEncryption(
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key'
+        );
+
+        $this->responseFactory = new ResponseFactory(
+            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
+            new PlatesRenderer(
+                new Engine(__DIR__ . '/../../src/TemplateRenderer/DefaultTemplates'),
+                'login_user',
+                'authorize_client'
+            )
+        );
     }
 
     public function testGetIdentifier()
     {
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
 
         $this->assertEquals('implicit', $grant->getIdentifier());
     }
 
     public function testCanRespondToRequest()
     {
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
 
         $request = new ServerRequest(
             [],
@@ -73,12 +92,10 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $grant = new ImplicitGrant($userRepositoryMock);
+        $grant = new ImplicitGrant($userRepositoryMock, $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -103,7 +120,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
 
         $this->assertTrue($response instanceof BearerRedirectResponse);
     }
@@ -114,9 +131,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testRespondToAuthorizationRequestMissingClientId()
     {
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
 
         $request = new ServerRequest(
             [
@@ -129,7 +144,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
+                'oauth_authorize_request' => $this->messageEncryption->encrypt(json_encode(['user_id' => 123])),
             ],
             [
                 'response_type' => 'token',
@@ -141,7 +156,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
     }
 
     public function testRespondToAuthorizationRequestBadClient()
@@ -150,10 +165,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -166,7 +179,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
+                'oauth_authorize_request' => $this->messageEncryption->encrypt(json_encode(['user_id' => 123])),
             ],
             [
                 'response_type' => 'token',
@@ -180,7 +193,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getMessage(), 'Client authentication failed');
         }
@@ -196,10 +209,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -212,7 +223,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
+                'oauth_authorize_request' => $this->messageEncryption->encrypt(json_encode(['user_id' => 123])),
             ],
             [
                 'response_type' => 'token',
@@ -227,7 +238,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getMessage(), 'Client authentication failed');
         }
@@ -248,10 +259,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -277,7 +286,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
     }
 
     public function testRespondToAuthorizationRequestTryLogin()
@@ -294,11 +303,9 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -311,7 +318,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => null])),
+                'oauth_authorize_request' => $this->messageEncryption->encrypt(json_encode(['user_id' => null])),
             ],
             [
                 'response_type' => 'token',
@@ -324,7 +331,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
         $this->assertTrue($response instanceof HtmlResponse);
 
         $response = $response->generateHttpResponse(new Response);
@@ -345,11 +352,9 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -362,7 +367,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
+                'oauth_authorize_request' => $this->messageEncryption->encrypt(json_encode(['user_id' => 123])),
             ],
             [
                 'response_type' => 'code',
@@ -374,7 +379,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
 
         $this->assertTrue($response instanceof HtmlResponse);
 
@@ -397,10 +402,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
+        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
 
         $request = new ServerRequest(
             [
@@ -413,7 +416,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             'php://input',
             [],
             [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
+                'oauth_authorize_request' => $this->messageEncryption->encrypt(json_encode(['user_id' => 123])),
             ],
             [
                 'response_type' => 'code',
@@ -427,6 +430,6 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
     }
 }
