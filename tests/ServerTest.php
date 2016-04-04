@@ -11,10 +11,9 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use League\OAuth2\Server\ResponseTypes\ResponseFactory;
 use League\OAuth2\Server\Server;
 use LeagueTests\Stubs\ClientEntity;
-use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
@@ -30,7 +29,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $this->getMock(ScopeRepositoryInterface::class),
             '',
             '',
-            new StubResponseType()
+            new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key')
         );
 
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
@@ -57,7 +56,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $scopeRepositoryMock,
             '',
             '',
-            new StubResponseType()
+            new ResponseFactory('file://' . __DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key')
         );
 
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
@@ -87,7 +86,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key',
-            new StubResponseType()
+            new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key')
         );
 
         $userRepository = $this->getMock(UserRepositoryInterface::class);
@@ -115,25 +114,6 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($response instanceof ResponseInterface);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertTrue(strstr($response->getHeaderLine('location'), 'code=') !== false);
-    }
-
-    public function testGetResponseType()
-    {
-        $clientRepository = $this->getMock(ClientRepositoryInterface::class);
-
-        $server = new Server(
-            $clientRepository,
-            $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
-            '',
-            ''
-        );
-
-        $abstractGrantReflection = new \ReflectionClass($server);
-        $method = $abstractGrantReflection->getMethod('getResponseType');
-        $method->setAccessible(true);
-
-        $this->assertTrue($method->invoke($server) instanceof BearerTokenResponse);
     }
 
     public function testValidateRequest()

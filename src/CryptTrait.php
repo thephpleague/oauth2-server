@@ -12,9 +12,6 @@ namespace League\OAuth2\Server;
 
 trait CryptTrait
 {
-    /**
-     * @var string
-     */
     protected $privateKeyPath;
 
     /**

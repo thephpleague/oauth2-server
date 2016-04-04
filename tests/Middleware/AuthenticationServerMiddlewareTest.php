@@ -7,9 +7,9 @@ use League\OAuth2\Server\Middleware\AuthenticationServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseFactory;
 use League\OAuth2\Server\Server;
 use LeagueTests\Stubs\ClientEntity;
-use LeagueTests\Stubs\StubResponseType;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
@@ -27,9 +27,9 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $scopeRepositoryMock,
-            '',
-            '',
-            new StubResponseType()
+            __DIR__ . '/../Stubs/private.key',
+            __DIR__ . '/../Stubs/public.key',
+            new ResponseFactory('file://' . __DIR__ . '/../Stubs/private.key', 'file://' . __DIR__ . '/../Stubs/public.key')
         );
 
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
@@ -48,6 +48,7 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
                 return func_get_args()[1];
             }
         );
+
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -62,7 +63,7 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $this->getMock(ScopeRepositoryInterface::class),
             '',
             '',
-            new StubResponseType()
+            new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key')
         );
 
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));

@@ -10,7 +10,7 @@
  */
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -23,7 +23,7 @@ class ClientCredentialsGrant extends AbstractGrant
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        ResponseTypeInterface $responseType,
+        ResponseFactoryInterface $responseFactory,
         \DateInterval $accessTokenTTL
     ) {
         // Validate request
@@ -36,10 +36,7 @@ class ClientCredentialsGrant extends AbstractGrant
         // Issue and persist access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $client->getIdentifier(), $scopes);
 
-        // Inject access token into response type
-        $responseType->setAccessToken($accessToken);
-
-        return $responseType;
+        return $responseFactory->newAccessTokenResponse($accessToken);
     }
 
     /**

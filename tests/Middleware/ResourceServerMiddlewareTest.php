@@ -2,14 +2,16 @@
 
 namespace LeagueTests\Middleware;
 
+use Lcobucci\JWT\Builder;
+use League\OAuth2\Server\AccessTokenToJwtConverter;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseFactory;
 use League\OAuth2\Server\Server;
 use LeagueTests\Stubs\ClientEntity;
-use LeagueTests\Stubs\StubResponseType;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
@@ -25,7 +27,7 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $this->getMock(ScopeRepositoryInterface::class),
             'file://' . __DIR__ . '/../Stubs/private.key',
             'file://' . __DIR__ . '/../Stubs/public.key',
-            new StubResponseType()
+            new ResponseFactory(__DIR__ . '/../Stubs/private.key', __DIR__ . '/../Stubs/public.key')
         );
 
         $client = new ClientEntity();
@@ -37,7 +39,8 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
 
-        $token = $accessToken->convertToJWT('file://' . __DIR__ . '/../Stubs/private.key');
+        $converter = new AccessTokenToJwtConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key');
+        $token = $converter->convert($accessToken);
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));
@@ -66,7 +69,7 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $this->getMock(ScopeRepositoryInterface::class),
             '',
             '',
-            new StubResponseType()
+            new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key')
         );
 
         $request = new ServerRequest();

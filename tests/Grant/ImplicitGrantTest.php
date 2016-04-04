@@ -8,11 +8,11 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
+use League\OAuth2\Server\ResponseTypes\BearerRedirectResponse;
 use League\OAuth2\Server\ResponseTypes\HtmlResponse;
-use League\OAuth2\Server\ResponseTypes\RedirectResponse;
+use League\OAuth2\Server\ResponseTypes\ResponseFactory;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\CryptTraitStub;
-use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -103,9 +103,9 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response instanceof RedirectResponse);
+        $this->assertTrue($response instanceof BearerRedirectResponse);
     }
 
     /**
@@ -141,7 +141,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
     }
 
     public function testRespondToAuthorizationRequestBadClient()
@@ -180,8 +180,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            /* @var StubResponseType $response */
-            $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getMessage(), 'Client authentication failed');
         }
@@ -228,8 +227,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            /* @var StubResponseType $response */
-            $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getMessage(), 'Client authentication failed');
         }
@@ -279,7 +277,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
     }
 
     public function testRespondToAuthorizationRequestTryLogin()
@@ -326,7 +324,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
         $this->assertTrue($response instanceof HtmlResponse);
 
         $response = $response->generateHttpResponse(new Response);
@@ -376,7 +374,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
 
         $this->assertTrue($response instanceof HtmlResponse);
 
@@ -429,6 +427,6 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT10M'));
     }
 }

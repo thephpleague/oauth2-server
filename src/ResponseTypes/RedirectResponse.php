@@ -4,7 +4,7 @@ namespace League\OAuth2\Server\ResponseTypes;
 
 use Psr\Http\Message\ResponseInterface;
 
-class RedirectResponse extends AbstractResponseType
+class RedirectResponse implements ResponseTypeInterface
 {
     /**
      * @var string
@@ -14,7 +14,7 @@ class RedirectResponse extends AbstractResponseType
     /**
      * @param string $redirectUri
      */
-    public function setRedirectUri($redirectUri)
+    public function __construct($redirectUri)
     {
         $this->redirectUri = $redirectUri;
     }

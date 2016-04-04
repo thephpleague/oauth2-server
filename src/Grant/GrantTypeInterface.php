@@ -14,7 +14,7 @@ use League\Event\EmitterAwareInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -39,15 +39,15 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * Respond to an incoming request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface                  $request
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param \DateInterval                                             $accessTokenTTL
+     * @param \Psr\Http\Message\ServerRequestInterface                     $request
+     * @param \League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface $responseFactory
+     * @param \DateInterval                                                $accessTokenTTL
      *
      * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        ResponseTypeInterface $responseType,
+        ResponseFactoryInterface $responseFactory,
         \DateInterval $accessTokenTTL
     );
 

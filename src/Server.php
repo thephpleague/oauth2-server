@@ -12,7 +12,7 @@ use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,9 +37,9 @@ class Server implements EmitterAwareInterface
     protected $privateKeyPath;
 
     /**
-     * @var ResponseTypeInterface
+     * @var ResponseFactoryInterface
      */
-    protected $responseType;
+    protected $responseFactory;
 
     /**
      * @var string
@@ -74,7 +74,7 @@ class Server implements EmitterAwareInterface
      * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface                        $scopeRepository
      * @param string                                                                             $privateKeyPath
      * @param string                                                                             $publicKeyPath
-     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface                     $responseType
+     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface                  $responseFactory
      * @param null|\League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface $authorizationValidator
      */
     public function __construct(
@@ -83,7 +83,7 @@ class Server implements EmitterAwareInterface
         ScopeRepositoryInterface $scopeRepository,
         $privateKeyPath,
         $publicKeyPath,
-        ResponseTypeInterface $responseType = null,
+        ResponseFactoryInterface $responseFactory = null,
         AuthorizationValidatorInterface $authorizationValidator = null
     ) {
         $this->clientRepository = $clientRepository;
@@ -91,7 +91,7 @@ class Server implements EmitterAwareInterface
         $this->scopeRepository = $scopeRepository;
         $this->privateKeyPath = $privateKeyPath;
         $this->publicKeyPath = $publicKeyPath;
-        $this->responseType = $responseType;
+        $this->responseFactory = $responseFactory;
         $this->authorizationValidator = $authorizationValidator;
     }
 
@@ -133,7 +133,7 @@ class Server implements EmitterAwareInterface
             if ($grantType->canRespondToRequest($request)) {
                 $tokenResponse = $grantType->respondToRequest(
                     $request,
-                    $this->getResponseType(),
+                    $this->responseFactory,
                     $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
                 );
             }
@@ -158,23 +158,6 @@ class Server implements EmitterAwareInterface
     public function validateAuthenticatedRequest(ServerRequestInterface $request)
     {
         return $this->getAuthorizationValidator()->validateAuthorization($request);
-    }
-
-    /**
-     * Get the token type that grants will return in the HTTP response.
-     *
-     * @return ResponseTypeInterface
-     */
-    protected function getResponseType()
-    {
-        if (!$this->responseType instanceof ResponseTypeInterface) {
-            $this->responseType = new BearerTokenResponse($this->accessTokenRepository);
-        }
-
-        $this->responseType->setPublicKeyPath($this->publicKeyPath);
-        $this->responseType->setPrivateKeyPath($this->privateKeyPath);
-
-        return $this->responseType;
     }
 
     /**

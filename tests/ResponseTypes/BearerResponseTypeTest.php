@@ -2,6 +2,8 @@
 
 namespace LeagueTests\ResponseTypes;
 
+use Lcobucci\JWT\Builder;
+use League\OAuth2\Server\AccessTokenToJwtConverter;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
@@ -18,10 +20,6 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 {
     public function testGenerateHttpResponse()
     {
-        $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
 
@@ -39,8 +37,13 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $refreshToken->setAccessToken($accessToken);
         $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
 
-        $responseType->setAccessToken($accessToken);
-        $responseType->setRefreshToken($refreshToken);
+        $responseType = new BearerTokenResponse(
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
+            new AccessTokenToJwtConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
+            $accessToken,
+            $refreshToken
+        );
 
         $response = $responseType->generateHttpResponse(new Response());
 
@@ -60,10 +63,6 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testDetermineAccessTokenInHeaderValidToken()
     {
-        $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
 
@@ -78,8 +77,13 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $refreshToken->setAccessToken($accessToken);
         $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
 
-        $responseType->setAccessToken($accessToken);
-        $responseType->setRefreshToken($refreshToken);
+        $responseType = new BearerTokenResponse(
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
+            new AccessTokenToJwtConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
+            $accessToken,
+            $refreshToken
+        );
 
         $response = $responseType->generateHttpResponse(new Response());
         $json = json_decode((string) $response->getBody());
@@ -107,10 +111,6 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
 
-        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
 
@@ -125,8 +125,13 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $refreshToken->setAccessToken($accessToken);
         $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
 
-        $responseType->setAccessToken($accessToken);
-        $responseType->setRefreshToken($refreshToken);
+        $responseType = new BearerTokenResponse(
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
+            new AccessTokenToJwtConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
+            $accessToken,
+            $refreshToken
+        );
 
         $response = $responseType->generateHttpResponse(new Response());
         $json = json_decode((string) $response->getBody());
@@ -150,10 +155,6 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testDetermineAccessTokenInHeaderRevokedToken()
     {
-        $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
 
@@ -168,8 +169,13 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $refreshToken->setAccessToken($accessToken);
         $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
 
-        $responseType->setAccessToken($accessToken);
-        $responseType->setRefreshToken($refreshToken);
+        $responseType = new BearerTokenResponse(
+            'file://' . __DIR__ . '/../Stubs/private.key',
+            'file://' . __DIR__ . '/../Stubs/public.key',
+            new AccessTokenToJwtConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
+            $accessToken,
+            $refreshToken
+        );
 
         $response = $responseType->generateHttpResponse(new Response());
         $json = json_decode((string) $response->getBody());
@@ -196,10 +202,6 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testDetermineAccessTokenInHeaderInvalidToken()
     {
-        $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);

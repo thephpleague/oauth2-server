@@ -4,7 +4,7 @@ namespace League\OAuth2\Server\ResponseTypes;
 
 use Psr\Http\Message\ResponseInterface;
 
-class HtmlResponse extends AbstractResponseType
+class HtmlResponse implements ResponseTypeInterface
 {
     /**
      * @var string
@@ -23,17 +23,13 @@ class HtmlResponse extends AbstractResponseType
 
     /**
      * @param string $html
+     * @param int    $statusCode
+     * @param array  $headers
      */
-    public function setHtml($html)
+    public function __construct($html, $statusCode = 200, array $headers = [])
     {
         $this->html = $html;
-    }
-
-    /**
-     * @param int $statusCode
-     */
-    public function setStatusCode($statusCode = 200)
-    {
+        $this->headers = $headers;
         $this->statusCode = $statusCode;
     }
 
@@ -53,14 +49,5 @@ class HtmlResponse extends AbstractResponseType
         return $response
             ->withStatus($this->statusCode)
             ->withHeader('content-type', 'text/html');
-    }
-
-    /**
-     * @param string $key
-     * @param string $value
-     */
-    public function setHeader($key, $value)
-    {
-        $this->headers[$key] = $value;
     }
 }

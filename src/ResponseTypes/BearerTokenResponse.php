@@ -10,11 +10,46 @@
  */
 namespace League\OAuth2\Server\ResponseTypes;
 
+use League\OAuth2\Server\AccessTokenToJwtConverter;
+use League\OAuth2\Server\CryptTrait;
+use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class BearerTokenResponse extends AbstractResponseType
+class BearerTokenResponse implements ResponseTypeInterface
 {
+    use CryptTrait;
+    /**
+     * @var \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
+     */
+    protected $accessToken;
+
+    /**
+     * @var \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface
+     */
+    protected $refreshToken;
+    /**
+     * @var AccessTokenToJwtConverter
+     */
+    private $accessTokenToJwtConverter;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(
+        $privateKeyPath,
+        $publicKeyPath,
+        AccessTokenToJwtConverter $accessTokenToJwtConverter,
+        AccessTokenEntityInterface $accessToken,
+        RefreshTokenEntityInterface $refreshToken = null
+    ) {
+        $this->setPrivateKeyPath($privateKeyPath);
+        $this->setPublicKeyPath($publicKeyPath);
+        $this->accessTokenToJwtConverter = $accessTokenToJwtConverter;
+        $this->accessToken = $accessToken;
+        $this->refreshToken = $refreshToken;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -22,7 +57,7 @@ class BearerTokenResponse extends AbstractResponseType
     {
         $expireDateTime = $this->accessToken->getExpiryDateTime()->getTimestamp();
 
-        $jwtAccessToken = $this->accessToken->convertToJWT($this->privateKeyPath);
+        $jwtAccessToken = $this->accessTokenToJwtConverter->convert($this->accessToken);
 
         $responseParams = [
             'token_type'   => 'Bearer',

@@ -10,22 +10,10 @@
  */
 namespace League\OAuth2\Server\ResponseTypes;
 
-use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
 
 interface ResponseTypeInterface
 {
-    /**
-     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessToken
-     */
-    public function setAccessToken(AccessTokenEntityInterface $accessToken);
-
-    /**
-     * @param \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface $refreshToken
-     */
-    public function setRefreshToken(RefreshTokenEntityInterface $refreshToken);
-
     /**
      * @param ResponseInterface $response
      *

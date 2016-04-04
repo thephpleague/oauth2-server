@@ -16,7 +16,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -43,7 +43,7 @@ class PasswordGrant extends AbstractGrant
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        ResponseTypeInterface $responseType,
+        ResponseFactoryInterface $responseFactory,
         \DateInterval $accessTokenTTL
     ) {
         // Validate request
@@ -58,11 +58,7 @@ class PasswordGrant extends AbstractGrant
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
 
-        // Inject tokens into response
-        $responseType->setAccessToken($accessToken);
-        $responseType->setRefreshToken($refreshToken);
-
-        return $responseType;
+        return $responseFactory->newAccessRefreshTokenResponse($accessToken, $refreshToken);
     }
 
     /**

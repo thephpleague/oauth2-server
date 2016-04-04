@@ -2,13 +2,13 @@
 
 namespace LeagueTests\Grant;
 
-use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use League\OAuth2\Server\ResponseTypes\ResponseFactory;
 use LeagueTests\Stubs\ClientEntity;
-use LeagueTests\Stubs\StubResponseType;
 use Zend\Diactoros\ServerRequest;
 
 class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
@@ -45,9 +45,8 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $responseType = new StubResponseType();
-        $grant->respondToRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $responseType = $grant->respondToRequest($serverRequest, new ResponseFactory(__DIR__ . '/Stubs/private.key', __DIR__ . '/Stubs/public.key'), new \DateInterval('PT5M'));
 
-        $this->assertTrue($responseType->getAccessToken() instanceof AccessTokenEntityInterface);
+        $this->assertTrue($responseType instanceof BearerTokenResponse);
     }
 }

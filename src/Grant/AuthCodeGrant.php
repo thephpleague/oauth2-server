@@ -10,9 +10,7 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
-use League\OAuth2\Server\ResponseTypes\HtmlResponse;
-use League\OAuth2\Server\ResponseTypes\RedirectResponse;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
 use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -49,13 +47,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      * Respond to an authorization request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ResponseFactoryInterface                 $responseFactory
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
     protected function respondToAuthorizationRequest(
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
+        ResponseFactoryInterface $responseFactory
     ) {
         $clientId = $this->getQueryStringParameter(
             'client_id',
@@ -145,11 +145,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 ),
             ]);
 
-            $htmlResponse = new HtmlResponse();
-            $htmlResponse->setStatusCode(403);
-            $htmlResponse->setHtml($html);
-
-            return $htmlResponse;
+            return $responseFactory->newHtmlResponse($html, 403);
         }
 
         // The user hasn't approved the client yet so show an authorize form
@@ -163,20 +159,17 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 ),
             ]);
 
-            $htmlResponse = new HtmlResponse();
-            $htmlResponse->setStatusCode(200);
-            $htmlResponse->setHtml($html);
-            $htmlResponse->setHeader('set-cookie', sprintf(
-                'oauth_authorize_request=%s; Expires=%s',
-                urlencode($this->encrypt(
-                    json_encode([
-                        'user_id' => $userId,
-                    ])
-                )),
-                (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
-            ));
-
-            return $htmlResponse;
+            return $responseFactory->newHtmlResponse($html, 200, [
+                'set-cookie' => sprintf(
+                    'oauth_authorize_request=%s; Expires=%s',
+                    urlencode($this->encrypt(
+                        json_encode([
+                            'user_id' => $userId,
+                        ])
+                    )),
+                    (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
+                ),
+            ]);
         }
 
         // The user has either approved or denied the client, so redirect them back
@@ -215,15 +208,12 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 )
             );
 
-            $response = new RedirectResponse();
-            $response->setRedirectUri(
+            return $responseFactory->newRedirectResponse(
                 $this->makeRedirectUri(
                     $redirectUri,
                     $redirectPayload
                 )
             );
-
-            return $response;
         }
 
         // The user denied the client, redirect them back with an error
@@ -233,9 +223,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Respond to an access token request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface                  $request
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param \DateInterval                                             $accessTokenTTL
+     * @param \Psr\Http\Message\ServerRequestInterface                     $request
+     * @param \League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface $responseFactory
+     * @param \DateInterval                                                $accessTokenTTL
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
@@ -243,7 +233,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      */
     protected function respondToAccessTokenRequest(
         ServerRequestInterface $request,
-        ResponseTypeInterface $responseType,
+        ResponseFactoryInterface $responseFactory,
         DateInterval $accessTokenTTL
     ) {
         // The redirect URI is required in this request
@@ -299,11 +289,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
 
-        // Inject tokens into response type
-        $responseType->setAccessToken($accessToken);
-        $responseType->setRefreshToken($refreshToken);
-
-        return $responseType;
+        return $responseFactory->newAccessRefreshTokenResponse($accessToken, $refreshToken);
     }
 
     /**
@@ -311,17 +297,17 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        ResponseTypeInterface $responseType,
+        ResponseFactoryInterface $responseFactory,
         \DateInterval $accessTokenTTL
     ) {
         if (
             array_key_exists('response_type', $request->getQueryParams())
             && $request->getQueryParams()['response_type'] === 'code'
         ) {
-            return $this->respondToAuthorizationRequest($request);
+            return $this->respondToAuthorizationRequest($request, $responseFactory);
         }
 
-        return $this->respondToAccessTokenRequest($request, $responseType, $accessTokenTTL);
+        return $this->respondToAccessTokenRequest($request, $responseFactory, $accessTokenTTL);
     }
 
     /**

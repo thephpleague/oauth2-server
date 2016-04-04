@@ -7,9 +7,7 @@ use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
-use League\OAuth2\Server\ResponseTypes\HtmlResponse;
-use League\OAuth2\Server\ResponseTypes\RedirectResponse;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
 use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -50,7 +48,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        ResponseTypeInterface $responseType,
+        ResponseFactoryInterface $responseFactory,
         \DateInterval $accessTokenTTL
     ) {
         $clientId = $this->getQueryStringParameter(
@@ -141,11 +139,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 ),
             ]);
 
-            $htmlResponse = new HtmlResponse();
-            $htmlResponse->setStatusCode(403);
-            $htmlResponse->setHtml($html);
-
-            return $htmlResponse;
+            return $responseFactory->newHtmlResponse($html, 403);
         }
 
         // The user hasn't approved the client yet so show an authorize form
@@ -159,30 +153,23 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 ),
             ]);
 
-            $htmlResponse = new HtmlResponse();
-            $htmlResponse->setStatusCode(200);
-            $htmlResponse->setHtml($html);
-            $htmlResponse->setHeader('set-cookie', sprintf(
-                'oauth_authorize_request=%s; Expires=%s',
-                urlencode($this->encrypt(
-                    json_encode([
-                        'user_id' => $userId,
-                    ])
-                )),
-                (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
-            ));
-
-            return $htmlResponse;
+            return $responseFactory->newHtmlResponse($html, 200, [
+                'set-cookie' => sprintf(
+                    'oauth_authorize_request=%s; Expires=%s',
+                    urlencode($this->encrypt(
+                        json_encode([
+                            'user_id' => $userId,
+                        ])
+                    )),
+                    (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
+                ),
+            ]);
         }
 
         // The user has either approved or denied the client, so redirect them back
         $redirectUri = $client->getRedirectUri();
-        $redirectPayload = [];
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
-        if ($stateParameter !== null) {
-            $redirectPayload['state'] = $stateParameter;
-        }
 
         // THe user approved the client, redirect them back with an access token
         if ($userHasApprovedClient === true) {
@@ -197,20 +184,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $scopes
             );
 
-            $redirectPayload['access_token'] = (string) $accessToken->convertToJWT($this->privateKeyPath);
-            $redirectPayload['token_type'] = 'bearer';
-            $redirectPayload['expires_in'] = time() - $accessToken->getExpiryDateTime()->getTimestamp();
-
-            $response = new RedirectResponse();
-            $response->setRedirectUri(
-                $this->makeRedirectUri(
-                    $redirectUri,
-                    $redirectPayload,
-                    '#'
-                )
-            );
-
-            return $response;
+            return $responseFactory->newAccessTokenRedirectResponse($accessToken, $redirectUri, $stateParameter);
         }
 
         // The user denied the client, redirect them back with an error
