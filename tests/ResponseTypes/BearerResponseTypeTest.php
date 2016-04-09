@@ -157,8 +157,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
     public function testDetermineAccessTokenInHeaderRevokedToken()
     {
         $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
