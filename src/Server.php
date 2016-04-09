@@ -134,7 +134,7 @@ class Server implements EmitterAwareInterface
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function respondToRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function respondToAccessTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
         $tokenResponse = null;
         while ($tokenResponse === null && $grantType = array_shift($this->enabledGrantTypes)) {

@@ -54,7 +54,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
     $server = $app->getContainer()->get(Server::class);
 
     try {
-        return $server->respondToRequest($request, $response);
+        return $server->respondToAccessTokenRequest($request, $response);
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
     } catch (\Exception $exception) {

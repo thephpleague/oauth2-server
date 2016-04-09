@@ -38,7 +38,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
 
         try {
-            $server->respondToRequest(ServerRequestFactory::fromGlobals(), new Response);
+            $server->respondToAccessTokenRequest(ServerRequestFactory::fromGlobals(), new Response);
         } catch (OAuthServerException $e) {
             $this->assertEquals('unsupported_grant_type', $e->getErrorType());
             $this->assertEquals(400, $e->getHttpStatusCode());
@@ -70,7 +70,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $_POST['grant_type'] = 'client_credentials';
         $_POST['client_id'] = 'foo';
         $_POST['client_secret'] = 'bar';
-        $response = $server->respondToRequest(ServerRequestFactory::fromGlobals(), new Response);
+        $response = $server->respondToAccessTokenRequest(ServerRequestFactory::fromGlobals(), new Response);
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -119,7 +119,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $_POST['action'] = 'approve';
         $_POST['username'] = 'user';
         $_POST['password'] = 'pass';
-        $response = $server->respondToRequest(ServerRequestFactory::fromGlobals(), new Response);
+        $response = $server->respondToAccessTokenRequest(ServerRequestFactory::fromGlobals(), new Response);
         $this->assertTrue($response instanceof ResponseInterface);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertTrue(strstr($response->getHeaderLine('location'), 'code=') !== false);
