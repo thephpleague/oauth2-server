@@ -2,7 +2,7 @@
 
 namespace LeagueTests\Middleware;
 
-use League\OAuth2\Server\Entities\AccessTokenEntity;
+use LeagueTests\Stubs\AccessTokenEntity;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Middleware\AuthenticationServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;

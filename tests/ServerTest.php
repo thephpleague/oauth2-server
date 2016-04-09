@@ -2,8 +2,8 @@
 
 namespace LeagueTests;
 
-use League\OAuth2\Server\Entities\AccessTokenEntity;
-use League\OAuth2\Server\Entities\AuthCodeEntity;
+use LeagueTests\Stubs\AccessTokenEntity;
+use LeagueTests\Stubs\AuthCodeEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;

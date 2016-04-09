@@ -3,7 +3,7 @@
 namespace LeagueTests\Middleware;
 
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Entities\AccessTokenEntity;
+use LeagueTests\Stubs\AccessTokenEntity;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;

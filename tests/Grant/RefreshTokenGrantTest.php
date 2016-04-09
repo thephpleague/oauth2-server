@@ -3,10 +3,10 @@
 namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Entities\AccessTokenEntity;
+use LeagueTests\Stubs\AccessTokenEntity;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
-use League\OAuth2\Server\Entities\RefreshTokenEntity;
+use LeagueTests\Stubs\RefreshTokenEntity;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -42,7 +42,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
-        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -102,7 +101,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
-        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -164,7 +162,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
-        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -221,7 +218,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
-        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -254,7 +250,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
-        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -290,7 +285,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
-        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -341,7 +335,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
-        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -388,7 +381,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
-        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 

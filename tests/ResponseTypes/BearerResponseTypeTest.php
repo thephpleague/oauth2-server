@@ -4,8 +4,8 @@ namespace LeagueTests\ResponseTypes;
 
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Entities\AccessTokenEntity;
-use League\OAuth2\Server\Entities\RefreshTokenEntity;
+use\LeagueTests\Stubs\AccessTokenEntity;
+use LeagueTests\Stubs\RefreshTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;

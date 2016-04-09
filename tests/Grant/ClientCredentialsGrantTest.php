@@ -2,7 +2,7 @@
 
 namespace LeagueTests\Grant;
 
-use League\OAuth2\Server\Entities\AccessTokenEntity;
+use LeagueTests\Stubs\AccessTokenEntity;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -23,7 +23,6 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
     public function testRespondToRequest()
     {
         $client = new ClientEntity();
-        $client->setSecret('bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 

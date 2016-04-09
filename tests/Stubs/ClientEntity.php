@@ -3,90 +3,21 @@
 namespace LeagueTests\Stubs;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\Traits\ClientTrait;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
 
 class ClientEntity implements ClientEntityInterface
 {
-    use EntityTrait;
+    use EntityTrait, ClientTrait;
 
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $secret;
-
-    /**
-     * @var string
-     */
-    protected $redirectUri;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function setRedirectUri($uri)
     {
-        return $this->name;
+        $this->redirectUri = $uri;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setName($name)
     {
         $this->name = $name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function canKeepASecret()
-    {
-        return $this->secret !== null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSecret($secret)
-    {
-        $this->secret = password_hash($secret, PASSWORD_DEFAULT);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validateSecret($submittedSecret)
-    {
-        return strcmp((string) $submittedSecret, $this->secret) === 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRedirectUri($redirectUri)
-    {
-        $this->redirectUri = $redirectUri;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRedirectUri()
-    {
-        return $this->redirectUri;
-    }
-
-    /**
-     * Get the hashed client secret
-     *
-     * @return string
-     */
-    public function getSecret()
-    {
-        return $this->secret;
-    }
 }

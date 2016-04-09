@@ -3,7 +3,7 @@
 namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Entities\AccessTokenEntity;
+use LeagueTests\Stubs\AccessTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -221,7 +221,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             [
                 'response_type' => 'token',
                 'client_id'     => 'foo',
-                'redirect_uri'  =>  'sdfsdf',
+                'redirect_uri'  => 'sdfsdf',
             ],
             [
                 'username' => 'alex',

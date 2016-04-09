@@ -4,12 +4,9 @@ namespace LeagueTests\Grant;
 
 use League\Event\Emitter;
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Entities\AccessTokenEntity;
-use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
-use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
@@ -17,6 +14,9 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\AuthCodeEntity;
+use LeagueTests\Stubs\AccessTokenEntity;
+use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use Zend\Diactoros\ServerRequest;
 
@@ -60,8 +60,6 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
     public function testValidateClientConfidential()
     {
         $client = new ClientEntity();
-        $client->setSecret('bar');
-        $client->setRedirectUri('http://foo/bar');
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
@@ -178,8 +176,8 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody([
-            'client_id'     => 'foo',
-            'redirect_uri'  => 'http://bar/foo',
+            'client_id'    => 'foo',
+            'redirect_uri' => 'http://bar/foo',
         ]);
 
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
@@ -206,8 +204,8 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody([
-            'client_id'     => 'foo',
-            'redirect_uri'  => 'http://bar/foo',
+            'client_id'    => 'foo',
+            'redirect_uri' => 'http://bar/foo',
         ]);
 
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
