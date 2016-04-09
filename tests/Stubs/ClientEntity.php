@@ -19,5 +19,4 @@ class ClientEntity implements ClientEntityInterface
     {
         $this->name = $name;
     }
-
 }

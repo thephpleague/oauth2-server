@@ -10,8 +10,8 @@
  */
 namespace League\OAuth2\Server\Repositories;
 
-use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
+use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 
 /**
  * Refresh token abstract class.

@@ -3,12 +3,12 @@
 namespace LeagueTests\Middleware;
 
 use League\OAuth2\Server\CryptKey;
-use LeagueTests\Stubs\AccessTokenEntity;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Server;
+use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\StubResponseType;
 use Zend\Diactoros\Response;
