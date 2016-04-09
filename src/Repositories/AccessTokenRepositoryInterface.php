@@ -23,7 +23,7 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
      *
      * @param \League\OAuth2\Server\Entities\ClientEntityInterface  $clientEntity
      * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
-     * @param mixed                                                            $userIdentifier
+     * @param mixed                                                 $userIdentifier
      *
      * @return AccessTokenEntityInterface
      */

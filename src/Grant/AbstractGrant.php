@@ -190,9 +190,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate scopes in the request.
      *
-     * @param string                                                          $scopes
+     * @param string                                               $scopes
      * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client
-     * @param string                                                          $redirectUri
+     * @param string                                               $redirectUri
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
@@ -285,9 +285,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an access token.
      *
-     * @param \DateInterval                                                    $accessTokenTTL
+     * @param \DateInterval                                         $accessTokenTTL
      * @param \League\OAuth2\Server\Entities\ClientEntityInterface  $client
-     * @param string                                                           $userIdentifier
+     * @param string                                                $userIdentifier
      * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
      *
      * @return \League\OAuth2\Server\Entities\AccessTokenEntityInterface
@@ -316,10 +316,10 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an auth code.
      *
-     * @param \DateInterval                                                    $authCodeTTL
+     * @param \DateInterval                                         $authCodeTTL
      * @param \League\OAuth2\Server\Entities\ClientEntityInterface  $client
-     * @param string                                                           $userIdentifier
-     * @param string                                                           $redirectUri
+     * @param string                                                $userIdentifier
+     * @param string                                                $redirectUri
      * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
      *
      * @return \League\OAuth2\Server\Entities\AuthCodeEntityInterface

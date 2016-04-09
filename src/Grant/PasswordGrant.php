@@ -66,7 +66,7 @@ class PasswordGrant extends AbstractGrant
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface                        $request
+     * @param \Psr\Http\Message\ServerRequestInterface             $request
      * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException

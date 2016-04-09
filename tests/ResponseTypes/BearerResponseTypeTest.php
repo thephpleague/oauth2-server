@@ -3,15 +3,16 @@
 namespace LeagueTests\ResponseTypes;
 
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
-use League\OAuth2\Server\CryptKey;
-use\LeagueTests\Stubs\AccessTokenEntity;
-use LeagueTests\Stubs\RefreshTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
+
+useLeagueTestsLeague\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use Psr\Http\Message\ResponseInterface;
+use Stubs\AccessTokenEntity;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
