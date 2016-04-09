@@ -3,8 +3,8 @@
 namespace League\OAuth2\Server\AuthorizationValidators;
 
 use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\ValidationData;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\ValidationData;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
