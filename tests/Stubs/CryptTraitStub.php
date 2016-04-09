@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Stubs;
 
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
 
 class CryptTraitStub
@@ -10,8 +11,8 @@ class CryptTraitStub
 
     public function __construct()
     {
-        $this->setPrivateKeyPath('file://' . __DIR__ . '/private.key');
-        $this->setPublicKeyPath('file://' . __DIR__ . '/public.key');
+        $this->setPrivateKey(new CryptKey('file://' . __DIR__ . '/private.key'));
+        $this->setPublicKey(new CryptKey('file://' . __DIR__ . '/public.key'));
     }
 
     public function doEncrypt($unencryptedData)

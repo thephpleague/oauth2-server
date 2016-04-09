@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Grant;
 
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -77,8 +78,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [
@@ -115,8 +116,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
     public function testRespondToAuthorizationRequestMissingClientId()
     {
         $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [
@@ -152,8 +153,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
         $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [
@@ -199,8 +200,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
         $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [
@@ -252,8 +253,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
         $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [
@@ -299,8 +300,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [
@@ -350,8 +351,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [
@@ -401,8 +402,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
         $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class));
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
-        $grant->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [

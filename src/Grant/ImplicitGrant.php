@@ -197,7 +197,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $scopes
             );
 
-            $redirectPayload['access_token'] = (string) $accessToken->convertToJWT($this->privateKeyPath);
+            $redirectPayload['access_token'] = (string) $accessToken->convertToJWT($this->privateKey);
             $redirectPayload['token_type'] = 'bearer';
             $redirectPayload['expires_in'] = time() - $accessToken->getExpiryDateTime()->getTimestamp();
 

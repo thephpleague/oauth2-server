@@ -3,6 +3,7 @@
 namespace LeagueTests\ResponseTypes;
 
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -21,8 +22,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -66,8 +67,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
 
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -90,8 +91,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $json = json_decode((string) $response->getBody());
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
-        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $authorizationValidator->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
@@ -110,8 +111,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
 
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -134,8 +135,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $json = json_decode((string) $response->getBody());
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
-        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $authorizationValidator->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token . 'foo'));
@@ -156,8 +157,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(true);
 
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -180,8 +181,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $json = json_decode((string) $response->getBody());
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
-        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $authorizationValidator->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
@@ -201,12 +202,12 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
-        $authorizationValidator->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
-        $authorizationValidator->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
+        $authorizationValidator->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', 'Bearer blah');

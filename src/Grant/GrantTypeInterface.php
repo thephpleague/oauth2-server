@@ -11,6 +11,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareInterface;
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -89,14 +90,14 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * Set the path to the private key.
      *
-     * @param string $privateKeyPath
+     * @param \League\OAuth2\Server\CryptKey $privateKey
      */
-    public function setPrivateKeyPath($privateKeyPath);
+    public function setPrivateKey(CryptKey $privateKey);
 
     /**
      * Set the path to the public key.
      *
-     * @param string $publicKeyPath
+     * @param \League\OAuth2\Server\CryptKey $publicKey
      */
-    public function setPublicKeyPath($publicKeyPath);
+    public function setPublicKey(CryptKey $publicKey);
 }
