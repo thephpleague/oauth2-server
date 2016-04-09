@@ -2,16 +2,17 @@
 
 namespace LeagueTests\Grant;
 
+use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Jwt\AccessTokenConverter;
-use League\OAuth2\Server\Jwt\BearerRedirectResponse;
 use League\OAuth2\Server\MessageEncryption;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseFactory;
+use League\OAuth2\Server\ResponseTypes\BearerRedirectResponse;
 use League\OAuth2\Server\ResponseTypes\HtmlResponse;
 use League\OAuth2\Server\TemplateRenderer\PlatesRenderer;
 use League\Plates\Engine;
@@ -39,7 +40,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->responseFactory = new ResponseFactory(
-            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
+            new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
             new PlatesRenderer(
                 new Engine(__DIR__ . '/../../src/TemplateRenderer/DefaultTemplates'),
                 'login_user',
@@ -50,14 +51,22 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testGetIdentifier()
     {
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
+        $grant = new ImplicitGrant(
+            $this->getMock(UserRepositoryInterface::class),
+            $this->responseFactory,
+            $this->messageEncryption
+        );
 
         $this->assertEquals('implicit', $grant->getIdentifier());
     }
 
     public function testCanRespondToRequest()
     {
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
+        $grant = new ImplicitGrant(
+            $this->getMock(UserRepositoryInterface::class),
+            $this->responseFactory,
+            $this->messageEncryption
+        );
 
         $request = new ServerRequest(
             [],
@@ -92,7 +101,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $grant = new ImplicitGrant($userRepositoryMock, $this->messageEncryption);
+        $grant = new ImplicitGrant($userRepositoryMock, $this->responseFactory, $this->messageEncryption);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -120,7 +129,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new \DateInterval('PT10M'));
 
         $this->assertTrue($response instanceof BearerRedirectResponse);
     }
@@ -131,7 +140,11 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testRespondToAuthorizationRequestMissingClientId()
     {
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
+        $grant = new ImplicitGrant(
+            $this->getMock(UserRepositoryInterface::class),
+            $this->responseFactory,
+            $this->messageEncryption
+        );
 
         $request = new ServerRequest(
             [
@@ -156,7 +169,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, new \DateInterval('PT10M'));
     }
 
     public function testRespondToAuthorizationRequestBadClient()
@@ -165,7 +178,11 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
+        $grant = new ImplicitGrant(
+            $this->getMock(UserRepositoryInterface::class),
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -193,7 +210,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getMessage(), 'Client authentication failed');
         }
@@ -209,7 +226,11 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
+        $grant = new ImplicitGrant(
+            $this->getMock(UserRepositoryInterface::class),
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -238,7 +259,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getMessage(), 'Client authentication failed');
         }
@@ -259,7 +280,11 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
+        $grant = new ImplicitGrant(
+            $this->getMock(UserRepositoryInterface::class),
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -286,7 +311,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, new \DateInterval('PT10M'));
     }
 
     public function testRespondToAuthorizationRequestTryLogin()
@@ -303,7 +328,11 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
+        $grant = new ImplicitGrant(
+            $this->getMock(UserRepositoryInterface::class),
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -331,7 +360,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new \DateInterval('PT10M'));
         $this->assertTrue($response instanceof HtmlResponse);
 
         $response = $response->generateHttpResponse(new Response);
@@ -352,7 +381,11 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
+        $grant = new ImplicitGrant(
+            $this->getMock(UserRepositoryInterface::class),
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -379,7 +412,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new \DateInterval('PT10M'));
 
         $this->assertTrue($response instanceof HtmlResponse);
 
@@ -402,7 +435,11 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
-        $grant = new ImplicitGrant($this->getMock(UserRepositoryInterface::class), $this->messageEncryption);
+        $grant = new ImplicitGrant(
+            $this->getMock(UserRepositoryInterface::class),
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -430,6 +467,6 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, new \DateInterval('PT10M'));
     }
 }

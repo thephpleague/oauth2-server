@@ -2,9 +2,9 @@
 namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use League\OAuth2\Server\Jwt\AccessTokenConverterInterface;
-use League\OAuth2\Server\Jwt\BearerRedirectResponse;
-use League\OAuth2\Server\Jwt\BearerTokenResponse;
+use League\OAuth2\Server\ResponseTypes\AccessTokenConverterInterface;
+use League\OAuth2\Server\ResponseTypes\BearerRedirectResponse;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\Dto\AuthorizeData;
 use League\OAuth2\Server\ResponseTypes\Dto\CodeData;
 use League\OAuth2\Server\ResponseTypes\Dto\EncryptedRefreshToken;
@@ -27,14 +27,14 @@ final class ResponseFactory implements ResponseFactoryInterface
     private $renderer;
 
     /**
-     * @param AccessTokenConverterInterface $accessTokenToJwtConverter
+     * @param AccessTokenConverterInterface $accessTokenConverter
      * @param RendererInterface             $renderer
      */
     public function __construct(
-        AccessTokenConverterInterface $accessTokenToJwtConverter,
+        AccessTokenConverterInterface $accessTokenConverter,
         RendererInterface $renderer
     ) {
-        $this->accessTokenConverter = $accessTokenToJwtConverter;
+        $this->accessTokenConverter = $accessTokenConverter;
         $this->renderer = $renderer;
     }
 

@@ -6,7 +6,7 @@ use DateInterval;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\MessageEncryption;
+use League\OAuth2\Server\MessageEncryptionInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
@@ -25,45 +25,57 @@ class AuthCodeGrant extends AbstractGrant
      */
     private $authCodeTTL;
     /**
-     * @var MessageEncryption
+     * @var MessageEncryptionInterface
      */
     private $messageEncryption;
+    /**
+     * @var ResponseFactoryInterface
+     */
+    private $responseFactory;
 
     /**
      * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface     $authCodeRepository
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
-     * @param MessageEncryption                                                  $messageEncryption
+     * @param ResponseFactoryInterface                                           $responseFactory
+     * @param MessageEncryptionInterface                                         $messageEncryption
      * @param \DateInterval                                                      $authCodeTTL
+     * @param \DateInterval                                                      $refreshTokenTTL
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         UserRepositoryInterface $userRepository,
-        MessageEncryption $messageEncryption,
-        \DateInterval $authCodeTTL
+        ResponseFactoryInterface $responseFactory,
+        MessageEncryptionInterface $messageEncryption,
+        \DateInterval $authCodeTTL,
+        \DateInterval $refreshTokenTTL = null
     ) {
         $this->setAuthCodeRepository($authCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->setUserRepository($userRepository);
         $this->authCodeTTL = $authCodeTTL;
         $this->messageEncryption = $messageEncryption;
-        $this->refreshTokenTTL = new \DateInterval('P1M');
+        $this->responseFactory = $responseFactory;
+
+        if ($refreshTokenTTL === null) {
+            $refreshTokenTTL = new \DateInterval('P1M');
+        }
+
+        $this->refreshTokenTTL = $refreshTokenTTL;
     }
 
     /**
      * Respond to an authorization request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param ResponseFactoryInterface                 $responseFactory
      *
      * @throws OAuthServerException
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
     protected function respondToAuthorizationRequest(
-        ServerRequestInterface $request,
-        ResponseFactoryInterface $responseFactory
+        ServerRequestInterface $request
     ) {
         $clientId = $this->getQueryStringParameter(
             'client_id',
@@ -145,7 +157,7 @@ class AuthCodeGrant extends AbstractGrant
 
         // The user hasn't logged in yet so show a login form
         if ($userId === null) {
-            return $responseFactory->newHtmlLoginResponse(
+            return $this->responseFactory->newHtmlLoginResponse(
                 new LoginData($loginError, $postbackUri, $request->getQueryParams())
             );
         }
@@ -158,7 +170,7 @@ class AuthCodeGrant extends AbstractGrant
                 ])
             );
 
-            return $responseFactory->newHtmlAuthorizeResponse(
+            return $this->responseFactory->newHtmlAuthorizeResponse(
                 new AuthorizeData($client, $scopes, $postbackUri, $request->getQueryParams(), $encryptedUserId)
             );
         }
@@ -194,7 +206,7 @@ class AuthCodeGrant extends AbstractGrant
                 )
             );
 
-            return $responseFactory->newAuthCodeRedirectResponse(
+            return $this->responseFactory->newAuthCodeRedirectResponse(
                 new CodeData($redirectUri, $code, $stateParameter)
             );
         }
@@ -207,7 +219,6 @@ class AuthCodeGrant extends AbstractGrant
      * Respond to an access token request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface                     $request
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface $responseFactory
      * @param \DateInterval                                                $accessTokenTTL
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
@@ -216,7 +227,6 @@ class AuthCodeGrant extends AbstractGrant
      */
     protected function respondToAccessTokenRequest(
         ServerRequestInterface $request,
-        ResponseFactoryInterface $responseFactory,
         DateInterval $accessTokenTTL
     ) {
         // The redirect URI is required in this request
@@ -270,7 +280,7 @@ class AuthCodeGrant extends AbstractGrant
 
         // Issue and persist access + refresh tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
-        $refreshToken = $this->issueRefreshToken($accessToken);
+        $refreshToken = $this->issueRefreshToken($accessToken, $this->refreshTokenTTL);
         $expireDateTime = $accessToken->getExpiryDateTime()->getTimestamp();
 
         $encryptedRefreshToken = new EncryptedRefreshToken(
@@ -288,7 +298,7 @@ class AuthCodeGrant extends AbstractGrant
             )
         );
 
-        return $responseFactory->newRefreshTokenResponse($accessToken, $encryptedRefreshToken);
+        return $this->responseFactory->newRefreshTokenResponse($accessToken, $encryptedRefreshToken);
     }
 
     /**
@@ -296,17 +306,16 @@ class AuthCodeGrant extends AbstractGrant
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        ResponseFactoryInterface $responseFactory,
         \DateInterval $accessTokenTTL
     ) {
         if (
             array_key_exists('response_type', $request->getQueryParams())
             && $request->getQueryParams()['response_type'] === 'code'
         ) {
-            return $this->respondToAuthorizationRequest($request, $responseFactory);
+            return $this->respondToAuthorizationRequest($request);
         }
 
-        return $this->respondToAccessTokenRequest($request, $responseFactory, $accessTokenTTL);
+        return $this->respondToAccessTokenRequest($request, $accessTokenTTL);
     }
 
     /**

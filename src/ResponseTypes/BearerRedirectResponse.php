@@ -8,10 +8,9 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-namespace League\OAuth2\Server\Jwt;
+namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class BearerRedirectResponse implements ResponseTypeInterface
@@ -29,9 +28,9 @@ class BearerRedirectResponse implements ResponseTypeInterface
      */
     protected $accessToken;
     /**
-     * @var AccessTokenConverter
+     * @var AccessTokenConverterInterface
      */
-    private $accessTokenToJwtConverter;
+    private $accessTokenConverter;
 
     /**
      * @param AccessTokenConverterInterface $accessTokenToJwtConverter
@@ -48,7 +47,7 @@ class BearerRedirectResponse implements ResponseTypeInterface
         $this->redirectUri = $redirectUri;
         $this->state = $state;
         $this->accessToken = $accessToken;
-        $this->accessTokenToJwtConverter = $accessTokenToJwtConverter;
+        $this->accessTokenConverter = $accessTokenToJwtConverter;
     }
 
     /**
@@ -56,15 +55,13 @@ class BearerRedirectResponse implements ResponseTypeInterface
      */
     public function generateHttpResponse(ResponseInterface $response)
     {
-        $jwtAccessToken = $this->accessTokenToJwtConverter->convert($this->accessToken)->getToken();
-
         $redirectPayload = [];
 
         if ($this->state !== null) {
             $redirectPayload['state'] = $this->state;
         }
 
-        $redirectPayload['access_token'] = (string) $jwtAccessToken;
+        $redirectPayload['access_token'] = $this->accessTokenConverter->convert($this->accessToken);
         $redirectPayload['token_type'] = 'Bearer';
         $redirectPayload['expires_in'] = time() - $this->accessToken->getExpiryDateTime()->getTimestamp();
 

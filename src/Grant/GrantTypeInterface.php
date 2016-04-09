@@ -14,7 +14,6 @@ use League\Event\EmitterAwareInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -22,13 +21,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 interface GrantTypeInterface extends EmitterAwareInterface
 {
-    /**
-     * Set refresh token TTL.
-     *
-     * @param \DateInterval $refreshTokenTTL
-     */
-    public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL);
-
     /**
      * Return the grant identifier that can be used in matching up requests.
      *
@@ -40,14 +32,12 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * Respond to an incoming request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface                     $request
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface $responseFactory
      * @param \DateInterval                                                $accessTokenTTL
      *
      * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        ResponseFactoryInterface $responseFactory,
         \DateInterval $accessTokenTTL
     );
 

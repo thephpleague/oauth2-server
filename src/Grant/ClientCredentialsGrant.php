@@ -19,11 +19,23 @@ use Psr\Http\Message\ServerRequestInterface;
 class ClientCredentialsGrant extends AbstractGrant
 {
     /**
+     * @var ResponseFactoryInterface
+     */
+    private $responseFactory;
+
+    /**
+     * @param $responseFactory
+     */
+    public function __construct($responseFactory)
+    {
+        $this->responseFactory = $responseFactory;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        ResponseFactoryInterface $responseFactory,
         \DateInterval $accessTokenTTL
     ) {
         // Validate request
@@ -36,7 +48,7 @@ class ClientCredentialsGrant extends AbstractGrant
         // Issue and persist access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $client->getIdentifier(), $scopes);
 
-        return $responseFactory->newAccessTokenResponse($accessToken);
+        return $this->responseFactory->newAccessTokenResponse($accessToken);
     }
 
     /**

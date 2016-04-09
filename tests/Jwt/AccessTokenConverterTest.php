@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Jwt;
 
+use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Jwt\AccessTokenConverter;
 use LeagueTests\Stubs\ClientEntity;
@@ -25,16 +26,8 @@ class AccessTokenConverterTest extends \PHPUnit_Framework_TestCase
         $token->setUserIdentifier('test');
         $token->addScope($scope);
 
-        $converter = new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key');
-        $jwtBuilder = $converter->convert($token);
-
-        $token = $jwtBuilder->getToken();
-        $this->assertGreaterThan(0, strlen((string) $token));
-        $this->assertEquals('test', $token->getClaim('sub'));
-        $this->assertEquals('integer', gettype($token->getClaim('exp')));
-        $this->assertEquals('integer', gettype($token->getClaim('nbf')));
-        $this->assertEquals('integer', gettype($token->getClaim('iat')));
-        $this->assertEquals(2, $token->getClaim('jti'));
-        $this->assertEquals([$scope], $token->getClaim('scopes'));
+        $converter = new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key');
+        $jwt = $converter->convert($token);
+        $this->assertGreaterThan(0, strlen((string) $jwt));
     }
 }

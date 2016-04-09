@@ -1,8 +1,14 @@
 <?php
 
+use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ImplicitGrant;
+use League\OAuth2\Server\Jwt\AccessTokenConverter;
+use League\OAuth2\Server\MessageEncryption;
+use League\OAuth2\Server\ResponseFactory;
 use League\OAuth2\Server\Server;
+use League\OAuth2\Server\TemplateRenderer\PlatesRenderer;
+use League\Plates\Engine;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
@@ -39,7 +45,24 @@ $app = new App([
 
         // Enable the implicit grant on the server with a token TTL of 1 hour
         $server->enableGrantType(
-            new ImplicitGrant($userRepository),
+            new ImplicitGrant(
+                $userRepository,
+                new MessageEncryption(
+                    $privateKeyPath,
+                    $publicKeyPath
+                ),
+                new ResponseFactory(
+                    new AccessTokenConverter(
+                        new Builder(),
+                        $publicKeyPath
+                    ),
+                    new PlatesRenderer(
+                        new Engine(),
+                        'login_user',
+                        'authorize_client'
+                    )
+                )
+            ),
             new \DateInterval('PT1H')
         );
 

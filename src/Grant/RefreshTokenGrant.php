@@ -11,7 +11,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\MessageEncryption;
+use League\OAuth2\Server\MessageEncryptionInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\Dto\EncryptedRefreshToken;
@@ -24,22 +24,34 @@ use Psr\Http\Message\ServerRequestInterface;
 class RefreshTokenGrant extends AbstractGrant
 {
     /**
-     * @var MessageEncryption
+     * @var MessageEncryptionInterface
      */
     private $messageEncryption;
+    /**
+     * @var ResponseFactoryInterface
+     */
+    private $responseFactory;
 
     /**
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
-     * @param MessageEncryption                                                  $messageEncryption
+     * @param ResponseFactoryInterface                                           $responseFactory
+     * @param MessageEncryptionInterface                                         $messageEncryption
+     * @param \DateInterval                                                      $refreshTokenTTL
      */
     public function __construct(
         RefreshTokenRepositoryInterface $refreshTokenRepository,
-        MessageEncryption $messageEncryption
+        ResponseFactoryInterface $responseFactory,
+        MessageEncryptionInterface $messageEncryption,
+        \DateInterval $refreshTokenTTL = null
     ) {
+        if ($refreshTokenTTL === null) {
+            $refreshTokenTTL = new \DateInterval('P1M');
+        }
         $this->setRefreshTokenRepository($refreshTokenRepository);
 
         $this->messageEncryption = $messageEncryption;
-        $this->refreshTokenTTL = new \DateInterval('P1M');
+        $this->refreshTokenTTL = $refreshTokenTTL;
+        $this->responseFactory = $responseFactory;
     }
 
     /**
@@ -47,7 +59,6 @@ class RefreshTokenGrant extends AbstractGrant
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        ResponseFactoryInterface $responseFactory,
         \DateInterval $accessTokenTTL
     ) {
         // Validate request
@@ -84,7 +95,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $oldRefreshToken['user_id'], $scopes);
-        $refreshToken = $this->issueRefreshToken($accessToken);
+        $refreshToken = $this->issueRefreshToken($accessToken, $this->refreshTokenTTL);
         $expireDateTime = $accessToken->getExpiryDateTime()->getTimestamp();
 
         $encryptedRefreshToken = new EncryptedRefreshToken(
@@ -102,7 +113,7 @@ class RefreshTokenGrant extends AbstractGrant
             )
         );
 
-        return $responseFactory->newRefreshTokenResponse($accessToken, $encryptedRefreshToken);
+        return $this->responseFactory->newRefreshTokenResponse($accessToken, $encryptedRefreshToken);
     }
 
     /**

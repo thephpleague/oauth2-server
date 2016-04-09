@@ -1,10 +1,16 @@
 <?php
 
+use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
+use League\OAuth2\Server\Jwt\AccessTokenConverter;
+use League\OAuth2\Server\Jwt\BearerTokenValidator;
+use League\OAuth2\Server\MessageEncryption;
 use League\OAuth2\Server\Middleware\AuthenticationServerMiddleware;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
+use League\OAuth2\Server\ResponseFactory;
 use League\OAuth2\Server\Server;
+use League\OAuth2\Server\TemplateRenderer\NullRenderer;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\AuthCodeRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
@@ -39,8 +45,10 @@ $app = new App([
             $clientRepository,
             $accessTokenRepository,
             $scopeRepository,
-            $privateKeyPath,
-            $publicKeyPath
+            new BearerTokenValidator(
+                new AccessTokenRepository(),
+                'file://' . __DIR__ . '/../public.key'
+            )
         );
 
         // Enable the authentication code grant on the server with a token TTL of 1 hour
@@ -49,6 +57,17 @@ $app = new App([
                 $authCodeRepository,
                 $refreshTokenRepository,
                 $userRepository,
+                new ResponseFactory(
+                    new AccessTokenConverter(
+                        new Builder(),
+                        'file://' . __DIR__ . '/../private.key'
+                    ),
+                    new NullRenderer()
+                ),
+                new MessageEncryption(
+                    'file://' . __DIR__ . '/../private.key',
+                    'file://' . __DIR__ . '/../public.key'
+                ),
                 new \DateInterval('PT10M')
             ),
             new \DateInterval('PT1H')
@@ -56,7 +75,20 @@ $app = new App([
 
         // Enable the refresh token grant on the server with a token TTL of 1 month
         $server->enableGrantType(
-            new RefreshTokenGrant($refreshTokenRepository),
+            new RefreshTokenGrant(
+                $refreshTokenRepository,
+                new ResponseFactory(
+                    new AccessTokenConverter(
+                        new Builder(),
+                        'file://' . __DIR__ . '/../private.key'
+                    ),
+                    new NullRenderer()
+                ),
+                new MessageEncryption(
+                    'file://' . __DIR__ . '/../private.key',
+                    'file://' . __DIR__ . '/../public.key'
+                )
+            ),
             new \DateInterval('PT1M')
         );
 

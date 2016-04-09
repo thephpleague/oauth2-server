@@ -228,7 +228,6 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setRefreshTokenTTL(new \DateInterval('PT1M'));
         $grantMock->setRefreshTokenRepository($refreshTokenRepoMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
@@ -237,7 +236,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $accessToken = new AccessTokenEntity();
         /** @var RefreshTokenEntityInterface $refreshToken */
-        $refreshToken = $issueRefreshTokenMethod->invoke($grantMock, $accessToken);
+        $refreshToken = $issueRefreshTokenMethod->invoke($grantMock, $accessToken, new \DateInterval('PT1M'));
         $this->assertTrue($refreshToken instanceof RefreshTokenEntityInterface);
         $this->assertFalse($refreshToken->isExpired());
         $this->assertEquals($accessToken, $refreshToken->getAccessToken());

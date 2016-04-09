@@ -1,8 +1,14 @@
 <?php
 
+use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\PasswordGrant;
+use League\OAuth2\Server\Jwt\AccessTokenConverter;
+use League\OAuth2\Server\Jwt\BearerTokenValidator;
+use League\OAuth2\Server\MessageEncryption;
+use League\OAuth2\Server\ResponseFactory;
 use League\OAuth2\Server\Server;
+use League\OAuth2\Server\TemplateRenderer\NullRenderer;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\RefreshTokenRepository;
@@ -35,13 +41,29 @@ $app = new App([
             $clientRepository,
             $accessTokenRepository,
             $scopeRepository,
-            $privateKeyPath,
-            $publicKeyPath
+            new BearerTokenValidator(
+                $accessTokenRepository,
+                $publicKeyPath
+            )
         );
 
         // Enable the password grant on the server with a token TTL of 1 hour
         $server->enableGrantType(
-            new PasswordGrant($userRepository, $refreshTokenRepository),
+            new PasswordGrant(
+                $userRepository,
+                new MessageEncryption(
+                    $privateKeyPath,
+                    $publicKeyPath
+                ),
+                $refreshTokenRepository,
+                new ResponseFactory(
+                    new AccessTokenConverter(
+                        new Builder(),
+                        $privateKeyPath
+                    ),
+                    new NullRenderer()
+                )
+            ),
             new \DateInterval('PT1H')
         );
 

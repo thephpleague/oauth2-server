@@ -2,15 +2,16 @@
 
 namespace LeagueTests\Grant;
 
+use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Jwt\AccessTokenConverter;
-use League\OAuth2\Server\Jwt\BearerTokenResponse;
 use League\OAuth2\Server\MessageEncryption;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResponseFactory;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
@@ -35,7 +36,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->responseFactory = new ResponseFactory(
-            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
+            new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
             $this->getMock(RendererInterface::class)
         );
     }
@@ -44,7 +45,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $refreshTokenRepositoryMock = $this->getMock(RefreshTokenRepositoryInterface::class);
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
+        $grant = new RefreshTokenGrant(
+            $refreshTokenRepositoryMock,
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $this->assertEquals('refresh_token', $grant->getIdentifier());
     }
 
@@ -70,7 +75,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('persistNewRefreshToken')->willReturnSelf();
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
+        $grant = new RefreshTokenGrant(
+            $refreshTokenRepositoryMock,
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
@@ -97,7 +106,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $responseType = $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
+        $responseType = $grant->respondToRequest($serverRequest, new \DateInterval('PT5M'));
         $this->assertTrue($responseType instanceof BearerTokenResponse);
     }
 
@@ -120,7 +129,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
+        $grant = new RefreshTokenGrant(
+            $refreshTokenRepositoryMock,
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -148,7 +161,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $responseType = $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
+        $responseType = $grant->respondToRequest($serverRequest, new \DateInterval('PT5M'));
 
         $this->assertTrue($responseType instanceof BearerTokenResponse);
     }
@@ -176,7 +189,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
+        $grant = new RefreshTokenGrant(
+            $refreshTokenRepositoryMock,
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -204,7 +221,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, new \DateInterval('PT5M'));
     }
 
     /**
@@ -222,7 +239,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
+        $grant = new RefreshTokenGrant(
+            $refreshTokenRepositoryMock,
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -234,7 +255,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, new \DateInterval('PT5M'));
     }
 
     /**
@@ -252,7 +273,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
+        $grant = new RefreshTokenGrant(
+            $refreshTokenRepositoryMock,
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -267,7 +292,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, new \DateInterval('PT5M'));
     }
 
     /**
@@ -289,7 +314,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
+        $grant = new RefreshTokenGrant(
+            $refreshTokenRepositoryMock,
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -315,7 +344,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, new \DateInterval('PT5M'));
     }
 
     /**
@@ -333,7 +362,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
+        $grant = new RefreshTokenGrant(
+            $refreshTokenRepositoryMock,
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -359,7 +392,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, new \DateInterval('PT5M'));
     }
 
     /**
@@ -378,7 +411,11 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('isRefreshTokenRevoked')->willReturn(true);
 
-        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock, $this->messageEncryption);
+        $grant = new RefreshTokenGrant(
+            $refreshTokenRepositoryMock,
+            $this->responseFactory,
+            $this->messageEncryption
+        );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -404,6 +441,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($serverRequest, $this->responseFactory, new \DateInterval('PT5M'));
+        $grant->respondToRequest($serverRequest, new \DateInterval('PT5M'));
     }
 }

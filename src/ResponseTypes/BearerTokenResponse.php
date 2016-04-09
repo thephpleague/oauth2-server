@@ -8,11 +8,10 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-namespace League\OAuth2\Server\Jwt;
+namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\ResponseTypes\Dto\EncryptedRefreshToken;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class BearerTokenResponse implements ResponseTypeInterface
@@ -26,21 +25,21 @@ class BearerTokenResponse implements ResponseTypeInterface
      */
     protected $refreshToken;
     /**
-     * @var AccessTokenConverter
+     * @var AccessTokenConverterInterface
      */
-    private $accessTokenToJwtConverter;
+    private $accessTokenConverter;
 
     /**
-     * @param AccessTokenConverterInterface $accessTokenToJwtConverter
+     * @param AccessTokenConverterInterface $accessTokenConverter
      * @param AccessTokenEntityInterface    $accessToken
      * @param EncryptedRefreshToken         $refreshToken
      */
     public function __construct(
-        AccessTokenConverterInterface $accessTokenToJwtConverter,
+        AccessTokenConverterInterface $accessTokenConverter,
         AccessTokenEntityInterface $accessToken,
         EncryptedRefreshToken $refreshToken = null
     ) {
-        $this->accessTokenToJwtConverter = $accessTokenToJwtConverter;
+        $this->accessTokenConverter = $accessTokenConverter;
         $this->accessToken = $accessToken;
         $this->refreshToken = $refreshToken;
     }
@@ -52,12 +51,10 @@ class BearerTokenResponse implements ResponseTypeInterface
     {
         $expireDateTime = $this->accessToken->getExpiryDateTime()->getTimestamp();
 
-        $jwtAccessToken = $this->accessTokenToJwtConverter->convert($this->accessToken)->getToken();
-
         $responseParams = [
             'token_type'   => 'Bearer',
             'expires_in'   => $expireDateTime - (new \DateTime())->getTimestamp(),
-            'access_token' => (string) $jwtAccessToken,
+            'access_token' => $this->accessTokenConverter->convert($this->accessToken),
         ];
 
         if ($this->refreshToken instanceof EncryptedRefreshToken) {

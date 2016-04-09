@@ -10,7 +10,7 @@
  */
 namespace League\OAuth2\Server;
 
-final class MessageEncryption
+final class MessageEncryption implements MessageEncryptionInterface
 {
     /**
      * @var string

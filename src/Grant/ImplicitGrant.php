@@ -5,7 +5,7 @@ namespace League\OAuth2\Server\Grant;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\MessageEncryption;
+use League\OAuth2\Server\MessageEncryptionInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\Dto\AuthorizeData;
@@ -16,18 +16,26 @@ use Psr\Http\Message\ServerRequestInterface;
 class ImplicitGrant extends AbstractGrant
 {
     /**
-     * @var MessageEncryption
+     * @var MessageEncryptionInterface
      */
     private $messageEncryption;
+    /**
+     * @var ResponseFactoryInterface
+     */
+    private $responseFactory;
 
     /**
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface $userRepository
-     * @param MessageEncryption                                          $messageEncryption
+     * @param MessageEncryptionInterface                                 $messageEncryption
+     * @param ResponseFactoryInterface                                   $responseFactory
      */
-    public function __construct(UserRepositoryInterface $userRepository, MessageEncryption $messageEncryption)
-    {
+    public function __construct(
+        UserRepositoryInterface $userRepository,
+        ResponseFactoryInterface $responseFactory,
+        MessageEncryptionInterface $messageEncryption
+    ) {
         $this->setUserRepository($userRepository);
-        $this->refreshTokenTTL = new \DateInterval('P1M');
+        $this->responseFactory = $responseFactory;
         $this->messageEncryption = $messageEncryption;
     }
 
@@ -55,7 +63,6 @@ class ImplicitGrant extends AbstractGrant
      */
     public function respondToRequest(
         ServerRequestInterface $request,
-        ResponseFactoryInterface $responseFactory,
         \DateInterval $accessTokenTTL
     ) {
         $clientId = $this->getQueryStringParameter(
@@ -138,7 +145,7 @@ class ImplicitGrant extends AbstractGrant
 
         // The user hasn't logged in yet so show a login form
         if ($userId === null) {
-            return $responseFactory->newHtmlLoginResponse(
+            return $this->responseFactory->newHtmlLoginResponse(
                 new LoginData($loginError, $postbackUri, $request->getQueryParams())
             );
         }
@@ -151,7 +158,7 @@ class ImplicitGrant extends AbstractGrant
                 ])
             );
 
-            return $responseFactory->newHtmlAuthorizeResponse(
+            return $this->responseFactory->newHtmlAuthorizeResponse(
                 new AuthorizeData($client, $scopes, $postbackUri, $request->getQueryParams(), $encryptedUserId)
             );
         }
@@ -174,7 +181,7 @@ class ImplicitGrant extends AbstractGrant
                 $scopes
             );
 
-            return $responseFactory->newAccessTokenRedirectResponse($accessToken, $redirectUri, $stateParameter);
+            return $this->responseFactory->newAccessTokenRedirectResponse($accessToken, $redirectUri, $stateParameter);
         }
 
         // The user denied the client, redirect them back with an error

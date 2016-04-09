@@ -2,12 +2,13 @@
 
 namespace LeagueTests\ResponseTypes;
 
+use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Jwt\AccessTokenConverter;
-use League\OAuth2\Server\Jwt\BearerTokenResponse;
 use League\OAuth2\Server\Jwt\BearerTokenValidator;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\Dto\EncryptedRefreshToken;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
@@ -32,7 +33,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessToken->addScope($scope);
 
         $responseType = new BearerTokenResponse(
-            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
+            new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
             $accessToken,
             new EncryptedRefreshToken('encrypted')
         );
@@ -65,7 +66,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessToken->setClient($client);
 
         $responseType = new BearerTokenResponse(
-            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
+            new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
             $accessToken,
             new EncryptedRefreshToken('encrypted')
         );
@@ -107,7 +108,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessToken->setClient($client);
 
         $responseType = new BearerTokenResponse(
-            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
+            new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
             $accessToken,
             new EncryptedRefreshToken('encrypted')
         );
@@ -145,7 +146,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $accessToken->setClient($client);
 
         $responseType = new BearerTokenResponse(
-            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
+            new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
             $accessToken,
             new EncryptedRefreshToken('encrypted')
         );

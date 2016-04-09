@@ -2,6 +2,7 @@
 
 namespace LeagueTests;
 
+use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -31,17 +32,21 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $this->getMock(ClientRepositoryInterface::class),
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            new ResponseFactory(
-                new AccessTokenConverter('file://' . __DIR__ . '/Stubs/private.key'),
-                $this->getMock(RendererInterface::class)
-            ),
             new BearerTokenValidator(
                 $this->getMock(AccessTokenRepositoryInterface::class),
                 'file://' . __DIR__ . '/Stubs/public.key'
             )
         );
 
-        $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
+        $server->enableGrantType(
+            new ClientCredentialsGrant(
+                new ResponseFactory(
+                    new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/Stubs/private.key'),
+                    $this->getMock(RendererInterface::class)
+                )
+            ),
+            new \DateInterval('PT1M')
+        );
 
         try {
             $server->respondToRequest(ServerRequestFactory::fromGlobals(), new Response);
@@ -63,17 +68,21 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $scopeRepositoryMock,
-            new ResponseFactory(
-                new AccessTokenConverter('file://' . __DIR__ . '/Stubs/private.key'),
-                $this->getMock(RendererInterface::class)
-            ),
             new BearerTokenValidator(
                 $this->getMock(AccessTokenRepositoryInterface::class),
                 'file://' . __DIR__ . '/Stubs/public.key'
             )
         );
 
-        $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
+        $server->enableGrantType(
+            new ClientCredentialsGrant(
+                new ResponseFactory(
+                    new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/Stubs/private.key'),
+                    $this->getMock(RendererInterface::class)
+                )
+            ),
+            new \DateInterval('PT1M')
+        );
 
         $_POST['grant_type'] = 'client_credentials';
         $_POST['client_id'] = 'foo';
@@ -98,10 +107,6 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $scopeRepositoryMock,
-            new ResponseFactory(
-                new AccessTokenConverter('file://' . __DIR__ . '/Stubs/private.key'),
-                $this->getMock(RendererInterface::class)
-            ),
             new BearerTokenValidator(
                 $this->getMock(AccessTokenRepositoryInterface::class),
                 'file://' . __DIR__ . '/Stubs/public.key'
@@ -116,6 +121,10 @@ class ServerTest extends \PHPUnit_Framework_TestCase
                 $this->getMock(AuthCodeRepositoryInterface::class),
                 $this->getMock(RefreshTokenRepositoryInterface::class),
                 $userRepository,
+                new ResponseFactory(
+                    new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/Stubs/private.key'),
+                    $this->getMock(RendererInterface::class)
+                ),
                 new MessageEncryption(
                     'file://' . __DIR__ . '/Stubs/private.key',
                     'file://' . __DIR__ . '/Stubs/public.key'
@@ -147,10 +156,6 @@ class ServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            new ResponseFactory(
-                new AccessTokenConverter('file://' . __DIR__ . '/Stubs/private.key'),
-                $this->getMock(RendererInterface::class)
-            ),
             new BearerTokenValidator(
                 $this->getMock(AccessTokenRepositoryInterface::class),
                 'file://' . __DIR__ . '/Stubs/public.key'

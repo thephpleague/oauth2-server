@@ -2,10 +2,10 @@
 
 namespace LeagueTests\Grant;
 
+use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Jwt\AccessTokenConverter;
-use League\OAuth2\Server\Jwt\BearerTokenResponse;
 use League\OAuth2\Server\MessageEncryption;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
@@ -14,6 +14,7 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResponseFactory;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\HtmlResponse;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\TemplateRenderer\PlatesRenderer;
@@ -44,7 +45,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->responseFactory = new ResponseFactory(
-            new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
+            new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key'),
             new PlatesRenderer(
                 new Engine(__DIR__ . '/../../src/TemplateRenderer/DefaultTemplates'),
                 'login_user',
@@ -59,6 +60,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $this->getMock(UserRepositoryInterface::class),
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -72,6 +74,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $this->getMock(UserRepositoryInterface::class),
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -114,6 +117,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -146,7 +150,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new \DateInterval('PT10M'));
 
         $this->assertTrue($response instanceof RedirectResponse);
 
@@ -176,6 +180,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -207,7 +212,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, new \DateInterval('PT10M'));
     }
 
     /**
@@ -229,6 +234,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -257,7 +263,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, new \DateInterval('PT10M'));
     }
 
     public function testRespondToAuthorizationRequestBadClient()
@@ -274,6 +280,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -304,7 +311,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getMessage(), 'Client authentication failed');
         }
@@ -324,6 +331,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -355,7 +363,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getMessage(), 'Client authentication failed');
         }
@@ -380,6 +388,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -409,7 +418,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, new \DateInterval('PT10M'));
     }
 
     public function testRespondToAuthorizationRequestTryLogin()
@@ -433,6 +442,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -464,7 +474,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new \DateInterval('PT10M'));
 
         $this->assertTrue($response instanceof RedirectResponse);
 
@@ -490,6 +500,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -520,7 +531,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new \DateInterval('PT10M'));
 
         $this->assertTrue($response instanceof HtmlResponse);
 
@@ -548,6 +559,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -577,7 +589,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new \DateInterval('PT10M'));
 
         $response = $response->generateHttpResponse(new Response);
         $this->assertTrue($response instanceof ResponseInterface);
@@ -610,6 +622,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -646,7 +659,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $response = $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $response = $grant->respondToRequest($request, new \DateInterval('PT10M'));
         $this->assertTrue($response instanceof BearerTokenResponse);
     }
 
@@ -665,6 +678,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -686,7 +700,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, new \DateInterval('PT10M'));
     }
 
     /**
@@ -709,6 +723,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -733,7 +748,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+        $grant->respondToRequest($request, new \DateInterval('PT10M'));
     }
 
     public function testRespondToAccessTokenRequestExpiredCode()
@@ -758,6 +773,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -794,7 +810,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code has expired');
         }
@@ -825,6 +841,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $authCodeRepositoryMock,
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -861,7 +878,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code has been revoked');
         }
@@ -889,6 +906,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -925,7 +943,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code was not issued to this client');
         }
@@ -953,6 +971,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
+            $this->responseFactory,
             $this->messageEncryption,
             new \DateInterval('PT10M')
         );
@@ -978,7 +997,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         try {
-            $grant->respondToRequest($request, $this->responseFactory, new \DateInterval('PT10M'));
+            $grant->respondToRequest($request, new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Cannot decrypt the authorization code');
         }

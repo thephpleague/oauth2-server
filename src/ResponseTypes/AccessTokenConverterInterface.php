@@ -1,8 +1,7 @@
 <?php
 
-namespace League\OAuth2\Server\Jwt;
+namespace League\OAuth2\Server\ResponseTypes;
 
-use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 
 interface AccessTokenConverterInterface
@@ -10,7 +9,7 @@ interface AccessTokenConverterInterface
     /**
      * @param AccessTokenEntityInterface $accessTokenEntity
      *
-     * @return Builder
+     * @return string
      */
     public function convert(AccessTokenEntityInterface $accessTokenEntity);
 }

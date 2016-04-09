@@ -72,11 +72,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $userRepository;
 
     /**
-     * @var \DateInterval
-     */
-    protected $refreshTokenTTL;
-
-    /**
      * @param ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository)
@@ -122,14 +117,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setUserRepository(UserRepositoryInterface $userRepository)
     {
         $this->userRepository = $userRepository;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
-    {
-        $this->refreshTokenTTL = $refreshTokenTTL;
     }
 
     /**
@@ -341,14 +328,15 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessToken
+     * @param \DateInterval                                                        $refreshTokenTTL
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface
      */
-    protected function issueRefreshToken(AccessTokenEntityInterface $accessToken)
+    protected function issueRefreshToken(AccessTokenEntityInterface $accessToken, \DateInterval $refreshTokenTTL)
     {
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier($this->generateUniqueIdentifier());
-        $refreshToken->setExpiryDateTime((new \DateTime())->add($this->refreshTokenTTL));
+        $refreshToken->setExpiryDateTime((new \DateTime())->add($refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
 
         $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);

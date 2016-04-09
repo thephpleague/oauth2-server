@@ -1,5 +1,6 @@
 <?php
 
+use League\OAuth2\Server\Jwt\BearerTokenValidator;
 use League\OAuth2\Server\Server;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
@@ -20,8 +21,10 @@ $app = new App([
             new ClientRepository(),
             new AccessTokenRepository(),
             new ScopeRepository(),
-            'file://' . __DIR__ . '/../private.key',
-            'file://' . __DIR__ . '/../public.key'
+            new BearerTokenValidator(
+                new AccessTokenRepository(),
+                'file://' . __DIR__ . '/../public.key'
+            )
         );
 
         return $server;

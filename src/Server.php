@@ -11,7 +11,6 @@ use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\ResponseFactoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,16 +28,6 @@ class Server implements EmitterAwareInterface
      * @var \DateInterval[]
      */
     protected $grantTypeAccessTokenTTL = [];
-
-    /**
-     * @var string
-     */
-    protected $privateKeyPath;
-
-    /**
-     * @var ResponseFactoryInterface
-     */
-    protected $responseFactory;
 
     /**
      * @var ClientRepositoryInterface
@@ -66,20 +55,17 @@ class Server implements EmitterAwareInterface
      * @param ClientRepositoryInterface       $clientRepository
      * @param AccessTokenRepositoryInterface  $accessTokenRepository
      * @param ScopeRepositoryInterface        $scopeRepository
-     * @param ResponseFactoryInterface        $responseFactory
      * @param AuthorizationValidatorInterface $authorizationValidator
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
         AccessTokenRepositoryInterface $accessTokenRepository,
         ScopeRepositoryInterface $scopeRepository,
-        ResponseFactoryInterface $responseFactory,
         AuthorizationValidatorInterface $authorizationValidator
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
         $this->scopeRepository = $scopeRepository;
-        $this->responseFactory = $responseFactory;
         $this->authorizationValidator = $authorizationValidator;
     }
 
@@ -119,7 +105,6 @@ class Server implements EmitterAwareInterface
             if ($grantType->canRespondToRequest($request)) {
                 $tokenResponse = $grantType->respondToRequest(
                     $request,
-                    $this->responseFactory,
                     $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
                 );
             }

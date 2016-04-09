@@ -6,6 +6,7 @@ use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
+use League\OAuth2\Server\ResponseTypes\AccessTokenConverterInterface;
 
 class AccessTokenConverter implements AccessTokenConverterInterface
 {
@@ -19,12 +20,13 @@ class AccessTokenConverter implements AccessTokenConverterInterface
     private $builder;
 
     /**
+     * @param Builder $builder
      * @param $privateKeyPath
      */
-    public function __construct($privateKeyPath)
+    public function __construct(Builder $builder, $privateKeyPath)
     {
-        $this->builder = new Builder();
         $this->privateKeyPath = $privateKeyPath;
+        $this->builder = $builder;
     }
 
     /**
@@ -32,11 +34,11 @@ class AccessTokenConverter implements AccessTokenConverterInterface
      *
      * @param AccessTokenEntityInterface $accessTokenEntity
      *
-     * @return Builder
+     * @return string
      */
     public function convert(AccessTokenEntityInterface $accessTokenEntity)
     {
-        return $this->builder
+        return (string) $this->builder
             ->setAudience($accessTokenEntity->getClient()->getIdentifier())
             ->setId($accessTokenEntity->getIdentifier(), true)
             ->setIssuedAt(time())
@@ -44,6 +46,7 @@ class AccessTokenConverter implements AccessTokenConverterInterface
             ->setExpiration($accessTokenEntity->getExpiryDateTime()->getTimestamp())
             ->setSubject($accessTokenEntity->getUserIdentifier())
             ->set('scopes', $accessTokenEntity->getScopes())
-            ->sign(new Sha256(), new Key($this->privateKeyPath));
+            ->sign(new Sha256(), new Key($this->privateKeyPath))
+            ->getToken();
     }
 }

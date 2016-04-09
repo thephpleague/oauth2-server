@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Middleware;
 
+use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
 use League\OAuth2\Server\Jwt\AccessTokenConverter;
 use League\OAuth2\Server\Jwt\BearerTokenValidator;
@@ -26,10 +27,6 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            new ResponseFactory(
-                new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
-                $this->getMock(RendererInterface::class)
-            ),
             new BearerTokenValidator(
                 $this->getMock(AccessTokenRepositoryInterface::class),
                 'file://' . __DIR__ . '/../Stubs/public.key'
@@ -45,8 +42,8 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
 
-        $converter = new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key');
-        $token = $converter->convert($accessToken)->getToken();
+        $converter = new AccessTokenConverter(new Builder(), 'file://' . __DIR__ . '/../Stubs/private.key');
+        $token = $converter->convert($accessToken);
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));
@@ -73,10 +70,6 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            new ResponseFactory(
-                new AccessTokenConverter('file://' . __DIR__ . '/../Stubs/private.key'),
-                $this->getMock(RendererInterface::class)
-            ),
             new BearerTokenValidator(
                 $this->getMock(AccessTokenRepositoryInterface::class),
                 'file://' . __DIR__ . '/../Stubs/public.key'
