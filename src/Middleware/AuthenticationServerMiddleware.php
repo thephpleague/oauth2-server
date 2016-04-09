@@ -34,7 +34,7 @@ class AuthenticationServerMiddleware
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         try {
-            $response = $this->server->respondToRequest($request, $response);
+            $response = $this->server->respondToAccessTokenRequest($request, $response);
         } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
             // @codeCoverageIgnoreStart

@@ -139,7 +139,7 @@ class Server implements EmitterAwareInterface
         $tokenResponse = null;
         while ($tokenResponse === null && $grantType = array_shift($this->enabledGrantTypes)) {
             /** @var \League\OAuth2\Server\Grant\GrantTypeInterface $grantType */
-            if ($grantType->canRespondToRequest($request)) {
+            if ($grantType->canRespondToAccessTokenRequest($request)) {
                 $tokenResponse = $grantType->respondToRequest(
                     $request,
                     $this->getResponseType(),
