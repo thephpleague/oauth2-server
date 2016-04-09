@@ -188,6 +188,34 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
      */
+    public function testValidateClientInvalidRedirectUriArray()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri(['http://foo/bar']);
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setClientRepository($clientRepositoryMock);
+
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withParsedBody([
+            'client_id'     => 'foo',
+            'redirect_uri'  => 'http://bar/foo',
+        ]);
+
+        $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
+        $validateClientMethod->setAccessible(true);
+
+        $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
+    }
+
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     */
     public function testValidateClientBadClient()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();

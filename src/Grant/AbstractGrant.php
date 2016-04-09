@@ -173,8 +173,18 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         // If a redirect URI is provided ensure it matches what is pre-registered
         $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
-        if ($redirectUri !== null && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)) {
-            throw OAuthServerException::invalidClient();
+        if ($redirectUri !== null) {
+            if (
+                is_string($client->getRedirectUri())
+                && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
+            ) {
+                throw OAuthServerException::invalidClient();
+            } elseif (
+                is_array($client->getRedirectUri())
+                && in_array($redirectUri, $client->getRedirectUri()) === false
+            ) {
+                throw OAuthServerException::invalidClient();
+            }
         }
 
         return $client;

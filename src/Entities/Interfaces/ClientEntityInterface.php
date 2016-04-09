@@ -40,9 +40,11 @@ interface ClientEntityInterface
     public function setRedirectUri($redirectUri);
 
     /**
-     * Returns the registered redirect URI.
+     * Returns the registered redirect URI (as a string).
      *
-     * @return string
+     * Alternatively return an indexed array of redirect URIs.
+     *
+     * @return string|string[]
      */
     public function getRedirectUri();
 }
