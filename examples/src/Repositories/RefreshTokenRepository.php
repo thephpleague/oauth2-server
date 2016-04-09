@@ -9,7 +9,7 @@ use OAuth2ServerExamples\Entities\RefreshTokenEntity;
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntityInterface)
     {
@@ -17,7 +17,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function revokeRefreshToken($tokenId)
     {
@@ -25,7 +25,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isRefreshTokenRevoked($tokenId)
     {
@@ -33,7 +33,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNewRefreshToken()
     {

@@ -10,7 +10,7 @@ use OAuth2ServerExamples\Entities\AccessTokenEntity;
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
@@ -18,7 +18,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function revokeAccessToken($tokenId)
     {
@@ -26,7 +26,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isAccessTokenRevoked($tokenId)
     {
@@ -34,7 +34,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
     {

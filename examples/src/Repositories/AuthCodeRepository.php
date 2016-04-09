@@ -9,7 +9,7 @@ use OAuth2ServerExamples\Entities\AuthCodeEntity;
 class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
@@ -17,7 +17,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function revokeAuthCode($codeId)
     {
@@ -25,7 +25,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isAuthCodeRevoked($codeId)
     {
@@ -33,7 +33,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNewAuthCode()
     {
