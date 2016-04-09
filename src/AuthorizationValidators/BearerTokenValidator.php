@@ -48,7 +48,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
                 throw OAuthServerException::accessDenied('Access token could not be verified');
             }
 
-            // validate
+            // Ensure access token hasn't expired
             $data = new ValidationData();
             $data->setCurrentTime(time());
 
