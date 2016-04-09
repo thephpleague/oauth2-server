@@ -1,6 +1,6 @@
 <?php
 
-namespace League\OAuth2\Server\Entities\Interfaces;
+namespace League\OAuth2\Server\Entities;
 
 interface UserEntityInterface
 {

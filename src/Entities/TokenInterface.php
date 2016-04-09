@@ -1,6 +1,6 @@
 <?php
 
-namespace League\OAuth2\Server\Entities\Interfaces;
+namespace League\OAuth2\Server\Entities;
 
 interface TokenInterface
 {
@@ -56,14 +56,14 @@ interface TokenInterface
     /**
      * Set the client that the token was issued to.
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client
      */
     public function setClient(ClientEntityInterface $client);
 
     /**
      * Associate a scope with the token.
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface $scope
+     * @param \League\OAuth2\Server\Entities\ScopeEntityInterface $scope
      */
     public function addScope(ScopeEntityInterface $scope);
 
