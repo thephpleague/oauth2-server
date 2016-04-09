@@ -3,6 +3,7 @@
 namespace League\OAuth2\Server\AuthorizationValidators;
 
 use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\ValidationData;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -45,6 +46,14 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             $token = (new Parser())->parse($jwt);
             if ($token->verify(new Sha256(), $this->publicKey->getKeyPath()) === false) {
                 throw OAuthServerException::accessDenied('Access token could not be verified');
+            }
+
+            // validate
+            $data = new ValidationData();
+            $data->setCurrentTime(time());
+
+            if ($token->validate($data) === false) {
+                throw OAuthServerException::accessDenied('Access token is invalid');
             }
 
             // Check if token has been revoked
