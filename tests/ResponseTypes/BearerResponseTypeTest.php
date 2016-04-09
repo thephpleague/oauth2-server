@@ -90,6 +90,9 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $response = $responseType->generateHttpResponse(new Response());
         $json = json_decode((string) $response->getBody());
 
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
+
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
@@ -153,12 +156,9 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testDetermineAccessTokenInHeaderRevokedToken()
     {
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(true);
-
-        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $responseType = new BearerTokenResponse();
+        $responseType->setPrivateKeyPath('file://' . __DIR__ . '/../Stubs/private.key');
+        $responseType->setPublicKeyPath('file://' . __DIR__ . '/../Stubs/public.key');
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -179,6 +179,9 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
 
         $response = $responseType->generateHttpResponse(new Response());
         $json = json_decode((string) $response->getBody());
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(true);
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -204,6 +207,8 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));

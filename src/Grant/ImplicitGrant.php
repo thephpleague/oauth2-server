@@ -141,7 +141,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 ),
             ]);
 
-            $htmlResponse = new HtmlResponse($this->accessTokenRepository);
+            $htmlResponse = new HtmlResponse();
             $htmlResponse->setStatusCode(403);
             $htmlResponse->setHtml($html);
 
@@ -159,7 +159,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 ),
             ]);
 
-            $htmlResponse = new HtmlResponse($this->accessTokenRepository);
+            $htmlResponse = new HtmlResponse();
             $htmlResponse->setStatusCode(200);
             $htmlResponse->setHtml($html);
             $htmlResponse->setHeader('set-cookie', sprintf(
@@ -201,7 +201,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $redirectPayload['token_type'] = 'bearer';
             $redirectPayload['expires_in'] = time() - $accessToken->getExpiryDateTime()->getTimestamp();
 
-            $response = new RedirectResponse($this->accessTokenRepository);
+            $response = new RedirectResponse();
             $response->setRedirectUri(
                 $this->makeRedirectUri(
                     $redirectUri,
