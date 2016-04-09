@@ -3,39 +3,48 @@
 namespace OAuth2ServerExamples\Repositories;
 
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use OAuth2ServerExamples\Entities\AccessTokenEntity;
 
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
     /**
-     * Persists a new access token to permanent storage.
-     *
-     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessTokenEntity
+     * @inheritdoc
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
-        // TODO: Implement persistNewAccessToken() method.
+        // Some logic here to save the access token to a database
     }
 
     /**
-     * Revoke an access token.
-     *
-     * @param string $tokenId
+     * @inheritdoc
      */
     public function revokeAccessToken($tokenId)
     {
-        // TODO: Implement revokeAccessToken() method.
+        // Some logic here to revoke the access token
     }
 
     /**
-     * Check if the access token has been revoked.
-     *
-     * @param string $tokenId
-     *
-     * @return bool Return true if this token has been revoked
+     * @inheritdoc
      */
     public function isAccessTokenRevoked($tokenId)
     {
-        // TODO: Implement isAccessTokenRevoked() method.
+        return false; // Access token hasn't been revoked
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
+    {
+        $accessToken = new AccessTokenEntity();
+        $accessToken->setClient($clientEntity);
+        foreach ($scopes as $scope) {
+            $accessToken->addScope($scope);
+        }
+        $accessToken->setUserIdentifier($userIdentifier);
+
+        return $accessToken;
     }
 }
