@@ -12,7 +12,7 @@ abstract class AbstractAccessTokenRepository implements AccessTokenRepositoryInt
      *
      * @param \League\OAuth2\Server\Entities\ClientEntityInterface  $clientEntity
      * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
-     * @param mixed                                                            $userIdentifier
+     * @param mixed                                                 $userIdentifier
      *
      * @return \League\OAuth2\Server\Entities\AccessTokenEntityInterface
      */

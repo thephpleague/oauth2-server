@@ -31,10 +31,10 @@ interface ScopeRepositoryInterface extends RepositoryInterface
      * Given a client, grant type and optional user identifier validate the set of scopes requested are valid and optionally
      * append additional scopes or remove requested scopes.
      *
-     * @param ScopeEntityInterface[]                                          $scopes
-     * @param string                                                          $grantType
+     * @param ScopeEntityInterface[]                               $scopes
+     * @param string                                               $grantType
      * @param \League\OAuth2\Server\Entities\ClientEntityInterface $clientEntity
-     * @param null|string                                                     $userIdentifier
+     * @param null|string                                          $userIdentifier
      *
      * @return \League\OAuth2\Server\Entities\ScopeEntityInterface[]
      */
