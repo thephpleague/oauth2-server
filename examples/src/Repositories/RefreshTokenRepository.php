@@ -4,38 +4,39 @@ namespace OAuth2ServerExamples\Repositories;
 
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use OAuth2ServerExamples\Entities\RefreshTokenEntity;
 
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     /**
-     * Create a new refresh token_name.
-     *
-     * @param \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface $refreshTokenEntityInterface
+     * @inheritdoc
      */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntityInterface)
     {
-        // TODO: Implement persistNewRefreshToken() method.
+        // Some logic to persist the refresh token in a database
     }
 
     /**
-     * Revoke the refresh token.
-     *
-     * @param string $tokenId
+     * @inheritdoc
      */
     public function revokeRefreshToken($tokenId)
     {
-        // TODO: Implement revokeRefreshToken() method.
+        // Some logic to revoke the refresh token in a database
     }
 
     /**
-     * Check if the refresh token has been revoked.
-     *
-     * @param string $tokenId
-     *
-     * @return bool Return true if this token has been revoked
+     * @inheritdoc
      */
     public function isRefreshTokenRevoked($tokenId)
     {
-        // TODO: Implement isRefreshTokenRevoked() method.
+        return false; // The refresh token has not been revoked
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getNewRefreshToken()
+    {
+        return new RefreshTokenEntity();
     }
 }

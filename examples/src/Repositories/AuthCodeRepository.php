@@ -4,38 +4,39 @@ namespace OAuth2ServerExamples\Repositories;
 
 use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
+use OAuth2ServerExamples\Entities\AuthCodeEntity;
 
 class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
     /**
-     * Persists a new auth code to permanent storage.
-     *
-     * @param \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface $authCodeEntity
+     * @inheritdoc
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
-        // TODO: Implement persistNewAuthCode() method.
+        // Some logic to persist the auth code to a database
     }
 
     /**
-     * Revoke an auth code.
-     *
-     * @param string $codeId
+     * @inheritdoc
      */
     public function revokeAuthCode($codeId)
     {
-        // TODO: Implement revokeAuthCode() method.
+        // Some logic to revoke the auth code in a database
     }
 
     /**
-     * Check if the auth code has been revoked.
-     *
-     * @param string $codeId
-     *
-     * @return bool Return true if this code has been revoked
+     * @inheritdoc
      */
     public function isAuthCodeRevoked($codeId)
     {
-        // TODO: Implement isAuthCodeRevoked() method.
+        return false; // The auth code has not been revoked
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getNewAuthCode()
+    {
+        return new AuthCodeEntity();
     }
 }
