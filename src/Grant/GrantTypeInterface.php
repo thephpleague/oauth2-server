@@ -31,8 +31,8 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * Respond to an incoming request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface                     $request
-     * @param \DateInterval                                                $accessTokenTTL
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \DateInterval                            $accessTokenTTL
      *
      * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */

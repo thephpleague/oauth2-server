@@ -218,8 +218,8 @@ class AuthCodeGrant extends AbstractGrant
     /**
      * Respond to an access token request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface                     $request
-     * @param \DateInterval                                                $accessTokenTTL
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \DateInterval                            $accessTokenTTL
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
