@@ -3,6 +3,8 @@
 namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Entities\AccessTokenEntity;
+use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntity;
