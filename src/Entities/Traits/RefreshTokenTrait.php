@@ -3,7 +3,7 @@
 namespace League\OAuth2\Server\Entities\Traits;
 
 use DateTime;
-use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 
 trait RefreshTokenTrait
 {

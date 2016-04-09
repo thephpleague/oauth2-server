@@ -12,9 +12,9 @@ namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\CryptTrait;
-use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
@@ -137,7 +137,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface
+     * @return \League\OAuth2\Server\Entities\ClientEntityInterface
      */
     protected function validateClient(ServerRequestInterface $request)
     {
@@ -191,12 +191,12 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Validate scopes in the request.
      *
      * @param string                                                          $scopes
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client
      * @param string                                                          $redirectUri
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[]
+     * @return \League\OAuth2\Server\Entities\ScopeEntityInterface[]
      */
     public function validateScopes(
         $scopes,
@@ -286,11 +286,11 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Issue an access token.
      *
      * @param \DateInterval                                                    $accessTokenTTL
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface  $client
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface  $client
      * @param string                                                           $userIdentifier
-     * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[] $scopes
+     * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
+     * @return \League\OAuth2\Server\Entities\AccessTokenEntityInterface
      */
     protected function issueAccessToken(
         \DateInterval $accessTokenTTL,
@@ -317,12 +317,12 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Issue an auth code.
      *
      * @param \DateInterval                                                    $authCodeTTL
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface  $client
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface  $client
      * @param string                                                           $userIdentifier
      * @param string                                                           $redirectUri
-     * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[] $scopes
+     * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface
+     * @return \League\OAuth2\Server\Entities\AuthCodeEntityInterface
      */
     protected function issueAuthCode(
         \DateInterval $authCodeTTL,
@@ -348,9 +348,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessToken
+     * @param \League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface
+     * @return \League\OAuth2\Server\Entities\RefreshTokenEntityInterface
      */
     protected function issueRefreshToken(AccessTokenEntityInterface $accessToken)
     {

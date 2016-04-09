@@ -11,20 +11,20 @@
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\CryptTrait;
-use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 
 abstract class AbstractResponseType implements ResponseTypeInterface
 {
     use CryptTrait;
 
     /**
-     * @var \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface
+     * @var \League\OAuth2\Server\Entities\AccessTokenEntityInterface
      */
     protected $accessToken;
 
     /**
-     * @var \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface
+     * @var \League\OAuth2\Server\Entities\RefreshTokenEntityInterface
      */
     protected $refreshToken;
 

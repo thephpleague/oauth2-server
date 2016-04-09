@@ -2,7 +2,7 @@
 
 namespace League\OAuth2\Server\Repositories;
 
-use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 
 interface UserRepositoryInterface extends RepositoryInterface
 {
@@ -12,9 +12,9 @@ interface UserRepositoryInterface extends RepositoryInterface
      * @param string                                                          $username
      * @param string                                                          $password
      * @param string                                                          $grantType    The grant type used
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $clientEntity
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $clientEntity
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
+     * @return \League\OAuth2\Server\Entities\UserEntityInterface
      */
     public function getUserEntityByUserCredentials(
         $username,

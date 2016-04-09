@@ -10,8 +10,8 @@
  */
 namespace League\OAuth2\Server\Repositories;
 
-use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 
 /**
  * Access token interface.
@@ -21,8 +21,8 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     /**
      * Create a new access token
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface  $clientEntity
-     * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[] $scopes
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface  $clientEntity
+     * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
      * @param mixed                                                            $userIdentifier
      *
      * @return AccessTokenEntityInterface
@@ -32,7 +32,7 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     /**
      * Persists a new access token to permanent storage.
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessTokenEntity
+     * @param \League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessTokenEntity
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity);
 

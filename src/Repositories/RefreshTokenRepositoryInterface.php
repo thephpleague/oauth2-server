@@ -10,7 +10,7 @@
  */
 namespace League\OAuth2\Server\Repositories;
 
-use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 
 /**
  * Refresh token interface.
@@ -27,7 +27,7 @@ interface RefreshTokenRepositoryInterface extends RepositoryInterface
     /**
      * Create a new refresh token_name.
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface $refreshTokenEntity
+     * @param \League\OAuth2\Server\Entities\RefreshTokenEntityInterface $refreshTokenEntity
      */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity);
 

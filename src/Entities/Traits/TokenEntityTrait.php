@@ -3,8 +3,8 @@
 namespace League\OAuth2\Server\Entities\Traits;
 
 use DateTime;
-use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 
 trait TokenEntityTrait
 {
@@ -31,7 +31,7 @@ trait TokenEntityTrait
     /**
      * Associate a scope with the token.
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface $scope
+     * @param \League\OAuth2\Server\Entities\ScopeEntityInterface $scope
      */
     public function addScope(ScopeEntityInterface $scope)
     {
@@ -101,7 +101,7 @@ trait TokenEntityTrait
     /**
      * Set the client that the token was issued to.
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client
      */
     public function setClient(ClientEntityInterface $client)
     {

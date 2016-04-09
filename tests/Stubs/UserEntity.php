@@ -2,7 +2,7 @@
 
 namespace LeagueTests\Stubs;
 
-use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 
 class UserEntity implements UserEntityInterface
 {

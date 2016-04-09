@@ -10,8 +10,8 @@
  */
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\UserEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
@@ -67,11 +67,11 @@ class PasswordGrant extends AbstractGrant
 
     /**
      * @param \Psr\Http\Message\ServerRequestInterface                        $request
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $client
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\UserEntityInterface
+     * @return \League\OAuth2\Server\Entities\UserEntityInterface
      */
     protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client)
     {

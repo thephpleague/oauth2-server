@@ -10,8 +10,8 @@
  */
 namespace League\OAuth2\Server\Repositories;
 
-use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 
 /**
  * Scope interface.
@@ -23,7 +23,7 @@ interface ScopeRepositoryInterface extends RepositoryInterface
      *
      * @param string $identifier The scope identifier
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface
+     * @return \League\OAuth2\Server\Entities\ScopeEntityInterface
      */
     public function getScopeEntityByIdentifier($identifier);
 
@@ -33,10 +33,10 @@ interface ScopeRepositoryInterface extends RepositoryInterface
      *
      * @param ScopeEntityInterface[]                                          $scopes
      * @param string                                                          $grantType
-     * @param \League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface $clientEntity
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $clientEntity
      * @param null|string                                                     $userIdentifier
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface[]
+     * @return \League\OAuth2\Server\Entities\ScopeEntityInterface[]
      */
     public function finalizeScopes(
         array $scopes,

@@ -2,7 +2,7 @@
 
 namespace OAuth2ServerExamples\Repositories;
 
-use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use OAuth2ServerExamples\Entities\ScopeEntity;
 use OAuth2ServerExamples\Entities\UserEntity;

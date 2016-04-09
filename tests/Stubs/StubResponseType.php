@@ -2,8 +2,8 @@
 
 namespace LeagueTests\Stubs;
 
-use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use Psr\Http\Message\ResponseInterface;
@@ -27,7 +27,7 @@ class StubResponseType extends AbstractResponseType
     }
 
     /**
-     * @param \League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface $accessToken
+     * @param \League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken
      */
     public function setAccessToken(AccessTokenEntityInterface $accessToken)
     {
@@ -35,7 +35,7 @@ class StubResponseType extends AbstractResponseType
     }
 
     /**
-     * @param \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface $refreshToken
+     * @param \League\OAuth2\Server\Entities\RefreshTokenEntityInterface $refreshToken
      */
     public function setRefreshToken(RefreshTokenEntityInterface $refreshToken)
     {

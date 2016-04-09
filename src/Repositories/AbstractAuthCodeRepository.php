@@ -11,7 +11,7 @@
 namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\AuthCodeEntity;
-use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
+use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 
 /**
  * Auth code storage abstract class.
@@ -21,7 +21,7 @@ abstract class AbstractAuthCodeRepository implements AuthCodeRepositoryInterface
     /**
      * Creates a new AuthCode
      *
-     * @return \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface
+     * @return \League\OAuth2\Server\Entities\AuthCodeEntityInterface
      */
     public function getNewAuthCode()
     {
@@ -31,7 +31,7 @@ abstract class AbstractAuthCodeRepository implements AuthCodeRepositoryInterface
     /**
      * Persists a new auth code to permanent storage.
      *
-     * @param \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface $authCodeEntity
+     * @param \League\OAuth2\Server\Entities\AuthCodeEntityInterface $authCodeEntity
      */
     abstract public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity);
 
