@@ -392,7 +392,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function canRespondToRequest(ServerRequestInterface $request)
+    public function canRespondToAccessTokenRequest(ServerRequestInterface $request)
     {
         $requestParameters = (array) $request->getParsedBody();
 

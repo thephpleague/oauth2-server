@@ -64,7 +64,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * @return bool
      */
-    public function canRespondToRequest(ServerRequestInterface $request);
+    public function canRespondToAccessTokenRequest(ServerRequestInterface $request);
 
     /**
      * Set the client repository.
