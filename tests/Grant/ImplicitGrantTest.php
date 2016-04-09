@@ -69,6 +69,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();

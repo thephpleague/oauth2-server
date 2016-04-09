@@ -12,12 +12,9 @@ namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\CryptTrait;
-use League\OAuth2\Server\Entities\AccessTokenEntity;
-use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface;
-use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
@@ -301,11 +298,11 @@ abstract class AbstractGrant implements GrantTypeInterface
         $userIdentifier,
         array $scopes = []
     ) {
-        $accessToken = new AccessTokenEntity();
-        $accessToken->setIdentifier($this->generateUniqueIdentifier());
-        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
+        $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
         $accessToken->setClient($client);
         $accessToken->setUserIdentifier($userIdentifier);
+        $accessToken->setIdentifier($this->generateUniqueIdentifier());
+        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
 
         foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
@@ -334,7 +331,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $redirectUri,
         array $scopes = []
     ) {
-        $authCode = new AuthCodeEntity();
+        $authCode = $this->authCodeRepository->getNewAuthCode();
         $authCode->setIdentifier($this->generateUniqueIdentifier());
         $authCode->setExpiryDateTime((new \DateTime())->add($authCodeTTL));
         $authCode->setClient($client);
@@ -357,7 +354,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function issueRefreshToken(AccessTokenEntityInterface $accessToken)
     {
-        $refreshToken = new RefreshTokenEntity();
+        $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
         $refreshToken->setIdentifier($this->generateUniqueIdentifier());
         $refreshToken->setExpiryDateTime((new \DateTime())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);

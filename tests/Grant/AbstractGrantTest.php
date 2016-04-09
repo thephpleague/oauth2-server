@@ -5,9 +5,11 @@ namespace LeagueTests\Grant;
 use League\Event\Emitter;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntity;
+use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
@@ -256,6 +258,10 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
     public function testIssueRefreshToken()
     {
         $refreshTokenRepoMock = $this->getMock(RefreshTokenRepositoryInterface::class);
+        $refreshTokenRepoMock
+            ->expects($this->once())
+            ->method('getNewRefreshToken')
+            ->willReturn(new RefreshTokenEntity());
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -277,6 +283,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
     public function testIssueAccessToken()
     {
         $accessTokenRepoMock = $this->getMock(AccessTokenRepositoryInterface::class);
+        $accessTokenRepoMock->method('getNewToken')->willReturn(new AccessTokenEntity());
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -301,6 +308,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
     public function testIssueAuthCode()
     {
         $authCodeRepoMock = $this->getMock(AuthCodeRepositoryInterface::class);
+        $authCodeRepoMock->expects($this->once())->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);

@@ -5,6 +5,7 @@ namespace LeagueTests\Grant;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\Interfaces\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Entities\RefreshTokenEntity;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -91,8 +92,11 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
+        $authCodeRepoMock = $this->getMock(AuthCodeRepositoryInterface::class);
+        $authCodeRepoMock->expects($this->once())->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
+
         $grant = new AuthCodeGrant(
-            $this->getMock(AuthCodeRepositoryInterface::class),
+            $authCodeRepoMock,
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
             new \DateInterval('PT10M')
@@ -418,8 +422,11 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
+        $authCodeRepoMock = $this->getMock(AuthCodeRepositoryInterface::class);
+        $authCodeRepoMock->expects($this->once())->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
+
         $grant = new AuthCodeGrant(
-            $this->getMock(AuthCodeRepositoryInterface::class),
+            $authCodeRepoMock,
             $this->getMock(RefreshTokenRepositoryInterface::class),
             $userRepositoryMock,
             new \DateInterval('PT10M')
@@ -593,10 +600,12 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
         $grant = new AuthCodeGrant(
             $this->getMock(AuthCodeRepositoryInterface::class),

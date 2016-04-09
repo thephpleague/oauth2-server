@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 Auth code storage interface.
+ * OAuth 2.0 Auth code storage abstract class.
  *
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -10,33 +10,37 @@
  */
 namespace League\OAuth2\Server\Repositories;
 
+use League\OAuth2\Server\Entities\AuthCodeEntity;
 use League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface;
 
 /**
- * Auth code storage interface.
+ * Auth code storage abstract class.
  */
-interface AuthCodeRepositoryInterface extends RepositoryInterface
+abstract class AbstractAuthCodeRepository implements AuthCodeRepositoryInterface
 {
     /**
      * Creates a new AuthCode
      *
      * @return \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface
      */
-    public function getNewAuthCode();
+    public function getNewAuthCode()
+    {
+        return new AuthCodeEntity();
+    }
 
     /**
      * Persists a new auth code to permanent storage.
      *
      * @param \League\OAuth2\Server\Entities\Interfaces\AuthCodeEntityInterface $authCodeEntity
      */
-    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity);
+    abstract public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity);
 
     /**
      * Revoke an auth code.
      *
      * @param string $codeId
      */
-    public function revokeAuthCode($codeId);
+    abstract public function revokeAuthCode($codeId);
 
     /**
      * Check if the auth code has been revoked.
@@ -45,5 +49,5 @@ interface AuthCodeRepositoryInterface extends RepositoryInterface
      *
      * @return bool Return true if this code has been revoked
      */
-    public function isAuthCodeRevoked($codeId);
+    abstract public function isAuthCodeRevoked($codeId);
 }

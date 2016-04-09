@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 Refresh token storage interface.
+ * OAuth 2.0 Refresh token storage abstract class.
  *
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -11,32 +11,36 @@
 namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Entities\RefreshTokenEntity;
 
 /**
- * Refresh token interface.
+ * Refresh token abstract class.
  */
-interface RefreshTokenRepositoryInterface extends RepositoryInterface
+abstract class AbstractRefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     /**
      * Creates a new refresh token
      *
      * @return RefreshTokenEntityInterface
      */
-    public function getNewRefreshToken();
+    public function getNewRefreshToken()
+    {
+        return new RefreshTokenEntity();
+    }
 
     /**
      * Create a new refresh token_name.
      *
      * @param \League\OAuth2\Server\Entities\Interfaces\RefreshTokenEntityInterface $refreshTokenEntity
      */
-    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity);
+    abstract public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity);
 
     /**
      * Revoke the refresh token.
      *
      * @param string $tokenId
      */
-    public function revokeRefreshToken($tokenId);
+    abstract public function revokeRefreshToken($tokenId);
 
     /**
      * Check if the refresh token has been revoked.
@@ -45,5 +49,5 @@ interface RefreshTokenRepositoryInterface extends RepositoryInterface
      *
      * @return bool Return true if this token has been revoked
      */
-    public function isRefreshTokenRevoked($tokenId);
+    abstract public function isRefreshTokenRevoked($tokenId);
 }
