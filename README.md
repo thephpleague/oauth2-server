@@ -32,8 +32,8 @@ The `openssl` extension is also required.
 
 ## Documentation
 
-The library documentation can be found at [http://oauth2.thephpleague.com](http://oauth2.thephpleague.com). 
-You can contribute to this documentation in the [gh-pages branch](https://github.com/thephpleague/oauth2-server/tree/gh-pages/).
+The library documentation can be found at [https://oauth2.thephpleague.com](https://oauth2.thephpleague.com). 
+You can contribute to the documentation in the [gh-pages branch](https://github.com/thephpleague/oauth2-server/tree/gh-pages/).
 
 ## Changelog
 
