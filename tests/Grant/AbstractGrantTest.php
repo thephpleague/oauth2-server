@@ -374,7 +374,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setScopeRepository($scopeRepositoryMock);
 
-        $this->assertEquals([$scope], $grantMock->validateScopes('basic   ', new ClientEntity()));
+        $this->assertEquals([$scope], $grantMock->validateScopes('basic   '));
     }
 
     /**
@@ -389,7 +389,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setScopeRepository($scopeRepositoryMock);
 
-        $grantMock->validateScopes('basic   ', new ClientEntity());
+        $grantMock->validateScopes('basic   ');
     }
 
     public function testGenerateUniqueIdentifier()

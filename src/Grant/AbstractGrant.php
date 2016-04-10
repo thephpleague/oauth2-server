@@ -194,7 +194,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Validate scopes in the request.
      *
      * @param string                                               $scopes
-     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client
      * @param string                                               $redirectUri
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
@@ -203,7 +202,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateScopes(
         $scopes,
-        ClientEntityInterface $client,
         $redirectUri = null
     ) {
         $scopesList = array_filter(
