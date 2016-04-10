@@ -7,23 +7,27 @@ use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
-use League\OAuth2\Server\ResponseTypes\HtmlResponse;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
-use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ImplicitGrant extends AbstractAuthorizeGrant
 {
     /**
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface    $userRepository
-     * @param \League\OAuth2\Server\TemplateRenderer\RendererInterface|null $templateRenderer
+     * @var \DateInterval
      */
-    public function __construct(UserRepositoryInterface $userRepository, RendererInterface $templateRenderer = null)
+    private $accessTokenTTL;
+
+    /**
+     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface $userRepository
+     * @param \DateInterval                                              $accessTokenTTL
+     */
+    public function __construct(UserRepositoryInterface $userRepository, \DateInterval $accessTokenTTL)
     {
         $this->setUserRepository($userRepository);
         $this->refreshTokenTTL = new \DateInterval('P1M');
-        $this->templateRenderer = $templateRenderer;
+        $this->accessTokenTTL = $accessTokenTTL;
     }
 
     /**
@@ -31,8 +35,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
      */
     public function canRespondToAccessTokenRequest(ServerRequestInterface $request)
     {
-        return (array_key_exists('response_type', $request->getQueryParams())
-            && $request->getQueryParams()['response_type'] === 'token');
+        return false;
     }
 
     /**
@@ -46,13 +49,39 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     }
 
     /**
-     * {@inheritdoc}
+     * Respond to an incoming request.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface                  $request
+     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
+     * @param \DateInterval                                             $accessTokenTTL
+     *
+     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */
-    public function respondToRequest(
+    public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
         \DateInterval $accessTokenTTL
     ) {
+        throw new \LogicException('This grant does not used this method');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
+    {
+        return (
+            array_key_exists('response_type', $request->getQueryParams())
+            && $request->getQueryParams()['response_type'] === 'token'
+            && isset($request->getQueryParams()['client_id'])
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateAuthorizationRequest(ServerRequestInterface $request)
+    {
         $clientId = $this->getQueryStringParameter(
             'client_id',
             $request,
@@ -72,10 +101,21 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidClient();
         }
 
-        $redirectUriParameter = $this->getQueryStringParameter('redirect_uri', $request, $client->getRedirectUri());
-        if ($redirectUriParameter !== $client->getRedirectUri()) {
-            $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
-            throw OAuthServerException::invalidClient();
+        $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
+        if ($redirectUri !== null) {
+            if (
+                is_string($client->getRedirectUri())
+                && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
+            ) {
+                $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
+                throw OAuthServerException::invalidClient();
+            } elseif (
+                is_array($client->getRedirectUri())
+                && in_array($redirectUri, $client->getRedirectUri()) === false
+            ) {
+                $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
+                throw OAuthServerException::invalidClient();
+            }
         }
 
         $scopes = $this->validateScopes(
@@ -83,117 +123,41 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $client->getRedirectUri()
         );
 
-        $postbackUri = sprintf(
-            '//%s%s',
-            $request->getServerParams()['HTTP_HOST'],
-            $request->getServerParams()['REQUEST_URI']
-        );
-
-        $userId = null;
-        $userHasApprovedClient = null;
-        if ($this->getRequestParameter('action', $request, null) !== null) {
-            $userHasApprovedClient = ($this->getRequestParameter('action', $request) === 'approve');
-        }
-
-        // Check if the user has been authenticated
-        $oauthCookie = $this->getCookieParameter('oauth_authorize_request', $request, null);
-        if ($oauthCookie !== null) {
-            try {
-                $oauthCookiePayload = json_decode($this->decrypt($oauthCookie));
-                if (is_object($oauthCookiePayload)) {
-                    $userId = $oauthCookiePayload->user_id;
-                }
-            } catch (\LogicException $e) {
-                throw OAuthServerException::serverError($e->getMessage());
-            }
-        }
-
-        // The username + password might be available in $_POST
-        $usernameParameter = $this->getRequestParameter('username', $request, null);
-        $passwordParameter = $this->getRequestParameter('password', $request, null);
-
-        $loginError = null;
-
-        // Assert if the user has logged in already
-        if ($userId === null && $usernameParameter !== null && $passwordParameter !== null) {
-            $userEntity = $this->userRepository->getUserEntityByUserCredentials(
-                $usernameParameter,
-                $passwordParameter,
-                $this->getIdentifier(),
-                $client
-            );
-
-            if ($userEntity instanceof UserEntityInterface) {
-                $userId = $userEntity->getIdentifier();
-            } else {
-                $loginError = 'Incorrect username or password';
-            }
-        }
-
-        // The user hasn't logged in yet so show a login form
-        if ($userId === null) {
-            $html = $this->getTemplateRenderer()->renderLogin([
-                'error'        => $loginError,
-                'postback_uri' => $this->makeRedirectUri(
-                    $postbackUri,
-                    $request->getQueryParams()
-                ),
-            ]);
-
-            $htmlResponse = new HtmlResponse();
-            $htmlResponse->setStatusCode(403);
-            $htmlResponse->setHtml($html);
-
-            return $htmlResponse;
-        }
-
-        // The user hasn't approved the client yet so show an authorize form
-        if ($userId !== null && $userHasApprovedClient === null) {
-            $html = $this->getTemplateRenderer()->renderAuthorize([
-                'client'       => $client,
-                'scopes'       => $scopes,
-                'postback_uri' => $this->makeRedirectUri(
-                    $postbackUri,
-                    $request->getQueryParams()
-                ),
-            ]);
-
-            $htmlResponse = new HtmlResponse();
-            $htmlResponse->setStatusCode(200);
-            $htmlResponse->setHtml($html);
-            $htmlResponse->setHeader('set-cookie', sprintf(
-                'oauth_authorize_request=%s; Expires=%s',
-                urlencode($this->encrypt(
-                    json_encode([
-                        'user_id' => $userId,
-                    ])
-                )),
-                (new \DateTime())->add(new \DateInterval('PT5M'))->format('D, d M Y H:i:s e')
-            ));
-
-            return $htmlResponse;
-        }
-
-        // The user has either approved or denied the client, so redirect them back
-        $redirectUri = $client->getRedirectUri();
-        $redirectPayload = [];
-
         $stateParameter = $this->getQueryStringParameter('state', $request);
-        if ($stateParameter !== null) {
-            $redirectPayload['state'] = $stateParameter;
+
+        $authorizationRequest = new AuthorizationRequest();
+        $authorizationRequest->setGrantTypeId($this->getIdentifier());
+        $authorizationRequest->setClient($client);
+        $authorizationRequest->setRedirectUri($redirectUri);
+        $authorizationRequest->setState($stateParameter);
+        $authorizationRequest->setScopes($scopes);
+
+        return $authorizationRequest;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
+    {
+        if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
+            throw new \LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
         }
 
-        // THe user approved the client, redirect them back with an access token
-        if ($userHasApprovedClient === true) {
+        $finalRedirectUri = ($authorizationRequest->getRedirectUri() === null)
+            ? is_array($authorizationRequest->getClient()->getRedirectUri())
+                ? $authorizationRequest->getClient()->getRedirectUri()[0]
+                : $authorizationRequest->getClient()->getRedirectUri()
+            : $authorizationRequest->getRedirectUri();
 
-            // Finalize the requested scopes
-            $scopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $userId);
+        // The user approved the client, redirect them back with an access token
+        if ($authorizationRequest->isAuthorizationApproved() === true) {
 
             $accessToken = $this->issueAccessToken(
-                $accessTokenTTL,
-                $client,
-                $userId,
-                $scopes
+                $this->accessTokenTTL,
+                $authorizationRequest->getClient(),
+                $authorizationRequest->getUser()->getIdentifier(),
+                $authorizationRequest->getScopes()
             );
 
             $redirectPayload['access_token'] = (string) $accessToken->convertToJWT($this->privateKey);
@@ -203,7 +167,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $response = new RedirectResponse();
             $response->setRedirectUri(
                 $this->makeRedirectUri(
-                    $redirectUri,
+                    $finalRedirectUri,
                     $redirectPayload,
                     '#'
                 )
@@ -213,6 +177,9 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         }
 
         // The user denied the client, redirect them back with an error
-        throw OAuthServerException::accessDenied('The user denied the request', (string) $redirectUri);
+        throw OAuthServerException::accessDenied(
+            'The user denied the request',
+            $finalRedirectUri
+        );
     }
 }
