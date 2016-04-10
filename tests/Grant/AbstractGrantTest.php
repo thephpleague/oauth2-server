@@ -13,6 +13,7 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
@@ -401,5 +402,29 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $method->setAccessible(true);
 
         $this->assertTrue(is_string($method->invoke($grantMock)));
+    }
+
+    public function testCanRespondToAuthorizationRequest()
+    {
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $this->assertFalse($grantMock->canRespondToAuthorizationRequest(new ServerRequest()));
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testValidateAuthorizationRequest()
+    {
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->validateAuthorizationRequest(new ServerRequest());
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testCompleteAuthorizationRequest()
+    {
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->completeAuthorizationRequest(new AuthorizationRequest());
     }
 }

@@ -119,6 +119,8 @@ class OAuthServerException extends \Exception
      * @param $hint
      *
      * @return static
+     *
+     * @codeCoverageIgnore
      */
     public static function serverError($hint)
     {

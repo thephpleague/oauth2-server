@@ -234,6 +234,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     ]
                 )
             );
+            $redirectPayload['state'] = $authorizationRequest->getState();
 
             $response = new RedirectResponse();
             $response->setRedirectUri(

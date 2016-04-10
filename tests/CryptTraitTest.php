@@ -44,4 +44,12 @@ class CryptTraitTest extends \PHPUnit_Framework_TestCase
         $this->cryptStub->setPublicKey(new CryptKey(__DIR__ . '/Stubs/private.key'));
         $this->cryptStub->doDecrypt('');
     }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testNonExistentKey()
+    {
+        new CryptKey('foo/bar');
+    }
 }

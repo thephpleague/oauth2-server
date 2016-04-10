@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Middleware;
 
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Middleware\AuthenticationServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -36,7 +37,7 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             new StubResponseType()
         );
 
-        $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
+        $server->enableGrantType(new ClientCredentialsGrant());
 
         $_POST['grant_type'] = 'client_credentials';
         $_POST['client_id'] = 'foo';
@@ -88,5 +89,23 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(401, $response->getStatusCode());
+    }
+
+    public function testOAuthErrorResponseRedirectUri()
+    {
+        $exception = OAuthServerException::invalidScope('test', 'http://foo/bar');
+        $response = $exception->generateHttpResponse(new Response());
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals('http://foo/bar?error=invalid_scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope', $response->getHeader('location')[0]);
+    }
+
+    public function testOAuthErrorResponseRedirectUriFragment()
+    {
+        $exception = OAuthServerException::invalidScope('test', 'http://foo/bar');
+        $response = $exception->generateHttpResponse(new Response(), true);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals('http://foo/bar#error=invalid_scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope', $response->getHeader('location')[0]);
     }
 }

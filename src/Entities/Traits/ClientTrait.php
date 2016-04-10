@@ -12,6 +12,7 @@ trait ClientTrait
      * Get the client's name.
      *
      * @return string
+     * @codeCoverageIgnore
      */
     public function getName()
     {
