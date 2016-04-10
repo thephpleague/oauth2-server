@@ -35,6 +35,8 @@ The following versions of PHP are supported:
 * PHP 7.0
 * HHVM
 
+The `openssl` extension is also required.
+
 ## Documentation
 
 The library documentation can be found at [http://oauth2.thephpleague.com](http://oauth2.thephpleague.com). 
