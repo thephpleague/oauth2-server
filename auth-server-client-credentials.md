@@ -34,16 +34,18 @@ $accessTokenRepository = new AccessTokenRepository();
 $scopeRepository = new ScopeRepository();
 
 // Path to public and private keys
-$privateKeyPath = 'file://path/to/private.key';
-$publicKeyPath = 'file://path/to/public.key';
-        
+$privateKey = 'file://path/to/private.key';
+// Private key with passphrase if needed
+//$privateKey = new CryptKey('file://path/to/private.key', 'passphrase');
+$publicKey = 'file://path/to/public.key';
+
 // Setup the authorization server
 $server = new \League\OAuth2\Server\Server(
     $clientRepository,
     $accessTokenRepository,
     $scopeRepository,
-    $privateKeyPath,
-    $publicKeyPath
+    $privateKey,
+    $publicKey
 );
 
 // Enable the client credentials grant on the server with a token TTL of 1 hour
@@ -63,13 +65,13 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
     /* @var \League\OAuth2\Server\Server $server */
     $server = $app->getContainer()->get(Server::class);
 
-    // Try to respond to the request 
+    // Try to respond to the request
     try {
         return $server->respondToRequest($request, $response);
-        
+
     } catch (\League\OAuth2\Server\Exception\OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
-        
+
     } catch (\Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
