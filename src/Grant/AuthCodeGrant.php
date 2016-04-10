@@ -98,6 +98,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
                 $scopes[] = $scope;
             }
+
+            // Finalize the requested scopes
+            $scopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $authCodePayload->user_id);
         } catch (\LogicException  $e) {
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code');
         }
