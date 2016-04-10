@@ -125,6 +125,28 @@ class Server implements EmitterAwareInterface
     }
 
     /**
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     *
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    public function respondToAuthorizationRequest(ServerRequestInterface $request)
+    {
+        $authRequest = null;
+        while ($authRequest === null && $grantType = array_shift($this->enabledGrantTypes)) {
+            /** @var \League\OAuth2\Server\Grant\GrantTypeInterface $grantType */
+            if ($grantType->canRespondToAccessTokenRequest($request)) {
+                $authRequest = $grantType->respondToRequest(
+                    $request,
+                    $this->getResponseType(),
+                    $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
+                );
+            }
+        }
+        
+        throw OAuthServerException::unsupportedGrantType();
+    }
+
+    /**
      * Return an access token response.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request

@@ -23,6 +23,7 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -175,11 +176,13 @@ abstract class AbstractGrant implements GrantTypeInterface
                 is_string($client->getRedirectUri())
                 && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
             ) {
+                $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
                 throw OAuthServerException::invalidClient();
             } elseif (
                 is_array($client->getRedirectUri())
                 && in_array($redirectUri, $client->getRedirectUri()) === false
             ) {
+                $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
                 throw OAuthServerException::invalidClient();
             }
         }
@@ -400,5 +403,29 @@ abstract class AbstractGrant implements GrantTypeInterface
             array_key_exists('grant_type', $requestParameters)
             && $requestParameters['grant_type'] === $this->getIdentifier()
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function validateAuthorizationRequest(ServerRequestInterface $request)
+    {
+        throw new \LogicException('This grant cannot validate an authorization request');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
+    {
+        throw new \LogicException('This grant cannot complete an authorization request');
     }
 }

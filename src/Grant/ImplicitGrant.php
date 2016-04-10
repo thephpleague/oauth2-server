@@ -29,7 +29,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function canRespondToRequest(ServerRequestInterface $request)
+    public function canRespondToAccessTokenRequest(ServerRequestInterface $request)
     {
         return (array_key_exists('response_type', $request->getQueryParams())
             && $request->getQueryParams()['response_type'] === 'token');
