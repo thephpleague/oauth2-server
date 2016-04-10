@@ -130,8 +130,9 @@ class Server implements EmitterAwareInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
-     * @return \League\OAuth2\Server\RequestTypes\AuthorizationRequest|null
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     *
+     * @return \League\OAuth2\Server\RequestTypes\AuthorizationRequest|null
      */
     public function validateAuthorizationRequest(ServerRequestInterface $request)
     {
