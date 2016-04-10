@@ -81,6 +81,7 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
     } catch (\Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
+
         return $response->withStatus(500)->withBody($body);
     }
 });
