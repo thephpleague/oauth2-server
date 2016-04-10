@@ -133,7 +133,6 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMock(RefreshTokenRepositoryInterface::class),
-            $this->getMock(UserRepositoryInterface::class),
             new \DateInterval('PT10M')
         );
 
@@ -162,7 +161,6 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $grant = new AuthCodeGrant(
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
-            $this->getMock(UserRepositoryInterface::class),
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);

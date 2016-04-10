@@ -5,7 +5,6 @@ namespace League\OAuth2\Server\Grant;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
@@ -20,12 +19,10 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     private $accessTokenTTL;
 
     /**
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface $userRepository
-     * @param \DateInterval                                              $accessTokenTTL
+     * @param \DateInterval $accessTokenTTL
      */
-    public function __construct(UserRepositoryInterface $userRepository, \DateInterval $accessTokenTTL)
+    public function __construct(\DateInterval $accessTokenTTL)
     {
-        $this->setUserRepository($userRepository);
         $this->refreshTokenTTL = new \DateInterval('P1M');
         $this->accessTokenTTL = $accessTokenTTL;
     }
@@ -161,7 +158,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
             $redirectPayload['access_token'] = (string) $accessToken->convertToJWT($this->privateKey);
             $redirectPayload['token_type'] = 'bearer';
-            $redirectPayload['expires_in'] = $accessToken->getExpiryDateTime()->getTimestamp()  - (new \DateTime())->getTimestamp();
+            $redirectPayload['expires_in'] = $accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp();
 
             $response = new RedirectResponse();
             $response->setRedirectUri(
