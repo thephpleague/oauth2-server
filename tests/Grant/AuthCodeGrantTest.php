@@ -13,6 +13,7 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\HtmlResponse;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
@@ -51,7 +52,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('authorization_code', $grant->getIdentifier());
     }
 
-    public function testCanRespondToRequest()
+    public function testCanRespondToAuthorizationRequest()
     {
         $grant = new AuthCodeGrant(
             $this->getMock(AuthCodeRepositoryInterface::class),
@@ -74,515 +75,265 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertTrue($grant->canRespondToRequest($request));
+        $this->assertTrue($grant->canRespondToAuthorizationRequest($request));
     }
 
-    public function testRespondToAuthorizationRequest()
+    public function testValidateAuthorizationRequest()
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
-        $userEntity = new UserEntity();
-        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
-
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
-
-        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
-
-        $authCodeRepoMock = $this->getMock(AuthCodeRepositoryInterface::class);
-        $authCodeRepoMock->expects($this->once())->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
-
-        $grant = new AuthCodeGrant(
-            $authCodeRepoMock,
-            $this->getMock(RefreshTokenRepositoryInterface::class),
-            $userRepositoryMock,
-            new \DateInterval('PT10M')
-        );
-        $grant->setClientRepository($clientRepositoryMock);
-        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-
-        $request = new ServerRequest(
-            [
-                'HTTP_HOST'   => 'auth-server.tld',
-                'REQUEST_URI' => '/authorize',
-            ],
-            [],
-            null,
-            'POST',
-            'php://input',
-            [],
-            [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
-            ],
-            [
-                'response_type' => 'code',
-                'client_id'     => 'foo',
-                'state'         => 'foobar',
-            ],
-            [
-                'username' => 'alex',
-                'password' => 'whisky',
-                'action'   => 'approve',
-            ]
-        );
-
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-
-        $this->assertTrue($response instanceof RedirectResponse);
-
-        $response = $response->generateHttpResponse(new Response);
-        $this->assertTrue(strstr($response->getHeader('location')[0], 'http://foo/bar') !== false);
-    }
-
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 9
-     */
-    public function testRespondToAuthorizationRequestUserDenied()
-    {
-        $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
-        $userEntity = new UserEntity();
-        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
-
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $grant = new AuthCodeGrant(
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
-            $userRepositoryMock,
+            $this->getMock(UserRepositoryInterface::class),
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
-            [
-                'HTTP_HOST'   => 'auth-server.tld',
-                'REQUEST_URI' => '/authorize',
-            ],
+            [],
             [],
             null,
-            'POST',
+            null,
             'php://input',
-            [],
-            [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
-            ],
-            [
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
                 'response_type' => 'code',
                 'client_id'     => 'foo',
-                'state'         => 'foobar',
-            ],
-            [
-                'username' => 'alex',
-                'password' => 'whisky',
-                'action'   => 'denied',
+                'redirect_uri'  => 'http://foo/bar',
             ]
         );
 
-        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+    }
+
+    public function testValidateAuthorizationRequestRedirectUriArray()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri(['http://foo/bar']);
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $grant = new AuthCodeGrant(
+            $this->getMock(AuthCodeRepositoryInterface::class),
+            $this->getMock(RefreshTokenRepositoryInterface::class),
+            $this->getMock(UserRepositoryInterface::class),
+            new \DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
+                'response_type' => 'code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => 'http://foo/bar',
+            ]
+        );
+
+        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
     }
 
     /**
      * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
      * @expectedExceptionCode 3
      */
-    public function testRespondToAuthorizationRequestMissingClientId()
+    public function testValidateAuthorizationRequestMissingClientId()
     {
-        $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
-        $userEntity = new UserEntity();
-        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
         $grant = new AuthCodeGrant(
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
-            $userRepositoryMock,
+            $this->getMock(UserRepositoryInterface::class),
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
-            [
-                'HTTP_HOST'   => 'auth-server.tld',
-                'REQUEST_URI' => '/authorize',
-            ],
+            [],
             [],
             null,
-            'POST',
+            null,
             'php://input',
-            [],
-            [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
-            ],
-            [
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
                 'response_type' => 'code',
-            ],
-            [
-                'username' => 'alex',
-                'password' => 'whisky',
-                'action'   => 'approve',
             ]
         );
 
-        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-    }
-
-    public function testRespondToAuthorizationRequestBadClient()
-    {
-        $client = null;
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
-        $userEntity = new UserEntity();
-        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
-
-        $grant = new AuthCodeGrant(
-            $this->getMock(AuthCodeRepositoryInterface::class),
-            $this->getMock(RefreshTokenRepositoryInterface::class),
-            $userRepositoryMock,
-            new \DateInterval('PT10M')
-        );
-        $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-
-        $request = new ServerRequest(
-            [
-                'HTTP_HOST'   => 'auth-server.tld',
-                'REQUEST_URI' => '/authorize',
-            ],
-            [],
-            null,
-            'POST',
-            'php://input',
-            [],
-            [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
-            ],
-            [
-                'response_type' => 'code',
-                'client_id'     => 'foo',
-            ],
-            [
-                'username' => 'alex',
-                'password' => 'whisky',
-                'action'   => 'approve',
-            ]
-        );
-
-        try {
-            /* @var StubResponseType $response */
-            $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-        } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getMessage(), 'Client authentication failed');
-        }
-    }
-
-    public function testRespondToAuthorizationRequestBadRedirectUri()
-    {
-        $client = new ClientEntity();
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
-        $userEntity = new UserEntity();
-        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
-
-        $grant = new AuthCodeGrant(
-            $this->getMock(AuthCodeRepositoryInterface::class),
-            $this->getMock(RefreshTokenRepositoryInterface::class),
-            $userRepositoryMock,
-            new \DateInterval('PT10M')
-        );
-        $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-
-        $request = new ServerRequest(
-            [
-                'HTTP_HOST'   => 'auth-server.tld',
-                'REQUEST_URI' => '/authorize',
-            ],
-            [],
-            null,
-            'POST',
-            'php://input',
-            [],
-            [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
-            ],
-            [
-                'response_type' => 'code',
-                'client_id'     => 'foo',
-                'redirect_uri'  =>  'sdfsdf',
-            ],
-            [
-                'username' => 'alex',
-                'password' => 'whisky',
-                'action'   => 'approve',
-            ]
-        );
-
-        try {
-            /* @var StubResponseType $response */
-            $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-        } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getMessage(), 'Client authentication failed');
-        }
+        $grant->validateAuthorizationRequest($request);
     }
 
     /**
      * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 7
+     * @expectedExceptionCode 4
      */
-    public function testRespondToAuthorizationRequestBadCookie()
+    public function testValidateAuthorizationRequestInvalidClientId()
     {
-        $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
-        $userEntity = new UserEntity();
-        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
+        $clientRepositoryMock->method('getClientEntity')->willReturn(null);
 
         $grant = new AuthCodeGrant(
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
-            $userRepositoryMock,
+            $this->getMock(UserRepositoryInterface::class),
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
-            [
-                'HTTP_HOST'   => 'auth-server.tld',
-                'REQUEST_URI' => '/authorize',
-            ],
+            [],
             [],
             null,
-            'POST',
+            null,
             'php://input',
-            [],
-            [
-                'oauth_authorize_request' => 'blah',
-            ],
-            [
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
                 'response_type' => 'code',
                 'client_id'     => 'foo',
-            ],
-            [
-                'username' => 'alex',
-                'password' => 'whisky',
-                'action'   => 'approve',
             ]
         );
 
-        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $grant->validateAuthorizationRequest($request);
     }
 
-    public function testRespondToAuthorizationRequestTryLogin()
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     * @expectedExceptionCode 4
+     */
+    public function testValidateAuthorizationRequestBadRedirectUriString()
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
-        $userEntity = new UserEntity();
-        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
-
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
-
-        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
-
-        $authCodeRepoMock = $this->getMock(AuthCodeRepositoryInterface::class);
-        $authCodeRepoMock->expects($this->once())->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
-
-        $grant = new AuthCodeGrant(
-            $authCodeRepoMock,
-            $this->getMock(RefreshTokenRepositoryInterface::class),
-            $userRepositoryMock,
-            new \DateInterval('PT10M')
-        );
-        $grant->setClientRepository($clientRepositoryMock);
-        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-
-        $request = new ServerRequest(
-            [
-                'HTTP_HOST'   => 'auth-server.tld',
-                'REQUEST_URI' => '/authorize',
-            ],
-            [],
-            null,
-            'POST',
-            'php://input',
-            [],
-            [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => null])),
-            ],
-            [
-                'response_type' => 'code',
-                'client_id'     => 'foo',
-            ],
-            [
-                'username' => 'alex',
-                'password' => 'whisky',
-                'action'   => 'approve',
-            ]
-        );
-
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-
-        $this->assertTrue($response instanceof RedirectResponse);
-
-        $response = $response->generateHttpResponse(new Response);
-        $this->assertTrue(strstr($response->getHeader('location')[0], 'http://foo/bar') !== false);
-    }
-
-    public function testRespondToAuthorizationRequestShowLoginForm()
-    {
-        $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
-        $userEntity = null;
-        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
-
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $grant = new AuthCodeGrant(
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
-            $userRepositoryMock,
+            $this->getMock(UserRepositoryInterface::class),
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
-            [
-                'HTTP_HOST'   => 'auth-server.tld',
-                'REQUEST_URI' => '/authorize',
-            ],
+            [],
             [],
             null,
-            'POST',
+            null,
             'php://input',
-            [],
-            [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => null])),
-            ],
-            [
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
                 'response_type' => 'code',
                 'client_id'     => 'foo',
-            ],
-            [
-                'username' => 'alex',
-                'password' => 'whisky',
-                'action'   => 'approve',
+                'redirect_uri'  => 'http://bar',
             ]
         );
 
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-
-        $this->assertTrue($response instanceof HtmlResponse);
-
-        $response = $response->generateHttpResponse(new Response);
-        $this->assertTrue(strstr($response->getHeader('content-type')[0], 'text/html') !== false);
-        $this->assertTrue(strstr((string) $response->getBody(), 'Incorrect username or password') !== false);
+        $grant->validateAuthorizationRequest($request);
     }
 
-    public function testRespondToAuthorizationRequestShowAuthorizeForm()
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     * @expectedExceptionCode 4
+     */
+    public function testValidateAuthorizationRequestBadRedirectUriArray()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
-        $client->setName('Test Client');
+        $client->setRedirectUri(['http://foo/bar']);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
-        $userEntity = new UserEntity();
-        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
-
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $grant = new AuthCodeGrant(
             $this->getMock(AuthCodeRepositoryInterface::class),
             $this->getMock(RefreshTokenRepositoryInterface::class),
-            $userRepositoryMock,
+            $this->getMock(UserRepositoryInterface::class),
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
-            [
-                'HTTP_HOST'   => 'auth-server.tld',
-                'REQUEST_URI' => '/authorize',
-            ],
+            [],
             [],
             null,
-            'POST',
+            null,
             'php://input',
-            [],
-            [
-                'oauth_authorize_request' => $this->cryptStub->doEncrypt(json_encode(['user_id' => 123])),
-            ],
-            [
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
                 'response_type' => 'code',
                 'client_id'     => 'foo',
-            ],
-            [
-                'username' => 'alex',
-                'password' => 'whisky',
+                'redirect_uri'  => 'http://bar',
             ]
         );
 
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $grant->validateAuthorizationRequest($request);
+    }
 
-        $response = $response->generateHttpResponse(new Response);
-        $this->assertTrue($response instanceof ResponseInterface);
-        $this->assertTrue(strstr($response->getHeader('set-cookie')[0], 'oauth_authorize_request') !== false);
+    public function testCompleteAuthorizationRequest()
+    {
+        $authRequest = new AuthorizationRequest();
+        $authRequest->setAuthorizationApproved(true);
+        $authRequest->setClient(new ClientEntity());
+        $authRequest->setGrantTypeId('authorization_code');
+        $authRequest->setUser(new UserEntity());
+
+        $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
+        $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
+
+        $grant = new AuthCodeGrant(
+            $authCodeRepository,
+            $this->getMock(RefreshTokenRepositoryInterface::class),
+            $this->getMock(UserRepositoryInterface::class),
+            new \DateInterval('PT10M')
+        );
+
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+    }
+
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     * @expectedExceptionCode 9
+     */
+    public function testCompleteAuthorizationRequestDenied()
+    {
+        $authRequest = new AuthorizationRequest();
+        $authRequest->setAuthorizationApproved(false);
+        $authRequest->setClient(new ClientEntity());
+        $authRequest->setGrantTypeId('authorization_code');
+        $authRequest->setUser(new UserEntity());
+
+        $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
+        $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
+
+        $grant = new AuthCodeGrant(
+            $authCodeRepository,
+            $this->getMock(RefreshTokenRepositoryInterface::class),
+            $this->getMock(UserRepositoryInterface::class),
+            new \DateInterval('PT10M')
+        );
+
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $grant->completeAuthorizationRequest($authRequest);
     }
 
     public function testRespondToAccessTokenRequest()
@@ -651,7 +402,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         /** @var StubResponseType $response */
-        $response = $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
         $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
         $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
@@ -695,7 +446,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         /* @var StubResponseType $response */
-        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
     }
 
     /**
@@ -743,7 +494,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         /* @var StubResponseType $response */
-        $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
     }
 
     public function testRespondToAccessTokenRequestExpiredCode()
@@ -806,7 +557,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code has expired');
         }
@@ -875,7 +626,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code has been revoked');
         }
@@ -941,7 +692,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code was not issued to this client');
         }
@@ -996,7 +747,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Cannot decrypt the authorization code');
         }
