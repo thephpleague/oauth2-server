@@ -67,7 +67,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
 
     // Try to respond to the request
     try {
-        return $server->respondToRequest($request, $response);
+        return $server->respondToAccessTokenRequest($request, $response);
 
     } catch (\League\OAuth2\Server\Exception\OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
