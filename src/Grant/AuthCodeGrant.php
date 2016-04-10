@@ -109,6 +109,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         // Inject tokens into response type
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
+        
+        // Revoke used auth code
+        $this->authCodeRepository->revokeAuthCode($authCodePayload->auth_code_id);
 
         return $responseType;
     }
