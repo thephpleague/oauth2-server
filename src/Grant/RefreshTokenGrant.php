@@ -101,17 +101,13 @@ class RefreshTokenGrant extends AbstractGrant
         try {
             $refreshToken = $this->decrypt($encryptedRefreshToken);
         } catch (\LogicException $e) {
-            throw OAuthServerException::invalidRefreshToken('Cannot parse refresh token: ' . $e->getMessage());
+            throw OAuthServerException::invalidRefreshToken('Cannot decrypt the refresh token');
         }
 
         $refreshTokenData = json_decode($refreshToken, true);
         if ($refreshTokenData['client_id'] !== $clientId) {
             $this->getEmitter()->emit(new RequestEvent('refresh_token.client.failed', $request));
-            throw OAuthServerException::invalidRefreshToken(
-                'Token is not linked to client,' .
-                ' got: ' . $clientId .
-                ' expected: ' . $refreshTokenData['client_id']
-            );
+            throw OAuthServerException::invalidRefreshToken('Token is not linked to client');
         }
 
         if ($refreshTokenData['expire_time'] < time()) {
