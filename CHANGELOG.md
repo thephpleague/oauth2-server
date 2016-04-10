@@ -1,5 +1,18 @@
 # Changelog
 
+## 5.0.0-RC2 (released 2016-04-XX)
+
+* Allow multiple client redirect URIs (Issue #511)
+* Remove unused mac token interface (Issue #503)
+* Handle RSA key passphrase (Issue #502)
+* Remove access token repository from response types (Issue #501)
+* Remove unnecessary methods from entity interfaces (Issue #490)
+* Ensure incoming JWT hasn't expired (Issue #509)
+* Fix client identifier passed where user identifier is expected (Issue #498)
+* Removed built-in entities; added traits to for quick re-use (Issue #504)
+* Redirect uri is required only if the "redirect_uri" parameter was included in the authorization request (Issue #514)
+* Removed templating for auth code and implicit grants (Issue #499)
+
 ## 5.0.0-RC1 (release 2016-03-24)
 
 Version 5 is a complete code rewrite.
