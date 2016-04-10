@@ -65,7 +65,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         $responseType = new StubResponseType();
-        $grant->respondToRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
 
         $this->assertTrue($responseType->getAccessToken() instanceof AccessTokenEntityInterface);
         $this->assertTrue($responseType->getRefreshToken() instanceof RefreshTokenEntityInterface);
@@ -99,7 +99,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         $responseType = new StubResponseType();
-        $grant->respondToRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
     }
 
     /**
@@ -131,7 +131,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         $responseType = new StubResponseType();
-        $grant->respondToRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
     }
 
     /**
@@ -165,6 +165,6 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         $responseType = new StubResponseType();
-        $grant->respondToRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
     }
 }

@@ -250,7 +250,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
             'grant_type' => 'foobar',
         ]);
 
-        $this->assertTrue($grantMock->canRespondToRequest($serverRequest));
+        $this->assertTrue($grantMock->canRespondToAccessTokenRequest($serverRequest));
     }
 
     public function testIssueRefreshToken()

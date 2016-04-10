@@ -47,7 +47,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */
-    public function respondToRequest(
+    public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
         \DateInterval $accessTokenTTL

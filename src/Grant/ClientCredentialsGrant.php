@@ -21,7 +21,7 @@ class ClientCredentialsGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function respondToRequest(
+    public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
         \DateInterval $accessTokenTTL
