@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "143453cc35e7f499b130b6460222dc5a",
-    "content-hash": "1ea46581fb6db25f323a37a45ef74f95",
+    "hash": "ec2df46ff78a00052e1a241ce5988d81",
+    "content-hash": "46a1c1e42c62d3e3645279fc54ae95b7",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -36,16 +36,16 @@
         },
         {
             "name": "lcobucci/jwt",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lcobucci/jwt.git",
-                "reference": "31499db4e692b343cec7ff345932899f98fde1cf"
+                "reference": "afea8e682e911a21574fd8519321b32522fa25b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/31499db4e692b343cec7ff345932899f98fde1cf",
-                "reference": "31499db4e692b343cec7ff345932899f98fde1cf",
+                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/afea8e682e911a21574fd8519321b32522fa25b5",
+                "reference": "afea8e682e911a21574fd8519321b32522fa25b5",
                 "shasum": ""
             },
             "require": {
@@ -90,7 +90,7 @@
                 "JWS",
                 "jwt"
             ],
-            "time": "2015-11-15 01:42:47"
+            "time": "2016-03-24 22:46:13"
         },
         {
             "name": "league/event",
@@ -144,11 +144,11 @@
         },
         {
             "name": "league/oauth2-server",
-            "version": "dev-V5-WIP",
+            "version": "dev-V5-authorization-request-flow",
             "dist": {
                 "type": "path",
                 "url": "../",
-                "reference": "0fbe109e2004c71feac2bd14fd85aff97704b2e5",
+                "reference": "5410a42bb66f5a61969c3ec1a8e7ab30d225875c",
                 "shasum": null
             },
             "require": {

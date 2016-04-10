@@ -7,7 +7,7 @@
     ],
     "require": {
         "slim/slim": "3.0.*",
-        "league/oauth2-server": "dev-V5-WIP",
+        "league/oauth2-server": "dev-V5-authorization-request-flow",
         "league/plates": "^3.1"
     },
     "autoload": {
