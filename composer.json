@@ -13,7 +13,6 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",
-        "league/plates": "^3.1",
         "zendframework/zend-diactoros": "^1.0"
     },
     "repositories": [
@@ -64,11 +63,5 @@
         "branch-alias": {
             "dev-V5-WIP": "5.0-dev"
         }
-    },
-    "suggest": {
-        "league/plates": "Used for parsing authorization code templates",
-        "twig/twig": "Used for parsing authorization code templates",
-        "smarty/smarty": "Used for parsing authorization code templates",
-        "mustache/mustache": "Used for parsing authorization code templates"
     }
 }
