@@ -132,7 +132,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
     {
@@ -144,7 +144,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function validateAuthorizationRequest(ServerRequestInterface $request)
     {
@@ -203,7 +203,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
     {
@@ -219,7 +219,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // The user approved the client, redirect them back with an auth code
         if ($authorizationRequest->isAuthorizationApproved() === true) {
-
             $authCode = $this->issueAuthCode(
                 $this->authCodeTTL,
                 $authorizationRequest->getClient(),

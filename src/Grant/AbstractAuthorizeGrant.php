@@ -11,8 +11,6 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\Plates\Engine;
-
 abstract class AbstractAuthorizeGrant extends AbstractGrant
 {
     /**
