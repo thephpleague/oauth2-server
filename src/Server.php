@@ -111,8 +111,12 @@ class Server implements EmitterAwareInterface
      * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
      * @param \DateInterval                                  $accessTokenTTL
      */
-    public function enableGrantType(GrantTypeInterface $grantType, DateInterval $accessTokenTTL)
+    public function enableGrantType(GrantTypeInterface $grantType, DateInterval $accessTokenTTL = null)
     {
+        if ($accessTokenTTL instanceof DateInterval === false) {
+            $accessTokenTTL = new \DateInterval('PT1H');
+        }
+
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
@@ -121,7 +125,6 @@ class Server implements EmitterAwareInterface
         $grantType->setEmitter($this->getEmitter());
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
-
         $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
     }
 
