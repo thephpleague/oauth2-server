@@ -1,4 +1,4 @@
-# PHP OAuth 2.0 Server by [@alexbilbie](https://twitter.com/alexbilbie)
+# PHP OAuth 2.0 Server
 
 [![Latest Version](http://img.shields.io/packagist/v/league/oauth2-server.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
@@ -17,14 +17,7 @@ It supports out of the box the following grants:
 * Resource owner password credentials grant
 * Refresh grant
 
-You can also easily define your own grants.
-
-In addition it supports the following token response types:
-
-* Bearer (JWT) tokens
-* MAC tokens
-
-You can also create you own tokens.
+This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](https://twitter.com/alexbilbie).
 
 ## Requirements
 
