@@ -12,6 +12,7 @@ use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -125,25 +126,42 @@ class Server implements EmitterAwareInterface
     }
 
     /**
+     * Validate an authorization request
+     *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      *
+     * @return \League\OAuth2\Server\RequestTypes\AuthorizationRequest|null
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      */
-    public function respondToAuthorizationRequest(ServerRequestInterface $request)
+    public function validateAuthorizationRequest(ServerRequestInterface $request)
     {
         $authRequest = null;
-        while ($authRequest === null && $grantType = array_shift($this->enabledGrantTypes)) {
+        $enabledGrantTypes = $this->enabledGrantTypes;
+        while ($authRequest === null && $grantType = array_shift($enabledGrantTypes)) {
             /** @var \League\OAuth2\Server\Grant\GrantTypeInterface $grantType */
-            if ($grantType->canRespondToAccessTokenRequest($request)) {
-                $authRequest = $grantType->respondToRequest(
-                    $request,
-                    $this->getResponseType(),
-                    $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
-                );
+            if ($grantType->canRespondToAuthorizationRequest($request)) {
+                $authRequest = $grantType->validateAuthorizationRequest($request);
+
+                return $authRequest;
             }
         }
-        
+
         throw OAuthServerException::unsupportedGrantType();
+    }
+
+    /**
+     * Complete an authorization request
+     *
+     * @param \League\OAuth2\Server\RequestTypes\AuthorizationRequest $authRequest
+     * @param \Psr\Http\Message\ResponseInterface                     $response
+     *
+     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     */
+    public function completeAuthorizationRequest(AuthorizationRequest $authRequest, ResponseInterface $response)
+    {
+        return $this->enabledGrantTypes[$authRequest->getGrantTypeId()]
+            ->completeAuthorizationRequest($authRequest)
+            ->generateHttpResponse($response);
     }
 
     /**
@@ -162,7 +180,7 @@ class Server implements EmitterAwareInterface
         while ($tokenResponse === null && $grantType = array_shift($this->enabledGrantTypes)) {
             /** @var \League\OAuth2\Server\Grant\GrantTypeInterface $grantType */
             if ($grantType->canRespondToAccessTokenRequest($request)) {
-                $tokenResponse = $grantType->respondToRequest(
+                $tokenResponse = $grantType->respondToAccessTokenRequest(
                     $request,
                     $this->getResponseType(),
                     $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
