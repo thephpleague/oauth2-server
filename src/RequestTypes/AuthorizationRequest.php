@@ -10,42 +10,49 @@ class AuthorizationRequest
 {
     /**
      * The grant type identifier
+     *
      * @var string
      */
     protected $grantTypeId;
 
     /**
      * The client identifier
+     *
      * @var ClientEntityInterface
      */
     protected $client;
 
     /**
      * The user identifier
+     *
      * @var UserEntityInterface
      */
     protected $user;
 
     /**
      * An array of scope identifiers
+     *
      * @var ScopeEntityInterface[]
      */
     protected $scopes = [];
 
     /**
      * Has the user authorized the authorization request
+     *
      * @var bool
      */
     protected $authorizationApproved = false;
 
     /**
      * The redirect URI used in the request
+     *
      * @var string
      */
     protected $redirectUri;
 
     /**
      * The state parameter on the authorization request
+     *
      * @var string
      */
     protected $state;
@@ -115,7 +122,7 @@ class AuthorizationRequest
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isAuthorizationApproved()
     {
@@ -123,7 +130,7 @@ class AuthorizationRequest
     }
 
     /**
-     * @param boolean $authorizationApproved
+     * @param bool $authorizationApproved
      */
     public function setAuthorizationApproved($authorizationApproved)
     {
@@ -161,5 +168,4 @@ class AuthorizationRequest
     {
         $this->state = $state;
     }
-
 }

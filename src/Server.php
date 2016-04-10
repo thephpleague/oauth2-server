@@ -142,7 +142,7 @@ class Server implements EmitterAwareInterface
                 );
             }
         }
-        
+
         throw OAuthServerException::unsupportedGrantType();
     }
 

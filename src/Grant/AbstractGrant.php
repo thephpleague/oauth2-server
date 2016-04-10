@@ -406,7 +406,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
     {
@@ -414,7 +414,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function validateAuthorizationRequest(ServerRequestInterface $request)
     {
@@ -422,7 +422,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
     {
