@@ -29,7 +29,6 @@ $app = new App([
         $accessTokenRepository = new AccessTokenRepository();
         $authCodeRepository = new AuthCodeRepository();
         $refreshTokenRepository = new RefreshTokenRepository();
-        $userRepository = new UserRepository();
 
         $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
         $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
@@ -48,7 +47,6 @@ $app = new App([
             new AuthCodeGrant(
                 $authCodeRepository,
                 $refreshTokenRepository,
-                $userRepository,
                 new \DateInterval('PT10M')
             ),
             new \DateInterval('PT1H')

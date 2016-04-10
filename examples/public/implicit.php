@@ -7,7 +7,6 @@ use OAuth2ServerExamples\Entities\UserEntity;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
-use OAuth2ServerExamples\Repositories\UserRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -24,7 +23,6 @@ $app = new App([
         $clientRepository = new ClientRepository();
         $scopeRepository = new ScopeRepository();
         $accessTokenRepository = new AccessTokenRepository();
-        $userRepository = new UserRepository();
 
         $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
         $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
@@ -39,7 +37,7 @@ $app = new App([
         );
 
         // Enable the implicit grant on the server with a token TTL of 1 hour
-        $server->enableGrantType(new ImplicitGrant($userRepository, new \DateInterval('PT1H')));
+        $server->enableGrantType(new ImplicitGrant(new \DateInterval('PT1H')));
 
         return $server;
     },
