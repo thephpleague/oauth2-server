@@ -2,7 +2,9 @@
 
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\Server;
+use OAuth2ServerExamples\Entities\UserEntity;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\AuthCodeRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
@@ -56,18 +58,29 @@ $app = new App([
     },
 ]);
 
-$app->any('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
+$app->get('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
     /* @var \League\OAuth2\Server\Server $server */
     $server = $app->getContainer()->get(Server::class);
 
     try {
-        return $server->respondToRequest($request, $response);
+        // Validate the HTTP request and return an AuthorizationRequest object.
+        // The auth request object can be serialized into a user's session
+        $authRequest = $server->validateAuthorizationRequest($request);
+
+        // Once the user has logged in set the user on the AuthorizationRequest
+        $authRequest->setUser(new UserEntity());
+
+        // Once the user has approved or denied the client update the status
+        // (true = approved, false = denied)
+        $authRequest->setAuthorizationApproved(true);
+
+        // Return the HTTP redirect response
+        return $server->completeAuthorizationRequest($authRequest, $response);
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
     } catch (\Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
-
         return $response->withStatus(500)->withBody($body);
     }
 });
@@ -77,7 +90,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
     $server = $app->getContainer()->get(Server::class);
 
     try {
-        return $server->respondToRequest($request, $response);
+        return $server->respondToAccessTokenRequest($request, $response);
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
     } catch (\Exception $exception) {
