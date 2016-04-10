@@ -11,7 +11,6 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
-use League\OAuth2\Server\ResponseTypes\HtmlResponse;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use League\OAuth2\Server\TemplateRenderer\RendererInterface;
@@ -57,17 +56,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      *
      * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
      */
-    protected function respondToAccessTokenRequest(
+    public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
     ) {
-        // The redirect URI is required in this request
-        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
-        if (is_null($redirectUri)) {
-            throw OAuthServerException::invalidRequest('redirect_uri');
-        }
-
         // Validate request
         $client = $this->validateClient($request);
         $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
@@ -91,6 +84,12 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest('code', 'Authorization code was not issued to this client');
             }
 
+            // The redirect URI is required in this request
+            $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
+            if (empty($authCodePayload->redirect_uri) === false && $redirectUri === null) {
+                throw OAuthServerException::invalidRequest('redirect_uri');
+            }
+
             if ($authCodePayload->redirect_uri !== $redirectUri) {
                 throw OAuthServerException::invalidRequest('redirect_uri', 'Invalid redirect URI');
             }
@@ -99,7 +98,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             foreach ($authCodePayload->scopes as $scopeId) {
                 $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
 
-                if (!$scope) {
+                if ($scope === false) {
                     // @codeCoverageIgnoreStart
                     throw OAuthServerException::invalidScope($scopeId);
                     // @codeCoverageIgnoreEnd
@@ -120,24 +119,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $responseType->setRefreshToken($refreshToken);
 
         return $responseType;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function respondToRequest(
-        ServerRequestInterface $request,
-        ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
-    ) {
-        if (
-            array_key_exists('response_type', $request->getQueryParams())
-            && $request->getQueryParams()['response_type'] === 'code'
-        ) {
-            return $this->respondToAuthorizationRequest($request);
-        }
-
-        return $this->respondToAccessTokenRequest($request, $responseType, $accessTokenTTL);
     }
 
     /**
@@ -230,6 +211,12 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw new \LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
         }
 
+        $finalRedirectUri = ($authorizationRequest->getRedirectUri() === null)
+            ? is_array($authorizationRequest->getClient()->getRedirectUri())
+                ? $authorizationRequest->getClient()->getRedirectUri()[0]
+                : $authorizationRequest->getClient()->getRedirectUri()
+            : $authorizationRequest->getRedirectUri();
+
         // The user approved the client, redirect them back with an auth code
         if ($authorizationRequest->isAuthorizationApproved() === true) {
 
@@ -254,12 +241,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 )
             );
 
-            $finalRedirectUri = ($authorizationRequest->getRedirectUri() === null)
-                ? is_array($authorizationRequest->getClient()->getRedirectUri())
-                    ? $authorizationRequest->getClient()->getRedirectUri()[0]
-                    : $authorizationRequest->getClient()->getRedirectUri()
-                : $authorizationRequest->getRedirectUri();
-
             $response = new RedirectResponse();
             $response->setRedirectUri(
                 $this->makeRedirectUri(
@@ -274,7 +255,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         // The user denied the client, redirect them back with an error
         throw OAuthServerException::accessDenied(
             'The user denied the request',
-            (string) $authorizationRequest->getRedirectUri()
+            $finalRedirectUri
         );
     }
 }
