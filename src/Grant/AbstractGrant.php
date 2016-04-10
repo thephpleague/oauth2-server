@@ -193,8 +193,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate scopes in the request.
      *
-     * @param string                                               $scopes
-     * @param string                                               $redirectUri
+     * @param string $scopes
+     * @param string $redirectUri
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
