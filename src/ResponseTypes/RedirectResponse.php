@@ -26,6 +26,6 @@ class RedirectResponse extends AbstractResponseType
      */
     public function generateHttpResponse(ResponseInterface $response)
     {
-        return $response->withStatus(302)->withHeader('location', $this->redirectUri);
+        return $response->withStatus(302)->withHeader('Location', $this->redirectUri);
     }
 }
