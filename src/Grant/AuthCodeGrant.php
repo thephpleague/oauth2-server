@@ -13,7 +13,6 @@ use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
-use League\OAuth2\Server\TemplateRenderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class AuthCodeGrant extends AbstractAuthorizeGrant
@@ -28,21 +27,18 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
      * @param \DateInterval                                                      $authCodeTTL
-     * @param \League\OAuth2\Server\TemplateRenderer\RendererInterface|null      $templateRenderer
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         UserRepositoryInterface $userRepository,
-        \DateInterval $authCodeTTL,
-        RendererInterface $templateRenderer = null
+        \DateInterval $authCodeTTL
     ) {
         $this->setAuthCodeRepository($authCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->setUserRepository($userRepository);
         $this->authCodeTTL = $authCodeTTL;
         $this->refreshTokenTTL = new \DateInterval('P1M');
-        $this->templateRenderer = $templateRenderer;
     }
 
     /**
