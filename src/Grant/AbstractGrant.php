@@ -148,7 +148,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             $this->getServerParameter('PHP_AUTH_USER', $request)
         );
         if (is_null($clientId)) {
-            throw OAuthServerException::invalidRequest('client_id', '`%s` parameter is missing');
+            throw OAuthServerException::invalidRequest('client_id');
         }
 
         // If the client is confidential require the client secret
