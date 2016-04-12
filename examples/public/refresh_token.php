@@ -37,10 +37,13 @@ $app = new App([
             $publicKeyPath
         );
 
-        // Enable the refresh token grant on the server with a token TTL of 1 hour
+        // Enable the refresh token grant on the server
+        $grant = new RefreshTokenGrant($refreshTokenRepository);
+        $grant->setRefreshTokenTTL(new \DateInterval('P1M')); // The refresh token will expire in 1 month
+
         $server->enableGrantType(
-            new RefreshTokenGrant($refreshTokenRepository),
-            new \DateInterval('PT1H')
+            $grant,
+            new \DateInterval('PT1H') // The new access token will expire after 1 hour
         );
 
         return $server;
