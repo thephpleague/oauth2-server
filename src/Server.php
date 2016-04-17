@@ -5,8 +5,6 @@ namespace League\OAuth2\Server;
 use DateInterval;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
-use League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface;
-use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -63,11 +61,6 @@ class Server implements EmitterAwareInterface
     private $scopeRepository;
 
     /**
-     * @var \League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface
-     */
-    private $authorizationValidator;
-
-    /**
      * New server instance.
      *
      * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface                       $clientRepository
@@ -76,7 +69,6 @@ class Server implements EmitterAwareInterface
      * @param \League\OAuth2\Server\CryptKey|string                                              $privateKey
      * @param \League\OAuth2\Server\CryptKey|string                                              $publicKey
      * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface                     $responseType
-     * @param null|\League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface $authorizationValidator
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
@@ -84,8 +76,7 @@ class Server implements EmitterAwareInterface
         ScopeRepositoryInterface $scopeRepository,
         $privateKey,
         $publicKey,
-        ResponseTypeInterface $responseType = null,
-        AuthorizationValidatorInterface $authorizationValidator = null
+        ResponseTypeInterface $responseType = null
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
@@ -102,7 +93,6 @@ class Server implements EmitterAwareInterface
         $this->publicKey = $publicKey;
 
         $this->responseType = $responseType;
-        $this->authorizationValidator = $authorizationValidator;
     }
 
     /**
@@ -200,20 +190,6 @@ class Server implements EmitterAwareInterface
     }
 
     /**
-     * Determine the access token validity.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
-     *
-     * @return \Psr\Http\Message\ServerRequestInterface
-     */
-    public function validateAuthenticatedRequest(ServerRequestInterface $request)
-    {
-        return $this->getAuthorizationValidator()->validateAuthorization($request);
-    }
-
-    /**
      * Get the token type that grants will return in the HTTP response.
      *
      * @return ResponseTypeInterface
@@ -227,19 +203,5 @@ class Server implements EmitterAwareInterface
         $this->responseType->setPrivateKey($this->privateKey);
 
         return $this->responseType;
-    }
-
-    /**
-     * @return \League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface
-     */
-    protected function getAuthorizationValidator()
-    {
-        if (!$this->authorizationValidator instanceof AuthorizationValidatorInterface) {
-            $this->authorizationValidator = new BearerTokenValidator($this->accessTokenRepository);
-        }
-
-        $this->authorizationValidator->setPublicKey($this->publicKey);
-
-        return $this->authorizationValidator;
     }
 }
