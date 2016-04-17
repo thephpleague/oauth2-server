@@ -5,12 +5,9 @@ namespace LeagueTests\Middleware;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\Server;
+use League\OAuth2\Server\ResourceServer;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
-use LeagueTests\Stubs\StubResponseType;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
@@ -18,15 +15,9 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
 {
     public function testValidResponse()
     {
-        $clientRepository = $this->getMock(ClientRepositoryInterface::class);
-
-        $server = new Server(
-            $clientRepository,
+        $server = new ResourceServer(
             $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            new StubResponseType()
+            'file://' . __DIR__ . '/../Stubs/public.key'
         );
 
         $client = new ClientEntity();
@@ -59,15 +50,9 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
 
     public function testValidResponseExpiredToken()
     {
-        $clientRepository = $this->getMock(ClientRepositoryInterface::class);
-
-        $server = new Server(
-            $clientRepository,
+        $server = new ResourceServer(
             $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            new StubResponseType()
+            'file://' . __DIR__ . '/../Stubs/public.key'
         );
 
         $client = new ClientEntity();
@@ -100,15 +85,9 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
 
     public function testErrorResponse()
     {
-        $clientRepository = $this->getMock(ClientRepositoryInterface::class);
-
-        $server = new Server(
-            $clientRepository,
+        $server = new ResourceServer(
             $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
-            'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
-            new StubResponseType()
+            'file://' . __DIR__ . '/../Stubs/public.key'
         );
 
         $request = new ServerRequest();
