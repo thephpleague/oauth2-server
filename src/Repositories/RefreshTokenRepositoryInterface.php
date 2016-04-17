@@ -1,7 +1,5 @@
 <?php
 /**
- * OAuth 2.0 Refresh token storage interface.
- *
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
