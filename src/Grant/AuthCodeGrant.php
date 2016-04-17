@@ -11,6 +11,7 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
@@ -97,7 +98,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             foreach ($authCodePayload->scopes as $scopeId) {
                 $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
 
-                if ($scope === false) {
+                if (!$scope instanceof ScopeEntityInterface) {
                     // @codeCoverageIgnoreStart
                     throw OAuthServerException::invalidScope($scopeId);
                     // @codeCoverageIgnoreEnd

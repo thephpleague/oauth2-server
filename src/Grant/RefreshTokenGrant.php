@@ -10,6 +10,7 @@
  */
 namespace League\OAuth2\Server\Grant;
 
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
@@ -49,7 +50,7 @@ class RefreshTokenGrant extends AbstractGrant
             $scopes = array_map(function ($scopeId) use ($client) {
                 $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
 
-                if (!$scope) {
+                if (!$scope instanceof ScopeEntityInterface) {
                     // @codeCoverageIgnoreStart
                     throw OAuthServerException::invalidScope($scopeId);
                     // @codeCoverageIgnoreEnd
