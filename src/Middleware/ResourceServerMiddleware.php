@@ -3,23 +3,23 @@
 namespace League\OAuth2\Server\Middleware;
 
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Server;
+use League\OAuth2\Server\ResourceServer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ResourceServerMiddleware
 {
     /**
-     * @var \League\OAuth2\Server\Server
+     * @var \League\OAuth2\Server\ResourceServer
      */
     private $server;
 
     /**
      * ResourceServerMiddleware constructor.
      *
-     * @param \League\OAuth2\Server\Server $server
+     * @param \League\OAuth2\Server\ResourceServer $server
      */
-    public function __construct(Server $server)
+    public function __construct(ResourceServer $server)
     {
         $this->server = $server;
     }
