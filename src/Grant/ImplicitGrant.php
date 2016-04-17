@@ -5,6 +5,7 @@ namespace League\OAuth2\Server\Grant;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
@@ -23,8 +24,27 @@ class ImplicitGrant extends AbstractAuthorizeGrant
      */
     public function __construct(\DateInterval $accessTokenTTL)
     {
-        $this->refreshTokenTTL = new \DateInterval('P1M');
         $this->accessTokenTTL = $accessTokenTTL;
+    }
+
+    /**
+     * @param \DateInterval $refreshTokenTTL
+     *
+     * @throw \LogicException
+     */
+    public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
+    {
+        throw new \LogicException('The Implicit Grant does nto return refresh tokens');
+    }
+
+    /**
+     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     *
+     * @throw \LogicException
+     */
+    public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository)
+    {
+        throw new \LogicException('The Implicit Grant does nto return refresh tokens');
     }
 
     /**
