@@ -3,7 +3,6 @@
 
 namespace LeagueTests;
 
-
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
@@ -24,5 +23,4 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals('Missing "Authorization" header', $e->getHint());
         }
     }
-
 }

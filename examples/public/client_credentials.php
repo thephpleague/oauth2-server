@@ -62,12 +62,10 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
 
         // Try to respond to the request
         return $server->respondToAccessTokenRequest($request, $response);
-
     } catch (OAuthServerException $exception) {
 
         // All instances of OAuthServerException can be formatted into a HTTP response
         return $exception->generateHttpResponse($response);
-
     } catch (\Exception $exception) {
 
         // Unknown exception
@@ -75,7 +73,6 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
         $body->write($exception->getMessage());
 
         return $response->withStatus(500)->withBody($body);
-
     }
 });
 

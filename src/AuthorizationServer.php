@@ -70,12 +70,12 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * New server instance.
      *
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface                       $clientRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface                  $accessTokenRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface                        $scopeRepository
-     * @param \League\OAuth2\Server\CryptKey|string                                              $privateKey
-     * @param \League\OAuth2\Server\CryptKey|string                                              $publicKey
-     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface                     $responseType
+     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
+     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
+     * @param \League\OAuth2\Server\CryptKey|string                             $privateKey
+     * @param \League\OAuth2\Server\CryptKey|string                             $publicKey
+     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface    $responseType
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
