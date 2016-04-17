@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" stopOnError="true"
+         stopOnFailure="true" stopOnIncomplete="false" stopOnSkipped="false" bootstrap="tests/Bootstrap.php">
+    <testsuites>
+        <testsuite name="Tests">
+            <directory>./tests/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+            <exclude>
+                <directory suffix=".php">src/ResponseTypes/DefaultTemplates</directory>
+                <directory suffix=".php">src/TemplateRenderer</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-text" target="php://stdout" title="thephpleague/oauth2-server" charset="UTF-8" yui="true"
+             highlight="true" lowUpperBound="60" highLowerBound="90"/>
+        <log type="coverage-html" target="build/coverage" title="thephpleague/oauth2-server" charset="UTF-8" yui="true"
+             highlight="true" lowUpperBound="60" highLowerBound="90"/>
+    </logging>
+</phpunit>

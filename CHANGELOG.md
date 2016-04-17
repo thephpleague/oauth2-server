@@ -1,5 +1,81 @@
 # Changelog
 
+## 5.0.0 (release 2016-04-17)
+
+Version 5 is a complete code rewrite.
+
+* JWT support
+* PSR-7 support
+* Improved exception errors
+* Replace all occurrences of the term "Storage" with "Repository"
+* Simplify repositories
+* Entities conform to interfaces and use traits
+* Auth code grant updated
+    * Allow support for public clients
+    * Add support for #439
+* Client credentials grant updated
+* Password grant updated
+    * Allow support for public clients
+* Refresh token grant updated
+* Implement Implicit grant
+* Bearer token output type
+* Remove MAC token output type
+* Authorization server rewrite
+* Resource server class moved to PSR-7 middleware
+* Tests
+* Much much better documentation
+
+Changes since RC2:
+
+* Renamed Server class to AuthorizationServer
+* Added ResourceServer class
+* Run unit tests again PHP 5.5.9 as it's the minimum supported version
+* Enable PHPUnit 5.0 support
+* Improved examples and documentation
+* Make it clearer that the implicit grant doesn't support refresh tokens
+* Improved refresh token validation errors
+* Fixed refresh token expiry date
+
+## 5.0.0-RC2 (released 2016-04-10)
+
+Changes since RC1:
+
+* Allow multiple client redirect URIs (Issue #511)
+* Remove unused mac token interface (Issue #503)
+* Handle RSA key passphrase (Issue #502)
+* Remove access token repository from response types (Issue #501)
+* Remove unnecessary methods from entity interfaces (Issue #490)
+* Ensure incoming JWT hasn't expired (Issue #509)
+* Fix client identifier passed where user identifier is expected (Issue #498)
+* Removed built-in entities; added traits to for quick re-use (Issue #504)
+* Redirect uri is required only if the "redirect_uri" parameter was included in the authorization request (Issue #514)
+* Removed templating for auth code and implicit grants (Issue #499)
+
+## 5.0.0-RC1 (release 2016-03-24)
+
+Version 5 is a complete code rewrite.
+
+* JWT support
+* PSR-7 support
+* Improved exception errors
+* Replace all occurrences of the term "Storage" with "Repository"
+* Simplify repositories
+* Entities conform to interfaces and use traits
+* Auth code grant updated
+    * Allow support for public clients
+    * Add support for #439
+* Client credentials grant updated
+* Password grant updated
+    * Allow support for public clients
+* Refresh token grant updated
+* Implement Implicit grant
+* Bearer token output type
+* Remove MAC token output type
+* Authorization server rewrite
+* Resource server class moved to PSR-7 middleware
+* Tests
+* Much much better documentation
+
 ## 4.1.5 (released 2016-01-04)
 
 * Enable Symfony 3.0 support (#412)
@@ -159,7 +235,7 @@
 * Included a PDO driver which implements the storage interfaces so the library is more "get up and go"
 * Further normalised the database structure so all sessions no longer contain infomation related to authorization grant (which may or may not be enabled)
 * A session can have multiple associated access tokens
-* Induvidual grants can have custom expire times for access tokens
+* Individual grants can have custom expire times for access tokens
 * Authorization codes now have a TTL of 10 minutes by default (can be manually set)
 * Refresh tokens now have a TTL of one week by default (can be manually set)
 * The client credentials grant will no longer gives out refresh tokens as per the specification

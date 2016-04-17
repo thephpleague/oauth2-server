@@ -1,47 +1,39 @@
-# PHP OAuth 2.0 Server by [@alexbilbie](https://twitter.com/alexbilbie)
+# PHP OAuth 2.0 Server
 
 [![Latest Version](http://img.shields.io/packagist/v/league/oauth2-server.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://img.shields.io/travis/thephpleague/oauth2-server/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/oauth2-server)
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server)
-[![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-server.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-server) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/thephpleague/oauth2-server?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-server.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-server)
 
-
-A standards compliant [OAuth 2.0](http://tools.ietf.org/wg/oauth/draft-ietf-oauth-v2/) authorization server and resource server written in PHP which makes working with OAuth 2.0 trivial. You can easily configure an OAuth 2.0 server to protect your API with access tokens, or allow clients to request new access tokens and refresh them.
+`league/oauth2-server` is a a standards compliant implementation of an [OAuth 2.0](https://tools.ietf.org/html/rfc6749) authorization server written in PHP which makes working with OAuth 2.0 trivial. You can easily configure an OAuth 2.0 server to protect your API with access tokens, or allow clients to request new access tokens and refresh them.
 
 It supports out of the box the following grants:
 
 * Authorization code grant
+* Implicit grant
 * Client credentials grant
 * Resource owner password credentials grant
 * Refresh grant
 
-You can also define your own grants.
-
-In addition it supports the following token types:
-
-* Bearer tokens
-* MAC tokens
-* JSON web tokens (coming soon)
-
-You can also create you own tokens.
-
+This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](https://twitter.com/alexbilbie).
 
 ## Requirements
 
 The following versions of PHP are supported:
 
-* PHP 5.4
-* PHP 5.5
+* PHP 5.5 (>=5.5.9)
 * PHP 5.6
+* PHP 7.0
 * HHVM
+
+The `openssl` extension is also required.
 
 ## Documentation
 
-This library has [full documentation](http://oauth2.thephpleague.com), powered by [Jekyll](http://jekyllrb.com/).
-
-Contribute to this documentation in the [gh-pages branch](https://github.com/thephpleague/oauth2-server/tree/gh-pages/).
+The library documentation can be found at [https://oauth2.thephpleague.com](https://oauth2.thephpleague.com). 
+You can contribute to the documentation in the [gh-pages branch](https://github.com/thephpleague/oauth2-server/tree/gh-pages/).
 
 ## Changelog
 
@@ -49,7 +41,7 @@ Contribute to this documentation in the [gh-pages branch](https://github.com/the
 
 ## Contributing
 
-Please see [CONTRIBUTING](https://github.com/thephpleague/oauth2-server/blob/master/CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING.md](https://github.com/thephpleague/oauth2-server/blob/master/CONTRIBUTING.md) and [CONDUCT.md](https://github.com/thephpleague/oauth2-server/blob/master/CONDUCT.md) for details.
 
 ## Integration
 
@@ -58,7 +50,9 @@ Please see [CONTRIBUTING](https://github.com/thephpleague/oauth2-server/blob/mas
 
 ## Support
 
-Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague/oauth2-server/issues)
+Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague/oauth2-server/issues).
+
+If you have any questions about OAuth _please_ open a ticket here; please **don't** email the address below.
 
 ## Security
 
@@ -72,12 +66,6 @@ This package is released under the MIT License. See the bundled [LICENSE](https:
 
 This code is principally developed and maintained by [Alex Bilbie](https://twitter.com/alexbilbie).
 
-Special thanks to:
-
-* [Dan Horrigan](https://github.com/dandoescode)
-* [Nick Jackson](https://github.com/jacksonj04)
-* [Michael Gooden](https://github.com/MichaelGooden)
-* [Phil Sturgeon](https://github.com/philsturgeon)
-* [and all the other contributors](https://github.com/thephpleague/oauth2-server/contributors)
+Special thanks to [all of these awesome contributors](https://github.com/thephpleague/oauth2-server/contributors)
 
 The initial code was developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which was funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.
