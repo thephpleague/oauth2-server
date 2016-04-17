@@ -20,7 +20,7 @@ The client will redirect the user to the authorization server with the following
 * `client_id` with the client identifier
 * `redirect_uri` with the client redirect URI. This parameter is optional, but if not send the user will be redirected to a pre-registered redirect URI.
 * `scope` a space delimited list of scopes
-* `state` with a CSRF token. This parameter is optional but highly recommended.
+* `state` with a [CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) token. This parameter is optional but highly recommended. You should store the value of the CSRF token in the user's session to be validated when they return.
 
 All of these parameters will be validated by the authorization server.
 
@@ -31,8 +31,9 @@ If the user approves the client they will be redirected back to the authorizatio
 * `token_type` with the value `Bearer`
 * `expires_in` with an integer representing the TTL of the access token
 * `access_token` a JWT signed with the authorization server's private key
+* `state` with the state parameter sent in the original request. You should compare this value with the value stored in the user's session to ensure the authorization code obtained is in response to requests made by this client rather than another client application.
 
-****Note**** this grant does not return a refresh token.
+****Note**** this grant does <u>not</u> return a refresh token.
 
 ## Setup
 
@@ -40,15 +41,13 @@ Wherever you initialize your objects, initialize a new instance of the authoriza
 
 {% highlight php %}
 // Init our repositories
-$clientRepository = new ClientRepository();
-$scopeRepository = new ScopeRepository();
-$accessTokenRepository = new AccessTokenRepository();
-$userRepository = new UserRepository();
+$clientRepository = new ClientRepository(); // instance of ClientRepositoryInterface
+$scopeRepository = new ScopeRepository(); // instance of ScopeRepositoryInterface
+$accessTokenRepository = new AccessTokenRepository(); // instance of AccessTokenRepositoryInterface
+$authCodeRepository = new AuthCodeRepository(); // instance of AuthCodeRepositoryInterface
 
-// Path to public and private keys
 $privateKey = 'file://path/to/private.key';
-// Private key with passphrase if needed
-//$privateKey = new CryptKey('file://path/to/private.key', 'passphrase');
+//$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // if private key has a pass phrase
 $publicKey = 'file://path/to/public.key';
 
 // Setup the authorization server
@@ -60,19 +59,27 @@ $server = new \League\OAuth2\Server\Server(
     $publicKey
 );
 
-// Enable the implicit grant on the server with a token TTL of 1 hour
-$server->enableGrantType(new ImplicitGrant(new \DateInterval('PT1H')));
+// Enable the implicit grant on the server
+$server->enableGrantType(
+    new ImplicitGrant(),
+    new \DateInterval('PT1H') // access tokens will expire after 1 hour
+);
 {% endhighlight %}
 
 ## Implementation
+
+_Please note: These examples here demonstrate usage with the Slim Framework; Slim is not a requirement to use this library, you just need something that generates PSR7-compatible HTTP requests and responses._
 
 The client will redirect the user to an authorization endpoint.
 
 {% highlight php %}
 $app->get('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
+
     /* @var \League\OAuth2\Server\Server $server */
     $server = $app->getContainer()->get(Server::class);
+
     try {
+
         // Validate the HTTP request and return an AuthorizationRequest object.
         $authRequest = $server->validateAuthorizationRequest($request);
         
@@ -80,8 +87,8 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
         // You will probably want to redirect the user at this point to a login endpoint.
         
         // Once the user has logged in set the user on the AuthorizationRequest
-        $authRequest->setUser(new UserEntity());
-        
+        $authRequest->setUser(new UserEntity()); // an instance of UserEntityInterface
+         
         // At this point you should redirect the user to an authorization page.
         // This form will ask the user to approve the client and the scopes requested.
         
@@ -93,12 +100,17 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
         return $server->completeAuthorizationRequest($authRequest, $response);
         
     } catch (OAuthServerException $exception) {
+        
+        // All instances of OAuthServerException can be formatted into a HTTP response
         return $exception->generateHttpResponse($response);
         
     } catch (\Exception $exception) {
+        
+        // Unknown exception
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
         return $response->withStatus(500)->withBody($body);
+        
     }
 });
 {% endhighlight %}

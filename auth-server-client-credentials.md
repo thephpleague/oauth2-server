@@ -29,14 +29,13 @@ Wherever you initialize your objects, initialize a new instance of the authoriza
 
 {% highlight php %}
 // Init our repositories
-$clientRepository = new ClientRepository();
-$accessTokenRepository = new AccessTokenRepository();
-$scopeRepository = new ScopeRepository();
+$clientRepository = new ClientRepository(); // instance of ClientRepositoryInterface
+$scopeRepository = new ScopeRepository(); // instance of ScopeRepositoryInterface
+$accessTokenRepository = new AccessTokenRepository(); // instance of AccessTokenRepositoryInterface
 
 // Path to public and private keys
 $privateKey = 'file://path/to/private.key';
-// Private key with passphrase if needed
-//$privateKey = new CryptKey('file://path/to/private.key', 'passphrase');
+//$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // if private key has a pass phrase
 $publicKey = 'file://path/to/public.key';
 
 // Setup the authorization server
@@ -48,14 +47,16 @@ $server = new \League\OAuth2\Server\Server(
     $publicKey
 );
 
-// Enable the client credentials grant on the server with a token TTL of 1 hour
+// Enable the client credentials grant on the server
 $server->enableGrantType(
     new \League\OAuth2\Server\Grant\ClientCredentialsGrant(),
-    new \DateInterval('PT1H')
+    new \DateInterval('PT1H') // access tokens will expire after 1 hour
 );
 {% endhighlight %}
 
 ## Implementation
+
+_Please note: These examples here demonstrate usage with the Slim Framework; Slim is not a requirement to use this library, you just need something that generates PSR7-compatible HTTP requests and responses._
 
 The client will request an access token so create an `/access_token` endpoint.
 
@@ -65,17 +66,23 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
     /* @var \League\OAuth2\Server\Server $server */
     $server = $app->getContainer()->get(Server::class);
 
-    // Try to respond to the request
     try {
+    
+        // Try to respond to the request
         return $server->respondToAccessTokenRequest($request, $response);
-
+        
     } catch (\League\OAuth2\Server\Exception\OAuthServerException $exception) {
+    
+        // All instances of OAuthServerException can be formatted into a HTTP response
         return $exception->generateHttpResponse($response);
-
+        
     } catch (\Exception $exception) {
+    
+        // Unknown exception
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
         return $response->withStatus(500)->withBody($body);
+        
     }
 });
 {% endhighlight %}
