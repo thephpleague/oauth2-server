@@ -27,6 +27,8 @@ Version 5 is a complete code rewrite.
 
 Changes since RC2:
 
+* Renamed Server class to AuthorizationServer
+* Added ResourceServer class
 * Run unit tests again PHP 5.5.9 as it's the minimum supported version
 * Enable PHPUnit 5.0 support
 * Improved examples and documentation
