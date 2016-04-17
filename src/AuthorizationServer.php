@@ -16,7 +16,7 @@ use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Server implements EmitterAwareInterface
+class AuthorizationServer implements EmitterAwareInterface
 {
     use EmitterAwareTrait;
 

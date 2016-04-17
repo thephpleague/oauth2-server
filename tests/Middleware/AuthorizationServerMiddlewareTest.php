@@ -4,18 +4,18 @@ namespace LeagueTests\Middleware;
 
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
-use League\OAuth2\Server\Middleware\AuthenticationServerMiddleware;
+use League\OAuth2\Server\Middleware\AuthorizationServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\Server;
+use League\OAuth2\Server\AuthorizationServer;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\StubResponseType;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
-class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
+class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
 {
     public function testValidResponse()
     {
@@ -28,7 +28,7 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
         $accessRepositoryMock = $this->getMock(AccessTokenRepositoryInterface::class);
         $accessRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
 
-        $server = new Server(
+        $server = new AuthorizationServer(
             $clientRepository,
             $accessRepositoryMock,
             $scopeRepositoryMock,
@@ -45,7 +45,7 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
 
         $request = ServerRequestFactory::fromGlobals();
 
-        $middleware = new AuthenticationServerMiddleware($server);
+        $middleware = new AuthorizationServerMiddleware($server);
         $response = $middleware->__invoke(
             $request,
             new Response(),
@@ -61,7 +61,7 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
         $clientRepository = $this->getMock(ClientRepositoryInterface::class);
         $clientRepository->method('getClientEntity')->willReturn(null);
 
-        $server = new Server(
+        $server = new AuthorizationServer(
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
@@ -78,7 +78,7 @@ class AuthenticationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
 
         $request = ServerRequestFactory::fromGlobals();
 
-        $middleware = new AuthenticationServerMiddleware($server);
+        $middleware = new AuthorizationServerMiddleware($server);
 
         $response = $middleware->__invoke(
             $request,

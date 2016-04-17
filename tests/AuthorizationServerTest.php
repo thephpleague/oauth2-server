@@ -13,7 +13,7 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
-use League\OAuth2\Server\Server;
+use League\OAuth2\Server\AuthorizationServer;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
@@ -24,11 +24,11 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 
-class ServerTest extends \PHPUnit_Framework_TestCase
+class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 {
     public function testRespondToRequestInvalidGrantType()
     {
-        $server = new Server(
+        $server = new AuthorizationServer(
             $this->getMock(ClientRepositoryInterface::class),
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
@@ -58,7 +58,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMock(AccessTokenRepositoryInterface::class);
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
 
-        $server = new Server(
+        $server = new AuthorizationServer(
             $clientRepository,
             $accessTokenRepositoryMock,
             $scopeRepositoryMock,
@@ -80,7 +80,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
     {
         $clientRepository = $this->getMock(ClientRepositoryInterface::class);
 
-        $server = new Server(
+        $server = new AuthorizationServer(
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
@@ -94,31 +94,12 @@ class ServerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($method->invoke($server) instanceof BearerTokenResponse);
     }
-
-    public function testValidateAuthenticatedRequest()
-    {
-        $clientRepository = $this->getMock(ClientRepositoryInterface::class);
-
-        $server = new Server(
-            $clientRepository,
-            $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key'
-        );
-
-        try {
-            $server->validateAuthenticatedRequest(ServerRequestFactory::fromGlobals());
-        } catch (OAuthServerException $e) {
-            $this->assertEquals('Missing "Authorization" header', $e->getHint());
-        }
-    }
-
+    
     public function testCompleteAuthorizationRequest()
     {
         $clientRepository = $this->getMock(ClientRepositoryInterface::class);
 
-        $server = new Server(
+        $server = new AuthorizationServer(
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
@@ -164,7 +145,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
 
-        $server = new Server(
+        $server = new AuthorizationServer(
             $clientRepositoryMock,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
@@ -196,7 +177,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateAuthorizationRequestUnregistered()
     {
-        $server = new Server(
+        $server = new AuthorizationServer(
             $this->getMock(ClientRepositoryInterface::class),
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
