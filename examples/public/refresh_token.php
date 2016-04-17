@@ -2,7 +2,7 @@
 
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
-use League\OAuth2\Server\Server;
+use League\OAuth2\Server\AuthorizationServer;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\RefreshTokenRepository;
@@ -18,7 +18,7 @@ $app = new App([
     'settings'    => [
         'displayErrorDetails' => true,
     ],
-    Server::class => function () {
+    AuthorizationServer::class => function () {
         // Init our repositories
         $clientRepository = new ClientRepository();
         $accessTokenRepository = new AccessTokenRepository();
@@ -29,7 +29,7 @@ $app = new App([
         $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
 
         // Setup the authorization server
-        $server = new Server(
+        $server = new AuthorizationServer(
             $clientRepository,
             $accessTokenRepository,
             $scopeRepository,
@@ -51,8 +51,8 @@ $app = new App([
 ]);
 
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
-    /* @var \League\OAuth2\Server\Server $server */
-    $server = $app->getContainer()->get(Server::class);
+    /* @var \League\OAuth2\Server\AuthorizationServer $server */
+    $server = $app->getContainer()->get(AuthorizationServer::class);
 
     try {
         return $server->respondToAccessTokenRequest($request, $response);

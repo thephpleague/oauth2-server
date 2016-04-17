@@ -2,7 +2,7 @@
 
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ImplicitGrant;
-use League\OAuth2\Server\Server;
+use League\OAuth2\Server\AuthorizationServer;
 use OAuth2ServerExamples\Entities\UserEntity;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
@@ -18,7 +18,7 @@ $app = new App([
     'settings'    => [
         'displayErrorDetails' => true,
     ],
-    Server::class => function () {
+    AuthorizationServer::class => function () {
         // Init our repositories
         $clientRepository = new ClientRepository();
         $scopeRepository = new ScopeRepository();
@@ -28,7 +28,7 @@ $app = new App([
         $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
 
         // Setup the authorization server
-        $server = new Server(
+        $server = new AuthorizationServer(
             $clientRepository,
             $accessTokenRepository,
             $scopeRepository,
@@ -44,8 +44,8 @@ $app = new App([
 ]);
 
 $app->get('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
-    /* @var \League\OAuth2\Server\Server $server */
-    $server = $app->getContainer()->get(Server::class);
+    /* @var \League\OAuth2\Server\AuthorizationServer $server */
+    $server = $app->getContainer()->get(AuthorizationServer::class);
 
     try {
         // Validate the HTTP request and return an AuthorizationRequest object.

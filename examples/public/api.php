@@ -1,7 +1,6 @@
 <?php
 
 use League\OAuth2\Server\ResourceServer;
-use League\OAuth2\Server\Server;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,7 +12,7 @@ $app = new App([
     'settings'    => [
         'displayErrorDetails' => true,
     ],
-    Server::class => function () {
+    ResourceServer::class => function () {
         // Setup the authorization server
         $server = new ResourceServer(
             new AccessTokenRepository(),
@@ -26,7 +25,7 @@ $app = new App([
 
 $app->add(
     new \League\OAuth2\Server\Middleware\ResourceServerMiddleware(
-        $app->getContainer()->get(Server::class)
+        $app->getContainer()->get(ResourceServer::class)
     )
 );
 
