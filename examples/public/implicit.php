@@ -7,9 +7,9 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ImplicitGrant;
-use League\OAuth2\Server\AuthorizationServer;
 use OAuth2ServerExamples\Entities\UserEntity;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
