@@ -37,12 +37,11 @@ $refreshTokenRepository = new RefreshTokenRepository();
 
 // Path to public and private keys
 $privateKey = 'file://path/to/private.key';
-// Private key with passphrase if needed
-//$privateKey = new CryptKey('file://path/to/private.key', 'passphrase');
+//$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // if private key has a pass phrase
 $publicKey = 'file://path/to/public.key';
 
 // Setup the authorization server
-$server = new \League\OAuth2\Server\Server(
+$server = new \League\OAuth2\Server\AuthorizationServer(
     $clientRepository,
     $accessTokenRepository,
     $scopeRepository,
@@ -50,10 +49,13 @@ $server = new \League\OAuth2\Server\Server(
     $publicKey
 );
 
-// Enable the refresh token grant on the server with a token TTL of 1 hour
+$grant = new \League\OAuth2\Server\Grant\RefreshTokenGrant($refreshTokenRepository);
+$grant->setRefreshTokenTTL(new \DateInterval('P1M')); // new refresh tokens will expire after 1 month
+
+// Enable the refresh token grant on the server
 $server->enableGrantType(
-    new \League\OAuth2\Server\Grant\RefreshTokenGrant($refreshTokenRepository),
-    new \DateInterval('PT1H')
+    $grant,
+    new \DateInterval('PT1H') // new access tokens will expire after an hour
 );
 {% endhighlight %}
 
@@ -64,8 +66,8 @@ The client will request an access token so create an `/access_token` endpoint.
 {% highlight php %}
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
 
-    /* @var \League\OAuth2\Server\Server $server */
-    $server = $app->getContainer()->get(Server::class);
+    /* @var \League\OAuth2\Server\AuthorizationServer $server */
+    $server = $app->getContainer()->get(AuthorizationServer::class);
 
     // Try to respond to the request
     try {

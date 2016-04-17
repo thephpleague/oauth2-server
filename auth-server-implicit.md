@@ -51,7 +51,7 @@ $privateKey = 'file://path/to/private.key';
 $publicKey = 'file://path/to/public.key';
 
 // Setup the authorization server
-$server = new \League\OAuth2\Server\Server(
+$server = new \League\OAuth2\Server\AuthorizationServer(
     $clientRepository,
     $accessTokenRepository,
     $scopeRepository,
@@ -75,8 +75,8 @@ The client will redirect the user to an authorization endpoint.
 {% highlight php %}
 $app->get('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
 
-    /* @var \League\OAuth2\Server\Server $server */
-    $server = $app->getContainer()->get(Server::class);
+    /* @var \League\OAuth2\Server\AuthorizationServer $server */
+    $server = $app->getContainer()->get(AuthorizationServer::class);
 
     try {
 

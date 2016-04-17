@@ -14,20 +14,14 @@ Wherever you intialize your objects, initialize a new instance of the resource s
 
 {% highlight php %}
 // Init our repositories
-$clientRepository = new ClientRepository();
-$accessTokenRepository = new AccessTokenRepository();
-$scopeRepository = new ScopeRepository();
+$accessTokenRepository = new AccessTokenRepository(); // instance of AccessTokenRepositoryInterface
 
-// Path to public and private keys
-$privateKeyPath = 'file://path/to/private.key';
-$publicKeyPath = 'file://path/to/public.key';
+// Path to authorization server's public key
+$publicKey = 'file://path/to/public.key';
         
 // Setup the authorization server
-$server = new \League\OAuth2\Server\Server(
-    $clientRepository,
+$server = new \League\OAuth2\Server\ResourceServer(
     $accessTokenRepository,
-    $scopeRepository,
-    $privateKeyPath,
     $publicKeyPath
 );
 {% endhighlight %}
