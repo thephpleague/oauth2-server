@@ -1,9 +1,8 @@
 <?php
 
+use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\Server;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
-use OAuth2ServerExamples\Repositories\ClientRepository;
-use OAuth2ServerExamples\Repositories\ScopeRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -16,11 +15,8 @@ $app = new App([
     ],
     Server::class => function () {
         // Setup the authorization server
-        $server = new Server(
-            new ClientRepository(),
+        $server = new ResourceServer(
             new AccessTokenRepository(),
-            new ScopeRepository(),
-            'file://' . __DIR__ . '/../private.key',
             'file://' . __DIR__ . '/../public.key'
         );
 
@@ -54,12 +50,14 @@ $app->get('/users', function (ServerRequestInterface $request, ResponseInterface
         ],
     ];
 
+    // If the access token doesn't have the `basic` scope hide users' names
     if (in_array('basic', $request->getAttribute('oauth_scopes')) === false) {
         for ($i = 0; $i < count($users); $i++) {
             unset($users[$i]['name']);
         }
     }
 
+    // If the access token doesn't have the `emal` scope hide users' email addresses
     if (in_array('email', $request->getAttribute('oauth_scopes')) === false) {
         for ($i = 0; $i < count($users); $i++) {
             unset($users[$i]['email']);
