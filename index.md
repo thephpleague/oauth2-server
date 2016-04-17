@@ -3,17 +3,6 @@ layout: default
 title: Introduction
 ---
 
-<div style="margin-top:1rem; color: #31708f; background-color: #d9edf7; padding: 15px; margin-bottom: 1rem; border: 1px solid #bcdff1; border-radius: .25rem; font-size: 1.5rem">
-
-<p>This is the documentation for the second version 5 release candidate.</p>
-
-<p>Version 5 is stable and is the recommended version that you should implement as it is significantly simpler to work with.</p>
-
-<p>Version 4 docs can be <a href="/V4-docs/">found here</a>.</p>
-
-</div>
-
-
 # Introduction
 
 [![Author](http://img.shields.io/badge/author-@alexbilbie-red.svg?style=flat-square)](https://twitter.com/alexbilbie)
