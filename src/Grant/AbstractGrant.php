@@ -215,7 +215,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         foreach ($scopesList as $scopeItem) {
             $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeItem);
 
-            if (($scope instanceof ScopeEntityInterface) === false) {
+            if (!$scope instanceof ScopeEntityInterface) {
                 throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
             }
 
