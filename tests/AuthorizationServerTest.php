@@ -2,6 +2,7 @@
 
 namespace LeagueTests;
 
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
@@ -13,7 +14,6 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
-use League\OAuth2\Server\AuthorizationServer;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
@@ -94,7 +94,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($method->invoke($server) instanceof BearerTokenResponse);
     }
-    
+
     public function testCompleteAuthorizationRequest()
     {
         $clientRepository = $this->getMock(ClientRepositoryInterface::class);
