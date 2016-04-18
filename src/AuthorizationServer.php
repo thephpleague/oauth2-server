@@ -204,7 +204,7 @@ class AuthorizationServer implements EmitterAwareInterface
     protected function getResponseType()
     {
         if (!$this->responseType instanceof ResponseTypeInterface) {
-            $this->responseType = new BearerTokenResponse($this->accessTokenRepository);
+            $this->responseType = new BearerTokenResponse();
         }
 
         $this->responseType->setPrivateKey($this->privateKey);
