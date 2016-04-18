@@ -30,9 +30,9 @@ $app = new App([
         $accessTokenRepository = new AccessTokenRepository(); // instance of AccessTokenRepositoryInterface
 
         // Path to public and private keys
-        $privateKey = 'file://path/to/private.key';
+        $privateKey = 'file://'.__DIR__.'/../private.key';
         //$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // if private key has a pass phrase
-        $publicKey = 'file://path/to/public.key';
+        $publicKey = 'file://'.__DIR__.'/../public.key';
 
         // Setup the authorization server
         $server = new AuthorizationServer(
