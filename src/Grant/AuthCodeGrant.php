@@ -108,7 +108,12 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             }
 
             // Finalize the requested scopes
-            $scopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $authCodePayload->user_id);
+            $scopes = $this->scopeRepository->finalizeScopes(
+                $scopes,
+                $this->getIdentifier(),
+                $client,
+                $authCodePayload->user_id
+            );
         } catch (\LogicException  $e) {
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code');
         }
@@ -234,25 +239,25 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $authorizationRequest->getScopes()
             );
 
-            $redirectPayload['code'] = $this->encrypt(
-                json_encode(
-                    [
-                        'client_id'    => $authCode->getClient()->getIdentifier(),
-                        'redirect_uri' => $authCode->getRedirectUri(),
-                        'auth_code_id' => $authCode->getIdentifier(),
-                        'scopes'       => $authCode->getScopes(),
-                        'user_id'      => $authCode->getUserIdentifier(),
-                        'expire_time'  => (new \DateTime())->add($this->authCodeTTL)->format('U'),
-                    ]
-                )
-            );
-            $redirectPayload['state'] = $authorizationRequest->getState();
-
             $response = new RedirectResponse();
             $response->setRedirectUri(
                 $this->makeRedirectUri(
                     $finalRedirectUri,
-                    $redirectPayload
+                    [
+                        'code'  => $this->encrypt(
+                            json_encode(
+                                [
+                                    'client_id'    => $authCode->getClient()->getIdentifier(),
+                                    'redirect_uri' => $authCode->getRedirectUri(),
+                                    'auth_code_id' => $authCode->getIdentifier(),
+                                    'scopes'       => $authCode->getScopes(),
+                                    'user_id'      => $authCode->getUserIdentifier(),
+                                    'expire_time'  => (new \DateTime())->add($this->authCodeTTL)->format('U'),
+                                ]
+                            )
+                        ),
+                        'state' => $authorizationRequest->getState(),
+                    ]
                 )
             );
 
