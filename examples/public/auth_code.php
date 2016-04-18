@@ -29,7 +29,7 @@ $app = new App([
     ],
     AuthorizationServer::class => function () {
         // Init our repositories
-        $clientRepository = new ClientReptository();
+        $clientRepository = new ClientRepository();
         $scopeRepository = new ScopeRepository();
         $accessTokenRepository = new AccessTokenRepository();
         $authCodeRepository = new AuthCodeRepository();
