@@ -1,11 +1,4 @@
 <?php
-/**
- * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) Alex Bilbie
- * @license     http://mit-license.org/
- *
- * @link        https://github.com/thephpleague/oauth2-server
- */
 
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -18,58 +11,64 @@ use OAuth2ServerExamples\Repositories\UserRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Zend\Diactoros\Stream;
 
 include __DIR__ . '/../vendor/autoload.php';
 
 $app = new App([
-    'settings'    => [
-        'displayErrorDetails' => true,
-    ],
+    // Add the authorization server to the DI container
     AuthorizationServer::class => function () {
-        // Init our repositories
-        $clientRepository = new ClientRepository();
-        $accessTokenRepository = new AccessTokenRepository();
-        $scopeRepository = new ScopeRepository();
-        $userRepository = new UserRepository();
-        $refreshTokenRepository = new RefreshTokenRepository();
-
-        $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
-        $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
 
         // Setup the authorization server
         $server = new AuthorizationServer(
-            $clientRepository,
-            $accessTokenRepository,
-            $scopeRepository,
-            $privateKeyPath,
-            $publicKeyPath
+            new ClientRepository(),                 // instance of ClientRepositoryInterface
+            new AccessTokenRepository(),            // instance of AccessTokenRepositoryInterface
+            new ScopeRepository(),                  // instance of ScopeRepositoryInterface
+            'file://'.__DIR__.'/../private.key',    // path to private key
+            'file://'.__DIR__.'/../public.key'      // path to public key
         );
+
+        $grant = new PasswordGrant(
+            new UserRepository(),           // instance of UserRepositoryInterface
+            new RefreshTokenRepository()    // instance of RefreshTokenRepositoryInterface
+        );
+        $grant->setRefreshTokenTTL(new \DateInterval('P1M')); // refresh tokens will expire after 1 month
 
         // Enable the password grant on the server with a token TTL of 1 hour
         $server->enableGrantType(
-            new PasswordGrant($userRepository, $refreshTokenRepository),
-            new \DateInterval('PT1H')
+            $grant,
+            new \DateInterval('PT1H') // access tokens will expire after 1 month
         );
 
         return $server;
     },
 ]);
 
-$app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
-    /* @var \League\OAuth2\Server\AuthorizationServer $server */
-    $server = $app->getContainer()->get(AuthorizationServer::class);
+$app->post(
+    '/access_token',
+    function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
 
-    try {
-        return $server->respondToAccessTokenRequest($request, $response);
-    } catch (OAuthServerException $exception) {
-        return $exception->generateHttpResponse($response);
-    } catch (\Exception $exception) {
-        $body = new Stream('php://temp', 'r+');
-        $body->write($exception->getMessage());
+        /* @var \League\OAuth2\Server\AuthorizationServer $server */
+        $server = $app->getContainer()->get(AuthorizationServer::class);
 
-        return $response->withStatus(500)->withBody($body);
+        try {
+
+            // Try to respond to the access token request
+            return $server->respondToAccessTokenRequest($request, $response);
+
+        } catch (OAuthServerException $exception) {
+
+            // All instances of OAuthServerException can be converted to a PSR-7 response
+            return $exception->generateHttpResponse($response);
+
+        } catch (\Exception $exception) {
+
+            // Catch unexpected exceptions
+            $body = $response->getBody();
+            $body->write($exception->getMessage());
+            return $response->withStatus(500)->withBody($body);
+
+        }
     }
-});
+);
 
 $app->run();
