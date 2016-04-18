@@ -1,6 +1,10 @@
 # Changelog
 
-## 5.0.0 (release 2016-04-17)
+## 5.0.1 (released 2016-04-18)
+
+* Fixes an issue (#550) whereby it was unclear whether or not to validate a client's secret during a request.
+
+## 5.0.0 (released 2016-04-17)
 
 Version 5 is a complete code rewrite.
 
