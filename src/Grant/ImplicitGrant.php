@@ -185,15 +185,15 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $authorizationRequest->getScopes()
             );
 
-            $redirectPayload['access_token'] = (string) $accessToken->convertToJWT($this->privateKey);
-            $redirectPayload['token_type'] = 'bearer';
-            $redirectPayload['expires_in'] = $accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp();
-
             $response = new RedirectResponse();
             $response->setRedirectUri(
                 $this->makeRedirectUri(
                     $finalRedirectUri,
-                    $redirectPayload,
+                    [
+                        'access_token' => (string) $accessToken->convertToJWT($this->privateKey),
+                        'token_type'   => 'bearer',
+                        'expires_in'   => $accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp(),
+                    ],
                     '#'
                 )
             );
