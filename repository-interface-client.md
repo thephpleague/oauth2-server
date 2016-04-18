@@ -10,9 +10,7 @@ permalink: /client-repository-interface/
 
 This method is called to validate a client's credentials.
 
-The client secret may or may not be provided depending on the request sent by the client. If the client secret is sent it must be validated.
-
-If the grant type is equal to `client_credentials` you should always validate the client secret.
+The client secret may or may not be provided depending on the request sent by the client. The boolean `$mustValidateSecret` parameter will indicate whether or not the client secret must be validated. If the client is confidential (i.e. is capable of securely storing a secret) and `$mustValidateSecret === true` then the secret must be validated.
 
 You can use the grant type to determine if the client is permitted to use the grant type.
 
