@@ -161,7 +161,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         $client = $this->clientRepository->getClientEntity(
             $clientId,
             $this->getIdentifier(),
-            $clientSecret
+            $clientSecret,
+            true
         );
 
         if (!$client instanceof ClientEntityInterface) {

@@ -165,7 +165,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $client = $this->clientRepository->getClientEntity(
             $clientId,
-            $this->getIdentifier()
+            $this->getIdentifier(),
+            null,
+            false
         );
 
         if ($client instanceof ClientEntityInterface === false) {
