@@ -2,7 +2,6 @@ filter:
     excluded_paths:
         - tests/*
         - vendor/*
-        - examples/*
 checks:
     php:
         code_rating: true
