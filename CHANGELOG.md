@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.2 (released 2016-04-18)
+
+* `state` parameter is now correctly returned after implicit grant authorization
+* Small code and docblock improvements
+
 ## 5.0.1 (released 2016-04-18)
 
 * Fixes an issue (#550) whereby it was unclear whether or not to validate a client's secret during a request.
