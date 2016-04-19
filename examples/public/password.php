@@ -36,7 +36,7 @@ $app = new App([
         // Enable the password grant on the server with a token TTL of 1 hour
         $server->enableGrantType(
             $grant,
-            new \DateInterval('PT1H') // access tokens will expire after 1 month
+            new \DateInterval('PT1H') // access tokens will expire after 1 hour
         );
 
         return $server;
