@@ -6,6 +6,14 @@ permalink: /auth-code-repository-interface/
 
 # Auth Code Repository Interface
 
+## getNewAuthCode() : AuthCodeEntityInterface
+
+This method should return an implementation of `\League\OAuth2\Server\Entities\AuthCodeEntityInterface`. You can use the following traits to help you implement the required methods from that interface:
+
+* `League\OAuth2\Server\Entities\Traits\EntityTrait`
+* `League\OAuth2\Server\Entities\Traits\TokenEntityTrait`
+* `League\OAuth2\Server\Entities\Traits\AuthCodeTrait`
+
 ## persistNewAuthCode() : void
 
 When a new access token is created this method will be called. You don't have to do anything here but for auditing you probably want to.

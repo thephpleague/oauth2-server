@@ -6,6 +6,13 @@ permalink: /refresh-token-repository-interface/
 
 # Refresh Token Repository Interface
 
+## getNewRefreshToken() : RefreshTokenEntityInterface
+
+This method should return an implementation of `\League\OAuth2\Server\Entities\RefreshTokenEntityInterface`. You can use the following traits to help you implement the required methods from that interface:
+
+* `League\OAuth2\Server\Entities\Traits\RefreshTokenTrait`
+* `League\OAuth2\Server\Entities\Traits\EntityTrait`
+
 ## persistNewRefreshToken() : void
 
 When a new refresh token is created this method will be called. You don't have to do anything here but for auditing you might want to.
