@@ -11,8 +11,14 @@ namespace League\OAuth2\Server\Entities\Traits;
 
 trait ClientTrait
 {
+    /**
+     * @var null|string
+     */
     protected $name;
 
+    /**
+     * @var null|string|string[]
+     */
     protected $redirectUri;
 
     /**
@@ -27,6 +33,16 @@ trait ClientTrait
     }
 
     /**
+     * Set the client's name.
+     *
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
      * Returns the registered redirect URI (as a string).
      *
      * Alternatively return an indexed array of redirect URIs.
@@ -36,5 +52,17 @@ trait ClientTrait
     public function getRedirectUri()
     {
         return $this->redirectUri;
+    }
+
+    /**
+     * Sets the registered redirect URI (as a string).
+     *
+     * Alternatively set an indexed array of redirect URIs.
+     *
+     * @param string|string[] $uri
+     */
+    public function setRedirectUri($uri)
+    {
+        $this->redirectUri = $uri;
     }
 }
