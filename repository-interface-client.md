@@ -15,3 +15,8 @@ The client secret may or may not be provided depending on the request sent by th
 You can use the grant type to determine if the client is permitted to use the grant type.
 
 If the client's credentials are validated you should return an instance of `\League\OAuth2\Server\Entities\Interfaces\ClientEntityInterface`
+
+There are two grants you can use to help you implement some of the `ClientEntityInterface` methods:
+
+* `\League\OAuth2\Server\Entities\Traits\ClientTrait`
+* `\League\OAuth2\Server\Entities\Traits\EntityTrait`
