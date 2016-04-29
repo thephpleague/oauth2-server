@@ -59,7 +59,7 @@ $grant = new \League\OAuth2\Server\Grant\PasswordGrant(
      $refreshTokenRepository
 );
 
-$grant->setRefreshTokenTTL(new \DateTime('P1M')); // refresh tokens will expire after 1 month
+$grant->setRefreshTokenTTL(new \DateInterval('P1M')); // refresh tokens will expire after 1 month
 
 // Enable the password grant on the server
 $server->enableGrantType(
