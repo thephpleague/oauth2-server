@@ -13,6 +13,7 @@ use DateInterval;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
+use League\OAuth2\Server\Events;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
@@ -176,7 +177,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         );
 
         if ($client instanceof ClientEntityInterface === false) {
-            $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
+            $this->getEmitter()->emit(new RequestEvent(Events::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
         }
 
@@ -186,13 +187,13 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 is_string($client->getRedirectUri())
                 && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
             ) {
-                $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
+                $this->getEmitter()->emit(new RequestEvent(Events::CLIENT_AUTHENTICATION_FAILED, $request));
                 throw OAuthServerException::invalidClient();
             } elseif (
                 is_array($client->getRedirectUri())
                 && in_array($redirectUri, $client->getRedirectUri()) === false
             ) {
-                $this->getEmitter()->emit(new RequestEvent('client.authentication.failed', $request));
+                $this->getEmitter()->emit(new RequestEvent(Events::CLIENT_AUTHENTICATION_FAILED, $request));
                 throw OAuthServerException::invalidClient();
             }
         }

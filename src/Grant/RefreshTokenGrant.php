@@ -11,6 +11,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\Events;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
@@ -107,7 +108,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         $refreshTokenData = json_decode($refreshToken, true);
         if ($refreshTokenData['client_id'] !== $clientId) {
-            $this->getEmitter()->emit(new RequestEvent('refresh_token.client.failed', $request));
+            $this->getEmitter()->emit(new RequestEvent(Events::REFRESH_TOKEN_CLIENT_FAILED, $request));
             throw OAuthServerException::invalidRefreshToken('Token is not linked to client');
         }
 
