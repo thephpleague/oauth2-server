@@ -12,6 +12,7 @@ namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
+use League\OAuth2\Server\Events;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
@@ -92,7 +93,7 @@ class PasswordGrant extends AbstractGrant
             $client
         );
         if (!$user instanceof UserEntityInterface) {
-            $this->getEmitter()->emit(new RequestEvent('user.authentication.failed', $request));
+            $this->getEmitter()->emit(new RequestEvent(Events::USER_AUTHENTICATION_FAILED, $request));
 
             throw OAuthServerException::invalidCredentials();
         }
