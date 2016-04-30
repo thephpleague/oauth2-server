@@ -36,11 +36,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     const SCOPE_DELIMITER_STRING = ' ';
 
     /**
-     * @var ServerRequestInterface
-     */
-    protected $request;
-
-    /**
      * @var ClientRepositoryInterface
      */
     protected $clientRepository;
