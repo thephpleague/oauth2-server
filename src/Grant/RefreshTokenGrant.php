@@ -107,7 +107,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         $refreshTokenData = json_decode($refreshToken, true);
         if ($refreshTokenData['client_id'] !== $clientId) {
-            $this->getEmitter()->emit(new RequestEvent('refresh_token.client.failed', $request));
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_CLIENT_FAILED, $request));
             throw OAuthServerException::invalidRefreshToken('Token is not linked to client');
         }
 

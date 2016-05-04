@@ -13,6 +13,10 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestEvent extends Event
 {
+    const CLIENT_AUTHENTICATION_FAILED = 'client.authentication.failed';
+    const USER_AUTHENTICATION_FAILED = 'user.authentication.failed';
+    const REFRESH_TOKEN_CLIENT_FAILED = 'refresh_token.client.failed';
+
     /**
      * @var \Psr\Http\Message\ServerRequestInterface
      */
