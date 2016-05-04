@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.0.3 (released 2016-05-04)
+
+* Fix hints in PasswordGrant (Issue #560)
+* Add meaning of `Resource owner` to terminology.md (Issue #561)
+* Use constant for event name instead of explicit string (Issue #563)
+* Remove unused request property (Issue #564)
+* Correct wrong phpdoc (Issue #569)
+* Fixed typo in exception string (Issue #570)
+
 ## 5.0.2 (released 2016-04-18)
 
 * `state` parameter is now correctly returned after implicit grant authorization
