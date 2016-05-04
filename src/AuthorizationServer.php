@@ -156,7 +156,7 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param \League\OAuth2\Server\RequestTypes\AuthorizationRequest $authRequest
      * @param \Psr\Http\Message\ResponseInterface                     $response
      *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public function completeAuthorizationRequest(AuthorizationRequest $authRequest, ResponseInterface $response)
     {
