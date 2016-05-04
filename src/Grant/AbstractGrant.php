@@ -295,7 +295,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $userIdentifier,
         array $scopes = []
     ) {
-        $accessToken = $this->accessTokenRepository->getNewToken();
+        $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
         $accessToken->setClient($client);
         $accessToken->setUserIdentifier($userIdentifier);
         $accessToken->setIdentifier($this->generateUniqueIdentifier());
