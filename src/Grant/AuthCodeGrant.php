@@ -196,6 +196,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidClient();
             }
         }
+        elseif(is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
+            || empty($client->getRedirectUri())) {
+            $this->getEmitter()->emit(new RequestEvent(Events::CLIENT_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidClient();
+        }
 
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request),
