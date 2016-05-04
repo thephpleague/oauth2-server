@@ -30,9 +30,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private $authCodeTTL;
 
     /**
-     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface     $authCodeRepository
+     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface $authCodeRepository
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
-     * @param \DateInterval                                                      $authCodeTTL
+     * @param \DateInterval $authCodeTTL
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
@@ -48,9 +48,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Respond to an access token request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface                  $request
+     * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param \DateInterval                                             $accessTokenTTL
+     * @param \DateInterval $accessTokenTTL
      *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      *
@@ -195,6 +195,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
                 throw OAuthServerException::invalidClient();
             }
+        } elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
+            || empty($client->getRedirectUri())
+        ) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidClient();
         }
 
         $scopes = $this->validateScopes(
@@ -246,15 +251,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $this->makeRedirectUri(
                     $finalRedirectUri,
                     [
-                        'code'  => $this->encrypt(
+                        'code' => $this->encrypt(
                             json_encode(
                                 [
-                                    'client_id'    => $authCode->getClient()->getIdentifier(),
+                                    'client_id' => $authCode->getClient()->getIdentifier(),
                                     'redirect_uri' => $authCode->getRedirectUri(),
                                     'auth_code_id' => $authCode->getIdentifier(),
-                                    'scopes'       => $authCode->getScopes(),
-                                    'user_id'      => $authCode->getUserIdentifier(),
-                                    'expire_time'  => (new \DateTime())->add($this->authCodeTTL)->format('U'),
+                                    'scopes' => $authCode->getScopes(),
+                                    'user_id' => $authCode->getUserIdentifier(),
+                                    'expire_time' => (new \DateTime())->add($this->authCodeTTL)->format('U'),
                                 ]
                             )
                         ),

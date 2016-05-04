@@ -32,8 +32,8 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $this->getMock(ClientRepositoryInterface::class),
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key',
+            'file://'.__DIR__.'/Stubs/private.key',
+            'file://'.__DIR__.'/Stubs/public.key',
             new StubResponseType()
         );
 
@@ -62,8 +62,8 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $accessTokenRepositoryMock,
             $scopeRepositoryMock,
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key',
+            'file://'.__DIR__.'/Stubs/private.key',
+            'file://'.__DIR__.'/Stubs/public.key',
             new StubResponseType()
         );
 
@@ -84,8 +84,8 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key'
+            'file://'.__DIR__.'/Stubs/private.key',
+            'file://'.__DIR__.'/Stubs/public.key'
         );
 
         $abstractGrantReflection = new \ReflectionClass($server);
@@ -103,8 +103,8 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $clientRepository,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key'
+            'file://'.__DIR__.'/Stubs/private.key',
+            'file://'.__DIR__.'/Stubs/public.key'
         );
 
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
@@ -116,8 +116,8 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             new \DateInterval('PT10M')
         );
 
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://'.__DIR__.'/Stubs/private.key'));
+        $grant->setPublicKey(new CryptKey('file://'.__DIR__.'/Stubs/public.key'));
 
         $server->enableGrantType($grant);
 
@@ -135,6 +135,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     public function testValidateAuthorizationRequest()
     {
         $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -149,8 +150,8 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $clientRepositoryMock,
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key'
+            'file://'.__DIR__.'/Stubs/private.key',
+            'file://'.__DIR__.'/Stubs/public.key'
         );
         $server->enableGrantType($grant);
 
@@ -164,11 +165,55 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id'     => 'foo',
+                'client_id' => 'foo'
             ]
         );
 
         $this->assertTrue($server->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+    }
+
+    public function testValidateAuthorizationRequestWithMissingRedirectUri()
+    {
+        $client = new ClientEntity();
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $grant = new AuthCodeGrant(
+            $this->getMock(AuthCodeRepositoryInterface::class),
+            $this->getMock(RefreshTokenRepositoryInterface::class),
+            new \DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+
+        $server = new AuthorizationServer(
+            $clientRepositoryMock,
+            $this->getMock(AccessTokenRepositoryInterface::class),
+            $this->getMock(ScopeRepositoryInterface::class),
+            'file://'.__DIR__.'/Stubs/private.key',
+            'file://'.__DIR__.'/Stubs/public.key'
+        );
+        $server->enableGrantType($grant);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
+                'response_type' => 'code',
+                'client_id' => 'foo'
+            ]
+        );
+
+        try {
+            $server->validateAuthorizationRequest($request);
+        } catch (OAuthServerException $e) {
+            $this->assertEquals('invalid_client', $e->getErrorType());
+            $this->assertEquals(401, $e->getHttpStatusCode());
+        }
     }
 
     /**
@@ -181,8 +226,8 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $this->getMock(ClientRepositoryInterface::class),
             $this->getMock(AccessTokenRepositoryInterface::class),
             $this->getMock(ScopeRepositoryInterface::class),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key'
+            'file://'.__DIR__.'/Stubs/private.key',
+            'file://'.__DIR__.'/Stubs/public.key'
         );
 
         $request = new ServerRequest(
@@ -195,7 +240,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
             ]
         );
 
