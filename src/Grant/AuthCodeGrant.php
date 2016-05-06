@@ -30,6 +30,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private $authCodeTTL;
 
     /**
+     * @var bool
+     */
+    private $enableCodeExchangeProof = false;
+
+    /**
      * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface     $authCodeRepository
      * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \DateInterval                                                      $authCodeTTL
@@ -43,6 +48,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->authCodeTTL = $authCodeTTL;
         $this->refreshTokenTTL = new \DateInterval('P1M');
+    }
+
+    public function enableCodeExchangeProof()
+    {
+        $this->enableCodeExchangeProof = true;
     }
 
     /**
@@ -116,6 +126,42 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             );
         } catch (\LogicException  $e) {
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code');
+        }
+
+        // Validate code challenge
+        if ($this->enableCodeExchangeProof === true) {
+            $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
+            if ($codeVerifier === null) {
+                throw OAuthServerException::invalidRequest('code_verifier');
+            }
+
+            switch ($authCodePayload->code_challenge_method) {
+                case 'plain':
+                    if (hash_equals($codeVerifier, $authCodePayload->code_challenge) === false) {
+                        throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
+                    }
+
+                    break;
+                case 'S256':
+                    if (
+                        hash_equals(
+                            urlencode(base64_encode(hash('sha256', $codeVerifier))),
+                            $authCodePayload->code_challenge
+                        ) === false
+                    ) {
+                        throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
+                    }
+                    // @codeCoverageIgnoreStart
+                    break;
+                default:
+                    throw OAuthServerException::serverError(
+                        sprintf(
+                            'Unsupported code challenge method `%s`',
+                            $authCodePayload->code_challenge_method
+                        )
+                    );
+                // @codeCoverageIgnoreEnd
+            }
         }
 
         // Issue and persist access + refresh tokens
@@ -213,6 +259,24 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $authorizationRequest->setState($stateParameter);
         $authorizationRequest->setScopes($scopes);
 
+        if ($this->enableCodeExchangeProof === true) {
+            $codeChallenge = $this->getQueryStringParameter('code_challenge', $request);
+            if ($codeChallenge === null) {
+                throw OAuthServerException::invalidRequest('code_challenge');
+            }
+
+            $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
+            if (in_array($codeChallengeMethod, ['plain', 'S256']) === false) {
+                throw OAuthServerException::invalidRequest(
+                    'code_challenge_method',
+                    'Code challenge method must be `plain` or `S256`'
+                );
+            }
+
+            $authorizationRequest->setCodeChallenge($codeChallenge);
+            $authorizationRequest->setCodeChallengeMethod($codeChallengeMethod);
+        }
+
         return $authorizationRequest;
     }
 
@@ -249,12 +313,14 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                         'code'  => $this->encrypt(
                             json_encode(
                                 [
-                                    'client_id'    => $authCode->getClient()->getIdentifier(),
-                                    'redirect_uri' => $authCode->getRedirectUri(),
-                                    'auth_code_id' => $authCode->getIdentifier(),
-                                    'scopes'       => $authCode->getScopes(),
-                                    'user_id'      => $authCode->getUserIdentifier(),
-                                    'expire_time'  => (new \DateTime())->add($this->authCodeTTL)->format('U'),
+                                    'client_id'               => $authCode->getClient()->getIdentifier(),
+                                    'redirect_uri'            => $authCode->getRedirectUri(),
+                                    'auth_code_id'            => $authCode->getIdentifier(),
+                                    'scopes'                  => $authCode->getScopes(),
+                                    'user_id'                 => $authCode->getUserIdentifier(),
+                                    'expire_time'             => (new \DateTime())->add($this->authCodeTTL)->format('U'),
+                                    'code_challenge'          => $authorizationRequest->getCodeChallenge(),
+                                    'code_challenge_method  ' => $authorizationRequest->getCodeChallengeMethod(),
                                 ]
                             )
                         ),

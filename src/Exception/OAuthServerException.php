@@ -173,6 +173,26 @@ class OAuthServerException extends \Exception
     }
 
     /**
+     * Invalid grant.
+     *
+     * @param string $hint
+     *
+     * @return static
+     */
+    public static function invalidGrant($hint = '')
+    {
+        return new static(
+            'The provided authorization grant (e.g., authorization code, resource owner credentials) or refresh token '
+                . 'is invalid, expired, revoked, does not match the redirection URI used in the authorization request, '
+                . 'or was issued to another client.',
+            10,
+            'invalid_grant',
+            400,
+            $hint
+        );
+    }
+
+    /**
      * @return string
      */
     public function getErrorType()

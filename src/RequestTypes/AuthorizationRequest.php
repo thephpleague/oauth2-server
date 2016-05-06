@@ -65,6 +65,18 @@ class AuthorizationRequest
     protected $state;
 
     /**
+     * The code challenge (if provided)
+     * @var string
+     */
+    protected $codeChallenge;
+
+    /**
+     * The code challenge method (if provided)
+     * @var string
+     */
+    protected $codeChallengeMethod;
+
+    /**
      * @return string
      */
     public function getGrantTypeId()
@@ -174,5 +186,37 @@ class AuthorizationRequest
     public function setState($state)
     {
         $this->state = $state;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCodeChallenge()
+    {
+        return $this->codeChallenge;
+    }
+
+    /**
+     * @param string $codeChallenge
+     */
+    public function setCodeChallenge($codeChallenge)
+    {
+        $this->codeChallenge = $codeChallenge;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCodeChallengeMethod()
+    {
+        return $this->codeChallengeMethod;
+    }
+
+    /**
+     * @param string $codeChallengeMethod
+     */
+    public function setCodeChallengeMethod($codeChallengeMethod)
+    {
+        $this->codeChallengeMethod = $codeChallengeMethod;
     }
 }
