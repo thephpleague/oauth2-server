@@ -40,6 +40,11 @@ trait AccessTokenTrait
     }
 
     /**
+     * @return mixed
+     */
+    abstract public function getIdentifier();
+    
+    /**
      * @return ClientEntityInterface
      */
     abstract public function getClient();
