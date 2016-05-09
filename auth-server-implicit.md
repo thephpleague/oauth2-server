@@ -60,7 +60,6 @@ $server = new \League\OAuth2\Server\AuthorizationServer(
 );
 
 // Enable the implicit grant on the server
-
 $server->enableGrantType(
     new ImplicitGrant(new \DateInterval('PT1H')),
     new \DateInterval('PT1H') // access tokens will expire after 1 hour
