@@ -37,6 +37,4 @@ The latest release is [![GitHub tag](https://img.shields.io/github/tag/thephplea
 
 Please ask questions on the [Github issues page](https://github.com/thephpleague/oauth2-server/issues).
 
-<!--
 For commercial support and custom implementations please visit [Glynde Labs](https://glyndelabs.com).
--->
