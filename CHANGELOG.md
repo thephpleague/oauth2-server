@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.1.0 (released 2016-05-XX)
+
+* Implemented RFC7636 (Issue #574) 
+
 ## 5.0.3 (released 2016-05-04)
 
 * Fix hints in PasswordGrant (Issue #560)
