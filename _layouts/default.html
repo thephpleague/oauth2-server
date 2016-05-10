@@ -23,6 +23,26 @@
         <link rel="apple-touch-icon-precomposed" href="//theme.thephpleague.com/img/apple-touch-icon-precomposed.png">
     {% endif %}
     <link rel="stylesheet" href="//theme.thephpleague.com/css/all.css">
+
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css"/>
+	<style>
+        menu .tool {
+            margin: 15px 0 0 0;
+            padding: 0 45px;
+        }
+        menu .search {
+            display: inline-block;
+            width: 100%;
+            padding: 7px 10px;
+            color: #6abcdd;
+            font-size: 14px;
+            font-family: "Museo Sans 300";
+            border: 0;
+            outline: 0;
+            background: #22303f;
+            border-radius: 3px;
+        }
+	</style>
 </head>
 <body>
 
@@ -59,6 +79,9 @@
 
 <main>
     <menu>
+        <div class="tool">
+            <input id="search" class="search" placeholder="Search&hellip;">
+        </div>
         {% for section in site.data.menu %}
             <h2>{{ section[0] }}</h2>
             <ul>
@@ -83,6 +106,14 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="//theme.thephpleague.com/js/scripts.js"></script>
 <script src="//theme.thephpleague.com/js/prism.js"></script>
+
+<script type="text/javascript" src="//cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script>
+<script type="text/javascript"> docsearch({
+    apiKey: '8dd21e312297ec1560d4bace1405d856',
+    indexName: 'oauth2-thephpleague',
+    inputSelector: '#search'
+});
+</script>
 
 {% if site.data.project.google_analytics_tracking_id %}
     <script>
