@@ -58,8 +58,7 @@ If you have any questions about OAuth _please_ open a ticket here; please **don'
 
 ## Commercial Support
 
-If you would like help implementing this library into your existing platform, or would like to 
- some advice or training for you and your team please email Alex Bilbie at `hello@glyndelabs.com`.
+If you would like help implementing this library into your existing platform, or would be interested in OAuth advice or training for you and your team please get in touch with [Glynde Labs](https://glyndelabs.com).
 
 ## Security
 
