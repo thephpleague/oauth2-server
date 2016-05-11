@@ -46,9 +46,8 @@ class ResourceServerMiddleware
             return $exception->generateHttpResponse($response);
             // @codeCoverageIgnoreStart
         } catch (\Exception $exception) {
-            $response->getBody()->write($exception->getMessage());
-
-            return $response->withStatus(500);
+            return (new OAuthServerException($exception->getMessage(), 0, 'unknown_error', 500))
+                ->generateHttpResponse($response);
             // @codeCoverageIgnoreEnd
         }
 
