@@ -37,7 +37,7 @@ The client will now send a POST request to the authorization server with the fol
 * `client_id` with the client identifier
 * `client_secret` with the client secret
 * `redirect_uri` with the same redirect URI the user was redirect back to
-* `code` with the authorization code from the query string (remember to url decode it first)
+* `code` with the authorization code from the query string **(remember to url decode it first)**
 
 The authorization server will respond with a JSON object containing the following properties:
 
