@@ -24,7 +24,7 @@ All of these parameters will be validated by the authorization server.
 
 The user will then be asked to login to the authorization server and approve the client.
 
-If the user approves the client they will be redirected back to the authorization server with the following parameters in the query string:
+If the user approves the client they will be redirected from the authorisation server to the client's redirect URI with the following parameters in the query string:'
 
 * `code` with the authorization code
 * `state` with the state parameter sent in the original request. You should compare this value with the value stored in the user's session to ensure the authorization code obtained is in response to requests made by this client rather than another client application.
