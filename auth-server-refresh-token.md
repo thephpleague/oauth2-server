@@ -13,6 +13,7 @@ Access tokens eventually expire; however some grants respond with a refresh toke
 The client sends a POST request with following body parameters to the authorization server:
 
 * `grant_type` with the value `refresh_token`
+* `refresh_token` with the refresh token
 * `client_id` with the the client's ID
 * `client_secret` with the client's secret
 * `scope` with a space-delimited list of requested scope permissions. This is optional; if not sent the original scopes will be used, otherwise you can request a reduced set of scopes.
