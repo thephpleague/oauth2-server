@@ -18,7 +18,7 @@ Ensure that you’ve set up your project to [autoload Composer-installed package
 
 Depending on [which grant](/authorization-server/which-grant/) you are implementing you will need to implement a number of repository interfaces. Each grant documentation page lists which repositories are required, and each repository interface has it's own documentation page.
 
-The repositories are expected to return (on success) instances of [entity interfaces](https://github.com/thephpleague/oauth2-server/tree/V5-WIP/src/Entities/Interfaces); to make integration with your existing entities and models as easy as possible though, all required methods have been implemented as traits that you can use.
+The repositories are expected to return (on success) instances of [entity interfaces](https://github.com/thephpleague/oauth2-server/tree/master/src/Entities); to make integration with your existing entities and models as easy as possible though, all required methods have been implemented as traits that you can use.
 
 ## Generating public and private keys
 
