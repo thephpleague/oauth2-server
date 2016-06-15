@@ -79,7 +79,7 @@ $grant = new \League\OAuth2\Server\Grant\AuthCodeGrant(
      new \DateInterval('PT10M') // authorization codes will expire after 10 minutes
  );
 
-$grant->setRefreshTokenTTL(new \DateTime('P1M')); // refresh tokens will expire after 1 month
+$grant->setRefreshTokenTTL(new \DateInterval('P1M')); // refresh tokens will expire after 1 month
 
 // Enable the authentication code grant on the server
 $server->enableGrantType(
