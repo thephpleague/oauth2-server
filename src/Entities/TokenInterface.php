@@ -80,11 +80,4 @@ interface TokenInterface
      * @return ScopeEntityInterface[]
      */
     public function getScopes();
-
-    /**
-     * Has the token expired?
-     *
-     * @return bool
-     */
-    public function isExpired();
 }

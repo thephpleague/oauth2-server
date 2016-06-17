@@ -275,7 +275,6 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         /** @var RefreshTokenEntityInterface $refreshToken */
         $refreshToken = $issueRefreshTokenMethod->invoke($grantMock, $accessToken);
         $this->assertTrue($refreshToken instanceof RefreshTokenEntityInterface);
-        $this->assertFalse($refreshToken->isExpired());
         $this->assertEquals($accessToken, $refreshToken->getAccessToken());
     }
 
@@ -301,7 +300,6 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
             [new ScopeEntity()]
         );
         $this->assertTrue($accessToken instanceof AccessTokenEntityInterface);
-        $this->assertFalse($accessToken->isExpired());
     }
 
     public function testIssueAuthCode()
