@@ -32,6 +32,76 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grantMock->setEmitter(new Emitter());
     }
 
+    public function testHttpBasicWithPassword()
+    {
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ' . base64_encode('Open:Sesame'));
+        $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
+        $basicAuthMethod->setAccessible(true);
+
+        $this->assertSame(['Open', 'Sesame'], $basicAuthMethod->invoke($grantMock, $serverRequest));
+    }
+
+    public function testHttpBasicNoPassword()
+    {
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ' . base64_encode('Open:'));
+        $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
+        $basicAuthMethod->setAccessible(true);
+
+        $this->assertSame(['Open', ''], $basicAuthMethod->invoke($grantMock, $serverRequest));
+    }
+
+    public function testHttpBasicNotBasic()
+    {
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withHeader('Authorization', 'Foo ' . base64_encode('Open:Sesame'));
+        $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
+        $basicAuthMethod->setAccessible(true);
+
+        $this->assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
+    }
+
+    public function testHttpBasicNotBase64()
+    {
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ||');
+        $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
+        $basicAuthMethod->setAccessible(true);
+
+        $this->assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
+    }
+
+    public function testHttpBasicNoColon()
+    {
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ' . base64_encode('OpenSesame'));
+        $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
+        $basicAuthMethod->setAccessible(true);
+
+        $this->assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
+    }
+
     public function testValidateClientPublic()
     {
         $client = new ClientEntity();
