@@ -226,4 +226,31 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
             );
         }
     }
+    
+    public function testDetermineMissingBearerInHeader()
+    {
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+
+        $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
+        $authorizationValidator->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $request = new ServerRequest();
+        $request = $request->withHeader('authorization', 'Bearer blah.blah.blah');
+
+        try {
+            $authorizationValidator->validateAuthorization($request);
+        } catch (OAuthServerException $e) {
+            $this->assertEquals(
+                'Error while decoding to JSON',
+                $e->getHint()
+            );
+        }
+    }
 }
