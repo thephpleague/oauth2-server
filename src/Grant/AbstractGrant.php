@@ -137,21 +137,15 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function validateClient(ServerRequestInterface $request)
     {
-        $clientId = $this->getRequestParameter(
-            'client_id',
-            $request,
-            $this->getServerParameter('PHP_AUTH_USER', $request)
-        );
+        list($basicAuthUser, $basicAuthPassword) = $this->getBasicAuthCredentials($request);
+
+        $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
         if (is_null($clientId)) {
             throw OAuthServerException::invalidRequest('client_id');
         }
 
         // If the client is confidential require the client secret
-        $clientSecret = $this->getRequestParameter(
-            'client_secret',
-            $request,
-            $this->getServerParameter('PHP_AUTH_PW', $request)
-        );
+        $clientSecret = $this->getRequestParameter('client_secret', $request, $basicAuthPassword);
 
         $client = $this->clientRepository->getClientEntity(
             $clientId,
@@ -235,6 +229,38 @@ abstract class AbstractGrant implements GrantTypeInterface
         $requestParameters = (array) $request->getParsedBody();
 
         return isset($requestParameters[$parameter]) ? $requestParameters[$parameter] : $default;
+    }
+
+    /**
+     * Retrieve HTTP Basic Auth credentials with the Authorization header
+     * of a request. First index of the returned array is the username,
+     * second is the password (so list() will work). If the header does
+     * not exist, or is otherwise an invalid HTTP Basic header, return
+     * [null, null].
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @return string[]|null[]
+     */
+    protected function getBasicAuthCredentials(ServerRequestInterface $request)
+    {
+        if (!$request->hasHeader('Authorization')) {
+            return [null, null];
+        }
+
+        $header = $request->getHeader('Authorization')[0];
+        if (strpos($header, 'Basic ') !== 0) {
+            return [null, null];
+        }
+
+        if (!($decoded = base64_decode(substr($header, 6)))) {
+            return [null, null];
+        }
+
+        if (strpos($decoded, ':') === false) {
+            return [null, null]; // HTTP Basic header without colon isn't valid
+        }
+
+        return explode(':', $decoded, 2);
     }
 
     /**
