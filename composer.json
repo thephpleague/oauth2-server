@@ -8,7 +8,7 @@
         "ext-openssl": "*",
         "league/event": "^2.1",
         "lcobucci/jwt": "^3.1",
-        "paragonie/random_compat": "^1.1",
+        "paragonie/random_compat": "^1.1 || ^2.0",
         "psr/http-message": "^1.0"
     },
     "require-dev": {
