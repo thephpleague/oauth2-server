@@ -1,8 +1,17 @@
 # Changelog
 
-## 5.1.0 (released 2016-05-XX)
+## 5.1.0 (released 2016-06-28)
 
-* Implemented RFC7636 (Issue #574) 
+* Implemented RFC7636 (Issue #574)
+* Unify middleware exception responses (Issue #578)
+* Updated examples (Issue #589)
+* Ensure state is in access denied redirect (Issue #597)
+* Remove redundant `isExpired()` method from entity interfaces and traits (Issue #600)
+* Added a check for unique access token constraint violation (Issue #601)
+* Look at Authorization header directly for HTTP Basic auth checks (Issue #604)
+* Added catch Runtime exception when parsing JWT string (Issue #605)
+* Allow `paragonie/random_compat` 2.x (Issue #606)
+* Added `indigophp/hash-compat` to Composer suggestions and `require-dev` for PHP 5.5 support
 
 ## 5.0.3 (released 2016-05-04)
 
