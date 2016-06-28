@@ -3,6 +3,8 @@
 namespace LeagueTests\Grant;
 
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -287,6 +289,78 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+
+        $grant->completeAuthorizationRequest($authRequest);
+    }
+
+    public function testAccessTokenRepositoryUniqueConstraintCheck()
+    {
+        $authRequest = new AuthorizationRequest();
+        $authRequest->setAuthorizationApproved(true);
+        $authRequest->setClient(new ClientEntity());
+        $authRequest->setGrantTypeId('authorization_code');
+        $authRequest->setUser(new UserEntity());
+
+        /** @var AccessTokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject $accessTokenRepositoryMock */
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->expects($this->at(0))->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
+        $accessTokenRepositoryMock->expects($this->at(1))->method('persistNewAccessToken')->willReturnSelf();
+
+        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+
+        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+    }
+
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     * @expectedExceptionCode 7
+     */
+    public function testAccessTokenRepositoryFailToPersist()
+    {
+        $authRequest = new AuthorizationRequest();
+        $authRequest->setAuthorizationApproved(true);
+        $authRequest->setClient(new ClientEntity());
+        $authRequest->setGrantTypeId('authorization_code');
+        $authRequest->setUser(new UserEntity());
+
+        /** @var AccessTokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject $accessTokenRepositoryMock */
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(OAuthServerException::serverError('something bad happened'));
+
+        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+
+        $grant->completeAuthorizationRequest($authRequest);
+    }
+
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException
+     * @expectedExceptionCode 100
+     */
+    public function testAccessTokenRepositoryFailToPersistUniqueNoInfiniteLoop()
+    {
+        $authRequest = new AuthorizationRequest();
+        $authRequest->setAuthorizationApproved(true);
+        $authRequest->setClient(new ClientEntity());
+        $authRequest->setGrantTypeId('authorization_code');
+        $authRequest->setUser(new UserEntity());
+
+        /** @var AccessTokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject $accessTokenRepositoryMock */
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));

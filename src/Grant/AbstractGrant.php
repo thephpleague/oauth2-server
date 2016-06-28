@@ -16,6 +16,7 @@ use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -34,6 +35,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     use EmitterAwareTrait, CryptTrait;
 
     const SCOPE_DELIMITER_STRING = ' ';
+
+    const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
 
     /**
      * @var ClientRepositoryInterface
@@ -321,19 +324,28 @@ abstract class AbstractGrant implements GrantTypeInterface
         $userIdentifier,
         array $scopes = []
     ) {
+        $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
+
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
         $accessToken->setClient($client);
         $accessToken->setUserIdentifier($userIdentifier);
-        $accessToken->setIdentifier($this->generateUniqueIdentifier());
         $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
 
         foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
         }
 
-        $this->accessTokenRepository->persistNewAccessToken($accessToken);
-
-        return $accessToken;
+        while ($maxGenerationAttempts-- > 0) {
+            $accessToken->setIdentifier($this->generateUniqueIdentifier());
+            try {
+                $this->accessTokenRepository->persistNewAccessToken($accessToken);
+                return $accessToken;
+            } catch (UniqueTokenIdentifierConstraintViolationException $e) {
+                if ($maxGenerationAttempts === 0) {
+                    throw $e;
+                }
+            }
+        }
     }
 
     /**
@@ -354,8 +366,9 @@ abstract class AbstractGrant implements GrantTypeInterface
         $redirectUri,
         array $scopes = []
     ) {
+        $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
+
         $authCode = $this->authCodeRepository->getNewAuthCode();
-        $authCode->setIdentifier($this->generateUniqueIdentifier());
         $authCode->setExpiryDateTime((new \DateTime())->add($authCodeTTL));
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
@@ -365,9 +378,17 @@ abstract class AbstractGrant implements GrantTypeInterface
             $authCode->addScope($scope);
         }
 
-        $this->authCodeRepository->persistNewAuthCode($authCode);
-
-        return $authCode;
+        while ($maxGenerationAttempts-- > 0) {
+            $authCode->setIdentifier($this->generateUniqueIdentifier());
+            try {
+                $this->authCodeRepository->persistNewAuthCode($authCode);
+                return $authCode;
+            } catch (UniqueTokenIdentifierConstraintViolationException $e) {
+                if ($maxGenerationAttempts === 0) {
+                    throw $e;
+                }
+            }
+        }
     }
 
     /**
@@ -377,14 +398,23 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function issueRefreshToken(AccessTokenEntityInterface $accessToken)
     {
+        $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
+
         $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
-        $refreshToken->setIdentifier($this->generateUniqueIdentifier());
         $refreshToken->setExpiryDateTime((new \DateTime())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
 
-        $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
-
-        return $refreshToken;
+        while ($maxGenerationAttempts-- > 0) {
+            $refreshToken->setIdentifier($this->generateUniqueIdentifier());
+            try {
+                $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
+                return $refreshToken;
+            } catch (UniqueTokenIdentifierConstraintViolationException $e) {
+                if ($maxGenerationAttempts === 0) {
+                    throw $e;
+                }
+            }
+        }
     }
 
     /**
