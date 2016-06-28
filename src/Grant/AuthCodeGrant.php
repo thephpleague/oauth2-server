@@ -335,7 +335,12 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         // The user denied the client, redirect them back with an error
         throw OAuthServerException::accessDenied(
             'The user denied the request',
-            $finalRedirectUri
+            $this->makeRedirectUri(
+                $finalRedirectUri,
+                [
+                    'state' => $authorizationRequest->getState(),
+                ]
+            )
         );
     }
 }
