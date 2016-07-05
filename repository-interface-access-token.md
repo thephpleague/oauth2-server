@@ -14,8 +14,6 @@ This method should return an implementation of `\League\OAuth2\Server\Entities\A
 * `League\OAuth2\Server\Entities\Traits\EntityTrait`
 * `League\OAuth2\Server\Entities\Traits\TokenEntityTrait`
 
-Note in version `5.0.x` this method has a number of parameters passed in. As of version `5.1.0` these parameters have been removed because they were unnecessary (see issue #553).
-
 ## persistNewAccessToken() : void
 
 When a new access token is created this method will be called. You don't have to do anything here but for auditing you probably want to.
