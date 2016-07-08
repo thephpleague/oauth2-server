@@ -370,4 +370,32 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
         $grant->completeAuthorizationRequest($authRequest);
     }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testSetRefreshTokenTTL()
+    {
+        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant->setRefreshTokenTTL(new \DateInterval('PT10M'));
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testSetRefreshTokenRepository()
+    {
+        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testCompleteAuthorizationRequestNoUser()
+    {
+        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant->completeAuthorizationRequest(new AuthorizationRequest());
+    }
 }
