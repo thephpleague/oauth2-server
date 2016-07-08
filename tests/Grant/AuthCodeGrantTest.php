@@ -1479,4 +1479,18 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
         $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
     }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testCompleteAuthorizationRequestNoUser()
+    {
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+
+        $grant->completeAuthorizationRequest(new AuthorizationRequest());
+    }
 }
