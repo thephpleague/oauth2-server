@@ -45,7 +45,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     }
 
     /**
-     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      *
      * @throw \LogicException
      */
@@ -75,11 +75,11 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     /**
      * Respond to an incoming request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface                  $request
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param \DateInterval                                             $accessTokenTTL
+     * @param ServerRequestInterface $request
+     * @param ResponseTypeInterface  $responseType
+     * @param \DateInterval          $accessTokenTTL
      *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @return ResponseTypeInterface
      */
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
@@ -122,7 +122,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             false
         );
 
-        if ($client instanceof ClientEntityInterface === false) {
+        if (!$client instanceof ClientEntityInterface) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
         }
@@ -168,7 +168,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
      */
     public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
     {
-        if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
+        if (!$authorizationRequest->getUser() instanceof UserEntityInterface) {
             throw new \LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
         }
 

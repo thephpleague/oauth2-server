@@ -21,7 +21,7 @@ trait AccessTokenTrait
     /**
      * Generate a JWT from the access token
      *
-     * @param \League\OAuth2\Server\CryptKey $privateKey
+     * @param CryptKey $privateKey
      *
      * @return string
      */

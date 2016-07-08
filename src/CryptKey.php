@@ -8,6 +8,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server;
 
 class CryptKey
@@ -18,7 +19,7 @@ class CryptKey
     protected $keyPath;
 
     /**
-     * @var string
+     * @var null|string
      */
     protected $passPhrase;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 Bearer Token Type.
+ * OAuth 2.0 Bearer Token Response.
  *
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -8,6 +8,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;

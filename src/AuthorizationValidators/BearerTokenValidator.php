@@ -22,14 +22,12 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     use CryptTrait;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
+     * @var AccessTokenRepositoryInterface
      */
     private $accessTokenRepository;
 
     /**
-     * BearerTokenValidator constructor.
-     *
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     * @param AccessTokenRepositoryInterface $accessTokenRepository
      */
     public function __construct(AccessTokenRepositoryInterface $accessTokenRepository)
     {

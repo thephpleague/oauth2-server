@@ -9,7 +9,6 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use DateInterval;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
@@ -35,9 +34,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private $enableCodeExchangeProof = false;
 
     /**
-     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface     $authCodeRepository
-     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
-     * @param \DateInterval                                                      $authCodeTTL
+     * @param AuthCodeRepositoryInterface     $authCodeRepository
+     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
+     * @param \DateInterval                   $authCodeTTL
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
@@ -58,18 +57,18 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Respond to an access token request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface                  $request
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param \DateInterval                                             $accessTokenTTL
+     * @param ServerRequestInterface $request
+     * @param ResponseTypeInterface  $responseType
+     * @param \DateInterval          $accessTokenTTL
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @return ResponseTypeInterface
      */
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        DateInterval $accessTokenTTL
+        \DateInterval $accessTokenTTL
     ) {
         // Validate request
         $client = $this->validateClient($request);
@@ -221,7 +220,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             false
         );
 
-        if ($client instanceof ClientEntityInterface === false) {
+        if (!$client instanceof ClientEntityInterface) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
         }
@@ -285,7 +284,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      */
     public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
     {
-        if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
+        if (!$authorizationRequest->getUser() instanceof UserEntityInterface) {
             throw new \LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
         }
 

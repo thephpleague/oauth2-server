@@ -8,6 +8,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;

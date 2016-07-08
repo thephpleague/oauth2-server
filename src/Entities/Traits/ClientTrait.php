@@ -11,8 +11,14 @@ namespace League\OAuth2\Server\Entities\Traits;
 
 trait ClientTrait
 {
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var string|string[]
+     */
     protected $redirectUri;
 
     /**

@@ -6,34 +6,38 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ResourceServer
 {
     /**
-     * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
+     * @var AccessTokenRepositoryInterface
      */
     private $accessTokenRepository;
+
     /**
-     * @var \League\OAuth2\Server\CryptKey|string
+     * @var CryptKey
      */
     private $publicKey;
+
     /**
-     * @var \League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface|null
+     * @var null|AuthorizationValidatorInterface
      */
     private $authorizationValidator;
 
     /**
      * New server instance.
      *
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface                  $accessTokenRepository
-     * @param \League\OAuth2\Server\CryptKey|string                                              $publicKey
-     * @param null|\League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface $authorizationValidator
+     * @param AccessTokenRepositoryInterface       $accessTokenRepository
+     * @param CryptKey|string                      $publicKey
+     * @param null|AuthorizationValidatorInterface $authorizationValidator
      */
     public function __construct(
         AccessTokenRepositoryInterface $accessTokenRepository,
@@ -51,7 +55,7 @@ class ResourceServer
     }
 
     /**
-     * @return \League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface
+     * @return AuthorizationValidatorInterface
      */
     protected function getAuthorizationValidator()
     {
@@ -67,11 +71,11 @@ class ResourceServer
     /**
      * Determine the access token validity.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      *
-     * @return \Psr\Http\Message\ServerRequestInterface
+     * @return ServerRequestInterface
      */
     public function validateAuthenticatedRequest(ServerRequestInterface $request)
     {
