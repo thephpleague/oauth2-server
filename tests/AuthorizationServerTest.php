@@ -17,6 +17,7 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\StubCustomResponseType;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use Psr\Http\Message\ResponseInterface;
@@ -93,6 +94,26 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $method->setAccessible(true);
 
         $this->assertTrue($method->invoke($server) instanceof BearerTokenResponse);
+    }
+
+    /**
+     * @group wip
+     */
+    public function testGetResponseTypeCustom()
+    {
+        $server = new AuthorizationServer(
+            $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
+            'file://' . __DIR__ . '/Stubs/private.key',
+            'file://' . __DIR__ . '/Stubs/public.key',
+            new StubCustomResponseType()
+        );
+
+        $method = new \ReflectionMethod($server, 'getResponseType');
+        $method->setAccessible(true);
+
+        $this->assertTrue($method->invoke($server) instanceof StubCustomResponseType);
     }
 
     public function testCompleteAuthorizationRequest()
