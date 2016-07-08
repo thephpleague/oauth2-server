@@ -326,7 +326,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testIssueRefreshToken()
     {
-        $refreshTokenRepoMock = $this->getMock(RefreshTokenRepositoryInterface::class);
+        $refreshTokenRepoMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepoMock
             ->expects($this->once())
             ->method('getNewRefreshToken')
@@ -350,7 +350,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testIssueAccessToken()
     {
-        $accessTokenRepoMock = $this->getMock(AccessTokenRepositoryInterface::class);
+        $accessTokenRepoMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepoMock->method('getNewToken')->willReturn(new AccessTokenEntity());
 
         /** @var AbstractGrant $grantMock */
@@ -374,7 +374,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testIssueAuthCode()
     {
-        $authCodeRepoMock = $this->getMock(AuthCodeRepositoryInterface::class);
+        $authCodeRepoMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepoMock->expects($this->once())->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
         /** @var AbstractGrant $grantMock */

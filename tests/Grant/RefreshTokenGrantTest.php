@@ -32,7 +32,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testGetIdentifier()
     {
-        $refreshTokenRepositoryMock = $this->getMock(RefreshTokenRepositoryInterface::class);
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $this->assertEquals('refresh_token', $grant->getIdentifier());
