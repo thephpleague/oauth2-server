@@ -93,9 +93,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             null,
             null,
             'php://input',
-            $headers = [],
-            $cookies = [],
-            $queryParams = [
+            [],
+            [],
+            [
                 'response_type' => 'code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
@@ -125,9 +125,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             null,
             null,
             'php://input',
-            $headers = [],
-            $cookies = [],
-            $queryParams = [
+            [],
+            [],
+            [
                 'response_type' => 'code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
@@ -159,9 +159,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             null,
             null,
             'php://input',
-            $headers = [],
-            $cookies = [],
-            $queryParams = [
+            [],
+            [],
+            [
                 'response_type'  => 'code',
                 'client_id'      => 'foo',
                 'redirect_uri'   => 'http://foo/bar',
@@ -260,9 +260,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             null,
             null,
             'php://input',
-            $headers = [],
-            $cookies = [],
-            $queryParams = [
+            [],
+            [],
+            [
                 'response_type' => 'code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://bar',
@@ -296,9 +296,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             null,
             null,
             'php://input',
-            $headers = [],
-            $cookies = [],
-            $queryParams = [
+            [],
+            [],
+            [
                 'response_type' => 'code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://bar',
@@ -333,9 +333,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             null,
             null,
             'php://input',
-            $headers = [],
-            $cookies = [],
-            $queryParams = [
+            [],
+            [],
+            [
                 'response_type' => 'code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
@@ -370,9 +370,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             null,
             null,
             'php://input',
-            $headers = [],
-            $cookies = [],
-            $queryParams = [
+            [],
+            [],
+            [
                 'response_type'         => 'code',
                 'client_id'             => 'foo',
                 'redirect_uri'          => 'http://foo/bar',
@@ -652,9 +652,10 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testRespondToAccessTokenRequestMissingRedirectUri()
     {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -662,10 +663,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -677,11 +675,69 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             [],
             [],
             [
+                'client_id'  => 'foo',
                 'grant_type' => 'authorization_code',
+                'code'       => $this->cryptStub->doEncrypt(
+                    json_encode(
+                        [
+                            'auth_code_id'          => uniqid(),
+                            'expire_time'           => time() + 3600,
+                            'client_id'             => 'foo',
+                            'redirect_uri'          => 'http://foo/bar',
+                        ]
+                    )
+                ),
             ]
         );
 
-        /* @var StubResponseType $response */
+        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+    }
+
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     * @expectedExceptionCode 3
+     */
+    public function testRespondToAccessTokenRequestRedirectUriMismatch()
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'client_id'  => 'foo',
+                'grant_type' => 'authorization_code',
+                'redirect_uri' => 'http://bar/foo',
+                'code'       => $this->cryptStub->doEncrypt(
+                    json_encode(
+                        [
+                            'auth_code_id'          => uniqid(),
+                            'expire_time'           => time() + 3600,
+                            'client_id'             => 'foo',
+                            'redirect_uri'          => 'http://foo/bar',
+                        ]
+                    )
+                ),
+            ]
+        );
+
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
     }
 
