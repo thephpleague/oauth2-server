@@ -51,7 +51,7 @@ class RefreshTokenGrant extends AbstractGrant
             $scopes = array_map(function ($scopeId) use ($client) {
                 $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
 
-                if (!$scope instanceof ScopeEntityInterface) {
+                if ($scope instanceof ScopeEntityInterface === false) {
                     // @codeCoverageIgnoreStart
                     throw OAuthServerException::invalidScope($scopeId);
                     // @codeCoverageIgnoreEnd

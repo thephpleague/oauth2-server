@@ -107,7 +107,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             foreach ($authCodePayload->scopes as $scopeId) {
                 $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
 
-                if (!$scope instanceof ScopeEntityInterface) {
+                if ($scope instanceof ScopeEntityInterface === false) {
                     // @codeCoverageIgnoreStart
                     throw OAuthServerException::invalidScope($scopeId);
                     // @codeCoverageIgnoreEnd
@@ -220,7 +220,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             false
         );
 
-        if (!$client instanceof ClientEntityInterface) {
+        if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
         }
@@ -284,7 +284,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      */
     public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
     {
-        if (!$authorizationRequest->getUser() instanceof UserEntityInterface) {
+        if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
             throw new \LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
         }
 

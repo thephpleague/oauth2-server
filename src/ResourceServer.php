@@ -46,7 +46,7 @@ class ResourceServer
     ) {
         $this->accessTokenRepository = $accessTokenRepository;
 
-        if (!$publicKey instanceof CryptKey) {
+        if ($publicKey instanceof CryptKey === false) {
             $publicKey = new CryptKey($publicKey);
         }
         $this->publicKey = $publicKey;
@@ -59,7 +59,7 @@ class ResourceServer
      */
     protected function getAuthorizationValidator()
     {
-        if (!$this->authorizationValidator instanceof AuthorizationValidatorInterface) {
+        if ($this->authorizationValidator instanceof AuthorizationValidatorInterface === false) {
             $this->authorizationValidator = new BearerTokenValidator($this->accessTokenRepository);
         }
 

@@ -88,12 +88,12 @@ class AuthorizationServer implements EmitterAwareInterface
         $this->accessTokenRepository = $accessTokenRepository;
         $this->scopeRepository = $scopeRepository;
 
-        if (!$privateKey instanceof CryptKey) {
+        if ($privateKey instanceof CryptKey === false) {
             $privateKey = new CryptKey($privateKey);
         }
         $this->privateKey = $privateKey;
 
-        if (!$publicKey instanceof CryptKey) {
+        if ($publicKey instanceof CryptKey === false) {
             $publicKey = new CryptKey($publicKey);
         }
         $this->publicKey = $publicKey;
@@ -109,7 +109,7 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     public function enableGrantType(GrantTypeInterface $grantType, \DateInterval $accessTokenTTL = null)
     {
-        if (!$accessTokenTTL instanceof \DateInterval) {
+        if ($accessTokenTTL instanceof \DateInterval === false) {
             $accessTokenTTL = new \DateInterval('PT1H');
         }
 
@@ -202,7 +202,7 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     protected function getResponseType()
     {
-        if (!$this->responseType instanceof ResponseTypeInterface) {
+        if ($this->responseType instanceof ResponseTypeInterface === false) {
             $this->responseType = new BearerTokenResponse();
         }
 

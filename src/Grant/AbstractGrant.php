@@ -159,7 +159,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             true
         );
 
-        if (!$client instanceof ClientEntityInterface) {
+        if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
         }
@@ -210,7 +210,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         foreach ($scopesList as $scopeItem) {
             $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeItem);
 
-            if (!$scope instanceof ScopeEntityInterface) {
+            if ($scope instanceof ScopeEntityInterface === false) {
                 throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
             }
 
