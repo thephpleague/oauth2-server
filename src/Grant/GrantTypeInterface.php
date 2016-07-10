@@ -8,6 +8,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareInterface;
@@ -41,11 +42,11 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * Respond to an incoming request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface                  $request
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param \DateInterval                                             $accessTokenTTL
+     * @param ServerRequestInterface $request
+     * @param ResponseTypeInterface  $responseType
+     * @param \DateInterval          $accessTokenTTL
      *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @return ResponseTypeInterface
      */
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
@@ -56,7 +57,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * The grant type should return true if it is able to response to an authorization request
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      *
      * @return bool
      */
@@ -69,7 +70,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * If the validation is successful an AuthorizationRequest object will be returned. This object can be safely
      * serialized in a user's session, and can be used during user authentication and authorization.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      *
      * @return AuthorizationRequest
      */
@@ -80,9 +81,9 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * The AuthorizationRequest object's $userId property must be set to the authenticated user and the
      * $authorizationApproved property must reflect their desire to authorize or deny the client.
      *
-     * @param \League\OAuth2\Server\RequestTypes\AuthorizationRequest $authorizationRequest
+     * @param AuthorizationRequest $authorizationRequest
      *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @return ResponseTypeInterface
      */
     public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest);
 
@@ -91,7 +92,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * For example most grant types will check that the $_POST['grant_type'] property matches it's identifier property.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      *
      * @return bool
      */
@@ -100,35 +101,35 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * Set the client repository.
      *
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface $clientRepository
+     * @param ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository);
 
     /**
      * Set the access token repository.
      *
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     * @param AccessTokenRepositoryInterface $accessTokenRepository
      */
     public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository);
 
     /**
      * Set the scope repository.
      *
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface $scopeRepository
+     * @param ScopeRepositoryInterface $scopeRepository
      */
     public function setScopeRepository(ScopeRepositoryInterface $scopeRepository);
 
     /**
      * Set the path to the private key.
      *
-     * @param \League\OAuth2\Server\CryptKey $privateKey
+     * @param CryptKey $privateKey
      */
     public function setPrivateKey(CryptKey $privateKey);
 
     /**
      * Set the path to the public key.
      *
-     * @param \League\OAuth2\Server\CryptKey $publicKey
+     * @param CryptKey $publicKey
      */
     public function setPublicKey(CryptKey $publicKey);
 }

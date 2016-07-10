@@ -8,6 +8,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
@@ -25,8 +26,8 @@ use Psr\Http\Message\ServerRequestInterface;
 class PasswordGrant extends AbstractGrant
 {
     /**
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface         $userRepository
-     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     * @param UserRepositoryInterface         $userRepository
+     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      */
     public function __construct(
         UserRepositoryInterface $userRepository,
@@ -66,12 +67,12 @@ class PasswordGrant extends AbstractGrant
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface             $request
-     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client
+     * @param ServerRequestInterface $request
+     * @param ClientEntityInterface  $client
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      *
-     * @return \League\OAuth2\Server\Entities\UserEntityInterface
+     * @return UserEntityInterface
      */
     protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client)
     {
@@ -91,7 +92,7 @@ class PasswordGrant extends AbstractGrant
             $this->getIdentifier(),
             $client
         );
-        if (!$user instanceof UserEntityInterface) {
+        if ($user instanceof UserEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
 
             throw OAuthServerException::invalidCredentials();

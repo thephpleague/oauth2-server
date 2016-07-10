@@ -9,7 +9,6 @@
 
 namespace League\OAuth2\Server;
 
-use DateInterval;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -28,7 +27,7 @@ class AuthorizationServer implements EmitterAwareInterface
     use EmitterAwareTrait;
 
     /**
-     * @var \League\OAuth2\Server\Grant\GrantTypeInterface[]
+     * @var GrantTypeInterface[]
      */
     protected $enabledGrantTypes = [];
 
@@ -38,44 +37,44 @@ class AuthorizationServer implements EmitterAwareInterface
     protected $grantTypeAccessTokenTTL = [];
 
     /**
-     * @var \League\OAuth2\Server\CryptKey
+     * @var CryptKey
      */
     protected $privateKey;
 
     /**
-     * @var \League\OAuth2\Server\CryptKey
+     * @var CryptKey
      */
     protected $publicKey;
 
     /**
-     * @var ResponseTypeInterface
+     * @var null|ResponseTypeInterface
      */
     protected $responseType;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\ClientRepositoryInterface
+     * @var ClientRepositoryInterface
      */
     private $clientRepository;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
+     * @var AccessTokenRepositoryInterface
      */
     private $accessTokenRepository;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\ScopeRepositoryInterface
+     * @var ScopeRepositoryInterface
      */
     private $scopeRepository;
 
     /**
      * New server instance.
      *
-     * @param \League\OAuth2\Server\Repositories\ClientRepositoryInterface      $clientRepository
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
-     * @param \League\OAuth2\Server\Repositories\ScopeRepositoryInterface       $scopeRepository
-     * @param \League\OAuth2\Server\CryptKey|string                             $privateKey
-     * @param \League\OAuth2\Server\CryptKey|string                             $publicKey
-     * @param null|\League\OAuth2\Server\ResponseTypes\ResponseTypeInterface    $responseType
+     * @param ClientRepositoryInterface      $clientRepository
+     * @param AccessTokenRepositoryInterface $accessTokenRepository
+     * @param ScopeRepositoryInterface       $scopeRepository
+     * @param CryptKey|string                $privateKey
+     * @param CryptKey|string                $publicKey
+     * @param null|ResponseTypeInterface     $responseType
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
@@ -89,12 +88,12 @@ class AuthorizationServer implements EmitterAwareInterface
         $this->accessTokenRepository = $accessTokenRepository;
         $this->scopeRepository = $scopeRepository;
 
-        if (!$privateKey instanceof CryptKey) {
+        if ($privateKey instanceof CryptKey === false) {
             $privateKey = new CryptKey($privateKey);
         }
         $this->privateKey = $privateKey;
 
-        if (!$publicKey instanceof CryptKey) {
+        if ($publicKey instanceof CryptKey === false) {
             $publicKey = new CryptKey($publicKey);
         }
         $this->publicKey = $publicKey;
@@ -105,12 +104,12 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * Enable a grant type on the server.
      *
-     * @param \League\OAuth2\Server\Grant\GrantTypeInterface $grantType
-     * @param \DateInterval                                  $accessTokenTTL
+     * @param GrantTypeInterface $grantType
+     * @param null|\DateInterval $accessTokenTTL
      */
-    public function enableGrantType(GrantTypeInterface $grantType, DateInterval $accessTokenTTL = null)
+    public function enableGrantType(GrantTypeInterface $grantType, \DateInterval $accessTokenTTL = null)
     {
-        if ($accessTokenTTL instanceof DateInterval === false) {
+        if ($accessTokenTTL instanceof \DateInterval === false) {
             $accessTokenTTL = new \DateInterval('PT1H');
         }
 
@@ -128,11 +127,11 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * Validate an authorization request
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      *
-     * @return \League\OAuth2\Server\RequestTypes\AuthorizationRequest|null
+     * @return AuthorizationRequest
      */
     public function validateAuthorizationRequest(ServerRequestInterface $request)
     {
@@ -153,10 +152,10 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * Complete an authorization request
      *
-     * @param \League\OAuth2\Server\RequestTypes\AuthorizationRequest $authRequest
-     * @param \Psr\Http\Message\ResponseInterface                     $response
+     * @param AuthorizationRequest $authRequest
+     * @param ResponseInterface    $response
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function completeAuthorizationRequest(AuthorizationRequest $authRequest, ResponseInterface $response)
     {
@@ -168,12 +167,12 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * Return an access token response.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface      $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function respondToAccessTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
@@ -203,7 +202,7 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     protected function getResponseType()
     {
-        if (!$this->responseType instanceof ResponseTypeInterface) {
+        if ($this->responseType instanceof ResponseTypeInterface === false) {
             $this->responseType = new BearerTokenResponse();
         }
 

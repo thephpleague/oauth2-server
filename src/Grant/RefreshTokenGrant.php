@@ -8,6 +8,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
@@ -23,7 +24,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class RefreshTokenGrant extends AbstractGrant
 {
     /**
-     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      */
     public function __construct(RefreshTokenRepositoryInterface $refreshTokenRepository)
     {
@@ -50,7 +51,7 @@ class RefreshTokenGrant extends AbstractGrant
             $scopes = array_map(function ($scopeId) use ($client) {
                 $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
 
-                if (!$scope instanceof ScopeEntityInterface) {
+                if ($scope instanceof ScopeEntityInterface === false) {
                     // @codeCoverageIgnoreStart
                     throw OAuthServerException::invalidScope($scopeId);
                     // @codeCoverageIgnoreEnd
@@ -84,10 +85,10 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param string                                   $clientId
+     * @param ServerRequestInterface $request
+     * @param string                 $clientId
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      *
      * @return array
      */

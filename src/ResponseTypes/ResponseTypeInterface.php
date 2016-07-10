@@ -8,6 +8,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -17,12 +18,12 @@ use Psr\Http\Message\ResponseInterface;
 interface ResponseTypeInterface
 {
     /**
-     * @param \League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken
+     * @param AccessTokenEntityInterface $accessToken
      */
     public function setAccessToken(AccessTokenEntityInterface $accessToken);
 
     /**
-     * @param \League\OAuth2\Server\Entities\RefreshTokenEntityInterface $refreshToken
+     * @param RefreshTokenEntityInterface $refreshToken
      */
     public function setRefreshToken(RefreshTokenEntityInterface $refreshToken);
 

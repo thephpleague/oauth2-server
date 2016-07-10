@@ -17,14 +17,12 @@ use Psr\Http\Message\ServerRequestInterface;
 class ResourceServerMiddleware
 {
     /**
-     * @var \League\OAuth2\Server\ResourceServer
+     * @var ResourceServer
      */
     private $server;
 
     /**
-     * ResourceServerMiddleware constructor.
-     *
-     * @param \League\OAuth2\Server\ResourceServer $server
+     * @param ResourceServer $server
      */
     public function __construct(ResourceServer $server)
     {
@@ -32,9 +30,9 @@ class ResourceServerMiddleware
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface      $response
-     * @param callable                                 $next
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param callable               $next
      *
      * @return \Psr\Http\Message\ResponseInterface
      */

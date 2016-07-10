@@ -8,6 +8,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\CryptTrait;
@@ -19,12 +20,12 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     use CryptTrait;
 
     /**
-     * @var \League\OAuth2\Server\Entities\AccessTokenEntityInterface
+     * @var AccessTokenEntityInterface
      */
     protected $accessToken;
 
     /**
-     * @var \League\OAuth2\Server\Entities\RefreshTokenEntityInterface
+     * @var RefreshTokenEntityInterface
      */
     protected $refreshToken;
 

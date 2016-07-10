@@ -13,7 +13,9 @@ namespace League\OAuth2\Server\Grant;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
@@ -54,17 +56,17 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $scopeRepository;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface
+     * @var AuthCodeRepositoryInterface
      */
     protected $authCodeRepository;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface
+     * @var RefreshTokenRepositoryInterface
      */
     protected $refreshTokenRepository;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\UserRepositoryInterface
+     * @var UserRepositoryInterface
      */
     protected $userRepository;
 
@@ -98,7 +100,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      */
     public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository)
     {
@@ -106,7 +108,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param \League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface $authCodeRepository
+     * @param AuthCodeRepositoryInterface $authCodeRepository
      */
     public function setAuthCodeRepository(AuthCodeRepositoryInterface $authCodeRepository)
     {
@@ -114,7 +116,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param \League\OAuth2\Server\Repositories\UserRepositoryInterface $userRepository
+     * @param UserRepositoryInterface $userRepository
      */
     public function setUserRepository(UserRepositoryInterface $userRepository)
     {
@@ -132,11 +134,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate the client.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      *
-     * @return \League\OAuth2\Server\Entities\ClientEntityInterface
+     * @return ClientEntityInterface
      */
     protected function validateClient(ServerRequestInterface $request)
     {
@@ -157,7 +159,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             true
         );
 
-        if (!$client instanceof ClientEntityInterface) {
+        if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
         }
@@ -189,9 +191,9 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param string $scopes
      * @param string $redirectUri
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      *
-     * @return \League\OAuth2\Server\Entities\ScopeEntityInterface[]
+     * @return ScopeEntityInterface[]
      */
     public function validateScopes(
         $scopes,
@@ -208,7 +210,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         foreach ($scopesList as $scopeItem) {
             $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeItem);
 
-            if (!$scope instanceof ScopeEntityInterface) {
+            if ($scope instanceof ScopeEntityInterface === false) {
                 throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
             }
 
@@ -221,9 +223,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve request parameter.
      *
-     * @param string                                   $parameter
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param mixed                                    $default
+     * @param string                 $parameter
+     * @param ServerRequestInterface $request
+     * @param mixed                  $default
      *
      * @return null|string
      */
@@ -241,7 +243,8 @@ abstract class AbstractGrant implements GrantTypeInterface
      * not exist, or is otherwise an invalid HTTP Basic header, return
      * [null, null].
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
+     *
      * @return string[]|null[]
      */
     protected function getBasicAuthCredentials(ServerRequestInterface $request)
@@ -269,9 +272,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve query string parameter.
      *
-     * @param string                                   $parameter
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param mixed                                    $default
+     * @param string                 $parameter
+     * @param ServerRequestInterface $request
+     * @param mixed                  $default
      *
      * @return null|string
      */
@@ -283,9 +286,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve cookie parameter.
      *
-     * @param string                                   $parameter
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param mixed                                    $default
+     * @param string                 $parameter
+     * @param ServerRequestInterface $request
+     * @param mixed                  $default
      *
      * @return null|string
      */
@@ -297,9 +300,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve server parameter.
      *
-     * @param string                                   $parameter
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param mixed                                    $default
+     * @param string                 $parameter
+     * @param ServerRequestInterface $request
+     * @param mixed                  $default
      *
      * @return null|string
      */
@@ -311,12 +314,15 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an access token.
      *
-     * @param \DateInterval                                         $accessTokenTTL
-     * @param \League\OAuth2\Server\Entities\ClientEntityInterface  $client
-     * @param string                                                $userIdentifier
-     * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
+     * @param \DateInterval          $accessTokenTTL
+     * @param ClientEntityInterface  $client
+     * @param string                 $userIdentifier
+     * @param ScopeEntityInterface[] $scopes
      *
-     * @return \League\OAuth2\Server\Entities\AccessTokenEntityInterface
+     * @throws OAuthServerException
+     * @throws UniqueTokenIdentifierConstraintViolationException
+     *
+     * @return AccessTokenEntityInterface
      */
     protected function issueAccessToken(
         \DateInterval $accessTokenTTL,
@@ -351,13 +357,16 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an auth code.
      *
-     * @param \DateInterval                                         $authCodeTTL
-     * @param \League\OAuth2\Server\Entities\ClientEntityInterface  $client
-     * @param string                                                $userIdentifier
-     * @param string                                                $redirectUri
-     * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
+     * @param \DateInterval          $authCodeTTL
+     * @param ClientEntityInterface  $client
+     * @param string                 $userIdentifier
+     * @param string                 $redirectUri
+     * @param ScopeEntityInterface[] $scopes
      *
-     * @return \League\OAuth2\Server\Entities\AuthCodeEntityInterface
+     * @throws OAuthServerException
+     * @throws UniqueTokenIdentifierConstraintViolationException
+     *
+     * @return AuthCodeEntityInterface
      */
     protected function issueAuthCode(
         \DateInterval $authCodeTTL,
@@ -392,9 +401,12 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param \League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken
+     * @param AccessTokenEntityInterface $accessToken
      *
-     * @return \League\OAuth2\Server\Entities\RefreshTokenEntityInterface
+     * @throws OAuthServerException
+     * @throws UniqueTokenIdentifierConstraintViolationException
+     *
+     * @return RefreshTokenEntityInterface
      */
     protected function issueRefreshToken(AccessTokenEntityInterface $accessToken)
     {
@@ -422,7 +434,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @param int $length
      *
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      *
      * @return string
      */

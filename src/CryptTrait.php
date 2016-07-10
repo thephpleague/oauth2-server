@@ -8,24 +8,25 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server;
 
 trait CryptTrait
 {
     /**
-     * @var \League\OAuth2\Server\CryptKey
+     * @var CryptKey
      */
     protected $privateKey;
 
     /**
-     * @var \League\OAuth2\Server\CryptKey
+     * @var CryptKey
      */
     protected $publicKey;
 
     /**
      * Set path to private key.
      *
-     * @param \League\OAuth2\Server\CryptKey $privateKey
+     * @param CryptKey $privateKey
      */
     public function setPrivateKey(CryptKey $privateKey)
     {
@@ -35,7 +36,7 @@ trait CryptTrait
     /**
      * Set path to public key.
      *
-     * @param \League\OAuth2\Server\CryptKey $publicKey
+     * @param CryptKey $publicKey
      */
     public function setPublicKey(CryptKey $publicKey)
     {
@@ -46,6 +47,8 @@ trait CryptTrait
      * Encrypt data with a private key.
      *
      * @param string $unencryptedData
+     *
+     * @throws \LogicException
      *
      * @return string
      */

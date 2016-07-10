@@ -125,7 +125,7 @@ class AuthorizationRequest
     }
 
     /**
-     * @return \League\OAuth2\Server\Entities\ScopeEntityInterface[]
+     * @return ScopeEntityInterface[]
      */
     public function getScopes()
     {
@@ -133,9 +133,9 @@ class AuthorizationRequest
     }
 
     /**
-     * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
+     * @param ScopeEntityInterface[] $scopes
      */
-    public function setScopes($scopes)
+    public function setScopes(array $scopes)
     {
         $this->scopes = $scopes;
     }

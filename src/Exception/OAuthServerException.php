@@ -69,7 +69,7 @@ class OAuthServerException extends \Exception
      * Invalid request error.
      *
      * @param string      $parameter The invalid parameter
-     * @param string|null $hint
+     * @param null|string $hint
      *
      * @return static
      */
@@ -143,7 +143,7 @@ class OAuthServerException extends \Exception
     /**
      * Invalid refresh token.
      *
-     * @param string|null $hint
+     * @param null|string $hint
      *
      * @return static
      */
@@ -155,8 +155,8 @@ class OAuthServerException extends \Exception
     /**
      * Access denied.
      *
-     * @param string|null $hint
-     * @param string|null $redirectUri
+     * @param null|string $hint
+     * @param null|string $redirectUri
      *
      * @return static
      */
@@ -203,11 +203,10 @@ class OAuthServerException extends \Exception
     /**
      * Generate a HTTP response.
      *
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param bool                                $useFragment True if errors should be in the URI fragment instead of
-     *                                                         query string
+     * @param ResponseInterface $response
+     * @param bool              $useFragment True if errors should be in the URI fragment instead of query string
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function generateHttpResponse(ResponseInterface $response, $useFragment = false)
     {

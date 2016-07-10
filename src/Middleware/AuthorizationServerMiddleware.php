@@ -17,14 +17,12 @@ use Psr\Http\Message\ServerRequestInterface;
 class AuthorizationServerMiddleware
 {
     /**
-     * @var \League\OAuth2\Server\AuthorizationServer
+     * @var AuthorizationServer
      */
     private $server;
 
     /**
-     * AuthorizationServerMiddleware constructor.
-     *
-     * @param \League\OAuth2\Server\AuthorizationServer $server
+     * @param AuthorizationServer $server
      */
     public function __construct(AuthorizationServer $server)
     {
@@ -32,11 +30,11 @@ class AuthorizationServerMiddleware
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface      $response
-     * @param callable                                 $next
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param callable               $next
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
