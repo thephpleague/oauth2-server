@@ -135,14 +135,9 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     public function validateAuthorizationRequest(ServerRequestInterface $request)
     {
-        $authRequest = null;
-        $enabledGrantTypes = $this->enabledGrantTypes;
-        while ($authRequest === null && $grantType = array_shift($enabledGrantTypes)) {
-            /** @var \League\OAuth2\Server\Grant\GrantTypeInterface $grantType */
+        foreach ($this->enabledGrantTypes as $grantType) {
             if ($grantType->canRespondToAuthorizationRequest($request)) {
-                $authRequest = $grantType->validateAuthorizationRequest($request);
-
-                return $authRequest;
+                return $grantType->validateAuthorizationRequest($request);
             }
         }
 
@@ -176,20 +171,18 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     public function respondToAccessTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $tokenResponse = null;
-        while ($tokenResponse === null && $grantType = array_shift($this->enabledGrantTypes)) {
-            /** @var \League\OAuth2\Server\Grant\GrantTypeInterface $grantType */
+        foreach ($this->enabledGrantTypes as $grantType) {
             if ($grantType->canRespondToAccessTokenRequest($request)) {
                 $tokenResponse = $grantType->respondToAccessTokenRequest(
                     $request,
                     $this->getResponseType(),
                     $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
                 );
-            }
-        }
 
-        if ($tokenResponse instanceof ResponseTypeInterface) {
-            return $tokenResponse->generateHttpResponse($response);
+                if ($tokenResponse instanceof ResponseTypeInterface) {
+                    return $tokenResponse->generateHttpResponse($response);
+                }
+            }
         }
 
         throw OAuthServerException::unsupportedGrantType();
