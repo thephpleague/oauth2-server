@@ -17,7 +17,7 @@ Authorization Server:
     'Domain Events': '/authorization-server/events/'
 Resource Server:
     'Securing your API': '/resource-server/securing-your-api/'
-Respository Interfaces:
+Repository Interfaces:
     'Access Token Repository Interface': '/access-token-repository-interface/'
     'Client Repository Interface': '/client-repository-interface/'
     'Refresh Token Repository Interface': '/refresh-token-repository-interface/'
