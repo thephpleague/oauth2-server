@@ -51,6 +51,8 @@ class CryptKey
     /**
      * @param string $key
      *
+     * @throws \RuntimeException
+     *
      * @return string
      */
     private function saveKeyToFile($key)
@@ -58,7 +60,9 @@ class CryptKey
         $keyPath = sys_get_temp_dir() . '/' . sha1($key) . '.key';
 
         if (!file_exists($keyPath) && !touch($keyPath)) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException('"%s" key file could not be created', $keyPath);
+            // @codeCoverageIgnoreEnd
         }
 
         file_put_contents($keyPath, $key);
