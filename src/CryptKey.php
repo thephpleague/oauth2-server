@@ -13,6 +13,9 @@ namespace League\OAuth2\Server;
 
 class CryptKey
 {
+    const RSA_KEY_PATTERN =
+        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----\n)(.|\n)+(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)$/';
+
     /**
      * @var string
      */
@@ -29,6 +32,10 @@ class CryptKey
      */
     public function __construct($keyPath, $passPhrase = null)
     {
+        if (preg_match(self::RSA_KEY_PATTERN, $keyPath)) {
+            $keyPath = $this->saveKeyToFile($keyPath);
+        }
+
         if (strpos($keyPath, 'file://') !== 0) {
             $keyPath = 'file://' . $keyPath;
         }
@@ -39,6 +46,24 @@ class CryptKey
 
         $this->keyPath = $keyPath;
         $this->passPhrase = $passPhrase;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return string
+     */
+    private function saveKeyToFile($key)
+    {
+        $keyPath = sys_get_temp_dir() . '/' . sha1($key) . '.key';
+
+        if (!file_exists($keyPath) && !mkdir($keyPath)) {
+            throw new \RuntimeException('"%s" key file could not be created', $keyPath);
+        }
+
+        file_put_contents($keyPath, $key);
+
+        return 'file://' . $keyPath;
     }
 
     /**
