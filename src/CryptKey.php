@@ -57,7 +57,7 @@ class CryptKey
     {
         $keyPath = sys_get_temp_dir() . '/' . sha1($key) . '.key';
 
-        if (!file_exists($keyPath) && !mkdir($keyPath)) {
+        if (!file_exists($keyPath) && !touch($keyPath)) {
             throw new \RuntimeException('"%s" key file could not be created', $keyPath);
         }
 
