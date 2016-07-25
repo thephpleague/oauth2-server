@@ -19,13 +19,13 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
 {
     public function testValidResponse()
     {
-        $clientRepository = $this->getMock(ClientRepositoryInterface::class);
+        $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn(new ClientEntity());
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $accessRepositoryMock = $this->getMock(AccessTokenRepositoryInterface::class);
+        $accessRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
 
         $server = new AuthorizationServer(
@@ -58,13 +58,13 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
 
     public function testOAuthErrorResponse()
     {
-        $clientRepository = $this->getMock(ClientRepositoryInterface::class);
+        $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn(null);
 
         $server = new AuthorizationServer(
             $clientRepository,
-            $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/../Stubs/private.key',
             'file://' . __DIR__ . '/../Stubs/public.key',
             new StubResponseType()

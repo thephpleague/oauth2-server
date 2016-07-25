@@ -8,6 +8,7 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
@@ -368,5 +369,33 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
         $grant->completeAuthorizationRequest($authRequest);
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testSetRefreshTokenTTL()
+    {
+        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant->setRefreshTokenTTL(new \DateInterval('PT10M'));
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testSetRefreshTokenRepository()
+    {
+        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testCompleteAuthorizationRequestNoUser()
+    {
+        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant->completeAuthorizationRequest(new AuthorizationRequest());
     }
 }

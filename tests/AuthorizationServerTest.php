@@ -29,9 +29,9 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     public function testRespondToRequestInvalidGrantType()
     {
         $server = new AuthorizationServer(
-            $this->getMock(ClientRepositoryInterface::class),
-            $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
+            $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key',
             new StubResponseType()
@@ -49,13 +49,13 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
     public function testRespondToRequest()
     {
-        $clientRepository = $this->getMock(ClientRepositoryInterface::class);
+        $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn(new ClientEntity());
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $accessTokenRepositoryMock = $this->getMock(AccessTokenRepositoryInterface::class);
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
 
         $server = new AuthorizationServer(
@@ -78,12 +78,12 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetResponseType()
     {
-        $clientRepository = $this->getMock(ClientRepositoryInterface::class);
+        $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
         $server = new AuthorizationServer(
             $clientRepository,
-            $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key'
         );
@@ -97,12 +97,12 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
     public function testCompleteAuthorizationRequest()
     {
-        $clientRepository = $this->getMock(ClientRepositoryInterface::class);
+        $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
         $server = new AuthorizationServer(
             $clientRepository,
-            $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key'
         );
@@ -112,7 +112,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $grant = new AuthCodeGrant(
             $authCodeRepository,
-            $this->getMock(RefreshTokenRepositoryInterface::class),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
 
@@ -139,16 +139,16 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
         $grant = new AuthCodeGrant(
-            $this->getMock(AuthCodeRepositoryInterface::class),
-            $this->getMock(RefreshTokenRepositoryInterface::class),
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
 
         $server = new AuthorizationServer(
             $clientRepositoryMock,
-            $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key'
         );
@@ -178,9 +178,9 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     public function testValidateAuthorizationRequestUnregistered()
     {
         $server = new AuthorizationServer(
-            $this->getMock(ClientRepositoryInterface::class),
-            $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
+            $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key'
         );

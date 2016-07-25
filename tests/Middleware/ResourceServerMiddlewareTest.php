@@ -16,7 +16,7 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
     public function testValidResponse()
     {
         $server = new ResourceServer(
-            $this->getMock(AccessTokenRepositoryInterface::class),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/../Stubs/public.key'
         );
 
@@ -51,7 +51,7 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
     public function testValidResponseExpiredToken()
     {
         $server = new ResourceServer(
-            $this->getMock(AccessTokenRepositoryInterface::class),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/../Stubs/public.key'
         );
 
@@ -86,7 +86,7 @@ class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
     public function testErrorResponse()
     {
         $server = new ResourceServer(
-            $this->getMock(AccessTokenRepositoryInterface::class),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/../Stubs/public.key'
         );
 
