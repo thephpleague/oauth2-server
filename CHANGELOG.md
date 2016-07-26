@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.1.1 (released 2016-07-26)
+
+* Improved test suite (Issue #614)
+* Updated docblocks (Issue #616)
+* Replace `array_shift` with `foreach` loop (Issue #621)
+* Allow easy addition of custom fields to Bearer token response (Issue #624)
+* Key file auto-generation from string (Issue #625)
+
 ## 5.1.0 (released 2016-06-28)
 
 * Implemented RFC7636 (Issue #574)
