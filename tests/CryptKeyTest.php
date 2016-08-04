@@ -26,7 +26,7 @@ class CryptKeyTest extends \PHPUnit_Framework_TestCase
     public function testKeyFileCreation()
     {
         $keyContent = file_get_contents(__DIR__ . '/Stubs/public.key');
-        $key = new CryptKey($keyContent);
+        $key = CryptKey::fromString($keyContent);
 
         $this->assertEquals(
             'file://' . sys_get_temp_dir() . '/' . sha1($keyContent) . '.key',

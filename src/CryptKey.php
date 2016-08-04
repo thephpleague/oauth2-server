@@ -13,9 +13,6 @@ namespace League\OAuth2\Server;
 
 class CryptKey
 {
-    const RSA_KEY_PATTERN =
-        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----\n)(.|\n)+(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)$/';
-
     /**
      * @var string
      */
@@ -27,16 +24,12 @@ class CryptKey
     protected $passPhrase;
 
     /**
-     * @param string      $keyPath
+     * @param string $keyPath
      * @param null|string $passPhrase
      */
     public function __construct($keyPath, $passPhrase = null)
     {
-        if (preg_match(self::RSA_KEY_PATTERN, $keyPath)) {
-            $keyPath = $this->saveKeyToFile($keyPath);
-        }
-
-        if (strpos($keyPath, 'file://') !== 0) {
+        if (strpos($keyPath, '://') === false) {
             $keyPath = 'file://' . $keyPath;
         }
 
@@ -46,28 +39,6 @@ class CryptKey
 
         $this->keyPath = $keyPath;
         $this->passPhrase = $passPhrase;
-    }
-
-    /**
-     * @param string $key
-     *
-     * @throws \RuntimeException
-     *
-     * @return string
-     */
-    private function saveKeyToFile($key)
-    {
-        $keyPath = sys_get_temp_dir() . '/' . sha1($key) . '.key';
-
-        if (!file_exists($keyPath) && !touch($keyPath)) {
-            // @codeCoverageIgnoreStart
-            throw new \RuntimeException('"%s" key file could not be created', $keyPath);
-            // @codeCoverageIgnoreEnd
-        }
-
-        file_put_contents($keyPath, $key);
-
-        return 'file://' . $keyPath;
     }
 
     /**
@@ -88,5 +59,25 @@ class CryptKey
     public function getPassPhrase()
     {
         return $this->passPhrase;
+    }
+
+    /**
+     * @param $key
+     * @param null $passPhrase
+     * @return CryptKey
+     */
+    public static function fromString($key, $passPhrase = null)
+    {
+        $keyPath = sys_get_temp_dir() . '/' . sha1($key) . '.key';
+
+        if (!file_exists($keyPath) && !touch($keyPath)) {
+            // @codeCoverageIgnoreStart
+            throw new \RuntimeException('"%s" key file could not be created', $keyPath);
+            // @codeCoverageIgnoreEnd
+        }
+
+        file_put_contents($keyPath, $key);
+
+        return new static('file://' . $keyPath, $passPhrase);
     }
 }
