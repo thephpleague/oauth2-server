@@ -4,9 +4,9 @@ title: Which OAuth 2.0 grant should I use?
 permalink: /authorization-server/which-grant/
 ---
 
-# Which OAuth 2.0 grant should I use? 
+# Which OAuth 2.0 grant should I implement?
 
-A grant is a method of acquiring an access token. Deciding which grants to implement requires implementing the right grant depending on the type of client and the best experience for your users.
+A grant is a method of acquiring an access token. Deciding which grants to implement depends on the type of client the end user will be using, and the experience you want for your users.
 
 <figure>
     <img src="/images/grants.svg" style="width:100%">
@@ -36,4 +36,4 @@ If the client is a web application that has runs entirely on the front end (e.g.
 
 If the client is a native application such as a mobile app you should implement the [password grant](/authorization-server/resource-owner-password-credentials-grant/).
 
-Third party native applications should use the [authorization code grant](/authorization-server/auth-code-grant/) (via the native browser, not an embedded browser - e.g. for iOS push the user to Safari or use [SFSafariViewController](https://developer.apple.com/library/ios/documentation/SafariServices/Reference/SFSafariViewController_Ref/), <u>don't</u> use an embedded [WKWebView](https://developer.apple.com/library/ios/documentation/WebKit/Reference/WKWebView_Ref/)). 
+Third party native applications should use the [authorization code grant](/authorization-server/auth-code-grant/) (via the native browser, not an embedded browser - e.g. for iOS push the user to Safari or use [SFSafariViewController](https://developer.apple.com/library/ios/documentation/SafariServices/Reference/SFSafariViewController_Ref/), <u>don't</u> use an embedded [WKWebView](https://developer.apple.com/library/ios/documentation/WebKit/Reference/WKWebView_Ref/)).
