@@ -25,7 +25,7 @@ use Zend\Diactoros\Stream;
 include __DIR__ . '/../vendor/autoload.php';
 
 $app = new App([
-    'settings'                 => [
+    'settings' => [
         'displayErrorDetails' => true,
     ],
     AuthorizationServer::class => function () {
@@ -79,7 +79,7 @@ $app->group('/api', function () {
 
         if (in_array('basic', $request->getAttribute('oauth_scopes', []))) {
             $params = [
-                'id'   => 1,
+                'id' => 1,
                 'name' => 'Alex',
                 'city' => 'London',
             ];

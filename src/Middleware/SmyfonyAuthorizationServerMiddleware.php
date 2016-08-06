@@ -15,7 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Diactoros\Response;
 
-class SymfonyAuthorizationServerMiddleware extends Psr7AuthorizationServerMiddleware
+class SmyfonyAuthorizationServerMiddleware extends Psr7AuthorizationServerMiddleware
 {
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
