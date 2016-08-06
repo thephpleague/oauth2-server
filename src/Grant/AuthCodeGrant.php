@@ -309,16 +309,16 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $this->makeRedirectUri(
                     $finalRedirectUri,
                     [
-                        'code'  => $this->encrypt(
+                        'code' => $this->encrypt(
                             json_encode(
                                 [
-                                    'client_id'               => $authCode->getClient()->getIdentifier(),
-                                    'redirect_uri'            => $authCode->getRedirectUri(),
-                                    'auth_code_id'            => $authCode->getIdentifier(),
-                                    'scopes'                  => $authCode->getScopes(),
-                                    'user_id'                 => $authCode->getUserIdentifier(),
-                                    'expire_time'             => (new \DateTime())->add($this->authCodeTTL)->format('U'),
-                                    'code_challenge'          => $authorizationRequest->getCodeChallenge(),
+                                    'client_id' => $authCode->getClient()->getIdentifier(),
+                                    'redirect_uri' => $authCode->getRedirectUri(),
+                                    'auth_code_id' => $authCode->getIdentifier(),
+                                    'scopes' => $authCode->getScopes(),
+                                    'user_id' => $authCode->getUserIdentifier(),
+                                    'expire_time' => (new \DateTime())->add($this->authCodeTTL)->format('U'),
+                                    'code_challenge' => $authorizationRequest->getCodeChallenge(),
                                     'code_challenge_method  ' => $authorizationRequest->getCodeChallengeMethod(),
                                 ]
                             )

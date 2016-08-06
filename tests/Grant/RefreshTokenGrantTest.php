@@ -71,12 +71,12 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
                 [
-                    'client_id'        => 'foo',
+                    'client_id' => 'foo',
                     'refresh_token_id' => 'zyxwvu',
-                    'access_token_id'  => 'abcdef',
-                    'scopes'           => ['foo'],
-                    'user_id'          => 123,
-                    'expire_time'      => time() + 3600,
+                    'access_token_id' => 'abcdef',
+                    'scopes' => ['foo'],
+                    'user_id' => 123,
+                    'expire_time' => time() + 3600,
                 ]
             )
         );
@@ -84,7 +84,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
                 'refresh_token' => $oldRefreshToken,
             ]
@@ -127,12 +127,12 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
                 [
-                    'client_id'        => 'foo',
+                    'client_id' => 'foo',
                     'refresh_token_id' => 'zyxwvu',
-                    'access_token_id'  => 'abcdef',
-                    'scopes'           => ['foo', 'bar'],
-                    'user_id'          => 123,
-                    'expire_time'      => time() + 3600,
+                    'access_token_id' => 'abcdef',
+                    'scopes' => ['foo', 'bar'],
+                    'user_id' => 123,
+                    'expire_time' => time() + 3600,
                 ]
             )
         );
@@ -140,10 +140,10 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
                 'refresh_token' => $oldRefreshToken,
-                'scope'         => 'foo',
+                'scope' => 'foo',
             ]
         );
 
@@ -186,12 +186,12 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
                 [
-                    'client_id'        => 'foo',
+                    'client_id' => 'foo',
                     'refresh_token_id' => 'zyxwvu',
-                    'access_token_id'  => 'abcdef',
-                    'scopes'           => ['foo', 'bar'],
-                    'user_id'          => 123,
-                    'expire_time'      => time() + 3600,
+                    'access_token_id' => 'abcdef',
+                    'scopes' => ['foo', 'bar'],
+                    'user_id' => 123,
+                    'expire_time' => time() + 3600,
                 ]
             )
         );
@@ -199,10 +199,10 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
                 'refresh_token' => $oldRefreshToken,
-                'scope'         => 'foobar',
+                'scope' => 'foobar',
             ]
         );
 
@@ -233,7 +233,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
             ]
         );
@@ -267,7 +267,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
                 'refresh_token' => $oldRefreshToken,
             ]
@@ -304,12 +304,12 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
                 [
-                    'client_id'        => 'bar',
+                    'client_id' => 'bar',
                     'refresh_token_id' => 'zyxwvu',
-                    'access_token_id'  => 'abcdef',
-                    'scopes'           => ['foo'],
-                    'user_id'          => 123,
-                    'expire_time'      => time() + 3600,
+                    'access_token_id' => 'abcdef',
+                    'scopes' => ['foo'],
+                    'user_id' => 123,
+                    'expire_time' => time() + 3600,
                 ]
             )
         );
@@ -317,7 +317,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
                 'refresh_token' => $oldRefreshToken,
             ]
@@ -350,12 +350,12 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
                 [
-                    'client_id'        => 'foo',
+                    'client_id' => 'foo',
                     'refresh_token_id' => 'zyxwvu',
-                    'access_token_id'  => 'abcdef',
-                    'scopes'           => ['foo'],
-                    'user_id'          => 123,
-                    'expire_time'      => time() - 3600,
+                    'access_token_id' => 'abcdef',
+                    'scopes' => ['foo'],
+                    'user_id' => 123,
+                    'expire_time' => time() - 3600,
                 ]
             )
         );
@@ -363,7 +363,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
                 'refresh_token' => $oldRefreshToken,
             ]
@@ -397,12 +397,12 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
                 [
-                    'client_id'        => 'foo',
+                    'client_id' => 'foo',
                     'refresh_token_id' => 'zyxwvu',
-                    'access_token_id'  => 'abcdef',
-                    'scopes'           => ['foo'],
-                    'user_id'          => 123,
-                    'expire_time'      => time() + 3600,
+                    'access_token_id' => 'abcdef',
+                    'scopes' => ['foo'],
+                    'user_id' => 123,
+                    'expire_time' => time() + 3600,
                 ]
             )
         );
@@ -410,7 +410,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
                 'refresh_token' => $oldRefreshToken,
             ]

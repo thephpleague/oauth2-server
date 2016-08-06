@@ -21,9 +21,9 @@ class ClientRepository implements ClientRepositoryInterface
     {
         $clients = [
             'myawesomeapp' => [
-                'secret'          => password_hash('abc123', PASSWORD_BCRYPT),
-                'name'            => 'My Awesome App',
-                'redirect_uri'    => 'http://foo/bar',
+                'secret' => password_hash('abc123', PASSWORD_BCRYPT),
+                'name' => 'My Awesome App',
+                'redirect_uri' => 'http://foo/bar',
                 'is_confidential' => true,
             ],
         ];
