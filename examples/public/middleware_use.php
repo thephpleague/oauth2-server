@@ -10,8 +10,8 @@
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
-use League\OAuth2\Server\Middleware\AuthorizationServerMiddleware;
-use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
+use League\OAuth2\Server\Middleware\Psr7AuthorizationServerMiddleware;
+use League\OAuth2\Server\Middleware\Psr7ResourceServerMiddleware;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\AuthCodeRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
@@ -70,7 +70,7 @@ $app = new App([
 
 // Access token issuer
 $app->post('/access_token', function () {
-})->add(new AuthorizationServerMiddleware($app->getContainer()->get(AuthorizationServer::class)));
+})->add(new Psr7AuthorizationServerMiddleware($app->getContainer()->get(AuthorizationServer::class)));
 
 // Secured API
 $app->group('/api', function () {
@@ -94,6 +94,6 @@ $app->group('/api', function () {
 
         return $response->withBody($body);
     });
-})->add(new ResourceServerMiddleware($app->getContainer()->get(AuthorizationServer::class)));
+})->add(new Psr7ResourceServerMiddleware($app->getContainer()->get(AuthorizationServer::class)));
 
 $app->run();
