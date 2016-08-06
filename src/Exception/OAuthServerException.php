@@ -213,7 +213,7 @@ class OAuthServerException extends \Exception
         $headers = $this->getHttpHeaders();
 
         $payload = [
-            'error'   => $this->getErrorType(),
+            'error' => $this->getErrorType(),
             'message' => $this->getMessage(),
         ];
 

@@ -72,7 +72,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'token',
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
             ]
         );
 
@@ -99,8 +99,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id'     => 'foo',
-                'redirect_uri'  => 'http://foo/bar',
+                'client_id' => 'foo',
+                'redirect_uri' => 'http://foo/bar',
             ]
         );
 
@@ -127,8 +127,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id'     => 'foo',
-                'redirect_uri'  => 'http://foo/bar',
+                'client_id' => 'foo',
+                'redirect_uri' => 'http://foo/bar',
             ]
         );
 
@@ -184,7 +184,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
             ]
         );
 
@@ -215,8 +215,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id'     => 'foo',
-                'redirect_uri'  => 'http://bar',
+                'client_id' => 'foo',
+                'redirect_uri' => 'http://bar',
             ]
         );
 
@@ -247,8 +247,8 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id'     => 'foo',
-                'redirect_uri'  => 'http://bar',
+                'client_id' => 'foo',
+                'redirect_uri' => 'http://bar',
             ]
         );
 

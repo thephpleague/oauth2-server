@@ -9,7 +9,6 @@
 
 namespace League\OAuth2\Server\Exception;
 
-
 class UniqueTokenIdentifierConstraintViolationException extends OAuthServerException
 {
     public static function create()

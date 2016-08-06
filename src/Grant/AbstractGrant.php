@@ -345,6 +345,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             $accessToken->setIdentifier($this->generateUniqueIdentifier());
             try {
                 $this->accessTokenRepository->persistNewAccessToken($accessToken);
+
                 return $accessToken;
             } catch (UniqueTokenIdentifierConstraintViolationException $e) {
                 if ($maxGenerationAttempts === 0) {
@@ -391,6 +392,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             $authCode->setIdentifier($this->generateUniqueIdentifier());
             try {
                 $this->authCodeRepository->persistNewAuthCode($authCode);
+
                 return $authCode;
             } catch (UniqueTokenIdentifierConstraintViolationException $e) {
                 if ($maxGenerationAttempts === 0) {
@@ -420,6 +422,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             $refreshToken->setIdentifier($this->generateUniqueIdentifier());
             try {
                 $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
+
                 return $refreshToken;
             } catch (UniqueTokenIdentifierConstraintViolationException $e) {
                 if ($maxGenerationAttempts === 0) {

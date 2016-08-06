@@ -66,12 +66,14 @@ class AuthorizationRequest
 
     /**
      * The code challenge (if provided)
+     *
      * @var string
      */
     protected $codeChallenge;
 
     /**
      * The code challenge method (if provided)
+     *
      * @var string
      */
     protected $codeChallengeMethod;
