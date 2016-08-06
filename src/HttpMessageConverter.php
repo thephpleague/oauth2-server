@@ -2,9 +2,9 @@
 
 namespace League\OAuth2\Server;
 
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -18,7 +18,7 @@ class HttpMessageConverter
      *
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    static public function convertSymfonyRequestToPsr7(SymfonyRequest $request)
+    public static function convertSymfonyRequestToPsr7(SymfonyRequest $request)
     {
         $psr7Factory = new DiactorosFactory();
 
@@ -32,7 +32,7 @@ class HttpMessageConverter
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    static public function convertSymfonyResponseToPsr7(SymfonyResponse $response)
+    public static function convertSymfonyResponseToPsr7(SymfonyResponse $response)
     {
         $psr7Factory = new DiactorosFactory();
 
@@ -46,7 +46,7 @@ class HttpMessageConverter
      *
      * @return \Symfony\Component\HttpFoundation\Request
      */
-    static public function convertPsr7RequestToSymfony(ServerRequestInterface $request)
+    public static function convertPsr7RequestToSymfony(ServerRequestInterface $request)
     {
         $httpFoundationFactory = new HttpFoundationFactory();
 
@@ -60,7 +60,7 @@ class HttpMessageConverter
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    static public function convertPsr7ResponseToSymfony(ResponseInterface $response)
+    public static function convertPsr7ResponseToSymfony(ResponseInterface $response)
     {
         $httpFoundationFactory = new HttpFoundationFactory();
 

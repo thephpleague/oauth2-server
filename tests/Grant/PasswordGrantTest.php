@@ -57,10 +57,10 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
-                'username'      => 'foo',
-                'password'      => 'bar',
+                'username' => 'foo',
+                'password' => 'bar',
             ]
         );
 
@@ -93,7 +93,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
             ]
         );
@@ -124,9 +124,9 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
-                'username'      => 'alex',
+                'username' => 'alex',
             ]
         );
 
@@ -157,10 +157,10 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
-                'username'      => 'alex',
-                'password'      => 'whisky',
+                'username' => 'alex',
+                'password' => 'whisky',
             ]
         );
 

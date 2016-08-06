@@ -164,7 +164,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
             ]
         );
 
@@ -195,7 +195,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
             ]
         );
 

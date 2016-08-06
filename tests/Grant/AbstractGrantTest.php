@@ -144,9 +144,9 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
-                'redirect_uri'  => 'http://foo/bar',
+                'redirect_uri' => 'http://foo/bar',
             ]
         );
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
@@ -219,7 +219,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody([
-            'client_id'     => 'foo',
+            'client_id' => 'foo',
             'client_secret' => 'foo',
         ]);
 
@@ -247,7 +247,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody([
-            'client_id'    => 'foo',
+            'client_id' => 'foo',
             'redirect_uri' => 'http://bar/foo',
         ]);
 
@@ -275,7 +275,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody([
-            'client_id'    => 'foo',
+            'client_id' => 'foo',
             'redirect_uri' => 'http://bar/foo',
         ]);
 
@@ -301,7 +301,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody([
-            'client_id'     => 'foo',
+            'client_id' => 'foo',
             'client_secret' => 'bar',
         ]);
 

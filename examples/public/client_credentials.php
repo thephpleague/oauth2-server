@@ -20,7 +20,7 @@ use Zend\Diactoros\Stream;
 include __DIR__ . '/../vendor/autoload.php';
 
 $app = new App([
-    'settings'                 => [
+    'settings' => [
         'displayErrorDetails' => true,
     ],
     AuthorizationServer::class => function () {
@@ -30,9 +30,9 @@ $app = new App([
         $accessTokenRepository = new AccessTokenRepository(); // instance of AccessTokenRepositoryInterface
 
         // Path to public and private keys
-        $privateKey = 'file://'.__DIR__.'/../private.key';
+        $privateKey = 'file://' . __DIR__ . '/../private.key';
         //$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // if private key has a pass phrase
-        $publicKey = 'file://'.__DIR__.'/../public.key';
+        $publicKey = 'file://' . __DIR__ . '/../public.key';
 
         // Setup the authorization server
         $server = new AuthorizationServer(
