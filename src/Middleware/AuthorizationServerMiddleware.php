@@ -12,6 +12,6 @@ namespace League\OAuth2\Server\Middleware;
 /**
  * @deprecated Use the Psr7AuthorizationServerMiddleware or SymfonyAuthorizationServerMiddleware
  */
-class AuthorizationServerMiddleware extends PSR7AuthorizationServerMiddleware
+class AuthorizationServerMiddleware extends Psr7AuthorizationServerMiddleware
 {
 }
