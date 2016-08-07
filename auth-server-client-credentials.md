@@ -13,7 +13,7 @@ This grant is suitable for machine-to-machine authentication, for example for us
 The client sends a POST request with following body parameters to the authorization server:
 
 * `grant_type` with the value `client_credentials`
-* `client_id` with the the client's ID
+* `client_id` with the client's ID
 * `client_secret` with the client's secret
 * `scope` with a space-delimited list of requested scope permissions.
 
