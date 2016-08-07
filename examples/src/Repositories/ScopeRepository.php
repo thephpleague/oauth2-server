@@ -54,7 +54,7 @@ class ScopeRepository implements ScopeRepositoryInterface
             $scope->setIdentifier('email');
             $scopes[] = $scope;
         }
-        
+
         return $scopes;
     }
 }

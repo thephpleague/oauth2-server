@@ -13,8 +13,9 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8 || ^5.0",
-        "zendframework/zend-diactoros": "^1.0",
-        "indigophp/hash-compat": "^1.1"
+        "zendframework/zend-diactoros": "^1.3",
+        "indigophp/hash-compat": "^1.1",
+        "symfony/psr-http-message-bridge": "^0.2.0"
     },
     "repositories": [
         {
@@ -66,6 +67,8 @@
         }
     },
     "suggest": {
-        "indigophp/hash-compat": "Polyfill for hash_equals function for PHP 5.5"
+        "indigophp/hash-compat": "Polyfill for hash_equals function for PHP 5.5",
+        "symfony/psr-http-message-bridge": "Required for Symfony HTTP request and response comparability",
+        "zendframework/zend-diactoros": "Required for Symfony HTTP request and response comparability"
     }
 }

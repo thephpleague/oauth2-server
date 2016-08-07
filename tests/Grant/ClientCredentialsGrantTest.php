@@ -41,7 +41,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
             [
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
                 'client_secret' => 'bar',
             ]
         );
