@@ -1,48 +1,47 @@
 <?php
 /**
- * OAuth 2.0 Base Exception
+ * OAuth 2.0 Base Exception.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Exception;
 
 use League\OAuth2\Server\Util\RedirectUri;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Exception class
+ * Exception class.
  */
 class OAuthException extends \Exception
 {
     /**
-     * The HTTP status code for this exception that should be sent in the response
+     * The HTTP status code for this exception that should be sent in the response.
      */
     public $httpStatusCode = 400;
 
     /**
-     * Redirect URI if the server should redirect back to the client
+     * Redirect URI if the server should redirect back to the client.
      *
      * @var string|null
      */
     public $redirectUri = null;
 
     /**
-     * The exception type
+     * The exception type.
      */
     public $errorType = '';
 
     /**
-     * Parameter eventually passed to Exception
+     * Parameter eventually passed to Exception.
      */
     public $parameter = '';
 
     /**
-     * Throw a new exception
+     * Throw a new exception.
      *
      * @param string $msg Exception Message
      */
@@ -62,7 +61,7 @@ class OAuthException extends \Exception
     }
 
     /**
-     * Return redirect URI if set
+     * Return redirect URI if set.
      *
      * @return string|null
      */
@@ -71,14 +70,14 @@ class OAuthException extends \Exception
         return RedirectUri::make(
             $this->redirectUri,
             [
-                'error' =>  $this->errorType,
-                'message' =>  $this->getMessage(),
+                'error'   => $this->errorType,
+                'message' => $this->getMessage(),
             ]
         );
     }
 
     /**
-     * Return parameter if set
+     * Return parameter if set.
      *
      * @return string
      */
@@ -88,7 +87,7 @@ class OAuthException extends \Exception
     }
 
     /**
-     * Get all headers that have to be send with the error response
+     * Get all headers that have to be send with the error response.
      *
      * @return array Array with header values
      */

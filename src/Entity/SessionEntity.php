@@ -1,89 +1,88 @@
 <?php
 /**
- * OAuth 2.0 session entity
+ * OAuth 2.0 session entity.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Entity;
 
 use League\OAuth2\Server\AbstractServer;
 use League\OAuth2\Server\Event\SessionOwnerEvent;
 
 /**
- * Session entity grant
+ * Session entity grant.
  */
 class SessionEntity
 {
     /**
-     * Session identifier
+     * Session identifier.
      *
      * @var string
      */
     protected $id;
 
     /**
-     * Client identifier
+     * Client identifier.
      *
      * @var \League\OAuth2\Server\Entity\ClientEntity
      */
     protected $client;
 
     /**
-     * Session owner identifier
+     * Session owner identifier.
      *
      * @var string
      */
     protected $ownerId;
 
     /**
-     * Session owner type (e.g. "user")
+     * Session owner type (e.g. "user").
      *
      * @var string
      */
     protected $ownerType;
 
     /**
-     * Auth code
+     * Auth code.
      *
      * @var \League\OAuth2\Server\Entity\AuthCodeEntity
      */
     protected $authCode;
 
     /**
-     * Access token
+     * Access token.
      *
      * @var \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     protected $accessToken;
 
     /**
-     * Refresh token
+     * Refresh token.
      *
      * @var \League\OAuth2\Server\Entity\RefreshTokenEntity
      */
     protected $refreshToken;
 
     /**
-     * Session scopes
+     * Session scopes.
      *
      * @var \Symfony\Component\HttpFoundation\ParameterBag
      */
     protected $scopes;
 
     /**
-     * Authorization or resource server
+     * Authorization or resource server.
      *
      * @var \League\OAuth2\Server\AuthorizationServer|\League\OAuth2\Server\ResourceServer
      */
     protected $server;
 
     /**
-     * __construct
+     * __construct.
      *
      * @param \League\OAuth2\Server\AbstractServer $server
      *
@@ -97,7 +96,7 @@ class SessionEntity
     }
 
     /**
-     * Set the session identifier
+     * Set the session identifier.
      *
      * @param string $id
      *
@@ -111,7 +110,7 @@ class SessionEntity
     }
 
     /**
-     * Return the session identifier
+     * Return the session identifier.
      *
      * @return string
      */
@@ -121,7 +120,7 @@ class SessionEntity
     }
 
     /**
-     * Associate a scope
+     * Associate a scope.
      *
      * @param \League\OAuth2\Server\Entity\ScopeEntity $scope
      *
@@ -137,7 +136,7 @@ class SessionEntity
     }
 
     /**
-     * Check if access token has an associated scope
+     * Check if access token has an associated scope.
      *
      * @param string $scope Scope to check
      *
@@ -153,7 +152,7 @@ class SessionEntity
     }
 
     /**
-     * Return all scopes associated with the session
+     * Return all scopes associated with the session.
      *
      * @return \League\OAuth2\Server\Entity\ScopeEntity[]
      */
@@ -167,7 +166,7 @@ class SessionEntity
     }
 
     /**
-     * Format the local scopes array
+     * Format the local scopes array.
      *
      * @param  \League\OAuth2\Server\Entity\Scope[]
      *
@@ -188,7 +187,7 @@ class SessionEntity
     }
 
     /**
-     * Associate an access token with the session
+     * Associate an access token with the session.
      *
      * @param \League\OAuth2\Server\Entity\AccessTokenEntity $accessToken
      *
@@ -202,7 +201,7 @@ class SessionEntity
     }
 
     /**
-     * Associate a refresh token with the session
+     * Associate a refresh token with the session.
      *
      * @param \League\OAuth2\Server\Entity\RefreshTokenEntity $refreshToken
      *
@@ -216,7 +215,7 @@ class SessionEntity
     }
 
     /**
-     * Associate a client with the session
+     * Associate a client with the session.
      *
      * @param \League\OAuth2\Server\Entity\ClientEntity $client The client
      *
@@ -230,7 +229,7 @@ class SessionEntity
     }
 
     /**
-     * Return the session client
+     * Return the session client.
      *
      * @return \League\OAuth2\Server\Entity\ClientEntity
      */
@@ -246,7 +245,7 @@ class SessionEntity
     }
 
     /**
-     * Set the session owner
+     * Set the session owner.
      *
      * @param string $type The type of the owner (e.g. user, app)
      * @param string $id   The identifier of the owner
@@ -264,7 +263,7 @@ class SessionEntity
     }
 
     /**
-     * Return session owner identifier
+     * Return session owner identifier.
      *
      * @return string
      */
@@ -274,7 +273,7 @@ class SessionEntity
     }
 
     /**
-     * Return session owner type
+     * Return session owner type.
      *
      * @return string
      */
@@ -284,7 +283,7 @@ class SessionEntity
     }
 
     /**
-     * Save the session
+     * Save the session.
      *
      * @return void
      */

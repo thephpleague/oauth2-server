@@ -55,11 +55,11 @@ class MacTest extends \PHPUnit_Framework_TestCase
             $request->getRequestUri(),
             $request->getHost(),
             $request->getPort(),
-            'ext'
+            'ext',
         ];
         $calculatedSignature = base64_encode(hash_hmac('sha256', implode("\n", $calculatedSignatureParts), 'abcdef', true));
 
-        $request->headers->set('Authorization',  sprintf('MAC id="foo", nonce="foo", ts="%s", mac="%s", ext="ext"', $ts, $calculatedSignature));
+        $request->headers->set('Authorization', sprintf('MAC id="foo", nonce="foo", ts="%s", mac="%s", ext="ext"', $ts, $calculatedSignature));
 
         $tokenType = new MAC();
         $tokenType->setServer($server);
@@ -134,7 +134,7 @@ class MacTest extends \PHPUnit_Framework_TestCase
         $ts = time() - 100;
 
         $request = Request::createFromGlobals();
-        $request->headers->set('Authorization',  sprintf('MAC id="foo", nonce="foo", ts="%s", mac="%s", ext="ext"', $ts, 'foo'));
+        $request->headers->set('Authorization', sprintf('MAC id="foo", nonce="foo", ts="%s", mac="%s", ext="ext"', $ts, 'foo'));
 
         $tokenType = new MAC();
         $tokenType->setServer($server);
@@ -154,7 +154,7 @@ class MacTest extends \PHPUnit_Framework_TestCase
         $ts = time();
 
         $request = Request::createFromGlobals();
-        $request->headers->set('Authorization',  sprintf('MAC id="foo", nonce="foo", ts="%s", mac="%s", ext="ext"', $ts, 'foo'));
+        $request->headers->set('Authorization', sprintf('MAC id="foo", nonce="foo", ts="%s", mac="%s", ext="ext"', $ts, 'foo'));
 
         $tokenType = new MAC();
         $tokenType->setServer($server);

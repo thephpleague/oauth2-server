@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Password grant
+ * OAuth 2.0 Password grant.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
@@ -20,40 +19,40 @@ use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 
 /**
- * Password grant class
+ * Password grant class.
  */
 class PasswordGrant extends AbstractGrant
 {
     /**
-     * Grant identifier
+     * Grant identifier.
      *
      * @var string
      */
     protected $identifier = 'password';
 
     /**
-     * Response type
+     * Response type.
      *
      * @var string
      */
     protected $responseType;
 
     /**
-     * Callback to authenticate a user's name and password
+     * Callback to authenticate a user's name and password.
      *
      * @var callable
      */
     protected $callback;
 
     /**
-     * Access token expires in override
+     * Access token expires in override.
      *
      * @var int
      */
     protected $accessTokenTTL;
 
     /**
-     * Set the callback to verify a user's username and password
+     * Set the callback to verify a user's username and password.
      *
      * @param callable $callback The callback function
      *
@@ -65,11 +64,11 @@ class PasswordGrant extends AbstractGrant
     }
 
     /**
-     * Return the callback function
-     *
-     * @return callable
+     * Return the callback function.
      *
      * @throws
+     *
+     * @return callable
      */
     protected function getVerifyCredentialsCallback()
     {
@@ -81,11 +80,11 @@ class PasswordGrant extends AbstractGrant
     }
 
     /**
-     * Complete the password grant
-     *
-     * @return array
+     * Complete the password grant.
      *
      * @throws
+     *
+     * @return array
      */
     public function completeFlow()
     {

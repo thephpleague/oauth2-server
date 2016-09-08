@@ -1,26 +1,25 @@
 <?php
 /**
- * OAuth 2.0 Access token storage interface
+ * OAuth 2.0 Access token storage interface.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Storage;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 
 /**
- * Access token interface
+ * Access token interface.
  */
 interface AccessTokenInterface extends StorageInterface
 {
     /**
-     * Get an instance of Entity\AccessTokenEntity
+     * Get an instance of Entity\AccessTokenEntity.
      *
      * @param string $token The access token
      *
@@ -29,7 +28,7 @@ interface AccessTokenInterface extends StorageInterface
     public function get($token);
 
     /**
-     * Get the scopes for an access token
+     * Get the scopes for an access token.
      *
      * @param \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
      *
@@ -38,18 +37,18 @@ interface AccessTokenInterface extends StorageInterface
     public function getScopes(AccessTokenEntity $token);
 
     /**
-     * Creates a new access token
+     * Creates a new access token.
      *
-     * @param string         $token      The access token
-     * @param integer        $expireTime The expire time expressed as a unix timestamp
-     * @param string|integer $sessionId  The session ID
+     * @param string     $token      The access token
+     * @param int        $expireTime The expire time expressed as a unix timestamp
+     * @param string|int $sessionId  The session ID
      *
      * @return void
      */
     public function create($token, $expireTime, $sessionId);
 
     /**
-     * Associate a scope with an acess token
+     * Associate a scope with an acess token.
      *
      * @param \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
      * @param \League\OAuth2\Server\Entity\ScopeEntity       $scope The scope
@@ -59,7 +58,7 @@ interface AccessTokenInterface extends StorageInterface
     public function associateScope(AccessTokenEntity $token, ScopeEntity $scope);
 
     /**
-     * Delete an access token
+     * Delete an access token.
      *
      * @param \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token to delete
      *
