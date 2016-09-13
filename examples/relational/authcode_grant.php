@@ -39,8 +39,8 @@ $router->get('/authorize', function (Request $request) use ($server) {
     } catch (\Exception $e) {
         return new Response(
             json_encode([
-                'error'     =>  $e->errorType,
-                'message'   =>  $e->getMessage(),
+                'error'     => $e->errorType,
+                'message'   => $e->getMessage(),
             ]),
             $e->httpStatusCode,
             $e->getHttpHeaders()
@@ -60,14 +60,13 @@ $router->get('/authorize', function (Request $request) use ($server) {
     $redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', 1, $authParams);
 
     $response = new Response('', 200, [
-        'Location'  =>  $redirectUri
+        'Location'  => $redirectUri,
     ]);
 
     return $response;
 });
 
 $router->post('/access_token', function (Request $request) use ($server) {
-
     try {
         $response = $server->issueAccessToken();
 
@@ -75,14 +74,13 @@ $router->post('/access_token', function (Request $request) use ($server) {
     } catch (\Exception $e) {
         return new Response(
             json_encode([
-                'error'     =>  $e->errorType,
-                'message'   =>  $e->getMessage(),
+                'error'     => $e->errorType,
+                'message'   => $e->getMessage(),
             ]),
             $e->httpStatusCode,
             $e->getHttpHeaders()
         );
     }
-
 });
 
 $dispatcher = $router->getDispatcher();
@@ -99,8 +97,8 @@ try {
     $response->setContent(json_encode(['status_code' => $e->getStatusCode(), 'message' => $e->getMessage()]));
 } catch (\League\OAuth2\Server\Exception\OAuthException $e) {
     $response = new Response(json_encode([
-        'error'     =>  $e->errorType,
-        'message'   =>  $e->getMessage(),
+        'error'     => $e->errorType,
+        'message'   => $e->getMessage(),
     ]), $e->httpStatusCode);
 
     foreach ($e->getHttpHeaders() as $header) {

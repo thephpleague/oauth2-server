@@ -1,32 +1,31 @@
 <?php
 /**
- * OAuth 2.0 abstract storage
+ * OAuth 2.0 abstract storage.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Storage;
 
 use League\OAuth2\Server\AbstractServer;
 
 /**
- * Abstract storage class
+ * Abstract storage class.
  */
 abstract class AbstractStorage implements StorageInterface
 {
     /**
-     * Server
+     * Server.
      *
-     * @var \League\OAuth2\Server\AbstractServer $server
+     * @var \League\OAuth2\Server\AbstractServer
      */
     protected $server;
 
     /**
-     * Set the server
+     * Set the server.
      *
      * @param \League\OAuth2\Server\AbstractServer $server
      *
@@ -40,7 +39,7 @@ abstract class AbstractStorage implements StorageInterface
     }
 
     /**
-     * Return the server
+     * Return the server.
      *
      * @return \League\OAuth2\Server\AbstractServer
      */

@@ -11,9 +11,9 @@ class ClientEntityTest extends \PHPUnit_Framework_TestCase
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
         $client = (new ClientEntity($server))->hydrate([
-            'id' => 'foobar',
-            'secret' => 'barfoo',
-            'name' => 'Test Client',
+            'id'          => 'foobar',
+            'secret'      => 'barfoo',
+            'name'        => 'Test Client',
             'redirectUri' => 'http://foo/bar',
         ]);
 

@@ -5,8 +5,6 @@ namespace LeagueTests\Grant;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
-use League\OAuth2\Server\Exception\InvalidRequestException;
-use League\OAuth2\Server\Grant;
 use LeagueTests\Stubs\StubAbstractGrant;
 use Mockery as M;
 
