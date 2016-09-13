@@ -1,76 +1,75 @@
 <?php
 /**
- * OAuth 2.0 Authorization Server
+ * OAuth 2.0 Authorization Server.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\TokenType\Bearer;
 
 /**
- * OAuth 2.0 authorization server class
+ * OAuth 2.0 authorization server class.
  */
 class AuthorizationServer extends AbstractServer
 {
     /**
      * The delimiter between scopes specified in the scope query string parameter
-     * The OAuth 2 specification states it should be a space but most use a comma
+     * The OAuth 2 specification states it should be a space but most use a comma.
      *
      * @var string
      */
     protected $scopeDelimiter = ' ';
 
     /**
-     * The TTL (time to live) of an access token in seconds (default: 3600)
+     * The TTL (time to live) of an access token in seconds (default: 3600).
      *
-     * @var integer
+     * @var int
      */
     protected $accessTokenTTL = 3600;
 
     /**
-     * The registered grant response types
+     * The registered grant response types.
      *
      * @var array
      */
     protected $responseTypes = [];
 
     /**
-     * The registered grant types
+     * The registered grant types.
      *
      * @var array
      */
     protected $grantTypes = [];
 
     /**
-     * Require the "scope" parameter to be in checkAuthoriseParams()
+     * Require the "scope" parameter to be in checkAuthoriseParams().
      *
-     * @var boolean
+     * @var bool
      */
     protected $requireScopeParam = false;
 
     /**
-     * Default scope(s) to be used if none is provided
+     * Default scope(s) to be used if none is provided.
      *
      * @var string|array
      */
     protected $defaultScope;
 
     /**
-     * Require the "state" parameter to be in checkAuthoriseParams()
+     * Require the "state" parameter to be in checkAuthoriseParams().
      *
-     * @var boolean
+     * @var bool
      */
     protected $requireStateParam = false;
 
     /**
-     * Create a new OAuth2 authorization server
+     * Create a new OAuth2 authorization server.
      *
      * @return self
      */
@@ -85,7 +84,7 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Enable support for a grant
+     * Enable support for a grant.
      *
      * @param GrantTypeInterface $grantType  A grant class which conforms to Interface/GrantTypeInterface
      * @param null|string        $identifier An identifier for the grant (autodetected if not passed)
@@ -111,19 +110,19 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Check if a grant type has been enabled
+     * Check if a grant type has been enabled.
      *
      * @param string $identifier The grant type identifier
      *
-     * @return boolean Returns "true" if enabled, "false" if not
+     * @return bool Returns "true" if enabled, "false" if not
      */
     public function hasGrantType($identifier)
     {
-        return (array_key_exists($identifier, $this->grantTypes));
+        return array_key_exists($identifier, $this->grantTypes);
     }
 
     /**
-     * Returns response types
+     * Returns response types.
      *
      * @return array
      */
@@ -133,9 +132,9 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Require the "scope" parameter in checkAuthoriseParams()
+     * Require the "scope" parameter in checkAuthoriseParams().
      *
-     * @param boolean $require
+     * @param bool $require
      *
      * @return self
      */
@@ -157,7 +156,7 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Default scope to be used if none is provided and requireScopeParam() is false
+     * Default scope to be used if none is provided and requireScopeParam() is false.
      *
      * @param string $default Name of the default scope
      *
@@ -171,7 +170,7 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Default scope to be used if none is provided and requireScopeParam is false
+     * Default scope to be used if none is provided and requireScopeParam is false.
      *
      * @return string|null
      */
@@ -181,7 +180,7 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Require the "state" parameter in checkAuthoriseParams()
+     * Require the "state" parameter in checkAuthoriseParams().
      *
      * @return bool
      */
@@ -191,9 +190,9 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Require the "state" parameter in checkAuthoriseParams()
+     * Require the "state" parameter in checkAuthoriseParams().
      *
-     * @param boolean $require
+     * @param bool $require
      *
      * @return self
      */
@@ -205,7 +204,7 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Get the scope delimiter
+     * Get the scope delimiter.
      *
      * @return string The scope delimiter (default: ",")
      */
@@ -215,7 +214,7 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Set the scope delimiter
+     * Set the scope delimiter.
      *
      * @param string $scopeDelimiter
      *
@@ -229,7 +228,7 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Get the TTL for an access token
+     * Get the TTL for an access token.
      *
      * @return int The TTL
      */
@@ -239,7 +238,7 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Set the TTL for an access token
+     * Set the TTL for an access token.
      *
      * @param int $accessTokenTTL The new TTL
      *
@@ -253,11 +252,11 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Issue an access token
-     *
-     * @return array Authorise request parameters
+     * Issue an access token.
      *
      * @throws
+     *
+     * @return array Authorise request parameters
      */
     public function issueAccessToken()
     {
@@ -276,13 +275,13 @@ class AuthorizationServer extends AbstractServer
     }
 
     /**
-     * Return a grant type class
+     * Return a grant type class.
      *
      * @param string $grantType The grant type identifier
      *
-     * @return Grant\GrantTypeInterface
-     *
      * @throws
+     *
+     * @return Grant\GrantTypeInterface
      */
     public function getGrantType($grantType)
     {

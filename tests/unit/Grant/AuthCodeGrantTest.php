@@ -7,7 +7,6 @@ use League\OAuth2\Server\Entity\AuthCodeEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Entity\SessionEntity;
-use League\OAuth2\Server\Exception\InvalidRequestException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use Mockery as M;
@@ -44,7 +43,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $server = new AuthorizationServer();
         $_GET = [
-            'client_id' =>  'testapp',
+            'client_id' => 'testapp',
         ];
 
         $grant = new AuthCodeGrant();
@@ -58,9 +57,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
 
         $_GET = [
-            'client_id'     =>  'testapp',
-            'redirect_uri'  =>  'http://foo/bar',
-            'response_type' =>  'code',
+            'client_id'     => 'testapp',
+            'redirect_uri'  => 'http://foo/bar',
+            'response_type' => 'code',
         ];
         $server = new AuthorizationServer();
 
@@ -81,8 +80,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_GET = [
-            'client_id' =>  'testapp',
-            'redirect_uri'  =>  'http://foo/bar',
+            'client_id'     => 'testapp',
+            'redirect_uri'  => 'http://foo/bar',
         ];
         $server = new AuthorizationServer();
 
@@ -105,8 +104,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_GET = [
-            'client_id'     =>  'testapp',
-            'redirect_uri'  =>  'http://foo/bar',
+            'client_id'     => 'testapp',
+            'redirect_uri'  => 'http://foo/bar',
         ];
         $server = new AuthorizationServer();
 
@@ -128,9 +127,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\UnsupportedResponseTypeException');
 
         $_GET = [
-            'client_id'     =>  'testapp',
-            'redirect_uri'  =>  'http://foo/bar',
-            'response_type' =>  'foobar',
+            'client_id'     => 'testapp',
+            'redirect_uri'  => 'http://foo/bar',
+            'response_type' => 'foobar',
         ];
         $server = new AuthorizationServer();
 
@@ -152,10 +151,10 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidScopeException');
 
         $_GET = [
-            'response_type' =>  'code',
-            'client_id'     =>  'testapp',
-            'redirect_uri'  =>  'http://foo/bar',
-            'scope'         =>  'foo',
+            'response_type' => 'code',
+            'client_id'     => 'testapp',
+            'redirect_uri'  => 'http://foo/bar',
+            'scope'         => 'foo',
         ];
 
         $server = new AuthorizationServer();
@@ -193,10 +192,10 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     public function testCheckAuthoriseParams()
     {
         $_GET = [
-            'response_type' =>  'code',
-            'client_id'     =>  'testapp',
-            'redirect_uri'  =>  'http://foo/bar',
-            'scope'         =>  'foo',
+            'response_type' => 'code',
+            'client_id'     => 'testapp',
+            'redirect_uri'  => 'http://foo/bar',
+            'scope'         => 'foo',
         ];
 
         $server = new AuthorizationServer();
@@ -271,9 +270,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $grant->newAuthorizeRequest('user', 123, [
             'client'        => $client,
-            'redirect_uri'  =>  'http://foo/bar',
-            'scopes'        =>  [$scope],
-            'state'         =>  'foobar'
+            'redirect_uri'  => 'http://foo/bar',
+            'scopes'        => [$scope],
+            'state'         => 'foobar',
         ]);
     }
 
@@ -296,7 +295,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
         $_POST = [
             'grant_type' => 'authorization_code',
-            'client_id' =>  'testapp',
+            'client_id'  => 'testapp',
         ];
 
         $server = new AuthorizationServer();
@@ -311,8 +310,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
-            'grant_type' => 'authorization_code',
-            'client_id' =>  'testapp',
+            'grant_type'    => 'authorization_code',
+            'client_id'     => 'testapp',
             'client_secret' => 'foobar',
         ];
 
@@ -328,10 +327,10 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
 
         $_POST = [
-            'grant_type'    =>  'authorization_code',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'redirect_uri'  =>  'http://foo/bar',
+            'grant_type'    => 'authorization_code',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'redirect_uri'  => 'http://foo/bar',
         ];
 
         $server = new AuthorizationServer();
@@ -352,10 +351,10 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
-            'grant_type'    =>  'authorization_code',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'redirect_uri'  =>  'http://foo/bar',
+            'grant_type'    => 'authorization_code',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'redirect_uri'  => 'http://foo/bar',
         ];
 
         $server = new AuthorizationServer();
@@ -400,11 +399,11 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
-            'grant_type'    =>  'authorization_code',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'redirect_uri'  =>  'http://foo/bar',
-            'code'          =>  'foobar',
+            'grant_type'    => 'authorization_code',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'redirect_uri'  => 'http://foo/bar',
+            'code'          => 'foobar',
         ];
 
         $server = new AuthorizationServer();
@@ -449,11 +448,11 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
-            'grant_type'    =>  'authorization_code',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'redirect_uri'  =>  'http://foo/bar',
-            'code'          =>  'foobar',
+            'grant_type'    => 'authorization_code',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'redirect_uri'  => 'http://foo/bar',
+            'code'          => 'foobar',
         ];
 
         $server = new AuthorizationServer();
@@ -500,11 +499,11 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidRequestException');
 
         $_POST = [
-            'grant_type'    =>  'authorization_code',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'redirect_uri'  =>  'http://foo/bar',
-            'code'          =>  'foobar',
+            'grant_type'    => 'authorization_code',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'redirect_uri'  => 'http://foo/bar',
+            'code'          => 'foobar',
         ];
 
         $server = new AuthorizationServer();
@@ -550,10 +549,10 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     {
         $_POST = [
             'grant_type'    => 'authorization_code',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'redirect_uri'  =>  'http://foo/bar',
-            'code'          =>  'foo',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'redirect_uri'  => 'http://foo/bar',
+            'code'          => 'foo',
         ];
 
         $server = new AuthorizationServer();
@@ -620,10 +619,10 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     {
         $_POST = [
             'grant_type'    => 'authorization_code',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'redirect_uri'  =>  'http://foo/bar',
-            'code'          =>  'foo',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'redirect_uri'  => 'http://foo/bar',
+            'code'          => 'foo',
         ];
 
         $server = new AuthorizationServer();

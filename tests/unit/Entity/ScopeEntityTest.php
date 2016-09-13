@@ -11,7 +11,7 @@ class ScopeEntityTest extends \PHPUnit_Framework_TestCase
     {
         $server = M::mock('League\OAuth2\Server\AbstractServer');
         $scope = (new ScopeEntity($server))->hydrate([
-            'id' => 'foobar',
+            'id'          => 'foobar',
             'description' => 'barfoo',
         ]);
 

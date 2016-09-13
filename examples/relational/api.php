@@ -28,32 +28,29 @@ $router = new \Orno\Route\RouteCollection();
 
 // GET /tokeninfo
 $router->get('/tokeninfo', function (Request $request) use ($server) {
-
     $accessToken = $server->getAccessToken();
     $session = $server->getSessionStorage()->getByAccessToken($accessToken);
     $token = [
-        'owner_id' => $session->getOwnerId(),
-        'owner_type' => $session->getOwnerType(),
+        'owner_id'     => $session->getOwnerId(),
+        'owner_type'   => $session->getOwnerType(),
         'access_token' => $accessToken,
-        'client_id' => $session->getClient()->getId(),
-        'scopes' => $accessToken->getScopes(),
+        'client_id'    => $session->getClient()->getId(),
+        'scopes'       => $accessToken->getScopes(),
     ];
 
     return new Response(json_encode($token));
-
 });
 
 // GET /users
 $router->get('/users', function (Request $request) use ($server) {
-
     $results = (new Model\Users())->get();
 
     $users = [];
 
     foreach ($results as $result) {
         $user = [
-            'username'  =>  $result['username'],
-            'name'      =>  $result['name'],
+            'username'  => $result['username'],
+            'name'      => $result['name'],
         ];
 
         if ($server->getAccessToken()->hasScope('email')) {
@@ -72,7 +69,6 @@ $router->get('/users', function (Request $request) use ($server) {
 
 // GET /users/{username}
 $router->get('/users/{username}', function (Request $request, Response $response, array $args) use ($server) {
-
     $result = (new Model\Users())->get($args['username']);
 
     if (count($result) === 0) {
@@ -80,8 +76,8 @@ $router->get('/users/{username}', function (Request $request, Response $response
     }
 
     $user = [
-        'username'  =>  $result[0]['username'],
-        'name'      =>  $result[0]['name'],
+        'username'  => $result[0]['username'],
+        'name'      => $result[0]['name'],
     ];
 
     if ($server->getAccessToken()->hasScope('email')) {
@@ -112,8 +108,8 @@ try {
     $response->setContent(json_encode(['status_code' => $e->getStatusCode(), 'message' => $e->getMessage()]));
 } catch (\League\OAuth2\Server\Exception\OAuthException $e) {
     $response = new Response(json_encode([
-        'error'     =>  $e->errorType,
-        'message'   =>  $e->getMessage(),
+        'error'     => $e->errorType,
+        'message'   => $e->getMessage(),
     ]), $e->httpStatusCode);
 
     foreach ($e->getHttpHeaders() as $header) {
