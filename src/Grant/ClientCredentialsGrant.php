@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Client credentials grant
+ * OAuth 2.0 Client credentials grant.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
@@ -19,44 +18,44 @@ use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 
 /**
- * Client credentials grant class
+ * Client credentials grant class.
  */
 class ClientCredentialsGrant extends AbstractGrant
 {
     /**
-     * Grant identifier
+     * Grant identifier.
      *
      * @var string
      */
     protected $identifier = 'client_credentials';
 
     /**
-     * Response type
+     * Response type.
      *
      * @var string
      */
     protected $responseType = null;
 
     /**
-     * AuthServer instance
+     * AuthServer instance.
      *
      * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server = null;
 
     /**
-     * Access token expires in override
+     * Access token expires in override.
      *
      * @var int
      */
     protected $accessTokenTTL = null;
 
     /**
-     * Complete the client credentials grant
-     *
-     * @return array
+     * Complete the client credentials grant.
      *
      * @throws
+     *
+     * @return array
      */
     public function completeFlow()
     {

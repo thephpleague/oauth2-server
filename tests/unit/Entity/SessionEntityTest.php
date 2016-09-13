@@ -2,7 +2,6 @@
 
 namespace LeagueTests\Entity;
 
-use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;

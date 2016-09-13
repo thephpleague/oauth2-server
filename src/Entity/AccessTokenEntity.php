@@ -1,23 +1,22 @@
 <?php
 /**
- * OAuth 2.0 Access token entity
+ * OAuth 2.0 Access token entity.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Entity;
 
 /**
- * Access token entity class
+ * Access token entity class.
  */
 class AccessTokenEntity extends AbstractTokenEntity
 {
     /**
-     * Get session
+     * Get session.
      *
      * @return \League\OAuth2\Server\Entity\SessionEntity
      */
@@ -33,7 +32,7 @@ class AccessTokenEntity extends AbstractTokenEntity
     }
 
     /**
-     * Check if access token has an associated scope
+     * Check if access token has an associated scope.
      *
      * @param string $scope Scope to check
      *
@@ -49,7 +48,7 @@ class AccessTokenEntity extends AbstractTokenEntity
     }
 
     /**
-     * Return all scopes associated with the access token
+     * Return all scopes associated with the access token.
      *
      * @return \League\OAuth2\Server\Entity\ScopeEntity[]
      */

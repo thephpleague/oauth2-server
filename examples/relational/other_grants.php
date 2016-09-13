@@ -47,7 +47,6 @@ $request = (new Request())->createFromGlobals();
 $router = new \Orno\Route\RouteCollection();
 
 $router->post('/access_token', function (Request $request) use ($server) {
-
     try {
         $response = $server->issueAccessToken();
 
@@ -55,14 +54,13 @@ $router->post('/access_token', function (Request $request) use ($server) {
     } catch (\Exception $e) {
         return new Response(
             json_encode([
-                'error'     =>  $e->errorType,
-                'message'   =>  $e->getMessage(),
+                'error'     => $e->errorType,
+                'message'   => $e->getMessage(),
             ]),
             $e->httpStatusCode,
             $e->getHttpHeaders()
         );
     }
-
 });
 
 $dispatcher = $router->getDispatcher();
@@ -79,8 +77,8 @@ try {
     $response->setContent(json_encode(['status_code' => $e->getStatusCode(), 'message' => $e->getMessage()]));
 } catch (\League\OAuth2\Server\Exception\OAuthException $e) {
     $response = new Response(json_encode([
-        'error'     =>  $e->errorType,
-        'message'   =>  $e->getMessage(),
+        'error'     => $e->errorType,
+        'message'   => $e->getMessage(),
     ]), $e->httpStatusCode);
 
     foreach ($e->getHttpHeaders() as $header) {

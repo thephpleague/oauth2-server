@@ -1,37 +1,36 @@
 <?php
 /**
- * OAuth 2.0 Refresh token entity
+ * OAuth 2.0 Refresh token entity.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Entity;
 
 /**
- * Refresh token entity class
+ * Refresh token entity class.
  */
 class RefreshTokenEntity extends AbstractTokenEntity
 {
     /**
-     * Access token associated to refresh token
+     * Access token associated to refresh token.
      *
      * @var \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     protected $accessTokenEntity;
 
     /**
-     * Id of the access token
+     * Id of the access token.
      *
      * @var string
      */
     protected $accessTokenId;
 
     /**
-     * Set the ID of the associated access token
+     * Set the ID of the associated access token.
      *
      * @param string $accessTokenId
      *
@@ -45,7 +44,7 @@ class RefreshTokenEntity extends AbstractTokenEntity
     }
 
     /**
-     * Associate an access token
+     * Associate an access token.
      *
      * @param \League\OAuth2\Server\Entity\AccessTokenEntity $accessTokenEntity
      *
@@ -59,13 +58,13 @@ class RefreshTokenEntity extends AbstractTokenEntity
     }
 
     /**
-     * Return access token
+     * Return access token.
      *
      * @return AccessTokenEntity
      */
     public function getAccessToken()
     {
-        if (! $this->accessTokenEntity instanceof AccessTokenEntity) {
+        if (!$this->accessTokenEntity instanceof AccessTokenEntity) {
             $this->accessTokenEntity = $this->server->getAccessTokenStorage()->get($this->accessTokenId);
         }
 

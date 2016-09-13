@@ -1,30 +1,29 @@
 <?php
 /**
- * OAuth 2.0 Auth code entity
+ * OAuth 2.0 Auth code entity.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Entity;
 
 /**
- * Auth Code entity class
+ * Auth Code entity class.
  */
 class AuthCodeEntity extends AbstractTokenEntity
 {
     /**
-     * Redirect URI
+     * Redirect URI.
      *
      * @var string
      */
     protected $redirectUri = '';
 
     /**
-     * Set the redirect URI for the authorization request
+     * Set the redirect URI for the authorization request.
      *
      * @param string $redirectUri
      *
@@ -38,7 +37,7 @@ class AuthCodeEntity extends AbstractTokenEntity
     }
 
     /**
-     * Get the redirect URI
+     * Get the redirect URI.
      *
      * @return string
      */
@@ -48,7 +47,7 @@ class AuthCodeEntity extends AbstractTokenEntity
     }
 
     /**
-     * Generate a redirect URI
+     * Generate a redirect URI.
      *
      * @param string $state          The state parameter if set by the client
      * @param string $queryDelimeter The query delimiter ('?' for auth code grant, '#' for implicit grant)
@@ -61,13 +60,13 @@ class AuthCodeEntity extends AbstractTokenEntity
         $uri .= (strstr($this->getRedirectUri(), $queryDelimeter) === false) ? $queryDelimeter : '&';
 
         return $uri.http_build_query([
-            'code'  =>  $this->getId(),
-            'state' =>  $state,
+            'code'  => $this->getId(),
+            'state' => $state,
         ]);
     }
 
     /**
-     * Get session
+     * Get session.
      *
      * @return \League\OAuth2\Server\Entity\SessionEntity
      */
@@ -83,7 +82,7 @@ class AuthCodeEntity extends AbstractTokenEntity
     }
 
     /**
-     * Return all scopes associated with the session
+     * Return all scopes associated with the session.
      *
      * @return \League\OAuth2\Server\Entity\ScopeEntity[]
      */

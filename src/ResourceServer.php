@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Resource Server
+ * OAuth 2.0 Resource Server.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
@@ -22,26 +21,26 @@ use League\OAuth2\Server\TokenType\Bearer;
 use League\OAuth2\Server\TokenType\MAC;
 
 /**
- * OAuth 2.0 Resource Server
+ * OAuth 2.0 Resource Server.
  */
 class ResourceServer extends AbstractServer
 {
     /**
-     * The access token
+     * The access token.
      *
      * @var \League\OAuth2\Server\Entity\AccessTokenEntity
      */
     protected $accessToken;
 
     /**
-     * The query string key which is used by clients to present the access token (default: access_token)
+     * The query string key which is used by clients to present the access token (default: access_token).
      *
      * @var string
      */
     protected $tokenKey = 'access_token';
 
     /**
-     * Initialise the resource server
+     * Initialise the resource server.
      *
      * @param \League\OAuth2\Server\Storage\SessionInterface     $sessionStorage
      * @param \League\OAuth2\Server\Storage\AccessTokenInterface $accessTokenStorage
@@ -84,7 +83,7 @@ class ResourceServer extends AbstractServer
     }
 
     /**
-     * Gets the access token
+     * Gets the access token.
      *
      * @return \League\OAuth2\Server\Entity\AccessTokenEntity
      */
@@ -94,9 +93,9 @@ class ResourceServer extends AbstractServer
     }
 
     /**
-     * Checks if the access token is valid or not
+     * Checks if the access token is valid or not.
      *
-     * @param bool                                                $headerOnly Limit Access Token to Authorization header
+     * @param bool                                                $headerOnly  Limit Access Token to Authorization header
      * @param \League\OAuth2\Server\Entity\AccessTokenEntity|null $accessToken Access Token
      *
      * @throws \League\OAuth2\Server\Exception\AccessDeniedException
@@ -128,7 +127,7 @@ class ResourceServer extends AbstractServer
     }
 
     /**
-     * Reads in the access token from the headers
+     * Reads in the access token from the headers.
      *
      * @param bool $headerOnly Limit Access Token to Authorization header
      *
@@ -140,7 +139,7 @@ class ResourceServer extends AbstractServer
     {
         if (!empty($this->getRequest()->headers->get('Authorization'))) {
             $accessToken = $this->getTokenType()->determineAccessTokenInHeader($this->getRequest());
-        } elseif ($headerOnly === false && (! $this->getTokenType() instanceof MAC)) {
+        } elseif ($headerOnly === false && (!$this->getTokenType() instanceof MAC)) {
             $accessToken = ($this->getRequest()->server->get('REQUEST_METHOD') === 'GET')
                                 ? $this->getRequest()->query->get($this->tokenKey)
                                 : $this->getRequest()->request->get($this->tokenKey);
