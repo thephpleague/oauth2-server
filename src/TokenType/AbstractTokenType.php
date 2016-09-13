@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Abstract Token Type
+ * OAuth 2.0 Abstract Token Type.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\TokenType;
 
 use League\OAuth2\Server\AbstractServer;
@@ -17,23 +16,23 @@ use League\OAuth2\Server\Entity\SessionEntity;
 abstract class AbstractTokenType
 {
     /**
-     * Response array
+     * Response array.
      *
      * @var array
      */
     protected $response = [];
 
     /**
-     * Server
+     * Server.
      *
-     * @var \League\OAuth2\Server\AbstractServer $server
+     * @var \League\OAuth2\Server\AbstractServer
      */
     protected $server;
 
     /**
-     * Server
+     * Server.
      *
-     * @var \League\OAuth2\Server\Entity\SessionEntity $session
+     * @var \League\OAuth2\Server\Entity\SessionEntity
      */
     protected $session;
 

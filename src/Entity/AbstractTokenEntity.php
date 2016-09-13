@@ -1,61 +1,60 @@
 <?php
 /**
- * OAuth 2.0 Abstract token
+ * OAuth 2.0 Abstract token.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Entity;
 
 use League\OAuth2\Server\AbstractServer;
 use League\OAuth2\Server\Util\SecureKey;
 
 /**
- * Abstract token class
+ * Abstract token class.
  */
 abstract class AbstractTokenEntity
 {
     /**
-     * Token identifier
+     * Token identifier.
      *
      * @var string
      */
     protected $id;
 
     /**
-     * Associated session
+     * Associated session.
      *
      * @var \League\OAuth2\Server\Entity\SessionEntity
      */
     protected $session;
 
     /**
-     * Session scopes
+     * Session scopes.
      *
      * @var \League\OAuth2\Server\Entity\ScopeEntity[]
      */
     protected $scopes;
 
     /**
-     * Token expire time
+     * Token expire time.
      *
      * @var int
      */
     protected $expireTime = 0;
 
     /**
-     * Authorization or resource server
+     * Authorization or resource server.
      *
      * @var \League\OAuth2\Server\AbstractServer
      */
     protected $server;
 
     /**
-     * __construct
+     * __construct.
      *
      * @param \League\OAuth2\Server\AbstractServer $server
      *
@@ -69,7 +68,7 @@ abstract class AbstractTokenEntity
     }
 
     /**
-     * Set session
+     * Set session.
      *
      * @param \League\OAuth2\Server\Entity\SessionEntity $session
      *
@@ -83,9 +82,9 @@ abstract class AbstractTokenEntity
     }
 
     /**
-     * Set the expire time of the token
+     * Set the expire time of the token.
      *
-     * @param integer $expireTime Unix time stamp
+     * @param int $expireTime Unix time stamp
      *
      * @return self
      */
@@ -97,7 +96,7 @@ abstract class AbstractTokenEntity
     }
 
     /**
-     * Return token expire time
+     * Return token expire time.
      *
      * @return int
      */
@@ -113,11 +112,11 @@ abstract class AbstractTokenEntity
      */
     public function isExpired()
     {
-        return ((time() - $this->expireTime) > 0);
+        return (time() - $this->expireTime) > 0;
     }
 
     /**
-     * Set token ID
+     * Set token ID.
      *
      * @param string $id Token ID
      *
@@ -131,7 +130,7 @@ abstract class AbstractTokenEntity
     }
 
     /**
-     * Get the token ID
+     * Get the token ID.
      *
      * @return string
      */
@@ -141,7 +140,7 @@ abstract class AbstractTokenEntity
     }
 
     /**
-     * Associate a scope
+     * Associate a scope.
      *
      * @param \League\OAuth2\Server\Entity\ScopeEntity $scope
      *
@@ -157,7 +156,7 @@ abstract class AbstractTokenEntity
     }
 
     /**
-     * Format the local scopes array
+     * Format the local scopes array.
      *
      * @param  \League\OAuth2\Server\Entity\ScopeEntity[]
      *
@@ -180,7 +179,7 @@ abstract class AbstractTokenEntity
     }
 
     /**
-     * Returns the token as a string if the object is cast as a string
+     * Returns the token as a string if the object is cast as a string.
      *
      * @return string
      */
@@ -194,14 +193,14 @@ abstract class AbstractTokenEntity
     }
 
     /**
-     * Expire the token
+     * Expire the token.
      *
      * @return void
      */
     abstract public function expire();
 
     /**
-     * Save the token
+     * Save the token.
      *
      * @return void
      */

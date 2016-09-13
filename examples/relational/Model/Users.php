@@ -19,7 +19,5 @@ class Users
         if (count($result) > 0) {
             return $result;
         }
-
-        return;
     }
 }

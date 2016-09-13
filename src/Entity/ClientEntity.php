@@ -1,62 +1,61 @@
 <?php
 /**
- * OAuth 2.0 Client entity
+ * OAuth 2.0 Client entity.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Entity;
 
 use League\OAuth2\Server\AbstractServer;
 
 /**
- * Client entity class
+ * Client entity class.
  */
 class ClientEntity
 {
     use EntityTrait;
 
     /**
-     * Client identifier
+     * Client identifier.
      *
      * @var string
      */
     protected $id = null;
 
     /**
-     * Client secret
+     * Client secret.
      *
      * @var string
      */
     protected $secret = null;
 
     /**
-     * Client name
+     * Client name.
      *
      * @var string
      */
     protected $name = null;
 
     /**
-     * Client redirect URI
+     * Client redirect URI.
      *
      * @var string
      */
     protected $redirectUri = null;
 
     /**
-     * Authorization or resource server
+     * Authorization or resource server.
      *
      * @var \League\OAuth2\Server\AbstractServer
      */
     protected $server;
 
     /**
-     * __construct
+     * __construct.
      *
      * @param \League\OAuth2\Server\AbstractServer $server
      *
@@ -70,7 +69,7 @@ class ClientEntity
     }
 
     /**
-     * Return the client identifier
+     * Return the client identifier.
      *
      * @return string
      */
@@ -80,7 +79,7 @@ class ClientEntity
     }
 
     /**
-     * Return the client secret
+     * Return the client secret.
      *
      * @return string
      */
@@ -90,7 +89,7 @@ class ClientEntity
     }
 
     /**
-     * Get the client name
+     * Get the client name.
      *
      * @return string
      */
@@ -100,7 +99,7 @@ class ClientEntity
     }
 
     /**
-     * Returnt the client redirect URI
+     * Returnt the client redirect URI.
      *
      * @return string
      */

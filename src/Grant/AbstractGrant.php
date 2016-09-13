@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Abstract grant
+ * OAuth 2.0 Abstract grant.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\AuthorizationServer;
@@ -17,40 +16,40 @@ use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Exception;
 
 /**
- * Abstract grant class
+ * Abstract grant class.
  */
 abstract class AbstractGrant implements GrantTypeInterface
 {
     /**
-     * Grant identifier
+     * Grant identifier.
      *
      * @var string
      */
     protected $identifier = '';
 
     /**
-     * Response type
+     * Response type.
      *
      * @var string
      */
     protected $responseType;
 
     /**
-     * Callback to authenticate a user's name and password
+     * Callback to authenticate a user's name and password.
      *
      * @var callable
      */
     protected $callback;
 
     /**
-     * AuthServer instance
+     * AuthServer instance.
      *
      * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server;
 
     /**
-     * Access token expires in override
+     * Access token expires in override.
      *
      * @var int
      */
@@ -83,7 +82,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Get the TTL for an access token
+     * Get the TTL for an access token.
      *
      * @return int The TTL
      */
@@ -97,7 +96,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Override the default access token expire time
+     * Override the default access token expire time.
      *
      * @param int $accessTokenTTL
      *
@@ -121,18 +120,18 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Given a list of scopes, validate them and return an array of Scope entities
+     * Given a list of scopes, validate them and return an array of Scope entities.
      *
      * @param string                                    $scopeParam  A string of scopes (e.g. "profile email birthday")
      * @param \League\OAuth2\Server\Entity\ClientEntity $client      Client entity
      * @param string|null                               $redirectUri The redirect URI to return the user to
      *
-     * @return \League\OAuth2\Server\Entity\ScopeEntity[]
-     *
      * @throws \League\OAuth2\Server\Exception\InvalidScopeException If scope is invalid, or no scopes passed when required
      * @throws
+     *
+     * @return \League\OAuth2\Server\Entity\ScopeEntity[]
      */
-    public function validateScopes($scopeParam = '', ClientEntity $client, $redirectUri = null)
+    public function validateScopes($scopeParam, ClientEntity $client, $redirectUri = null)
     {
         $scopesList = explode($this->server->getScopeDelimiter(), $scopeParam);
 
@@ -177,7 +176,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Format the local scopes array
+     * Format the local scopes array.
      *
      * @param  \League\OAuth2\Server\Entity\ScopeEntity[]
      *

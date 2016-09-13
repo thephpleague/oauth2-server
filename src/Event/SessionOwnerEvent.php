@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 session owner event
+ * OAuth 2.0 session owner event.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Event;
 
 use League\Event\AbstractEvent;
@@ -17,14 +16,14 @@ use League\OAuth2\Server\Entity\SessionEntity;
 class SessionOwnerEvent extends AbstractEvent
 {
     /**
-     * Session entity
+     * Session entity.
      *
      * @var \League\OAuth2\Server\Entity\SessionEntity
      */
     private $session;
 
     /**
-     * Init the event with a session
+     * Init the event with a session.
      *
      * @param \League\OAuth2\Server\Entity\SessionEntity $session
      */
@@ -34,7 +33,7 @@ class SessionOwnerEvent extends AbstractEvent
     }
 
     /**
-     * The name of the event
+     * The name of the event.
      *
      * @return string
      */
@@ -44,7 +43,7 @@ class SessionOwnerEvent extends AbstractEvent
     }
 
     /**
-     * Return session
+     * Return session.
      *
      * @return \League\OAuth2\Server\Entity\SessionEntity
      */
