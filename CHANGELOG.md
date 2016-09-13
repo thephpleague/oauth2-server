@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.6 (released 2016-09-13)
+
+* Less restrictive on Authorization header check (Issue #652)
+
 ## 4.1.5 (released 2016-01-04)
 
 * Enable Symfony 3.0 support (#412)
