@@ -75,7 +75,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         } catch (\InvalidArgumentException $exception) {
             // JWT couldn't be parsed so return the request as is
             throw OAuthServerException::accessDenied($exception->getMessage());
-        } catch(\RuntimeException $exception){
+        } catch (\RuntimeException $exception) {
             //JWR couldn't be parsed so return the request as is
             throw OAuthServerException::accessDenied('Error while decoding to JSON');
         }
