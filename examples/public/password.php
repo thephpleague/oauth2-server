@@ -23,8 +23,8 @@ $app = new App([
             new ClientRepository(),                 // instance of ClientRepositoryInterface
             new AccessTokenRepository(),            // instance of AccessTokenRepositoryInterface
             new ScopeRepository(),                  // instance of ScopeRepositoryInterface
-            'file://'.__DIR__.'/../private.key',    // path to private key
-            'file://'.__DIR__.'/../public.key'      // path to public key
+            'file://' . __DIR__ . '/../private.key',    // path to private key
+            'file://' . __DIR__ . '/../public.key'      // path to public key
         );
 
         $grant = new PasswordGrant(
@@ -54,19 +54,17 @@ $app->post(
 
             // Try to respond to the access token request
             return $server->respondToAccessTokenRequest($request, $response);
-
         } catch (OAuthServerException $exception) {
 
             // All instances of OAuthServerException can be converted to a PSR-7 response
             return $exception->generateHttpResponse($response);
-
         } catch (\Exception $exception) {
 
             // Catch unexpected exceptions
             $body = $response->getBody();
             $body->write($exception->getMessage());
-            return $response->withStatus(500)->withBody($body);
 
+            return $response->withStatus(500)->withBody($body);
         }
     }
 );
