@@ -68,6 +68,7 @@ class BearerTokenResponse extends AbstractResponseType
      * this class rather than the default.
      *
      * @param AccessTokenEntityInterface $accessToken
+     *
      * @return array
      */
     protected function getExtraParams(AccessTokenEntityInterface $accessToken)
