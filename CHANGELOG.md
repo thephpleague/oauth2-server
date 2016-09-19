@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.1.2 (released 2016-09-19)
+
+* Fixed `finalizeScopes` call (Issue #650)
+
 ## 5.1.1 (released 2016-07-26)
 
 * Improved test suite (Issue #614)
