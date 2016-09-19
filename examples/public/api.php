@@ -31,7 +31,6 @@ $app->add(
 $app->get(
     '/users',
     function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
-
         $users = [
             [
                 'id'    => 123,

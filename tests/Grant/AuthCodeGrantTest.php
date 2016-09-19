@@ -137,7 +137,6 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
     }
 
-
     public function testValidateAuthorizationRequestCodeChallenge()
     {
         $client = new ClientEntity();

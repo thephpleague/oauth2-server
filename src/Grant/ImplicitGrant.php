@@ -151,6 +151,13 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 : $client->getRedirectUri()
         );
 
+        // Finalize the requested scopes
+        $scopes = $this->scopeRepository->finalizeScopes(
+            $scopes,
+            $this->getIdentifier(),
+            $client
+        );
+
         $stateParameter = $this->getQueryStringParameter('state', $request);
 
         $authorizationRequest = new AuthorizationRequest();
