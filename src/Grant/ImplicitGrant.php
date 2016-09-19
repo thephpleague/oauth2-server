@@ -155,8 +155,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         $scopes = $this->scopeRepository->finalizeScopes(
             $scopes,
             $this->getIdentifier(),
-            $client,
-            $authCodePayload->user_id
+            $client
         );
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
