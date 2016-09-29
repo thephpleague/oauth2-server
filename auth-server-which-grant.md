@@ -32,7 +32,7 @@ Depending on whether or not the client is capable of keeping a secret will depen
 
 If the client is a web application that has a server side component then you should implement the [authorization code grant](/authorization-server/auth-code-grant/).
 
-If the client is a web application that has runs entirely on the front end (e.g. a single page web application) you should implement the [password grant](/authorization-server/resource-owner-password-credentials-grant/) for a first party clients and the [implicit grant](/authorization-server/auth-code-grant/) for a third party clients.
+If the client is a web application that has runs entirely on the front end (e.g. a single page web application) you should implement the [password grant](/authorization-server/resource-owner-password-credentials-grant/) for a first party clients and the [implicit grant](/authorization-server/implicit-grant/) for a third party clients.
 
 If the client is a native application such as a mobile app you should implement the [password grant](/authorization-server/resource-owner-password-credentials-grant/).
 
