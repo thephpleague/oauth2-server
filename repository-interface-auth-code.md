@@ -16,21 +16,21 @@ This method should return an implementation of `\League\OAuth2\Server\Entities\A
 
 ## persistNewAuthCode() : void
 
-When a new access token is created this method will be called. You don't have to do anything here but for auditing you probably want to.
+When a new auht code is created this method will be called. You don't have to do anything here but for auditing you probably want to.
 
-The access token entity passed in has a number of methods you can call which contain data worth saving to a database:
+The auth code entity passed in has a number of methods you can call which contain data worth saving to a database:
 
-* `getIdentifier() : string` this is randomly generated unique identifier (of 80+ characters in length) for the access token.
-* `getExpiryDateTime() :  \DateTime` the expiry date and time of the access token.
-* `getUserIdentifier() : string|null` the user identifier represented by the access token. 
+* `getIdentifier() : string` this is randomly generated unique identifier (of 80+ characters in length) for the auth code.
+* `getExpiryDateTime() :  \DateTime` the expiry date and time of the auth code.
+* `getUserIdentifier() : string|null` the user identifier represented by the auth code. 
 * `getScopes() : ScopeEntityInterface[]` an array of scope entities
-* `getClient()->getIdentifier() : string` the identifier of the client who requested the access token.
+* `getClient()->getIdentifier() : string` the identifier of the client who requested the auth code.
 
-JWT access tokens contain an expiry date and so will be rejected automatically when used. You can safely clean up expired access tokens from your database.
+The auth codes contain an expiry date and so will be rejected automatically if used when expired. You can safely clean up expired auth codes from your database.
 
 ## revokeAuthCode() : void
 
-This method is called when an authorization code is exchanged for an access token.
+This method is called when an authorization code is exchanged for an access token. You can also use it in your own business logic.
 
 ## isAuthCodeRevoked() : boolean
 
