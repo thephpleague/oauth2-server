@@ -3,7 +3,7 @@
 ## Installation
 
 0. Run `composer install` in this directory to install dependencies
-0. Create a private key `openssl genrsa -out private.key 1024`
+0. Create a private key `openssl genrsa -out private.key 2048`
 0. Create a public key `openssl rsa -in private.key -pubout > public.key`
 0. `cd` into the public directory
 0. Start a PHP server `php -S localhost:4444`
