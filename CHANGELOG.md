@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.3 (released 2016-10-12)
+
+* Fixed WWW-Authenticate header (Issue #669)
+* Increase the recommended RSA key length from 1024 to 2048 bits (Issue #668)
+
 ## 5.1.2 (released 2016-09-19)
 
 * Fixed `finalizeScopes` call (Issue #650)
