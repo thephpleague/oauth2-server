@@ -267,7 +267,7 @@ class OAuthServerException extends \Exception
             ) {
                 $authScheme = 'Bearer';
             }
-            $headers[] = 'WWW-Authenticate: ' . $authScheme . ' realm="OAuth"';
+            $headers['WWW-Authenticate'] = $authScheme . ' realm="OAuth"';
         }
         // @codeCoverageIgnoreEnd
         return $headers;
