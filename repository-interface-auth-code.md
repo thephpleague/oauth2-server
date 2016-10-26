@@ -16,7 +16,7 @@ This method should return an implementation of `\League\OAuth2\Server\Entities\A
 
 ## persistNewAuthCode() : void
 
-When a new auht code is created this method will be called. You don't have to do anything here but for auditing you probably want to.
+When a new auth code is created this method will be called. You don't have to do anything here but for auditing you probably want to.
 
 The auth code entity passed in has a number of methods you can call which contain data worth saving to a database:
 
