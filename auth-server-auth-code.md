@@ -95,11 +95,8 @@ _Please note: These examples here demonstrate usage with the Slim Framework; Sli
 The client will redirect the user to an authorization endpoint.
 
 {% highlight php %}
-$app->get('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
+$app->get('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($server) {
    
-    /* @var \League\OAuth2\Server\AuthorizationServer $server */
-    $server = $app->getContainer()->get(AuthorizationServer::class);
-    
     try {
     
         // Validate the HTTP request and return an AuthorizationRequest object.
@@ -140,10 +137,7 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
 The client will request an access token using an authorization code so create an `/access_token` endpoint.
 
 {% highlight php %}
-$app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
-
-    /* @var \League\OAuth2\Server\AuthorizationServer $server */
-    $server = $app->getContainer()->get(AuthorizationServer::class);
+$app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($server) {
 
     try {
     
