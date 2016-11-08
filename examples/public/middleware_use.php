@@ -8,6 +8,7 @@
  */
 
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Middleware\AuthorizationServerMiddleware;
@@ -66,6 +67,15 @@ $app = new App([
 
         return $server;
     },
+    ResourceServer::class => function () {
+        $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
+
+        $server = new ResourceServer(
+            new AccessTokenRepository(),
+            $publicKeyPath
+        );
+        return $server;
+    },
 ]);
 
 // Access token issuer
@@ -94,6 +104,6 @@ $app->group('/api', function () {
 
         return $response->withBody($body);
     });
-})->add(new ResourceServerMiddleware($app->getContainer()->get(AuthorizationServer::class)));
+})->add(new ResourceServerMiddleware($app->getContainer()->get(ResourceServer::class)));
 
 $app->run();
