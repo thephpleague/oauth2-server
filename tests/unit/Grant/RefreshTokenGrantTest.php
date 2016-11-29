@@ -43,7 +43,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
         $_POST = [
             'grant_type' => 'refresh_token',
-            'client_id'  =>  'testapp',
+            'client_id'  => 'testapp',
         ];
 
         $server = new AuthorizationServer();
@@ -58,9 +58,9 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
 
         $_POST = [
-            'grant_type' => 'refresh_token',
-            'client_id' =>  'testapp',
-            'client_secret' =>  'foobar',
+            'grant_type'    => 'refresh_token',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
         ];
 
         $server = new AuthorizationServer();
@@ -82,8 +82,8 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
         $_POST = [
             'grant_type'    => 'refresh_token',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
         ];
 
         $server = new AuthorizationServer();
@@ -116,9 +116,9 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
         $_POST = [
             'grant_type'    => 'refresh_token',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'refresh_token' =>  'meh',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'refresh_token' => 'meh',
         ];
 
         $server = new AuthorizationServer();
@@ -150,9 +150,9 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $_POST = [
             'grant_type'    => 'refresh_token',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'refresh_token' =>  'refresh_token',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'refresh_token' => 'refresh_token',
         ];
 
         $server = new AuthorizationServer();
@@ -218,10 +218,10 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $_POST = [
             'grant_type'    => 'refresh_token',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'refresh_token' =>  'refresh_token',
-            'scope'         =>  'foo',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'refresh_token' => 'refresh_token',
+            'scope'         => 'foo',
         ];
 
         $server = new AuthorizationServer();
@@ -291,10 +291,10 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
         $_POST = [
             'grant_type'    => 'refresh_token',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'refresh_token' =>  'refresh_token',
-            'scope'         =>  'foo',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'refresh_token' => 'refresh_token',
+            'scope'         => 'foo',
         ];
 
         $server = new AuthorizationServer();
@@ -357,10 +357,10 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $_POST = [
             'grant_type'    => 'refresh_token',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'refresh_token' =>  'refresh_token',
-            'scope'         =>  'blah',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'refresh_token' => 'refresh_token',
+            'scope'         => 'blah',
         ];
 
         $server = new AuthorizationServer();
@@ -426,9 +426,9 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $_POST = [
             'grant_type'    => 'refresh_token',
-            'client_id'     =>  'testapp',
-            'client_secret' =>  'foobar',
-            'refresh_token' =>  'refresh_token',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'refresh_token' => 'refresh_token',
         ];
 
         $server = new AuthorizationServer();
@@ -503,8 +503,8 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $_POST = [
             'grant_type'    => 'refresh_token',
-            'client_id'     =>  'testapp',
-            'refresh_token' =>  'refresh_token',
+            'client_id'     => 'testapp',
+            'refresh_token' => 'refresh_token',
         ];
 
         $server = new AuthorizationServer();
@@ -565,6 +565,5 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(array_key_exists('refresh_token', $response));
         $this->assertTrue(array_key_exists('token_type', $response));
         $this->assertTrue(array_key_exists('expires_in', $response));
-
     }
 }

@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Auth code grant
+ * OAuth 2.0 Auth code grant.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\Grant;
 
 use League\OAuth2\Server\Entity\AccessTokenEntity;
@@ -21,42 +20,42 @@ use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 
 /**
- * Auth code grant class
+ * Auth code grant class.
  */
 class AuthCodeGrant extends AbstractGrant
 {
     /**
-     * Grant identifier
+     * Grant identifier.
      *
      * @var string
      */
     protected $identifier = 'authorization_code';
 
     /**
-     * Response type
+     * Response type.
      *
      * @var string
      */
     protected $responseType = 'code';
 
     /**
-     * AuthServer instance
+     * AuthServer instance.
      *
      * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server = null;
 
     /**
-     * Access token expires in override
+     * Access token expires in override.
      *
      * @var int
      */
     protected $accessTokenTTL = null;
 
     /**
-     * The TTL of the auth token
+     * The TTL of the auth token.
      *
-     * @var integer
+     * @var int
      */
     protected $authTokenTTL = 600;
 
@@ -64,12 +63,12 @@ class AuthCodeGrant extends AbstractGrant
      * Whether to require the client secret when
      * completing the flow.
      *
-     * @var boolean
+     * @var bool
      */
     protected $requireClientSecret = true;
 
     /**
-     * Override the default access token expire time
+     * Override the default access token expire time.
      *
      * @param int $authTokenTTL
      *
@@ -81,7 +80,6 @@ class AuthCodeGrant extends AbstractGrant
     }
 
     /**
-     *
      * @param bool $required True to require client secret during access
      *                       token request. False if not. Default = true
      */
@@ -102,11 +100,11 @@ class AuthCodeGrant extends AbstractGrant
     }
 
     /**
-     * Check authorize parameters
-     *
-     * @return array Authorize request parameters
+     * Check authorize parameters.
      *
      * @throws
+     *
+     * @return array Authorize request parameters
      */
     public function checkAuthorizeParams()
     {
@@ -158,12 +156,12 @@ class AuthCodeGrant extends AbstractGrant
             'redirect_uri'  => $redirectUri,
             'state'         => $state,
             'response_type' => $responseType,
-            'scopes'        => $scopes
+            'scopes'        => $scopes,
         ];
     }
 
     /**
-     * Parse a new authorize request
+     * Parse a new authorize request.
      *
      * @param string $type       The session owner's type
      * @param string $typeId     The session owner's ID
@@ -197,11 +195,11 @@ class AuthCodeGrant extends AbstractGrant
     }
 
     /**
-     * Complete the auth code grant
-     *
-     * @return array
+     * Complete the auth code grant.
      *
      * @throws
+     *
+     * @return array
      */
     public function completeFlow()
     {

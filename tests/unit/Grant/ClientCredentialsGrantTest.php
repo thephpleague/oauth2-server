@@ -30,7 +30,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
         $_POST = [
             'grant_type' => 'client_credentials',
-            'client_id' =>  'testapp',
+            'client_id'  => 'testapp',
         ];
 
         $server = new AuthorizationServer();
@@ -45,9 +45,9 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidClientException');
 
         $_POST = [
-            'grant_type' => 'client_credentials',
-            'client_id' =>  'testapp',
-            'client_secret' =>  'foobar',
+            'grant_type'    => 'client_credentials',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
         ];
 
         $server = new AuthorizationServer();
@@ -68,10 +68,10 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('League\OAuth2\Server\Exception\InvalidScopeException');
 
         $_POST = [
-            'grant_type' => 'client_credentials',
-            'client_id' =>  'testapp',
-            'client_secret' =>  'foobar',
-            'scope' => 'foo',
+            'grant_type'    => 'client_credentials',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'scope'         => 'foo',
         ];
 
         $server = new AuthorizationServer();
@@ -109,9 +109,9 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
     public function testCompleteFlowNoScopes()
     {
         $_POST = [
-            'grant_type' => 'client_credentials',
-            'client_id' =>  'testapp',
-            'client_secret' =>  'foobar',
+            'grant_type'    => 'client_credentials',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
         ];
 
         $server = new AuthorizationServer();
@@ -156,10 +156,10 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
     public function testCompleteFlow()
     {
         $_POST = [
-            'grant_type' => 'client_credentials',
-            'client_id' =>  'testapp',
-            'client_secret' =>  'foobar',
-            'scope' =>  'foo',
+            'grant_type'    => 'client_credentials',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'scope'         => 'foo',
         ];
 
         $server = new AuthorizationServer();
@@ -210,10 +210,10 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('\League\OAuth2\Server\Exception\UnauthorizedClientException');
 
         $_POST = [
-            'grant_type' => 'client_credentials',
-            'client_id' =>  'testapp',
-            'client_secret' =>  'foobar',
-            'scope' =>  'foo',
+            'grant_type'    => 'client_credentials',
+            'client_id'     => 'testapp',
+            'client_secret' => 'foobar',
+            'scope'         => 'foo',
         ];
 
         $server = new AuthorizationServer();

@@ -28,18 +28,16 @@ class AuthCodeStorage extends AbstractStorage implements AuthCodeInterface
 
             return $token;
         }
-
-        return;
     }
 
     public function create($token, $expireTime, $sessionId, $redirectUri)
     {
         Capsule::table('oauth_auth_codes')
                     ->insert([
-                        'auth_code'     =>  $token,
-                        'client_redirect_uri'  =>  $redirectUri,
-                        'session_id'    =>  $sessionId,
-                        'expire_time'   =>  $expireTime,
+                        'auth_code'            => $token,
+                        'client_redirect_uri'  => $redirectUri,
+                        'session_id'           => $sessionId,
+                        'expire_time'          => $expireTime,
                     ]);
     }
 
@@ -59,8 +57,8 @@ class AuthCodeStorage extends AbstractStorage implements AuthCodeInterface
         if (count($result) > 0) {
             foreach ($result as $row) {
                 $scope = (new ScopeEntity($this->server))->hydrate([
-                    'id'            =>  $row['id'],
-                    'description'   =>  $row['description'],
+                    'id'            => $row['id'],
+                    'description'   => $row['description'],
                 ]);
                 $response[] = $scope;
             }
@@ -76,8 +74,8 @@ class AuthCodeStorage extends AbstractStorage implements AuthCodeInterface
     {
         Capsule::table('oauth_auth_code_scopes')
                     ->insert([
-                        'auth_code' =>  $token->getId(),
-                        'scope'     =>  $scope->getId(),
+                        'auth_code' => $token->getId(),
+                        'scope'     => $scope->getId(),
                     ]);
     }
 

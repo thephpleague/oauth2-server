@@ -30,8 +30,6 @@ class SessionStorage extends AbstractStorage implements SessionInterface
 
             return $session;
         }
-
-        return;
     }
 
     /**
@@ -52,8 +50,6 @@ class SessionStorage extends AbstractStorage implements SessionInterface
 
             return $session;
         }
-
-        return;
     }
 
     /**
@@ -72,8 +68,8 @@ class SessionStorage extends AbstractStorage implements SessionInterface
 
         foreach ($result as $scope) {
             $scopes[] = (new ScopeEntity($this->server))->hydrate([
-                'id'            =>  $scope['id'],
-                'description'   =>  $scope['description'],
+                'id'            => $scope['id'],
+                'description'   => $scope['description'],
             ]);
         }
 
@@ -87,9 +83,9 @@ class SessionStorage extends AbstractStorage implements SessionInterface
     {
         $id = Capsule::table('oauth_sessions')
                         ->insertGetId([
-                            'owner_type'  =>    $ownerType,
-                            'owner_id'    =>    $ownerId,
-                            'client_id'   =>    $clientId,
+                            'owner_type'  => $ownerType,
+                            'owner_id'    => $ownerId,
+                            'client_id'   => $clientId,
                         ]);
 
         return $id;
@@ -102,8 +98,8 @@ class SessionStorage extends AbstractStorage implements SessionInterface
     {
         Capsule::table('oauth_session_scopes')
                             ->insert([
-                                'session_id'    =>  $session->getId(),
-                                'scope'         =>  $scope->getId(),
+                                'session_id'    => $session->getId(),
+                                'scope'         => $scope->getId(),
                             ]);
     }
 }

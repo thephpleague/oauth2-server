@@ -1,14 +1,13 @@
 <?php
 /**
- * OAuth 2.0 Token Type Interface
+ * OAuth 2.0 Token Type Interface.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
-
 namespace League\OAuth2\Server\TokenType;
 
 use League\OAuth2\Server\AbstractServer;
@@ -18,14 +17,14 @@ use Symfony\Component\HttpFoundation\Request;
 interface TokenTypeInterface
 {
     /**
-     * Generate a response
+     * Generate a response.
      *
      * @return array
      */
     public function generateResponse();
 
     /**
-     * Set the server
+     * Set the server.
      *
      * @param \League\OAuth2\Server\AbstractServer $server
      *
@@ -34,7 +33,7 @@ interface TokenTypeInterface
     public function setServer(AbstractServer $server);
 
     /**
-     * Set a key/value response pair
+     * Set a key/value response pair.
      *
      * @param string $key
      * @param mixed  $value
@@ -42,7 +41,7 @@ interface TokenTypeInterface
     public function setParam($key, $value);
 
     /**
-     * Get a key from the response array
+     * Get a key from the response array.
      *
      * @param string $key
      *
@@ -58,7 +57,7 @@ interface TokenTypeInterface
     public function setSession(SessionEntity $session);
 
     /**
-     * Determine the access token in the authorization header
+     * Determine the access token in the authorization header.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
