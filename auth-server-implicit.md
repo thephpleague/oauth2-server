@@ -18,7 +18,7 @@ The client will redirect the user to the authorization server with the following
 
 * `response_type` with the value `token`
 * `client_id` with the client identifier
-* `redirect_uri` with the client redirect URI. This parameter is optional, but if not send the user will be redirected to a pre-registered redirect URI.
+* `redirect_uri` with the client redirect URI. This parameter is optional, but if not sent the user will be redirected to a pre-registered redirect URI.
 * `scope` a space delimited list of scopes
 * `state` with a [CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) token. This parameter is optional but highly recommended. You should store the value of the CSRF token in the user's session to be validated when they return.
 
