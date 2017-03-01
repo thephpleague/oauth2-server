@@ -62,7 +62,7 @@ $app = new App([
         // Enable the refresh token grant on the server with a token TTL of 1 month
         $server->enableGrantType(
             new RefreshTokenGrant($refreshTokenRepository),
-            new \DateInterval('PT1M')
+            new \DateInterval('P1M')
         );
 
         return $server;
