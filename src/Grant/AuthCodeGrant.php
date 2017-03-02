@@ -319,7 +319,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                                     'user_id'                 => $authCode->getUserIdentifier(),
                                     'expire_time'             => (new \DateTime())->add($this->authCodeTTL)->format('U'),
                                     'code_challenge'          => $authorizationRequest->getCodeChallenge(),
-                                    'code_challenge_method  ' => $authorizationRequest->getCodeChallengeMethod(),
+                                    'code_challenge_method'   => $authorizationRequest->getCodeChallengeMethod(),
                                 ]
                             )
                         ),
