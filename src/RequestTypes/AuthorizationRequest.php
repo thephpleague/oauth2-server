@@ -66,12 +66,14 @@ class AuthorizationRequest
 
     /**
      * The code challenge (if provided)
+     *
      * @var string
      */
     protected $codeChallenge;
 
     /**
      * The code challenge method (if provided)
+     *
      * @var string
      */
     protected $codeChallengeMethod;
@@ -125,7 +127,7 @@ class AuthorizationRequest
     }
 
     /**
-     * @return \League\OAuth2\Server\Entities\ScopeEntityInterface[]
+     * @return ScopeEntityInterface[]
      */
     public function getScopes()
     {
@@ -133,9 +135,9 @@ class AuthorizationRequest
     }
 
     /**
-     * @param \League\OAuth2\Server\Entities\ScopeEntityInterface[] $scopes
+     * @param ScopeEntityInterface[] $scopes
      */
-    public function setScopes($scopes)
+    public function setScopes(array $scopes)
     {
         $this->scopes = $scopes;
     }

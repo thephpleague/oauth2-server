@@ -42,21 +42,14 @@ interface RefreshTokenEntityInterface
     /**
      * Set the access token that the refresh token was associated with.
      *
-     * @param \League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken
+     * @param AccessTokenEntityInterface $accessToken
      */
     public function setAccessToken(AccessTokenEntityInterface $accessToken);
 
     /**
      * Get the access token that the refresh token was originally associated with.
      *
-     * @return \League\OAuth2\Server\Entities\AccessTokenEntityInterface
+     * @return AccessTokenEntityInterface
      */
     public function getAccessToken();
-
-    /**
-     * Has the token expired?
-     *
-     * @return bool
-     */
-    public function isExpired();
 }

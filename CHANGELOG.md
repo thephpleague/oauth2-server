@@ -1,5 +1,35 @@
 # Changelog
 
+## 5.1.3 (released 2016-10-12)
+
+* Fixed WWW-Authenticate header (Issue #669)
+* Increase the recommended RSA key length from 1024 to 2048 bits (Issue #668)
+
+## 5.1.2 (released 2016-09-19)
+
+* Fixed `finalizeScopes` call (Issue #650)
+
+## 5.1.1 (released 2016-07-26)
+
+* Improved test suite (Issue #614)
+* Updated docblocks (Issue #616)
+* Replace `array_shift` with `foreach` loop (Issue #621)
+* Allow easy addition of custom fields to Bearer token response (Issue #624)
+* Key file auto-generation from string (Issue #625)
+
+## 5.1.0 (released 2016-06-28)
+
+* Implemented RFC7636 (Issue #574)
+* Unify middleware exception responses (Issue #578)
+* Updated examples (Issue #589)
+* Ensure state is in access denied redirect (Issue #597)
+* Remove redundant `isExpired()` method from entity interfaces and traits (Issue #600)
+* Added a check for unique access token constraint violation (Issue #601)
+* Look at Authorization header directly for HTTP Basic auth checks (Issue #604)
+* Added catch Runtime exception when parsing JWT string (Issue #605)
+* Allow `paragonie/random_compat` 2.x (Issue #606)
+* Added `indigophp/hash-compat` to Composer suggestions and `require-dev` for PHP 5.5 support
+
 ## 5.0.3 (released 2016-05-04)
 
 * Fix hints in PasswordGrant (Issue #560)

@@ -6,6 +6,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server;
 
 use League\Event\Event;
@@ -18,15 +19,15 @@ class RequestEvent extends Event
     const REFRESH_TOKEN_CLIENT_FAILED = 'refresh_token.client.failed';
 
     /**
-     * @var \Psr\Http\Message\ServerRequestInterface
+     * @var ServerRequestInterface
      */
     private $request;
 
     /**
      * RequestEvent constructor.
      *
-     * @param string                                   $name
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param string                 $name
+     * @param ServerRequestInterface $request
      */
     public function __construct($name, ServerRequestInterface $request)
     {

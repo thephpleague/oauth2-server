@@ -45,7 +45,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     }
 
     /**
-     * @param \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface $refreshTokenRepository
+     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      *
      * @throw \LogicException
      */
@@ -75,11 +75,11 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     /**
      * Respond to an incoming request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface                  $request
-     * @param \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface $responseType
-     * @param \DateInterval                                             $accessTokenTTL
+     * @param ServerRequestInterface $request
+     * @param ResponseTypeInterface  $responseType
+     * @param \DateInterval          $accessTokenTTL
      *
-     * @return \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface
+     * @return ResponseTypeInterface
      */
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
@@ -151,6 +151,13 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 : $client->getRedirectUri()
         );
 
+        // Finalize the requested scopes
+        $scopes = $this->scopeRepository->finalizeScopes(
+            $scopes,
+            $this->getIdentifier(),
+            $client
+        );
+
         $stateParameter = $this->getQueryStringParameter('state', $request);
 
         $authorizationRequest = new AuthorizationRequest();
@@ -207,7 +214,12 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         // The user denied the client, redirect them back with an error
         throw OAuthServerException::accessDenied(
             'The user denied the request',
-            $finalRedirectUri
+            $this->makeRedirectUri(
+                $finalRedirectUri,
+                [
+                    'state' => $authorizationRequest->getState(),
+                ]
+            )
         );
     }
 }

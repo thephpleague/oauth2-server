@@ -21,8 +21,8 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetIdentifier()
     {
-        $userRepositoryMock = $this->getMock(UserRepositoryInterface::class);
-        $refreshTokenRepositoryMock = $this->getMock(RefreshTokenRepositoryInterface::class);
+        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
         $grant = new PasswordGrant($userRepositoryMock, $refreshTokenRepositoryMock);
         $this->assertEquals('password', $grant->getIdentifier());

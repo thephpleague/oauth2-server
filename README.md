@@ -7,7 +7,7 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-server.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-server)
 
-`league/oauth2-server` is a a standards compliant implementation of an [OAuth 2.0](https://tools.ietf.org/html/rfc6749) authorization server written in PHP which makes working with OAuth 2.0 trivial. You can easily configure an OAuth 2.0 server to protect your API with access tokens, or allow clients to request new access tokens and refresh them.
+`league/oauth2-server` is a standards compliant implementation of an [OAuth 2.0](https://tools.ietf.org/html/rfc6749) authorization server written in PHP which makes working with OAuth 2.0 trivial. You can easily configure an OAuth 2.0 server to protect your API with access tokens, or allow clients to request new access tokens and refresh them.
 
 It supports out of the box the following grants:
 
@@ -33,6 +33,7 @@ The following versions of PHP are supported:
 * PHP 5.5 (>=5.5.9)
 * PHP 5.6
 * PHP 7.0
+* PHP 7.1
 * HHVM
 
 The `openssl` extension is also required.
@@ -58,8 +59,7 @@ If you have any questions about OAuth _please_ open a ticket here; please **don'
 
 ## Commercial Support
 
-If you would like help implementing this library into your existing platform, or would like to 
- some advice or training for you and your team please email Alex Bilbie at `hello@glyndelabs.com`.
+If you would like help implementing this library into your existing platform, or would be interested in OAuth advice or training for you and your team please get in touch with [Glynde Labs](https://glyndelabs.com).
 
 ## Security
 

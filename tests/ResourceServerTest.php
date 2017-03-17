@@ -13,7 +13,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
     public function testValidateAuthenticatedRequest()
     {
         $server = new ResourceServer(
-            $this->getMock(AccessTokenRepositoryInterface::class),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/public.key'
         );
 

@@ -61,6 +61,53 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($json->refresh_token));
     }
 
+    public function testGenerateHttpResponseWithExtraParams()
+    {
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+
+        $responseType = new BearerTokenResponseWithParams($accessTokenRepositoryMock);
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $client = new ClientEntity();
+        $client->setIdentifier('clientName');
+
+        $scope = new ScopeEntity();
+        $scope->setIdentifier('basic');
+
+        $accessToken = new AccessTokenEntity();
+        $accessToken->setIdentifier('abcdef');
+        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setClient($client);
+        $accessToken->addScope($scope);
+
+        $refreshToken = new RefreshTokenEntity();
+        $refreshToken->setIdentifier('abcdef');
+        $refreshToken->setAccessToken($accessToken);
+        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+
+        $responseType->setAccessToken($accessToken);
+        $responseType->setRefreshToken($refreshToken);
+
+        $response = $responseType->generateHttpResponse(new Response());
+
+        $this->assertTrue($response instanceof ResponseInterface);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('no-cache', $response->getHeader('pragma')[0]);
+        $this->assertEquals('no-store', $response->getHeader('cache-control')[0]);
+        $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
+
+        $response->getBody()->rewind();
+        $json = json_decode($response->getBody()->getContents());
+        $this->assertEquals('Bearer', $json->token_type);
+        $this->assertTrue(isset($json->expires_in));
+        $this->assertTrue(isset($json->access_token));
+        $this->assertTrue(isset($json->refresh_token));
+
+        $this->assertTrue(isset($json->foo));
+        $this->assertEquals('bar', $json->foo);
+    }
+
     public function testDetermineAccessTokenInHeaderValidToken()
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
@@ -222,6 +269,33 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         } catch (OAuthServerException $e) {
             $this->assertEquals(
                 'The JWT string must have two dots',
+                $e->getHint()
+            );
+        }
+    }
+
+    public function testDetermineMissingBearerInHeader()
+    {
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+
+        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+
+        $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
+        $authorizationValidator->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $request = new ServerRequest();
+        $request = $request->withHeader('authorization', 'Bearer blah.blah.blah');
+
+        try {
+            $authorizationValidator->validateAuthorization($request);
+        } catch (OAuthServerException $e) {
+            $this->assertEquals(
+                'Error while decoding to JSON',
                 $e->getHint()
             );
         }

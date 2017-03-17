@@ -1,6 +1,6 @@
 <?php
 /**
- * OAuth 2.0 Bearer Token Type.
+ * OAuth 2.0 Bearer Token Response.
  *
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -8,8 +8,10 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server\ResponseTypes;
 
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -47,6 +49,8 @@ class BearerTokenResponse extends AbstractResponseType
             $responseParams['refresh_token'] = $refreshToken;
         }
 
+        $responseParams = array_merge($this->getExtraParams($this->accessToken), $responseParams);
+
         $response = $response
             ->withStatus(200)
             ->withHeader('pragma', 'no-cache')
@@ -56,5 +60,19 @@ class BearerTokenResponse extends AbstractResponseType
         $response->getBody()->write(json_encode($responseParams));
 
         return $response;
+    }
+
+    /**
+     * Add custom fields to your Bearer Token response here, then override
+     * AuthorizationServer::getResponseType() to pull in your version of
+     * this class rather than the default.
+     *
+     * @param AccessTokenEntityInterface $accessToken
+     *
+     * @return array
+     */
+    protected function getExtraParams(AccessTokenEntityInterface $accessToken)
+    {
+        return [];
     }
 }

@@ -22,14 +22,12 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     use CryptTrait;
 
     /**
-     * @var \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface
+     * @var AccessTokenRepositoryInterface
      */
     private $accessTokenRepository;
 
     /**
-     * BearerTokenValidator constructor.
-     *
-     * @param \League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface $accessTokenRepository
+     * @param AccessTokenRepositoryInterface $accessTokenRepository
      */
     public function __construct(AccessTokenRepositoryInterface $accessTokenRepository)
     {
@@ -77,6 +75,9 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         } catch (\InvalidArgumentException $exception) {
             // JWT couldn't be parsed so return the request as is
             throw OAuthServerException::accessDenied($exception->getMessage());
+        } catch (\RuntimeException $exception) {
+            //JWR couldn't be parsed so return the request as is
+            throw OAuthServerException::accessDenied('Error while decoding to JSON');
         }
     }
 }

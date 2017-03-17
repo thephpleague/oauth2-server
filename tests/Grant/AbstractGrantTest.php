@@ -32,6 +32,76 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grantMock->setEmitter(new Emitter());
     }
 
+    public function testHttpBasicWithPassword()
+    {
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ' . base64_encode('Open:Sesame'));
+        $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
+        $basicAuthMethod->setAccessible(true);
+
+        $this->assertSame(['Open', 'Sesame'], $basicAuthMethod->invoke($grantMock, $serverRequest));
+    }
+
+    public function testHttpBasicNoPassword()
+    {
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ' . base64_encode('Open:'));
+        $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
+        $basicAuthMethod->setAccessible(true);
+
+        $this->assertSame(['Open', ''], $basicAuthMethod->invoke($grantMock, $serverRequest));
+    }
+
+    public function testHttpBasicNotBasic()
+    {
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withHeader('Authorization', 'Foo ' . base64_encode('Open:Sesame'));
+        $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
+        $basicAuthMethod->setAccessible(true);
+
+        $this->assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
+    }
+
+    public function testHttpBasicNotBase64()
+    {
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ||');
+        $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
+        $basicAuthMethod->setAccessible(true);
+
+        $this->assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
+    }
+
+    public function testHttpBasicNoColon()
+    {
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ' . base64_encode('OpenSesame'));
+        $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
+        $basicAuthMethod->setAccessible(true);
+
+        $this->assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
+    }
+
     public function testValidateClientPublic()
     {
         $client = new ClientEntity();
@@ -256,7 +326,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testIssueRefreshToken()
     {
-        $refreshTokenRepoMock = $this->getMock(RefreshTokenRepositoryInterface::class);
+        $refreshTokenRepoMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepoMock
             ->expects($this->once())
             ->method('getNewRefreshToken')
@@ -275,13 +345,12 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         /** @var RefreshTokenEntityInterface $refreshToken */
         $refreshToken = $issueRefreshTokenMethod->invoke($grantMock, $accessToken);
         $this->assertTrue($refreshToken instanceof RefreshTokenEntityInterface);
-        $this->assertFalse($refreshToken->isExpired());
         $this->assertEquals($accessToken, $refreshToken->getAccessToken());
     }
 
     public function testIssueAccessToken()
     {
-        $accessTokenRepoMock = $this->getMock(AccessTokenRepositoryInterface::class);
+        $accessTokenRepoMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepoMock->method('getNewToken')->willReturn(new AccessTokenEntity());
 
         /** @var AbstractGrant $grantMock */
@@ -301,12 +370,11 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
             [new ScopeEntity()]
         );
         $this->assertTrue($accessToken instanceof AccessTokenEntityInterface);
-        $this->assertFalse($accessToken->isExpired());
     }
 
     public function testIssueAuthCode()
     {
-        $authCodeRepoMock = $this->getMock(AuthCodeRepositoryInterface::class);
+        $authCodeRepoMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepoMock->expects($this->once())->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
         /** @var AbstractGrant $grantMock */

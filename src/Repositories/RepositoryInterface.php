@@ -6,6 +6,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server\Repositories;
 
 /**

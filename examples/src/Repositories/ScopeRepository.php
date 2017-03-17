@@ -48,6 +48,13 @@ class ScopeRepository implements ScopeRepositoryInterface
         ClientEntityInterface $clientEntity,
         $userIdentifier = null
     ) {
+        // Example of programatically modifying the final scope of the access token
+        if ((int) $userIdentifier === 1) {
+            $scope = new ScopeEntity();
+            $scope->setIdentifier('email');
+            $scopes[] = $scope;
+        }
+
         return $scopes;
     }
 }

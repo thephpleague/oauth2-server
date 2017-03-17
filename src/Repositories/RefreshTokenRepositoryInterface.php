@@ -6,6 +6,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
@@ -25,7 +26,7 @@ interface RefreshTokenRepositoryInterface extends RepositoryInterface
     /**
      * Create a new refresh token_name.
      *
-     * @param \League\OAuth2\Server\Entities\RefreshTokenEntityInterface $refreshTokenEntity
+     * @param RefreshTokenEntityInterface $refreshTokenEntity
      */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity);
 
