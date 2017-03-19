@@ -17,7 +17,7 @@ Wherever you intialize your objects, initialize a new instance of the resource s
 $accessTokenRepository = new AccessTokenRepository(); // instance of AccessTokenRepositoryInterface
 
 // Path to authorization server's public key
-$publicKey = 'file://path/to/public.key';
+$publicKeyPath = 'file://path/to/public.key';
         
 // Setup the authorization server
 $server = new \League\OAuth2\Server\ResourceServer(
