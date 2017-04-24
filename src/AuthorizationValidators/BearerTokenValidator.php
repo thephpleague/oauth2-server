@@ -24,7 +24,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     /**
      * @var AccessTokenRepositoryInterface
      */
-    private $accessTokenRepository;
+    protected $accessTokenRepository;
 
     /**
      * @param AccessTokenRepositoryInterface $accessTokenRepository
@@ -33,19 +33,25 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     {
         $this->accessTokenRepository = $accessTokenRepository;
     }
+    
+    /**
+     * @param ServerRequestInterface $request
+     */
+    public function getAccessToken(ServerRequestInterface $request) {
+	    if ($request->hasHeader('authorization') === false) {
+            throw OAuthServerException::accessDenied('Missing "Authorization" header');
+        }
+
+        $header = $request->getHeader('authorization');
+        return trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header[0]));
+    }
 
     /**
      * {@inheritdoc}
      */
     public function validateAuthorization(ServerRequestInterface $request)
     {
-        if ($request->hasHeader('authorization') === false) {
-            throw OAuthServerException::accessDenied('Missing "Authorization" header');
-        }
-
-        $header = $request->getHeader('authorization');
-        $jwt = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header[0]));
-
+      	$jwt = $this->getAccessToken($request);
         try {
             // Attempt to parse and validate the JWT
             $token = (new Parser())->parse($jwt);
