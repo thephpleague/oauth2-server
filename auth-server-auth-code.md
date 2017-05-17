@@ -126,7 +126,7 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
     } catch (\Exception $exception) {
     
         // Unknown exception
-        $body = new Stream('php://temp', 'r+');
+        $body = new Stream(fopen('php://temp', 'r+'));
         $body->write($exception->getMessage());
         return $response->withStatus(500)->withBody($body);
         
@@ -152,7 +152,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
     } catch (\Exception $exception) {
     
         // Unknown exception
-        $body = new Stream('php://temp', 'r+');
+        $body = new Stream(fopen('php://temp', 'r+'));
         $body->write($exception->getMessage());
         return $response->withStatus(500)->withBody($body);
     }
