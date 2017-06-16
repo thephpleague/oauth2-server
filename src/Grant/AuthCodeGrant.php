@@ -134,6 +134,17 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest('code_verifier');
             }
 
+            // Validate code_verifier according to RFC-7636
+            // @see: https://tools.ietf.org/html/rfc7636#section-4.1
+            $isValidCodeVerifier = (bool) preg_match('#[A-Za-z0-9\-|\.|\_|\~]{43,128}#', $codeVerifier);
+
+            if ($isValidCodeVerifier === false) {
+                throw OAuthServerException::invalidRequest(
+                    'code_verifier',
+                    'Code Verifier must follow the specifications of RFC-7636.'
+                );
+            }
+
             switch ($authCodePayload->code_challenge_method) {
                 case 'plain':
                     if (hash_equals($codeVerifier, $authCodePayload->code_challenge) === false) {
@@ -269,6 +280,17 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest(
                     'code_challenge_method',
                     'Code challenge method must be `plain` or `S256`'
+                );
+            }
+
+            // Validate code_challenge according to RFC-7636
+            // @see: https://tools.ietf.org/html/rfc7636#section-4.2
+            $isValidCodeChallenge = (bool) preg_match('#[A-Za-z0-9\-|\.|\_|\~]{43}#', $codeChallenge);
+
+            if ($isValidCodeChallenge === false) {
+                throw OAuthServerException::invalidRequest(
+                    'code_challenged',
+                    'Code challenge must follow the specifications of RFC-7636.'
                 );
             }
 
