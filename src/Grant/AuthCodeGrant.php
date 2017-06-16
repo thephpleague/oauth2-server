@@ -144,7 +144,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 case 'S256':
                     if (
                         hash_equals(
-                            urlencode(base64_encode(hash('sha256', $codeVerifier))),
+                            rtrim(strtr(base64_encode(hash('sha256', $codeVerifier, true)), '+/', '-_'), '='),
                             $authCodePayload->code_challenge
                         ) === false
                     ) {
