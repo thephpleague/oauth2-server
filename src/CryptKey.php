@@ -44,6 +44,23 @@ class CryptKey
             throw new \LogicException(sprintf('Key path "%s" does not exist or is not readable', $keyPath));
         }
 
+        // Verify the permissions of the key
+        $keyPathPerms = decoct(fileperms($keyPath) & 0777);
+        if ($keyPathPerms !== '600') {
+            // Attempt to correct the permissions
+            if (chmod($keyPath, 0600) === false) {
+                // @codeCoverageIgnoreStart
+                throw new \LogicException(
+                    sprintf(
+                        'Key file "%s" permissions are not correct, should be 600 instead of %s, unable to automatically resolve the issue',
+                        $keyPath,
+                        $keyPathPerms
+                    )
+                );
+                // @codeCoverageIgnoreEnd
+            }
+        }
+
         $this->keyPath = $keyPath;
         $this->passPhrase = $passPhrase;
     }
