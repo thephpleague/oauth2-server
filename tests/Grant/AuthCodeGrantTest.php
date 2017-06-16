@@ -32,9 +32,21 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
      */
     protected $cryptStub;
 
+    /**
+     * @var string Valid generated Code verifier.
+     */
+    protected $codeVerifier;
+
+    /**
+     * @var string Valid generated code challenge using a proper code verifier.
+     */
+    protected $codeChallenge;
+
     public function setUp()
     {
         $this->cryptStub = new CryptTraitStub;
+        $this->codeVerifier = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+        $this->codeChallenge = rtrim(strtr(base64_encode(hash('sha256',$this->codeVerifier, true)), '+/', '-_'), '=');
     }
 
     public function testGetIdentifier()
@@ -164,7 +176,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'response_type'  => 'code',
                 'client_id'      => 'foo',
                 'redirect_uri'   => 'http://foo/bar',
-                'code_challenge' => 'FOOBAR',
+                'code_challenge' => $this->codeChallenge,
             ]
         );
 
@@ -548,7 +560,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
-                'code_verifier' => 'foobar',
+                'code_verifier' => $this->codeVerifier,
                 'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
@@ -558,7 +570,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
                             'redirect_uri'          => 'http://foo/bar',
-                            'code_challenge'        => 'foobar',
+                            'code_challenge'        => $this->codeVerifier,
                             'code_challenge_method' => 'plain',
                         ]
                     )
@@ -620,7 +632,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
-                'code_verifier' => 'foobar',
+                'code_verifier' => $this->codeVerifier,
                 'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
@@ -630,7 +642,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
                             'redirect_uri'          => 'http://foo/bar',
-                            'code_challenge'        => urlencode(base64_encode(hash('sha256', 'foobar'))),
+                            'code_challenge'        => $this->codeChallenge,
                             'code_challenge_method' => 'S256',
                         ]
                     )
@@ -1069,7 +1081,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
-                'code_verifier' => 'nope',
+                'code_verifier' => $this->codeVerifier,
                 'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
@@ -1164,7 +1176,153 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Failed to verify `code_verifier`.');
+            $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
+        }
+    }
+
+    public function testRespondToAccessTokenRequestMalformedCodeVerifierS256WithInvalidChars()
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+        $grant->enableCodeExchangeProof();
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => 'http://foo/bar',
+                'code_verifier' => 'dqX7C-RbqjHYtytmhGTigKdZCXfxq-+xbsk9_GxUcaE', // Malformed code. Contains `+`.
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode(
+                        [
+                            'auth_code_id'          => uniqid(),
+                            'expire_time'           => time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => 'http://foo/bar',
+                            'code_challenge'        => $this->codeChallenge,
+                            'code_challenge_method' => 'S256',
+                        ]
+                    )
+                ),
+            ]
+        );
+
+        try {
+            /* @var StubResponseType $response */
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        } catch (OAuthServerException $e) {
+            $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
+        }
+    }
+
+    public function testRespondToAccessTokenRequestMalformedCodeVerifierS256WithInvalidLength()
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+        $grant->enableCodeExchangeProof();
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => 'http://foo/bar',
+                'code_verifier' => 'dqX7C-RbqjHY', // Malformed code. Invalid length.
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode(
+                        [
+                            'auth_code_id'          => uniqid(),
+                            'expire_time'           => time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => 'http://foo/bar',
+                            'code_challenge'        => 'R7T1y1HPNFvs1WDCrx4lfoBS6KD2c71pr8OHvULjvv8',
+                            'code_challenge_method' => 'S256',
+                        ]
+                    )
+                ),
+            ]
+        );
+
+        try {
+            /* @var StubResponseType $response */
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        } catch (OAuthServerException $e) {
+            $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
         }
     }
 
