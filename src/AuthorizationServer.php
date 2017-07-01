@@ -117,7 +117,6 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
         $grantType->setPrivateKey($this->privateKey);
-        $grantType->setPublicKey($this->publicKey);
         $grantType->setEmitter($this->getEmitter());
         $grantType->setEncryptionKey($this->encryptionKey);
 
