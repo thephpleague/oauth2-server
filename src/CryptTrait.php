@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server;
 
+use Defuse\Crypto\Crypto;
+
 trait CryptTrait
 {
     /**
@@ -22,6 +24,11 @@ trait CryptTrait
      * @var CryptKey
      */
     protected $publicKey;
+
+    /**
+     * @var string
+     */
+    protected $encryptionKey;
 
     /**
      * Set path to private key.
@@ -54,6 +61,10 @@ trait CryptTrait
      */
     protected function encrypt($unencryptedData)
     {
+        if ($this->encryptionKey !== null) {
+            return Crypto::encryptWithPassword($unencryptedData, $this->encryptionKey);
+        }
+
         $privateKey = openssl_pkey_get_private($this->privateKey->getKeyPath(), $this->privateKey->getPassPhrase());
         $privateKeyDetails = @openssl_pkey_get_details($privateKey);
         if ($privateKeyDetails === null) {
@@ -91,6 +102,10 @@ trait CryptTrait
      */
     protected function decrypt($encryptedData)
     {
+        if ($this->encryptionKey !== null) {
+            return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
+        }
+
         $publicKey = openssl_pkey_get_public($this->publicKey->getKeyPath());
         $publicKeyDetails = @openssl_pkey_get_details($publicKey);
         if ($publicKeyDetails === null) {
@@ -117,5 +132,15 @@ trait CryptTrait
         openssl_pkey_free($publicKey);
 
         return $output;
+    }
+
+    /**
+     * Set the encryption key
+     *
+     * @param string $key
+     */
+    public function setEncryptionKey($key = null)
+    {
+        $this->encryptionKey = $key;
     }
 }

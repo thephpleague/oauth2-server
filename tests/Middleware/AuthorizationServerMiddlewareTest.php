@@ -36,6 +36,7 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             'file://' . __DIR__ . '/../Stubs/public.key',
             new StubResponseType()
         );
+        $server->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $server->enableGrantType(new ClientCredentialsGrant());
 
@@ -69,6 +70,7 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             'file://' . __DIR__ . '/../Stubs/public.key',
             new StubResponseType()
         );
+        $server->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
 
