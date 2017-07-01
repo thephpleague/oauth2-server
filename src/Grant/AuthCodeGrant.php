@@ -311,6 +311,26 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $authorizationRequest->getScopes()
             );
 
+            $payload = [
+                'client_id'               => $authCode->getClient()->getIdentifier(),
+                'redirect_uri'            => $authCode->getRedirectUri(),
+                'auth_code_id'            => $authCode->getIdentifier(),
+                'scopes'                  => $authCode->getScopes(),
+                'user_id'                 => $authCode->getUserIdentifier(),
+                'expire_time'             => (new \DateTime())->add($this->authCodeTTL)->format('U'),
+                'code_challenge'          => $authorizationRequest->getCodeChallenge(),
+                'code_challenge_method  ' => $authorizationRequest->getCodeChallengeMethod(),
+                '_padding'                => base64_encode(random_bytes(mt_rand(8, 256)))
+            ];
+
+            // Shuffle the payload so that the structure is no longer know and obvious
+            $keys = array_keys($payload);
+            shuffle($keys);
+            $shuffledPayload = [];
+            foreach ($keys as $key) {
+                $shuffledPayload[$key] = $payload[$key];
+            }
+
             $response = new RedirectResponse();
             $response->setRedirectUri(
                 $this->makeRedirectUri(
@@ -318,16 +338,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     [
                         'code'  => $this->encrypt(
                             json_encode(
-                                [
-                                    'client_id'               => $authCode->getClient()->getIdentifier(),
-                                    'redirect_uri'            => $authCode->getRedirectUri(),
-                                    'auth_code_id'            => $authCode->getIdentifier(),
-                                    'scopes'                  => $authCode->getScopes(),
-                                    'user_id'                 => $authCode->getUserIdentifier(),
-                                    'expire_time'             => (new \DateTime())->add($this->authCodeTTL)->format('U'),
-                                    'code_challenge'          => $authorizationRequest->getCodeChallenge(),
-                                    'code_challenge_method  ' => $authorizationRequest->getCodeChallengeMethod(),
-                                ]
+                                $shuffledPayload
                             )
                         ),
                         'state' => $authorizationRequest->getState(),
