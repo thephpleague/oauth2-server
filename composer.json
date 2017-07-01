@@ -61,11 +61,6 @@
             "LeagueTests\\": "tests/"
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-V5-WIP": "5.0-dev"
-        }
-    },
     "suggest": {
         "indigophp/hash-compat": "Polyfill for hash_equals function for PHP 5.5"
     }
