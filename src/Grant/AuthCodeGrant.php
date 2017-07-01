@@ -264,7 +264,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest('code_challenge');
             }
 
-            if (preg_match("/^[A-Za-z0-9-._~]{43,128}$/", $codeChallenge) !== 1) {
+            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeChallenge) !== 1) {
                 throw OAuthServerException::invalidRequest(
                     'code_challenge',
                     'The code_challenge must be between 43 and 128 characters'

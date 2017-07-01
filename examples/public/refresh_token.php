@@ -17,7 +17,6 @@ use OAuth2ServerExamples\Repositories\ScopeRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Zend\Diactoros\Stream;
 
 include __DIR__ . '/../vendor/autoload.php';
 
@@ -68,6 +67,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
         return $exception->generateHttpResponse($response);
     } catch (\Exception $exception) {
         $response->getBody()->write($exception->getMessage());
+
         return $response->withStatus(500);
     }
 });
