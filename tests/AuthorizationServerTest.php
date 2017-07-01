@@ -33,10 +33,9 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key',
+            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
-        $server->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
 
@@ -64,10 +63,9 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $accessTokenRepositoryMock,
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key',
+            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
-        $server->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
 
@@ -89,7 +87,6 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key'
         );
-        $server->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $abstractGrantReflection = new \ReflectionClass($server);
         $method = $abstractGrantReflection->getMethod('getResponseType');
@@ -109,7 +106,6 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key'
         );
-        $server->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
@@ -119,9 +115,6 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/Stubs/public.key'));
 
         $server->enableGrantType($grant);
 
@@ -156,7 +149,6 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key'
         );
-        $server->setEncryptionKey(base64_encode(random_bytes(36)));
         $server->enableGrantType($grant);
 
         $request = new ServerRequest(
@@ -189,7 +181,6 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key'
         );
-        $server->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $request = new ServerRequest(
             [],

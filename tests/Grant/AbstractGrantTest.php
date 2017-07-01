@@ -27,8 +27,6 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setPrivateKey(new CryptKey(__DIR__ . '/../Stubs/private.key'));
-        $grantMock->setPublicKey(new CryptKey(__DIR__ . '/../Stubs/public.key'));
         $grantMock->setEmitter(new Emitter());
     }
 
