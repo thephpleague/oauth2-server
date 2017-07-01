@@ -226,6 +226,7 @@ class AuthorizationServer implements EmitterAwareInterface
         }
 
         $this->responseType->setPrivateKey($this->privateKey);
+        $this->responseType->setEncryptionKey($this->encryptionKey);
 
         return $this->responseType;
     }
