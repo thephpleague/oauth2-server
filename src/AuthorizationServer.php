@@ -3,7 +3,6 @@
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
- *
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
@@ -78,7 +77,7 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param AccessTokenRepositoryInterface $accessTokenRepository
      * @param ScopeRepositoryInterface       $scopeRepository
      * @param CryptKey|string                $privateKey
-     * @param CryptKey|string                $publicKey
+     * @param string                         $encryptionKey
      * @param null|ResponseTypeInterface     $responseType
      */
     public function __construct(
@@ -86,7 +85,7 @@ class AuthorizationServer implements EmitterAwareInterface
         AccessTokenRepositoryInterface $accessTokenRepository,
         ScopeRepositoryInterface $scopeRepository,
         $privateKey,
-        $publicKey,
+        $encryptionKey,
         ResponseTypeInterface $responseType = null
     ) {
         $this->clientRepository = $clientRepository;
@@ -98,11 +97,7 @@ class AuthorizationServer implements EmitterAwareInterface
         }
         $this->privateKey = $privateKey;
 
-        if ($publicKey instanceof CryptKey === false) {
-            $publicKey = new CryptKey($publicKey);
-        }
-        $this->publicKey = $publicKey;
-
+        $this->encryptionKey = $encryptionKey;
         $this->responseType = $responseType;
     }
 
