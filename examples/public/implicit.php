@@ -42,6 +42,7 @@ $app = new App([
             $privateKeyPath,
             $publicKeyPath
         );
+        $server->setEncryptionKey('lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen');
 
         // Enable the implicit grant on the server with a token TTL of 1 hour
         $server->enableGrantType(new ImplicitGrant(new \DateInterval('PT1H')));

@@ -46,6 +46,7 @@ $app = new App([
             $privateKeyPath,
             $publicKeyPath
         );
+        $server->setEncryptionKey('lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen');
 
         // Enable the authentication code grant on the server with a token TTL of 1 hour
         $server->enableGrantType(
