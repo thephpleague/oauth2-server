@@ -73,6 +73,8 @@ This package is released under the MIT License. See the bundled [LICENSE](https:
 
 This code is principally developed and maintained by [Alex Bilbie](https://twitter.com/alexbilbie).
 
-Special thanks to [all of these awesome contributors](https://github.com/thephpleague/oauth2-server/contributors)
+Special thanks to [all of these awesome contributors](https://github.com/thephpleague/oauth2-server/contributors).
+
+Additional thanks go to the [Mozilla Secure Open Source Fund](https://wiki.mozilla.org/MOSS/Secure_Open_Source) for funding a security audit of this library.
 
 The initial code was developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which was funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.
