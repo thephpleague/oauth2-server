@@ -26,8 +26,6 @@ class AuthorizationServer implements EmitterAwareInterface
 {
     use EmitterAwareTrait;
 
-    const ENCRYPTION_KEY_ERROR = 'You must set the encryption key going forward to improve the security of this library - see this page for more information https://oauth2.thephpleague.com/v5-security-improvements/';
-
     /**
      * @var GrantTypeInterface[]
      */
@@ -109,16 +107,6 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
-     * Set the encryption key
-     *
-     * @param string $key
-     */
-    public function setEncryptionKey($key)
-    {
-        $this->encryptionKey = $key;
-    }
-
-    /**
      * Enable a grant type on the server.
      *
      * @param GrantTypeInterface $grantType
@@ -136,12 +124,6 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setPrivateKey($this->privateKey);
         $grantType->setPublicKey($this->publicKey);
         $grantType->setEmitter($this->getEmitter());
-
-        if ($this->encryptionKey === null) {
-            // @codeCoverageIgnoreStart
-            error_log(self::ENCRYPTION_KEY_ERROR);
-            // @codeCoverageIgnoreEnd
-        }
         $grantType->setEncryptionKey($this->encryptionKey);
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
@@ -159,12 +141,6 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     public function validateAuthorizationRequest(ServerRequestInterface $request)
     {
-        if ($this->encryptionKey === null) {
-            // @codeCoverageIgnoreStart
-            error_log(self::ENCRYPTION_KEY_ERROR);
-            // @codeCoverageIgnoreEnd
-        }
-
         foreach ($this->enabledGrantTypes as $grantType) {
             if ($grantType->canRespondToAuthorizationRequest($request)) {
                 return $grantType->validateAuthorizationRequest($request);
