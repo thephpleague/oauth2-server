@@ -4,7 +4,7 @@
     "homepage": "https://oauth2.thephpleague.com/",
     "license": "MIT",
     "require": {
-        "php": ">=5.5.9",
+        "php": ">=5.6.0",
         "ext-openssl": "*",
         "league/event": "^2.1",
         "lcobucci/jwt": "^3.1",
@@ -14,8 +14,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8 || ^5.0",
-        "zendframework/zend-diactoros": "^1.0",
-        "indigophp/hash-compat": "^1.1"
+        "zendframework/zend-diactoros": "^1.0"
     },
     "repositories": [
         {
@@ -60,8 +59,5 @@
         "psr-4": {
             "LeagueTests\\": "tests/"
         }
-    },
-    "suggest": {
-        "indigophp/hash-compat": "Polyfill for hash_equals function for PHP 5.5"
     }
 }

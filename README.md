@@ -30,11 +30,9 @@ This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](ht
 
 The following versions of PHP are supported:
 
-* PHP 5.5 (>=5.5.9)
 * PHP 5.6
 * PHP 7.0
 * PHP 7.1
-* HHVM
 
 The `openssl` extension is also required.
 
