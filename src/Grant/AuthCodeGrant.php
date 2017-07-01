@@ -320,15 +320,20 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'expire_time'             => (new \DateTime())->add($this->authCodeTTL)->format('U'),
                 'code_challenge'          => $authorizationRequest->getCodeChallenge(),
                 'code_challenge_method  ' => $authorizationRequest->getCodeChallengeMethod(),
-                '_padding'                => base64_encode(random_bytes(mt_rand(8, 256)))
             ];
 
-            // Shuffle the payload so that the structure is no longer know and obvious
-            $keys = array_keys($payload);
-            shuffle($keys);
-            $shuffledPayload = [];
-            foreach ($keys as $key) {
-                $shuffledPayload[$key] = $payload[$key];
+            if ($this->encryptionKey === null) {
+                // Add padding to vary the length of the payload
+                $payload['_padding'] = base64_encode(random_bytes(mt_rand(8, 256)));
+                // Shuffle the payload so that the structure is no longer know and obvious
+                $keys = array_keys($payload);
+                shuffle($keys);
+                $shuffledPayload = [];
+                foreach ($keys as $key) {
+                    $shuffledPayload[$key] = $payload[$key];
+                }
+            } else {
+                $shuffledPayload = $payload;
             }
 
             $response = new RedirectResponse();
