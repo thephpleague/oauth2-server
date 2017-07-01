@@ -138,7 +138,9 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setEmitter($this->getEmitter());
 
         if ($this->encryptionKey === null) {
+            // @codeCoverageIgnoreStart
             error_log(self::ENCRYPTION_KEY_ERROR);
+            // @codeCoverageIgnoreEnd
         }
         $grantType->setEncryptionKey($this->encryptionKey);
 
@@ -158,7 +160,9 @@ class AuthorizationServer implements EmitterAwareInterface
     public function validateAuthorizationRequest(ServerRequestInterface $request)
     {
         if ($this->encryptionKey === null) {
+            // @codeCoverageIgnoreStart
             error_log(self::ENCRYPTION_KEY_ERROR);
+            // @codeCoverageIgnoreEnd
         }
 
         foreach ($this->enabledGrantTypes as $grantType) {
