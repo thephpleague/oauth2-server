@@ -322,20 +322,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'code_challenge_method  ' => $authorizationRequest->getCodeChallengeMethod(),
             ];
 
-            if ($this->encryptionKey === null) {
-                // Add padding to vary the length of the payload
-                $payload['_padding'] = base64_encode(random_bytes(mt_rand(8, 256)));
-                // Shuffle the payload so that the structure is no longer know and obvious
-                $keys = array_keys($payload);
-                shuffle($keys);
-                $shuffledPayload = [];
-                foreach ($keys as $key) {
-                    $shuffledPayload[$key] = $payload[$key];
-                }
-            } else {
-                $shuffledPayload = $payload;
-            }
-
             $response = new RedirectResponse();
             $response->setRedirectUri(
                 $this->makeRedirectUri(
@@ -343,7 +329,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     [
                         'code'  => $this->encrypt(
                             json_encode(
-                                $shuffledPayload
+                                $payload
                             )
                         ),
                         'state' => $authorizationRequest->getState(),
