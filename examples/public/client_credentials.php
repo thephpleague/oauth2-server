@@ -32,7 +32,6 @@ $app = new App([
         // Path to public and private keys
         $privateKey = 'file://' . __DIR__ . '/../private.key';
         //$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // if private key has a pass phrase
-        $publicKey = 'file://' . __DIR__ . '/../public.key';
 
         // Setup the authorization server
         $server = new AuthorizationServer(
@@ -40,9 +39,8 @@ $app = new App([
             $accessTokenRepository,
             $scopeRepository,
             $privateKey,
-            $publicKey
+            'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'
         );
-        $server->setEncryptionKey('lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen');
 
         // Enable the client credentials grant on the server
         $server->enableGrantType(

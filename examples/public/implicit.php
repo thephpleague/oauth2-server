@@ -32,7 +32,6 @@ $app = new App([
         $accessTokenRepository = new AccessTokenRepository();
 
         $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
-        $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
 
         // Setup the authorization server
         $server = new AuthorizationServer(
@@ -40,7 +39,7 @@ $app = new App([
             $accessTokenRepository,
             $scopeRepository,
             $privateKeyPath,
-            $publicKeyPath
+            'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'
         );
         $server->setEncryptionKey('lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen');
 
