@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.0 (released 2017-07-01)
+
+* Breaking change: The `AuthorizationServer` constructor now expects an encryption key string instead of a public key
+* Remove support for HHVM
+* Remove support for PHP 5.5
+
 ## 5.1.4 (released 2017-07-01)
 
 * Fixed multiple security vulnerabilities as a result of a security audit paid for by the [Mozilla Secure Open Source Fund](https://wiki.mozilla.org/MOSS/Secure_Open_Source). All users of this library are encouraged to update as soon as possible to this version or version 6.0 or greater.
