@@ -48,7 +48,7 @@ $authCodeRepository = new AuthCodeRepository(); // instance of AuthCodeRepositor
 
 $privateKey = 'file://path/to/private.key';
 //$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // if private key has a pass phrase
-$publicKey = 'file://path/to/public.key';
+$encryptionKey = 'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'; // generate using base64_encode(random_bytes(32))
 
 // Setup the authorization server
 $server = new \League\OAuth2\Server\AuthorizationServer(
@@ -56,7 +56,7 @@ $server = new \League\OAuth2\Server\AuthorizationServer(
     $accessTokenRepository,
     $scopeRepository,
     $privateKey,
-    $publicKey
+    $encryptionKey
 );
 
 // Enable the implicit grant on the server
