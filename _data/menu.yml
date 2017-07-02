@@ -5,6 +5,7 @@ Getting Started:
     Installation: '/installation/'
     Database Setup: '/database-setup/'
     Framework Integrations: '/framework-integrations/'
+    V5 Security Improvements: '/v5-security-improvements/'
     V4 Docs: '/V4-docs/'
 Authorization Server:
     'Which Grant?': '/authorization-server/which-grant/'
