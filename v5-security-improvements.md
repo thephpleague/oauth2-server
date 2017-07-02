@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Authorization code grant
+title: V5 Security Improvements
 permalink: /v5-security-improvements/
 ---
 
