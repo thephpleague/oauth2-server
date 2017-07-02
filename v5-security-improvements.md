@@ -38,7 +38,7 @@ $server->setEncryptionKey('lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen');
 
 ### 6.0.0
 
-Version `6.0.0` is not backwards compatible with version `5.1.x` but only requires you to make one like of code change:
+Version `6.0.0` is not backwards compatible with version `5.1.x` but only requires you to make one line of code change:
 
 ```patch
   $server = new AuthorizationServer(
@@ -52,3 +52,9 @@ Version `6.0.0` is not backwards compatible with version `5.1.x` but only requir
 ```
 
 All you need to do is replace the public key that was being passed into the constructor of `AuthorizationServer` with a 32 bit encryption key.
+
+To generate an encryption key for the `AuthorizationServer` run the following command in the terminal:
+
+{% highlight shell %}
+php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
+{% endhighlight %}
