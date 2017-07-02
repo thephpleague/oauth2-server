@@ -51,3 +51,11 @@ The private key must be kept secret (i.e. out of the web-root of the authorizati
 If a passphrase has been used to generate private key it must be provided to the authorization server.
 
 The public key should be distributed to any services (for example resource servers) that validate access tokens.
+
+## Generating encryption keys
+
+To generate an encryption key for the `AuthorizationServer` run the following code:
+
+{% highlight shell %}
+php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
+{% endhighlight %}
