@@ -54,7 +54,7 @@ The public key should be distributed to any services (for example resource serve
 
 ## Generating encryption keys
 
-To generate an encryption key for the `AuthorizationServer` run the following code:
+To generate an encryption key for the `AuthorizationServer` run the following command in the terminal:
 
 {% highlight shell %}
 php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
