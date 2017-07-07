@@ -1308,8 +1308,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1381,8 +1380,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
