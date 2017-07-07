@@ -136,9 +136,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
             // Validate code_verifier according to RFC-7636
             // @see: https://tools.ietf.org/html/rfc7636#section-4.1
-            $isValidCodeVerifier = (bool) preg_match('#[A-Za-z0-9\-|\.|\_|\~]{43,128}#', $codeVerifier);
-
-            if ($isValidCodeVerifier === false) {
+            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeVerifier) !== 1) {
                 throw OAuthServerException::invalidRequest(
                     'code_verifier',
                     'Code Verifier must follow the specifications of RFC-7636.'
@@ -275,13 +273,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest('code_challenge');
             }
 
-            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeChallenge) !== 1) {
-                throw OAuthServerException::invalidRequest(
-                    'code_challenge',
-                    'The code_challenge must be between 43 and 128 characters'
-                );
-            }
-
             $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
             if (in_array($codeChallengeMethod, ['plain', 'S256']) === false) {
                 throw OAuthServerException::invalidRequest(
@@ -292,9 +283,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
             // Validate code_challenge according to RFC-7636
             // @see: https://tools.ietf.org/html/rfc7636#section-4.2
-            $isValidCodeChallenge = (bool) preg_match('#[A-Za-z0-9\-|\.|\_|\~]{43}#', $codeChallenge);
-
-            if ($isValidCodeChallenge === false) {
+            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeChallenge) !== 1) {
                 throw OAuthServerException::invalidRequest(
                     'code_challenged',
                     'Code challenge must follow the specifications of RFC-7636.'
