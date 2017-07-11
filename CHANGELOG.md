@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.5 (released 2017-07-11)
+
+To address feedback from the security release the following two changes have been made:
+
+* If an RSA key cannot be `chmod`'ed to 600 then it will now throw a `E_USER_NOTICE` instead of an exception.
+* Not using the new encryption key method on `AuthorizationServer` will set throw an `E_USER_DEPRECATED` message instead of an error.
+
 ## 5.1.4 (released 2017-07-01)
 
 * Fixed multiple security vulnerabilities as a result of a security audit paid for by the [Mozilla Secure Open Source Fund](https://wiki.mozilla.org/MOSS/Secure_Open_Source). All users of this library are encouraged to update as soon as possible to this version or version 6.0 or greater.
