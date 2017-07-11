@@ -139,7 +139,7 @@ class AuthorizationServer implements EmitterAwareInterface
 
         if ($this->encryptionKey === null) {
             // @codeCoverageIgnoreStart
-            error_log(self::ENCRYPTION_KEY_ERROR);
+            trigger_error(self::ENCRYPTION_KEY_ERROR, E_USER_DEPRECATED);
             // @codeCoverageIgnoreEnd
         }
         $grantType->setEncryptionKey($this->encryptionKey);
@@ -161,7 +161,7 @@ class AuthorizationServer implements EmitterAwareInterface
     {
         if ($this->encryptionKey === null) {
             // @codeCoverageIgnoreStart
-            error_log(self::ENCRYPTION_KEY_ERROR);
+            trigger_error(self::ENCRYPTION_KEY_ERROR, E_USER_DEPRECATED);
             // @codeCoverageIgnoreEnd
         }
 
