@@ -51,7 +51,7 @@ Version `6.0.0` is not backwards compatible with version `5.1.x` but only requir
   );
 ```
 
-All you need to do is replace the public key that was being passed into the constructor of `AuthorizationServer` with a 32 bit encryption key.
+All you need to do is replace the public key that was being passed into the constructor of `AuthorizationServer` with a 32 byte encryption key.
 
 To generate an encryption key for the `AuthorizationServer` run the following command in the terminal:
 
