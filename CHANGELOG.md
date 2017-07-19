@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.1 (released 2017-07-19)
+
+To address feedback from the security release the following change has been made:
+  
+* If an RSA key cannot be chmod'ed to 600 then it will now throw a E_USER_NOTICE instead of an exception.
+
 ## 6.0.0 (released 2017-07-01)
 
 * Breaking change: The `AuthorizationServer` constructor now expects an encryption key string instead of a public key
