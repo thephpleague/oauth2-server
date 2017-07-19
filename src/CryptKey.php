@@ -50,12 +50,13 @@ class CryptKey
             // Attempt to correct the permissions
             if (chmod($keyPath, 0600) === false) {
                 // @codeCoverageIgnoreStart
-                throw new \LogicException(
+                trigger_error(
                     sprintf(
                         'Key file "%s" permissions are not correct, should be 600 instead of %s, unable to automatically resolve the issue',
                         $keyPath,
                         $keyPathPerms
-                    )
+                    ),
+                    E_USER_NOTICE
                 );
                 // @codeCoverageIgnoreEnd
             }
