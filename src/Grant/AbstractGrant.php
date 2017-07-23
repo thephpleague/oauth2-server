@@ -11,6 +11,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareTrait;
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
@@ -76,6 +77,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $refreshTokenTTL;
 
     /**
+     * @var \League\OAuth2\Server\CryptKey
+     */
+    protected $privateKey;
+
+    /**
      * @param ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository)
@@ -129,6 +135,16 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
     {
         $this->refreshTokenTTL = $refreshTokenTTL;
+    }
+
+    /**
+     * Set the private key
+     *
+     * @param \League\OAuth2\Server\CryptKey $key
+     */
+    public function setPrivateKey(CryptKey $key)
+    {
+        $this->privateKey = $key;
     }
 
     /**
