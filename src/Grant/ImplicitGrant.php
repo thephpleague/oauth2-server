@@ -203,8 +203,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                         'token_type'   => 'bearer',
                         'expires_in'   => $accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp(),
                         'state'        => $authorizationRequest->getState(),
-                    ],
-                    '#'
+                    ]
                 )
             );
 
