@@ -33,4 +33,11 @@ interface ResponseTypeInterface
      * @return ResponseInterface
      */
     public function generateHttpResponse(ResponseInterface $response);
+
+    /**
+     * Set the encryption key
+     *
+     * @param string|null $key
+     */
+    public function setEncryptionKey($key = null);
 }

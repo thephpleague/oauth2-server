@@ -127,9 +127,9 @@ interface GrantTypeInterface extends EmitterAwareInterface
     public function setPrivateKey(CryptKey $privateKey);
 
     /**
-     * Set the path to the public key.
+     * Set the encryption key
      *
-     * @param CryptKey $publicKey
+     * @param string|null $key
      */
-    public function setPublicKey(CryptKey $publicKey);
+    public function setEncryptionKey($key = null);
 }

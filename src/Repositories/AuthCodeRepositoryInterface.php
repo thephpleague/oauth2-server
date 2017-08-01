@@ -10,6 +10,7 @@
 namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
+use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 
 /**
  * Auth code storage interface.
@@ -27,6 +28,8 @@ interface AuthCodeRepositoryInterface extends RepositoryInterface
      * Persists a new auth code to permanent storage.
      *
      * @param AuthCodeEntityInterface $authCodeEntity
+     *
+     * @throws UniqueTokenIdentifierConstraintViolationException
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity);
 

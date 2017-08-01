@@ -24,7 +24,7 @@ $app = new App([
             new AccessTokenRepository(),            // instance of AccessTokenRepositoryInterface
             new ScopeRepository(),                  // instance of ScopeRepositoryInterface
             'file://' . __DIR__ . '/../private.key',    // path to private key
-            'file://' . __DIR__ . '/../public.key'      // path to public key
+            'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'      // encryption key
         );
 
         $grant = new PasswordGrant(

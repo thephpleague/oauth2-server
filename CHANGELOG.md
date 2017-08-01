@@ -1,5 +1,26 @@
 # Changelog
 
+## 6.0.1 (released 2017-07-19)
+
+To address feedback from the security release the following change has been made:
+  
+* If an RSA key cannot be chmod'ed to 600 then it will now throw a E_USER_NOTICE instead of an exception.
+
+## 6.0.0 (released 2017-07-01)
+
+* Breaking change: The `AuthorizationServer` constructor now expects an encryption key string instead of a public key
+* Remove support for HHVM
+* Remove support for PHP 5.5
+
+## 5.1.4 (released 2017-07-01)
+
+* Fixed multiple security vulnerabilities as a result of a security audit paid for by the [Mozilla Secure Open Source Fund](https://wiki.mozilla.org/MOSS/Secure_Open_Source). All users of this library are encouraged to update as soon as possible to this version or version 6.0 or greater.
+	* It is recommended on each `AuthorizationServer` instance you set the `setEncryptionKey()`. This will result in stronger encryption being used. If this method is not set messages will be sent to the defined error handling routines (using `error_log`). Please see the examples and documentation for examples.
+* TravisCI now tests PHP 7.1 (Issue #671)
+* Fix middleware example fatal error (Issue #682)
+* Fix typo in the first README sentence (Issue #690)
+* Corrected DateInterval from 1 min to 1 month (Issue #709)
+
 ## 5.1.3 (released 2016-10-12)
 
 * Fixed WWW-Authenticate header (Issue #669)

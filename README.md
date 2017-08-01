@@ -1,5 +1,11 @@
 # PHP OAuth 2.0 Server
 
+### :warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
+### Security Notice 
+
+### Please upgrade to version `>=5.1.4` (backwards compatible) or `6.x` (one tiny breaking change) to fix some potential security vulnerabilities - [visit this page for more information](https://oauth2.thephpleague.com/v5-security-improvements/)
+### :warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
+
 [![Latest Version](http://img.shields.io/packagist/v/league/oauth2-server.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://img.shields.io/travis/thephpleague/oauth2-server/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/oauth2-server)
@@ -30,11 +36,9 @@ This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](ht
 
 The following versions of PHP are supported:
 
-* PHP 5.5 (>=5.5.9)
 * PHP 5.6
 * PHP 7.0
 * PHP 7.1
-* HHVM
 
 The `openssl` extension is also required.
 
@@ -73,6 +77,8 @@ This package is released under the MIT License. See the bundled [LICENSE](https:
 
 This code is principally developed and maintained by [Alex Bilbie](https://twitter.com/alexbilbie).
 
-Special thanks to [all of these awesome contributors](https://github.com/thephpleague/oauth2-server/contributors)
+Special thanks to [all of these awesome contributors](https://github.com/thephpleague/oauth2-server/contributors).
+
+Additional thanks go to the [Mozilla Secure Open Source Fund](https://wiki.mozilla.org/MOSS/Secure_Open_Source) for funding a security audit of this library.
 
 The initial code was developed as part of the [Linkey](http://linkey.blogs.lincoln.ac.uk) project which was funded by [JISC](http://jisc.ac.uk) under the Access and Identity Management programme.

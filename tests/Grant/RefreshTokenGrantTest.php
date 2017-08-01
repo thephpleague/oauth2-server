@@ -21,7 +21,7 @@ use Zend\Diactoros\ServerRequest;
 class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * CryptTrait stub
+     * @var CryptTraitStub
      */
     protected $cryptStub;
 
@@ -65,7 +65,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
@@ -121,7 +121,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
@@ -180,7 +180,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
@@ -227,7 +227,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = new ServerRequest();
@@ -259,7 +259,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = 'foobar';
@@ -291,14 +291,13 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
-
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
 
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
@@ -344,7 +343,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
@@ -391,7 +390,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
