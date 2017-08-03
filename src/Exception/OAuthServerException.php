@@ -152,7 +152,7 @@ class OAuthServerException extends \Exception
      */
     public static function invalidRefreshToken($hint = null)
     {
-        return new static('The refresh token is invalid.', 8, 'invalid_request', 400, $hint);
+        return new static('The refresh token is invalid.', 8, 'invalid_request', 401, $hint);
     }
 
     /**
