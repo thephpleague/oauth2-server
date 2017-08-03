@@ -29,8 +29,9 @@ class CryptKey
     /**
      * @param string      $keyPath
      * @param null|string $passPhrase
+     * @param bool        $keyPermissionsCheck
      */
-    public function __construct($keyPath, $passPhrase = null)
+    public function __construct($keyPath, $passPhrase = null, $keyPermissionsCheck = true)
     {
         if (preg_match(self::RSA_KEY_PATTERN, $keyPath)) {
             $keyPath = $this->saveKeyToFile($keyPath);
@@ -44,21 +45,15 @@ class CryptKey
             throw new \LogicException(sprintf('Key path "%s" does not exist or is not readable', $keyPath));
         }
 
-        // Verify the permissions of the key
-        $keyPathPerms = decoct(fileperms($keyPath) & 0777);
-        if ($keyPathPerms !== '600') {
-            // Attempt to correct the permissions
-            if (chmod($keyPath, 0600) === false) {
-                // @codeCoverageIgnoreStart
-                trigger_error(
-                    sprintf(
-                        'Key file "%s" permissions are not correct, should be 600 instead of %s, unable to automatically resolve the issue',
-                        $keyPath,
-                        $keyPathPerms
-                    ),
-                    E_USER_NOTICE
-                );
-                // @codeCoverageIgnoreEnd
+        if ($keyPermissionsCheck === true) {
+            // Verify the permissions of the key
+            $keyPathPerms = decoct(fileperms($keyPath) & 0777);
+            if (in_array($keyPathPerms, ['600', '660'], true) === false) {
+                trigger_error(sprintf(
+                    'Key file "%s" permissions are not correct, should be 600 or 660 instead of %s',
+                    $keyPath,
+                    $keyPathPerms
+                ), E_USER_NOTICE);
             }
         }
 

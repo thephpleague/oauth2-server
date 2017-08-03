@@ -26,6 +26,13 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        // Make sure the keys have the correct permissions.
+        chmod(__DIR__ . '/Stubs/private.key', 0600);
+        chmod(__DIR__ . '/Stubs/public.key', 0600);
+    }
+
     public function testRespondToRequestInvalidGrantType()
     {
         $server = new AuthorizationServer(
