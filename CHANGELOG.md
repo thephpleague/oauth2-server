@@ -1,5 +1,17 @@
 # Changelog
 
+## 6.0.2 (released 2017-08-03)
+
+* An invalid refresh token that can't be decrypted now returns a HTTP 401 error instead of HTTP 400 (Issue #759)
+* Removed chmod from CryptKey and add toggle to disable checking (Issue #776)
+* Fixes invalid code challenge method payload key name (Issue #777)
+
+## 6.0.1 (released 2017-07-19)
+
+To address feedback from the security release the following change has been made:
+  
+* If an RSA key cannot be chmod'ed to 600 then it will now throw a E_USER_NOTICE instead of an exception.
+
 ## 6.0.0 (released 2017-07-01)
 
 * Breaking change: The `AuthorizationServer` constructor now expects an encryption key string instead of a public key
