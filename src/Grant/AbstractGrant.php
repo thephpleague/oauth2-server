@@ -8,6 +8,7 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
 namespace League\OAuth2\Server\Grant;
 
 use League\Event\EmitterAwareTrait;
@@ -20,6 +21,7 @@ use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
+use League\OAuth2\Server\Exception\UrlInvalidException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -184,28 +186,58 @@ abstract class AbstractGrant implements GrantTypeInterface
         $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
         if ($redirectUri !== null) {
             if (is_string($client->getRedirectUri())) {
-                if((strcmp($client->getRedirectUri(), $redirectUri) !== 0)){
-
-
-                    $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                    throw OAuthServerException::invalidClient();
+                if ((strcmp($client->getRedirectUri(), $redirectUri) !== 0)) {
+                    $registered_domain = $this->getDomain($client->getRedirectUri());
+                    $requested_domain = $this->getDomain($redirectUri, count(explode('.', $registered_domain)));
+                    if ($registered_domain !== $requested_domain) {
+                        $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+                        throw OAuthServerException::invalidClient();
+                    }
                 }
 
             } elseif (
                 is_array($client->getRedirectUri())
                 && in_array($redirectUri, $client->getRedirectUri()) === false
             ) {
-                $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
+                $invalid_client = true;
+                foreach ($client->getRedirectUri() as $url) {
+                    $registered_domain = $this->getDomain($url);
+                    $requested_domain = $this->getDomain($redirectUri, count(explode('.', $registered_domain)));
+                    if ($registered_domain === $requested_domain) {
+                        $invalid_client = false;
+                        break;
+                    }
+                }
+                if ($invalid_client) {
+                    $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+                    throw OAuthServerException::invalidClient();
+                }
             }
         }
 
         return $client;
     }
 
-    protected function checkSubDomainRedirectUri($redirectUri, $clientRedirectUri)
+    /**
+     * Get domain from the URL
+     *
+     * @param $redirectUri
+     * @param int $sub_domain_depth (2 - domain.com, 3 - subdomain.domain.com, etc.)
+     * @return null|string
+     */
+    protected function getDomain($redirectUri, $sub_domain_depth = null)
     {
-        $segments = explode('.', parse_url($redirectUri)['host']);
+        try {
+            $host = parse_url($redirectUri)['host'];
+            if ($sub_domain_depth) {
+                $url_array = explode('.', $host);
+                array_splice($url_array, 0, -$sub_domain_depth);
+                $host = implode(".", $url_array);
+            }
+            return $host;
+        } catch (\Exception $exception) {
+            return null;
+        }
     }
 
 
@@ -222,7 +254,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function validateScopes(
         $scopes,
         $redirectUri = null
-    ) {
+    )
+    {
         $scopesList = array_filter(
             explode(self::SCOPE_DELIMITER_STRING, trim($scopes)),
             function ($scope) {
@@ -247,15 +280,15 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve request parameter.
      *
-     * @param string                 $parameter
+     * @param string $parameter
      * @param ServerRequestInterface $request
-     * @param mixed                  $default
+     * @param mixed $default
      *
      * @return null|string
      */
     protected function getRequestParameter($parameter, ServerRequestInterface $request, $default = null)
     {
-        $requestParameters = (array) $request->getParsedBody();
+        $requestParameters = (array)$request->getParsedBody();
 
         return isset($requestParameters[$parameter]) ? $requestParameters[$parameter] : $default;
     }
@@ -296,9 +329,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve query string parameter.
      *
-     * @param string                 $parameter
+     * @param string $parameter
      * @param ServerRequestInterface $request
-     * @param mixed                  $default
+     * @param mixed $default
      *
      * @return null|string
      */
@@ -310,9 +343,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve cookie parameter.
      *
-     * @param string                 $parameter
+     * @param string $parameter
      * @param ServerRequestInterface $request
-     * @param mixed                  $default
+     * @param mixed $default
      *
      * @return null|string
      */
@@ -324,9 +357,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve server parameter.
      *
-     * @param string                 $parameter
+     * @param string $parameter
      * @param ServerRequestInterface $request
-     * @param mixed                  $default
+     * @param mixed $default
      *
      * @return null|string
      */
@@ -338,9 +371,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an access token.
      *
-     * @param \DateInterval          $accessTokenTTL
-     * @param ClientEntityInterface  $client
-     * @param string                 $userIdentifier
+     * @param \DateInterval $accessTokenTTL
+     * @param ClientEntityInterface $client
+     * @param string $userIdentifier
      * @param ScopeEntityInterface[] $scopes
      *
      * @throws OAuthServerException
@@ -353,7 +386,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         ClientEntityInterface $client,
         $userIdentifier,
         array $scopes = []
-    ) {
+    )
+    {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
@@ -382,10 +416,10 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an auth code.
      *
-     * @param \DateInterval          $authCodeTTL
-     * @param ClientEntityInterface  $client
-     * @param string                 $userIdentifier
-     * @param string                 $redirectUri
+     * @param \DateInterval $authCodeTTL
+     * @param ClientEntityInterface $client
+     * @param string $userIdentifier
+     * @param string $redirectUri
      * @param ScopeEntityInterface[] $scopes
      *
      * @throws OAuthServerException
@@ -399,7 +433,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         $userIdentifier,
         $redirectUri,
         array $scopes = []
-    ) {
+    )
+    {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $authCode = $this->authCodeRepository->getNewAuthCode();
@@ -486,7 +521,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function canRespondToAccessTokenRequest(ServerRequestInterface $request)
     {
-        $requestParameters = (array) $request->getParsedBody();
+        $requestParameters = (array)$request->getParsedBody();
 
         return (
             array_key_exists('grant_type', $requestParameters)
