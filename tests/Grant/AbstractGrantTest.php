@@ -255,6 +255,31 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
+    public function testValidateWildcardSubDomainRedirectUri()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://domain.foo/bar/123');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setClientRepository($clientRepositoryMock);
+
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withParsedBody([
+            'client_id'    => 'foo',
+            'redirect_uri' => 'http://subdomain.domain.foo/bar',
+        ]);
+
+        $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
+        $validateClientMethod->setAccessible(true);
+
+        $result = $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
+        $this->assertEquals($client, $result);
+    }
+
     /**
      * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
      */
@@ -281,6 +306,32 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $validateClientMethod->setAccessible(true);
 
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
+    }
+
+    public function testValidateWildcardSubDomainRedirectUriArray()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri(['https://domain.foo/bar']);
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setClientRepository($clientRepositoryMock);
+
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withParsedBody([
+            'client_id'    => 'foo',
+            'redirect_uri' => 'https://subdomain.domain.foo/bar',
+        ]);
+
+        $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
+        $validateClientMethod->setAccessible(true);
+
+        $result = $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
+        $this->assertEquals($client, $result);
     }
 
     /**
