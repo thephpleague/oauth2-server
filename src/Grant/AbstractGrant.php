@@ -21,7 +21,6 @@ use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
-use League\OAuth2\Server\Exception\UrlInvalidException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -189,7 +188,7 @@ abstract class AbstractGrant implements GrantTypeInterface
                 if ((strcmp($client->getRedirectUri(), $redirectUri) !== 0)) {
                     $registered_domain = $this->getDomain($client->getRedirectUri());
                     $requested_domain = $this->getDomain($redirectUri, count(explode('.', $registered_domain)));
-                    if ($registered_domain !== $requested_domain) {
+                    if ((!$registered_domain || !$requested_domain) || $registered_domain !== $requested_domain) {
                         $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
                         throw OAuthServerException::invalidClient();
                     }
@@ -203,7 +202,7 @@ abstract class AbstractGrant implements GrantTypeInterface
                 foreach ($client->getRedirectUri() as $url) {
                     $registered_domain = $this->getDomain($url);
                     $requested_domain = $this->getDomain($redirectUri, count(explode('.', $registered_domain)));
-                    if ($registered_domain === $requested_domain) {
+                    if (($registered_domain && $requested_domain) && $registered_domain == $requested_domain) {
                         $invalid_client = false;
                         break;
                     }
