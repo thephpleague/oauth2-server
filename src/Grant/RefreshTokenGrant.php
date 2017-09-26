@@ -1,11 +1,11 @@
 <?php
 /**
- * OAuth 2.0 Refresh token grant
+ * OAuth 2.0 Refresh token grant.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
@@ -19,7 +19,7 @@ use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
 
 /**
- * Refresh token grant
+ * Refresh token grant.
  */
 class RefreshTokenGrant extends AbstractGrant
 {
@@ -29,16 +29,16 @@ class RefreshTokenGrant extends AbstractGrant
     protected $identifier = 'refresh_token';
 
     /**
-     * Refresh token TTL (default = 604800 | 1 week)
+     * Refresh token TTL (default = 604800 | 1 week).
      *
-     * @var integer
+     * @var int
      */
     protected $refreshTokenTTL = 604800;
 
     /**
-     * Rotate token (default = true)
+     * Rotate token (default = true).
      *
-     * @var integer
+     * @var int
      */
     protected $refreshTokenRotate = true;
 
@@ -46,12 +46,12 @@ class RefreshTokenGrant extends AbstractGrant
      * Whether to require the client secret when
      * completing the flow.
      *
-     * @var boolean
+     * @var bool
      */
     protected $requireClientSecret = true;
 
     /**
-     * Set the TTL of the refresh token
+     * Set the TTL of the refresh token.
      *
      * @param int $refreshTokenTTL
      *
@@ -63,7 +63,7 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
-     * Get the TTL of the refresh token
+     * Get the TTL of the refresh token.
      *
      * @return int
      */
@@ -73,7 +73,8 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
-     * Set the rotation boolean of the refresh token
+     * Set the rotation boolean of the refresh token.
+     *
      * @param bool $refreshTokenRotate
      */
     public function setRefreshTokenRotation($refreshTokenRotate = true)
@@ -82,7 +83,7 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
-     * Get rotation boolean of the refresh token
+     * Get rotation boolean of the refresh token.
      *
      * @return bool
      */
@@ -92,7 +93,6 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
-     *
      * @param bool $required True to require client secret during access
      *                       token request. False if not. Default = true
      */
@@ -111,7 +111,6 @@ class RefreshTokenGrant extends AbstractGrant
     {
         return $this->requireClientSecret;
     }
-
 
     /**
      * {@inheritdoc}
@@ -139,6 +138,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         if (($client instanceof ClientEntity) === false) {
             $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
+
             throw new Exception\InvalidClientException();
         }
 
@@ -160,6 +160,10 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         $oldAccessToken = $oldRefreshToken->getAccessToken();
+
+        if (is_null($oldAccessToken)) {
+            throw new Exception\InvalidRefreshException();
+        }
 
         // Get the scopes for the original session
         $session = $oldAccessToken->getSession();
