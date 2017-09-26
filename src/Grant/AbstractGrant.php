@@ -181,7 +181,20 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         // If a redirect URI is provided ensure it matches what is pre-registered
-        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
+        $this->checkRedirectUri($this->getRequestParameter('redirect_uri', $request, null), $client, $request);
+
+        return $client;
+    }
+
+    /**
+     * Validate redirect Uri
+     *
+     * @param $redirectUri
+     * @param $client
+     * @param $request
+     * @throws OAuthServerException
+     */
+    public function checkRedirectUri($redirectUri, $client, $request){
         if ($redirectUri !== null) {
             if (is_string($client->getRedirectUri())) {
                 if ((strcmp($client->getRedirectUri(), $redirectUri) !== 0)) {
@@ -212,8 +225,6 @@ abstract class AbstractGrant implements GrantTypeInterface
                 }
             }
         }
-
-        return $client;
     }
 
     /**
