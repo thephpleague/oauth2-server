@@ -61,6 +61,10 @@ Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague
 
 If you have any questions about OAuth _please_ open a ticket here; please **don't** email the address below.
 
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/N2YMJcLBppt2Eg9E1jGu4gef/thephpleague/oauth2-server'>
+  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/N2YMJcLBppt2Eg9E1jGu4gef/thephpleague/oauth2-server.svg' />
+</a>
+
 ## Commercial Support
 
 If you would like help implementing this library into your existing platform, or would be interested in OAuth advice or training for you and your team please get in touch with [Glynde Labs](https://glyndelabs.com).
