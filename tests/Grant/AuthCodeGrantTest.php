@@ -949,6 +949,60 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     * @expectedExceptionCode 3
+     */
+    public function testRespondToAccessTokenRequestAuthCodePayload()
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => 'http://foo/bar',
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode(
+                        [
+                            'scopes'       => ''
+                        ]
+                    )
+                ),
+            ]
+        );
+
+        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+    }
+
     public function testRespondToAccessTokenRequestRevokedCode()
     {
         $client = new ClientEntity();
