@@ -81,6 +81,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         // Validate the authorization code
         try {
             $authCodePayload = json_decode($this->decrypt($encryptedAuthCode));
+
+            $this->validateAuthCodePayload($authCodePayload);
+
             if (time() > $authCodePayload->expire_time) {
                 throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
             }
@@ -175,6 +178,33 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $this->authCodeRepository->revokeAuthCode($authCodePayload->auth_code_id);
 
         return $responseType;
+    }
+
+    /**
+     * Validate auth code payload to avoid errors like 'Undefined property: stdClass::$auth_code_id'.
+     *
+     * @param mixed $authCodePayload
+     *
+     * @throws OAuthServerException
+     */
+    private function validateAuthCodePayload($authCodePayload)
+    {
+        if (false === is_object($authCodePayload)) {
+            throw OAuthServerException::invalidRequest('code');
+        }
+
+        $validCodePayload =
+            isset($authCodePayload->expire_time) &
+            isset($authCodePayload->auth_code_id) &
+            isset($authCodePayload->client_id) &
+            isset($authCodePayload->redirect_uri) &
+            isset($authCodePayload->scopes) &&
+            is_array($authCodePayload->scopes) &
+            isset($authCodePayload->user_id);
+
+        if (false === $validCodePayload) {
+            throw OAuthServerException::invalidRequest('code');
+        }
     }
 
     /**
