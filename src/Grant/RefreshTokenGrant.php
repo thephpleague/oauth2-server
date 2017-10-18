@@ -44,11 +44,11 @@ class RefreshTokenGrant extends AbstractGrant
         // Validate request
         $client = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
-        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request));
+        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
 
         // If no new scopes are requested then give the access token the original session scopes
         if (count($scopes) === 0) {
-            $scopes = array_map(function ($scopeId) use ($client) {
+            $scopes = array_map(function ($scopeId) {
                 $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
 
                 if ($scope instanceof ScopeEntityInterface === false) {

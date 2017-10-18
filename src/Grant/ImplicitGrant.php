@@ -145,14 +145,14 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         }
 
         $scopes = $this->validateScopes(
-            $this->getQueryStringParameter('scope', $request),
+            $this->getQueryStringParameter('scope', $request, $this->defaultScope),
             is_array($client->getRedirectUri())
                 ? $client->getRedirectUri()[0]
                 : $client->getRedirectUri()
         );
 
         // Finalize the requested scopes
-        $scopes = $this->scopeRepository->finalizeScopes(
+        $finalizedScopes = $this->scopeRepository->finalizeScopes(
             $scopes,
             $this->getIdentifier(),
             $client
@@ -165,7 +165,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         $authorizationRequest->setClient($client);
         $authorizationRequest->setRedirectUri($redirectUri);
         $authorizationRequest->setState($stateParameter);
-        $authorizationRequest->setScopes($scopes);
+        $authorizationRequest->setScopes($finalizedScopes);
 
         return $authorizationRequest;
     }
