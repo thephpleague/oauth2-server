@@ -17,6 +17,7 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use Psr\Http\Message\ResponseInterface;
@@ -26,6 +27,9 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 {
+
+    const DEFAULT_SCOPE = 'basic   ';
+
     public function setUp()
     {
         // Make sure the keys have the correct permissions.
@@ -41,6 +45,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
             base64_encode(random_bytes(36)),
+            self::DEFAULT_SCOPE,
             new StubResponseType()
         );
 
@@ -59,7 +64,9 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn(new ClientEntity());
 
+        $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
@@ -71,6 +78,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/Stubs/private.key',
             base64_encode(random_bytes(36)),
+            self::DEFAULT_SCOPE,
             new StubResponseType()
         );
 
@@ -142,6 +150,10 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -152,9 +164,10 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $server = new AuthorizationServer(
             $clientRepositoryMock,
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
-            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
+            $scopeRepositoryMock,
             'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key'
+            'file://' . __DIR__ . '/Stubs/public.key',
+            self::DEFAULT_SCOPE
         );
         $server->enableGrantType($grant);
 
