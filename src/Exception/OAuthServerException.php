@@ -196,6 +196,21 @@ class OAuthServerException extends \Exception
     }
 
     /**
+     * Missing scope error
+     *
+     * @param null|string $redirectUri A HTTP URI to redirect the user back to
+     *
+     * @return static
+     */
+    public static function missingScope($redirectUri = null)
+    {
+        $errorMessage = 'No scope was specified for this request';
+        $hint = 'Set a default scope on the server if no scopes are passed in the request';
+
+        return new static($errorMessage, 11, 'missing_scope', 400, $hint, $redirectUri);
+    }
+
+    /**
      * @return string
      */
     public function getErrorType()
