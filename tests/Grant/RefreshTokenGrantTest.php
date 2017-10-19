@@ -20,6 +20,8 @@ use Zend\Diactoros\ServerRequest;
 
 class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 {
+    const DEFAULT_SCOPE = 'basic';
+
     /**
      * @var CryptTraitStub
      */
@@ -61,12 +63,17 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('persistNewRefreshToken')->willReturnSelf();
 
+        $oldRefreshTokenCheckResult = ['scopes' => $scopeEntity->getIdentifier()];
+
+        $refreshTokenRepositoryMock->method('validateOldRefreshToken')->willReturn($oldRefreshTokenCheckResult);
+
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(

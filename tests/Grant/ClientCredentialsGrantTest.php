@@ -9,11 +9,14 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use Zend\Diactoros\ServerRequest;
 
 class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 {
+    const DEFAULT_SCOPE = 'basic';
+
     public function testGetIdentifier()
     {
         $grant = new ClientCredentialsGrant();
@@ -30,13 +33,16 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
+        $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ClientCredentialsGrant();
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(

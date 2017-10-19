@@ -13,12 +13,15 @@ use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
+use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use Zend\Diactoros\ServerRequest;
 
 class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 {
+    const DEFAULT_SCOPE = 'basic';
+
     public function testGetIdentifier()
     {
         $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
@@ -46,13 +49,16 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
+        $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new PasswordGrant($userRepositoryMock, $refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(

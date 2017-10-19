@@ -22,6 +22,8 @@ use Zend\Diactoros\ServerRequest;
 
 class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 {
+    const DEFAULT_SCOPE = 'basic';
+
     /**
      * CryptTrait stub
      */
@@ -96,6 +98,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = new ServerRequest(
             [],
@@ -130,6 +133,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = new ServerRequest(
             [],
