@@ -95,7 +95,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
     {
         return (
-            array_key_exists('response_type', $request->getQueryParams())
+            isset($request->getQueryParams()['response_type'])
             && $request->getQueryParams()['response_type'] === 'token'
             && isset($request->getQueryParams()['client_id'])
         );
