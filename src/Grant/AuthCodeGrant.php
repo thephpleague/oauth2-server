@@ -209,7 +209,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $request,
             $this->getServerParameter('PHP_AUTH_USER', $request)
         );
-        if (is_null($clientId)) {
+        if (null === $clientId) {
             throw OAuthServerException::invalidRequest('client_id');
         }
 
