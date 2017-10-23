@@ -1,9 +1,11 @@
 <?php
 /**
  * Public/private key encryption.
+ *
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
@@ -24,6 +26,7 @@ trait CryptTrait
      * @param string $unencryptedData
      *
      * @throws \LogicException
+     *
      * @return string
      */
     protected function encrypt($unencryptedData)
@@ -41,6 +44,7 @@ trait CryptTrait
      * @param string $encryptedData
      *
      * @throws \LogicException
+     *
      * @return string
      */
     protected function decrypt($encryptedData)
