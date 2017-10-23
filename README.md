@@ -79,7 +79,8 @@ This package is released under the MIT License. See the bundled [LICENSE](https:
 
 ## Credits
 
-This code is principally developed and maintained by [Alex Bilbie](https://twitter.com/alexbilbie).
+This code is principally developed and maintained by [Andy Millington](https://twitter.com/Sephster), [Brian 
+Retterer](https://twitter.com/bretterer), and [Simon Hamp](https://twitter.com/simonhamp).
 
 Special thanks to [all of these awesome contributors](https://github.com/thephpleague/oauth2-server/contributors).
 
