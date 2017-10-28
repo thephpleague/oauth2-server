@@ -82,6 +82,8 @@ This package is released under the MIT License. See the bundled [LICENSE](https:
 This code is principally developed and maintained by [Andy Millington](https://twitter.com/Sephster), [Brian 
 Retterer](https://twitter.com/bretterer), and [Simon Hamp](https://twitter.com/simonhamp).
 
+Between 2012 and 2017 this library was developed and maintained by [Alex Bilbie](https://alexbilbie.com/).
+
 Special thanks to [all of these awesome contributors](https://github.com/thephpleague/oauth2-server/contributors).
 
 Additional thanks go to the [Mozilla Secure Open Source Fund](https://wiki.mozilla.org/MOSS/Secure_Open_Source) for funding a security audit of this library.
