@@ -73,7 +73,7 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * @var string
      */
-    private $defaultScope;
+    private $defaultScope = null;
 
     /**
      * New server instance.
@@ -83,7 +83,6 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param ScopeRepositoryInterface       $scopeRepository
      * @param CryptKey|string                $privateKey
      * @param string                         $encryptionKey
-     * @param null|string                    $defaultScope
      * @param null|ResponseTypeInterface     $responseType
      */
     public function __construct(
@@ -92,7 +91,6 @@ class AuthorizationServer implements EmitterAwareInterface
         ScopeRepositoryInterface $scopeRepository,
         $privateKey,
         $encryptionKey,
-        $defaultScope = null,
         ResponseTypeInterface $responseType = null
     ) {
         $this->clientRepository = $clientRepository;
@@ -103,9 +101,6 @@ class AuthorizationServer implements EmitterAwareInterface
             $privateKey = new CryptKey($privateKey);
         }
         $this->privateKey = $privateKey;
-
-        $this->defaultScope = $defaultScope;
-
         $this->encryptionKey = $encryptionKey;
         $this->responseType = $responseType;
     }
