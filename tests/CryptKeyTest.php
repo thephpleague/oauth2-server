@@ -21,6 +21,12 @@ class CryptKeyTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('file://' . $keyFile, $key->getKeyPath());
         $this->assertEquals('secret', $key->getPassPhrase());
+
+        $keyFile = __DIR__ . '/Stubs/public.key.crlf';
+        $key = new CryptKey($keyFile, 'secret');
+
+        $this->assertEquals('file://' . $keyFile, $key->getKeyPath());
+        $this->assertEquals('secret', $key->getPassPhrase());
     }
 
     public function testKeyFileCreation()
