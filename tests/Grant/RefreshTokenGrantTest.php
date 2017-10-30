@@ -49,6 +49,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
+        $scopeEntity->setIdentifier(self::DEFAULT_SCOPE);
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
@@ -62,10 +63,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $refreshTokenRepositoryMock
             ->expects($this->once())
             ->method('persistNewRefreshToken')->willReturnSelf();
-
-        $oldRefreshTokenCheckResult = ['scopes' => $scopeEntity->getIdentifier()];
-
-        $refreshTokenRepositoryMock->method('validateOldRefreshToken')->willReturn($oldRefreshTokenCheckResult);
 
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
@@ -81,7 +78,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                     'client_id'        => 'foo',
                     'refresh_token_id' => 'zyxwvu',
                     'access_token_id'  => 'abcdef',
-                    'scopes'           => ['foo'],
+                    'scopes'           => [self::DEFAULT_SCOPE],
                     'user_id'          => 123,
                     'expire_time'      => time() + 3600,
                 ]
