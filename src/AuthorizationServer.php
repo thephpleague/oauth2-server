@@ -73,7 +73,7 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * @var string
      */
-    private $defaultScope = null;
+    private $defaultScope = '';
 
     /**
      * New server instance.
@@ -208,5 +208,15 @@ class AuthorizationServer implements EmitterAwareInterface
         $this->responseType->setEncryptionKey($this->encryptionKey);
 
         return $this->responseType;
+    }
+
+    /**
+     * Set the default scope for the authorization server.
+     *
+     * @param string $defaultScope
+     */
+    public function setDefaultScope($defaultScope)
+    {
+        $this->defaultScope = $defaultScope;
     }
 }

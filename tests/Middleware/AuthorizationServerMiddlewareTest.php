@@ -40,10 +40,10 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/../Stubs/private.key',
             base64_encode(random_bytes(36)),
-            self::DEFAULT_SCOPE,
             new StubResponseType()
         );
 
+        $server->setDefaultScope(self::DEFAULT_SCOPE);
         $server->enableGrantType(new ClientCredentialsGrant());
 
         $_POST['grant_type'] = 'client_credentials';

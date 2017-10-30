@@ -45,7 +45,6 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
             base64_encode(random_bytes(36)),
-            self::DEFAULT_SCOPE,
             new StubResponseType()
         );
 
@@ -78,10 +77,10 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/Stubs/private.key',
             base64_encode(random_bytes(36)),
-            self::DEFAULT_SCOPE,
             new StubResponseType()
         );
 
+        $server->setDefaultScope(self::DEFAULT_SCOPE);
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
 
         $_POST['grant_type'] = 'client_credentials';
@@ -166,9 +165,10 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key',
-            self::DEFAULT_SCOPE
+            'file://' . __DIR__ . '/Stubs/public.key'
         );
+
+        $server->setDefaultScope(self::DEFAULT_SCOPE);
         $server->enableGrantType($grant);
 
         $request = new ServerRequest(
