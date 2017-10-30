@@ -11,18 +11,24 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
 {
+
+    const DEFAULT_SCOPE = 'basic';
+
     public function testValidResponse()
     {
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn(new ClientEntity());
 
+        $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $accessRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
@@ -34,6 +40,7 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/../Stubs/private.key',
             base64_encode(random_bytes(36)),
+            self::DEFAULT_SCOPE,
             new StubResponseType()
         );
 
