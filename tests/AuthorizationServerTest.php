@@ -3,7 +3,6 @@
 namespace LeagueTests;
 
 use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -26,6 +25,13 @@ use Zend\Diactoros\ServerRequestFactory;
 
 class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        // Make sure the keys have the correct permissions.
+        chmod(__DIR__ . '/Stubs/private.key', 0600);
+        chmod(__DIR__ . '/Stubs/public.key', 0600);
+    }
+
     public function testRespondToRequestInvalidGrantType()
     {
         $server = new AuthorizationServer(
@@ -33,7 +39,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key',
+            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 
@@ -63,7 +69,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $accessTokenRepositoryMock,
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key',
+            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 
@@ -115,9 +121,6 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/Stubs/public.key'));
 
         $server->enableGrantType($grant);
 

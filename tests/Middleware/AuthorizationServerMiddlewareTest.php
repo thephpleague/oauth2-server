@@ -33,7 +33,7 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $accessRepositoryMock,
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
+            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 
@@ -66,7 +66,7 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/../Stubs/private.key',
-            'file://' . __DIR__ . '/../Stubs/public.key',
+            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 
@@ -97,7 +97,8 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
         $response = $exception->generateHttpResponse(new Response());
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('http://foo/bar?error=invalid_scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope', $response->getHeader('location')[0]);
+        $this->assertEquals('http://foo/bar?error=invalid_scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope',
+            $response->getHeader('location')[0]);
     }
 
     public function testOAuthErrorResponseRedirectUriFragment()
@@ -106,6 +107,7 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
         $response = $exception->generateHttpResponse(new Response(), true);
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('http://foo/bar#error=invalid_scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope', $response->getHeader('location')[0]);
+        $this->assertEquals('http://foo/bar#error=invalid_scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope',
+            $response->getHeader('location')[0]);
     }
 }

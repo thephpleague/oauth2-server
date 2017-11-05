@@ -12,6 +12,7 @@ namespace League\OAuth2\Server\Repositories;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 
 /**
  * Access token interface.
@@ -33,6 +34,8 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
      * Persists a new access token to permanent storage.
      *
      * @param AccessTokenEntityInterface $accessTokenEntity
+     *
+     * @throws UniqueTokenIdentifierConstraintViolationException
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity);
 

@@ -2,13 +2,12 @@
 
 namespace LeagueTests\Utils;
 
-use League\OAuth2\Server\CryptKey;
 use LeagueTests\Stubs\CryptTraitStub;
 
 class CryptTraitTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * CryptTrait stub
+     * @var \LeagueTests\Stubs\CryptTraitStub
      */
     protected $cryptStub;
 
@@ -25,31 +24,5 @@ class CryptTraitTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotEquals($payload, $encrypted);
         $this->assertEquals($payload, $plainText);
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testBadPrivateKey()
-    {
-        $this->cryptStub->setPrivateKey(new CryptKey(__DIR__ . '/Stubs/public.key'));
-        $this->cryptStub->doEncrypt('');
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testBadPublicKey()
-    {
-        $this->cryptStub->setPublicKey(new CryptKey(__DIR__ . '/Stubs/private.key'));
-        $this->cryptStub->doDecrypt('');
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testNonExistentKey()
-    {
-        new CryptKey('foo/bar');
     }
 }

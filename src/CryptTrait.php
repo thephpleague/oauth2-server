@@ -11,37 +11,14 @@
 
 namespace League\OAuth2\Server;
 
+use Defuse\Crypto\Crypto;
+
 trait CryptTrait
 {
     /**
-     * @var CryptKey
+     * @var string
      */
-    protected $privateKey;
-
-    /**
-     * @var CryptKey
-     */
-    protected $publicKey;
-
-    /**
-     * Set path to private key.
-     *
-     * @param CryptKey $privateKey
-     */
-    public function setPrivateKey(CryptKey $privateKey)
-    {
-        $this->privateKey = $privateKey;
-    }
-
-    /**
-     * Set path to public key.
-     *
-     * @param CryptKey $publicKey
-     */
-    public function setPublicKey(CryptKey $publicKey)
-    {
-        $this->publicKey = $publicKey;
-    }
+    protected $encryptionKey;
 
     /**
      * Encrypt data with a private key.
@@ -54,30 +31,11 @@ trait CryptTrait
      */
     protected function encrypt($unencryptedData)
     {
-        $privateKey = openssl_pkey_get_private($this->privateKey->getKeyPath(), $this->privateKey->getPassPhrase());
-        $privateKeyDetails = @openssl_pkey_get_details($privateKey);
-        if ($privateKeyDetails === null) {
-            throw new \LogicException(
-                sprintf('Could not get details of private key: %s', $this->privateKey->getKeyPath())
-            );
+        try {
+            return Crypto::encryptWithPassword($unencryptedData, $this->encryptionKey);
+        } catch (\Exception $e) {
+            throw new \LogicException($e->getMessage());
         }
-
-        $chunkSize = ceil($privateKeyDetails['bits'] / 8) - 11;
-        $output = '';
-
-        while ($unencryptedData) {
-            $chunk = substr($unencryptedData, 0, $chunkSize);
-            $unencryptedData = substr($unencryptedData, $chunkSize);
-            if (openssl_private_encrypt($chunk, $encrypted, $privateKey) === false) {
-                // @codeCoverageIgnoreStart
-                throw new \LogicException('Failed to encrypt data');
-                // @codeCoverageIgnoreEnd
-            }
-            $output .= $encrypted;
-        }
-        openssl_pkey_free($privateKey);
-
-        return base64_encode($output);
     }
 
     /**
@@ -91,31 +49,20 @@ trait CryptTrait
      */
     protected function decrypt($encryptedData)
     {
-        $publicKey = openssl_pkey_get_public($this->publicKey->getKeyPath());
-        $publicKeyDetails = @openssl_pkey_get_details($publicKey);
-        if ($publicKeyDetails === null) {
-            throw new \LogicException(
-                sprintf('Could not get details of public key: %s', $this->publicKey->getKeyPath())
-            );
+        try {
+            return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
+        } catch (\Exception $e) {
+            throw new \LogicException($e->getMessage());
         }
+    }
 
-        $chunkSize = ceil($publicKeyDetails['bits'] / 8);
-        $output = '';
-
-        $encryptedData = base64_decode($encryptedData);
-
-        while ($encryptedData) {
-            $chunk = substr($encryptedData, 0, $chunkSize);
-            $encryptedData = substr($encryptedData, $chunkSize);
-            if (openssl_public_decrypt($chunk, $decrypted, $publicKey/*, OPENSSL_PKCS1_OAEP_PADDING*/) === false) {
-                // @codeCoverageIgnoreStart
-                throw new \LogicException('Failed to decrypt data');
-                // @codeCoverageIgnoreEnd
-            }
-            $output .= $decrypted;
-        }
-        openssl_pkey_free($publicKey);
-
-        return $output;
+    /**
+     * Set the encryption key
+     *
+     * @param string $key
+     */
+    public function setEncryptionKey($key = null)
+    {
+        $this->encryptionKey = $key;
     }
 }
