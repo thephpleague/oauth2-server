@@ -57,11 +57,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $scopeRepository;
 
     /**
-     * @var string
-     */
-    protected $defaultScope = '';
-
-    /**
      * @var AuthCodeRepositoryInterface
      */
     protected $authCodeRepository;
@@ -108,14 +103,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setScopeRepository(ScopeRepositoryInterface $scopeRepository)
     {
         $this->scopeRepository = $scopeRepository;
-    }
-
-    /**
-     * @param string $scope
-     */
-    public function setDefaultScope($scope)
-    {
-        $this->defaultScope = $scope;
     }
 
     /**
