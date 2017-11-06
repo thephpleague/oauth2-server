@@ -242,12 +242,18 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             }
         }
 
+        $redirectUri = is_array($client->getRedirectUri()) ? $client->getRedirectUri()[0] : $client->getRedirectUri();
+
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            is_array($client->getRedirectUri())
-                ? $client->getRedirectUri()[0]
-                : $client->getRedirectUri()
+            $redirectUri
         );
+
+        try {
+            $this->checkScopesRequested($scopes, $redirectUri);
+        } catch (OAuthServerException $ex) {
+            throw $ex;
+        }
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
 

@@ -20,8 +20,6 @@ use Zend\Diactoros\ServerRequest;
 
 class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 {
-    const DEFAULT_SCOPE = 'basic';
-
     /**
      * @var CryptTraitStub
      */
@@ -49,7 +47,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
-        $scopeEntity->setIdentifier(self::DEFAULT_SCOPE);
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
@@ -70,7 +67,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
@@ -78,7 +74,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                     'client_id'        => 'foo',
                     'refresh_token_id' => 'zyxwvu',
                     'access_token_id'  => 'abcdef',
-                    'scopes'           => [self::DEFAULT_SCOPE],
+                    'scopes'           => ['foo'],
                     'user_id'          => 123,
                     'expire_time'      => time() + 3600,
                 ]

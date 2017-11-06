@@ -459,21 +459,6 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $grantMock->validateScopes('basic   ');
     }
 
-    /**
-     * @expectedException     \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 5
-     */
-    public function testValidateScopesMissingScope()
-    {
-        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(null);
-
-        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setScopeRepository($scopeRepositoryMock);
-
-        $grantMock->validateScopes('');
-    }
-
     public function testGenerateUniqueIdentifier()
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);

@@ -232,10 +232,6 @@ abstract class AbstractGrant implements GrantTypeInterface
             $validScopes[] = $scope;
         }
 
-        if (empty($validScopes)) {
-            throw OAuthServerException::invalidScope($redirectUri);
-        }
-
         return $validScopes;
     }
 

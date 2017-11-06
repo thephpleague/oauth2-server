@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use League\OAuth2\Server\Exception\OAuthServerException;
+
 abstract class AbstractAuthorizeGrant extends AbstractGrant
 {
     /**
@@ -38,5 +40,18 @@ abstract class AbstractAuthorizeGrant extends AbstractGrant
     public function setDefaultScope($scope)
     {
         $this->defaultScope = $scope;
+    }
+
+    /**
+     * @param ScopeEntityInterface[] $requestedScopes
+     * @param string $redirectUri
+     *
+     * @throws OAuthServerException
+     */
+    protected function checkScopesRequested($requestedScopes, $redirectUri = null)
+    {
+        if (empty($requestedScopes)) {
+            throw OAuthServerException::invalidScope($redirectUri);
+        }
     }
 }
