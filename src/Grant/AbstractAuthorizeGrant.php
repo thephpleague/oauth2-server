@@ -14,6 +14,11 @@ namespace League\OAuth2\Server\Grant;
 abstract class AbstractAuthorizeGrant extends AbstractGrant
 {
     /**
+     * @var string
+     */
+    protected $defaultScope = '';
+
+    /**
      * @param string $uri
      * @param array  $params
      * @param string $queryDelimiter
@@ -25,5 +30,13 @@ abstract class AbstractAuthorizeGrant extends AbstractGrant
         $uri .= (strstr($uri, $queryDelimiter) === false) ? $queryDelimiter : '&';
 
         return $uri . http_build_query($params);
+    }
+
+    /**
+     * @param string $scope
+     */
+    public function setDefaultScope($scope)
+    {
+        $this->defaultScope = $scope;
     }
 }
