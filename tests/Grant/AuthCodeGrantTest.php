@@ -1671,7 +1671,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException     \League\OAuth2\Server\Exception\OAuthServerException
-+    * @expectedExceptionCode 5
+     * @expectedExceptionCode 5
      */
     public function testValidateAuthorizationRequestFailsWithoutScope()
     {
