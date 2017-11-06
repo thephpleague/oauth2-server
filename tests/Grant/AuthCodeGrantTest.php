@@ -1656,6 +1656,20 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \LogicException
+     */
+    public function testCompleteAuthorizationRequestNoUser()
+    {
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+
+        $grant->completeAuthorizationRequest(new AuthorizationRequest());
+    }
+
+    /**
      * @expectedException     \League\OAuth2\Server\Exception\OAuthServerException
 +    * @expectedExceptionCode 5
      */
