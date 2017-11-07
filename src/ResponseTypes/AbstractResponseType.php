@@ -36,6 +36,11 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     protected $privateKey;
 
     /**
+     * @var boolean
+     */
+    protected $returnScopes = false;
+
+    /**
      * {@inheritdoc}
      */
     public function setAccessToken(AccessTokenEntityInterface $accessToken)
@@ -59,6 +64,16 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     public function setPrivateKey(CryptKey $key)
     {
         $this->privateKey = $key;
+    }
+
+    /**
+     * Whether to include scopes to response params. Defaults to `false`.
+     *
+     * @param boolean $returnScopes
+     */
+    public function setReturnScopes($returnScopes)
+    {
+        $this->returnScopes = $returnScopes;
     }
 
 }

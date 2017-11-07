@@ -31,12 +31,15 @@ class BearerTokenResponse extends AbstractResponseType
             'token_type'   => 'Bearer',
             'expires_in'   => $expireDateTime - (new \DateTime())->getTimestamp(),
             'access_token' => (string) $jwtAccessToken,
-            'scope' => implode(" ", array_map(
+        ];
+
+        if ($this->returnScopes === true) {
+            $responseParams['scope'] = implode(" ", array_map(
                 function (ScopeEntityInterface $scopeEntity) {
                     return $scopeEntity->getIdentifier();
                 }, $this->accessToken->getScopes()
-            ))
-        ];
+            ));
+        }
 
         if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
             $refreshToken = $this->encrypt(

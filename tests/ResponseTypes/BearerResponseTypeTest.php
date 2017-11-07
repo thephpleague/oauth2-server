@@ -24,6 +24,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setReturnScopes(true);
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -113,8 +114,7 @@ class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($json->access_token));
         $this->assertTrue(isset($json->refresh_token));
 
-        $this->assertTrue(isset($json->scope));
-        $this->assertEquals('basic1 basic2', $json->scope);
+        $this->assertFalse(isset($json->scope));
 
         $this->assertTrue(isset($json->foo));
         $this->assertEquals('bar', $json->foo);
