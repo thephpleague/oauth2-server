@@ -75,5 +75,4 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     {
         $this->returnScopes = $returnScopes;
     }
-
 }
