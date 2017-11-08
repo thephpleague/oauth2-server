@@ -18,9 +18,10 @@ use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class AbstractGrantTest extends \PHPUnit_Framework_TestCase
+class AbstractGrantTest extends TestCase
 {
     public function testGetSet()
     {

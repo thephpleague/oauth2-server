@@ -19,11 +19,12 @@ use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use Psr\Http\Message\ResponseInterface;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 
-class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
+class AuthorizationServerTest extends TestCase
 {
     public function setUp()
     {

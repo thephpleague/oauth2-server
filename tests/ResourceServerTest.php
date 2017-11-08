@@ -6,9 +6,10 @@ namespace LeagueTests;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequestFactory;
 
-class ResourceServerTest extends \PHPUnit_Framework_TestCase
+class ResourceServerTest extends TestCase
 {
     public function testValidateAuthenticatedRequest()
     {

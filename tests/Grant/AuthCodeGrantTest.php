@@ -22,9 +22,10 @@ use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
+class AuthCodeGrantTest extends TestCase
 {
     /**
      * @var CryptTraitStub
