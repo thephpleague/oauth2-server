@@ -3,8 +3,9 @@
 namespace LeagueTests\Utils;
 
 use LeagueTests\Stubs\CryptTraitStub;
+use PHPUnit\Framework\TestCase;
 
-class CryptTraitTest extends \PHPUnit_Framework_TestCase
+class CryptTraitTest extends TestCase
 {
     /**
      * @var \LeagueTests\Stubs\CryptTraitStub

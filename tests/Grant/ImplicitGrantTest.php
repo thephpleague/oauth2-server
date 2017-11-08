@@ -18,9 +18,10 @@ use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
+class ImplicitGrantTest extends TestCase
 {
     /**
      * CryptTrait stub

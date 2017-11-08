@@ -16,9 +16,10 @@ use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
+class RefreshTokenGrantTest extends TestCase
 {
     /**
      * @var CryptTraitStub

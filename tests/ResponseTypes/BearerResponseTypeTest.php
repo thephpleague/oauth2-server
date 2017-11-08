@@ -11,11 +11,12 @@ use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
-class BearerResponseTypeTest extends \PHPUnit_Framework_TestCase
+class BearerResponseTypeTest extends TestCase
 {
     public function testGenerateHttpResponse()
     {
