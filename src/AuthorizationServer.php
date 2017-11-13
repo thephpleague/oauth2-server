@@ -121,13 +121,10 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
+        $grantType->setDefaultScope($this->defaultScope);
         $grantType->setPrivateKey($this->privateKey);
         $grantType->setEmitter($this->getEmitter());
         $grantType->setEncryptionKey($this->encryptionKey);
-
-        if ($grantType instanceof AbstractAuthorizeGrant) {
-            $grantType->setDefaultScope($this->defaultScope);
-        }
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
         $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
