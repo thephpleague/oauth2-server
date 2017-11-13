@@ -28,7 +28,7 @@ use Zend\Diactoros\ServerRequestFactory;
 class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 {
 
-    const DEFAULT_SCOPE = 'basic   ';
+    const DEFAULT_SCOPE = 'basic';
 
     public function setUp()
     {
