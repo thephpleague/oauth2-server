@@ -11,15 +11,8 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Exception\OAuthServerException;
-
 abstract class AbstractAuthorizeGrant extends AbstractGrant
 {
-    /**
-     * @var string
-     */
-    protected $defaultScope = '';
-
     /**
      * @param string $uri
      * @param array  $params
