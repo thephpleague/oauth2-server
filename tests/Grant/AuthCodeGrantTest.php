@@ -2,7 +2,6 @@
 
 namespace LeagueTests\Grant;
 
-use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -23,9 +22,10 @@ use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
+class AuthCodeGrantTest extends TestCase
 {
 
     const DEFAULT_SCOPE = 'basic';

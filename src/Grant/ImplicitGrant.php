@@ -27,11 +27,18 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     private $accessTokenTTL;
 
     /**
-     * @param \DateInterval $accessTokenTTL
+     * @var string
      */
-    public function __construct(\DateInterval $accessTokenTTL)
+    private $queryDelimiter;
+
+    /**
+     * @param \DateInterval $accessTokenTTL
+     * @param string $queryDelimiter
+     */
+    public function __construct(\DateInterval $accessTokenTTL, $queryDelimiter = '#')
     {
         $this->accessTokenTTL = $accessTokenTTL;
+        $this->queryDelimiter = $queryDelimiter;
     }
 
     /**
@@ -95,7 +102,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
     {
         return (
-            array_key_exists('response_type', $request->getQueryParams())
+            isset($request->getQueryParams()['response_type'])
             && $request->getQueryParams()['response_type'] === 'token'
             && isset($request->getQueryParams()['client_id'])
         );
@@ -204,7 +211,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                         'expires_in'   => $accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp(),
                         'state'        => $authorizationRequest->getState(),
                     ],
-                    '#'
+                    $this->queryDelimiter
                 )
             );
 

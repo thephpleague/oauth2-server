@@ -13,10 +13,11 @@ use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
-class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
+class AuthorizationServerMiddlewareTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
 

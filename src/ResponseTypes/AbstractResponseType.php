@@ -60,5 +60,4 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     {
         $this->privateKey = $key;
     }
-
 }

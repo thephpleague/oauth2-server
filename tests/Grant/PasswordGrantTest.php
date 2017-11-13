@@ -16,9 +16,10 @@ use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class PasswordGrantTest extends \PHPUnit_Framework_TestCase
+class PasswordGrantTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
 

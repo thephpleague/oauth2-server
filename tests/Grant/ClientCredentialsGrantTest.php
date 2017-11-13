@@ -11,9 +11,10 @@ use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
+class ClientCredentialsGrantTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
 
