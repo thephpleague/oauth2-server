@@ -28,7 +28,7 @@ use Zend\Diactoros\ServerRequest;
 class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
 {
 
-    const DEFAULT_SCOPE = 'default';
+    const DEFAULT_SCOPE = 'basic';
 
     /**
      * @var CryptTraitStub
