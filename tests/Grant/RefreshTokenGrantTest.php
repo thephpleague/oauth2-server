@@ -45,21 +45,18 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
-        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
+        $scopeEntity->setIdentifier('foo');
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
-        $accessTokenRepositoryMock
-            ->expects($this->once())
-            ->method('persistNewAccessToken')->willReturnSelf();
+        $accessTokenRepositoryMock->expects($this->once())->method('persistNewAccessToken')->willReturnSelf();
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
-        $refreshTokenRepositoryMock
-            ->expects($this->once())
-            ->method('persistNewRefreshToken')->willReturnSelf();
+        $refreshTokenRepositoryMock->expects($this->once())->method('persistNewRefreshToken')->willReturnSelf();
 
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
@@ -82,13 +79,12 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         );
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'refresh_token' => $oldRefreshToken,
-            ]
-        );
+        $serverRequest = $serverRequest->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $oldRefreshToken,
+            'scopes'        => ['foo'],
+        ]);
 
         $responseType = new StubResponseType();
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
