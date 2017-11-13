@@ -27,7 +27,6 @@ use Zend\Diactoros\ServerRequest;
 
 class AuthCodeGrantTest extends TestCase
 {
-
     const DEFAULT_SCOPE = 'basic';
 
     /**
