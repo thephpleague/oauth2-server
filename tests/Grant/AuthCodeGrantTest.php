@@ -1708,7 +1708,5 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'redirect_uri'  => 'http://foo/bar',
             ]
         );
-
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
     }
 }
