@@ -82,6 +82,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $privateKey;
 
     /**
+     * @string
+     */
+    protected $defaultScope;
+
+    /**
      * @param ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository)
@@ -145,6 +150,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setPrivateKey(CryptKey $key)
     {
         $this->privateKey = $key;
+    }
+
+    /**
+     * @param string $scope
+     */
+    public function setDefaultScope($scope)
+    {
+        $this->defaultScope = $scope;
     }
 
     /**
@@ -213,12 +226,9 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateScopes($scopes, $redirectUri = null)
     {
-        $scopesList = array_filter(
-            explode(self::SCOPE_DELIMITER_STRING, trim($scopes)),
-            function ($scope) {
-                return !empty($scope);
-            }
-        );
+        $scopesList = array_filter(explode(self::SCOPE_DELIMITER_STRING, trim($scopes)), function ($scope) {
+            return !empty($scope);
+        });
 
         $validScopes = [];
 
@@ -230,6 +240,10 @@ abstract class AbstractGrant implements GrantTypeInterface
             }
 
             $validScopes[] = $scope;
+        }
+
+        if (empty($validScopes)) {
+            throw OAuthServerException::invalidScope($redirectUri);
         }
 
         return $validScopes;

@@ -33,25 +33,4 @@ abstract class AbstractAuthorizeGrant extends AbstractGrant
 
         return $uri . http_build_query($params);
     }
-
-    /**
-     * @param string $scope
-     */
-    public function setDefaultScope($scope)
-    {
-        $this->defaultScope = $scope;
-    }
-
-    /**
-     * @param ScopeEntityInterface[] $requestedScopes
-     * @param string $redirectUri
-     *
-     * @throws OAuthServerException
-     */
-    protected function checkScopesRequested($requestedScopes, $redirectUri = null)
-    {
-        if (empty($requestedScopes)) {
-            throw OAuthServerException::invalidScope($redirectUri);
-        }
-    }
 }
