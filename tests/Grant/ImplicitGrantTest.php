@@ -447,5 +447,7 @@ class ImplicitGrantTest extends TestCase
                 'redirect_uri'  => 'http://foo/bar',
             ]
         );
+
+        $grant->validateAuthorizationRequest($request);
     }
 }
