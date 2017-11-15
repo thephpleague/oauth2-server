@@ -116,7 +116,75 @@ class ImplicitGrantTest extends TestCase
         $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
     }
 
+    public function testValidateAuthorizationSubDomainRequestRedirectUri()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://domain.foo/bar/123');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
+                'response_type' => 'code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => 'http://subdomain.domain.foo/bar',
+            ]
+        );
+
+        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+    }
+
     public function testValidateAuthorizationRequestRedirectUriArray()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri(['http://foo/bar']);
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
+                'response_type' => 'code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => 'http://foo/bar',
+            ]
+        );
+
+        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+    }
+
+    public function testValidateAuthorizationRequestSubDomainRedirectUriArray()
     {
         $client = new ClientEntity();
         $client->setRedirectUri(['http://foo/bar']);
