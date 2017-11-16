@@ -72,6 +72,11 @@ class AuthorizationServer implements EmitterAwareInterface
     private $encryptionKey;
 
     /**
+     * @var string
+     */
+    private $defaultScope = '';
+
+    /**
      * New server instance.
      *
      * @param ClientRepositoryInterface      $clientRepository
@@ -97,7 +102,6 @@ class AuthorizationServer implements EmitterAwareInterface
             $privateKey = new CryptKey($privateKey);
         }
         $this->privateKey = $privateKey;
-
         $this->encryptionKey = $encryptionKey;
         $this->responseType = $responseType;
     }
@@ -117,6 +121,7 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
+        $grantType->setDefaultScope($this->defaultScope);
         $grantType->setPrivateKey($this->privateKey);
         $grantType->setEmitter($this->getEmitter());
         $grantType->setEncryptionKey($this->encryptionKey);
@@ -204,5 +209,15 @@ class AuthorizationServer implements EmitterAwareInterface
         $this->responseType->setEncryptionKey($this->encryptionKey);
 
         return $this->responseType;
+    }
+
+    /**
+     * Set the default scope for the authorization server.
+     *
+     * @param string $defaultScope
+     */
+    public function setDefaultScope($defaultScope)
+    {
+        $this->defaultScope = $defaultScope;
     }
 }
