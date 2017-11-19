@@ -146,6 +146,7 @@ class AuthorizationServerTest extends TestCase
     public function testValidateAuthorizationRequest()
     {
         $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -186,6 +187,50 @@ class AuthorizationServerTest extends TestCase
         );
 
         $this->assertTrue($server->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+    }
+
+    public function testValidateAuthorizationRequestWithMissingRedirectUri()
+    {
+        $client = new ClientEntity();
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $grant = new AuthCodeGrant(
+            $this->getMock(AuthCodeRepositoryInterface::class),
+            $this->getMock(RefreshTokenRepositoryInterface::class),
+            new \DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+
+        $server = new AuthorizationServer(
+            $clientRepositoryMock,
+            $this->getMock(AccessTokenRepositoryInterface::class),
+            $this->getMock(ScopeRepositoryInterface::class),
+            'file://' . __DIR__ . '/Stubs/private.key',
+            'file://' . __DIR__ . '/Stubs/public.key'
+        );
+        $server->enableGrantType($grant);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
+                'response_type' => 'code',
+                'client_id'     => 'foo',
+            ]
+        );
+
+        try {
+            $server->validateAuthorizationRequest($request);
+        } catch (OAuthServerException $e) {
+            $this->assertEquals('invalid_client', $e->getErrorType());
+            $this->assertEquals(401, $e->getHttpStatusCode());
+        }
     }
 
     /**
