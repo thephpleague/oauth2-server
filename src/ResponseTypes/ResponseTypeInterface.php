@@ -37,7 +37,7 @@ interface ResponseTypeInterface
     /**
      * Set the encryption key
      *
-     * @param string|null $key
+     * @param string|\Defuse\Crypto\Key|null $key
      */
     public function setEncryptionKey($key = null);
 }

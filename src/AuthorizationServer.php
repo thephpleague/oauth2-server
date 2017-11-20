@@ -67,7 +67,7 @@ class AuthorizationServer implements EmitterAwareInterface
     private $scopeRepository;
 
     /**
-     * @var string
+     * @var string|\Defuse\Crypto\Key
      */
     private $encryptionKey;
 
@@ -83,7 +83,7 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param AccessTokenRepositoryInterface $accessTokenRepository
      * @param ScopeRepositoryInterface       $scopeRepository
      * @param CryptKey|string                $privateKey
-     * @param string                         $encryptionKey
+     * @param string|\Defuse\Crypto\Key      $encryptionKey
      * @param null|ResponseTypeInterface     $responseType
      */
     public function __construct(

@@ -136,7 +136,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * Set the encryption key
      *
-     * @param string|null $key
+     * @param string|\Defuse\Crypto\Key|null $key
      */
     public function setEncryptionKey($key = null);
 }
