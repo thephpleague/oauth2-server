@@ -34,6 +34,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private $enableCodeExchangeProof = false;
 
     /**
+     * @var bool
+     */
+    private $forceEnabledCodeExchangeProof = true;
+
+    /**
      * @param AuthCodeRepositoryInterface     $authCodeRepository
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \DateInterval                   $authCodeTTL
@@ -52,6 +57,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     public function enableCodeExchangeProof()
     {
         $this->enableCodeExchangeProof = true;
+    }
+
+    public function disableForceEnabledCodeExchangeProof()
+    {
+        $this->forceEnabledCodeExchangeProof = false;
     }
 
     /**
@@ -128,8 +138,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         // Validate code challenge
-        if ($this->enableCodeExchangeProof === true) {
-            $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
+        if (
+            $this->enableCodeExchangeProof === true
+            && (($codeVerifier = $this->getRequestParameter('code_verifier', $request, null)) !== null || $this->forceEnabledCodeExchangeProof === true)
+        ) {
             if ($codeVerifier === null) {
                 throw OAuthServerException::invalidRequest('code_verifier');
             }
@@ -263,8 +275,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $authorizationRequest->setState($stateParameter);
         $authorizationRequest->setScopes($scopes);
 
-        if ($this->enableCodeExchangeProof === true) {
-            $codeChallenge = $this->getQueryStringParameter('code_challenge', $request);
+        if (
+            $this->enableCodeExchangeProof === true
+            && (($codeChallenge = $this->getQueryStringParameter('code_challenge', $request)) !== null || $this->forceEnabledCodeExchangeProof === true)
+        ) {
             if ($codeChallenge === null) {
                 throw OAuthServerException::invalidRequest('code_challenge');
             }
