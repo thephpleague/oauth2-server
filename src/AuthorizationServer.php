@@ -178,17 +178,19 @@ class AuthorizationServer implements EmitterAwareInterface
     public function respondToAccessTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
         foreach ($this->enabledGrantTypes as $grantType) {
-            if ($grantType->canRespondToAccessTokenRequest($request)) {
-                $tokenResponse = $grantType->respondToAccessTokenRequest(
-                    $request,
-                    $this->getResponseType(),
-                    $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
-                );
-
-                if ($tokenResponse instanceof ResponseTypeInterface) {
-                    return $tokenResponse->generateHttpResponse($response);
-                }
+            if (!$grantType->canRespondToAccessTokenRequest($request)) {
+                continue;
             }
+            $tokenResponse = $grantType->respondToAccessTokenRequest(
+                $request,
+                $this->getResponseType(),
+                $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
+            );
+
+            if ($tokenResponse instanceof ResponseTypeInterface) {
+                return $tokenResponse->generateHttpResponse($response);
+            }
+            
         }
 
         throw OAuthServerException::unsupportedGrantType();
