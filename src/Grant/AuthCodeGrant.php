@@ -140,7 +140,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         // Validate code challenge
         if (
             $this->enableCodeExchangeProof === true
-            && ($authCodePayload->code_challenge !== null || $this->forceEnabledCodeExchangeProof === true)
+            && (isset($authCodePayload->code_challenge) || $this->forceEnabledCodeExchangeProof === true)
         ) {
             $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
             if ($codeVerifier === null) {
