@@ -25,18 +25,22 @@ class BearerResponseTypeTest extends TestCase
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setReturnScopes(true);
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
 
-        $scope = new ScopeEntity();
-        $scope->setIdentifier('basic');
+        $scope1 = new ScopeEntity();
+        $scope1->setIdentifier('basic1');
+        $scope2 = new ScopeEntity();
+        $scope2->setIdentifier('basic2');
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
-        $accessToken->addScope($scope);
+        $accessToken->addScope($scope1);
+        $accessToken->addScope($scope2);
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
@@ -60,6 +64,9 @@ class BearerResponseTypeTest extends TestCase
         $this->assertTrue(isset($json->expires_in));
         $this->assertTrue(isset($json->access_token));
         $this->assertTrue(isset($json->refresh_token));
+
+        $this->assertTrue(isset($json->scope));
+        $this->assertEquals('basic1 basic2', $json->scope);
     }
 
     public function testGenerateHttpResponseWithExtraParams()
@@ -73,14 +80,17 @@ class BearerResponseTypeTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
 
-        $scope = new ScopeEntity();
-        $scope->setIdentifier('basic');
+        $scope1 = new ScopeEntity();
+        $scope1->setIdentifier('basic1');
+        $scope2 = new ScopeEntity();
+        $scope2->setIdentifier('basic2');
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
-        $accessToken->addScope($scope);
+        $accessToken->addScope($scope1);
+        $accessToken->addScope($scope2);
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
@@ -104,6 +114,8 @@ class BearerResponseTypeTest extends TestCase
         $this->assertTrue(isset($json->expires_in));
         $this->assertTrue(isset($json->access_token));
         $this->assertTrue(isset($json->refresh_token));
+
+        $this->assertFalse(isset($json->scope));
 
         $this->assertTrue(isset($json->foo));
         $this->assertEquals('bar', $json->foo);

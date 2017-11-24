@@ -13,6 +13,7 @@ namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class BearerTokenResponse extends AbstractResponseType
@@ -31,6 +32,14 @@ class BearerTokenResponse extends AbstractResponseType
             'expires_in'   => $expireDateTime - (new \DateTime())->getTimestamp(),
             'access_token' => (string) $jwtAccessToken,
         ];
+
+        if ($this->returnScopes === true) {
+            $responseParams['scope'] = implode(" ", array_map(
+                function (ScopeEntityInterface $scopeEntity) {
+                    return $scopeEntity->getIdentifier();
+                }, $this->accessToken->getScopes()
+            ));
+        }
 
         if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
             $refreshToken = $this->encrypt(
