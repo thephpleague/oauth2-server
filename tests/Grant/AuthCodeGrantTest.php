@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Grant;
 
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -34,9 +35,15 @@ class AuthCodeGrantTest extends TestCase
      */
     protected $cryptStub;
 
+    /**
+     * @var CryptKey
+     */
+    protected $privateKey;
+
     public function setUp()
     {
-        $this->cryptStub = new CryptTraitStub;
+        $this->cryptStub  = new CryptTraitStub;
+        $this->privateKey = new CryptKey('file://' . __DIR__ . '/../Stubs/private.key');
     }
 
     public function testGetIdentifier()
@@ -544,6 +551,7 @@ class AuthCodeGrantTest extends TestCase
             new \DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
     }
@@ -569,6 +577,7 @@ class AuthCodeGrantTest extends TestCase
             new \DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $grant->completeAuthorizationRequest($authRequest);
     }
@@ -604,6 +613,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -672,6 +682,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -743,6 +754,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -800,6 +812,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -847,6 +860,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -900,6 +914,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -945,6 +960,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -1008,6 +1024,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -1068,6 +1085,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -1128,6 +1146,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -1186,6 +1205,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -1258,6 +1278,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -1330,6 +1351,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -1389,6 +1411,7 @@ class AuthCodeGrantTest extends TestCase
             new \DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
     }
@@ -1415,6 +1438,7 @@ class AuthCodeGrantTest extends TestCase
             new \DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
     }
@@ -1476,6 +1500,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -1547,6 +1572,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],
@@ -1618,6 +1644,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey($this->privateKey);
 
         $request = new ServerRequest(
             [],

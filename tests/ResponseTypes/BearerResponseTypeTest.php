@@ -18,13 +18,29 @@ use Zend\Diactoros\ServerRequest;
 
 class BearerResponseTypeTest extends TestCase
 {
+    /**
+     * @var string
+     */
+    protected $encryptionKey;
+
+    /**
+     * @var CryptKey
+     */
+    protected $privateKey;
+
+    public function setUp()
+    {
+        $this->encryptionKey = base64_encode(random_bytes(36));
+        $this->privateKey    = new CryptKey('file://' . __DIR__ . '/../Stubs/private.key');
+    }
+
     public function testGenerateHttpResponse()
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setPrivateKey($this->privateKey);
+        $responseType->setEncryptionKey($this->encryptionKey);
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -37,11 +53,13 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
+        $accessToken->setPrivateKey($this->privateKey);
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
         $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setEncryptionKey($this->encryptionKey);
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
@@ -67,8 +85,8 @@ class BearerResponseTypeTest extends TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponseWithParams($accessTokenRepositoryMock);
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setPrivateKey($this->privateKey);
+        $responseType->setEncryptionKey($this->encryptionKey);
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -81,11 +99,13 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
+        $accessToken->setPrivateKey($this->privateKey);
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
         $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setEncryptionKey($this->encryptionKey);
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
@@ -115,8 +135,8 @@ class BearerResponseTypeTest extends TestCase
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
 
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setPrivateKey($this->privateKey);
+        $responseType->setEncryptionKey($this->encryptionKey);
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -126,11 +146,13 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setUserIdentifier(123);
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->setPrivateKey($this->privateKey);
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
         $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setEncryptionKey($this->encryptionKey);
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
@@ -161,8 +183,8 @@ class BearerResponseTypeTest extends TestCase
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
 
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setPrivateKey($this->privateKey);
+        $responseType->setEncryptionKey($this->encryptionKey);
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -172,11 +194,13 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setUserIdentifier(123);
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->setPrivateKey($this->privateKey);
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
         $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setEncryptionKey($this->encryptionKey);
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
@@ -203,8 +227,8 @@ class BearerResponseTypeTest extends TestCase
     public function testDetermineAccessTokenInHeaderRevokedToken()
     {
         $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setPrivateKey($this->privateKey);
+        $responseType->setEncryptionKey($this->encryptionKey);
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -214,11 +238,13 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setUserIdentifier(123);
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->setPrivateKey($this->privateKey);
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
         $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setEncryptionKey($this->encryptionKey);
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
@@ -250,8 +276,8 @@ class BearerResponseTypeTest extends TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setPrivateKey($this->privateKey);
+        $responseType->setEncryptionKey($this->encryptionKey);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
@@ -276,8 +302,8 @@ class BearerResponseTypeTest extends TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setPrivateKey($this->privateKey);
+        $responseType->setEncryptionKey($this->encryptionKey);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 

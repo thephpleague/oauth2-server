@@ -2,11 +2,11 @@
 
 namespace LeagueTests\Stubs;
 
-use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Entities\AbstractJwtAwareRefreshToken;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
 use League\OAuth2\Server\Entities\Traits\RefreshTokenTrait;
 
-class RefreshTokenEntity implements RefreshTokenEntityInterface
+class RefreshTokenEntity extends AbstractJwtAwareRefreshToken
 {
     use RefreshTokenTrait, EntityTrait;
 }
