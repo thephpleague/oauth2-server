@@ -111,7 +111,7 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
     public function testValidateAuthorizationRequestRedirectUriArray()
@@ -149,7 +149,7 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
     public function testValidateAuthorizationRequestCodeChallenge()
@@ -189,7 +189,7 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
     /**
@@ -545,7 +545,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     /**
@@ -636,8 +636,8 @@ class AuthCodeGrantTest extends TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     public function testRespondToAccessTokenRequestCodeChallengePlain()
@@ -707,8 +707,8 @@ class AuthCodeGrantTest extends TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     public function testRespondToAccessTokenRequestCodeChallengeS256()
@@ -778,8 +778,8 @@ class AuthCodeGrantTest extends TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     /**
@@ -1390,7 +1390,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     /**
@@ -1416,7 +1416,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     /**
@@ -1441,7 +1441,7 @@ class AuthCodeGrantTest extends TestCase
             new \DateInterval('PT10M')
         );
 
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     public function testRefreshTokenRepositoryUniqueConstraintCheck()
@@ -1508,8 +1508,8 @@ class AuthCodeGrantTest extends TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     /**
@@ -1579,8 +1579,8 @@ class AuthCodeGrantTest extends TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     /**
@@ -1650,8 +1650,8 @@ class AuthCodeGrantTest extends TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     /**

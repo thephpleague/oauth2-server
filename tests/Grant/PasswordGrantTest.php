@@ -74,8 +74,8 @@ class PasswordGrantTest extends TestCase
         $responseType = new StubResponseType();
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
 
-        $this->assertTrue($responseType->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($responseType->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
     /**

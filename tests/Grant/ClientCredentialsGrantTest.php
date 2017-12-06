@@ -56,7 +56,7 @@ class ClientCredentialsGrantTest extends TestCase
         $responseType = new StubResponseType();
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
 
-        $this->assertTrue($responseType->getAccessToken() instanceof AccessTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
     }
 
     /**
