@@ -342,7 +342,7 @@ class AbstractGrantTest extends TestCase
         $accessToken = new AccessTokenEntity();
         /** @var RefreshTokenEntityInterface $refreshToken */
         $refreshToken = $issueRefreshTokenMethod->invoke($grantMock, $accessToken);
-        $this->assertTrue($refreshToken instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $refreshToken);
         $this->assertEquals($accessToken, $refreshToken->getAccessToken());
     }
 
@@ -367,7 +367,7 @@ class AbstractGrantTest extends TestCase
             123,
             [new ScopeEntity()]
         );
-        $this->assertTrue($accessToken instanceof AccessTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $accessToken);
     }
 
     public function testIssueAuthCode()
@@ -383,7 +383,8 @@ class AbstractGrantTest extends TestCase
         $issueAuthCodeMethod = $abstractGrantReflection->getMethod('issueAuthCode');
         $issueAuthCodeMethod->setAccessible(true);
 
-        $this->assertTrue(
+        $this->assertInstanceOf(
+            AuthCodeEntityInterface::class,
             $issueAuthCodeMethod->invoke(
                 $grantMock,
                 new \DateInterval('PT1H'),
@@ -391,7 +392,7 @@ class AbstractGrantTest extends TestCase
                 123,
                 'http://foo/bar',
                 [new ScopeEntity()]
-            ) instanceof AuthCodeEntityInterface
+            )
         );
     }
 
@@ -467,7 +468,7 @@ class AbstractGrantTest extends TestCase
         $method = $abstractGrantReflection->getMethod('generateUniqueIdentifier');
         $method->setAccessible(true);
 
-        $this->assertTrue(is_string($method->invoke($grantMock)));
+        $this->assertInternalType('string', $method->invoke($grantMock));
     }
 
     public function testCanRespondToAuthorizationRequest()
