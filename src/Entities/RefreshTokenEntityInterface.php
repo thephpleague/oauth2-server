@@ -52,4 +52,18 @@ interface RefreshTokenEntityInterface
      * @return AccessTokenEntityInterface
      */
     public function getAccessToken();
+
+    /**
+     * Set the encryption key
+     *
+     * @param string $key
+     */
+    public function setEncryptionKey($key = null);
+
+    /**
+     * Convert the refresh token to an encrypted refresh token.
+     *
+     * @return string
+     */
+    public function convertToEncryptedRefreshToken();
 }

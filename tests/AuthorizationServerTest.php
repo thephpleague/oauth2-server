@@ -197,16 +197,16 @@ class AuthorizationServerTest extends TestCase
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
         $grant = new AuthCodeGrant(
-            $this->getMock(AuthCodeRepositoryInterface::class),
-            $this->getMock(RefreshTokenRepositoryInterface::class),
+            $this->createMock(AuthCodeRepositoryInterface::class),
+            $this->createMock(RefreshTokenRepositoryInterface::class),
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
 
         $server = new AuthorizationServer(
             $clientRepositoryMock,
-            $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
+            $this->createMock(AccessTokenRepositoryInterface::class),
+            $this->createMock(ScopeRepositoryInterface::class),
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key'
         );

@@ -2,12 +2,11 @@
 
 namespace LeagueTests\Stubs;
 
-use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\Traits\AccessTokenTrait;
+use League\OAuth2\Server\Entities\AbstractJwtAwareAccessToken;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
 use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
 
-class AccessTokenEntity implements AccessTokenEntityInterface
+class AccessTokenEntity extends AbstractJwtAwareAccessToken
 {
-    use AccessTokenTrait, TokenEntityTrait, EntityTrait;
+    use TokenEntityTrait, EntityTrait;
 }

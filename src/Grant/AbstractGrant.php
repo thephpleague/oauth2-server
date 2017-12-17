@@ -82,7 +82,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $privateKey;
 
     /**
-     * @string
+     * @var string
      */
     protected $defaultScope;
 
@@ -365,6 +365,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $accessToken->setClient($client);
         $accessToken->setUserIdentifier($userIdentifier);
         $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
+        $accessToken->setPrivateKey($this->privateKey);
 
         foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
@@ -446,6 +447,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
         $refreshToken->setExpiryDateTime((new \DateTime())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
+        $refreshToken->setEncryptionKey($this->encryptionKey);
 
         while ($maxGenerationAttempts-- > 0) {
             $refreshToken->setIdentifier($this->generateUniqueIdentifier());

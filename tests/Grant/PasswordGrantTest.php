@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Grant;
 
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Grant\PasswordGrant;
@@ -60,6 +61,7 @@ class PasswordGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(

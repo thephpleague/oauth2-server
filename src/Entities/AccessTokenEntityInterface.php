@@ -14,11 +14,16 @@ use League\OAuth2\Server\CryptKey;
 interface AccessTokenEntityInterface extends TokenInterface
 {
     /**
-     * Generate a JWT from the access token
-     *
-     * @param CryptKey $privateKey
+     * Convert the access token to an encrypted access token.
      *
      * @return string
      */
-    public function convertToJWT(CryptKey $privateKey);
+    public function convertToEncryptedAccessToken();
+
+    /**
+     * Set the private key
+     *
+     * @param CryptKey $privateKey
+     */
+    public function setPrivateKey(CryptKey $privateKey);
 }
