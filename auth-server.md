@@ -6,7 +6,7 @@ permalink: /authorization-server/index
 
 # The Authorization Server
 
-The Authorization server accepts authorization requests from a client and if validated, issues an access token and refresh tokens if applicable.
+The Authorization server authorizes and accepts authorization requests from a client. It is responsible for issuing access and refresh tokens.
 
 ## enableGrantType() :null|DateInterval
 
@@ -14,7 +14,9 @@ By default, an instantiated AuthorizationServer will not accept any grant types.
 
 ## validateAuthorizationRequest() : AuthorizationRequest
 
-This function is used to validate an incoming authorization requests. It checks to ensure that a user has authorized a client to access their protected resources. If the authorization check passes, the server will issue an instance of `AuthorizationRequest`, which can be used with the `completeAuthorizationRequest()` method. This method is used by the Authorization Code Grant and the Implicit Grant.
+This function is used to validate an incoming authorization request, checking that a user has authorized a client to access their protected resources. If the check passes, the server will issue an instance of `AuthorizationRequest`, which can be used with the `completeAuthorizationRequest()` method. 
+
+This Authorization Code and Implicit Grant make use of this method.
 
 ## completeAuthorizationRequest() : ResponseInterface
 
