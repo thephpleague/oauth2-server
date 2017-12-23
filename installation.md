@@ -25,13 +25,13 @@ The repositories are expected to return (on success) instances of [entity interf
 To generate the private key run this command on the terminal:
 
 {% highlight shell %}
-openssl genrsa -out private.key 1024
+openssl genrsa -out private.key 2048
 {% endhighlight %}
 
 If you want to provide a passphrase for your private key run this command instead:
 
 {% highlight shell %}
-openssl genrsa -passout pass:_passphrase_ -out private.key 1024
+openssl genrsa -passout pass:_passphrase_ -out private.key 2048
 {% endhighlight %}
 
 then extract the public key from the private key:
