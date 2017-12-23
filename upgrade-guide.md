@@ -6,9 +6,9 @@ permalink: /upgrade-guide/
 
 # Upgrade Guide
 
-## 5.1.x &rarr; 6.0.x
+## 5.1.x &rarr; 6.x.x
 
-Version `6.0.0` is not backwards compatible with version `5.1.x` but only requires you to make one line of code change:
+Version `6.x.x` is not backwards compatible with version `5.1.x` but only requires you to make one line of code change:
 
 ```patch
   $server = new AuthorizationServer(
