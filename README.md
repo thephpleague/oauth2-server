@@ -3,7 +3,7 @@
 ### :warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
 ### Security Notice 
 
-### Please upgrade to version `>=5.1.4` (backwards compatible) or `6.x` (one tiny breaking change) to fix some potential security vulnerabilities - [visit this page for more information](https://oauth2.thephpleague.com/v5-security-improvements/)
+### Please upgrade to version `>=5.1.6` (backwards compatible) or `6.x` (one tiny breaking change) to fix some potential security vulnerabilities - [visit this page for more information](https://oauth2.thephpleague.com/v5-security-improvements/)
 ### :warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
 
 [![Latest Version](http://img.shields.io/packagist/v/league/oauth2-server.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server/releases)
