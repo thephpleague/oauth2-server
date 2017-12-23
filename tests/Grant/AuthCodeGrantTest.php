@@ -767,7 +767,7 @@ class AuthCodeGrantTest extends TestCase
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
                             'redirect_uri'          => 'http://foo/bar',
-                            'code_challenge'        => urlencode(base64_encode(hash('sha256', 'foobar'))),
+                            'code_challenge'        => strtr(rtrim(base64_encode(hash('sha256', 'foobar')), '='), '+/', '-_'),
                             'code_challenge_method' => 'S256',
                         ]
                     )
