@@ -412,42 +412,4 @@ class ImplicitGrantTest extends TestCase
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->completeAuthorizationRequest(new AuthorizationRequest());
     }
-
-    /**
-     * @expectedException     \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 5
-     */
-    public function testValidateAuthorizationRequestFailsWithoutScope()
-    {
-        $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeEntity = new ScopeEntity();
-        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
-        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
-
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->setClientRepository($clientRepositoryMock);
-        $grant->setScopeRepository($scopeRepositoryMock);
-
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            null,
-            'php://input',
-            $headers = [],
-            $cookies = [],
-            $queryParams = [
-                'response_type' => 'code',
-                'client_id'     => 'foo',
-                'redirect_uri'  => 'http://foo/bar',
-            ]
-        );
-
-        $grant->validateAuthorizationRequest($request);
-    }
 }
