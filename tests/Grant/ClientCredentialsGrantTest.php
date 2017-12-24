@@ -58,40 +58,4 @@ class ClientCredentialsGrantTest extends TestCase
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
     }
-
-    /**
-     * @expectedException     \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 5
-     */
-    public function testRespondToRequestFailsWithoutScope()
-    {
-        $client = new ClientEntity();
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
-        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
-
-        $scope = new ScopeEntity();
-        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
-        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
-
-        $grant = new ClientCredentialsGrant();
-        $grant->setClientRepository($clientRepositoryMock);
-        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setScopeRepository($scopeRepositoryMock);
-
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-            ]
-        );
-
-        $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
-    }
 }
