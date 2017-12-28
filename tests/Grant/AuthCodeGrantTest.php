@@ -48,7 +48,7 @@ class AuthCodeGrantTest extends TestCase
     {
         $this->cryptStub = new CryptTraitStub;
         $this->codeVerifier = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
-        $this->codeChallenge = rtrim(strtr(base64_encode(hash('sha256',$this->codeVerifier, true)), '+/', '-_'), '=');
+        $this->codeChallenge = rtrim(strtr(base64_encode(hash('sha256', $this->codeVerifier, true)), '+/', '-_'), '=');
     }
 
     public function testGetIdentifier()

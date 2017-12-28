@@ -190,7 +190,6 @@ class AuthorizationServer implements EmitterAwareInterface
             if ($tokenResponse instanceof ResponseTypeInterface) {
                 return $tokenResponse->generateHttpResponse($response);
             }
-            
         }
 
         throw OAuthServerException::unsupportedGrantType();

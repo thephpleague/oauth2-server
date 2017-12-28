@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
