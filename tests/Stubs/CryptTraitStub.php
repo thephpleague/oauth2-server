@@ -2,7 +2,6 @@
 
 namespace LeagueTests\Stubs;
 
-use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
 
 class CryptTraitStub

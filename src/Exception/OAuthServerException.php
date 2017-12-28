@@ -105,10 +105,15 @@ class OAuthServerException extends \Exception
     public static function invalidScope($scope, $redirectUri = null)
     {
         $errorMessage = 'The requested scope is invalid, unknown, or malformed';
-        $hint = sprintf(
-            'Check the `%s` scope',
-            htmlspecialchars($scope, ENT_QUOTES, 'UTF-8', false)
-        );
+
+        if (empty($scope)) {
+            $hint = 'Specify a scope in the request or set a default scope';
+        } else {
+            $hint = sprintf(
+                'Check the `%s` scope',
+                htmlspecialchars($scope, ENT_QUOTES, 'UTF-8', false)
+            );
+        }
 
         return new static($errorMessage, 5, 'invalid_scope', 400, $hint, $redirectUri);
     }

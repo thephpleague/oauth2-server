@@ -82,6 +82,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $privateKey;
 
     /**
+     * @string
+     */
+    protected $defaultScope;
+
+    /**
      * @param ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository)
@@ -148,6 +153,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @param string $scope
+     */
+    public function setDefaultScope($scope)
+    {
+        $this->defaultScope = $scope;
+    }
+
+    /**
      * Validate the client.
      *
      * @param ServerRequestInterface $request
@@ -211,18 +224,14 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @return ScopeEntityInterface[]
      */
-    public function validateScopes(
-        $scopes,
-        $redirectUri = null
-    ) {
-        $scopesList = array_filter(
-            explode(self::SCOPE_DELIMITER_STRING, trim($scopes)),
-            function ($scope) {
-                return !empty($scope);
-            }
-        );
+    public function validateScopes($scopes, $redirectUri = null)
+    {
+        $scopesList = array_filter(explode(self::SCOPE_DELIMITER_STRING, trim($scopes)), function ($scope) {
+            return !empty($scope);
+        });
 
-        $scopes = [];
+        $validScopes = [];
+
         foreach ($scopesList as $scopeItem) {
             $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeItem);
 
@@ -230,10 +239,10 @@ abstract class AbstractGrant implements GrantTypeInterface
                 throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
             }
 
-            $scopes[] = $scope;
+            $validScopes[] = $scope;
         }
 
-        return $scopes;
+        return $validScopes;
     }
 
     /**

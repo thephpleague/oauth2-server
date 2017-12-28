@@ -3,7 +3,7 @@
 ### :warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
 ### Security Notice 
 
-### Please upgrade to version `>=5.1.4` (backwards compatible) or `6.x` (one tiny breaking change) to fix some potential security vulnerabilities - [visit this page for more information](https://oauth2.thephpleague.com/v5-security-improvements/)
+### Please upgrade to version `>=5.1.6` (backwards compatible) or `6.x` (one tiny breaking change) to fix some potential security vulnerabilities - [visit this page for more information](https://oauth2.thephpleague.com/v5-security-improvements/)
 ### :warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning::warning:
 
 [![Latest Version](http://img.shields.io/packagist/v/league/oauth2-server.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server/releases)
@@ -39,6 +39,7 @@ The following versions of PHP are supported:
 * PHP 5.6
 * PHP 7.0
 * PHP 7.1
+* PHP 7.2
 
 The `openssl` extension is also required.
 
@@ -61,6 +62,10 @@ Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague
 
 If you have any questions about OAuth _please_ open a ticket here; please **don't** email the address below.
 
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/N2YMJcLBppt2Eg9E1jGu4gef/thephpleague/oauth2-server'>
+  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/N2YMJcLBppt2Eg9E1jGu4gef/thephpleague/oauth2-server.svg' />
+</a>
+
 ## Commercial Support
 
 If you would like help implementing this library into your existing platform, or would be interested in OAuth advice or training for you and your team please get in touch with [Glynde Labs](https://glyndelabs.com).
@@ -75,7 +80,10 @@ This package is released under the MIT License. See the bundled [LICENSE](https:
 
 ## Credits
 
-This code is principally developed and maintained by [Alex Bilbie](https://twitter.com/alexbilbie).
+This code is principally developed and maintained by [Andy Millington](https://twitter.com/Sephster), [Brian 
+Retterer](https://twitter.com/bretterer), and [Simon Hamp](https://twitter.com/simonhamp).
+
+Between 2012 and 2017 this library was developed and maintained by [Alex Bilbie](https://alexbilbie.com/).
 
 Special thanks to [all of these awesome contributors](https://github.com/thephpleague/oauth2-server/contributors).
 

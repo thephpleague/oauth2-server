@@ -44,28 +44,17 @@ class RefreshTokenGrant extends AbstractGrant
         // Validate request
         $client = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
-        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request));
+        $scopes = $this->validateScopes($this->getRequestParameter(
+            'scope',
+            $request,
+            implode(self::SCOPE_DELIMITER_STRING, $oldRefreshToken['scopes']))
+        );
 
-        // If no new scopes are requested then give the access token the original session scopes
-        if (count($scopes) === 0) {
-            $scopes = array_map(function ($scopeId) use ($client) {
-                $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
-
-                if ($scope instanceof ScopeEntityInterface === false) {
-                    // @codeCoverageIgnoreStart
-                    throw OAuthServerException::invalidScope($scopeId);
-                    // @codeCoverageIgnoreEnd
-                }
-
-                return $scope;
-            }, $oldRefreshToken['scopes']);
-        } else {
-            // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
-            // the request doesn't include any new scopes
-            foreach ($scopes as $scope) {
-                if (in_array($scope->getIdentifier(), $oldRefreshToken['scopes']) === false) {
-                    throw OAuthServerException::invalidScope($scope->getIdentifier());
-                }
+        // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
+        // the request doesn't include any new scopes
+        foreach ($scopes as $scope) {
+            if (in_array($scope->getIdentifier(), $oldRefreshToken['scopes']) === false) {
+                throw OAuthServerException::invalidScope($scope->getIdentifier());
             }
         }
 

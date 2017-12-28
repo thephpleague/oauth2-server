@@ -3,8 +3,9 @@
 namespace LeagueTests\Utils;
 
 use League\OAuth2\Server\CryptKey;
+use PHPUnit\Framework\TestCase;
 
-class CryptKeyTest extends \PHPUnit_Framework_TestCase
+class CryptKeyTest extends TestCase
 {
     /**
      * @expectedException \LogicException
