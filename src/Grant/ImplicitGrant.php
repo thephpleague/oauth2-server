@@ -158,9 +158,9 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            is_array($client->getRedirectUri())
+            $redirectUri ?: (is_array($client->getRedirectUri())
                 ? $client->getRedirectUri()[0]
-                : $client->getRedirectUri()
+                : $client->getRedirectUri())
         );
 
         // Finalize the requested scopes
