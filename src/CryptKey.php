@@ -14,7 +14,7 @@ namespace League\OAuth2\Server;
 class CryptKey
 {
     const RSA_KEY_PATTERN =
-        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----\n)(.|\n)+(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)$/';
+        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
 
     /**
      * @var string
