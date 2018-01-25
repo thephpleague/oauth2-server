@@ -744,6 +744,10 @@ class AuthCodeGrantTest extends TestCase
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
+        // [RFC 7636] Appendix B.  Example for the S256 code_challenge_method
+        $codeVerifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
+        $codeChallenge = 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM';
+
         $request = new ServerRequest(
             [],
             [],
@@ -757,7 +761,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
-                'code_verifier' => 'foobar',
+                'code_verifier' => $codeVerifier,
                 'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
@@ -767,7 +771,7 @@ class AuthCodeGrantTest extends TestCase
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
                             'redirect_uri'          => 'http://foo/bar',
-                            'code_challenge'        => hash('sha256', strtr(rtrim(base64_encode('foobar'), '='), '+/', '-_')),
+                            'code_challenge'        => $codeChallenge,
                             'code_challenge_method' => 'S256',
                         ]
                     )
