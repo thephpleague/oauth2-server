@@ -55,6 +55,6 @@ All you need to do is replace the public key that was being passed into the cons
 
 To generate an encryption key for the `AuthorizationServer` run the following command in the terminal:
 
-{% highlight shell %}
+~~~ shell
 php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
-{% endhighlight %}
+~~~

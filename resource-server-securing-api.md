@@ -12,7 +12,7 @@ This library provides a PSR-7 friendly resource server middleware that can valid
 
 Wherever you intialize your objects, initialize a new instance of the resource server with the storage interfaces:
 
-{% highlight php %}
+~~~ php
 // Init our repositories
 $accessTokenRepository = new AccessTokenRepository(); // instance of AccessTokenRepositoryInterface
 
@@ -24,13 +24,13 @@ $server = new \League\OAuth2\Server\ResourceServer(
     $accessTokenRepository,
     $publicKeyPath
 );
-{% endhighlight %}
+~~~
 
 Then add the middleware to your stack:
 
-{% highlight php %}
+~~~ php
 new \League\OAuth2\Server\Middleware\ResourceServerMiddleware($server);
-{% endhighlight %}
+~~~
 
 ## Implementation
 
