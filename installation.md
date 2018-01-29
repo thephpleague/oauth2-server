@@ -10,9 +10,9 @@ The recommended installation method is using [Composer](https://getcomposer.org)
 
 In your project root just run:
 
-{% highlight shell %}
+~~~ shell
 composer require league/oauth2-server
-{% endhighlight %}
+~~~
 
 Ensure that you’ve set up your project to [autoload Composer-installed packages](https://getcomposer.org/doc/01-basic-usage.md#autoloading).
 
@@ -24,27 +24,27 @@ The repositories are expected to return (on success) instances of [entity interf
 
 To generate the private key run this command on the terminal:
 
-{% highlight shell %}
+~~~ shell
 openssl genrsa -out private.key 2048
-{% endhighlight %}
+~~~
 
 If you want to provide a passphrase for your private key run this command instead:
 
-{% highlight shell %}
+~~~ shell
 openssl genrsa -passout pass:_passphrase_ -out private.key 2048
-{% endhighlight %}
+~~~
 
 then extract the public key from the private key:
 
-{% highlight shell %}
+~~~ shell
 openssl rsa -in private.key -pubout -out public.key
-{% endhighlight %}
+~~~
 
 or use your passphrase if provided on private key generation:
 
-{% highlight shell %}
+~~~ shell
 openssl rsa -in private.key -passin pass:_passphrase_ -pubout -out public.key
-{% endhighlight %}
+~~~
 
 The private key must be kept secret (i.e. out of the web-root of the authorization server). The authorization server also requires the public key.
 
@@ -56,6 +56,6 @@ The public key should be distributed to any services (for example resource serve
 
 To generate an encryption key for the `AuthorizationServer` run the following command in the terminal:
 
-{% highlight shell %}
+~~~ shell
 php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
-{% endhighlight %}
+~~~
