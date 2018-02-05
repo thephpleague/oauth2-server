@@ -47,8 +47,12 @@ class AuthCodeGrantTest extends TestCase
     public function setUp()
     {
         $this->cryptStub = new CryptTraitStub;
-        $this->codeVerifier = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
-        $this->codeChallenge = hash('sha256', strtr(rtrim(base64_encode($this->codeVerifier), '='), '+/', '-_'));
+
+        // [RFC 7636] Appendix B.  Example for the S256 code_challenge_method
+        // $this->codeVerifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
+        $this->codeVerifier = strtr(rtrim(base64_encode(random_bytes(32)), '='), '+/', '-_');
+        // $this->codeChallenge = 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM';
+        $this->codeChallenge = strtr(rtrim(base64_encode(hash('sha256', $this->codeVerifier, true)), '='), '+/', '-_');
     }
 
     public function testGetIdentifier()

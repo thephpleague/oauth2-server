@@ -62,9 +62,7 @@ Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague
 
 If you have any questions about OAuth _please_ open a ticket here; please **don't** email the address below.
 
-<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/N2YMJcLBppt2Eg9E1jGu4gef/thephpleague/oauth2-server'>
-  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/N2YMJcLBppt2Eg9E1jGu4gef/thephpleague/oauth2-server.svg' />
-</a>
+
 
 ## Commercial Support
 

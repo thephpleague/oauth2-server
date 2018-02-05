@@ -35,6 +35,7 @@ class AuthorizationServerTest extends TestCase
         // Make sure the keys have the correct permissions.
         chmod(__DIR__ . '/Stubs/private.key', 0600);
         chmod(__DIR__ . '/Stubs/public.key', 0600);
+        chmod(__DIR__ . '/Stubs/private.key.crlf', 0600);
     }
 
     public function testRespondToRequestInvalidGrantType()
