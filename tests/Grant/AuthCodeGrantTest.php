@@ -307,6 +307,51 @@ class AuthCodeGrantTest extends TestCase
      * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
      * @expectedExceptionCode 3
      */
+    public function testValidateAuthorizationRequestCodeChallengeFallback()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+        //$grant->enableCodeExchangeProof();
+        $grant->enablePkceFallbackAllowed();
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type'  => 'code',
+                'client_id'      => 'foo',
+                'redirect_uri'   => 'http://foo/bar',
+                'code_challenge' => str_repeat('A', 42) . '!',
+            ]
+        );
+
+        $grant->validateAuthorizationRequest($request);
+    }
+
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     * @expectedExceptionCode 3
+     */
     public function testValidateAuthorizationRequestMissingClientId()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
@@ -1373,7 +1418,11 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testRespondToAccessTokenRequestOptionalCodeVerifier()
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     * @expectedExceptionCode 10
+     */
+    public function testRespondToAccessTokenRequestCodeVerifierFallback()
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1399,8 +1448,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
-        $grant->disableForceEnabledCodeExchangeProof();
+        $grant->enablePkceFallbackAllowed();
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
@@ -1417,10 +1465,11 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type'   => 'authorization_code',
-                'client_id'    => 'foo',
-                'redirect_uri' => 'http://foo/bar',
-                'code'         => $this->cryptStub->doEncrypt(
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => 'http://foo/bar',
+                'code_verifier' => 'foobar2',
+                'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
                             'auth_code_id'          => uniqid(),
@@ -1429,6 +1478,8 @@ class AuthCodeGrantTest extends TestCase
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
                             'redirect_uri'          => 'http://foo/bar',
+                            'code_challenge'        => 'foobar',
+                            'code_challenge_method' => 'plain',
                         ]
                     )
                 ),
@@ -1437,9 +1488,6 @@ class AuthCodeGrantTest extends TestCase
 
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
-
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
     }
 
     public function testAuthCodeRepositoryUniqueConstraintCheck()
@@ -1739,45 +1787,5 @@ class AuthCodeGrantTest extends TestCase
         );
 
         $grant->completeAuthorizationRequest(new AuthorizationRequest());
-    }
-
-    public function testOptionalAuthorizationRequestCodeChallenge()
-    {
-        $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $scope = new ScopeEntity();
-        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
-
-        $grant = new AuthCodeGrant(
-            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
-            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
-        );
-        $grant->enableCodeExchangeProof();
-        $grant->disableForceEnabledCodeExchangeProof();
-        $grant->setClientRepository($clientRepositoryMock);
-        $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setDefaultScope(self::DEFAULT_SCOPE);
-
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            null,
-            'php://input',
-            [],
-            [],
-            [
-                'response_type'  => 'code',
-                'client_id'      => 'foo',
-                'redirect_uri'   => 'http://foo/bar',
-            ]
-        );
-
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
     }
 }

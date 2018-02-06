@@ -36,7 +36,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * @var bool
      */
-    private $forceEnabledCodeExchangeProof = true;
+    private $pkceFallbackAllowed = false;
 
     /**
      * @param AuthCodeRepositoryInterface     $authCodeRepository
@@ -59,9 +59,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $this->enableCodeExchangeProof = true;
     }
 
-    public function disableForceEnabledCodeExchangeProof()
+    public function enablePkceFallbackAllowed()
     {
-        $this->forceEnabledCodeExchangeProof = false;
+        $this->pkceFallbackAllowed = true;
     }
 
     /**
@@ -138,10 +138,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         // Validate code challenge
-        if (
-            $this->enableCodeExchangeProof === true
-            && (isset($authCodePayload->code_challenge) || $this->forceEnabledCodeExchangeProof === true)
-        ) {
+        if ($this->shouldValidatePKCE(isset($authCodePayload->code_challenge) ? $authCodePayload->code_challenge : null)) {
             $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
             if ($codeVerifier === null) {
                 throw OAuthServerException::invalidRequest('code_verifier');
@@ -276,10 +273,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $authorizationRequest->setState($stateParameter);
         $authorizationRequest->setScopes($scopes);
 
-        if (
-            $this->enableCodeExchangeProof === true
-            && (($codeChallenge = $this->getQueryStringParameter('code_challenge', $request)) !== null || $this->forceEnabledCodeExchangeProof === true)
-        ) {
+        $codeChallenge = $this->getQueryStringParameter('code_challenge', $request);
+        if ($this->shouldValidatePKCE($codeChallenge)) {
             if ($codeChallenge === null) {
                 throw OAuthServerException::invalidRequest('code_challenge');
             }
@@ -370,5 +365,25 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 ]
             )
         );
+    }
+
+    /**
+     * Check if PKCE should be validated, based on options.
+     *
+     * @param string|null $code
+     *
+     * @return bool
+     */
+    private function shouldValidatePKCE($code)
+    {
+        if ($this->enableCodeExchangeProof) {
+            return true;
+        }
+
+        if (null !== $code && $this->pkceFallbackAllowed) {
+            return true;
+        }
+
+        return false;
     }
 }
