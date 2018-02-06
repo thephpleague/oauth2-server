@@ -33,5 +33,13 @@ class CryptKeyTest extends TestCase
             'file://' . sys_get_temp_dir() . '/' . sha1($keyContent) . '.key',
             $key->getKeyPath()
         );
+
+        $keyContent = file_get_contents(__DIR__ . '/Stubs/private.key.crlf');
+        $key = new CryptKey($keyContent);
+
+        $this->assertEquals(
+            'file://' . sys_get_temp_dir() . '/' . sha1($keyContent) . '.key',
+            $key->getKeyPath()
+        );
     }
 }

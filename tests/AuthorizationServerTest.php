@@ -35,6 +35,7 @@ class AuthorizationServerTest extends TestCase
         // Make sure the keys have the correct permissions.
         chmod(__DIR__ . '/Stubs/private.key', 0600);
         chmod(__DIR__ . '/Stubs/public.key', 0600);
+        chmod(__DIR__ . '/Stubs/private.key.crlf', 0600);
     }
 
     public function testRespondToRequestInvalidGrantType()
@@ -106,7 +107,7 @@ class AuthorizationServerTest extends TestCase
         $method = $abstractGrantReflection->getMethod('getResponseType');
         $method->setAccessible(true);
 
-        $this->assertTrue($method->invoke($server) instanceof BearerTokenResponse);
+        $this->assertInstanceOf(BearerTokenResponse::class, $method->invoke($server));
     }
 
     public function testCompleteAuthorizationRequest()
@@ -138,8 +139,9 @@ class AuthorizationServerTest extends TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
-        $this->assertTrue(
-            $server->completeAuthorizationRequest($authRequest, new Response) instanceof ResponseInterface
+        $this->assertInstanceOf(
+            ResponseInterface::class,
+            $server->completeAuthorizationRequest($authRequest, new Response)
         );
     }
 
@@ -186,7 +188,7 @@ class AuthorizationServerTest extends TestCase
             ]
         );
 
-        $this->assertTrue($server->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        $this->assertInstanceOf(AuthorizationRequest::class, $server->validateAuthorizationRequest($request));
     }
 
     public function testValidateAuthorizationRequestWithMissingRedirectUri()
