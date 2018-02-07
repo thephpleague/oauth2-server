@@ -323,7 +323,6 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        //$grant->enableCodeExchangeProof();
         $grant->enablePkceFallbackAllowed();
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
