@@ -25,7 +25,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     /**
      * @var AccessTokenRepositoryInterface
      */
-    private $accessTokenRepository;
+    protected $accessTokenRepository;
 
     /**
      * @var \League\OAuth2\Server\CryptKey
@@ -39,7 +39,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     {
         $this->accessTokenRepository = $accessTokenRepository;
     }
-
+    
     /**
      * Set the public key
      *
@@ -51,17 +51,23 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param ServerRequestInterface $request
      */
-    public function validateAuthorization(ServerRequestInterface $request)
-    {
-        if ($request->hasHeader('authorization') === false) {
+    public function getAccessToken(ServerRequestInterface $request) {
+	    if ($request->hasHeader('authorization') === false) {
             throw OAuthServerException::accessDenied('Missing "Authorization" header');
         }
 
         $header = $request->getHeader('authorization');
-        $jwt = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header[0]));
+        return trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header[0]));
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function validateAuthorization(ServerRequestInterface $request)
+    {
+      	$jwt = $this->getAccessToken($request);
         try {
             // Attempt to parse and validate the JWT
             $token = (new Parser())->parse($jwt);
