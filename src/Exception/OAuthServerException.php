@@ -131,7 +131,7 @@ class OAuthServerException extends \Exception
     /**
      * Server error.
      *
-     * @param $hint
+     * @param string $hint
      *
      * @return static
      *
