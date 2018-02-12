@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
@@ -53,7 +52,7 @@ class RefreshTokenGrant extends AbstractGrant
         // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
         // the request doesn't include any new scopes
         foreach ($scopes as $scope) {
-            if (in_array($scope->getIdentifier(), $oldRefreshToken['scopes']) === false) {
+            if (in_array($scope->getIdentifier(), $oldRefreshToken['scopes'], true) === false) {
                 throw OAuthServerException::invalidScope($scope->getIdentifier());
             }
         }
