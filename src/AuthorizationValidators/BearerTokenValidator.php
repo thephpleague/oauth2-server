@@ -11,6 +11,7 @@ namespace League\OAuth2\Server\AuthorizationValidators;
 
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Token;
 use Lcobucci\JWT\ValidationData;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
@@ -83,11 +84,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             }
 
             // Return the request with additional attributes
-            return $request
-                ->withAttribute('oauth_access_token_id', $token->getClaim('jti'))
-                ->withAttribute('oauth_client_id', $token->getClaim('aud'))
-                ->withAttribute('oauth_user_id', $token->getClaim('sub'))
-                ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
+            return $this->appendAttributesFromToken($request, $token);
         } catch (\InvalidArgumentException $exception) {
             // JWT couldn't be parsed so return the request as is
             throw OAuthServerException::accessDenied($exception->getMessage());
@@ -95,5 +92,19 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             //JWR couldn't be parsed so return the request as is
             throw OAuthServerException::accessDenied('Error while decoding to JSON');
         }
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param Token $token
+     * @return ServerRequestInterface
+     */
+    protected function appendAttributesFromToken(ServerRequestInterface $request, Token $token)
+    {
+        return $request
+            ->withAttribute('oauth_access_token_id', $token->getClaim('jti'))
+            ->withAttribute('oauth_client_id', $token->getClaim('aud'))
+            ->withAttribute('oauth_user_id', $token->getClaim('sub'))
+            ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
     }
 }
