@@ -144,7 +144,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 case 'S256':
                     if (
                         hash_equals(
-                            urlencode(base64_encode(hash('sha256', $codeVerifier))),
+                            strtr(rtrim(base64_encode(hash('sha256', $codeVerifier, true)), '='), '+/', '-_'),
                             $authCodePayload->code_challenge
                         ) === false
                     ) {
@@ -240,13 +240,19 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
                 throw OAuthServerException::invalidClient();
             }
+	} elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
+	    || empty($client->getRedirectUri())) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidClient();
+        } else {
+            $redirectUri = is_array($client->getRedirectUri())
+                ? $client->getRedirectUri()[0]
+                : $client->getRedirectUri();
         }
 
         $scopes = $this->validateScopes(
-            $this->getQueryStringParameter('scope', $request),
-            is_array($client->getRedirectUri())
-                ? $client->getRedirectUri()[0]
-                : $client->getRedirectUri()
+            $this->getQueryStringParameter('scope', $request, $this->defaultScope),
+            $redirectUri
         );
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
@@ -312,15 +318,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             );
 
             $payload = [
-                'client_id'               => $authCode->getClient()->getIdentifier(),
-                'redirect_uri'            => $authCode->getRedirectUri(),
-                'auth_code_id'            => $authCode->getIdentifier(),
-                'scopes'                  => $authCode->getScopeIdentifiers(),
-                'user_id'                 => $authCode->getUserIdentifier(),
-                'expire_time'             => (new \DateTime())->add($this->authCodeTTL)->format('U'),
-                'code_challenge'          => $authorizationRequest->getCodeChallenge(),
-                'code_challenge_method  ' => $authorizationRequest->getCodeChallengeMethod(),
-            ];            
+                'client_id'             => $authCode->getClient()->getIdentifier(),
+                'redirect_uri'          => $authCode->getRedirectUri(),
+                'auth_code_id'          => $authCode->getIdentifier(),
+                'scopes'                => $authCode->getScopeIdentifiers(),
+                'user_id'               => $authCode->getUserIdentifier(),
+                'expire_time'           => (new \DateTime())->add($this->authCodeTTL)->format('U'),
+                'code_challenge'        => $authorizationRequest->getCodeChallenge(),
+                'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
+            ];
 
             $response = new RedirectResponse();
             $response->setRedirectUri(

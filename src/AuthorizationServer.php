@@ -3,6 +3,7 @@
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
@@ -16,6 +17,7 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -71,6 +73,11 @@ class AuthorizationServer implements EmitterAwareInterface
     private $encryptionKey;
 
     /**
+     * @var string
+     */
+    private $defaultScope = '';
+
+    /**
      * New server instance.
      *
      * @param ClientRepositoryInterface      $clientRepository
@@ -96,7 +103,6 @@ class AuthorizationServer implements EmitterAwareInterface
             $privateKey = new CryptKey($privateKey);
         }
         $this->privateKey = $privateKey;
-
         $this->encryptionKey = $encryptionKey;
         $this->responseType = $responseType;
     }
@@ -116,6 +122,7 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setAccessTokenRepository($this->accessTokenRepository);
         $grantType->setClientRepository($this->clientRepository);
         $grantType->setScopeRepository($this->scopeRepository);
+        $grantType->setDefaultScope($this->defaultScope);
         $grantType->setPrivateKey($this->privateKey);
         $grantType->setEmitter($this->getEmitter());
         $grantType->setEncryptionKey($this->encryptionKey);
@@ -172,17 +179,19 @@ class AuthorizationServer implements EmitterAwareInterface
     public function respondToAccessTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
         foreach ($this->enabledGrantTypes as $grantType) {
-            if ($grantType->canRespondToAccessTokenRequest($request)) {
-                $tokenResponse = $grantType->respondToAccessTokenRequest(
-                    $request,
-                    $this->getResponseType(),
-                    $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
-                );
-
-                if ($tokenResponse instanceof ResponseTypeInterface) {
-                    return $tokenResponse->generateHttpResponse($response);
-                }
+            if (!$grantType->canRespondToAccessTokenRequest($request)) {
+                continue;
             }
+            $tokenResponse = $grantType->respondToAccessTokenRequest(
+                $request,
+                $this->getResponseType(),
+                $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
+            );
+
+            if ($tokenResponse instanceof ResponseTypeInterface) {
+                return $tokenResponse->generateHttpResponse($response);
+            }
+
         }
 
         throw OAuthServerException::unsupportedGrantType();
@@ -199,9 +208,21 @@ class AuthorizationServer implements EmitterAwareInterface
             $this->responseType = new BearerTokenResponse();
         }
 
-        $this->responseType->setPrivateKey($this->privateKey);
+        if ($this->responseType instanceof AbstractResponseType === true) {
+            $this->responseType->setPrivateKey($this->privateKey);
+        }
         $this->responseType->setEncryptionKey($this->encryptionKey);
 
         return $this->responseType;
+    }
+
+    /**
+     * Set the default scope for the authorization server.
+     *
+     * @param string $defaultScope
+     */
+    public function setDefaultScope($defaultScope)
+    {
+        $this->defaultScope = $defaultScope;
     }
 }

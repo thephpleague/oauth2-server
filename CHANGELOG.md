@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.2 (released 2017-08-03)
+
+* An invalid refresh token that can't be decrypted now returns a HTTP 401 error instead of HTTP 400 (Issue #759)
+* Removed chmod from CryptKey and add toggle to disable checking (Issue #776)
+* Fixes invalid code challenge method payload key name (Issue #777)
+
 ## 6.0.1 (released 2017-07-19)
 
 To address feedback from the security release the following change has been made:

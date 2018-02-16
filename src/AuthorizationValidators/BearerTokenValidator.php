@@ -41,7 +41,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     }
 
     /**
-     * Set the private key
+     * Set the public key
      *
      * @param \League\OAuth2\Server\CryptKey $key
      */
