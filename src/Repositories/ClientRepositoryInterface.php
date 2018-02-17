@@ -27,5 +27,5 @@ interface ClientRepositoryInterface extends RepositoryInterface
      *
      * @return ClientEntityInterface
      */
-    public function getClientEntity($clientIdentifier, $grantType = null, $clientSecret = null, $mustValidateSecret = false);
+    public function getClientEntity($clientIdentifier, $grantType = null, $clientSecret = null, $mustValidateSecret = true);
 }
