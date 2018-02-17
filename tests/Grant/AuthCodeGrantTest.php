@@ -2,6 +2,8 @@
 
 namespace LeagueTests\Grant;
 
+use League\OAuth2\Server\CodeChallengeVerifiers\PlainVerifier;
+use League\OAuth2\Server\CodeChallengeVerifiers\S256Verifier;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -168,7 +170,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+        $grant->enableCodeChallengeVerifier(new PlainVerifier());
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
@@ -207,7 +209,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+        $grant->enableCodeChallengeVerifier(new PlainVerifier());
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -244,7 +246,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+		$grant->enableCodeChallengeVerifier(new PlainVerifier());
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -281,7 +283,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+        $grant->enableCodeChallengeVerifier(new PlainVerifier());
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -300,7 +302,9 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $grant->validateAuthorizationRequest($request);
+        self::assertInstanceOf(AuthorizationRequest::class, $authorizationRequest = $grant->validateAuthorizationRequest($request));
+        self::assertEquals('plain', $authorizationRequest->getCodeChallengeMethod());
+        self::assertEquals('FOOBAR', $authorizationRequest->getCodeChallenge());
     }
 
     /**
@@ -459,7 +463,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+        $grant->enableCodeChallengeVerifier(new PlainVerifier());
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
@@ -502,7 +506,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+        $grant->enableCodeChallengeVerifier(new PlainVerifier());
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
@@ -666,7 +670,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+        $grant->enableCodeChallengeVerifier(new PlainVerifier());
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
@@ -737,7 +741,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+        $grant->enableCodeChallengeVerifier(new S256Verifier());
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
@@ -1184,7 +1188,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+        $grant->enableCodeChallengeVerifier(new PlainVerifier());
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
@@ -1256,7 +1260,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+        $grant->enableCodeChallengeVerifier(new S256Verifier());
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
@@ -1328,7 +1332,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+        $grant->enableCodeChallengeVerifier(new PlainVerifier());
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
