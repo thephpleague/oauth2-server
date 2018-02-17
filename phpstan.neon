@@ -1,0 +1,9 @@
+includes:
+	- vendor/phpstan/phpstan-phpunit/extension.neon
+	- vendor/phpstan/phpstan-phpunit/rules.neon
+	- vendor/phpstan/phpstan-phpunit/strictRules.neon
+parameters:
+	ignoreErrors:
+		- '#Class Zend\\Diactoros\\ServerRequest constructor invoked with \d+ parameters, 0-6 required#'
+		- '#Parameter \#2 \$key of method Lcobucci\\JWT\\Builder::sign\(\) expects string, Lcobucci\\JWT\\Signer\\Key given#'
+	reportUnmatchedIgnoredErrors: false

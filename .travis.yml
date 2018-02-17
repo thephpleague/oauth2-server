@@ -16,7 +16,7 @@ install:
 
 script:
   - vendor/bin/phpunit
-  - vendor/bin/phpstan analyse -l 6 src
+  - vendor/bin/phpstan analyse -l 6 -c phpstan.neon src tests
 
 branches:
   only:
