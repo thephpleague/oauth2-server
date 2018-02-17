@@ -33,7 +33,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
     /**
      * @param \DateInterval $accessTokenTTL
-     * @param string $queryDelimiter
+     * @param string        $queryDelimiter
      */
     public function __construct(\DateInterval $accessTokenTTL, $queryDelimiter = '#')
     {

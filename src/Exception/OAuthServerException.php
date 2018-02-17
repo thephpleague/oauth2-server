@@ -34,7 +34,7 @@ class OAuthServerException extends \Exception
     private $redirectUri;
 
     /**
-     * @var  array
+     * @var array
      */
     private $payload;
 
@@ -245,7 +245,7 @@ class OAuthServerException extends \Exception
      *
      * @param ResponseInterface $response
      * @param bool              $useFragment True if errors should be in the URI fragment instead of query string
-     * @param int                $jsonOptions options passed to json_encode
+     * @param int               $jsonOptions options passed to json_encode
      *
      * @return ResponseInterface
      */

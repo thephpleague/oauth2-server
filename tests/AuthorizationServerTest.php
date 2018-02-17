@@ -19,15 +19,14 @@ use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
-use Psr\Http\Message\ResponseInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 
 class AuthorizationServerTest extends TestCase
 {
-
     const DEFAULT_SCOPE = 'basic';
 
     public function setUp()
