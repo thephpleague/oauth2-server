@@ -1,5 +1,34 @@
 # Changelog
 
+## 7.0.0 (released 2018-02-17)
+
+* Drop support for PHP 5.6
+* Drop support for version 5.x and 6.x of the library
+* Accept RSA key with CRLF line endings (PR #805)
+* Fix S256 code challenege method (PR #842)
+* Skip key file creation if the file already exists (PR #845)
+* Set correct redirect URI when validating scopes (PR #840)
+* Use PHPStan for static analysis of code (PR #848)
+* Do not issue an error if key file permissions are 400 or 440 (PR #839)
+* Add get and set methods for OAuth Server Exception payloads. Allow implementer to specify the JSON encode options (PR #719)
+* ClientRepository interface will now accept null for the Grant type to improve extensibility options (PR #607)
+* Update PHPUnit version and provide PHPStan coverage for tests (PR #849)
+* Upgrade library dependencies and enforce stricter static analysis checks (PR #852)
+* Fix PKCE implementation (PR #744)
+
+## 6.1.1 (released 2017-12-23)
+
+* Removed check on empty scopes
+
+## 6.1.0 (released 2017-12-23)
+
+* Changed the token type issued by the Implicit Grant to be Bearer instead of bearer. (PR #724)
+* Replaced call to array_key_exists() with the faster isset() on the Implicit Grant. (PR #749)
+* Allow specification of query delimiter character in the Password Grant (PR #801)
+* Add Zend Diactoros library dependency to examples (PR #678)
+* Can set default scope for the authorization endpoint. If no scope is passed during an authorization request, the default scope will be used if set. If not, the server will issue an invalid scope exception (PR #811)
+* Added validation for redirect URIs on the authorization end point to ensure exactly one redirection URI has been passed (PR #573)
+
 ## 6.0.2 (released 2017-08-03)
 
 * An invalid refresh token that can't be decrypted now returns a HTTP 401 error instead of HTTP 400 (Issue #759)
@@ -9,7 +38,7 @@
 ## 6.0.1 (released 2017-07-19)
 
 To address feedback from the security release the following change has been made:
-  
+
 * If an RSA key cannot be chmod'ed to 600 then it will now throw a E_USER_NOTICE instead of an exception.
 
 ## 6.0.0 (released 2017-07-01)
