@@ -20,8 +20,12 @@ install:
   - composer update --no-interaction --prefer-dist $DEPENDENCIES
 
 script:
-  - vendor/bin/phpunit
+  - vendor/bin/phpunit --coverage-clover=coverage.clover
   - vendor/bin/phpstan analyse -l 6 -c phpstan.neon src tests
+
+after_script:
+    - wget https://scrutinizer-ci.com/ocular.phar
+    - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
 
 branches:
   only:
