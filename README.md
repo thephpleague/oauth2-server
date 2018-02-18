@@ -10,7 +10,7 @@
 
 `league/oauth2-server` is a standards compliant implementation of an [OAuth 2.0](https://tools.ietf.org/html/rfc6749) authorization server written in PHP which makes working with OAuth 2.0 trivial. You can easily configure an OAuth 2.0 server to protect your API with access tokens, or allow clients to request new access tokens and refresh them.
 
-It supports out of the box the following grants:
+Out of the box it supports the following grants:
 
 * Authorization code grant
 * Implicit grant
