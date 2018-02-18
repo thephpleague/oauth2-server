@@ -386,7 +386,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param \DateInterval          $authCodeTTL
      * @param ClientEntityInterface  $client
      * @param string                 $userIdentifier
-     * @param string                 $redirectUri
+     * @param string|null            $redirectUri
      * @param ScopeEntityInterface[] $scopes
      *
      * @throws OAuthServerException
