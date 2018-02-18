@@ -21,7 +21,7 @@ interface TokenInterface
     /**
      * Set the token's identifier.
      *
-     * @param $identifier
+     * @param mixed $identifier
      */
     public function setIdentifier($identifier);
 
@@ -42,14 +42,14 @@ interface TokenInterface
     /**
      * Set the identifier of the user associated with the token.
      *
-     * @param string|int $identifier The identifier of the user
+     * @param string|int|null $identifier The identifier of the user
      */
     public function setUserIdentifier($identifier);
 
     /**
      * Get the token user's identifier.
      *
-     * @return string|int
+     * @return string|int|null
      */
     public function getUserIdentifier();
 

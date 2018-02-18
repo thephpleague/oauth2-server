@@ -5,19 +5,23 @@ sudo: false
 
 cache:
   directories:
-  - vendor
+    - vendor
+
+env:
+  - DEPENDENCIES=""
+  - DEPENDENCIES="--prefer-lowest --prefer-stable"
 
 php:
-  - 5.6
   - 7.0
   - 7.1
   - 7.2
 
 install:
-  - travis_retry composer install --no-interaction --prefer-source
+  - composer update --no-interaction --prefer-dist $DEPENDENCIES
 
 script:
   - vendor/bin/phpunit
+  - vendor/bin/phpstan analyse -l 6 -c phpstan.neon src tests
 
 branches:
   only:
