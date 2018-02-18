@@ -34,25 +34,13 @@ class AuthCodeGrantTest extends TestCase
      */
     protected $cryptStub;
 
-    /**
-     * @var string Valid generated Code verifier.
-     */
-    protected $codeVerifier;
+    const CODE_VERIFIER = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
 
-    /**
-     * @var string Valid generated code challenge using a proper code verifier.
-     */
-    protected $codeChallenge;
+    const CODE_CHALLENGE = 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM';
 
     public function setUp()
     {
         $this->cryptStub = new CryptTraitStub;
-
-        // [RFC 7636] Appendix B.  Example for the S256 code_challenge_method
-        // $this->codeVerifier = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
-        $this->codeVerifier = strtr(rtrim(base64_encode(random_bytes(32)), '='), '+/', '-_');
-        // $this->codeChallenge = 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM';
-        $this->codeChallenge = strtr(rtrim(base64_encode(hash('sha256', $this->codeVerifier, true)), '='), '+/', '-_');
     }
 
     public function testGetIdentifier()
@@ -201,7 +189,7 @@ class AuthCodeGrantTest extends TestCase
                 'response_type'  => 'code',
                 'client_id'      => 'foo',
                 'redirect_uri'   => 'http://foo/bar',
-                'code_challenge' => $this->codeChallenge,
+                'code_challenge' => self::CODE_CHALLENGE,
             ]
         );
 
@@ -702,7 +690,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
-                'code_verifier' => $this->codeVerifier,
+                'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
@@ -712,7 +700,7 @@ class AuthCodeGrantTest extends TestCase
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
                             'redirect_uri'          => 'http://foo/bar',
-                            'code_challenge'        => $this->codeVerifier,
+                            'code_challenge'        => self::CODE_VERIFIER,
                             'code_challenge_method' => 'plain',
                         ]
                     )
@@ -773,7 +761,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
-                'code_verifier' => $this->codeVerifier,
+                'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
@@ -783,7 +771,7 @@ class AuthCodeGrantTest extends TestCase
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
                             'redirect_uri'          => 'http://foo/bar',
-                            'code_challenge'        => $this->codeChallenge,
+                            'code_challenge'        => self::CODE_CHALLENGE,
                             'code_challenge_method' => 'S256',
                         ]
                     )
@@ -1216,7 +1204,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
-                'code_verifier' => $this->codeVerifier,
+                'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
@@ -1370,7 +1358,7 @@ class AuthCodeGrantTest extends TestCase
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
                             'redirect_uri'          => 'http://foo/bar',
-                            'code_challenge'        => $this->codeChallenge,
+                            'code_challenge'        => self::CODE_CHALLENGE,
                             'code_challenge_method' => 'S256',
                         ]
                     )
