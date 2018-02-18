@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [7.0.0] - released 2018-02-17
+## [7.0.0] - released 2018-02-18
 
 ### Added
 - Use PHPStan for static analysis of code (PR #848)
