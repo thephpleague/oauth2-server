@@ -68,7 +68,7 @@ We use [Travis CI](https://travis-ci.org/), [Scrutinizer](https://scrutinizer-ci
 
 ## Changelog
 
-[See the project releases page](https://github.com/thephpleague/oauth2-server/releases)
+See the [project changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md)
 
 ## Contributing
 
