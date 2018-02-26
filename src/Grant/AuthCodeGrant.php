@@ -225,7 +225,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         return (
             array_key_exists('response_type', $request->getQueryParams())
             && $request->getQueryParams()['response_type'] === 'code'
-            && null !== $this->getClientIdFromRequest($request)
+            && $this->getClientIdFromRequest($request) !== null
         );
     }
 
