@@ -199,7 +199,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Fetch the client_id parameter from the query string.
      *
-     * @return string
+     * @return string|null
      * @throws OAuthServerException
      */
     protected function getClientIdFromRequest($request)
