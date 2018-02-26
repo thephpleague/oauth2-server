@@ -18,6 +18,9 @@ class RequestEvent extends Event
     const USER_AUTHENTICATION_FAILED = 'user.authentication.failed';
     const REFRESH_TOKEN_CLIENT_FAILED = 'refresh_token.client.failed';
 
+    const REFRESH_TOKEN_ISSUED = 'refresh_token.issued';
+    const ACCESS_TOKEN_ISSUED = 'access_token.issued';
+
     /**
      * @var ServerRequestInterface
      */

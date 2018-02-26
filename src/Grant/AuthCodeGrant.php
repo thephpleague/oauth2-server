@@ -176,6 +176,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
 
+        // Send events to emitter
+        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
+        $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
+
         // Inject tokens into response type
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
