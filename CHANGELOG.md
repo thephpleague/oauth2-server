@@ -6,8 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-### Removed
+### Added
 - Added event emitters for issued access and refresh tokens (PR #860)
+
+### Removed
 - Remove paragone/random_compat from dependencies
 
 ## [7.0.0] - released 2018-02-18
