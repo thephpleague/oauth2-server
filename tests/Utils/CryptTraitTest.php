@@ -24,8 +24,8 @@ class CryptTraitTest extends TestCase
         return $this->encryptDecrypt($cryptStub);
     }
 
-    protected function encryptDecrypt(CryptTraitStub $cryptStub) {
-
+    protected function encryptDecrypt(CryptTraitStub $cryptStub) 
+    {
         $payload = 'alex loves whisky';
         $encrypted = $cryptStub->doEncrypt($payload);
         $plainText = $cryptStub->doDecrypt($encrypted);

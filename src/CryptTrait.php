@@ -33,7 +33,7 @@ trait CryptTrait
     protected function encrypt($unencryptedData)
     {
         try {
-            if($this->encryptionKey instanceof Key) {
+            if ($this->encryptionKey instanceof Key) {
                 return Crypto::encrypt($unencryptedData, $this->encryptionKey);
             } else {
                 return Crypto::encryptWithPassword($unencryptedData, $this->encryptionKey);
@@ -55,7 +55,7 @@ trait CryptTrait
     protected function decrypt($encryptedData)
     {
         try {
-            if($this->encryptionKey instanceof Key) {
+            if ($this->encryptionKey instanceof Key) {
                 return Crypto::decrypt($encryptedData, $this->encryptionKey);
             } else {
                 return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
