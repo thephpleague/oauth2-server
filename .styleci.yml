@@ -29,7 +29,6 @@ enabled:
   - phpdoc_inline_tag
   - phpdoc_no_access
   - phpdoc_no_simplified_null_return
-  - phpdoc_order
   - phpdoc_property
   - phpdoc_scalar
   - phpdoc_separation
