@@ -19,15 +19,14 @@ use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
-use Psr\Http\Message\ResponseInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 
 class AuthorizationServerTest extends TestCase
 {
-
     const DEFAULT_SCOPE = 'basic';
 
     public function setUp()
@@ -35,6 +34,7 @@ class AuthorizationServerTest extends TestCase
         // Make sure the keys have the correct permissions.
         chmod(__DIR__ . '/Stubs/private.key', 0600);
         chmod(__DIR__ . '/Stubs/public.key', 0600);
+        chmod(__DIR__ . '/Stubs/private.key.crlf', 0600);
     }
 
     public function testRespondToRequestInvalidGrantType()
@@ -197,16 +197,16 @@ class AuthorizationServerTest extends TestCase
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
         $grant = new AuthCodeGrant(
-            $this->getMock(AuthCodeRepositoryInterface::class),
-            $this->getMock(RefreshTokenRepositoryInterface::class),
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
 
         $server = new AuthorizationServer(
             $clientRepositoryMock,
-            $this->getMock(AccessTokenRepositoryInterface::class),
-            $this->getMock(ScopeRepositoryInterface::class),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
             'file://' . __DIR__ . '/Stubs/public.key'
         );

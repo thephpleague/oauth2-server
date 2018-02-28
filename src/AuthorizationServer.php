@@ -17,6 +17,7 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -190,7 +191,6 @@ class AuthorizationServer implements EmitterAwareInterface
             if ($tokenResponse instanceof ResponseTypeInterface) {
                 return $tokenResponse->generateHttpResponse($response);
             }
-            
         }
 
         throw OAuthServerException::unsupportedGrantType();
@@ -207,7 +207,9 @@ class AuthorizationServer implements EmitterAwareInterface
             $this->responseType = new BearerTokenResponse();
         }
 
-        $this->responseType->setPrivateKey($this->privateKey);
+        if ($this->responseType instanceof AbstractResponseType === true) {
+            $this->responseType->setPrivateKey($this->privateKey);
+        }
         $this->responseType->setEncryptionKey($this->encryptionKey);
 
         return $this->responseType;

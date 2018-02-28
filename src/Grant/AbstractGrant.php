@@ -204,7 +204,7 @@ abstract class AbstractGrant implements GrantTypeInterface
                 throw OAuthServerException::invalidClient();
             } elseif (
                 is_array($client->getRedirectUri())
-                && in_array($redirectUri, $client->getRedirectUri()) === false
+                && in_array($redirectUri, $client->getRedirectUri(), true) === false
             ) {
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
                 throw OAuthServerException::invalidClient();
@@ -341,7 +341,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @param \DateInterval          $accessTokenTTL
      * @param ClientEntityInterface  $client
-     * @param string                 $userIdentifier
+     * @param string|null            $userIdentifier
      * @param ScopeEntityInterface[] $scopes
      *
      * @throws OAuthServerException

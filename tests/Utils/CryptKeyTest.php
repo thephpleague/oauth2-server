@@ -17,7 +17,7 @@ class CryptKeyTest extends TestCase
 
     public function testKeyCreation()
     {
-        $keyFile = __DIR__ . '/Stubs/public.key';
+        $keyFile = __DIR__ . '/../Stubs/public.key';
         $key = new CryptKey($keyFile, 'secret');
 
         $this->assertEquals('file://' . $keyFile, $key->getKeyPath());
@@ -26,7 +26,15 @@ class CryptKeyTest extends TestCase
 
     public function testKeyFileCreation()
     {
-        $keyContent = file_get_contents(__DIR__ . '/Stubs/public.key');
+        $keyContent = file_get_contents(__DIR__ . '/../Stubs/public.key');
+        $key = new CryptKey($keyContent);
+
+        $this->assertEquals(
+            'file://' . sys_get_temp_dir() . '/' . sha1($keyContent) . '.key',
+            $key->getKeyPath()
+        );
+
+        $keyContent = file_get_contents(__DIR__ . '/../Stubs/private.key.crlf');
         $key = new CryptKey($keyContent);
 
         $this->assertEquals(

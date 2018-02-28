@@ -14,7 +14,7 @@ namespace League\OAuth2\Server;
 class CryptKey
 {
     const RSA_KEY_PATTERN =
-        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----\n)(.|\n)+(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)$/';
+        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
 
     /**
      * @var string
@@ -48,9 +48,9 @@ class CryptKey
         if ($keyPermissionsCheck === true) {
             // Verify the permissions of the key
             $keyPathPerms = decoct(fileperms($keyPath) & 0777);
-            if (in_array($keyPathPerms, ['600', '660'], true) === false) {
+            if (in_array($keyPathPerms, ['400', '440', '600', '660'], true) === false) {
                 trigger_error(sprintf(
-                    'Key file "%s" permissions are not correct, should be 600 or 660 instead of %s',
+                    'Key file "%s" permissions are not correct, recommend changing to 600 or 660 instead of %s',
                     $keyPath,
                     $keyPathPerms
                 ), E_USER_NOTICE);
@@ -73,7 +73,11 @@ class CryptKey
         $tmpDir = sys_get_temp_dir();
         $keyPath = $tmpDir . '/' . sha1($key) . '.key';
 
-        if (!file_exists($keyPath) && !touch($keyPath)) {
+        if (file_exists($keyPath)) {
+            return 'file://' . $keyPath;
+        }
+
+        if (!touch($keyPath)) {
             // @codeCoverageIgnoreStart
             throw new \RuntimeException(sprintf('"%s" key file could not be created', $keyPath));
             // @codeCoverageIgnoreEnd
