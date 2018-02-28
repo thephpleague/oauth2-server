@@ -35,9 +35,9 @@ trait CryptTrait
         try {
             if ($this->encryptionKey instanceof Key) {
                 return Crypto::encrypt($unencryptedData, $this->encryptionKey);
-            } else {
-                return Crypto::encryptWithPassword($unencryptedData, $this->encryptionKey);
             }
+
+            return Crypto::encryptWithPassword($unencryptedData, $this->encryptionKey);
         } catch (\Exception $e) {
             throw new \LogicException($e->getMessage());
         }
@@ -57,9 +57,9 @@ trait CryptTrait
         try {
             if ($this->encryptionKey instanceof Key) {
                 return Crypto::decrypt($encryptedData, $this->encryptionKey);
-            } else {
-                return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
             }
+
+            return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
         } catch (\Exception $e) {
             throw new \LogicException($e->getMessage());
         }

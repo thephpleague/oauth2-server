@@ -8,27 +8,32 @@ use PHPUnit\Framework\TestCase;
 
 class CryptTraitTest extends TestCase
 {
+    protected $cryptStub;
+
+    protected function setUp()
+    {
+        $this->cryptStub = new CryptTraitStub();
+    }
+
     public function testEncryptDecryptWithPassword()
     {
-        $cryptStub = new CryptTraitStub();
-        $cryptStub->setEncryptionKey(base64_encode(random_bytes(36)));
+        $this->cryptStub->setEncryptionKey(base64_encode(random_bytes(36)));
 
-        return $this->encryptDecrypt($cryptStub);
+        $this->encryptDecrypt();
     }
 
     public function testEncryptDecryptWithKey()
     {
-        $cryptStub = new CryptTraitStub();
-        $cryptStub->setEncryptionKey(Key::createNewRandomKey());
+        $this->cryptStub->setEncryptionKey(Key::createNewRandomKey());
 
-        return $this->encryptDecrypt($cryptStub);
+        $this->encryptDecrypt();
     }
 
-    protected function encryptDecrypt(CryptTraitStub $cryptStub) 
+    private function encryptDecrypt()
     {
         $payload = 'alex loves whisky';
-        $encrypted = $cryptStub->doEncrypt($payload);
-        $plainText = $cryptStub->doDecrypt($encrypted);
+        $encrypted = $this->cryptStub->doEncrypt($payload);
+        $plainText = $this->cryptStub->doDecrypt($encrypted);
 
         $this->assertNotEquals($payload, $encrypted);
         $this->assertEquals($payload, $plainText);
