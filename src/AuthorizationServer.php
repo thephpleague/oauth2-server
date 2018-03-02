@@ -23,6 +23,7 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Lcobucci\JWT\Parser;
 
 class AuthorizationServer implements EmitterAwareInterface
 {
@@ -207,7 +208,7 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     public function respondToIntrospectionRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $introspector = new Introspector($this->accessTokenRepository, $this->privateKey);
+        $introspector = new Introspector($this->accessTokenRepository, $this->privateKey, new Parser);
         $introspectionResponse = $introspector->respondToIntrospectionRequest($request);
 
         return $introspectionResponse->generateHttpResponse($response);

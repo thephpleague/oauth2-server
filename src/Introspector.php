@@ -83,7 +83,7 @@ class Introspector
         $keychain = new Keychain();
         $key = $keychain->getPrivateKey($this->privateKey->getKeyPath(), $this->privateKey->getPassPhrase());
 
-        if (!$token->verify(new Sha256, $key)) {
+        if (!$token->verify(new Sha256, $key->getContent())) {
             throw OAuthServerException::accessDenied('Access token could not be verified');
         }
     }
