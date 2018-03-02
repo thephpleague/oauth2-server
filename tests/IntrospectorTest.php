@@ -10,7 +10,6 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\IntrospectionResponse;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response;
 
 class IntrospectorTest extends TestCase
 {

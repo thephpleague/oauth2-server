@@ -10,6 +10,7 @@
 namespace League\OAuth2\Server;
 
 use Defuse\Crypto\Key;
+use Lcobucci\JWT\Parser;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -23,7 +24,6 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Lcobucci\JWT\Parser;
 
 class AuthorizationServer implements EmitterAwareInterface
 {
