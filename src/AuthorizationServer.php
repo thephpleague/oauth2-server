@@ -198,6 +198,22 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
+     * Return an introspection response.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     *
+     * @return ResponseInterface
+     */
+    public function respondToIntrospectionRequest(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $introspector = new Introspector($this->accessTokenRepository, $this->privateKey);
+        $introspectionResponse = $introspector->respondToIntrospectionRequest($request);
+
+        return $introspectionResponse->generateHttpResponse($response);
+    }
+
+    /**
      * Get the token type that grants will return in the HTTP response.
      *
      * @return ResponseTypeInterface
