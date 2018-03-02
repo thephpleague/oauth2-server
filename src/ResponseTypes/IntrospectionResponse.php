@@ -36,6 +36,7 @@ class IntrospectionResponse extends AbstractResponseType
     public function generateHttpResponse(ResponseInterface $response)
     {
         $response->getBody()->write(json_encode($this->introspectionData));
+
         return $response;
     }
 }

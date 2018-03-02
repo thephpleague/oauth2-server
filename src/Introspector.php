@@ -3,17 +3,15 @@
 namespace League\OAuth2\Server;
 
 use Exception;
+use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\ValidationData;
-use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Lcobucci\JWT\Parser;
 use League\OAuth2\Server\ResponseTypes\IntrospectionResponse;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Introspector
 {
@@ -43,8 +41,7 @@ class Introspector
         AccessTokenRepositoryInterface $accessTokenRepository,
         CryptKey $privateKey,
         Parser $parser
-    )
-    {
+    ) {
         $this->accessTokenRepository = $accessTokenRepository;
         $this->privateKey = $privateKey;
         $this->parser = $parser;
@@ -69,8 +66,7 @@ class Introspector
             $this->checkIfTokenIsRevoked($token);
 
             return $this->createActiveResponse($token);
-        }
-        catch(Exception $ex) {
+        } catch(Exception $ex) {
             return $this->createInactiveResponse();
         }
     }
