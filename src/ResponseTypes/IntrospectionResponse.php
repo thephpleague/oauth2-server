@@ -2,7 +2,6 @@
 
 namespace League\OAuth2\Server\ResponseTypes;
 
-use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use Psr\Http\Message\ResponseInterface;
 
 class IntrospectionResponse extends AbstractResponseType

@@ -66,7 +66,7 @@ class Introspector
             $this->checkIfTokenIsRevoked($token);
 
             return $this->createActiveResponse($token);
-        } catch(Exception $ex) {
+        } catch (Exception $ex) {
             return $this->createInactiveResponse();
         }
     }
@@ -121,7 +121,7 @@ class Introspector
     /**
      * Create active introspection response.
      *
-     * @param Token             $token
+     * @param Token $token
      *
      * @return IntrospectionResponse
      */
