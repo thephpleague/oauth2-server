@@ -70,6 +70,12 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         ResponseTypeInterface $responseType,
         \DateInterval $accessTokenTTL
     ) {
+        
+        // The redirect URI is required in this request.
+            $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
+            if (empty($authCodePayload->redirect_uri) === false && $redirectUri === null) {
+                throw OAuthServerException::invalidRequest('redirect_uri');
+            }
         // Validate request
         $client = $this->validateClient($request);
         $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
@@ -93,15 +99,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest('code', 'Authorization code was not issued to this client');
             }
 
-            // The redirect URI is required in this request
-            $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
-            if (empty($authCodePayload->redirect_uri) === false && $redirectUri === null) {
-                throw OAuthServerException::invalidRequest('redirect_uri');
-            }
-
-            if ($authCodePayload->redirect_uri !== $redirectUri) {
-                throw OAuthServerException::invalidRequest('redirect_uri', 'Invalid redirect URI');
-            }
+            
 
             $scopes = [];
             foreach ($authCodePayload->scopes as $scopeId) {
