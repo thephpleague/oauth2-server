@@ -54,8 +54,38 @@ The public key should be distributed to any services (for example resource serve
 
 ## Generating encryption keys
 
-To generate an encryption key for the `AuthorizationServer` run the following command in the terminal:
+The `AuthorizationServer` accepts two kinds of encryption keys, a `string` password or a `\Defuse\Crypto\Key` object from the [Secure PHP Encryption Library](https://github.com/defuse/php-encryption).
+
+### `string` password
+
+A `string` password is of unknown strength, to turn it into a strong encryption key the [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2) key derivation function is used.
+This function derives an encryption key from a password and is slow by design, aimed to reduce vulnerability to brute force attacks.
+
+To generate a `string` password for the `AuthorizationServer` run the following command in the terminal:
 
 ~~~ shell
 php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
 ~~~
+
+### `Key` object
+
+A `\Defuse\Crypto\Key` is a strong encryption key. This removes the need to use a slow key derivation function, reducing encryption and decryption times compared to using a `string` password.
+
+A `Key` can be generated with the `generate-defuse-key` script. To generate a `Key` for the `AuthorizationServer` run the following command in the terminal:
+
+~~~ shell
+vendor/bin/generate-defuse-key
+~~~
+
+The `string` can be loaded as a `Key` with `Key::loadFromAsciiSafeString($string)`. For example:
+
+```php
+  use \Defuse\Crypto\Key;
+  $server = new AuthorizationServer(
+      $clientRepository,
+      $accessTokenRepository,
+      $scopeRepository,
+      $privateKeyPath,
+      Key::loadFromAsciiSafeString($encryptionKey)
+);
+```
