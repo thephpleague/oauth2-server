@@ -58,10 +58,10 @@ The `AuthorizationServer` accepts two kinds of encryption keys, a `string` passw
 
 ### `string` password
 
-A `string` password is of unknown strength, to turn it into a strong encryption key the [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2) key derivation function is used.
-This function derives an encryption key from a password and is slow by design, aimed to reduce vulnerability to brute force attacks.
+A `string` password can be of variable strength depending on the password used. To turn it into a strong encryption key the [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2) key derivation function is used.
+This function derives an encryption key from a password and is slow by design. It uses a lot of CPU resources for a fraction of a second, applying key stretching to the password to reduce vulnerability to brute force attacks.
 
-To generate a `string` password for the `AuthorizationServer` run the following command in the terminal:
+To generate a `string` password for the `AuthorizationServer`, you can run the following command in the terminal:
 
 ~~~ shell
 php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
