@@ -60,7 +60,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     }
 
     /**
-     *
+     * Enable fallback if enableCodeExchangeProof is false, so PKCE will still be validated.
      */
     public function enablePkceFallback()
     {
