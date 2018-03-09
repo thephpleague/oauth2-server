@@ -327,7 +327,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enablePkceFallbackAllowed();
+        $grant->enablePkceFallback();
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
@@ -344,7 +344,7 @@ class AuthCodeGrantTest extends TestCase
                 'response_type'  => 'code',
                 'client_id'      => 'foo',
                 'redirect_uri'   => 'http://foo/bar',
-                'code_challenge' => str_repeat('A', 42) . '!',
+                'code_challenge' => 'foobar',
             ]
         );
 
@@ -1591,7 +1591,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enablePkceFallbackAllowed();
+        $grant->enablePkceFallback();
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
@@ -1611,7 +1611,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
-                'code_verifier' => 'foobar2',
+                'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [

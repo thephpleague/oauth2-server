@@ -36,7 +36,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * @var bool
      */
-    private $pkceFallbackAllowed = false;
+    private $enablePkceFallback = false;
 
     /**
      * @param AuthCodeRepositoryInterface     $authCodeRepository
@@ -59,9 +59,12 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $this->enableCodeExchangeProof = true;
     }
 
-    public function enablePkceFallbackAllowed()
+    /**
+     *
+     */
+    public function enablePkceFallback()
     {
-        $this->pkceFallbackAllowed = true;
+        $this->enablePkceFallback = true;
     }
 
     /**
@@ -410,7 +413,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             return true;
         }
 
-        if (null !== $code && $this->pkceFallbackAllowed) {
+        if ($code !== null && $this->enablePkceFallback) {
             return true;
         }
 
