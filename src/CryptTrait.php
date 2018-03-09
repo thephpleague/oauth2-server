@@ -12,11 +12,12 @@
 namespace League\OAuth2\Server;
 
 use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 
 trait CryptTrait
 {
     /**
-     * @var string
+     * @var string|Key
      */
     protected $encryptionKey;
 
@@ -32,6 +33,10 @@ trait CryptTrait
     protected function encrypt($unencryptedData)
     {
         try {
+            if ($this->encryptionKey instanceof Key) {
+                return Crypto::encrypt($unencryptedData, $this->encryptionKey);
+            }
+
             return Crypto::encryptWithPassword($unencryptedData, $this->encryptionKey);
         } catch (\Exception $e) {
             throw new \LogicException($e->getMessage());
@@ -50,6 +55,10 @@ trait CryptTrait
     protected function decrypt($encryptedData)
     {
         try {
+            if ($this->encryptionKey instanceof Key) {
+                return Crypto::decrypt($encryptedData, $this->encryptionKey);
+            }
+
             return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
         } catch (\Exception $e) {
             throw new \LogicException($e->getMessage());
@@ -59,7 +68,7 @@ trait CryptTrait
     /**
      * Set the encryption key
      *
-     * @param string $key
+     * @param string|Key $key
      */
     public function setEncryptionKey($key = null)
     {

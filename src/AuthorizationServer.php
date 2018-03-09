@@ -9,6 +9,7 @@
 
 namespace League\OAuth2\Server;
 
+use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -17,6 +18,7 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -67,7 +69,7 @@ class AuthorizationServer implements EmitterAwareInterface
     private $scopeRepository;
 
     /**
-     * @var string
+     * @var string|Key
      */
     private $encryptionKey;
 
@@ -83,7 +85,7 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param AccessTokenRepositoryInterface $accessTokenRepository
      * @param ScopeRepositoryInterface       $scopeRepository
      * @param CryptKey|string                $privateKey
-     * @param string                         $encryptionKey
+     * @param string|Key                     $encryptionKey
      * @param null|ResponseTypeInterface     $responseType
      */
     public function __construct(
@@ -190,7 +192,6 @@ class AuthorizationServer implements EmitterAwareInterface
             if ($tokenResponse instanceof ResponseTypeInterface) {
                 return $tokenResponse->generateHttpResponse($response);
             }
-            
         }
 
         throw OAuthServerException::unsupportedGrantType();
@@ -207,7 +208,9 @@ class AuthorizationServer implements EmitterAwareInterface
             $this->responseType = new BearerTokenResponse();
         }
 
-        $this->responseType->setPrivateKey($this->privateKey);
+        if ($this->responseType instanceof AbstractResponseType === true) {
+            $this->responseType->setPrivateKey($this->privateKey);
+        }
         $this->responseType->setEncryptionKey($this->encryptionKey);
 
         return $this->responseType;

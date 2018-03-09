@@ -33,7 +33,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
     /**
      * @param \DateInterval $accessTokenTTL
-     * @param string $queryDelimiter
+     * @param string        $queryDelimiter
      */
     public function __construct(\DateInterval $accessTokenTTL, $queryDelimiter = '#')
     {
@@ -144,23 +144,24 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidClient();
             } elseif (
                 is_array($client->getRedirectUri())
-                && in_array($redirectUri, $client->getRedirectUri()) === false
+                && in_array($redirectUri, $client->getRedirectUri(), true) === false
             ) {
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
                 throw OAuthServerException::invalidClient();
             }
         } elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
-            || empty($client->getRedirectUri())
-        ) {
+            || empty($client->getRedirectUri())) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
+        } else {
+            $redirectUri = is_array($client->getRedirectUri())
+                ? $client->getRedirectUri()[0]
+                : $client->getRedirectUri();
         }
 
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            is_array($client->getRedirectUri())
-                ? $client->getRedirectUri()[0]
-                : $client->getRedirectUri()
+            $redirectUri
         );
 
         // Finalize the requested scopes
