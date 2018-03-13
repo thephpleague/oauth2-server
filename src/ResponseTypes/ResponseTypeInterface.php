@@ -41,4 +41,13 @@ interface ResponseTypeInterface
      * @param string|Key|null $key
      */
     public function setEncryptionKey($key = null);
+
+    /**
+     * Generate a string token from the access token
+     *
+     * @param AccessTokenEntityInterface $accessToken
+     *
+     * @return string
+     */
+    public function convert(AccessTokenEntityInterface $accessToken);
 }

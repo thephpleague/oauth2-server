@@ -11,6 +11,7 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
@@ -286,11 +287,15 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
+        $key = new CryptKey('file://' . __DIR__ . '/../Stubs/private.key');
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPrivateKey($key);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
+        $responseType = new BearerTokenResponse();
+        $responseType->setPrivateKey($key);
+
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest, $responseType));
     }
 
     /**
@@ -309,11 +314,15 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
+        $key = new CryptKey('file://' . __DIR__ . '/../Stubs/private.key');
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPrivateKey($key);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $grant->completeAuthorizationRequest($authRequest);
+        $responseType = new BearerTokenResponse();
+        $responseType->setPrivateKey($key);
+
+        $grant->completeAuthorizationRequest($authRequest, $responseType);
     }
 
     public function testAccessTokenRepositoryUniqueConstraintCheck()
@@ -330,11 +339,15 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->expects($this->at(0))->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
         $accessTokenRepositoryMock->expects($this->at(1))->method('persistNewAccessToken')->willReturnSelf();
 
+        $key = new CryptKey('file://' . __DIR__ . '/../Stubs/private.key');
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPrivateKey($key);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
+        $responseType = new BearerTokenResponse();
+        $responseType->setPrivateKey($key);
+
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest, $responseType));
     }
 
     /**
@@ -354,11 +367,15 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(OAuthServerException::serverError('something bad happened'));
 
+        $key = new CryptKey('file://' . __DIR__ . '/../Stubs/private.key');
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPrivateKey($key);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $grant->completeAuthorizationRequest($authRequest);
+        $responseType = new BearerTokenResponse();
+        $responseType->setPrivateKey($key);
+
+        $grant->completeAuthorizationRequest($authRequest, $responseType);
     }
 
     /**
@@ -382,7 +399,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $grant->completeAuthorizationRequest($authRequest);
+        $grant->completeAuthorizationRequest($authRequest, new BearerTokenResponse());
     }
 
     /**
@@ -410,6 +427,6 @@ class ImplicitGrantTest extends TestCase
     public function testCompleteAuthorizationRequestNoUser()
     {
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->completeAuthorizationRequest(new AuthorizationRequest());
+        $grant->completeAuthorizationRequest(new AuthorizationRequest(), new BearerTokenResponse());
     }
 }

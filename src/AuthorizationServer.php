@@ -163,7 +163,7 @@ class AuthorizationServer implements EmitterAwareInterface
     public function completeAuthorizationRequest(AuthorizationRequest $authRequest, ResponseInterface $response)
     {
         return $this->enabledGrantTypes[$authRequest->getGrantTypeId()]
-            ->completeAuthorizationRequest($authRequest)
+            ->completeAuthorizationRequest($authRequest, $this->getResponseType())
             ->generateHttpResponse($response);
     }
 

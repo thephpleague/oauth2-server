@@ -204,6 +204,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      * Fetch the client_id parameter from the query string.
      *
      * @return string|null
+     *
      * @throws OAuthServerException
      */
     protected function getClientIdFromRequest($request)
@@ -324,7 +325,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
+    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest, ResponseTypeInterface $responseType)
     {
         if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
             throw new \LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');

@@ -82,11 +82,12 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * The AuthorizationRequest object's $userId property must be set to the authenticated user and the
      * $authorizationApproved property must reflect their desire to authorize or deny the client.
      *
-     * @param AuthorizationRequest $authorizationRequest
+     * @param AuthorizationRequest  $authorizationRequest
+     * @param ResponseTypeInterface $responseType
      *
      * @return ResponseTypeInterface
      */
-    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest);
+    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest, ResponseTypeInterface $responseType);
 
     /**
      * The grant type should return true if it is able to respond to this request.

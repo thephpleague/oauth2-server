@@ -6,6 +6,7 @@ use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use PHPUnit\Framework\TestCase;
@@ -30,7 +31,9 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
 
-        $token = $accessToken->convertToJWT(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType = new BearerTokenResponse();
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $token = $responseType->convert($accessToken);
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));
@@ -65,7 +68,9 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->sub(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
 
-        $token = $accessToken->convertToJWT(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType = new BearerTokenResponse();
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $token = $responseType->convert($accessToken);
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));

@@ -67,4 +67,16 @@ class StubResponseType extends AbstractResponseType
     {
         return new Response();
     }
+
+    /**
+     * Generate a string token from the access token
+     *
+     * @param AccessTokenEntityInterface $accessToken
+     *
+     * @return string
+     */
+    public function convert(AccessTokenEntityInterface $accessToken)
+    {
+        return '';
+    }
 }

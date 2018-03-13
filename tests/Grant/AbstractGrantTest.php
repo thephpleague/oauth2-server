@@ -13,6 +13,7 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
@@ -492,6 +493,6 @@ class AbstractGrantTest extends TestCase
     public function testCompleteAuthorizationRequest()
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->completeAuthorizationRequest(new AuthorizationRequest());
+        $grantMock->completeAuthorizationRequest(new AuthorizationRequest(), new BearerTokenResponse());
     }
 }

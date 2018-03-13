@@ -13,6 +13,7 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
@@ -549,7 +550,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest, new BearerTokenResponse()));
     }
 
     /**
@@ -574,7 +575,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $grant->completeAuthorizationRequest($authRequest);
+        $grant->completeAuthorizationRequest($authRequest, new BearerTokenResponse());
     }
 
     public function testRespondToAccessTokenRequest()
@@ -1538,7 +1539,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest, new BearerTokenResponse()));
     }
 
     /**
@@ -1564,7 +1565,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest, new BearerTokenResponse()));
     }
 
     /**
@@ -1589,7 +1590,7 @@ class AuthCodeGrantTest extends TestCase
             new \DateInterval('PT10M')
         );
 
-        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest, new BearerTokenResponse()));
     }
 
     public function testRefreshTokenRepositoryUniqueConstraintCheck()
@@ -1813,6 +1814,6 @@ class AuthCodeGrantTest extends TestCase
             new \DateInterval('PT10M')
         );
 
-        $grant->completeAuthorizationRequest(new AuthorizationRequest());
+        $grant->completeAuthorizationRequest(new AuthorizationRequest(), new BearerTokenResponse());
     }
 }
