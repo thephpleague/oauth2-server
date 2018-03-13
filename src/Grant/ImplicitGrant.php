@@ -186,7 +186,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
+    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest, ResponseTypeInterface $responseType)
     {
         if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
             throw new \LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
@@ -212,7 +212,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $this->makeRedirectUri(
                     $finalRedirectUri,
                     [
-                        'access_token' => (string) $accessToken->convertToJWT($this->privateKey),
+                        'access_token' => $responseType->convert($accessToken),
                         'token_type'   => 'Bearer',
                         'expires_in'   => $accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp(),
                         'state'        => $authorizationRequest->getState(),

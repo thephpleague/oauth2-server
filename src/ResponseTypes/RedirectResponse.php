@@ -11,6 +11,7 @@
 
 namespace League\OAuth2\Server\ResponseTypes;
 
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class RedirectResponse extends AbstractResponseType
@@ -36,5 +37,17 @@ class RedirectResponse extends AbstractResponseType
     public function generateHttpResponse(ResponseInterface $response)
     {
         return $response->withStatus(302)->withHeader('Location', $this->redirectUri);
+    }
+
+    /**
+     * Generate a string token from the access token
+     *
+     * @param AccessTokenEntityInterface $accessToken
+     *
+     * @return string
+     */
+    public function convert(AccessTokenEntityInterface $accessToken)
+    {
+        throw new \LogicException('RedirectResponse cannot convert AccessToken');
     }
 }

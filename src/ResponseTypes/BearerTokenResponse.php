@@ -11,6 +11,9 @@
 
 namespace League\OAuth2\Server\ResponseTypes;
 
+use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -24,12 +27,12 @@ class BearerTokenResponse extends AbstractResponseType
     {
         $expireDateTime = $this->accessToken->getExpiryDateTime()->getTimestamp();
 
-        $jwtAccessToken = $this->accessToken->convertToJWT($this->privateKey);
+        $jwtAccessToken = $this->convert($this->accessToken);
 
         $responseParams = [
             'token_type'   => 'Bearer',
             'expires_in'   => $expireDateTime - (new \DateTime())->getTimestamp(),
-            'access_token' => (string) $jwtAccessToken,
+            'access_token' => $jwtAccessToken,
         ];
 
         if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
@@ -74,5 +77,26 @@ class BearerTokenResponse extends AbstractResponseType
     protected function getExtraParams(AccessTokenEntityInterface $accessToken)
     {
         return [];
+    }
+
+    /**
+     * Generate a string token from the access token
+     *
+     * @param AccessTokenEntityInterface $accessToken
+     *
+     * @return string
+     */
+    public function convert(AccessTokenEntityInterface $accessToken)
+    {
+        return (string) (new Builder())
+            ->setAudience($accessToken->getClient()->getIdentifier())
+            ->setId($accessToken->getIdentifier(), true)
+            ->setIssuedAt(time())
+            ->setNotBefore(time())
+            ->setExpiration($accessToken->getExpiryDateTime()->getTimestamp())
+            ->setSubject((string) $accessToken->getUserIdentifier())
+            ->set('scopes', $accessToken->getScopes())
+            ->sign(new Sha256(), new Key($this->privateKey->getKeyPath(), $this->privateKey->getPassPhrase()))
+            ->getToken();
     }
 }
