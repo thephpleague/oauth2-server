@@ -41,6 +41,18 @@ trait AccessTokenTrait
     }
 
     /**
+     * Generate a string representation from the access token
+     *
+     * @param CryptKey $privateKey
+     *
+     * @return string
+     */
+    public function getResponseString(CryptKey $privateKey)
+    {
+        return (string) $this->convertToJWT($privateKey);
+    }
+
+    /**
      * @return ClientEntityInterface
      */
     abstract public function getClient();

@@ -22,4 +22,13 @@ interface AccessTokenEntityInterface extends TokenInterface
      * @return Token
      */
     public function convertToJWT(CryptKey $privateKey);
+
+    /**
+     * Generate a string representation from the access token
+     *
+     * @param CryptKey $privateKey
+     *
+     * @return string
+     */
+    public function getResponseString(CryptKey $privateKey);
 }
