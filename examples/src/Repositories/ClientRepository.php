@@ -17,7 +17,7 @@ class ClientRepository implements ClientRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getClientEntity($clientIdentifier, $grantType, $clientSecret = null, $mustValidateSecret = true)
+    public function getClientEntity($clientIdentifier, $grantType = null, $clientSecret = null, $mustValidateSecret = true)
     {
         $clients = [
             'myawesomeapp' => [
