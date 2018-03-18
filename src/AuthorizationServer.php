@@ -10,6 +10,7 @@
 namespace League\OAuth2\Server;
 
 use Defuse\Crypto\Key;
+use Lcobucci\JWT\Parser;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -195,6 +196,22 @@ class AuthorizationServer implements EmitterAwareInterface
         }
 
         throw OAuthServerException::unsupportedGrantType();
+    }
+
+    /**
+     * Return an introspection response.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     *
+     * @return ResponseInterface
+     */
+    public function respondToIntrospectionRequest(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $introspector = new Introspector($this->accessTokenRepository, $this->privateKey, new Parser);
+        $introspectionResponse = $introspector->respondToIntrospectionRequest($request);
+
+        return $introspectionResponse->generateHttpResponse($response);
     }
 
     /**
