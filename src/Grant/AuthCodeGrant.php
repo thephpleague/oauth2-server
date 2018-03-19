@@ -34,6 +34,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private $enableCodeExchangeProof = false;
 
     /**
+     * @var bool
+     */
+    private $enablePkceFallback = false;
+
+    /**
      * @param AuthCodeRepositoryInterface     $authCodeRepository
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \DateInterval                   $authCodeTTL
@@ -52,6 +57,14 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     public function enableCodeExchangeProof()
     {
         $this->enableCodeExchangeProof = true;
+    }
+
+    /**
+     * Enable fallback if enableCodeExchangeProof is false, so PKCE will still be validated.
+     */
+    public function enablePkceFallback()
+    {
+        $this->enablePkceFallback = true;
     }
 
     /**
@@ -128,7 +141,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         // Validate code challenge
-        if ($this->enableCodeExchangeProof === true) {
+        if ($this->shouldValidatePKCE(isset($authCodePayload->code_challenge) ? $authCodePayload->code_challenge : null)) {
             $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
             if ($codeVerifier === null) {
                 throw OAuthServerException::invalidRequest('code_verifier');
@@ -204,6 +217,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      * Fetch the client_id parameter from the query string.
      *
      * @return string|null
+     *
      * @throws OAuthServerException
      */
     protected function getClientIdFromRequest($request)
@@ -291,8 +305,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $authorizationRequest->setState($stateParameter);
         $authorizationRequest->setScopes($scopes);
 
-        if ($this->enableCodeExchangeProof === true) {
-            $codeChallenge = $this->getQueryStringParameter('code_challenge', $request);
+        $codeChallenge = $this->getQueryStringParameter('code_challenge', $request);
+        if ($this->shouldValidatePKCE($codeChallenge)) {
             if ($codeChallenge === null) {
                 throw OAuthServerException::invalidRequest('code_challenge');
             }
@@ -385,5 +399,25 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 ]
             )
         );
+    }
+
+    /**
+     * Check if PKCE should be validated, based on options.
+     *
+     * @param string|null $code
+     *
+     * @return bool
+     */
+    private function shouldValidatePKCE($code)
+    {
+        if ($this->enableCodeExchangeProof) {
+            return true;
+        }
+
+        if ($code !== null && $this->enablePkceFallback) {
+            return true;
+        }
+
+        return false;
     }
 }
