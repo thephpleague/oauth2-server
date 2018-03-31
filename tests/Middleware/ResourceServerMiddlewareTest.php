@@ -30,7 +30,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
 
-        $token = $accessToken->getResponseString(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $token = $accessToken->convertToAccessToken(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));
@@ -65,7 +65,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->sub(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
 
-        $token = $accessToken->getResponseString(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $token = $accessToken->convertToAccessToken(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));

@@ -47,7 +47,7 @@ trait AccessTokenTrait
      *
      * @return string
      */
-    public function getResponseString(CryptKey $privateKey)
+    public function convertToAccessToken(CryptKey $privateKey)
     {
         return (string) $this->convertToJWT($privateKey);
     }
