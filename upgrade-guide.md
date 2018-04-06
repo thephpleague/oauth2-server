@@ -6,6 +6,23 @@ permalink: /upgrade-guide/
 
 # Upgrade Guide
 
+## 6.x.x &rarr; 7.x.x
+
+Version `7.x.x` requires PHP 7.0.0 or higher. This version is not backwards compatible with version `6.x.x` of the library.
+
+The interface for `getClientEntity()` in the `clientRepositoryInterface` has changed. The `$grantType` argument must now default to `null`.
+
+```patch
+  public function getClientEntity(
+      $clientIdentifier, 
+-     $grantType,
++     $grantType = null,
+      $clientSecret = null, 
+      $mustValidateSecret = true
+  );
+```
+Please see the [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md) for a complete list of all changes.
+
 ## 5.1.x &rarr; 6.x.x
 
 Version `6.x.x` is not backwards compatible with version `5.1.x` but only requires you to make one line of code change:
