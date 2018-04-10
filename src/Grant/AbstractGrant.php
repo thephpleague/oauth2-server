@@ -268,6 +268,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         foreach ($entity->getScopes() as $scope) {
             $scopesList[] = $scope->getIdentifier();
         }
+
         return $scopesList;
     }
 
