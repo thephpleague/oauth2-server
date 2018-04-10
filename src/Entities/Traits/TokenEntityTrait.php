@@ -10,14 +10,10 @@
 namespace League\OAuth2\Server\Entities\Traits;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
-use League\OAuth2\Server\Entities\ScopeEntityInterface;
 
 trait TokenEntityTrait
 {
-    /**
-     * @var ScopeEntityInterface[]
-     */
-    protected $scopes = [];
+    use ScopeEntityTrait;
 
     /**
      * @var \DateTime
@@ -33,26 +29,6 @@ trait TokenEntityTrait
      * @var ClientEntityInterface
      */
     protected $client;
-
-    /**
-     * Associate a scope with the token.
-     *
-     * @param ScopeEntityInterface $scope
-     */
-    public function addScope(ScopeEntityInterface $scope)
-    {
-        $this->scopes[$scope->getIdentifier()] = $scope;
-    }
-
-    /**
-     * Return an array of scopes associated with the token.
-     *
-     * @return ScopeEntityInterface[]
-     */
-    public function getScopes()
-    {
-        return array_values($this->scopes);
-    }
 
     /**
      * Get the token's expiry date time.

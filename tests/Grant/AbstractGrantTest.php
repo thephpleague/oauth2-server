@@ -16,6 +16,7 @@ use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\ClientScopeEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use PHPUnit\Framework\TestCase;
@@ -442,7 +443,28 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setScopeRepository($scopeRepositoryMock);
 
-        $this->assertEquals([$scope], $grantMock->validateScopes('basic   '));
+        $this->assertEquals([$scope], $grantMock->validateScopes(new ClientEntity(), 'basic   '));
+    }
+
+    public function testValidateNonAvailableClientScopes()
+    {
+        $scope = new ScopeEntity();
+        $scope->setIdentifier('non-existing-scope');
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setScopeRepository($scopeRepositoryMock);
+
+        $client = new ClientScopeEntity();
+        $client->addScope($scope);
+
+        $this->assertEquals([], $grantMock->validateScopes($client, 'basic   '));
+
+        $backwardsCompatibleClient = new ClientEntity();
+        $this->assertEquals([$scope], $grantMock->validateScopes($backwardsCompatibleClient, 'basic   '));
     }
 
     /**
@@ -457,7 +479,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setScopeRepository($scopeRepositoryMock);
 
-        $grantMock->validateScopes('basic   ');
+        $grantMock->validateScopes(new ClientEntity(), 'basic   ');
     }
 
     public function testGenerateUniqueIdentifier()
