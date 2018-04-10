@@ -43,7 +43,7 @@ class RefreshTokenGrant extends AbstractGrant
         // Validate request
         $client = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
-        $scopes = $this->validateScopes($this->getRequestParameter(
+        $scopes = $this->validateScopes($client, $this->getRequestParameter(
             'scope',
             $request,
             implode(self::SCOPE_DELIMITER_STRING, $oldRefreshToken['scopes']))

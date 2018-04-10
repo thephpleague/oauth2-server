@@ -18,6 +18,7 @@ use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\Entities\ScopeInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -217,20 +218,26 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate scopes in the request.
      *
-     * @param string $scopes
-     * @param string $redirectUri
-     *
-     * @throws OAuthServerException
+     * @param ClientEntityInterface $client
+     * @param string                $scopes
+     * @param string                $redirectUri
      *
      * @return ScopeEntityInterface[]
+     * @throws OAuthServerException
      */
-    public function validateScopes($scopes, $redirectUri = null)
+    public function validateScopes(ClientEntityInterface $client, $scopes, $redirectUri = null)
     {
         $scopesList = array_filter(explode(self::SCOPE_DELIMITER_STRING, trim($scopes)), function ($scope) {
             return !empty($scope);
         });
 
         $validScopes = [];
+
+        if ($client instanceof ScopeInterface) {
+            if ($clientScopes = $this->getScopeIdentifiers($client)) {
+                $scopesList = array_intersect($clientScopes, $scopesList);
+            }
+        }
 
         foreach ($scopesList as $scopeItem) {
             $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeItem);
@@ -243,6 +250,22 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         return $validScopes;
+    }
+
+    /**
+     * Retrieve the scope identifiers from an Entity.
+     *
+     * @param ScopeInterface $entity
+     * @return string[]
+     */
+    private function getScopeIdentifiers(ScopeInterface $entity)
+    {
+        $scopesList = [];
+
+        foreach ($entity->getScopes() as $scope) {
+            $scopesList[] = $scope->getIdentifier();
+        }
+        return $scopesList;
     }
 
     /**
