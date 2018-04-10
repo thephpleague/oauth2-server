@@ -222,8 +222,9 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param string                $scopes
      * @param string                $redirectUri
      *
-     * @return ScopeEntityInterface[]
      * @throws OAuthServerException
+     *
+     * @return ScopeEntityInterface[]
      */
     public function validateScopes(ClientEntityInterface $client, $scopes, $redirectUri = null)
     {
@@ -257,6 +258,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Retrieve the scope identifiers from an Entity.
      *
      * @param ScopeInterface $entity
+     *
      * @return string[]
      */
     private function getScopeIdentifiers(ScopeInterface $entity)
