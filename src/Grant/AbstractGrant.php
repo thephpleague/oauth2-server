@@ -234,7 +234,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         $validScopes = [];
 
         if ($client instanceof ScopeInterface) {
-            if ($clientScopes = $this->getScopeIdentifiers($client)) {
+            $clientScopes = $this->getScopeIdentifiers($client);
+            if (count($clientScopes) > 0) {
                 $scopesList = array_intersect($clientScopes, $scopesList);
             }
         }
