@@ -201,27 +201,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     }
 
     /**
-     * Fetch the client_id parameter from the query string.
-     *
-     * @return string|null
-     * @throws OAuthServerException
-     */
-    protected function getClientIdFromRequest($request)
-    {
-        $clientId = $this->getQueryStringParameter(
-            'client_id',
-            $request,
-            $this->getServerParameter('PHP_AUTH_USER', $request)
-        );
-
-        if (is_null($clientId)) {
-            throw OAuthServerException::invalidRequest('client_id');
-        }
-
-        return $clientId;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
@@ -229,7 +208,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         return (
             array_key_exists('response_type', $request->getQueryParams())
             && $request->getQueryParams()['response_type'] === 'code'
-            && $this->getClientIdFromRequest($request) !== null
+            && isset($request->getQueryParams()['client_id'])
         );
     }
 
@@ -238,7 +217,14 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      */
     public function validateAuthorizationRequest(ServerRequestInterface $request)
     {
-        $clientId = $this->getClientIdFromRequest($request);
+        $clientId = $this->getQueryStringParameter(
+            'client_id',
+            $request,
+            $this->getServerParameter('PHP_AUTH_USER', $request)
+        );
+        if (is_null($clientId)) {
+            throw OAuthServerException::invalidRequest('client_id');
+        }
 
         $client = $this->clientRepository->getClientEntity(
             $clientId,
