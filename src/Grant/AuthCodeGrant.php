@@ -286,7 +286,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             }
 
             $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
-            
+
             if (in_array($codeChallengeMethod, ['plain', 'S256'], true) === false) {
                 throw OAuthServerException::invalidRequest(
                     'code_challenge_method',
