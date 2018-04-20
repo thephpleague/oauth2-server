@@ -222,6 +222,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $request,
             $this->getServerParameter('PHP_AUTH_USER', $request)
         );
+
         if (is_null($clientId)) {
             throw OAuthServerException::invalidRequest('client_id');
         }
@@ -239,6 +240,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
+
         if ($redirectUri !== null) {
             if (
                 is_string($client->getRedirectUri())
@@ -284,6 +286,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             }
 
             $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
+            
             if (in_array($codeChallengeMethod, ['plain', 'S256'], true) === false) {
                 throw OAuthServerException::invalidRequest(
                     'code_challenge_method',
