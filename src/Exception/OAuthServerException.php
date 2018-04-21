@@ -92,7 +92,7 @@ class OAuthServerException extends \Exception
     public static function unsupportedGrantType()
     {
         $errorMessage = 'The authorization grant type is not supported by the authorization server.';
-        $hint = 'Check the `grant_type` parameter';
+        $hint = 'Check that all required parameters have been provided';
 
         return new static($errorMessage, 2, 'unsupported_grant_type', 400, $hint);
     }
