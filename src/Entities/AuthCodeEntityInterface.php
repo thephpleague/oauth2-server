@@ -17,7 +17,7 @@ interface AuthCodeEntityInterface extends TokenInterface
     public function getRedirectUri();
 
     /**
-     * @param string|null $uri
+     * @param string $uri
      */
     public function setRedirectUri($uri);
 }

@@ -407,7 +407,10 @@ abstract class AbstractGrant implements GrantTypeInterface
         $authCode->setExpiryDateTime((new \DateTime())->add($authCodeTTL));
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
-        $authCode->setRedirectUri($redirectUri);
+
+        if ($redirectUri !== null) {
+            $authCode->setRedirectUri($redirectUri);
+        }
 
         foreach ($scopes as $scope) {
             $authCode->addScope($scope);

@@ -183,7 +183,7 @@ class AuthorizationRequest
     }
 
     /**
-     * @param string|null $state
+     * @param string $state
      */
     public function setState($state)
     {
