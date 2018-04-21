@@ -179,7 +179,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         $authorizationRequest->setRedirectUri($redirectUri);
 
         if ($stateParameter !== null) {
-            $authorizationRequest->setState($stateParameter);          
+            $authorizationRequest->setState($stateParameter);
         }
 
         $authorizationRequest->setScopes($finalizedScopes);
