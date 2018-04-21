@@ -54,7 +54,7 @@ The library uses [PHPUnit](https://phpunit.de/) for unit tests and [PHPStan](htt
 
 ```
 vendor/bin/phpunit
-vendor/bin/phpstan analyse -l 6 -c phpstan.neon src tests
+vendor/bin/phpstan analyse -l 7 -c phpstan.neon src tests
 ```
 
 ## Continous Integration

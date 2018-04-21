@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- Upgrade PHPStan checks to level 7 (PR #856)
+
 ### Added
 - Added event emitters for issued access and refresh tokens (PR #860)
 - Can now use Defuse\Crypto\Key for encryption/decryption of keys which is faster than the Cryto class (PR #812)

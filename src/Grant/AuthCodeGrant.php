@@ -276,7 +276,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $authorizationRequest->setGrantTypeId($this->getIdentifier());
         $authorizationRequest->setClient($client);
         $authorizationRequest->setRedirectUri($redirectUri);
-        $authorizationRequest->setState($stateParameter);
+
+        if ($stateParameter !== null) {
+            $authorizationRequest->setState($stateParameter);
+        }
+
         $authorizationRequest->setScopes($scopes);
 
         if ($this->enableCodeExchangeProof === true) {
