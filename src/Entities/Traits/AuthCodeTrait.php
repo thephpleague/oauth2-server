@@ -25,7 +25,7 @@ trait AuthCodeTrait
     }
 
     /**
-     * @param string|null $uri
+     * @param string $uri
      */
     public function setRedirectUri($uri)
     {
