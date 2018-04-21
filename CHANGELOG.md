@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Changed
+- Changed hint for unsupportedGrantType exception so it no longer references the grant type parameter which isn't always expected (PR #893)
 - Upgrade PHPStan checks to level 7 (PR #856)
 
 ### Added
