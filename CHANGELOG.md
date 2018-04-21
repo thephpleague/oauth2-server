@@ -6,7 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [7.0.0] - released 2018-02-17
+### Added
+- Added event emitters for issued access and refresh tokens (PR #860)
+- Can now use Defuse\Crypto\Key for encryption/decryption of keys which is faster than the Cryto class (PR #812)
+
+### Removed
+- Remove paragone/random_compat from dependencies
+
+## [7.0.0] - released 2018-02-18
 
 ### Added
 - Use PHPStan for static analysis of code (PR #848)

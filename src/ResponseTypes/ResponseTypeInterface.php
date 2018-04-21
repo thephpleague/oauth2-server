@@ -11,6 +11,7 @@
 
 namespace League\OAuth2\Server\ResponseTypes;
 
+use Defuse\Crypto\Key;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -37,7 +38,7 @@ interface ResponseTypeInterface
     /**
      * Set the encryption key
      *
-     * @param string|null $key
+     * @param string|Key|null $key
      */
     public function setEncryptionKey($key = null);
 }
