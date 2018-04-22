@@ -72,7 +72,7 @@ See the [project changelog](https://github.com/thephpleague/oauth2-server/blob/m
 
 ## Contributing
 
-Contributions are always welcome. Please see [CONTRIBUTING.md](https://github.com/thephpleague/oauth2-server/blob/master/CONTRIBUTING.md) and [CONDUCT.md](https://github.com/thephpleague/oauth2-server/blob/master/CONDUCT.md) for details.
+Contributions are always welcome. Please see [CONTRIBUTING.md](https://github.com/thephpleague/oauth2-server/blob/master/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/thephpleague/oauth2-server/blob/master/CODE_OF_CONDUCT.md) for details.
 
 ## Support
 
