@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.1.0] - released 2018-04-22
+
 ### Changed
 - Changed hint for unsupportedGrantType exception so it no longer references the grant type parameter which isn't always expected (PR #893)
 - Upgrade PHPStan checks to level 7 (PR #856)
@@ -383,6 +385,7 @@ Version 5 is a complete code rewrite.
 - First major release
 
 [Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.0.0...HEAD
+[7.1.0]: https://github.com/thephpleague/oauth2-server/compare/7.0.0...7.1.0
 [7.0.0]: https://github.com/thephpleague/oauth2-server/compare/6.1.1...7.0.0
 [6.1.1]: https://github.com/thephpleague/oauth2-server/compare/6.0.0...6.1.1
 [6.1.0]: https://github.com/thephpleague/oauth2-server/compare/6.0.2...6.1.0
