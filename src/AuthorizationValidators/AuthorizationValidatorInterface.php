@@ -14,11 +14,18 @@ use Psr\Http\Message\ServerRequestInterface;
 interface AuthorizationValidatorInterface
 {
     /**
+     * Determine the access token in the authorization header and return Token object with configured claims
+     *
+     * @param ServerRequestInterface $request
+     * @return \Lcobucci\JWT\Token
+     */
+    public function validateAuthorizationHeader(ServerRequestInterface $request);
+
+    /**
      * Determine the access token in the authorization header and append OAUth properties to the request
      *  as attributes.
      *
      * @param ServerRequestInterface $request
-     *
      * @return ServerRequestInterface
      */
     public function validateAuthorization(ServerRequestInterface $request);

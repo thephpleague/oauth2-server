@@ -53,7 +53,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function validateAuthorization(ServerRequestInterface $request)
+    public function validateAuthorizationHeader(ServerRequestInterface $request)
     {
         if ($request->hasHeader('authorization') === false) {
             throw OAuthServerException::accessDenied('Missing "Authorization" header');
@@ -82,12 +82,8 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
                 throw OAuthServerException::accessDenied('Access token has been revoked');
             }
 
-            // Return the request with additional attributes
-            return $request
-                ->withAttribute('oauth_access_token_id', $token->getClaim('jti'))
-                ->withAttribute('oauth_client_id', $token->getClaim('aud'))
-                ->withAttribute('oauth_user_id', $token->getClaim('sub'))
-                ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
+            // Return the token
+            return $token;
         } catch (\InvalidArgumentException $exception) {
             // JWT couldn't be parsed so return the request as is
             throw OAuthServerException::accessDenied($exception->getMessage());
@@ -95,5 +91,19 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             //JWR couldn't be parsed so return the request as is
             throw OAuthServerException::accessDenied('Error while decoding to JSON');
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateAuthorization(ServerRequestInterface $request)
+    {
+        $token = $this->validateAuthorizationHeader($request);
+
+        return $request
+            ->withAttribute('oauth_access_token_id', $token->getClaim('jti'))
+            ->withAttribute('oauth_client_id', $token->getClaim('aud'))
+            ->withAttribute('oauth_user_id', $token->getClaim('sub'))
+            ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
     }
 }
