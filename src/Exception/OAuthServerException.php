@@ -9,8 +9,8 @@
 
 namespace League\OAuth2\Server\Exception;
 
-use Psr\Http\Message\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequest;
 
 class OAuthServerException extends \Exception
 {
