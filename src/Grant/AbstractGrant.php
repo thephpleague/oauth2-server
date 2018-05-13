@@ -190,7 +190,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient();
+            throw OAuthServerException::invalidClient($request);
         }
 
         // If a redirect URI is provided ensure it matches what is pre-registered
@@ -201,13 +201,13 @@ abstract class AbstractGrant implements GrantTypeInterface
                 && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
             ) {
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
+                throw OAuthServerException::invalidClient($request);
             } elseif (
                 is_array($client->getRedirectUri())
                 && in_array($redirectUri, $client->getRedirectUri(), true) === false
             ) {
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
+                throw OAuthServerException::invalidClient($request);
             }
         }
 
