@@ -1,5 +1,7 @@
 <?php
 
+namespace LeagueTests\Exception;
+
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -55,7 +57,7 @@ class OAuthServerExceptionTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new ReflectionClass($grantMock);
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
 
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
