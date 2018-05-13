@@ -10,7 +10,7 @@
 namespace League\OAuth2\Server\Exception;
 
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequest;
+use Psr\Http\Message\ServerRequestInterface;
 
 class OAuthServerException extends \Exception
 {
@@ -40,7 +40,7 @@ class OAuthServerException extends \Exception
     private $payload;
 
     /**
-     * @var ServerRequest
+     * @var ServerRequestInterface
      */
     private $serverRequest;
 
@@ -93,7 +93,7 @@ class OAuthServerException extends \Exception
     /**
      * Set the server request that is responsible for generating the exception
      *
-     * @param ServerRequest $serverRequest
+     * @param ServerRequestInterface $serverRequest
      */
     public function setServerRequest($serverRequest)
     {
@@ -133,7 +133,7 @@ class OAuthServerException extends \Exception
     /**
      * Invalid client error.
      *
-     * @param ServerRequest $serverRequest
+     * @param ServerRequestInterface $serverRequest
      *
      * @return static
      */
