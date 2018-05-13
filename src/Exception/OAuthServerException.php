@@ -97,7 +97,7 @@ class OAuthServerException extends \Exception
      */
     public function setServerRequest($serverRequest)
     {
-        $this->ServerRequest = $serverRequest;
+        $this->serverRequest = $serverRequest;
     }
 
     /**
@@ -139,8 +139,6 @@ class OAuthServerException extends \Exception
      */
     public static function invalidClient($serverRequest)
     {
-        $errorMessage = 'Client authentication failed';
-
         $exception = new static('Client authentication failed', 4, 'invalid_client', 401);
 
         $exception->setServerRequest($serverRequest);
@@ -316,8 +314,8 @@ class OAuthServerException extends \Exception
         // include the "WWW-Authenticate" response header field
         // matching the authentication scheme used by the client.
         // @codeCoverageIgnoreStart
-        if ($this->errorType === 'invalid_client' && $this->ServerRequest->hasHeader('Authorization') === true) {
-            $authScheme = strpos($this->ServerRequest->getHeader('Authorization')[0], 'Bearer') === 0 ? 'Bearer' : 'Basic';
+        if ($this->errorType === 'invalid_client' && $this->serverRequest->hasHeader('Authorization') === true) {
+            $authScheme = strpos($this->serverRequest->getHeader('Authorization')[0], 'Bearer') === 0 ? 'Bearer' : 'Basic';
 
             $headers['WWW-Authenticate'] = $authScheme . ' realm="OAuth"';
         }
