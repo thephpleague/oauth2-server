@@ -1,9 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
@@ -45,7 +45,6 @@ class OAuthServerExceptionTest extends TestCase
     /**
      * Issue an invalid client exception
      *
-     * @return void
      * @throws OAuthServerException
      */
     private function issueInvalidClientException($serverRequest)

@@ -93,7 +93,7 @@ class OAuthServerException extends \Exception
     /**
      * Set the server request that is responsible for generating the exception
      *
-     * @return void
+     * @param ServerRequest $serverRequest
      */
     public function setServerRequest($serverRequest)
     {
