@@ -37,6 +37,8 @@ The following versions of PHP are supported:
 
 The `openssl` extension is also required.
 
+All HTTP messages passed to the server should be [PSR-7 compliant](https://www.php-fig.org/psr/psr-7/). This ensures interoperability between other packages and frameworks.
+
 ## Installation
 
 ```
