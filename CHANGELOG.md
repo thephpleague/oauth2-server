@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- No longer set a WWW-Authenticate header for invalid clients if the client did not send an Authorization header in the original request
+
 ## [7.1.0] - released 2018-04-22
 
 ### Changed
