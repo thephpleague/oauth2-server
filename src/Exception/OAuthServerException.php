@@ -295,6 +295,8 @@ class OAuthServerException extends \Exception
         // matching the authentication scheme used by the client.
         // @codeCoverageIgnoreStart
         if ($this->errorType === 'invalid_client' && array_key_exists('HTTP_AUTHORIZATION', $_SERVER) !== false) {
+            $authScheme = strpos($_SERVER['HTTP_AUTHORIZATION'], 'Bearer') === 0 ? 'Bearer' : 'Basic';            
+
             $headers['WWW-Authenticate'] = $authScheme . ' realm="OAuth"';
         }
         // @codeCoverageIgnoreEnd
