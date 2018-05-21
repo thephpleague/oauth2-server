@@ -9,6 +9,7 @@
 
 namespace League\OAuth2\Server;
 
+use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -68,7 +69,7 @@ class AuthorizationServer implements EmitterAwareInterface
     private $scopeRepository;
 
     /**
-     * @var string
+     * @var string|Key
      */
     private $encryptionKey;
 
@@ -84,7 +85,7 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param AccessTokenRepositoryInterface $accessTokenRepository
      * @param ScopeRepositoryInterface       $scopeRepository
      * @param CryptKey|string                $privateKey
-     * @param string                         $encryptionKey
+     * @param string|Key                     $encryptionKey
      * @param null|ResponseTypeInterface     $responseType
      */
     public function __construct(
@@ -191,7 +192,6 @@ class AuthorizationServer implements EmitterAwareInterface
             if ($tokenResponse instanceof ResponseTypeInterface) {
                 return $tokenResponse->generateHttpResponse($response);
             }
-
         }
 
         throw OAuthServerException::unsupportedGrantType();

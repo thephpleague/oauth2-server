@@ -60,7 +60,7 @@ class AuthorizationRequest
     /**
      * The state parameter on the authorization request
      *
-     * @var string
+     * @var string|null
      */
     protected $state;
 
@@ -175,7 +175,7 @@ class AuthorizationRequest
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getState()
     {

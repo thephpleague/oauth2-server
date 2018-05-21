@@ -134,6 +134,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest('code_verifier');
             }
 
+            // Validate code_verifier according to RFC-7636
+            // @see: https://tools.ietf.org/html/rfc7636#section-4.1
+            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeVerifier) !== 1) {
+                throw OAuthServerException::invalidRequest(
+                    'code_verifier',
+                    'Code Verifier must follow the specifications of RFC-7636.'
+                );
+            }
+
             switch ($authCodePayload->code_challenge_method) {
                 case 'plain':
                     if (hash_equals($codeVerifier, $authCodePayload->code_challenge) === false) {
@@ -166,6 +175,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         // Issue and persist access + refresh tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
+
+        // Send events to emitter
+        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
+        $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
 
         // Inject tokens into response type
         $responseType->setAccessToken($accessToken);
@@ -209,6 +222,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $request,
             $this->getServerParameter('PHP_AUTH_USER', $request)
         );
+
         if (is_null($clientId)) {
             throw OAuthServerException::invalidRequest('client_id');
         }
@@ -222,28 +236,29 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient();
+            throw OAuthServerException::invalidClient($request);
         }
 
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
+
         if ($redirectUri !== null) {
             if (
                 is_string($client->getRedirectUri())
                 && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
             ) {
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
+                throw OAuthServerException::invalidClient($request);
             } elseif (
                 is_array($client->getRedirectUri())
-                && in_array($redirectUri, $client->getRedirectUri()) === false
+                && in_array($redirectUri, $client->getRedirectUri(), true) === false
             ) {
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
+                throw OAuthServerException::invalidClient($request);
             }
-	} elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
-	    || empty($client->getRedirectUri())) {
+        } elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
+            || empty($client->getRedirectUri())) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient();
+            throw OAuthServerException::invalidClient($request);
         } else {
             $redirectUri = is_array($client->getRedirectUri())
                 ? $client->getRedirectUri()[0]
@@ -261,7 +276,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $authorizationRequest->setGrantTypeId($this->getIdentifier());
         $authorizationRequest->setClient($client);
         $authorizationRequest->setRedirectUri($redirectUri);
-        $authorizationRequest->setState($stateParameter);
+
+        if ($stateParameter !== null) {
+            $authorizationRequest->setState($stateParameter);
+        }
+
         $authorizationRequest->setScopes($scopes);
 
         if ($this->enableCodeExchangeProof === true) {
@@ -270,18 +289,21 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest('code_challenge');
             }
 
-            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeChallenge) !== 1) {
-                throw OAuthServerException::invalidRequest(
-                    'code_challenge',
-                    'The code_challenge must be between 43 and 128 characters'
-                );
-            }
-
             $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
-            if (in_array($codeChallengeMethod, ['plain', 'S256']) === false) {
+
+            if (in_array($codeChallengeMethod, ['plain', 'S256'], true) === false) {
                 throw OAuthServerException::invalidRequest(
                     'code_challenge_method',
                     'Code challenge method must be `plain` or `S256`'
+                );
+            }
+
+            // Validate code_challenge according to RFC-7636
+            // @see: https://tools.ietf.org/html/rfc7636#section-4.2
+            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeChallenge) !== 1) {
+                throw OAuthServerException::invalidRequest(
+                    'code_challenged',
+                    'Code challenge must follow the specifications of RFC-7636.'
                 );
             }
 

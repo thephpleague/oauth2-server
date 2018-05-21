@@ -11,6 +11,7 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -136,7 +137,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * Set the encryption key
      *
-     * @param string|null $key
+     * @param string|Key|null $key
      */
     public function setEncryptionKey($key = null);
 }

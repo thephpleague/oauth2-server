@@ -20,9 +20,7 @@ class BearerResponseTypeTest extends TestCase
 {
     public function testGenerateHttpResponse()
     {
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-
-        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
@@ -64,9 +62,7 @@ class BearerResponseTypeTest extends TestCase
 
     public function testGenerateHttpResponseWithExtraParams()
     {
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-
-        $responseType = new BearerTokenResponseWithParams($accessTokenRepositoryMock);
+        $responseType = new BearerTokenResponseWithParams();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
@@ -111,10 +107,7 @@ class BearerResponseTypeTest extends TestCase
 
     public function testDetermineAccessTokenInHeaderValidToken()
     {
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
-
-        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
@@ -158,9 +151,8 @@ class BearerResponseTypeTest extends TestCase
     public function testDetermineAccessTokenInHeaderInvalidJWT()
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
 
-        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
@@ -247,9 +239,7 @@ class BearerResponseTypeTest extends TestCase
 
     public function testDetermineAccessTokenInHeaderInvalidToken()
     {
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-
-        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
@@ -273,9 +263,7 @@ class BearerResponseTypeTest extends TestCase
 
     public function testDetermineMissingBearerInHeader()
     {
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-
-        $responseType = new BearerTokenResponse($accessTokenRepositoryMock);
+        $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 

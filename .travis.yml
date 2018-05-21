@@ -1,10 +1,15 @@
 language: php
 
+dist: trusty
 sudo: false
 
 cache:
   directories:
-  - vendor
+    - vendor
+
+env:
+  - DEPENDENCIES=""
+  - DEPENDENCIES="--prefer-lowest --prefer-stable"
 
 php:
   - 7.0
@@ -12,11 +17,15 @@ php:
   - 7.2
 
 install:
-  - travis_retry composer install --no-interaction --prefer-source
+  - composer update --no-interaction --prefer-dist $DEPENDENCIES
 
 script:
-  - vendor/bin/phpunit
-  - vendor/bin/phpstan analyse -l 6 src
+  - vendor/bin/phpunit --coverage-clover=coverage.clover
+  - vendor/bin/phpstan analyse -l 7 -c phpstan.neon src tests
+
+after_script:
+    - wget https://scrutinizer-ci.com/ocular.phar
+    - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
 
 branches:
   only:
