@@ -16,5 +16,5 @@ interface AccessTokenEntityInterface extends TokenInterface
     /**
      * Generate a string representation from the access token
      */
-    public function convertToAccessToken(CryptKey $privateKey): string;
+    public function convertToAccessToken(CryptKey $privateKey);
 }
