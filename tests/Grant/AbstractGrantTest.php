@@ -122,7 +122,7 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
 
-        $result = $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
+        $result = $validateClientMethod->invoke($grantMock, $serverRequest);
         $this->assertEquals($client, $result);
     }
 

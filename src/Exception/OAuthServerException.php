@@ -10,6 +10,7 @@
 namespace League\OAuth2\Server\Exception;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class OAuthServerException extends \Exception
 {
@@ -37,6 +38,11 @@ class OAuthServerException extends \Exception
      * @var array
      */
     private $payload;
+
+    /**
+     * @var ServerRequestInterface
+     */
+    private $serverRequest;
 
     /**
      * Throw a new exception.
@@ -85,6 +91,16 @@ class OAuthServerException extends \Exception
     }
 
     /**
+     * Set the server request that is responsible for generating the exception
+     *
+     * @param ServerRequestInterface $serverRequest
+     */
+    public function setServerRequest($serverRequest)
+    {
+        $this->serverRequest = $serverRequest;
+    }
+
+    /**
      * Unsupported grant type error.
      *
      * @return static
@@ -117,13 +133,17 @@ class OAuthServerException extends \Exception
     /**
      * Invalid client error.
      *
+     * @param ServerRequestInterface $serverRequest
+     *
      * @return static
      */
-    public static function invalidClient()
+    public static function invalidClient($serverRequest)
     {
-        $errorMessage = 'Client authentication failed';
+        $exception = new static('Client authentication failed', 4, 'invalid_client', 401);
 
-        return new static($errorMessage, 4, 'invalid_client', 401);
+        $exception->setServerRequest($serverRequest);
+
+        return $exception;
     }
 
     /**
@@ -294,13 +314,9 @@ class OAuthServerException extends \Exception
         // include the "WWW-Authenticate" response header field
         // matching the authentication scheme used by the client.
         // @codeCoverageIgnoreStart
-        if ($this->errorType === 'invalid_client') {
-            $authScheme = 'Basic';
-            if (array_key_exists('HTTP_AUTHORIZATION', $_SERVER) !== false
-                && strpos($_SERVER['HTTP_AUTHORIZATION'], 'Bearer') === 0
-            ) {
-                $authScheme = 'Bearer';
-            }
+        if ($this->errorType === 'invalid_client' && $this->serverRequest->hasHeader('Authorization') === true) {
+            $authScheme = strpos($this->serverRequest->getHeader('Authorization')[0], 'Bearer') === 0 ? 'Bearer' : 'Basic';
+
             $headers['WWW-Authenticate'] = $authScheme . ' realm="OAuth"';
         }
         // @codeCoverageIgnoreEnd

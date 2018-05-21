@@ -131,7 +131,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient();
+            throw OAuthServerException::invalidClient($request);
         }
 
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
@@ -141,18 +141,18 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
             ) {
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
+                throw OAuthServerException::invalidClient($request);
             } elseif (
                 is_array($client->getRedirectUri())
                 && in_array($redirectUri, $client->getRedirectUri(), true) === false
             ) {
                 $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
+                throw OAuthServerException::invalidClient($request);
             }
         } elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
             || empty($client->getRedirectUri())) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient();
+            throw OAuthServerException::invalidClient($request);
         } else {
             $redirectUri = is_array($client->getRedirectUri())
                 ? $client->getRedirectUri()[0]
