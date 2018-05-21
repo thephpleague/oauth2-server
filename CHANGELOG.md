@@ -390,6 +390,7 @@ Version 5 is a complete code rewrite.
 - First major release
 
 [Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.0.0...HEAD
+[7.1.1]: https://github.com/thephpleague/oauth2-server/compare/7.1.0...7.1.1
 [7.1.0]: https://github.com/thephpleague/oauth2-server/compare/7.0.0...7.1.0
 [7.0.0]: https://github.com/thephpleague/oauth2-server/compare/6.1.1...7.0.0
 [6.1.1]: https://github.com/thephpleague/oauth2-server/compare/6.0.0...6.1.1
