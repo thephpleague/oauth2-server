@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- The `invalidClient()` function accepts a PSR-7 compliant `$serverRequest` argument to avoid accessing the `$_SERVER` global variable and improve testing (PR #899) 
+
 ## [7.1.1] - released 2018-05-21
 
 ### Fixed
@@ -81,8 +84,6 @@ To address feedback from the security release the following change has been made
 
 ## [5.1.4] - 2017-07-01
 
-- Fixed multiple security vulnerabilities as a result of a security audit paid for by the [Mozilla Secure Open Source Fund](https://wiki.mozilla.org/MOSS/Secure_Open_Source). All users of this library are encouraged to update as soon as possible to this version or version 6.0 or greater.
-	- It is recommended on each `AuthorizationServer` instance you set the `setEncryptionKey()`. This will result in stronger encryption being used. If this method is not set messages will be sent to the defined error handling routines (using `error_log`). Please see the examples and documentation for examples.
 - TravisCI now tests PHP 7.1 (Issue #671)
 - Fix middleware example fatal error (Issue #682)
 - Fix typo in the first README sentence (Issue #690)
@@ -427,6 +428,8 @@ Version 5 is a complete code rewrite.
 [3.1.0]: https://github.com/thephpleague/oauth2-server/compare/3.0.1...3.1.0
 [3.0.1]: https://github.com/thephpleague/oauth2-server/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/thephpleague/oauth2-server/compare/2.1.1...3.0.0
+[2.1.1]: https://github.com/thephpleague/oauth2-server/compare/2.1.0...2.1.1
+[2.1.0]: https://github.com/thephpleague/oauth2-server/compare/2.0.5...2.1.0
 [2.1.1]: https://github.com/thephpleague/oauth2-server/compare/2.1.0...2.1.1
 [2.1.0]: https://github.com/thephpleague/oauth2-server/compare/2.0.5...2.1.0
 [2.0.5]: https://github.com/thephpleague/oauth2-server/compare/2.0.4...2.0.5
