@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Changed
+- Replace `convertToJWT()` interface with a more generic `convertToAccessToken` to improve extensibility (PR #874)
 - The `invalidClient()` function accepts a PSR-7 compliant `$serverRequest` argument to avoid accessing the `$_SERVER` global variable and improve testing (PR #899) 
 
 ## [7.1.1] - released 2018-05-21
