@@ -55,6 +55,18 @@ trait TokenEntityTrait
     }
 
     /**
+     * Return an array of scope identifiers associated with the token.
+     *
+     * @return string[]
+     */
+    public function getScopeIdentifiers()
+    {
+        return array_map(function($scope) { 
+            return $scope->getIdentifier(); 
+        }, $this->getScopes());
+    }
+
+    /**
      * Get the token's expiry date time.
      *
      * @return \DateTime

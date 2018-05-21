@@ -9,7 +9,7 @@
 
 namespace League\OAuth2\Server\Entities;
 
-interface ScopeEntityInterface extends \JsonSerializable
+interface ScopeEntityInterface
 {
     /**
      * Get the scope's identifier.

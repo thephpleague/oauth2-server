@@ -80,4 +80,11 @@ interface TokenInterface
      * @return ScopeEntityInterface[]
      */
     public function getScopes();
+    
+    /**
+     * Return an array of scope identifiers associated with the token.
+     *
+     * @return string[]
+     */
+    public function getScopeIdentifiers();
 }
