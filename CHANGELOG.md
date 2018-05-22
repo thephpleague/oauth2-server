@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- Catch and handle `BadMethodCallException` from the `verify()` method of the JWT token in the `validateAuthorization` method (PR #904)
+
 ## [7.1.1] - released 2018-05-21
 
 ### Fixed
