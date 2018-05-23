@@ -14,7 +14,12 @@ use League\OAuth2\Server\CryptKey;
 interface AccessTokenEntityInterface extends TokenInterface
 {
     /**
-     * Generate a string representation from the access token
+     * Set a private key used to encrypt the access token.
      */
-    public function convertToAccessToken(CryptKey $privateKey);
+    public function setPrivateKey(CryptKey $privateKey);
+
+    /**
+     * Generate a string representation of the access token.
+     */
+    public function __toString();
 }

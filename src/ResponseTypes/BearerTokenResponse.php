@@ -27,7 +27,7 @@ class BearerTokenResponse extends AbstractResponseType
         $responseParams = [
             'token_type'   => 'Bearer',
             'expires_in'   => $expireDateTime - (new \DateTime())->getTimestamp(),
-            'access_token' => $this->accessToken->convertToAccessToken($this->privateKey),
+            'access_token' => (string) $this->accessToken,
         ];
 
         if ($this->refreshToken instanceof RefreshTokenEntityInterface) {

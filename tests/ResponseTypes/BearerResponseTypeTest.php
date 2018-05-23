@@ -35,6 +35,7 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
@@ -77,6 +78,7 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
@@ -119,6 +121,7 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setUserIdentifier(123);
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
@@ -164,6 +167,7 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setUserIdentifier(123);
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
@@ -206,6 +210,7 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setUserIdentifier(123);
         $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
