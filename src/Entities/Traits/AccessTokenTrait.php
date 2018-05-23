@@ -20,7 +20,7 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
 trait AccessTokenTrait
 {
     /**
-     * @var CryptKey $privateKey
+     * @var CryptKey
      */
     private $privateKey;
 
