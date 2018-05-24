@@ -20,13 +20,26 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
 trait AccessTokenTrait
 {
     /**
+     * @var CryptKey
+     */
+    private $privateKey;
+
+    /**
+     * Set the private key used to encrypt this access token.
+     */
+    public function setPrivateKey(CryptKey $privateKey)
+    {
+        $this->privateKey = $privateKey;
+    }
+
+    /**
      * Generate a JWT from the access token
      *
      * @param CryptKey $privateKey
      *
      * @return Token
      */
-    public function convertToJWT(CryptKey $privateKey)
+    private function convertToJWT(CryptKey $privateKey)
     {
         return (new Builder())
             ->setAudience($this->getClient()->getIdentifier())
@@ -38,6 +51,14 @@ trait AccessTokenTrait
             ->set('scopes', $this->getScopes())
             ->sign(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()))
             ->getToken();
+    }
+
+    /**
+     * Generate a string representation from the access token
+     */
+    public function __toString()
+    {
+        return (string) $this->convertToJWT($this->privateKey);
     }
 
     /**
