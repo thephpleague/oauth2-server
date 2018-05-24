@@ -3,7 +3,6 @@
 namespace LeagueTests\AuthorizationValidators;
 
 use Lcobucci\JWT\Builder;
-use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
