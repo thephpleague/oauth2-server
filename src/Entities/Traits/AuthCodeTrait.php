@@ -17,7 +17,7 @@ trait AuthCodeTrait
     protected $redirectUri;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getRedirectUri()
     {

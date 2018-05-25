@@ -18,10 +18,13 @@ use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
+class ImplicitGrantTest extends TestCase
 {
+    const DEFAULT_SCOPE = 'basic';
+
     /**
      * CryptTrait stub
      */
@@ -96,6 +99,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = new ServerRequest(
             [],
@@ -112,7 +116,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
     public function testValidateAuthorizationRequestRedirectUriArray()
@@ -130,6 +134,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = new ServerRequest(
             [],
@@ -146,7 +151,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
     /**
@@ -283,10 +288,9 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     /**
@@ -307,7 +311,6 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
         $grant->completeAuthorizationRequest($authRequest);
@@ -329,10 +332,9 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     /**
@@ -354,7 +356,6 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
         $grant->completeAuthorizationRequest($authRequest);
@@ -379,7 +380,6 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
         $grant->completeAuthorizationRequest($authRequest);

@@ -1,7 +1,7 @@
 Thanks for contributing to this project.
 
 
-**Please submit your pull request against the `develop` branch only.**
+**Please submit your pull request against the `master` branch only.**
 
 
 Please ensure that you run `phpunit` from the project root after you've made any changes.

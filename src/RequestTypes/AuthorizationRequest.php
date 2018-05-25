@@ -53,14 +53,14 @@ class AuthorizationRequest
     /**
      * The redirect URI used in the request
      *
-     * @var string
+     * @var string|null
      */
     protected $redirectUri;
 
     /**
      * The state parameter on the authorization request
      *
-     * @var string
+     * @var string|null
      */
     protected $state;
 
@@ -159,7 +159,7 @@ class AuthorizationRequest
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getRedirectUri()
     {
@@ -167,7 +167,7 @@ class AuthorizationRequest
     }
 
     /**
-     * @param string $redirectUri
+     * @param string|null $redirectUri
      */
     public function setRedirectUri($redirectUri)
     {
@@ -175,7 +175,7 @@ class AuthorizationRequest
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getState()
     {

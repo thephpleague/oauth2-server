@@ -17,7 +17,6 @@ use OAuth2ServerExamples\Repositories\ScopeRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Zend\Diactoros\Stream;
 
 include __DIR__ . '/../vendor/autoload.php';
 
@@ -33,7 +32,6 @@ $app = new App([
         $refreshTokenRepository = new RefreshTokenRepository();
 
         $privateKeyPath = 'file://' . __DIR__ . '/../private.key';
-        $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
 
         // Setup the authorization server
         $server = new AuthorizationServer(
@@ -41,7 +39,7 @@ $app = new App([
             $accessTokenRepository,
             $scopeRepository,
             $privateKeyPath,
-            $publicKeyPath
+            'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'
         );
 
         // Enable the refresh token grant on the server
@@ -66,10 +64,9 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
     } catch (\Exception $exception) {
-        $body = new Stream('php://temp', 'r+');
-        $body->write($exception->getMessage());
+        $response->getBody()->write($exception->getMessage());
 
-        return $response->withStatus(500)->withBody($body);
+        return $response->withStatus(500);
     }
 });
 

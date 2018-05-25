@@ -9,6 +9,7 @@
 
 namespace League\OAuth2\Server\Entities;
 
+use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKey;
 
 interface AccessTokenEntityInterface extends TokenInterface
@@ -18,7 +19,7 @@ interface AccessTokenEntityInterface extends TokenInterface
      *
      * @param CryptKey $privateKey
      *
-     * @return string
+     * @return Token
      */
     public function convertToJWT(CryptKey $privateKey);
 }

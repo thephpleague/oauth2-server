@@ -8,10 +8,11 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
-class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
+class ResourceServerMiddlewareTest extends TestCase
 {
     public function testValidResponse()
     {

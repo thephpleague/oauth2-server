@@ -13,12 +13,16 @@ use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
+use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class PasswordGrantTest extends \PHPUnit_Framework_TestCase
+class PasswordGrantTest extends TestCase
 {
+    const DEFAULT_SCOPE = 'basic';
+
     public function testGetIdentifier()
     {
         $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
@@ -46,13 +50,16 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
+        $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new PasswordGrant($userRepositoryMock, $refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(
@@ -67,8 +74,8 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $responseType = new StubResponseType();
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
 
-        $this->assertTrue($responseType->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($responseType->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
     /**

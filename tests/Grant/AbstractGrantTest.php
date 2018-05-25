@@ -3,7 +3,6 @@
 namespace LeagueTests\Grant;
 
 use League\Event\Emitter;
-use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
@@ -19,16 +18,15 @@ use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class AbstractGrantTest extends \PHPUnit_Framework_TestCase
+class AbstractGrantTest extends TestCase
 {
     public function testGetSet()
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setPrivateKey(new CryptKey(__DIR__ . '/../Stubs/private.key'));
-        $grantMock->setPublicKey(new CryptKey(__DIR__ . '/../Stubs/public.key'));
         $grantMock->setEmitter(new Emitter());
     }
 
@@ -344,7 +342,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $accessToken = new AccessTokenEntity();
         /** @var RefreshTokenEntityInterface $refreshToken */
         $refreshToken = $issueRefreshTokenMethod->invoke($grantMock, $accessToken);
-        $this->assertTrue($refreshToken instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $refreshToken);
         $this->assertEquals($accessToken, $refreshToken->getAccessToken());
     }
 
@@ -369,7 +367,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
             123,
             [new ScopeEntity()]
         );
-        $this->assertTrue($accessToken instanceof AccessTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $accessToken);
     }
 
     public function testIssueAuthCode()
@@ -385,7 +383,8 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $issueAuthCodeMethod = $abstractGrantReflection->getMethod('issueAuthCode');
         $issueAuthCodeMethod->setAccessible(true);
 
-        $this->assertTrue(
+        $this->assertInstanceOf(
+            AuthCodeEntityInterface::class,
             $issueAuthCodeMethod->invoke(
                 $grantMock,
                 new \DateInterval('PT1H'),
@@ -393,7 +392,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
                 123,
                 'http://foo/bar',
                 [new ScopeEntity()]
-            ) instanceof AuthCodeEntityInterface
+            )
         );
     }
 
@@ -469,7 +468,7 @@ class AbstractGrantTest extends \PHPUnit_Framework_TestCase
         $method = $abstractGrantReflection->getMethod('generateUniqueIdentifier');
         $method->setAccessible(true);
 
-        $this->assertTrue(is_string($method->invoke($grantMock)));
+        $this->assertInternalType('string', $method->invoke($grantMock));
     }
 
     public function testCanRespondToAuthorizationRequest()

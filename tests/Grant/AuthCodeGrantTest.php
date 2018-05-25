@@ -2,7 +2,6 @@
 
 namespace LeagueTests\Grant;
 
-use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -23,14 +22,21 @@ use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
+class AuthCodeGrantTest extends TestCase
 {
+    const DEFAULT_SCOPE = 'basic';
+
     /**
      * @var CryptTraitStub
      */
     protected $cryptStub;
+
+    const CODE_VERIFIER = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
+
+    const CODE_CHALLENGE = 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM';
 
     public function setUp()
     {
@@ -77,8 +83,13 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -86,6 +97,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = new ServerRequest(
             [],
@@ -102,7 +115,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
     public function testValidateAuthorizationRequestRedirectUriArray()
@@ -112,12 +125,18 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = new ServerRequest(
             [],
@@ -134,10 +153,53 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
     public function testValidateAuthorizationRequestCodeChallenge()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+        $grant->enableCodeExchangeProof();
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type'  => 'code',
+                'client_id'      => 'foo',
+                'redirect_uri'   => 'http://foo/bar',
+                'code_challenge' => self::CODE_CHALLENGE,
+            ]
+        );
+
+        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
+    }
+
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooShort()
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -164,11 +226,85 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'response_type'  => 'code',
                 'client_id'      => 'foo',
                 'redirect_uri'   => 'http://foo/bar',
-                'code_challenge' => 'FOOBAR',
+                'code_challenge' => str_repeat('A', 42),
             ]
         );
 
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        $grant->validateAuthorizationRequest($request);
+    }
+
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooLong()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+        $grant->enableCodeExchangeProof();
+        $grant->setClientRepository($clientRepositoryMock);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type'  => 'code',
+                'client_id'      => 'foo',
+                'redirect_uri'   => 'http://foo/bar',
+                'code_challenge' => str_repeat('A', 129),
+            ]
+        );
+
+        $grant->validateAuthorizationRequest($request);
+    }
+
+    /**
+     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     */
+    public function testValidateAuthorizationRequestCodeChallengeInvalidCharacters()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+        $grant->enableCodeExchangeProof();
+        $grant->setClientRepository($clientRepositoryMock);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type'  => 'code',
+                'client_id'      => 'foo',
+                'redirect_uri'   => 'http://foo/bar',
+                'code_challenge' => str_repeat('A', 42) . '!',
+            ]
+        );
+
+        $grant->validateAuthorizationRequest($request);
     }
 
     /**
@@ -318,6 +454,10 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -325,6 +465,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
         $grant->enableCodeExchangeProof();
         $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = new ServerRequest(
             [],
@@ -355,6 +497,10 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -362,6 +508,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         );
         $grant->enableCodeExchangeProof();
         $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = new ServerRequest(
             [],
@@ -399,11 +547,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     /**
@@ -426,9 +572,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $grant->completeAuthorizationRequest($authRequest);
     }
@@ -463,8 +607,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -497,8 +640,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     public function testRespondToAccessTokenRequestCodeChallengePlain()
@@ -532,8 +675,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -548,7 +690,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
-                'code_verifier' => 'foobar',
+                'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
@@ -558,7 +700,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
                             'redirect_uri'          => 'http://foo/bar',
-                            'code_challenge'        => 'foobar',
+                            'code_challenge'        => self::CODE_VERIFIER,
                             'code_challenge_method' => 'plain',
                         ]
                     )
@@ -569,8 +711,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     public function testRespondToAccessTokenRequestCodeChallengeS256()
@@ -604,8 +746,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -620,7 +761,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
-                'code_verifier' => 'foobar',
+                'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
@@ -630,7 +771,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
                             'redirect_uri'          => 'http://foo/bar',
-                            'code_challenge'        => urlencode(base64_encode(hash('sha256', 'foobar'))),
+                            'code_challenge'        => self::CODE_CHALLENGE,
                             'code_challenge_method' => 'S256',
                         ]
                     )
@@ -641,8 +782,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     /**
@@ -662,7 +803,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -709,7 +850,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             new \DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -762,8 +903,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -808,8 +948,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -872,8 +1011,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -933,8 +1071,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -994,8 +1131,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1053,8 +1189,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1069,7 +1204,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
                 'redirect_uri'  => 'http://foo/bar',
-                'code_verifier' => 'nope',
+                'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
                     json_encode(
                         [
@@ -1126,8 +1261,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1164,7 +1298,151 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Failed to verify `code_verifier`.');
+            $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
+        }
+    }
+
+    public function testRespondToAccessTokenRequestMalformedCodeVerifierS256WithInvalidChars()
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+        $grant->enableCodeExchangeProof();
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => 'http://foo/bar',
+                'code_verifier' => 'dqX7C-RbqjHYtytmhGTigKdZCXfxq-+xbsk9_GxUcaE', // Malformed code. Contains `+`.
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode(
+                        [
+                            'auth_code_id'          => uniqid(),
+                            'expire_time'           => time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => 'http://foo/bar',
+                            'code_challenge'        => self::CODE_CHALLENGE,
+                            'code_challenge_method' => 'S256',
+                        ]
+                    )
+                ),
+            ]
+        );
+
+        try {
+            /* @var StubResponseType $response */
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        } catch (OAuthServerException $e) {
+            $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
+        }
+    }
+
+    public function testRespondToAccessTokenRequestMalformedCodeVerifierS256WithInvalidLength()
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+        $grant->enableCodeExchangeProof();
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => 'http://foo/bar',
+                'code_verifier' => 'dqX7C-RbqjHY', // Malformed code. Invalid length.
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode(
+                        [
+                            'auth_code_id'          => uniqid(),
+                            'expire_time'           => time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => 'http://foo/bar',
+                            'code_challenge'        => 'R7T1y1HPNFvs1WDCrx4lfoBS6KD2c71pr8OHvULjvv8',
+                            'code_challenge_method' => 'S256',
+                        ]
+                    )
+                ),
+            ]
+        );
+
+        try {
+            /* @var StubResponseType $response */
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        } catch (OAuthServerException $e) {
+            $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
         }
     }
 
@@ -1199,8 +1477,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1259,11 +1536,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     /**
@@ -1287,11 +1562,9 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     /**
@@ -1316,10 +1589,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
             new \DateInterval('PT10M')
         );
 
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     public function testRefreshTokenRepositoryUniqueConstraintCheck()
@@ -1353,8 +1623,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1387,8 +1656,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     /**
@@ -1425,8 +1694,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1459,8 +1727,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     /**
@@ -1497,8 +1765,7 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1531,8 +1798,8 @@ class AuthCodeGrantTest extends \PHPUnit_Framework_TestCase
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
-        $this->assertTrue($response->getAccessToken() instanceof AccessTokenEntityInterface);
-        $this->assertTrue($response->getRefreshToken() instanceof RefreshTokenEntityInterface);
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
     /**
