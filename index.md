@@ -29,7 +29,7 @@ This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](ht
 
 ## Changelog
 
-The full changelog can be viewed here - [https://github.com/thephpleague/oauth2-server/releases](https://github.com/thephpleague/oauth2-server/releases).
+Please see the [project's changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md) for a complete history of changes to this library.
 
 The latest release is [![GitHub tag](https://img.shields.io/github/tag/thephpleague/oauth2-server.svg)](https://github.com/thephpleague/oauth2-server/releases)
 
