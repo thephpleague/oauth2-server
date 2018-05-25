@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Function `hasRedirect()` added to `OAuthServerException` (PR #703)
+
 ### Fixed
 - Catch and handle `BadMethodCallException` from the `verify()` method of the JWT token in the `validateAuthorization` method (PR #904)
 
