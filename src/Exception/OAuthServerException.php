@@ -304,6 +304,21 @@ class OAuthServerException extends \Exception
     }
 
     /**
+     * Check if the exception has an associated redirect URI.
+     *
+     * Returns whether the exception includes a redirect, since
+     * getHttpStatusCode() doesn't return a 302 when there's a
+     * redirect enabled. This helps when you want to override local
+     * error pages but want to let redirects through.
+     *
+     * @return bool
+     */
+    public function hasRedirect()
+    {
+        return $this->redirectUri !== null;
+    }
+
+    /**
      * Returns the HTTP status code to send when the exceptions is output.
      *
      * @return int
