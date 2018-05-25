@@ -12,9 +12,10 @@ This library uses key cryptography in order to encrypt and decrypt, as well as v
 
 The following versions of PHP are supported:
 
-* PHP 5.6
 * PHP 7.0
 * PHP 7.1
 * PHP 7.2
 
 The `openssl` PHP extension is required.
+
+All HTTP messages passed to the server should be [PSR-7 compliant](https://www.php-fig.org/psr/psr-7/). This ensures interoperability between other packages and frameworks.
