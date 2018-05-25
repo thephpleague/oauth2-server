@@ -22,7 +22,7 @@ The repositories are expected to return (on success) instances of [entity interf
 
 ## Generating public and private keys
 
-To generate the private key run this command on the terminal:
+The public/private key pair is used to sign and verify JWTs tramsitted. To generate the private key run this command on the terminal:
 
 ~~~ shell
 openssl genrsa -out private.key 2048
@@ -54,9 +54,9 @@ The public key should be distributed to any services (for example resource serve
 
 ## Generating encryption keys
 
-The `AuthorizationServer` accepts two kinds of encryption keys, a `string` password or a `\Defuse\Crypto\Key` object from the [Secure PHP Encryption Library](https://github.com/defuse/php-encryption).
+Encryption keys are used to encrypt authorization and refresh codes. The `AuthorizationServer` accepts two kinds of encryption keys, a `string` password or a `\Defuse\Crypto\Key` object from the [Secure PHP Encryption Library](https://github.com/defuse/php-encryption).
 
-### `string` password
+### string password
 
 A `string` password can vary in strength depending on the password chosen. To turn it into a strong encryption key the [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2) key derivation function is used.
 This function derives an encryption key from a password and is slow by design. It uses a lot of CPU resources for a fraction of a second, applying key stretching to the password to reduce vulnerability to brute force attacks.
@@ -67,7 +67,7 @@ To generate a `string` password for the `AuthorizationServer`, you can run the f
 php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
 ~~~
 
-### `Key` object
+### Key object
 
 A `\Defuse\Crypto\Key` is a strong encryption key. This removes the need to use a slow key derivation function, reducing encryption and decryption times compared to using a `string` password.
 
