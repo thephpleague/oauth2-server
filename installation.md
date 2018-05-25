@@ -22,7 +22,7 @@ The repositories are expected to return (on success) instances of [entity interf
 
 ## Generating public and private keys
 
-The public/private key pair is used to sign and verify JWTs tramsitted. To generate the private key run this command on the terminal:
+The public/private key pair is used to sign and verify JWTs tramsitted. The _Authorization Server_ possesses the public key to sign tokens and the _Resource Server_ possesses the corresponding private key to verify the signatures. To generate the private key run this command on the terminal:
 
 ~~~ shell
 openssl genrsa -out private.key 2048
