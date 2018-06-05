@@ -1,6 +1,6 @@
 <?php
 /**
- * Public/private key encryption.
+ * Encrypt/decrypt with encryptionKey.
  *
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -22,7 +22,7 @@ trait CryptTrait
     protected $encryptionKey;
 
     /**
-     * Encrypt data with a private key.
+     * Encrypt data with encryptionKey.
      *
      * @param string $unencryptedData
      *
@@ -44,7 +44,7 @@ trait CryptTrait
     }
 
     /**
-     * Decrypt data with a public key.
+     * Decrypt data with encryptionKey.
      *
      * @param string $encryptedData
      *
