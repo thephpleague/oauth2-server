@@ -362,10 +362,6 @@ abstract class AbstractGrant implements GrantTypeInterface
         $accessToken->setUserIdentifier($userIdentifier);
         $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
 
-        foreach ($scopes as $scope) {
-            $accessToken->addScope($scope);
-        }
-
         while ($maxGenerationAttempts-- > 0) {
             $accessToken->setIdentifier($this->generateUniqueIdentifier());
             try {
