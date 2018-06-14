@@ -206,13 +206,11 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Validate redirectUri from the request.
      * If a redirect URI is provided ensure it matches what is pre-registered
      *
-     * @param string $redirectUri
-     * @param ClientEntityInterface $client
+     * @param string                 $redirectUri
+     * @param ClientEntityInterface  $client
      * @param ServerRequestInterface $request
      *
      * @throws OAuthServerException
-     *
-     * @return void
      */
     protected function validateRedirectUri(
         string $redirectUri,
