@@ -121,7 +121,7 @@ class OAuthServerException extends \Exception
      */
     public static function invalidClient()
     {
-        $errorMessage = 'Client authentication failed';
+        $errorMessage = 'Client authentication failed, the redirect uri might not match';
 
         return new static($errorMessage, 4, 'invalid_client', 401);
     }
