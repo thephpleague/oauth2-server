@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Changed
-- Refactoring: extracted `validateRedirectUri` method to remove 3 code duplicates (PR #912)
+- Added new`validateRedirectUri` method AbstractGrant to remove three instances of code duplication (PR #912)
+- Allow 640 as a crypt key file permission (PR #917)
 
 ### Added
 - Function `hasRedirect()` added to `OAuthServerException` (PR #703)
