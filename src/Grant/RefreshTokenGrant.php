@@ -161,6 +161,11 @@ class RefreshTokenGrant extends AbstractGrant
 
         $oldAccessToken = $oldRefreshToken->getAccessToken();
 
+        // Ensure the old refresh token has a valid access token referred by it
+        if (($oldAccessToken instanceof AccessTokenEntity) === false) {
+            throw new Exception\InvalidRefreshException();
+        }
+
         // Get the scopes for the original session
         $session = $oldAccessToken->getSession();
         $scopes = $this->formatScopes($session->getScopes());
