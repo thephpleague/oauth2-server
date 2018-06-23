@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.2.0] - released 2018-06-23
+
 ### Changed
 - Added new`validateRedirectUri` method AbstractGrant to remove three instances of code duplication (PR #912)
 - Allow 640 as a crypt key file permission (PR #917)
@@ -408,7 +410,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.1.1...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.2.0...HEAD
+[7.2.0]: https://github.com/thephpleague/oauth2-server/compare/7.1.1...7.2.0
 [7.1.1]: https://github.com/thephpleague/oauth2-server/compare/7.1.0...7.1.1
 [7.1.0]: https://github.com/thephpleague/oauth2-server/compare/7.0.0...7.1.0
 [7.0.0]: https://github.com/thephpleague/oauth2-server/compare/6.1.1...7.0.0
