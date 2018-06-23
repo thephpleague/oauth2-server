@@ -2,7 +2,6 @@
 
 namespace LeagueTests\Grant;
 
-use League\Event\Emitter;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
