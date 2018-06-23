@@ -107,6 +107,10 @@ To address feedback from the security release the following change has been made
 
 - Fixed `finalizeScopes` call (Issue #650)
 
+## [4.1.6] - 2016-09-13
+
+- Less restrictive on Authorization header check (Issue #652)
+
 ## [5.1.1] - 2016-07-26
 
 - Improved test suite (Issue #614)
@@ -419,6 +423,7 @@ Version 5 is a complete code rewrite.
 [5.0.0]: https://github.com/thephpleague/oauth2-server/compare/5.0.0-RC2...5.0.0
 [5.0.0-RC2]: https://github.com/thephpleague/oauth2-server/compare/5.0.0-RC1...5.0.0-RC2
 [5.0.0-RC1]: https://github.com/thephpleague/oauth2-server/compare/4.1.5...5.0.0-RC1
+[4.1.6]: https://github.com/thephpleague/oauth2-server/compare/4.1.5...4.1.6
 [4.1.5]: https://github.com/thephpleague/oauth2-server/compare/4.1.4...4.1.5
 [4.1.4]: https://github.com/thephpleague/oauth2-server/compare/4.1.3...4.1.4
 [4.1.3]: https://github.com/thephpleague/oauth2-server/compare/4.1.2...4.1.3
