@@ -14,9 +14,4 @@ class ClientEntity implements ClientEntityInterface
     {
         $this->redirectUri = $uri;
     }
-
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
 }
