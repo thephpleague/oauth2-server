@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Catch and handle `BadMethodCallException` from the `verify()` method of the JWT token in the `validateAuthorization` method (PR #904)
 
+## [4.1.7] - released 2018-06-23
+
+### Fixed
+- Ensure `empty()` function call only contains variable to be compatible with PHP 5.4 (PR #918)
+
 ## [7.1.1] - released 2018-05-21
 
 ### Fixed
@@ -423,6 +428,7 @@ Version 5 is a complete code rewrite.
 [5.0.0]: https://github.com/thephpleague/oauth2-server/compare/5.0.0-RC2...5.0.0
 [5.0.0-RC2]: https://github.com/thephpleague/oauth2-server/compare/5.0.0-RC1...5.0.0-RC2
 [5.0.0-RC1]: https://github.com/thephpleague/oauth2-server/compare/4.1.5...5.0.0-RC1
+[4.1.7]: https://github.com/thephpleague/oauth2-server/compare/4.1.6...4.1.7
 [4.1.6]: https://github.com/thephpleague/oauth2-server/compare/4.1.5...4.1.6
 [4.1.5]: https://github.com/thephpleague/oauth2-server/compare/4.1.4...4.1.5
 [4.1.4]: https://github.com/thephpleague/oauth2-server/compare/4.1.3...4.1.4
