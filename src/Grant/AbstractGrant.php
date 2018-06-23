@@ -358,7 +358,6 @@ abstract class AbstractGrant implements GrantTypeInterface
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
-        //$accessToken->setClient($client);
         $accessToken->setUserIdentifier($userIdentifier);
         $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
 
