@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Catch and handle `BadMethodCallException` from the `verify()` method of the JWT token in the `validateAuthorization` method (PR #904)
+- Stop scopes being set twice in the `issueAccessToken()` function in the Abstract Grant (PR #910)
 
 ## [4.1.7] - released 2018-06-23
 
