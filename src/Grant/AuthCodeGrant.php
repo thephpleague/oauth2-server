@@ -236,7 +236,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient();
+            throw OAuthServerException::invalidClient($request);
         }
 
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
@@ -246,7 +246,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         } elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
             || empty($client->getRedirectUri())) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient();
+            throw OAuthServerException::invalidClient($request);
         } else {
             $redirectUri = is_array($client->getRedirectUri())
                 ? $client->getRedirectUri()[0]
