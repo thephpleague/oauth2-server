@@ -2,7 +2,6 @@
 
 namespace LeagueTests\Grant;
 
-use League\Event\Emitter;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
@@ -24,13 +23,6 @@ use Zend\Diactoros\ServerRequest;
 
 class AbstractGrantTest extends TestCase
 {
-    public function testGetSet()
-    {
-        /** @var AbstractGrant $grantMock */
-        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setEmitter(new Emitter());
-    }
-
     public function testHttpBasicWithPassword()
     {
         /** @var AbstractGrant $grantMock */
