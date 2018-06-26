@@ -34,7 +34,7 @@ class BearerTokenResponse extends AbstractResponseType
 
         if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
             $refreshToken = $this->encrypt(
-                json_encode(
+                (string) json_encode(
                     [
                         'client_id'        => $this->accessToken->getClient()->getIdentifier(),
                         'refresh_token_id' => $this->refreshToken->getIdentifier(),
@@ -57,7 +57,7 @@ class BearerTokenResponse extends AbstractResponseType
             ->withHeader('cache-control', 'no-store')
             ->withHeader('content-type', 'application/json; charset=UTF-8');
 
-        $response->getBody()->write(json_encode($responseParams));
+        $response->getBody()->write((string) json_encode($responseParams));
 
         return $response;
     }

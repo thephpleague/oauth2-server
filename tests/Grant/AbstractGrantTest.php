@@ -27,7 +27,7 @@ class AbstractGrantTest extends TestCase
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setEmitter(new Emitter());
+        $this->assertSame($grantMock, $grantMock->setEmitter(new Emitter()));
     }
 
     public function testHttpBasicWithPassword()
@@ -342,7 +342,6 @@ class AbstractGrantTest extends TestCase
         $accessToken = new AccessTokenEntity();
         /** @var RefreshTokenEntityInterface $refreshToken */
         $refreshToken = $issueRefreshTokenMethod->invoke($grantMock, $accessToken);
-        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $refreshToken);
         $this->assertEquals($accessToken, $refreshToken->getAccessToken());
     }
 
@@ -367,7 +366,7 @@ class AbstractGrantTest extends TestCase
             123,
             [new ScopeEntity()]
         );
-        $this->assertInstanceOf(AccessTokenEntityInterface::class, $accessToken);
+        $this->assertSame(123, $accessToken->getUserIdentifier());
     }
 
     public function testIssueAuthCode()

@@ -17,7 +17,7 @@ use Defuse\Crypto\Key;
 trait CryptTrait
 {
     /**
-     * @var string|Key
+     * @var null|string|Key
      */
     protected $encryptionKey;
 
@@ -68,7 +68,7 @@ trait CryptTrait
     /**
      * Set the encryption key
      *
-     * @param string|Key $key
+     * @param null|string|Key $key
      */
     public function setEncryptionKey($key = null)
     {

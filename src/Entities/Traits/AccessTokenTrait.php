@@ -34,7 +34,7 @@ trait AccessTokenTrait
             ->setIssuedAt(time())
             ->setNotBefore(time())
             ->setExpiration($this->getExpiryDateTime()->getTimestamp())
-            ->setSubject($this->getUserIdentifier())
+            ->setSubject((string) $this->getUserIdentifier())
             ->set('scopes', $this->getScopes())
             ->sign(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()))
             ->getToken();
@@ -51,7 +51,7 @@ trait AccessTokenTrait
     abstract public function getExpiryDateTime();
 
     /**
-     * @return string|int
+     * @return string|int|null
      */
     abstract public function getUserIdentifier();
 

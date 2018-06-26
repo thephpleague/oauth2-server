@@ -33,7 +33,7 @@ class CryptKey
      */
     public function __construct($keyPath, $passPhrase = null, $keyPermissionsCheck = true)
     {
-        if (preg_match(self::RSA_KEY_PATTERN, $keyPath)) {
+        if (preg_match(self::RSA_KEY_PATTERN, $keyPath) === 1) {
             $keyPath = $this->saveKeyToFile($keyPath);
         }
 

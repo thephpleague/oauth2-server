@@ -26,6 +26,7 @@ class CryptKeyTest extends TestCase
 
     public function testKeyFileCreation()
     {
+        /** @var string $keyContent */
         $keyContent = file_get_contents(__DIR__ . '/../Stubs/public.key');
         $key = new CryptKey($keyContent);
 
@@ -34,6 +35,7 @@ class CryptKeyTest extends TestCase
             $key->getKeyPath()
         );
 
+        /** @var string $keyContent */
         $keyContent = file_get_contents(__DIR__ . '/../Stubs/private.key.crlf');
         $key = new CryptKey($keyContent);
 

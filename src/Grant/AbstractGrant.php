@@ -82,7 +82,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $privateKey;
 
     /**
-     * @string
+     * @var string|null
      */
     protected $defaultScope;
 
@@ -299,7 +299,8 @@ abstract class AbstractGrant implements GrantTypeInterface
             return [null, null];
         }
 
-        if (!($decoded = base64_decode(substr($header, 6)))) {
+        $decoded = base64_decode(substr($header, 6), true);
+        if ($decoded === false) {
             return [null, null];
         }
 

@@ -254,7 +254,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         $scopes = $this->validateScopes(
-            $this->getQueryStringParameter('scope', $request, $this->defaultScope),
+            $this->getQueryStringParameter('scope', $request, (string) $this->defaultScope),
             $redirectUri
         );
 
@@ -344,7 +344,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     $finalRedirectUri,
                     [
                         'code'  => $this->encrypt(
-                            json_encode(
+                            (string) json_encode(
                                 $payload
                             )
                         ),

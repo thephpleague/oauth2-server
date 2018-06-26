@@ -32,7 +32,7 @@ class AuthorizationRequest
     /**
      * The user identifier
      *
-     * @var UserEntityInterface
+     * @var UserEntityInterface|null
      */
     protected $user;
 
@@ -111,7 +111,7 @@ class AuthorizationRequest
     }
 
     /**
-     * @return UserEntityInterface
+     * @return UserEntityInterface|null
      */
     public function getUser()
     {

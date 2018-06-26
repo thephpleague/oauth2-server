@@ -129,7 +129,7 @@ class OAuthServerException extends \Exception
     /**
      * Invalid scope error.
      *
-     * @param string      $scope       The bad scope
+     * @param null|string $scope       The bad scope
      * @param null|string $redirectUri A HTTP URI to redirect the user back to
      *
      * @return static
@@ -269,7 +269,7 @@ class OAuthServerException extends \Exception
             $response = $response->withHeader($header, $content);
         }
 
-        $response->getBody()->write(json_encode($payload, $jsonOptions));
+        $response->getBody()->write((string) json_encode($payload, $jsonOptions));
 
         return $response->withStatus($this->getHttpStatusCode());
     }

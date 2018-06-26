@@ -115,7 +115,8 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
+        $request = $grant->validateAuthorizationRequest($request);
+        $this->assertSame('authorization_code', $request->getGrantTypeId());
     }
 
     public function testValidateAuthorizationRequestRedirectUriArray()
@@ -153,7 +154,8 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
+        $request = $grant->validateAuthorizationRequest($request);
+        $this->assertSame('authorization_code', $request->getGrantTypeId());
     }
 
     public function testValidateAuthorizationRequestCodeChallenge()
@@ -193,7 +195,8 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
+        $request = $grant->validateAuthorizationRequest($request);
+        $this->assertSame('authorization_code', $request->getGrantTypeId());
     }
 
     /**

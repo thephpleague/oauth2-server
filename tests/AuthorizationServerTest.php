@@ -20,7 +20,6 @@ use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
@@ -138,10 +137,8 @@ class AuthorizationServerTest extends TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
-        $this->assertInstanceOf(
-            ResponseInterface::class,
-            $server->completeAuthorizationRequest($authRequest, new Response)
-        );
+        $response = $server->completeAuthorizationRequest($authRequest, new Response);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     public function testValidateAuthorizationRequest()
@@ -187,7 +184,8 @@ class AuthorizationServerTest extends TestCase
             ]
         );
 
-        $this->assertInstanceOf(AuthorizationRequest::class, $server->validateAuthorizationRequest($request));
+        $request = $server->validateAuthorizationRequest($request);
+        $this->assertSame('authorization_code', $request->getGrantTypeId());
     }
 
     public function testValidateAuthorizationRequestWithMissingRedirectUri()

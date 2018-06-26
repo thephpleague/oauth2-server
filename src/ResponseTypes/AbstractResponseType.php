@@ -26,7 +26,7 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     protected $accessToken;
 
     /**
-     * @var RefreshTokenEntityInterface
+     * @var RefreshTokenEntityInterface|null
      */
     protected $refreshToken;
 

@@ -189,9 +189,7 @@ class AuthorizationServer implements EmitterAwareInterface
                 $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
             );
 
-            if ($tokenResponse instanceof ResponseTypeInterface) {
-                return $tokenResponse->generateHttpResponse($response);
-            }
+            return $tokenResponse->generateHttpResponse($response);
         }
 
         throw OAuthServerException::unsupportedGrantType();
