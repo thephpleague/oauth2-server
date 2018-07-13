@@ -172,6 +172,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             }
         }
 
+        // Handle extra authorization code parameters
+        $this->handleExtraAuthCodeParams($authCodePayload);
+
         // Issue and persist access + refresh tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
@@ -338,6 +341,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
 
+            $payload = array_merge($this->getExtraAuthCodeParams($authorizationRequest), $payload);
+
             $response = new RedirectResponse();
             $response->setRedirectUri(
                 $this->makeRedirectUri(
@@ -366,5 +371,27 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 ]
             )
         );
+    }
+
+    /**
+     * Add custom fields to your authorization code to save some data from the previous (authorize) state
+     * for when you are issuing the token at the token endpoint
+     *
+     * @param AuthorizationRequest $authorizationRequest
+     *
+     * @return array
+     */
+    protected function getExtraAuthCodeParams(AuthorizationRequest $authorizationRequest)
+    {
+        return [];
+    }
+
+    /**
+     * Handle the extra params specified in getExtraAuthCodeParams
+     *
+     * @param object $authCodePayload
+     */
+    protected function handleExtraAuthCodeParams(object $authCodePayload)
+    {
     }
 }
