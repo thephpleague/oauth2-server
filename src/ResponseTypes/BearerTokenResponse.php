@@ -63,9 +63,8 @@ class BearerTokenResponse extends AbstractResponseType
     }
 
     /**
-     * Add custom fields to your Bearer Token response here, then override
-     * AuthorizationServer::getResponseType() to pull in your version of
-     * this class rather than the default.
+     * Add custom fields to your Bearer Token response here, then pass an instance
+     * of your version of this class into the last parameter of the AuthorizationServer.
      *
      * @param AccessTokenEntityInterface $accessToken
      *
