@@ -199,7 +199,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $this->accessTokenTTL,
                 $authorizationRequest->getClient(),
                 $authorizationRequest->getUser()->getIdentifier(),
-                $authorizationRequest->getScopes()
+                $finalizedScopes
             );
 
             $response = new RedirectResponse();
