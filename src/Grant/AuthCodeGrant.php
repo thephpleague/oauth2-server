@@ -9,10 +9,10 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
-use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
@@ -378,7 +378,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      * Add custom fields to your authorization code to save some data from the previous (authorize) state
      * for when you are issuing the token at the token endpoint
      *
-     * @param AuthorizationRequest $authorizationRequest
+     * @param AuthorizationRequest    $authorizationRequest
      * @param AuthCodeEntityInterface $authCode
      *
      * @return array
