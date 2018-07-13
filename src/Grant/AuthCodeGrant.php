@@ -391,7 +391,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      *
      * @param object $authCodePayload
      */
-    protected function handleExtraAuthCodeParams(object $authCodePayload)
+    protected function handleExtraAuthCodeParams($authCodePayload)
     {
     }
 }
