@@ -12,6 +12,7 @@ namespace League\OAuth2\Server\Grant;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
+use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
@@ -341,7 +342,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
 
-            $payload = array_merge($this->getExtraAuthCodeParams($authorizationRequest), $payload);
+            $payload = array_merge($this->getExtraAuthCodeParams($authorizationRequest, $authCode), $payload);
 
             $response = new RedirectResponse();
             $response->setRedirectUri(
@@ -378,10 +379,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      * for when you are issuing the token at the token endpoint
      *
      * @param AuthorizationRequest $authorizationRequest
+     * @param AuthCodeEntityInterface $authCode
      *
      * @return array
      */
-    protected function getExtraAuthCodeParams(AuthorizationRequest $authorizationRequest)
+    protected function getExtraAuthCodeParams(AuthorizationRequest $authorizationRequest, AuthCodeEntityInterface $authCode)
     {
         return [];
     }
