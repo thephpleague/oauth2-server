@@ -21,6 +21,7 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use League\OAuth2\Server\ResponseTypes\IntrospectionResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -199,6 +200,28 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
+     * @param IntrospectionResponse      $response
+     */
+    public function setIntrospectionReponseType(IntrospectionResponse $reponseType)
+    {
+        $this->introspectionResponseType = $reponseType;
+    }
+
+    /**
+     * Get the introspection response
+     *
+     * @return ResponseTypeInterface
+     */
+    protected function getIntrospectionResponseType()
+    {
+        if ($this->introspectionResponseType instanceof IntrospectionResponse === false) {
+            $this->introspectionResponseType = new IntrospectionResponse;
+        }
+
+        return $this->introspectionResponseType;
+    }
+
+    /**
      * Return an introspection response.
      *
      * @param ServerRequestInterface $request
@@ -209,7 +232,10 @@ class AuthorizationServer implements EmitterAwareInterface
     public function respondToIntrospectionRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
         $introspector = new Introspector($this->accessTokenRepository, $this->privateKey, new Parser);
-        $introspectionResponse = $introspector->respondToIntrospectionRequest($request);
+        $introspectionResponse = $introspector->respondToIntrospectionRequest(
+            $request,
+            $this->getIntrospectionResponseType()
+        );
 
         return $introspectionResponse->generateHttpResponse($response);
     }

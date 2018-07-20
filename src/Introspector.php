@@ -55,19 +55,22 @@ class Introspector
      *
      * @return IntrospectionResponse
      */
-    public function respondToIntrospectionRequest(ServerRequestInterface $request)
+    public function respondToIntrospectionRequest(
+        ServerRequestInterface $request,
+        IntrospectionResponse $responseType
+    )
     {
         $jwt = $request->getParsedBody()['token'] ?? null;
 
         try {
             $token = $this->parser->parse($jwt);
         } catch (InvalidArgumentException $e) {
-            return $this->createInactiveResponse();
+            return $responseType;
         }
 
         return $this->isTokenValid($token) ?
-            $this->createActiveResponse($token) :
-            $this->createInactiveResponse();
+            $this->setTokenOnResponse($token, $responseType) :
+            $responseType;
     }
 
     /**
@@ -128,41 +131,10 @@ class Introspector
      *
      * @return IntrospectionResponse
      */
-    private function createActiveResponse(Token $token)
+    private function setTokenOnResponse(Token $token, IntrospectionResponse $responseType)
     {
-        $response = new IntrospectionResponse();
+        $responseType->setToken($token);
 
-        $response->setIntrospectionData(
-            [
-                'active' => true,
-                'token_type' => 'access_token',
-                'scope' => $token->getClaim('scopes', ''),
-                'client_id' => $token->getClaim('aud'),
-                'exp' => $token->getClaim('exp'),
-                'iat' => $token->getClaim('iat'),
-                'sub' => $token->getClaim('sub'),
-                'jti' => $token->getClaim('jti'),
-            ]
-            );
-
-        return $response;
-    }
-
-    /**
-     * Create inactive introspection response
-     *
-     * @return IntrospectionResponse
-     */
-    private function createInactiveResponse()
-    {
-        $response = new IntrospectionResponse();
-
-        $response->setIntrospectionData(
-            [
-                'active' => false,
-            ]
-        );
-
-        return $response;
+        return $responseType;
     }
 }

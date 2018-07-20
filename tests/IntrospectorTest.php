@@ -30,10 +30,14 @@ class IntrospectorTest extends TestCase
         $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $requestMock->method('getParsedBody')->willReturn([]);
 
-        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock);
+        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock, new IntrospectionResponse);
 
         $this->assertInstanceOf(IntrospectionResponse::class, $introspectionResponse);
-        $this->assertEquals(['active' => false], $introspectionResponse->getIntrospectionData());
+        $this->assertAttributeEquals(null, 'token', $introspectionResponse);
+        $this->assertEquals(
+            [],
+            $introspectionResponse->getValidIntrospectionParams()
+        );
     }
 
     public function testRespondToRequestWithInvalidToken()
@@ -53,10 +57,14 @@ class IntrospectorTest extends TestCase
         $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $requestMock->method('getParsedBody')->willReturn(['token' => 'token']);
 
-        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock);
+        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock, new IntrospectionResponse);
 
         $this->assertInstanceOf(IntrospectionResponse::class, $introspectionResponse);
-        $this->assertEquals(['active' => false], $introspectionResponse->getIntrospectionData());
+        $this->assertAttributeEquals(null, 'token', $introspectionResponse);
+        $this->assertEquals(
+            [],
+            $introspectionResponse->getValidIntrospectionParams()
+        );
     }
 
     public function testRespondToRequestWithExpiredToken()
@@ -77,10 +85,14 @@ class IntrospectorTest extends TestCase
         $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $requestMock->method('getParsedBody')->willReturn(['token' => 'token']);
 
-        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock);
+        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock, new IntrospectionResponse);
 
         $this->assertInstanceOf(IntrospectionResponse::class, $introspectionResponse);
-        $this->assertEquals(['active' => false], $introspectionResponse->getIntrospectionData());
+        $this->assertAttributeEquals(null, 'token', $introspectionResponse);
+        $this->assertEquals(
+            [],
+            $introspectionResponse->getValidIntrospectionParams()
+        );
     }
 
     public function testRespondToRequestWithRevokedToken()
@@ -103,10 +115,14 @@ class IntrospectorTest extends TestCase
         $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $requestMock->method('getParsedBody')->willReturn(['token' => 'token']);
 
-        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock);
+        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock, new IntrospectionResponse);
 
         $this->assertInstanceOf(IntrospectionResponse::class, $introspectionResponse);
-        $this->assertEquals(['active' => false], $introspectionResponse->getIntrospectionData());
+        $this->assertAttributeEquals(null, 'token', $introspectionResponse);
+        $this->assertEquals(
+            [],
+            $introspectionResponse->getValidIntrospectionParams()
+        );
     }
 
     public function testRespondToRequestWithValidToken()
@@ -130,7 +146,7 @@ class IntrospectorTest extends TestCase
         $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $requestMock->method('getParsedBody')->willReturn(['token' => 'token']);
 
-        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock);
+        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock, new IntrospectionResponse);
 
         $this->assertInstanceOf(IntrospectionResponse::class, $introspectionResponse);
         $this->assertEquals(
@@ -144,7 +160,7 @@ class IntrospectorTest extends TestCase
                 'sub' => 'value',
                 'jti' => 'value',
             ],
-            $introspectionResponse->getIntrospectionData()
+            $introspectionResponse->getValidIntrospectionParams()
         );
     }
 }
