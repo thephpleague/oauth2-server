@@ -56,8 +56,7 @@ class Introspector
     public function respondToIntrospectionRequest(
         ServerRequestInterface $request,
         IntrospectionResponse $responseType
-    )
-    {
+    ) {
         $jwt = $request->getParsedBody()['token'] ?? null;
 
         try {
