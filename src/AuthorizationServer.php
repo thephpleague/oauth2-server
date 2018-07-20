@@ -200,7 +200,7 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
-     * @param IntrospectionResponse      $response
+     * @param IntrospectionResponse $response
      */
     public function setIntrospectionReponseType(IntrospectionResponse $reponseType)
     {

@@ -29,7 +29,7 @@ class IntrospectionResponse extends AbstractResponseType
     {
         $token = $this->token;
 
-        if (!$token){
+        if (!$token) {
             return [];
         }
 
@@ -55,8 +55,7 @@ class IntrospectionResponse extends AbstractResponseType
         if ($this->token) {
             $responseParams = $this->getValidIntrospectionParams();
             $responseParams = array_merge($this->getExtraParams(), $responseParams);
-        }
-        else {
+        } else {
             $responseParams = [
                 'active' => false,
             ];

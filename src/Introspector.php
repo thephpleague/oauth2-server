@@ -2,14 +2,12 @@
 
 namespace League\OAuth2\Server;
 
-use Exception;
 use InvalidArgumentException;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\ValidationData;
-use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\IntrospectionResponse;
 use Psr\Http\Message\ServerRequestInterface;
