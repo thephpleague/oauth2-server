@@ -38,6 +38,8 @@ The following versions of PHP are supported:
 
 The `openssl` extension is also required.
 
+All HTTP messages passed to the server should be [PSR-7 compliant](https://www.php-fig.org/psr/psr-7/). This ensures interoperability with other packages and frameworks.
+
 ## Installation
 
 ```
@@ -55,7 +57,7 @@ The library uses [PHPUnit](https://phpunit.de/) for unit tests and [PHPStan](htt
 
 ```
 vendor/bin/phpunit
-vendor/bin/phpstan analyse -l 6 -c phpstan.neon src tests
+vendor/bin/phpstan analyse -l 7 -c phpstan.neon src tests
 ```
 
 ## Continous Integration
@@ -64,6 +66,7 @@ We use [Travis CI](https://travis-ci.org/), [Scrutinizer](https://scrutinizer-ci
 
 ## Community Integrations
 
+* [Drupal](https://www.drupal.org/project/simple_oauth)
 * [Laravel Passport](https://github.com/laravel/passport)
 * [OAuth 2 Server for CakePHP 3](https://github.com/uafrica/oauth-server)
 
@@ -73,7 +76,7 @@ See the [project changelog](https://github.com/thephpleague/oauth2-server/blob/m
 
 ## Contributing
 
-Contributions are always welcome. Please see [CONTRIBUTING.md](https://github.com/thephpleague/oauth2-server/blob/master/CONTRIBUTING.md) and [CONDUCT.md](https://github.com/thephpleague/oauth2-server/blob/master/CONDUCT.md) for details.
+Contributions are always welcome. Please see [CONTRIBUTING.md](https://github.com/thephpleague/oauth2-server/blob/master/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/thephpleague/oauth2-server/blob/master/CODE_OF_CONDUCT.md) for details.
 
 ## Support
 

@@ -201,13 +201,21 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     }
 
     /**
-     * Fetch the client_id parameter from the query string.
-     *
-     * @return string|null
-     *
-     * @throws OAuthServerException
+     * {@inheritdoc}
      */
-    protected function getClientIdFromRequest($request)
+    public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
+    {
+        return (
+            array_key_exists('response_type', $request->getQueryParams())
+            && $request->getQueryParams()['response_type'] === 'code'
+            && isset($request->getQueryParams()['client_id'])
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateAuthorizationRequest(ServerRequestInterface $request)
     {
         $clientId = $this->getQueryStringParameter(
             'client_id',
@@ -218,28 +226,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         if (is_null($clientId)) {
             throw OAuthServerException::invalidRequest('client_id');
         }
-
-        return $clientId;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
-    {
-        return (
-            array_key_exists('response_type', $request->getQueryParams())
-            && $request->getQueryParams()['response_type'] === 'code'
-            && $this->getClientIdFromRequest($request) !== null
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validateAuthorizationRequest(ServerRequestInterface $request)
-    {
-        $clientId = $this->getClientIdFromRequest($request);
 
         $client = $this->clientRepository->getClientEntity(
             $clientId,
@@ -254,20 +240,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
+
         if ($redirectUri !== null) {
-            if (
-                is_string($client->getRedirectUri())
-                && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
-            ) {
-                $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
-            } elseif (
-                is_array($client->getRedirectUri())
-                && in_array($redirectUri, $client->getRedirectUri(), true) === false
-            ) {
-                $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
-            }
+            $this->validateRedirectUri($redirectUri, $client, $request);
         } elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
             || empty($client->getRedirectUri())) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
@@ -289,7 +264,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $authorizationRequest->setGrantTypeId($this->getIdentifier());
         $authorizationRequest->setClient($client);
         $authorizationRequest->setRedirectUri($redirectUri);
-        $authorizationRequest->setState($stateParameter);
+
+        if ($stateParameter !== null) {
+            $authorizationRequest->setState($stateParameter);
+        }
+
         $authorizationRequest->setScopes($scopes);
 
         if ($this->enableCodeExchangeProof === true) {
@@ -299,6 +278,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             }
 
             $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
+
             if (in_array($codeChallengeMethod, ['plain', 'S256'], true) === false) {
                 throw OAuthServerException::invalidRequest(
                     'code_challenge_method',

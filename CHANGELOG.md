@@ -6,6 +6,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.2.0] - released 2018-06-23
+
+### Changed
+- Added new`validateRedirectUri` method AbstractGrant to remove three instances of code duplication (PR #912)
+- Allow 640 as a crypt key file permission (PR #917)
+
+### Added
+- Function `hasRedirect()` added to `OAuthServerException` (PR #703)
+
+### Fixed
+- Catch and handle `BadMethodCallException` from the `verify()` method of the JWT token in the `validateAuthorization` method (PR #904)
+
+## [4.1.7] - released 2018-06-23
+
+### Fixed
+- Ensure `empty()` function call only contains variable to be compatible with PHP 5.4 (PR #918)
+
+## [7.1.1] - released 2018-05-21
+
+### Fixed
+- No longer set a WWW-Authenticate header for invalid clients if the client did not send an Authorization header in the original request (PR #902)
+
+## [7.1.0] - released 2018-04-22
+
+### Changed
+- Changed hint for unsupportedGrantType exception so it no longer references the grant type parameter which isn't always expected (PR #893)
+- Upgrade PHPStan checks to level 7 (PR #856)
+
 ### Added
 - Added event emitters for issued access and refresh tokens (PR #860)
 - Can now use Defuse\Crypto\Key for encryption/decryption of keys which is faster than the Cryto class (PR #812)
@@ -85,6 +113,10 @@ To address feedback from the security release the following change has been made
 ## [5.1.2] - 2016-09-19
 
 - Fixed `finalizeScopes` call (Issue #650)
+
+## [4.1.6] - 2016-09-13
+
+- Less restrictive on Authorization header check (Issue #652)
 
 ## [5.1.1] - 2016-07-26
 
@@ -378,7 +410,10 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.0.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.2.0...HEAD
+[7.2.0]: https://github.com/thephpleague/oauth2-server/compare/7.1.1...7.2.0
+[7.1.1]: https://github.com/thephpleague/oauth2-server/compare/7.1.0...7.1.1
+[7.1.0]: https://github.com/thephpleague/oauth2-server/compare/7.0.0...7.1.0
 [7.0.0]: https://github.com/thephpleague/oauth2-server/compare/6.1.1...7.0.0
 [6.1.1]: https://github.com/thephpleague/oauth2-server/compare/6.0.0...6.1.1
 [6.1.0]: https://github.com/thephpleague/oauth2-server/compare/6.0.2...6.1.0
@@ -396,6 +431,8 @@ Version 5 is a complete code rewrite.
 [5.0.0]: https://github.com/thephpleague/oauth2-server/compare/5.0.0-RC2...5.0.0
 [5.0.0-RC2]: https://github.com/thephpleague/oauth2-server/compare/5.0.0-RC1...5.0.0-RC2
 [5.0.0-RC1]: https://github.com/thephpleague/oauth2-server/compare/4.1.5...5.0.0-RC1
+[4.1.7]: https://github.com/thephpleague/oauth2-server/compare/4.1.6...4.1.7
+[4.1.6]: https://github.com/thephpleague/oauth2-server/compare/4.1.5...4.1.6
 [4.1.5]: https://github.com/thephpleague/oauth2-server/compare/4.1.4...4.1.5
 [4.1.4]: https://github.com/thephpleague/oauth2-server/compare/4.1.3...4.1.4
 [4.1.3]: https://github.com/thephpleague/oauth2-server/compare/4.1.2...4.1.3

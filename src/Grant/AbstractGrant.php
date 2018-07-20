@@ -193,25 +193,41 @@ abstract class AbstractGrant implements GrantTypeInterface
             throw OAuthServerException::invalidClient();
         }
 
-        // If a redirect URI is provided ensure it matches what is pre-registered
         $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
+
         if ($redirectUri !== null) {
-            if (
-                is_string($client->getRedirectUri())
-                && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
-            ) {
-                $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
-            } elseif (
-                is_array($client->getRedirectUri())
-                && in_array($redirectUri, $client->getRedirectUri(), true) === false
-            ) {
-                $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
-            }
+            $this->validateRedirectUri($redirectUri, $client, $request);
         }
 
         return $client;
+    }
+
+    /**
+     * Validate redirectUri from the request.
+     * If a redirect URI is provided ensure it matches what is pre-registered
+     *
+     * @param string                 $redirectUri
+     * @param ClientEntityInterface  $client
+     * @param ServerRequestInterface $request
+     *
+     * @throws OAuthServerException
+     */
+    protected function validateRedirectUri(
+        string $redirectUri,
+        ClientEntityInterface $client,
+        ServerRequestInterface $request
+    ) {
+        if (is_string($client->getRedirectUri())
+            && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
+        ) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidClient();
+        } elseif (is_array($client->getRedirectUri())
+            && in_array($redirectUri, $client->getRedirectUri(), true) === false
+        ) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidClient();
+        }
     }
 
     /**
@@ -386,7 +402,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param \DateInterval          $authCodeTTL
      * @param ClientEntityInterface  $client
      * @param string                 $userIdentifier
-     * @param string                 $redirectUri
+     * @param string|null            $redirectUri
      * @param ScopeEntityInterface[] $scopes
      *
      * @throws OAuthServerException
@@ -407,7 +423,10 @@ abstract class AbstractGrant implements GrantTypeInterface
         $authCode->setExpiryDateTime((new \DateTime())->add($authCodeTTL));
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
-        $authCode->setRedirectUri($redirectUri);
+
+        if ($redirectUri !== null) {
+            $authCode->setRedirectUri($redirectUri);
+        }
 
         foreach ($scopes as $scope) {
             $authCode->addScope($scope);

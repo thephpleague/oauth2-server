@@ -65,8 +65,12 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         try {
             // Attempt to parse and validate the JWT
             $token = (new Parser())->parse($jwt);
-            if ($token->verify(new Sha256(), $this->publicKey->getKeyPath()) === false) {
-                throw OAuthServerException::accessDenied('Access token could not be verified');
+            try {
+                if ($token->verify(new Sha256(), $this->publicKey->getKeyPath()) === false) {
+                    throw OAuthServerException::accessDenied('Access token could not be verified');
+                }
+            } catch (\BadMethodCallException $exception) {
+                throw OAuthServerException::accessDenied('Access token is not signed');
             }
 
             // Ensure access token hasn't expired

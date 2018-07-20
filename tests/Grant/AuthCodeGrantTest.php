@@ -335,7 +335,7 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $grant->canRespondToAuthorizationRequest($request);
+        $grant->validateAuthorizationRequest($request);
     }
 
     /**
