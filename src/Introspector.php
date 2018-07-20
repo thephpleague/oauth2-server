@@ -3,6 +3,7 @@
 namespace League\OAuth2\Server;
 
 use Exception;
+use InvalidArgumentException;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
@@ -60,15 +61,23 @@ class Introspector
 
         try {
             $token = $this->parser->parse($jwt);
-
-            $this->verifyToken($token);
-            $this->checkIfTokenIsExpired($token);
-            $this->checkIfTokenIsRevoked($token);
-
-            return $this->createActiveResponse($token);
-        } catch (Exception $ex) {
+        } catch (InvalidArgumentException $e) {
             return $this->createInactiveResponse();
         }
+
+        return $this->isTokenValid($token) ?
+            $this->createActiveResponse($token) :
+            $this->createInactiveResponse();
+    }
+
+    /**
+     * Validate the JWT and make sure it has not expired or been revoked
+     *
+     * @return bool
+     */
+    private function isTokenValid(Token $token)
+    {
+        return $this->verifyToken($token) && !$this->isTokenExpired($token) && !$this->isTokenRevoked($token);
     }
 
     /**
@@ -76,16 +85,14 @@ class Introspector
      *
      * @param Token $token
      *
-     * @throws OAuthServerException
+     * @return bool
      */
     private function verifyToken(Token $token)
     {
         $keychain = new Keychain();
         $key = $keychain->getPrivateKey($this->privateKey->getKeyPath(), $this->privateKey->getPassPhrase());
 
-        if (!$token->verify(new Sha256, $key->getContent())) {
-            throw OAuthServerException::accessDenied('Access token could not be verified');
-        }
+        return $token->verify(new Sha256, $key->getContent());
     }
 
     /**
@@ -93,15 +100,13 @@ class Introspector
      *
      * @param Token $token
      *
-     * @throws OAuthServerException
+     * @return bool
      */
-    private function checkIfTokenIsExpired(Token $token)
+    private function isTokenExpired(Token $token)
     {
         $data = new ValidationData(time());
 
-        if (!$token->validate($data)) {
-            throw OAuthServerException::accessDenied('Access token is invalid');
-        }
+        return !$token->validate($data);
     }
 
     /**
@@ -109,13 +114,11 @@ class Introspector
      *
      * @param Token $token
      *
-     * @throws OAuthServerException
+     * @return bool
      */
-    private function checkIfTokenIsRevoked(Token $token)
+    private function isTokenRevoked(Token $token)
     {
-        if ($this->accessTokenRepository->isAccessTokenRevoked($token->getClaim('jti'))) {
-            throw OAuthServerException::accessDenied('Access token has been revoked');
-        }
+        return $this->accessTokenRepository->isAccessTokenRevoked($token->getClaim('jti'));
     }
 
     /**
