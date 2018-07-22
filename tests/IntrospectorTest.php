@@ -59,7 +59,7 @@ class IntrospectorTest extends TestCase
         $this->assertAttributeEquals(null, 'token', $introspectionResponse);
         $this->assertEquals(
             [
-                'active' => false
+                'active' => false,
             ],
             $introspectionResponse->getIntrospectionParams()
         );
@@ -88,7 +88,7 @@ class IntrospectorTest extends TestCase
         $this->assertAttributeEquals(null, 'token', $introspectionResponse);
         $this->assertEquals(
             [
-                'active' => false
+                'active' => false,
             ],
             $introspectionResponse->getIntrospectionParams()
         );
@@ -118,7 +118,7 @@ class IntrospectorTest extends TestCase
         $this->assertAttributeEquals(null, 'token', $introspectionResponse);
         $this->assertEquals(
             [
-                'active' => false
+                'active' => false,
             ],
             $introspectionResponse->getIntrospectionParams()
         );
@@ -150,7 +150,7 @@ class IntrospectorTest extends TestCase
         $this->assertAttributeEquals(null, 'token', $introspectionResponse);
         $this->assertEquals(
             [
-                'active' => false
+                'active' => false,
             ],
             $introspectionResponse->getIntrospectionParams()
         );

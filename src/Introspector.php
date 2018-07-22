@@ -56,7 +56,7 @@ class Introspector
      */
     public function validateIntrospectionRequest(ServerRequestInterface $request)
     {
-        if ($request->getMethod() !== 'POST'){
+        if ($request->getMethod() !== 'POST') {
             throw OAuthServerException::accessDenied('Invalid request method');
         }
     }

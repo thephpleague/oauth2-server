@@ -269,7 +269,7 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     private function getIntrospector()
     {
-        if (!isset($this->introspector)){
+        if (!isset($this->introspector)) {
             $this->introspector = new Introspector($this->accessTokenRepository, $this->privateKey, new Parser);
         }
 
