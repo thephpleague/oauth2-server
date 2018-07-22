@@ -277,7 +277,6 @@ class IntrospectorTest extends TestCase
 
     public function testGenerateHttpResponseWithValidToken()
     {
-
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $parserMock = $this->getMockBuilder(Parser::class)->getMock();
         $tokenMock = $this->getMockBuilder(Token::class)->getMock();
