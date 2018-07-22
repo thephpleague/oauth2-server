@@ -220,7 +220,7 @@ class IntrospectorTest extends TestCase
             protected function getExtraParams()
             {
                 return [
-                    'custom' => 'parameter'
+                    'custom' => 'parameter',
                 ];
             }
         });
