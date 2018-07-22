@@ -26,18 +26,13 @@ class IntrospectionResponse extends AbstractResponseType
     {
         return $this->token !== null;
     }
-    /**
-     * Extract the introspection params from the token
-     */
-    public function getIntrospectionParams()
-    {
-        if (!$this->hasToken()) {
-            return [
-                'active' => false,
-            ];
-        }
 
-        return [
+    /**
+     * @return array
+     */
+    private function validTokenResponse()
+    {
+        $responseParams = [
             'active' => true,
             'token_type' => 'access_token',
             'scope' => $this->token->getClaim('scopes', ''),
@@ -47,6 +42,30 @@ class IntrospectionResponse extends AbstractResponseType
             'sub' => $this->token->getClaim('sub'),
             'jti' => $this->token->getClaim('jti'),
         ];
+
+        return array_merge($this->getExtraParams(), $responseParams);
+    }
+
+    /**
+     * @return array
+     */
+    private function invalidTokenResponse()
+    {
+        return [
+            'active' => false,
+        ];
+    }
+
+    /**
+     * Extract the introspection params from the token
+     *
+     * @return array
+     */
+    public function getIntrospectionParams()
+    {
+        return $this->hasToken() ?
+            $this->validTokenResponse() :
+            $this->invalidTokenResponse();
     }
 
     /**
@@ -57,10 +76,6 @@ class IntrospectionResponse extends AbstractResponseType
     public function generateHttpResponse(ResponseInterface $response)
     {
         $responseParams = $this->getIntrospectionParams();
-
-        if ($this->hasToken()) {
-            $responseParams = array_merge($this->getExtraParams(), $responseParams);
-        }
 
         $response = $response
                 ->withStatus(200)

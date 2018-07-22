@@ -194,4 +194,51 @@ class IntrospectorTest extends TestCase
             $introspectionResponse->getIntrospectionParams()
         );
     }
+
+    public function testRespondToRequestWithValidTokenWithExtraParams()
+    {
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $parserMock = $this->getMockBuilder(Parser::class)->getMock();
+        $tokenMock = $this->getMockBuilder(Token::class)->getMock();
+
+        $introspector = new Introspector(
+            $accessTokenRepositoryMock,
+            new CryptKey('file://' . __DIR__ . '/Stubs/private.key'),
+            $parserMock
+        );
+
+        $parserMock->method('parse')->willReturn($tokenMock);
+        $tokenMock->method('verify')->willReturn(true);
+        $tokenMock->method('validate')->willReturn(true);
+        $tokenMock->method('getClaim')->willReturn('value');
+        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
+
+        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
+        $requestMock->method('getParsedBody')->willReturn(['token' => 'token']);
+
+        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock, new class extends IntrospectionResponse {
+            protected function getExtraParams()
+            {
+                return [
+                    'custom' => 'parameter'
+                ];
+            }
+        });
+
+        $this->assertInstanceOf(IntrospectionResponse::class, $introspectionResponse);
+        $this->assertEquals(
+            [
+                'active' => true,
+                'token_type' => 'access_token',
+                'scope' => 'value',
+                'client_id' => 'value',
+                'exp' => 'value',
+                'iat' => 'value',
+                'sub' => 'value',
+                'jti' => 'value',
+                'custom' => 'parameter',
+            ],
+            $introspectionResponse->getIntrospectionParams()
+        );
+    }
 }
