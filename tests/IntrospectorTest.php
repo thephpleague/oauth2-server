@@ -10,7 +10,9 @@ use League\OAuth2\Server\Introspector;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\IntrospectionResponse;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
 
 class IntrospectorTest extends TestCase
 {
@@ -40,6 +42,19 @@ class IntrospectorTest extends TestCase
 
             throw $e;
         }
+    }
+
+    public function testPostRequest()
+    {
+        $introspector = new Introspector(
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            new CryptKey('file://' . __DIR__ . '/Stubs/private.key'),
+            new Parser()
+        );
+
+        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
+        $requestMock->method('getMethod')->willReturn('POST');
+        $this->assertNull($introspector->validateIntrospectionRequest($requestMock));
     }
 
     public function testRespondToRequestWithoutToken()
@@ -240,5 +255,68 @@ class IntrospectorTest extends TestCase
             ],
             $introspectionResponse->getIntrospectionParams()
         );
+    }
+
+    public function testGenerateHttpResponseWithNoToken()
+    {
+        $responseType = new IntrospectionResponse();
+
+        $response = $responseType->generateHttpResponse(new Response());
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('no-cache', $response->getHeader('pragma')[0]);
+        $this->assertEquals('no-store', $response->getHeader('cache-control')[0]);
+        $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
+
+        $response->getBody()->rewind();
+        $json = json_decode($response->getBody()->getContents());
+
+        $this->assertAttributeEquals(false, 'active', $json);
+    }
+
+    public function testGenerateHttpResponseWithValidToken()
+    {
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $parserMock = $this->getMockBuilder(Parser::class)->getMock();
+        $tokenMock = $this->getMockBuilder(Token::class)->getMock();
+
+        $introspector = new Introspector(
+            $accessTokenRepositoryMock,
+            new CryptKey('file://' . __DIR__ . '/Stubs/private.key'),
+            $parserMock
+        );
+
+        $parserMock->method('parse')->willReturn($tokenMock);
+        $tokenMock->method('verify')->willReturn(true);
+        $tokenMock->method('validate')->willReturn(true);
+        $tokenMock->method('getClaim')->willReturn('value');
+        $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
+
+        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
+        $requestMock->method('getParsedBody')->willReturn(['token' => 'token']);
+
+        $introspectionResponse = $introspector->respondToIntrospectionRequest($requestMock, new IntrospectionResponse);
+
+        $response = $introspectionResponse->generateHttpResponse(new Response());
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('no-cache', $response->getHeader('pragma')[0]);
+        $this->assertEquals('no-store', $response->getHeader('cache-control')[0]);
+        $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
+
+        $response->getBody()->rewind();
+        $json = json_decode($response->getBody()->getContents());
+
+        $this->assertAttributeEquals(true, 'active', $json);
+        $this->assertAttributeEquals('access_token', 'token_type', $json);
+        $this->assertAttributeEquals('value', 'scope', $json);
+        $this->assertAttributeEquals('value', 'client_id', $json);
+        $this->assertAttributeEquals('value', 'exp', $json);
+        $this->assertAttributeEquals('value', 'iat', $json);
+        $this->assertAttributeEquals('value', 'sub', $json);
+        $this->assertAttributeEquals('value', 'jti', $json);
     }
 }
