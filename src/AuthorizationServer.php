@@ -61,6 +61,11 @@ class AuthorizationServer implements EmitterAwareInterface
     protected $introspectionResponseType;
 
     /**
+     * @var null|Introspector
+     */
+    protected $introspector;
+
+    /**
      * @var ClientRepositoryInterface
      */
     private $clientRepository;
@@ -236,13 +241,39 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     public function respondToIntrospectionRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $introspector = new Introspector($this->accessTokenRepository, $this->privateKey, new Parser);
+        $introspector = $this->getIntrospector();
+
         $introspectionResponse = $introspector->respondToIntrospectionRequest(
             $request,
             $this->getIntrospectionResponseType()
         );
 
         return $introspectionResponse->generateHttpResponse($response);
+    }
+
+    /**
+     * Return an introspection response.
+     *
+     * @param ServerRequestInterface $request
+     */
+    public function validateIntrospectionRequest(ServerRequestInterface $request)
+    {
+        $introspector = $this->getIntrospector();
+        $introspector->validateIntrospectionRequest($request);
+    }
+
+    /**
+     * Returns the introspector
+     *
+     * @return Introspector
+     */
+    private function getIntrospector()
+    {
+        if (!isset($this->introspector)){
+            $this->introspector = new Introspector($this->accessTokenRepository, $this->privateKey, new Parser);
+        }
+
+        return $this->introspector;
     }
 
     /**

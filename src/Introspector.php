@@ -8,6 +8,7 @@ use Lcobucci\JWT\Signer\Keychain;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\ValidationData;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\IntrospectionResponse;
 use Psr\Http\Message\ServerRequestInterface;
@@ -44,6 +45,20 @@ class Introspector
         $this->accessTokenRepository = $accessTokenRepository;
         $this->privateKey = $privateKey;
         $this->parser = $parser;
+    }
+
+    /**
+     * Validate the request
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @throws OAuthServerException
+     */
+    public function validateIntrospectionRequest(ServerRequestInterface $request)
+    {
+        if ($request->getMethod() !== 'POST'){
+            throw OAuthServerException::accessDenied('Invalid request method');
+        }
     }
 
     /**

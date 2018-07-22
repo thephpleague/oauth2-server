@@ -5,6 +5,7 @@ namespace LeagueTests;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Introspector;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\IntrospectionResponse;
@@ -17,6 +18,28 @@ class IntrospectorTest extends TestCase
     {
         // Make sure the keys have the correct permissions.
         chmod(__DIR__ . '/Stubs/private.key', 0600);
+    }
+
+    public function testGetRequest()
+    {
+        $introspector = new Introspector(
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            new CryptKey('file://' . __DIR__ . '/Stubs/private.key'),
+            new Parser()
+        );
+
+        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
+        $requestMock->method('getMethod')->willReturn('GET');
+        $this->expectException(OAuthServerException::class);
+
+        try {
+            $introspectionResponse = $introspector->validateIntrospectionRequest($requestMock);
+        } catch (OAuthServerException $e) {
+            $this->assertEquals('access_denied', $e->getErrorType());
+            $this->assertEquals(401, $e->getHttpStatusCode());
+
+            throw $e;
+        }
     }
 
     public function testRespondToRequestWithoutToken()
