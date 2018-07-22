@@ -15,33 +15,37 @@ class IntrospectionResponse extends AbstractResponseType
     /**
      * Set the token against the response
      *
-     * @param Token
+     * @param Token $token
      */
     public function setToken(Token $token)
     {
         $this->token = $token;
     }
 
+    private function hasToken()
+    {
+        return $this->token !== null;
+    }
     /**
      * Extract the introspection params from the token
      */
     public function getValidIntrospectionParams()
     {
-        $token = $this->token;
-
-        if (!$token) {
-            return [];
+        if (!$this->hasToken()) {
+            return [
+                'active' => false
+            ];
         }
 
         return [
             'active' => true,
             'token_type' => 'access_token',
-            'scope' => $token->getClaim('scopes', ''),
-            'client_id' => $token->getClaim('aud'),
-            'exp' => $token->getClaim('exp'),
-            'iat' => $token->getClaim('iat'),
-            'sub' => $token->getClaim('sub'),
-            'jti' => $token->getClaim('jti'),
+            'scope' => $this->token->getClaim('scopes', ''),
+            'client_id' => $this->token->getClaim('aud'),
+            'exp' => $this->token->getClaim('exp'),
+            'iat' => $this->token->getClaim('iat'),
+            'sub' => $this->token->getClaim('sub'),
+            'jti' => $this->token->getClaim('jti'),
         ];
     }
 
@@ -52,13 +56,10 @@ class IntrospectionResponse extends AbstractResponseType
      */
     public function generateHttpResponse(ResponseInterface $response)
     {
-        if ($this->token) {
-            $responseParams = $this->getValidIntrospectionParams();
+        $responseParams = $this->getValidIntrospectionParams();
+
+        if ($this->hasToken()) {
             $responseParams = array_merge($this->getExtraParams(), $responseParams);
-        } else {
-            $responseParams = [
-                'active' => false,
-            ];
         }
 
         $response = $response

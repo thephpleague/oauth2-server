@@ -56,6 +56,11 @@ class AuthorizationServer implements EmitterAwareInterface
     protected $responseType;
 
     /**
+     * @var null|IntrospectionResponse
+     */
+    protected $introspectionResponseType;
+
+    /**
      * @var ClientRepositoryInterface
      */
     private $clientRepository;
@@ -200,7 +205,7 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
-     * @param IntrospectionResponse $response
+     * @param IntrospectionResponse $reponseType
      */
     public function setIntrospectionReponseType(IntrospectionResponse $reponseType)
     {
@@ -210,7 +215,7 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * Get the introspection response
      *
-     * @return ResponseTypeInterface
+     * @return IntrospectionResponse
      */
     protected function getIntrospectionResponseType()
     {
@@ -225,7 +230,7 @@ class AuthorizationServer implements EmitterAwareInterface
      * Return an introspection response.
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param ResponseInterface $response
      *
      * @return ResponseInterface
      */
