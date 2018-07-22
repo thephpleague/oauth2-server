@@ -29,11 +29,11 @@ class IntrospectionResponse extends AbstractResponseType
     /**
      * Extract the introspection params from the token
      */
-    public function getValidIntrospectionParams()
+    public function getIntrospectionParams()
     {
         if (!$this->hasToken()) {
             return [
-                'active' => false
+                'active' => false,
             ];
         }
 
@@ -56,7 +56,7 @@ class IntrospectionResponse extends AbstractResponseType
      */
     public function generateHttpResponse(ResponseInterface $response)
     {
-        $responseParams = $this->getValidIntrospectionParams();
+        $responseParams = $this->getIntrospectionParams();
 
         if ($this->hasToken()) {
             $responseParams = array_merge($this->getExtraParams(), $responseParams);

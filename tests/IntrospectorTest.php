@@ -35,8 +35,10 @@ class IntrospectorTest extends TestCase
         $this->assertInstanceOf(IntrospectionResponse::class, $introspectionResponse);
         $this->assertAttributeEquals(null, 'token', $introspectionResponse);
         $this->assertEquals(
-            [],
-            $introspectionResponse->getValidIntrospectionParams()
+            [
+                'active' => false
+            ],
+            $introspectionResponse->getIntrospectionParams()
         );
     }
 
@@ -62,8 +64,10 @@ class IntrospectorTest extends TestCase
         $this->assertInstanceOf(IntrospectionResponse::class, $introspectionResponse);
         $this->assertAttributeEquals(null, 'token', $introspectionResponse);
         $this->assertEquals(
-            [],
-            $introspectionResponse->getValidIntrospectionParams()
+            [
+                'active' => false
+            ],
+            $introspectionResponse->getIntrospectionParams()
         );
     }
 
@@ -90,8 +94,10 @@ class IntrospectorTest extends TestCase
         $this->assertInstanceOf(IntrospectionResponse::class, $introspectionResponse);
         $this->assertAttributeEquals(null, 'token', $introspectionResponse);
         $this->assertEquals(
-            [],
-            $introspectionResponse->getValidIntrospectionParams()
+            [
+                'active' => false
+            ],
+            $introspectionResponse->getIntrospectionParams()
         );
     }
 
@@ -120,8 +126,10 @@ class IntrospectorTest extends TestCase
         $this->assertInstanceOf(IntrospectionResponse::class, $introspectionResponse);
         $this->assertAttributeEquals(null, 'token', $introspectionResponse);
         $this->assertEquals(
-            [],
-            $introspectionResponse->getValidIntrospectionParams()
+            [
+                'active' => false
+            ],
+            $introspectionResponse->getIntrospectionParams()
         );
     }
 
@@ -160,7 +168,7 @@ class IntrospectorTest extends TestCase
                 'sub' => 'value',
                 'jti' => 'value',
             ],
-            $introspectionResponse->getValidIntrospectionParams()
+            $introspectionResponse->getIntrospectionParams()
         );
     }
 }

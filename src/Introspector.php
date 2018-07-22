@@ -50,7 +50,7 @@ class Introspector
      * Return an introspection response.
      *
      * @param ServerRequestInterface $request
-     * @param IntrospectionResponse $responseType
+     * @param IntrospectionResponse  $responseType
      *
      * @return IntrospectionResponse
      */
