@@ -271,12 +271,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $authorizationRequest->setScopes($scopes);
 
-        if ($this->enableCodeExchangeProof === true) {
-            $codeChallenge = $this->getQueryStringParameter('code_challenge', $request);
-            if ($codeChallenge === null) {
-                throw OAuthServerException::invalidRequest('code_challenge');
-            }
+	$codeChallenge = $this->getQueryStringParameter('code_challenge', $request);
 
+        if ($codeChallenge !== null) {
             $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
 
             if (in_array($codeChallengeMethod, ['plain', 'S256'], true) === false) {
