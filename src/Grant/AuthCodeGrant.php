@@ -29,11 +29,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private $authCodeTTL;
 
     /**
-     * @var bool
-     */
-    private $enableCodeExchangeProof = false;
-
-    /**
      * @param AuthCodeRepositoryInterface     $authCodeRepository
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \DateInterval                   $authCodeTTL
@@ -47,11 +42,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->authCodeTTL = $authCodeTTL;
         $this->refreshTokenTTL = new \DateInterval('P1M');
-    }
-
-    public function enableCodeExchangeProof()
-    {
-        $this->enableCodeExchangeProof = true;
     }
 
     /**
@@ -81,6 +71,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         // Validate the authorization code
         try {
             $authCodePayload = json_decode($this->decrypt($encryptedAuthCode));
+	    
             if (time() > $authCodePayload->expire_time) {
                 throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
             }
@@ -104,6 +95,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             }
 
             $scopes = [];
+
             foreach ($authCodePayload->scopes as $scopeId) {
                 $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
 
@@ -127,9 +119,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code');
         }
 
+
         // Validate code challenge
-        if ($this->enableCodeExchangeProof === true) {
-            $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
+        if (!empty($authCodePayload->code_challenge)) {
+	    $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
+
             if ($codeVerifier === null) {
                 throw OAuthServerException::invalidRequest('code_verifier');
             }

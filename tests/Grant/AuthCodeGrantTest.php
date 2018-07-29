@@ -173,7 +173,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
@@ -249,7 +249,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -286,7 +286,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -464,7 +464,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
@@ -629,7 +629,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+	
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
@@ -701,7 +701,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
@@ -1145,7 +1145,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
@@ -1217,7 +1217,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
@@ -1289,7 +1289,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
@@ -1361,7 +1361,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
@@ -1433,7 +1433,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
-        $grant->enableCodeExchangeProof();
+
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
