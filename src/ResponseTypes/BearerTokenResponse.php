@@ -14,23 +14,37 @@ namespace League\OAuth2\Server\ResponseTypes;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class BearerTokenResponse extends AbstractResponseType
 {
     /**
      * {@inheritdoc}
      */
-    public function generateHttpResponse(ResponseInterface $response)
+    public function generateHttpResponse(ResponseInterface $response, ServerRequestInterface $request = null)
     {
         $expireDateTime = $this->accessToken->getExpiryDateTime()->getTimestamp();
 
         $jwtAccessToken = $this->accessToken->convertToJWT($this->privateKey);
+
+        $requestParameters = (array) $request->getParsedBody();
+        $requestedScopes = $requestParameters['scope'] ?? [];
 
         $responseParams = [
             'token_type'   => 'Bearer',
             'expires_in'   => $expireDateTime - (new \DateTime())->getTimestamp(),
             'access_token' => (string) $jwtAccessToken,
         ];
+
+        $givenScopes = array_map(function($scope) {
+            return $scope->getIdentifier();
+        }, $this->accessToken->getScopes());
+
+        if (!empty(array_diff($requestedScopes, $givenScopes))
+            || !empty(array_diff($givenScopes, $requestedScopes))
+        ) {
+            $responseParams['scope'] = implode(' ', $givenScopes);
+        }
 
         if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
             $refreshToken = $this->encrypt(
