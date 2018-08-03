@@ -27,7 +27,10 @@ class BearerTokenResponse extends AbstractResponseType
 
         $jwtAccessToken = $this->accessToken->convertToJWT($this->privateKey);
 
-        $requestParameters = (array) $request->getParsedBody();
+        if ($request) {
+            $requestParameters = (array) $request->getParsedBody();
+        }
+
         $requestedScopes = $requestParameters['scope'] ?? [];
 
         $responseParams = [
