@@ -36,7 +36,7 @@ class BearerTokenResponse extends AbstractResponseType
             'access_token' => (string) $jwtAccessToken,
         ];
 
-        $givenScopes = array_map(function($scope) {
+        $givenScopes = array_map(function ($scope) {
             return $scope->getIdentifier();
         }, $this->accessToken->getScopes());
 
