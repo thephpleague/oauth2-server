@@ -71,6 +71,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('client_id');
         }
 
+        // Only validate the client if it is confidential
         if ($this->clientRepository->isClientConfidential($clientId)) {
             $client = $this->validateClient($request);
         } else {
@@ -81,12 +82,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 false
             );
         }
-
-        // Validate request
-
-        // HERE I ONLY WANT TO VALIDATE IF THE CLIENT IS CONFIDENTIAL!
-
-
 
         $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
 
