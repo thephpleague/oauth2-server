@@ -50,6 +50,14 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     }
 
     /**
+     * Disable the requirement for a code challenge for public clients.
+     */
+    public function disableCodeChallengeForPublicClients()
+    {
+        $this->requireCodeChallengeForPublicClients = false;
+    }
+
+    /**
      * Respond to an access token request.
      *
      * @param ServerRequestInterface $request
@@ -185,7 +193,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     );
                 // @codeCoverageIgnoreEnd
             }
-        } else if ($this->$requireCodeChallengeForPublicClients && !$client->isConfidential()) {
+        } else if ($this->requireCodeChallengeForPublicClients && !$client->isConfidential()) {
             throw OAuthServerException::invalidRequest('code_challenge', 'Code challenge must be provided for public clients');
         }
 
