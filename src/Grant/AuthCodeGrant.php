@@ -29,6 +29,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private $authCodeTTL;
 
     /**
+     * @var bool
+     */
+    private $requireCodeChallengeForPublicClients = true;
+
+    /**
      * @param AuthCodeRepositoryInterface     $authCodeRepository
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \DateInterval                   $authCodeTTL
@@ -60,8 +65,29 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         ResponseTypeInterface $responseType,
         \DateInterval $accessTokenTTL
     ) {
+        $clientId = $this->getRequestParameter('client_id', $request, null);
+
+        if ($clientId === null) {
+            throw OAuthServerException::invalidRequest('client_id');
+        }
+
+        if ($this->clientRepository->isClientConfidential($clientId)) {
+            $client = $this->validateClient($request);
+        } else {
+            $client = $this->clientRepository->getClientEntity(
+                $clientId,
+                $this->getIdentifier(),
+                null,
+                false
+            );
+        }
+
         // Validate request
-        $client = $this->validateClient($request);
+
+        // HERE I ONLY WANT TO VALIDATE IF THE CLIENT IS CONFIDENTIAL!
+
+
+
         $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
 
         if ($encryptedAuthCode === null) {
@@ -71,7 +97,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         // Validate the authorization code
         try {
             $authCodePayload = json_decode($this->decrypt($encryptedAuthCode));
-	    
+
             if (time() > $authCodePayload->expire_time) {
                 throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
             }
@@ -86,6 +112,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
             // The redirect URI is required in this request
             $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
+
             if (empty($authCodePayload->redirect_uri) === false && $redirectUri === null) {
                 throw OAuthServerException::invalidRequest('redirect_uri');
             }
@@ -119,10 +146,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code');
         }
 
-
         // Validate code challenge
         if (!empty($authCodePayload->code_challenge)) {
-	    $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
+	        $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
 
             if ($codeVerifier === null) {
                 throw OAuthServerException::invalidRequest('code_verifier');
@@ -164,6 +190,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     );
                 // @codeCoverageIgnoreEnd
             }
+        } else if ($this->$requireCodeChallengeForPublicClients && !$client->isConfidential()) {
+            throw OAuthServerException::invalidRequest('code_challenge', 'Code challenge must be provided for public clients');
         }
 
         // Issue and persist access + refresh tokens
