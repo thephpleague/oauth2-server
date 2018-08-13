@@ -84,6 +84,7 @@ class AuthCodeGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
+        $client->setIsConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
@@ -123,6 +124,7 @@ class AuthCodeGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setRedirectUri(['http://foo/bar']);
+        $client->setIsConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -198,6 +200,7 @@ class AuthCodeGrantTest extends TestCase
     }
 
     /**
+     * $this->expectException(OAuth
      * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
      */
     public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooShort()
@@ -1818,6 +1821,9 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(3);
+
+        $grant->validateAuthorizationRequest($request);
     }
 }
