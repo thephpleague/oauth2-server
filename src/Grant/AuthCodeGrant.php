@@ -151,7 +151,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // Validate code challenge
         if (!empty($authCodePayload->code_challenge)) {
-	        $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
+            $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
 
             if ($codeVerifier === null) {
                 throw OAuthServerException::invalidRequest('code_verifier');
@@ -193,8 +193,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     );
                 // @codeCoverageIgnoreEnd
             }
-        } else if ($this->requireCodeChallengeForPublicClients && !$client->isConfidential()) {
-            throw OAuthServerException::invalidRequest('code_challenge', 'Code challenge must be provided for public clients');
         }
 
         // Issue and persist access + refresh tokens
@@ -296,7 +294,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $authorizationRequest->setScopes($scopes);
 
-	$codeChallenge = $this->getQueryStringParameter('code_challenge', $request);
+        $codeChallenge = $this->getQueryStringParameter('code_challenge', $request);
 
         if ($codeChallenge !== null) {
             $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
@@ -319,6 +317,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
             $authorizationRequest->setCodeChallenge($codeChallenge);
             $authorizationRequest->setCodeChallengeMethod($codeChallengeMethod);
+        } else if ($this->requireCodeChallengeForPublicClients && !$client->isConfidential()) {
+            throw OAuthServerException::invalidRequest('code_challenge', 'Code challenge must be provided for public clients');
         }
 
         return $authorizationRequest;
