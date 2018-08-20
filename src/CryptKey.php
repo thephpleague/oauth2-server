@@ -48,7 +48,8 @@ class CryptKey
         if ($keyPermissionsCheck === true) {
             // Verify the permissions of the key
             $keyPathPerms = decoct(fileperms($keyPath) & 0777);
-            if (in_array($keyPathPerms, ['400', '440', '600', '660'], true) === false && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+
+            if (in_array($keyPathPerms, ['400', '440', '600', '640', '660'], true) === false && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
                 trigger_error(sprintf(
                     'Key file "%s" permissions are not correct, recommend changing to 600 or 660 instead of %s',
                     $keyPath,

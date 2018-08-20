@@ -294,17 +294,28 @@ class OAuthServerException extends \Exception
         // include the "WWW-Authenticate" response header field
         // matching the authentication scheme used by the client.
         // @codeCoverageIgnoreStart
-        if ($this->errorType === 'invalid_client') {
-            $authScheme = 'Basic';
-            if (array_key_exists('HTTP_AUTHORIZATION', $_SERVER) !== false
-                && strpos($_SERVER['HTTP_AUTHORIZATION'], 'Bearer') === 0
-            ) {
-                $authScheme = 'Bearer';
-            }
+        if ($this->errorType === 'invalid_client' && array_key_exists('HTTP_AUTHORIZATION', $_SERVER) !== false) {
+            $authScheme = strpos($_SERVER['HTTP_AUTHORIZATION'], 'Bearer') === 0 ? 'Bearer' : 'Basic';
+
             $headers['WWW-Authenticate'] = $authScheme . ' realm="OAuth"';
         }
         // @codeCoverageIgnoreEnd
         return $headers;
+    }
+
+    /**
+     * Check if the exception has an associated redirect URI.
+     *
+     * Returns whether the exception includes a redirect, since
+     * getHttpStatusCode() doesn't return a 302 when there's a
+     * redirect enabled. This helps when you want to override local
+     * error pages but want to let redirects through.
+     *
+     * @return bool
+     */
+    public function hasRedirect()
+    {
+        return $this->redirectUri !== null;
     }
 
     /**

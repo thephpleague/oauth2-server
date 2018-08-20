@@ -118,6 +118,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $request,
             $this->getServerParameter('PHP_AUTH_USER', $request)
         );
+
         if (is_null($clientId)) {
             throw OAuthServerException::invalidRequest('client_id');
         }
@@ -135,20 +136,9 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         }
 
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
+
         if ($redirectUri !== null) {
-            if (
-                is_string($client->getRedirectUri())
-                && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
-            ) {
-                $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
-            } elseif (
-                is_array($client->getRedirectUri())
-                && in_array($redirectUri, $client->getRedirectUri(), true) === false
-            ) {
-                $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-                throw OAuthServerException::invalidClient();
-            }
+            $this->validateRedirectUri($redirectUri, $client, $request);
         } elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
             || empty($client->getRedirectUri())) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
