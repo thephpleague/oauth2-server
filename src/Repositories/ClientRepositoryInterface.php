@@ -39,15 +39,9 @@ interface ClientRepositoryInterface extends RepositoryInterface
      *
      * @param string      $clientIdentifier The client's identifier
      * @param null|string $clientSecret     The client's secret (if sent)
+     * @param null|string $grantType        The type of grant the client is using (if sent)
      *
      * @return bool
      */
-    public function validateClient($clientIdentifier, $clientSecret);
-
-    /**
-     * Check if a client can use a grant type.
-     *
-     * @return bool
-     */
-    public function canUseGrant($clientIdentifier, $grantType);
+    public function validateClient($clientIdentifier, $clientSecret, $grantType);
 }
