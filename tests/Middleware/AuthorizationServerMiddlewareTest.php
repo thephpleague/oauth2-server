@@ -66,7 +66,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
     public function testOAuthErrorResponse()
     {
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepository->method('getClientEntity')->willReturn(null);
+        $clientRepository->method('validateClient')->willReturn(false);
 
         $server = new AuthorizationServer(
             $clientRepository,
