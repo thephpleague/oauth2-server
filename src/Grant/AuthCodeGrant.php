@@ -52,7 +52,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Disable the requirement for a code challenge for public clients.
      */
-    public function disableCodeChallengeForPublicClients()
+    public function disableRequireCodeChallengeForPublicClients()
     {
         $this->requireCodeChallengeForPublicClients = false;
     }
