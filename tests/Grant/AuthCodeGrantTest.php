@@ -543,7 +543,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -681,7 +681,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -754,7 +754,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -830,7 +830,7 @@ class AuthCodeGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -878,7 +878,7 @@ class AuthCodeGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -927,7 +927,7 @@ class AuthCodeGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -970,7 +970,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -1031,7 +1031,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -1095,7 +1095,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -1156,7 +1156,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -1206,7 +1206,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -1279,7 +1279,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -1352,7 +1352,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -1425,7 +1425,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -1498,7 +1498,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setRedirectUri('http://foo/bar');
-        $client->isConfidential();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
