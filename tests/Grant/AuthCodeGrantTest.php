@@ -546,7 +546,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
@@ -615,7 +614,6 @@ class AuthCodeGrantTest extends TestCase
         $client->setRedirectUri('http://foo/bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(false);
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
@@ -686,7 +684,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
@@ -760,7 +757,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
@@ -837,7 +833,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -886,7 +881,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -936,7 +930,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -980,7 +973,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
@@ -1042,7 +1034,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
@@ -1107,7 +1098,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
@@ -1169,7 +1159,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
@@ -1220,7 +1209,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
@@ -1294,7 +1282,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
@@ -1368,7 +1355,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
@@ -1442,7 +1428,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
@@ -1516,7 +1501,6 @@ class AuthCodeGrantTest extends TestCase
         $client->isConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('isClientConfidential')->willReturn(true);
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();

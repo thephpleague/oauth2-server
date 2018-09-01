@@ -26,15 +26,6 @@ interface ClientRepositoryInterface extends RepositoryInterface
     public function getClientEntity($clientIdentifier);
 
     /**
-     * Check if a client is confidential.
-     *
-     * @param string $clientIdentifier The client's identifier
-     *
-     * @return bool
-     */
-    public function isClientConfidential($clientIdentifier);
-
-    /**
      * Validate a client's secret.
      *
      * @param string      $clientIdentifier The client's identifier

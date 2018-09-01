@@ -79,16 +79,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('client_id');
         }
 
+        $client = $this->clientRepository->getClientEntity($clientId);
+
         // Only validate the client if it is confidential
-        if ($this->clientRepository->isClientConfidential($clientId)) {
+        if ($client->isConfidential()) {
             $client = $this->validateClient($request);
-        } else {
-            $client = $this->clientRepository->getClientEntity(
-                $clientId,
-                $this->getIdentifier(),
-                null,
-                false
-            );
         }
 
         $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
