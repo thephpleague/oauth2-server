@@ -312,7 +312,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
             $authorizationRequest->setCodeChallenge($codeChallenge);
             $authorizationRequest->setCodeChallengeMethod($codeChallengeMethod);
-        } else if ($this->requireCodeChallengeForPublicClients && !$client->isConfidential()) {
+        } elseif ($this->requireCodeChallengeForPublicClients && !$client->isConfidential()) {
             throw OAuthServerException::invalidRequest('code_challenge', 'Code challenge must be provided for public clients');
         }
 
