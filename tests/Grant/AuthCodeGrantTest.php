@@ -200,7 +200,6 @@ class AuthCodeGrantTest extends TestCase
     }
 
     /**
-     * $this->expectException(OAuth
      * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
      */
     public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooShort()
