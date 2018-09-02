@@ -83,7 +83,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // Only validate the client if it is confidential
         if ($client->isConfidential()) {
-            $client = $this->validateClient($request);
+            $this->validateClient($request);
         }
 
         $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
