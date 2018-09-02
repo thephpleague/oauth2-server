@@ -673,7 +673,6 @@ class AuthCodeGrantTest extends TestCase
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
-
     }
 
     public function testRespondToAccessTokenRequestCodeChallengePlain()
