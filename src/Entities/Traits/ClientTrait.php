@@ -24,7 +24,7 @@ trait ClientTrait
     /**
      * @var bool
      */
-    protected $isConfidential;
+    protected $isConfidential = false;
 
     /**
      * Get the client's name.
