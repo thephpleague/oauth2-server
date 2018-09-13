@@ -2,8 +2,8 @@
 
 namespace LeagueTests\Utils;
 
-use Defuse\Crypto\Key;
 use Defuse\Crypto\Encoding;
+use Defuse\Crypto\Key;
 use LeagueTests\Stubs\CryptTraitStub;
 use PHPUnit\Framework\TestCase;
 
