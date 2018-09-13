@@ -56,7 +56,15 @@ trait CryptTrait
     {
         try {
             if ($this->encryptionKey instanceof Key) {
-                return Crypto::decrypt($encryptedData, $this->encryptionKey);
+                try {
+                    return Crypto::decrypt($encryptedData, $this->encryptionKey);
+                } catch (\Exception $e) {
+                    // This may have been encrypted with encryptWithPassword(), pull
+                    // the data out of the key and use that to decrypt.
+                    // $this->encryptionKey should not be assigned to the raw bytes so
+                    // subsequent calls to decrypt can work with the key object.
+                    return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey->getRawBytes());
+                }
             }
 
             return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
