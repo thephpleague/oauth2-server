@@ -9,6 +9,9 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use League\OAuth2\Server\CodeChallengeVerifiers\CodeChallengeVerifierInterface;
+use League\OAuth2\Server\CodeChallengeVerifiers\PlainVerifier;
+use League\OAuth2\Server\CodeChallengeVerifiers\S256Verifier;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
@@ -34,6 +37,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private $requireCodeChallengeForPublicClients = true;
 
     /**
+     * @var CodeChallengeVerifierInterface[]
+     */
+    private $codeChallengeVerifiers = [];
+
+    /**
      * @param AuthCodeRepositoryInterface     $authCodeRepository
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param \DateInterval                   $authCodeTTL
@@ -47,6 +55,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->authCodeTTL = $authCodeTTL;
         $this->refreshTokenTTL = new \DateInterval('P1M');
+
+        // SHOULD ONLY DO THIS IS SHA256 is supported
+        $s256Verifier = new S256Verifier();
+        $plainVerifier = new PlainVerifier();
+
+        $codeChallengeVerifiers = [
+            $s256Verifier->getMethod() => $s256Verifier,
+            $plainVerifier->getMethod() => $plainVerifier,
+        ];
     }
 
     /**
@@ -161,32 +178,19 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 );
             }
 
-            switch ($authCodePayload->code_challenge_method) {
-                case 'plain':
-                    if (hash_equals($codeVerifier, $authCodePayload->code_challenge) === false) {
-                        throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
-                    }
+            if (isset($this->codeChallengeVerifiers[$authCodePayLoad->code_challenge_method])) {
+                $codeChallengeVerifier = $this->codeChallengeVerifiers[$authCodePayload->code_challenge_method];
 
-                    break;
-                case 'S256':
-                    if (
-                        hash_equals(
-                            strtr(rtrim(base64_encode(hash('sha256', $codeVerifier, true)), '='), '+/', '-_'),
-                            $authCodePayload->code_challenge
-                        ) === false
-                    ) {
-                        throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
-                    }
-                    // @codeCoverageIgnoreStart
-                    break;
-                default:
-                    throw OAuthServerException::serverError(
-                        sprintf(
-                            'Unsupported code challenge method `%s`',
-                            $authCodePayload->code_challenge_method
-                        )
-                    );
-                // @codeCoverageIgnoreEnd
+                if ($codeChallengeVerifier->verifyCodeChallenge($codeVerifier, $authCodePayload->code_challenge) === false) {
+                    throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
+                }
+            } else {
+                throw OAuthServerException::serverError(
+                    sprintf(
+                        'Unsupported code challenge method `%s`',
+                        $authCodePayload->code_challenge_method
+                    )
+                );
             }
         }
 
@@ -289,10 +293,13 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         if ($codeChallenge !== null) {
             $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
 
-            if (in_array($codeChallengeMethod, ['plain', 'S256'], true) === false) {
+            if (array_key_exitst($codeChallengeMethod, $this->codeChallengeVerifiers) === false) {
                 throw OAuthServerException::invalidRequest(
                     'code_challenge_method',
-                    'Code challenge method must be `plain` or `S256`'
+                    'Code challenge method must be one of ' . implode(', ', array_map(
+                        function ($method) { return '`' . $method . '`'; },
+                        array_keys($this->codeChallengeVerifiers)
+                    ))
                 );
             }
 
