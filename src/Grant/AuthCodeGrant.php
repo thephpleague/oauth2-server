@@ -297,7 +297,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest(
                     'code_challenge_method',
                     'Code challenge method must be one of ' . implode(', ', array_map(
-                        function ($method) { return '`' . $method . '`'; },
+                        function ($method) {
+                            return '`' . $method . '`';
+                        },
                         array_keys($this->codeChallengeVerifiers)
                     ))
                 );
