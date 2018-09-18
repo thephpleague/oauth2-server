@@ -60,7 +60,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $s256Verifier = new S256Verifier();
         $plainVerifier = new PlainVerifier();
 
-        $codeChallengeVerifiers = [
+        $this->codeChallengeVerifiers = [
             $s256Verifier->getMethod() => $s256Verifier,
             $plainVerifier->getMethod() => $plainVerifier,
         ];
