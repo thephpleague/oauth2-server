@@ -178,7 +178,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 );
             }
 
-            if (isset($this->codeChallengeVerifiers[$authCodePayLoad->code_challenge_method])) {
+            if (isset($this->codeChallengeVerifiers[$authCodePayload->code_challenge_method])) {
                 $codeChallengeVerifier = $this->codeChallengeVerifiers[$authCodePayload->code_challenge_method];
 
                 if ($codeChallengeVerifier->verifyCodeChallenge($codeVerifier, $authCodePayload->code_challenge) === false) {
