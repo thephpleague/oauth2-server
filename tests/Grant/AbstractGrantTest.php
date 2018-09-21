@@ -175,7 +175,7 @@ class AbstractGrantTest extends TestCase
     public function testValidateClientMissingClientSecret()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn(null);
+        $clientRepositoryMock->method('validateClient')->willReturn(false);
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -200,7 +200,7 @@ class AbstractGrantTest extends TestCase
     public function testValidateClientInvalidClientSecret()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn(null);
+        $clientRepositoryMock->method('validateClient')->willReturn(false);
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -282,7 +282,7 @@ class AbstractGrantTest extends TestCase
     public function testValidateClientBadClient()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn(null);
+        $clientRepositoryMock->method('validateClient')->willReturn(false);
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);

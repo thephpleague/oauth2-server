@@ -123,12 +123,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('client_id');
         }
 
-        $client = $this->clientRepository->getClientEntity(
-            $clientId,
-            $this->getIdentifier(),
-            null,
-            false
-        );
+        $client = $this->clientRepository->getClientEntity($clientId);
 
         if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));

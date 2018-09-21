@@ -52,7 +52,7 @@ class OAuthServerExceptionTest extends TestCase
     private function issueInvalidClientException($serverRequest)
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn(false);
+        $clientRepositoryMock->method('validateClient')->willReturn(false);
 
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
