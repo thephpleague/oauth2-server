@@ -5,7 +5,7 @@ namespace LeagueTests\CodeChallengeVerifiers;
 use League\OAuth2\Server\CodeChallengeVerifiers\S256Verifier;
 use PHPUnit\Framework\TestCase;
 
-class S256Verifier extends TestCase
+class S256VerifierTest extends TestCase
 {
     public function testGetMethod()
     {
