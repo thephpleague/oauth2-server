@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Flag, `requireCodeChallengeForPublicClients`, used to reject public clients that do not provide a code challenge for the Auth Code Grant (PR #938)
 - Public clients can now use the Auth Code Grant (PR #938)
 - `isConfidential` property added to `ClientEntity` to identify type of client (PR #938)
+- Function `validateClient()` added to validate clients which was previously performed by the `getClientEntity()` function (PR #938)
 
 ### Changed
 - Replace `convertToJWT()` interface with a more generic `__toString()` to improve extensibility (PR #874)
 - The `invalidClient()` function accepts a PSR-7 compliant `$serverRequest` argument to avoid accessing the `$_SERVER` global variable and improve testing (PR #899)
 - `issueAccessToken()` in the Abstract Grant no longer sets access token client, user ID or scopes. These values should already have been set when calling `getNewToken()` (PR #919)
 - No longer need to enable PKCE with `enableCodeExchangeProof` flag. Any client sending a code challenge will initiate PKCE checks. (PR #938)
+- Function `getClientEntity()` no longer performs client validation (PR #938)
 
 ### Removed
 - `enableCodeExchangeProof` flag (PR #938)
