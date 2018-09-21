@@ -18,7 +18,7 @@ class PlainVerifierTest extends TestCase
     {
         $verifier = new PlainVerifier();
 
-        $this->assertTrue($verifier->verifyCodeChallenge('foo', 'foo');
-        $this->assertFalse($verifier->verifyCodeChallenge('foo', 'bar');
+        $this->assertTrue($verifier->verifyCodeChallenge('foo', 'foo'));
+        $this->assertFalse($verifier->verifyCodeChallenge('foo', 'bar'));
     }
 }
