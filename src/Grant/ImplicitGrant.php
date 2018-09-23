@@ -154,13 +154,6 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $redirectUri
         );
 
-        // Finalize the requested scopes
-        $finalizedScopes = $this->scopeRepository->finalizeScopes(
-            $scopes,
-            $this->getIdentifier(),
-            $client
-        );
-
         $stateParameter = $this->getQueryStringParameter('state', $request);
 
         $authorizationRequest = new AuthorizationRequest();
@@ -172,7 +165,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $authorizationRequest->setState($stateParameter);
         }
 
-        $authorizationRequest->setScopes($finalizedScopes);
+        $authorizationRequest->setScopes($scopes);
 
         return $authorizationRequest;
     }
@@ -194,11 +187,19 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         // The user approved the client, redirect them back with an access token
         if ($authorizationRequest->isAuthorizationApproved() === true) {
+            // Finalize the requested scopes
+            $finalizedScopes = $this->scopeRepository->finalizeScopes(
+                $authorizationRequest->getScopes(),
+                $this->getIdentifier(),
+                $authorizationRequest->getClient(),
+                $authorizationRequest->getUser()->getIdentifier()
+            );
+
             $accessToken = $this->issueAccessToken(
                 $this->accessTokenTTL,
                 $authorizationRequest->getClient(),
                 $authorizationRequest->getUser()->getIdentifier(),
-                $authorizationRequest->getScopes()
+                $finalizedScopes
             );
 
             $response = new RedirectResponse();

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- Moved  the `finalizeScopes()` call from `validateAuthorizationRequest` method to the `completeAuthorizationRequest` method so it is called just before the access token is issued (PR #923)
+
 ## [7.2.0] - released 2018-06-23
 
 ### Changed
