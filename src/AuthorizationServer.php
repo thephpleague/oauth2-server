@@ -263,7 +263,7 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
-     * Returns the introspector
+     * Returns the introspector.
      *
      * @return Introspector
      */

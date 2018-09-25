@@ -22,6 +22,11 @@ class IntrospectionResponse extends AbstractResponseType
         $this->token = $token;
     }
 
+    /**
+     * Return wether the token has been set
+     *
+     * @return boolean
+     */
     private function hasToken()
     {
         return $this->token !== null;
