@@ -225,7 +225,7 @@ class AuthorizationServer implements EmitterAwareInterface
     protected function getIntrospectionResponseType()
     {
         if ($this->introspectionResponseType instanceof IntrospectionResponse === false) {
-            $this->introspectionResponseType = new IntrospectionResponse;
+            $this->introspectionResponseType = new IntrospectionResponse();
         }
 
         return $this->introspectionResponseType;
