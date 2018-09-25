@@ -252,7 +252,7 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
-     * Return an introspection response.
+     * Validate an introspection request.
      *
      * @param ServerRequestInterface $request
      */
