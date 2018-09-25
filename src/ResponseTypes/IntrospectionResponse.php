@@ -23,7 +23,7 @@ class IntrospectionResponse extends AbstractResponseType
     }
 
     /**
-     * Return wether the token has been set
+     * Return wether the token has been set.
      *
      * @return bool
      */
