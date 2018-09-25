@@ -25,7 +25,7 @@ class IntrospectionResponse extends AbstractResponseType
     /**
      * Return wether the token has been set
      *
-     * @return boolean
+     * @return bool
      */
     private function hasToken()
     {
