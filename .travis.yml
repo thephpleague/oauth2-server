@@ -1,11 +1,17 @@
 language: php
 
-dist: trusty
-sudo: false
+dist: xenial
+sudo: required
 
 cache:
   directories:
     - vendor
+
+addons:
+  apt:
+    packages:
+    # required for php7.3
+    - libzip4
 
 env:
   - DEPENDENCIES=""
@@ -15,6 +21,7 @@ php:
   - 7.0
   - 7.1
   - 7.2
+  - 7.3snapshot
 
 install:
   - composer update --no-interaction --prefer-dist $DEPENDENCIES
