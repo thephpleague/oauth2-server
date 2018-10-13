@@ -174,7 +174,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         list($basicAuthUser, $basicAuthPassword) = $this->getBasicAuthCredentials($request);
 
         $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
-        if (is_null($clientId)) {
+        if ($clientId === null) {
             throw OAuthServerException::invalidRequest('client_id');
         }
 
@@ -217,13 +217,13 @@ abstract class AbstractGrant implements GrantTypeInterface
         ClientEntityInterface $client,
         ServerRequestInterface $request
     ) {
-        if (is_string($client->getRedirectUri())
+        if (\is_string($client->getRedirectUri())
             && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
-        } elseif (is_array($client->getRedirectUri())
-            && in_array($redirectUri, $client->getRedirectUri(), true) === false
+        } elseif (\is_array($client->getRedirectUri())
+            && \in_array($redirectUri, $client->getRedirectUri(), true) === false
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
@@ -233,16 +233,15 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate scopes in the request.
      *
-     * @param string $scopes
-     * @param string $redirectUri
-     *
-     * @throws OAuthServerException
+     * @param string|array $scopes
+     * @param string       $redirectUri
      *
      * @return ScopeEntityInterface[]
+     * @throws OAuthServerException
      */
     public function validateScopes($scopes, $redirectUri = null)
     {
-        if (!is_array($scopes)) {
+        if (!\is_array($scopes)) {
             $scopes = $this->convertScopesQueryStringToArray($scopes);
         }
 
@@ -288,7 +287,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     {
         $requestParameters = (array) $request->getParsedBody();
 
-        return isset($requestParameters[$parameter]) ? $requestParameters[$parameter] : $default;
+        return $requestParameters[$parameter] ?? $default;
     }
 
     /**
@@ -494,9 +493,8 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @param int $length
      *
-     * @throws OAuthServerException
-     *
      * @return string
+     * @throws OAuthServerException
      */
     protected function generateUniqueIdentifier($length = 40)
     {
