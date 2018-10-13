@@ -174,7 +174,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         list($basicAuthUser, $basicAuthPassword) = $this->getBasicAuthCredentials($request);
 
         $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
-        if (is_null($clientId)) {
+        if ($clientId === null) {
             throw OAuthServerException::invalidRequest('client_id');
         }
 
@@ -217,13 +217,13 @@ abstract class AbstractGrant implements GrantTypeInterface
         ClientEntityInterface $client,
         ServerRequestInterface $request
     ) {
-        if (is_string($client->getRedirectUri())
+        if (\is_string($client->getRedirectUri())
             && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
-        } elseif (is_array($client->getRedirectUri())
-            && in_array($redirectUri, $client->getRedirectUri(), true) === false
+        } elseif (\is_array($client->getRedirectUri())
+            && \in_array($redirectUri, $client->getRedirectUri(), true) === false
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient();
@@ -233,8 +233,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate scopes in the request.
      *
-     * @param string $scopes
-     * @param string $redirectUri
+     * @param string|array $scopes
+     * @param string       $redirectUri
      *
      * @throws OAuthServerException
      *
@@ -242,13 +242,13 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateScopes($scopes, $redirectUri = null)
     {
-        $scopesList = array_filter(explode(self::SCOPE_DELIMITER_STRING, trim($scopes)), function ($scope) {
-            return !empty($scope);
-        });
+        if (!\is_array($scopes)) {
+            $scopes = $this->convertScopesQueryStringToArray($scopes);
+        }
 
         $validScopes = [];
 
-        foreach ($scopesList as $scopeItem) {
+        foreach ($scopes as $scopeItem) {
             $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeItem);
 
             if ($scope instanceof ScopeEntityInterface === false) {
@@ -259,6 +259,20 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         return $validScopes;
+    }
+
+    /**
+     * Converts a scopes query string to an array to easily iterate for validation.
+     *
+     * @param string $scopes
+     *
+     * @return array
+     */
+    private function convertScopesQueryStringToArray($scopes)
+    {
+        return array_filter(explode(self::SCOPE_DELIMITER_STRING, trim($scopes)), function ($scope) {
+            return !empty($scope);
+        });
     }
 
     /**
@@ -274,7 +288,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     {
         $requestParameters = (array) $request->getParsedBody();
 
-        return isset($requestParameters[$parameter]) ? $requestParameters[$parameter] : $default;
+        return $requestParameters[$parameter] ?? $default;
     }
 
     /**
