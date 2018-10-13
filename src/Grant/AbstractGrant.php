@@ -374,10 +374,9 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param string|null            $userIdentifier
      * @param ScopeEntityInterface[] $scopes
      *
+     * @return AccessTokenEntityInterface
      * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
-     *
-     * @return AccessTokenEntityInterface
      */
     protected function issueAccessToken(
         \DateInterval $accessTokenTTL,
