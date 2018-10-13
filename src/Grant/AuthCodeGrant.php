@@ -163,7 +163,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Validate the authorization code.
      *
-     * @param AuthCodeEntityInterface $authCodePayload
+     * @param object $authCodePayload
      * @param ClientEntityInterface   $client
      * @param ServerRequestInterface  $request
      */
@@ -198,7 +198,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Get scopes from the auth code payload.
      *
-     * @param AuthCodeEntityInterface $authCodePayload
+     * @param object $authCodePayload
      *
      * @return array
      */
