@@ -163,9 +163,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Validate the authorization code.
      *
-     * @param object $authCodePayload
-     * @param ClientEntityInterface   $client
-     * @param ServerRequestInterface  $request
+     * @param object                 $authCodePayload
+     * @param ClientEntityInterface  $client
+     * @param ServerRequestInterface $request
      */
     private function validateAuthorizationCode(
         $authCodePayload,
