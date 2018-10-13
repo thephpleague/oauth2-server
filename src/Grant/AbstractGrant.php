@@ -242,13 +242,13 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateScopes($scopes, $redirectUri = null)
     {
-        $scopesList = array_filter(explode(self::SCOPE_DELIMITER_STRING, trim($scopes)), function ($scope) {
-            return !empty($scope);
-        });
+        if (!is_array($scopes)) {
+            $scopes = $this->convertScopesQueryStringToArray($scopes);
+        }
 
         $validScopes = [];
 
-        foreach ($scopesList as $scopeItem) {
+        foreach ($scopes as $scopeItem) {
             $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeItem);
 
             if ($scope instanceof ScopeEntityInterface === false) {
@@ -259,6 +259,20 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         return $validScopes;
+    }
+
+    /**
+     * Converts a scopes query string to an array to easily iterate for validation.
+     *
+     * @param string $scopes
+     *
+     * @return array
+     */
+    private function convertScopesQueryStringToArray($scopes)
+    {
+        return array_filter(explode(self::SCOPE_DELIMITER_STRING, trim($scopes)), function ($scope) {
+            return !empty($scope);
+        });
     }
 
     /**

@@ -86,7 +86,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $this->validateAuthorizationCode($authCodePayload, $client, $request);
 
             $scopes = $this->scopeRepository->finalizeScopes(
-                $this->getScopes($authCodePayload),
+                $this->validateScopes($authCodePayload->scopes),
                 $this->getIdentifier(),
                 $client,
                 $authCodePayload->user_id
@@ -192,32 +192,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         if ($authCodePayload->redirect_uri !== $redirectUri) {
             throw OAuthServerException::invalidRequest('redirect_uri', 'Invalid redirect URI');
         }
-    }
-
-    /**
-     * Get scopes from the auth code payload.
-     *
-     * @param \stdClass $authCodePayload
-     *
-     * @return array
-     */
-    private function getScopes($authCodePayload)
-    {
-        $scopes = [];
-
-        foreach ($authCodePayload->scopes as $scopeId) {
-            $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
-
-            if ($scope instanceof ScopeEntityInterface === false) {
-                // @codeCoverageIgnoreStart
-                throw OAuthServerException::invalidScope($scopeId);
-                // @codeCoverageIgnoreEnd
-            }
-
-            $scopes[] = $scope;
-        }
-
-        return $scopes;
     }
 
     /**
