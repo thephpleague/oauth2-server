@@ -34,9 +34,12 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private $enableCodeExchangeProof = false;
 
     /**
-     * @param AuthCodeRepositoryInterface     $authCodeRepository
+     * @param AuthCodeRepositoryInterface $authCodeRepository
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
-     * @param \DateInterval                   $authCodeTTL
+     * @param \DateInterval $authCodeTTL
+     *
+     * @return void
+     * @throws \Exception
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
