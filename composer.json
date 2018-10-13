@@ -46,6 +46,12 @@
             "email": "hello@alexbilbie.com",
             "homepage": "http://www.alexbilbie.com",
             "role": "Developer"
+        },
+        {
+            "name": "Andy Millington",
+            "email": "andrew@noexceptions.io",
+            "homepage": "https://www.noexceptions.io",
+            "role": "Developer"
         }
     ],
     "replace": {
