@@ -236,8 +236,9 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param string|array $scopes
      * @param string       $redirectUri
      *
-     * @return ScopeEntityInterface[]
      * @throws OAuthServerException
+     *
+     * @return ScopeEntityInterface[]
      */
     public function validateScopes($scopes, $redirectUri = null)
     {
@@ -373,9 +374,10 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param string|null            $userIdentifier
      * @param ScopeEntityInterface[] $scopes
      *
-     * @return AccessTokenEntityInterface
      * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
+     *
+     * @return AccessTokenEntityInterface
      */
     protected function issueAccessToken(
         \DateInterval $accessTokenTTL,
@@ -493,8 +495,9 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @param int $length
      *
-     * @return string
      * @throws OAuthServerException
+     *
+     * @return string
      */
     protected function generateUniqueIdentifier($length = 40)
     {
