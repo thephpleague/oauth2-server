@@ -25,7 +25,7 @@ interface ClientRepositoryInterface extends RepositoryInterface
      * @param bool        $mustValidateSecret If true the client must attempt to validate the secret if the client
      *                                        is confidential
      *
-     * @return ClientEntityInterface
+     * @return ClientEntityInterface|null
      */
     public function getClientEntity($clientIdentifier, $grantType = null, $clientSecret = null, $mustValidateSecret = true);
 }
