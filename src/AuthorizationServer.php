@@ -49,9 +49,9 @@ class AuthorizationServer implements EmitterAwareInterface
     protected $publicKey;
 
     /**
-     * @var null|ResponseTypeInterface
+     * @var ResponseTypeInterface
      */
-    protected $responseType;
+    protected $responseTypePrototype;
 
     /**
      * @var ClientRepositoryInterface
@@ -86,7 +86,7 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param ScopeRepositoryInterface       $scopeRepository
      * @param CryptKey|string                $privateKey
      * @param string|Key                     $encryptionKey
-     * @param null|ResponseTypeInterface     $responseType
+     * @param null|ResponseTypeInterface     $responseTypePrototype
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
@@ -94,7 +94,7 @@ class AuthorizationServer implements EmitterAwareInterface
         ScopeRepositoryInterface $scopeRepository,
         $privateKey,
         $encryptionKey,
-        ResponseTypeInterface $responseType = null
+        ResponseTypeInterface $responseTypePrototype = null
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
@@ -105,7 +105,17 @@ class AuthorizationServer implements EmitterAwareInterface
         }
         $this->privateKey = $privateKey;
         $this->encryptionKey = $encryptionKey;
-        $this->responseType = $responseType;
+
+        if ($responseTypePrototype === null) {
+            $responseTypePrototype = new BearerTokenResponse();
+        } else {
+            $responseTypePrototype = clone $responseTypePrototype;
+        }
+        if ($responseTypePrototype instanceof AbstractResponseType) {
+            $responseTypePrototype->setPrivateKey($this->privateKey);
+        }
+        $responseTypePrototype->setEncryptionKey($this->encryptionKey);
+        $this->responseTypePrototype = $responseTypePrototype;
     }
 
     /**
@@ -185,7 +195,7 @@ class AuthorizationServer implements EmitterAwareInterface
             }
             $tokenResponse = $grantType->respondToAccessTokenRequest(
                 $request,
-                $this->getResponseType(),
+                $this->newResponseType(),
                 $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()]
             );
 
@@ -202,18 +212,9 @@ class AuthorizationServer implements EmitterAwareInterface
      *
      * @return ResponseTypeInterface
      */
-    protected function getResponseType()
+    protected function newResponseType()
     {
-        if ($this->responseType instanceof ResponseTypeInterface === false) {
-            $this->responseType = new BearerTokenResponse();
-        }
-
-        if ($this->responseType instanceof AbstractResponseType === true) {
-            $this->responseType->setPrivateKey($this->privateKey);
-        }
-        $this->responseType->setEncryptionKey($this->encryptionKey);
-
-        return $this->responseType;
+        return clone $this->responseTypePrototype;
     }
 
     /**
