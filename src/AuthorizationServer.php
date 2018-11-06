@@ -103,6 +103,7 @@ class AuthorizationServer implements EmitterAwareInterface
         if ($privateKey instanceof CryptKey === false) {
             $privateKey = new CryptKey($privateKey);
         }
+        
         $this->privateKey = $privateKey;
         $this->encryptionKey = $encryptionKey;
 
@@ -111,10 +112,13 @@ class AuthorizationServer implements EmitterAwareInterface
         } else {
             $responseTypePrototype = clone $responseTypePrototype;
         }
+        
         if ($responseTypePrototype instanceof AbstractResponseType) {
             $responseTypePrototype->setPrivateKey($this->privateKey);
         }
+        
         $responseTypePrototype->setEncryptionKey($this->encryptionKey);
+        
         $this->responseTypePrototype = $responseTypePrototype;
     }
 
