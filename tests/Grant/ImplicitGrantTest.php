@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Grant;
 
+use DateInterval;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
@@ -37,13 +38,13 @@ class ImplicitGrantTest extends TestCase
 
     public function testGetIdentifier()
     {
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $this->assertEquals('implicit', $grant->getIdentifier());
     }
 
     public function testCanRespondToAccessTokenRequest()
     {
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
         $this->assertFalse(
             $grant->canRespondToAccessTokenRequest(new ServerRequest())
@@ -55,17 +56,17 @@ class ImplicitGrantTest extends TestCase
      */
     public function testRespondToAccessTokenRequest()
     {
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->respondToAccessTokenRequest(
             new ServerRequest(),
             new StubResponseType(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
     }
 
     public function testCanRespondToAuthorizationRequest()
     {
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
         $request = new ServerRequest(
             [],
@@ -96,7 +97,7 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
@@ -131,7 +132,7 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
@@ -162,7 +163,7 @@ class ImplicitGrantTest extends TestCase
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -190,7 +191,7 @@ class ImplicitGrantTest extends TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn(null);
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -221,7 +222,7 @@ class ImplicitGrantTest extends TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -253,7 +254,7 @@ class ImplicitGrantTest extends TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = new ServerRequest(
@@ -292,7 +293,7 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -315,7 +316,7 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -342,7 +343,7 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->expects($this->at(0))->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
         $accessTokenRepositoryMock->expects($this->at(1))->method('persistNewAccessToken')->willReturnSelf();
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -366,7 +367,7 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(OAuthServerException::serverError('something bad happened'));
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -390,7 +391,7 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
@@ -402,8 +403,8 @@ class ImplicitGrantTest extends TestCase
      */
     public function testSetRefreshTokenTTL()
     {
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->setRefreshTokenTTL(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
+        $grant->setRefreshTokenTTL(new DateInterval('PT10M'));
     }
 
     /**
@@ -411,7 +412,7 @@ class ImplicitGrantTest extends TestCase
      */
     public function testSetRefreshTokenRepository()
     {
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
     }
@@ -421,7 +422,7 @@ class ImplicitGrantTest extends TestCase
      */
     public function testCompleteAuthorizationRequestNoUser()
     {
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->completeAuthorizationRequest(new AuthorizationRequest());
     }
 }

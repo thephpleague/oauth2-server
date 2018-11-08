@@ -9,6 +9,7 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use DateInterval;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -22,7 +23,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class ImplicitGrant extends AbstractAuthorizeGrant
 {
     /**
-     * @var \DateInterval
+     * @var DateInterval
      */
     private $accessTokenTTL;
 
@@ -32,21 +33,21 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     private $queryDelimiter;
 
     /**
-     * @param \DateInterval $accessTokenTTL
-     * @param string        $queryDelimiter
+     * @param DateInterval $accessTokenTTL
+     * @param string       $queryDelimiter
      */
-    public function __construct(\DateInterval $accessTokenTTL, $queryDelimiter = '#')
+    public function __construct(DateInterval $accessTokenTTL, $queryDelimiter = '#')
     {
         $this->accessTokenTTL = $accessTokenTTL;
         $this->queryDelimiter = $queryDelimiter;
     }
 
     /**
-     * @param \DateInterval $refreshTokenTTL
+     * @param DateInterval $refreshTokenTTL
      *
      * @throw \LogicException
      */
-    public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
+    public function setRefreshTokenTTL(DateInterval $refreshTokenTTL)
     {
         throw new \LogicException('The Implicit Grant does not return refresh tokens');
     }
@@ -84,14 +85,14 @@ class ImplicitGrant extends AbstractAuthorizeGrant
      *
      * @param ServerRequestInterface $request
      * @param ResponseTypeInterface  $responseType
-     * @param \DateInterval          $accessTokenTTL
+     * @param DateInterval           $accessTokenTTL
      *
      * @return ResponseTypeInterface
      */
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
+        DateInterval $accessTokenTTL
     ) {
         throw new \LogicException('This grant does not used this method');
     }
@@ -203,7 +204,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                     [
                         'access_token' => (string) $accessToken,
                         'token_type'   => 'Bearer',
-                        'expires_in'   => $accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp(),
+                        'expires_in'   => $accessToken->getExpiryDateTime()->getTimestamp() - \time(),
                         'state'        => $authorizationRequest->getState(),
                     ],
                     $this->queryDelimiter

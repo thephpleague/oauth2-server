@@ -10,6 +10,8 @@
  */
 namespace League\OAuth2\Server\Grant;
 
+use DateInterval;
+use DateTimeImmutable;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
@@ -72,7 +74,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $userRepository;
 
     /**
-     * @var \DateInterval
+     * @var DateInterval
      */
     protected $refreshTokenTTL;
 
@@ -137,7 +139,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
+    public function setRefreshTokenTTL(DateInterval $refreshTokenTTL)
     {
         $this->refreshTokenTTL = $refreshTokenTTL;
     }
@@ -352,7 +354,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an access token.
      *
-     * @param \DateInterval          $accessTokenTTL
+     * @param DateInterval           $accessTokenTTL
      * @param ClientEntityInterface  $client
      * @param string|null            $userIdentifier
      * @param ScopeEntityInterface[] $scopes
@@ -363,7 +365,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @return AccessTokenEntityInterface
      */
     protected function issueAccessToken(
-        \DateInterval $accessTokenTTL,
+        DateInterval $accessTokenTTL,
         ClientEntityInterface $client,
         $userIdentifier,
         array $scopes = []
@@ -371,7 +373,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
-        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add($accessTokenTTL));
         $accessToken->setPrivateKey($this->privateKey);
 
         while ($maxGenerationAttempts-- > 0) {
@@ -391,7 +393,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an auth code.
      *
-     * @param \DateInterval          $authCodeTTL
+     * @param DateInterval           $authCodeTTL
      * @param ClientEntityInterface  $client
      * @param string                 $userIdentifier
      * @param string|null            $redirectUri
@@ -403,7 +405,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @return AuthCodeEntityInterface
      */
     protected function issueAuthCode(
-        \DateInterval $authCodeTTL,
+        DateInterval $authCodeTTL,
         ClientEntityInterface $client,
         $userIdentifier,
         $redirectUri,
@@ -412,7 +414,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $authCode = $this->authCodeRepository->getNewAuthCode();
-        $authCode->setExpiryDateTime((new \DateTime())->add($authCodeTTL));
+        $authCode->setExpiryDateTime((new DateTimeImmutable())->add($authCodeTTL));
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
 
@@ -451,7 +453,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
-        $refreshToken->setExpiryDateTime((new \DateTime())->add($this->refreshTokenTTL));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
 
         while ($maxGenerationAttempts-- > 0) {

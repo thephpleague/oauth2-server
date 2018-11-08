@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Middleware;
 
+use DateInterval;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -77,7 +78,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
             new StubResponseType()
         );
 
-        $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
+        $server->enableGrantType(new ClientCredentialsGrant(), new DateInterval('PT1M'));
 
         $_POST['grant_type'] = 'client_credentials';
         $_POST['client_id'] = 'foo';

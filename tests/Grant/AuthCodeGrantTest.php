@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Grant;
 
+use DateInterval;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
@@ -49,7 +50,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $this->assertEquals('authorization_code', $grant->getIdentifier());
@@ -60,7 +61,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $request = new ServerRequest(
@@ -96,7 +97,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -135,7 +136,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -173,7 +174,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -212,7 +213,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -249,7 +250,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -286,7 +287,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -321,7 +322,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
 
@@ -353,7 +354,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
 
@@ -388,7 +389,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
 
@@ -424,7 +425,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
 
@@ -464,7 +465,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -505,7 +506,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
@@ -530,7 +531,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
@@ -562,7 +563,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -600,7 +601,7 @@ class AuthCodeGrantTest extends TestCase
         );
 
         /** @var StubResponseType $response */
-        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
@@ -630,7 +631,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -668,7 +669,7 @@ class AuthCodeGrantTest extends TestCase
         );
 
         /** @var StubResponseType $response */
-        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
@@ -699,7 +700,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -741,7 +742,7 @@ class AuthCodeGrantTest extends TestCase
         );
 
         /** @var StubResponseType $response */
-        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
@@ -772,7 +773,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -814,7 +815,7 @@ class AuthCodeGrantTest extends TestCase
         );
 
         /** @var StubResponseType $response */
-        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
@@ -835,7 +836,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
@@ -865,7 +866,7 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
     /**
@@ -883,7 +884,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
@@ -914,7 +915,7 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
     /**
@@ -935,7 +936,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
@@ -960,7 +961,7 @@ class AuthCodeGrantTest extends TestCase
         );
 
         /* @var StubResponseType $response */
-        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
     public function testRespondToAccessTokenRequestExpiredCode()
@@ -981,7 +982,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
@@ -1018,7 +1019,7 @@ class AuthCodeGrantTest extends TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code has expired');
         }
@@ -1045,7 +1046,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $authCodeRepositoryMock,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
@@ -1082,7 +1083,7 @@ class AuthCodeGrantTest extends TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code has been revoked');
         }
@@ -1106,7 +1107,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
@@ -1143,7 +1144,7 @@ class AuthCodeGrantTest extends TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code was not issued to this client');
         }
@@ -1167,7 +1168,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
@@ -1193,7 +1194,7 @@ class AuthCodeGrantTest extends TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Cannot decrypt the authorization code');
         }
@@ -1224,7 +1225,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -1266,7 +1267,7 @@ class AuthCodeGrantTest extends TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Failed to verify `code_verifier`.');
         }
@@ -1297,7 +1298,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -1339,7 +1340,7 @@ class AuthCodeGrantTest extends TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
         }
@@ -1370,7 +1371,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -1412,7 +1413,7 @@ class AuthCodeGrantTest extends TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
         }
@@ -1443,7 +1444,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -1485,7 +1486,7 @@ class AuthCodeGrantTest extends TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
         }
@@ -1516,7 +1517,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -1557,7 +1558,7 @@ class AuthCodeGrantTest extends TestCase
 
         try {
             /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Check the `code_verifier` parameter');
         }
@@ -1580,7 +1581,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -1607,7 +1608,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
@@ -1633,7 +1634,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
@@ -1664,7 +1665,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -1702,7 +1703,7 @@ class AuthCodeGrantTest extends TestCase
         );
 
         /** @var StubResponseType $response */
-        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
@@ -1736,7 +1737,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -1774,7 +1775,7 @@ class AuthCodeGrantTest extends TestCase
         );
 
         /** @var StubResponseType $response */
-        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
@@ -1808,7 +1809,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -1846,7 +1847,7 @@ class AuthCodeGrantTest extends TestCase
         );
 
         /** @var StubResponseType $response */
-        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
@@ -1860,7 +1861,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->completeAuthorizationRequest(new AuthorizationRequest());
@@ -1881,7 +1882,7 @@ class AuthCodeGrantTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);

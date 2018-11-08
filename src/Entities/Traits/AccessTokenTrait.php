@@ -9,6 +9,7 @@
 
 namespace League\OAuth2\Server\Entities\Traits;
 
+use DateTimeImmutable;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
@@ -67,9 +68,9 @@ trait AccessTokenTrait
     abstract public function getClient();
 
     /**
-     * @return \DateTime
+     * @return DateTimeImmutable
      */
-    abstract public function getExpiryDateTime();
+    abstract public function getExpiryDateTime(): DateTimeImmutable;
 
     /**
      * @return string|int

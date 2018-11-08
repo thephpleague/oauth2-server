@@ -2,6 +2,8 @@
 
 namespace LeagueTests\ResponseTypes;
 
+use DateInterval;
+use DateTimeImmutable;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -32,7 +34,7 @@ class BearerResponseTypeTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -40,7 +42,7 @@ class BearerResponseTypeTest extends TestCase
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
@@ -75,7 +77,7 @@ class BearerResponseTypeTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -83,7 +85,7 @@ class BearerResponseTypeTest extends TestCase
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
@@ -119,14 +121,14 @@ class BearerResponseTypeTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
@@ -165,14 +167,14 @@ class BearerResponseTypeTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
@@ -208,14 +210,14 @@ class BearerResponseTypeTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
