@@ -4,48 +4,45 @@ namespace League\OAuth2\Server\ResponseTypes;
 
 use Lcobucci\JWT\Token;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class IntrospectionResponse extends AbstractResponseType
 {
     /**
-     * @var Token
+     * @var boolean
      */
-    protected $token;
+    protected $valid = false;
 
     /**
-     * Set the token against the response
-     *
-     * @param Token $token
+     * @var ServerRequestInterface
      */
-    public function setToken(Token $token)
+    protected $request;
+
+    /**
+     * @param boolean $bool
+     * @return void
+     */
+    public function setValidity(bool $bool)
     {
-        $this->token = $token;
+        $this->valid = $bool;
     }
 
     /**
-     * Return wether the token has been set.
-     *
-     * @return bool
+     * @param ServerRequestInterface $request
+     * @return void
      */
-    private function hasToken()
+    public function setRequest(ServerRequestInterface $request)
     {
-        return $this->token !== null;
+        $this->request = $request;
     }
 
     /**
      * @return array
      */
-    private function validTokenResponse()
+    protected function validIntrospectionResponse()
     {
         $responseParams = [
             'active' => true,
-            'token_type' => 'access_token',
-            'scope' => $this->token->getClaim('scopes', ''),
-            'client_id' => $this->token->getClaim('aud'),
-            'exp' => $this->token->getClaim('exp'),
-            'iat' => $this->token->getClaim('iat'),
-            'sub' => $this->token->getClaim('sub'),
-            'jti' => $this->token->getClaim('jti'),
         ];
 
         return array_merge($this->getExtraParams(), $responseParams);
@@ -54,7 +51,7 @@ class IntrospectionResponse extends AbstractResponseType
     /**
      * @return array
      */
-    private function invalidTokenResponse()
+    protected function invalidIntrospectionResponse()
     {
         return [
             'active' => false,
@@ -62,15 +59,23 @@ class IntrospectionResponse extends AbstractResponseType
     }
 
     /**
-     * Extract the introspection params from the token
+     * Extract the introspection response
      *
      * @return array
      */
-    public function getIntrospectionParams()
+    public function getIntrospectionResponseParams()
     {
-        return $this->hasToken() ?
-            $this->validTokenResponse() :
-            $this->invalidTokenResponse();
+        return $this->isValid() ?
+            $this->validIntrospectionResponse() :
+            $this->invalidIntrospectionResponse();
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function isValid()
+    {
+        return $this->valid === true;
     }
 
     /**
@@ -80,7 +85,7 @@ class IntrospectionResponse extends AbstractResponseType
      */
     public function generateHttpResponse(ResponseInterface $response)
     {
-        $responseParams = $this->getIntrospectionParams();
+        $responseParams = $this->getIntrospectionResponseParams();
 
         $response = $response
                 ->withStatus(200)
