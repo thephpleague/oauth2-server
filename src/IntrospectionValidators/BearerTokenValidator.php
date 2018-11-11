@@ -46,6 +46,7 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
      * Validates the given token from the request
      *
      * @param ServerRequestInterface $request
+     *
      * @return bool
      */
     public function validateIntrospection(ServerRequestInterface $request)
@@ -71,6 +72,7 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
      * Gets the token from the request body.
      *
      * @param ServerRequestInterface $request
+     *
      * @return Token
      */
     public function getTokenFromRequest(ServerRequestInterface $request)
@@ -111,7 +113,7 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
     {
         $data = new ValidationData(time());
 
-        return ! $token->validate($data);
+        return !$token->validate($data);
     }
 
     /**

@@ -10,7 +10,6 @@
 namespace League\OAuth2\Server;
 
 use Defuse\Crypto\Key;
-use Lcobucci\JWT\Parser;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;

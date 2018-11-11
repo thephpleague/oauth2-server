@@ -89,7 +89,6 @@ class BearerTokenIntrospectionResponseTest extends TestCase
         $this->assertAttributeEquals('value', 'sub', $json);
         $this->assertAttributeEquals('value', 'jti', $json);
         $this->assertAttributeEquals('param', 'extra', $json);
-
     }
 
     private function assertCorrectIntrospectionHeaders(ResponseInterface $response)

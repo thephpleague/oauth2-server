@@ -31,7 +31,7 @@ class BearerTokenIntrospectionResponse extends IntrospectionResponse
     /**
      * @return Token
      */
-protected function getTokenFromRequest()
+    protected function getTokenFromRequest()
     {
         $jwt = $this->request->getParsedBody()['token'] ?? null;
 

@@ -2,7 +2,6 @@
 
 namespace LeagueTests\IntrospectionValidators;
 
-use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\IntrospectionValidators\BearerTokenValidator;
@@ -10,7 +9,6 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use SebastianBergmann\CodeCoverage\InvalidArgumentException;
-use Zend\Diactoros\ServerRequest;
 
 class BearerTokenValidatorTest extends TestCase
 {

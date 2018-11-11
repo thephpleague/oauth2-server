@@ -2,14 +2,13 @@
 
 namespace League\OAuth2\Server\ResponseTypes;
 
-use Lcobucci\JWT\Token;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class IntrospectionResponse extends AbstractResponseType
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected $valid = false;
 
@@ -19,8 +18,7 @@ class IntrospectionResponse extends AbstractResponseType
     protected $request;
 
     /**
-     * @param boolean $bool
-     * @return void
+     * @param bool $bool
      */
     public function setValidity(bool $bool)
     {
@@ -29,7 +27,6 @@ class IntrospectionResponse extends AbstractResponseType
 
     /**
      * @param ServerRequestInterface $request
-     * @return void
      */
     public function setRequest(ServerRequestInterface $request)
     {
@@ -71,7 +68,7 @@ class IntrospectionResponse extends AbstractResponseType
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     protected function isValid()
     {
