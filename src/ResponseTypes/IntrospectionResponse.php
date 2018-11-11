@@ -18,6 +18,8 @@ class IntrospectionResponse extends AbstractResponseType
     protected $request;
 
     /**
+     * Set the validity of the response.
+     *
      * @param bool $bool
      */
     public function setValidity(bool $bool)
@@ -26,6 +28,8 @@ class IntrospectionResponse extends AbstractResponseType
     }
 
     /**
+     * Set the request.
+     *
      * @param ServerRequestInterface $request
      */
     public function setRequest(ServerRequestInterface $request)
@@ -34,6 +38,8 @@ class IntrospectionResponse extends AbstractResponseType
     }
 
     /**
+     * Return the valid introspection parameters.
+     *
      * @return array
      */
     protected function validIntrospectionResponse()
@@ -46,6 +52,8 @@ class IntrospectionResponse extends AbstractResponseType
     }
 
     /**
+     * Return the invalid introspection parameters.
+     *
      * @return array
      */
     protected function invalidIntrospectionResponse()
@@ -56,7 +64,7 @@ class IntrospectionResponse extends AbstractResponseType
     }
 
     /**
-     * Extract the introspection response
+     * Extract the introspection response.
      *
      * @return array
      */
@@ -68,6 +76,8 @@ class IntrospectionResponse extends AbstractResponseType
     }
 
     /**
+     * Check if the response is valid.
+     *
      * @return bool
      */
     protected function isValid()
@@ -76,6 +86,8 @@ class IntrospectionResponse extends AbstractResponseType
     }
 
     /**
+     * Generate a HTTP response.
+     *
      * @param ResponseInterface $response
      *
      * @return ResponseInterface

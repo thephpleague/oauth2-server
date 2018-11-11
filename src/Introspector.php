@@ -44,7 +44,7 @@ class Introspector
     }
 
     /**
-     * Validate the request
+     * Validate the introspection request.
      *
      * @param ServerRequestInterface $request
      *
@@ -80,6 +80,8 @@ class Introspector
     }
 
     /**
+     * Get the introspection validator, falling back to the bearer token validator if not set.
+     *
      * @return IntrospectionValidatorInterface
      */
     protected function getIntrospectionValidator()

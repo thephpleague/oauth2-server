@@ -33,7 +33,7 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
     }
 
     /**
-     * Set the public key
+     * Set the private key.
      *
      * @param \League\OAuth2\Server\CryptKey $key
      */
@@ -43,11 +43,7 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
     }
 
     /**
-     * Validates the given token from the request
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function validateIntrospection(ServerRequestInterface $request)
     {
@@ -84,7 +80,7 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
     }
 
     /**
-     * Validate the JWT token.
+     * Checks whether the token is unverified.
      *
      * @param Token $token
      *
@@ -103,7 +99,7 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
     }
 
     /**
-     * Ensure access token hasn't expired
+     * Ensure access token hasn't expired.
      *
      * @param Token $token
      *

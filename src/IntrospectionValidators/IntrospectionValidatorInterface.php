@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 interface IntrospectionValidatorInterface
 {
     /**
-     * Determine wether the introspection request is valid
+     * Determine wether the introspection request is valid.
      *
      * @param ServerRequestInterface $request
      *

@@ -217,6 +217,8 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
+     * Set the introspection response type.
+     *
      * @param IntrospectionResponse $reponseType
      */
     public function setIntrospectionReponseType(IntrospectionResponse $reponseType)
@@ -225,6 +227,8 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
+     * Set the validator used for introspection requests.
+     *
      * @param IntrospectionValidatorInterface $introspectionValidator
      */
     public function setIntrospectionValidator(IntrospectionValidatorInterface $introspectionValidator)
@@ -233,7 +237,7 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
-     * Get the introspection response
+     * Get the introspection response.
      *
      * @return IntrospectionResponse
      */

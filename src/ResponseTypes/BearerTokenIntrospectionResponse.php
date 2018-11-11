@@ -8,6 +8,8 @@ use Lcobucci\JWT\Token;
 class BearerTokenIntrospectionResponse extends IntrospectionResponse
 {
     /**
+     * Add the token data to the response.
+     *
      * @return array
      */
     protected function validIntrospectionResponse()
@@ -29,6 +31,8 @@ class BearerTokenIntrospectionResponse extends IntrospectionResponse
     }
 
     /**
+     * Gets the token from the request body.
+     *
      * @return Token
      */
     protected function getTokenFromRequest()
