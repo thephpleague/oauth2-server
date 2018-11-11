@@ -15,11 +15,14 @@ use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
+use League\OAuth2\Server\IntrospectionValidators\BearerTokenValidator;
+use League\OAuth2\Server\IntrospectionValidators\IntrospectionValidatorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
+use League\OAuth2\Server\ResponseTypes\BearerTokenIntrospectionResponse;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\IntrospectionResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -59,6 +62,11 @@ class AuthorizationServer implements EmitterAwareInterface
      * @var null|IntrospectionResponse
      */
     protected $introspectionResponseType;
+
+    /**
+     * @var null|IntrospectionValidatorInterface
+     */
+    protected $introspectionValidator;
 
     /**
      * @var null|Introspector
@@ -218,6 +226,14 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
+     * @param IntrospectionValidatorInterface $introspectionValidator
+     */
+    public function setIntrospectionValidator(IntrospectionValidatorInterface $introspectionValidator)
+    {
+        $this->introspectionValidator = $introspectionValidator;
+    }
+
+    /**
      * Get the introspection response
      *
      * @return IntrospectionResponse
@@ -225,10 +241,24 @@ class AuthorizationServer implements EmitterAwareInterface
     protected function getIntrospectionResponseType()
     {
         if ($this->introspectionResponseType instanceof IntrospectionResponse === false) {
-            $this->introspectionResponseType = new IntrospectionResponse();
+            $this->introspectionResponseType = new BearerTokenIntrospectionResponse();
         }
 
         return $this->introspectionResponseType;
+    }
+
+    /**
+     * Get the introspection response
+     *
+     * @return IntrospectionValidatorInterface
+     */
+    protected function getIntrospectionValidator()
+    {
+        if ($this->introspectionValidator instanceof IntrospectionValidatorInterface === false) {
+            $this->introspectionValidator = new BearerTokenValidator($this->accessTokenRepository);
+        }
+
+        return $this->introspectionValidator;
     }
 
     /**
@@ -270,7 +300,11 @@ class AuthorizationServer implements EmitterAwareInterface
     private function getIntrospector()
     {
         if (!isset($this->introspector)) {
-            $this->introspector = new Introspector($this->accessTokenRepository, $this->privateKey, new Parser);
+            $this->introspector = new Introspector(
+                $this->accessTokenRepository,
+                $this->privateKey,
+                $this->getIntrospectionValidator()
+            );
         }
 
         return $this->introspector;
