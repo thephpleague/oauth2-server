@@ -91,7 +91,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $authCodePayload->user_id
             );
         } catch (\LogicException  $e) {
-            throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code');
+            throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code', $e);
         }
 
         // Validate code challenge

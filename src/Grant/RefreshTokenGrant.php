@@ -95,7 +95,7 @@ class RefreshTokenGrant extends AbstractGrant
         try {
             $refreshToken = $this->decrypt($encryptedRefreshToken);
         } catch (\Exception $e) {
-            throw OAuthServerException::invalidRefreshToken('Cannot decrypt the refresh token');
+            throw OAuthServerException::invalidRefreshToken('Cannot decrypt the refresh token', $e);
         }
 
         $refreshTokenData = json_decode($refreshToken, true);
