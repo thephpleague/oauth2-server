@@ -9,6 +9,8 @@
 
 namespace League\OAuth2\Server\Entities;
 
+use DateTime;
+
 interface TokenInterface
 {
     /**
@@ -21,35 +23,35 @@ interface TokenInterface
     /**
      * Set the token's identifier.
      *
-     * @param $identifier
+     * @param mixed $identifier
      */
     public function setIdentifier($identifier);
 
     /**
      * Get the token's expiry date time.
      *
-     * @return \DateTime
+     * @return DateTime
      */
     public function getExpiryDateTime();
 
     /**
      * Set the date time when the token expires.
      *
-     * @param \DateTime $dateTime
+     * @param DateTime $dateTime
      */
-    public function setExpiryDateTime(\DateTime $dateTime);
+    public function setExpiryDateTime(DateTime $dateTime);
 
     /**
      * Set the identifier of the user associated with the token.
      *
-     * @param string|int $identifier The identifier of the user
+     * @param string|int|null $identifier The identifier of the user
      */
     public function setUserIdentifier($identifier);
 
     /**
      * Get the token user's identifier.
      *
-     * @return string|int
+     * @return string|int|null
      */
     public function getUserIdentifier();
 

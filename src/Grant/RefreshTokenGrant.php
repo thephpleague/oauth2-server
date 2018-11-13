@@ -11,7 +11,8 @@
 
 namespace League\OAuth2\Server\Grant;
 
-use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use DateInterval;
+use Exception;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
@@ -30,7 +31,7 @@ class RefreshTokenGrant extends AbstractGrant
     {
         $this->setRefreshTokenRepository($refreshTokenRepository);
 
-        $this->refreshTokenTTL = new \DateInterval('P1M');
+        $this->refreshTokenTTL = new DateInterval('P1M');
     }
 
     /**
@@ -39,33 +40,22 @@ class RefreshTokenGrant extends AbstractGrant
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
+        DateInterval $accessTokenTTL
     ) {
         // Validate request
         $client = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
-        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request));
+        $scopes = $this->validateScopes($this->getRequestParameter(
+            'scope',
+            $request,
+            implode(self::SCOPE_DELIMITER_STRING, $oldRefreshToken['scopes']))
+        );
 
-        // If no new scopes are requested then give the access token the original session scopes
-        if (count($scopes) === 0) {
-            $scopes = array_map(function ($scopeId) use ($client) {
-                $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeId);
-
-                if ($scope instanceof ScopeEntityInterface === false) {
-                    // @codeCoverageIgnoreStart
-                    throw OAuthServerException::invalidScope($scopeId);
-                    // @codeCoverageIgnoreEnd
-                }
-
-                return $scope;
-            }, $oldRefreshToken['scopes']);
-        } else {
-            // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
-            // the request doesn't include any new scopes
-            foreach ($scopes as $scope) {
-                if (in_array($scope->getIdentifier(), $oldRefreshToken['scopes']) === false) {
-                    throw OAuthServerException::invalidScope($scope->getIdentifier());
-                }
+        // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
+        // the request doesn't include any new scopes
+        foreach ($scopes as $scope) {
+            if (in_array($scope->getIdentifier(), $oldRefreshToken['scopes'], true) === false) {
+                throw OAuthServerException::invalidScope($scope->getIdentifier());
             }
         }
 
@@ -76,6 +66,10 @@ class RefreshTokenGrant extends AbstractGrant
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $oldRefreshToken['user_id'], $scopes);
         $refreshToken = $this->issueRefreshToken($accessToken);
+
+        // Send events to emitter
+        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
+        $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
 
         // Inject tokens into response
         $responseType->setAccessToken($accessToken);
@@ -102,8 +96,8 @@ class RefreshTokenGrant extends AbstractGrant
         // Validate refresh token
         try {
             $refreshToken = $this->decrypt($encryptedRefreshToken);
-        } catch (\Exception $e) {
-            throw OAuthServerException::invalidRefreshToken('Cannot decrypt the refresh token');
+        } catch (Exception $e) {
+            throw OAuthServerException::invalidRefreshToken('Cannot decrypt the refresh token', $e);
         }
 
         $refreshTokenData = json_decode($refreshToken, true);

@@ -9,9 +9,11 @@
 
 namespace League\OAuth2\Server\Entities\Traits;
 
+use DateTime;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
@@ -23,7 +25,7 @@ trait AccessTokenTrait
      *
      * @param CryptKey $privateKey
      *
-     * @return string
+     * @return Token
      */
     public function convertToJWT(CryptKey $privateKey)
     {
@@ -45,7 +47,7 @@ trait AccessTokenTrait
     abstract public function getClient();
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     abstract public function getExpiryDateTime();
 

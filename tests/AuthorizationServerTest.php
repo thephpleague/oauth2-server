@@ -17,20 +17,25 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 
-class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
+class AuthorizationServerTest extends TestCase
 {
+    const DEFAULT_SCOPE = 'basic';
+
     public function setUp()
     {
         // Make sure the keys have the correct permissions.
         chmod(__DIR__ . '/Stubs/private.key', 0600);
         chmod(__DIR__ . '/Stubs/public.key', 0600);
+        chmod(__DIR__ . '/Stubs/private.key.crlf', 0600);
     }
 
     public function testRespondToRequestInvalidGrantType()
@@ -59,7 +64,9 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn(new ClientEntity());
 
+        $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
@@ -74,6 +81,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             new StubResponseType()
         );
 
+        $server->setDefaultScope(self::DEFAULT_SCOPE);
         $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
 
         $_POST['grant_type'] = 'client_credentials';
@@ -83,7 +91,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testGetResponseType()
+    public function testNewDefaultResponseType()
     {
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -96,10 +104,66 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         );
 
         $abstractGrantReflection = new \ReflectionClass($server);
-        $method = $abstractGrantReflection->getMethod('getResponseType');
+        $method = $abstractGrantReflection->getMethod('newResponseType');
         $method->setAccessible(true);
 
-        $this->assertTrue($method->invoke($server) instanceof BearerTokenResponse);
+        $responseTypeA = $method->invoke($server);
+        $responseTypeB = $method->invoke($server);
+        $this->assertInstanceOf(BearerTokenResponse::class, $responseTypeA);
+        $this->assertInstanceOf(BearerTokenResponse::class, $responseTypeB);
+        $this->assertNotSame($responseTypeA, $responseTypeB);
+    }
+
+    public function testNewResponseTypeFromPrototype()
+    {
+        $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
+        $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
+
+        $responseTypePrototype = new class extends BearerTokenResponse {
+            /* @return null|CryptKey */
+            public function getPrivateKey()
+            {
+                return $this->privateKey;
+            }
+
+            public function getEncryptionKey()
+            {
+                return $this->encryptionKey;
+            }
+        };
+
+        $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+
+        $server = new AuthorizationServer(
+            $clientRepository,
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
+            $privateKey,
+            $encryptionKey,
+            $responseTypePrototype
+        );
+
+        $abstractGrantReflection = new \ReflectionClass($server);
+        $method = $abstractGrantReflection->getMethod('newResponseType');
+        $method->setAccessible(true);
+
+        $responseTypeA = $method->invoke($server);
+        $responseTypeB = $method->invoke($server);
+
+        // prototype should not get changed
+        $this->assertNull($responseTypePrototype->getPrivateKey());
+        $this->assertNull($responseTypePrototype->getEncryptionKey());
+
+        // generated instances should have keys setup
+        $this->assertSame($privateKey, $responseTypeA->getPrivateKey()->getKeyPath());
+        $this->assertSame($encryptionKey, $responseTypeA->getEncryptionKey());
+
+        // all instances should be different but based on the same prototype
+        $this->assertSame(get_class($responseTypePrototype), get_class($responseTypeA));
+        $this->assertSame(get_class($responseTypePrototype), get_class($responseTypeB));
+        $this->assertNotSame($responseTypePrototype, $responseTypeA);
+        $this->assertNotSame($responseTypePrototype, $responseTypeB);
+        $this->assertNotSame($responseTypeA, $responseTypeB);
     }
 
     public function testCompleteAuthorizationRequest()
@@ -131,12 +195,59 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
-        $this->assertTrue(
-            $server->completeAuthorizationRequest($authRequest, new Response) instanceof ResponseInterface
+        $this->assertInstanceOf(
+            ResponseInterface::class,
+            $server->completeAuthorizationRequest($authRequest, new Response)
         );
     }
 
     public function testValidateAuthorizationRequest()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new \DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+
+        $server = new AuthorizationServer(
+            $clientRepositoryMock,
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $scopeRepositoryMock,
+            'file://' . __DIR__ . '/Stubs/private.key',
+            'file://' . __DIR__ . '/Stubs/public.key'
+        );
+
+        $server->setDefaultScope(self::DEFAULT_SCOPE);
+        $server->enableGrantType($grant);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
+                'response_type' => 'code',
+                'client_id'     => 'foo',
+            ]
+        );
+
+        $this->assertInstanceOf(AuthorizationRequest::class, $server->validateAuthorizationRequest($request));
+    }
+
+    public function testValidateAuthorizationRequestWithMissingRedirectUri()
     {
         $client = new ClientEntity();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
@@ -172,7 +283,12 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertTrue($server->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        try {
+            $server->validateAuthorizationRequest($request);
+        } catch (OAuthServerException $e) {
+            $this->assertEquals('invalid_client', $e->getErrorType());
+            $this->assertEquals(401, $e->getHttpStatusCode());
+        }
     }
 
     /**

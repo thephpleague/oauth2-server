@@ -18,10 +18,13 @@ use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
-class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
+class ImplicitGrantTest extends TestCase
 {
+    const DEFAULT_SCOPE = 'basic';
+
     /**
      * CryptTrait stub
      */
@@ -91,11 +94,11 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
-        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = new ServerRequest(
             [],
@@ -112,7 +115,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
     public function testValidateAuthorizationRequestRedirectUriArray()
@@ -125,11 +128,11 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
-        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = new ServerRequest(
             [],
@@ -146,7 +149,7 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertTrue($grant->validateAuthorizationRequest($request) instanceof AuthorizationRequest);
+        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
     /**
@@ -281,11 +284,16 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
 
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     /**
@@ -304,9 +312,14 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
 
         $grant->completeAuthorizationRequest($authRequest);
     }
@@ -325,11 +338,16 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock->expects($this->at(0))->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
         $accessTokenRepositoryMock->expects($this->at(1))->method('persistNewAccessToken')->willReturnSelf();
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
 
-        $this->assertTrue($grant->completeAuthorizationRequest($authRequest) instanceof RedirectResponse);
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
     /**
@@ -349,9 +367,14 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(OAuthServerException::serverError('something bad happened'));
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
 
         $grant->completeAuthorizationRequest($authRequest);
     }
@@ -373,9 +396,14 @@ class ImplicitGrantTest extends \PHPUnit_Framework_TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
 
         $grant->completeAuthorizationRequest($authRequest);
     }

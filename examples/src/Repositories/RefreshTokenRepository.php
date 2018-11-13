@@ -18,7 +18,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntityInterface)
+    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity)
     {
         // Some logic to persist the refresh token in a database
     }

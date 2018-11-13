@@ -4,6 +4,7 @@ enabled:
   - binary_operator_spaces
   - blank_line_before_return
   - concat_with_spaces
+  - fully_qualified_strict_types
   - function_typehint_space
   - hash_to_slash_comment
   - include
@@ -29,7 +30,6 @@ enabled:
   - phpdoc_inline_tag
   - phpdoc_no_access
   - phpdoc_no_simplified_null_return
-  - phpdoc_order
   - phpdoc_property
   - phpdoc_scalar
   - phpdoc_separation

@@ -11,10 +11,13 @@
 
 namespace League\OAuth2\Server;
 
+use LogicException;
+use RuntimeException;
+
 class CryptKey
 {
     const RSA_KEY_PATTERN =
-        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----\n)(.|\n)+(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)$/';
+        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
 
     /**
      * @var string
@@ -42,15 +45,15 @@ class CryptKey
         }
 
         if (!file_exists($keyPath) || !is_readable($keyPath)) {
-            throw new \LogicException(sprintf('Key path "%s" does not exist or is not readable', $keyPath));
+            throw new LogicException(sprintf('Key path "%s" does not exist or is not readable', $keyPath));
         }
 
         if ($keyPermissionsCheck === true) {
             // Verify the permissions of the key
             $keyPathPerms = decoct(fileperms($keyPath) & 0777);
-            if (in_array($keyPathPerms, ['600', '660'], true) === false) {
+            if (in_array($keyPathPerms, ['400', '440', '600', '640', '660'], true) === false) {
                 trigger_error(sprintf(
-                    'Key file "%s" permissions are not correct, should be 600 or 660 instead of %s',
+                    'Key file "%s" permissions are not correct, recommend changing to 600 or 660 instead of %s',
                     $keyPath,
                     $keyPathPerms
                 ), E_USER_NOTICE);
@@ -64,7 +67,7 @@ class CryptKey
     /**
      * @param string $key
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      *
      * @return string
      */
@@ -73,21 +76,25 @@ class CryptKey
         $tmpDir = sys_get_temp_dir();
         $keyPath = $tmpDir . '/' . sha1($key) . '.key';
 
-        if (!file_exists($keyPath) && !touch($keyPath)) {
+        if (file_exists($keyPath)) {
+            return 'file://' . $keyPath;
+        }
+
+        if (!touch($keyPath)) {
             // @codeCoverageIgnoreStart
-            throw new \RuntimeException(sprintf('"%s" key file could not be created', $keyPath));
+            throw new RuntimeException(sprintf('"%s" key file could not be created', $keyPath));
             // @codeCoverageIgnoreEnd
         }
 
         if (file_put_contents($keyPath, $key) === false) {
             // @codeCoverageIgnoreStart
-            throw new \RuntimeException(sprintf('Unable to write key file to temporary directory "%s"', $tmpDir));
+            throw new RuntimeException(sprintf('Unable to write key file to temporary directory "%s"', $tmpDir));
             // @codeCoverageIgnoreEnd
         }
 
         if (chmod($keyPath, 0600) === false) {
             // @codeCoverageIgnoreStart
-            throw new \RuntimeException(sprintf('The key file "%s" file mode could not be changed with chmod to 600', $keyPath));
+            throw new RuntimeException(sprintf('The key file "%s" file mode could not be changed with chmod to 600', $keyPath));
             // @codeCoverageIgnoreEnd
         }
 
