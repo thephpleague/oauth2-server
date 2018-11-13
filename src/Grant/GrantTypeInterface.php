@@ -11,6 +11,7 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use DateInterval;
 use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\OAuth2\Server\CryptKey;
@@ -29,9 +30,9 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * Set refresh token TTL.
      *
-     * @param \DateInterval $refreshTokenTTL
+     * @param DateInterval $refreshTokenTTL
      */
-    public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL);
+    public function setRefreshTokenTTL(DateInterval $refreshTokenTTL);
 
     /**
      * Return the grant identifier that can be used in matching up requests.
@@ -45,14 +46,14 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * @param ServerRequestInterface $request
      * @param ResponseTypeInterface  $responseType
-     * @param \DateInterval          $accessTokenTTL
+     * @param DateInterval           $accessTokenTTL
      *
      * @return ResponseTypeInterface
      */
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
+        DateInterval $accessTokenTTL
     );
 
     /**

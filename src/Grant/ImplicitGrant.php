@@ -9,6 +9,8 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use DateInterval;
+use DateTime;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -17,12 +19,13 @@ use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ImplicitGrant extends AbstractAuthorizeGrant
 {
     /**
-     * @var \DateInterval
+     * @var DateInterval
      */
     private $accessTokenTTL;
 
@@ -32,33 +35,33 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     private $queryDelimiter;
 
     /**
-     * @param \DateInterval $accessTokenTTL
-     * @param string        $queryDelimiter
+     * @param DateInterval $accessTokenTTL
+     * @param string       $queryDelimiter
      */
-    public function __construct(\DateInterval $accessTokenTTL, $queryDelimiter = '#')
+    public function __construct(DateInterval $accessTokenTTL, $queryDelimiter = '#')
     {
         $this->accessTokenTTL = $accessTokenTTL;
         $this->queryDelimiter = $queryDelimiter;
     }
 
     /**
-     * @param \DateInterval $refreshTokenTTL
+     * @param DateInterval $refreshTokenTTL
      *
-     * @throw \LogicException
+     * @throw LogicException
      */
-    public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
+    public function setRefreshTokenTTL(DateInterval $refreshTokenTTL)
     {
-        throw new \LogicException('The Implicit Grant does not return refresh tokens');
+        throw new LogicException('The Implicit Grant does not return refresh tokens');
     }
 
     /**
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      *
-     * @throw \LogicException
+     * @throw LogicException
      */
     public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository)
     {
-        throw new \LogicException('The Implicit Grant does not return refresh tokens');
+        throw new LogicException('The Implicit Grant does not return refresh tokens');
     }
 
     /**
@@ -84,16 +87,16 @@ class ImplicitGrant extends AbstractAuthorizeGrant
      *
      * @param ServerRequestInterface $request
      * @param ResponseTypeInterface  $responseType
-     * @param \DateInterval          $accessTokenTTL
+     * @param DateInterval           $accessTokenTTL
      *
      * @return ResponseTypeInterface
      */
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
+        DateInterval $accessTokenTTL
     ) {
-        throw new \LogicException('This grant does not used this method');
+        throw new LogicException('This grant does not used this method');
     }
 
     /**
@@ -176,7 +179,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
     {
         if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
-            throw new \LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
+            throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
         }
 
         $finalRedirectUri = ($authorizationRequest->getRedirectUri() === null)
@@ -209,7 +212,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                     [
                         'access_token' => (string) $accessToken->convertToJWT($this->privateKey),
                         'token_type'   => 'Bearer',
-                        'expires_in'   => $accessToken->getExpiryDateTime()->getTimestamp() - (new \DateTime())->getTimestamp(),
+                        'expires_in'   => $accessToken->getExpiryDateTime()->getTimestamp() - (new DateTime())->getTimestamp(),
                         'state'        => $authorizationRequest->getState(),
                     ],
                     $this->queryDelimiter

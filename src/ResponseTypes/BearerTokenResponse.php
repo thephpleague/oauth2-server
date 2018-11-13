@@ -11,6 +11,7 @@
 
 namespace League\OAuth2\Server\ResponseTypes;
 
+use DateTime;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -28,7 +29,7 @@ class BearerTokenResponse extends AbstractResponseType
 
         $responseParams = [
             'token_type'   => 'Bearer',
-            'expires_in'   => $expireDateTime - (new \DateTime())->getTimestamp(),
+            'expires_in'   => $expireDateTime - (new DateTime())->getTimestamp(),
             'access_token' => (string) $jwtAccessToken,
         ];
 
