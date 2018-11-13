@@ -105,7 +105,7 @@ class OAuthServerException extends Exception
      *
      * @param string      $parameter The invalid parameter
      * @param null|string $hint
-     * @param Throwable  $previous  Previous exception
+     * @param Throwable   $previous  Previous exception
      *
      * @return static
      */
@@ -204,7 +204,7 @@ class OAuthServerException extends Exception
      *
      * @param null|string $hint
      * @param null|string $redirectUri
-     * @param Throwable  $previous
+     * @param Throwable   $previous
      *
      * @return static
      */
