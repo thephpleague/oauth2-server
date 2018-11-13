@@ -182,6 +182,8 @@ class OAuthServerException extends Exception
             7,
             'server_error',
             500,
+            null,
+            null,
             $previous
         );
     }
