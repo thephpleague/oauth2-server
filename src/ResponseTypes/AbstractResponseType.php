@@ -54,7 +54,7 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     /**
      * Set the private key
      *
-     * @param \League\OAuth2\Server\CryptKey $key
+     * @param CryptKey $key
      */
     public function setPrivateKey(CryptKey $key)
     {

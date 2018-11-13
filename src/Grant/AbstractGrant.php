@@ -10,6 +10,10 @@
  */
 namespace League\OAuth2\Server\Grant;
 
+use DateInterval;
+use DateTime;
+use Error;
+use Exception;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
@@ -28,7 +32,9 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
+use TypeError;
 
 /**
  * Abstract grant class.
@@ -72,12 +78,12 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $userRepository;
 
     /**
-     * @var \DateInterval
+     * @var DateInterval
      */
     protected $refreshTokenTTL;
 
     /**
-     * @var \League\OAuth2\Server\CryptKey
+     * @var CryptKey
      */
     protected $privateKey;
 
@@ -137,7 +143,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function setRefreshTokenTTL(\DateInterval $refreshTokenTTL)
+    public function setRefreshTokenTTL(DateInterval $refreshTokenTTL)
     {
         $this->refreshTokenTTL = $refreshTokenTTL;
     }
@@ -145,7 +151,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Set the private key
      *
-     * @param \League\OAuth2\Server\CryptKey $key
+     * @param CryptKey $key
      */
     public function setPrivateKey(CryptKey $key)
     {
@@ -369,7 +375,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an access token.
      *
-     * @param \DateInterval          $accessTokenTTL
+     * @param DateInterval           $accessTokenTTL
      * @param ClientEntityInterface  $client
      * @param string|null            $userIdentifier
      * @param ScopeEntityInterface[] $scopes
@@ -380,7 +386,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @return AccessTokenEntityInterface
      */
     protected function issueAccessToken(
-        \DateInterval $accessTokenTTL,
+        DateInterval $accessTokenTTL,
         ClientEntityInterface $client,
         $userIdentifier,
         array $scopes = []
@@ -390,7 +396,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
         $accessToken->setClient($client);
         $accessToken->setUserIdentifier($userIdentifier);
-        $accessToken->setExpiryDateTime((new \DateTime())->add($accessTokenTTL));
+        $accessToken->setExpiryDateTime((new DateTime())->add($accessTokenTTL));
 
         foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
@@ -413,7 +419,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an auth code.
      *
-     * @param \DateInterval          $authCodeTTL
+     * @param DateInterval           $authCodeTTL
      * @param ClientEntityInterface  $client
      * @param string                 $userIdentifier
      * @param string|null            $redirectUri
@@ -425,7 +431,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @return AuthCodeEntityInterface
      */
     protected function issueAuthCode(
-        \DateInterval $authCodeTTL,
+        DateInterval $authCodeTTL,
         ClientEntityInterface $client,
         $userIdentifier,
         $redirectUri,
@@ -434,7 +440,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $authCode = $this->authCodeRepository->getNewAuthCode();
-        $authCode->setExpiryDateTime((new \DateTime())->add($authCodeTTL));
+        $authCode->setExpiryDateTime((new DateTime())->add($authCodeTTL));
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
 
@@ -473,7 +479,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
-        $refreshToken->setExpiryDateTime((new \DateTime())->add($this->refreshTokenTTL));
+        $refreshToken->setExpiryDateTime((new DateTime())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
 
         while ($maxGenerationAttempts-- > 0) {
@@ -504,11 +510,11 @@ abstract class AbstractGrant implements GrantTypeInterface
         try {
             return bin2hex(random_bytes($length));
             // @codeCoverageIgnoreStart
-        } catch (\TypeError $e) {
+        } catch (TypeError $e) {
             throw OAuthServerException::serverError('An unexpected error has occurred', $e);
-        } catch (\Error $e) {
+        } catch (Error $e) {
             throw OAuthServerException::serverError('An unexpected error has occurred', $e);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // If you get this message, the CSPRNG failed hard.
             throw OAuthServerException::serverError('Could not generate a random string', $e);
         }
@@ -541,7 +547,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateAuthorizationRequest(ServerRequestInterface $request)
     {
-        throw new \LogicException('This grant cannot validate an authorization request');
+        throw new LogicException('This grant cannot validate an authorization request');
     }
 
     /**
@@ -549,6 +555,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
     {
-        throw new \LogicException('This grant cannot complete an authorization request');
+        throw new LogicException('This grant cannot complete an authorization request');
     }
 }

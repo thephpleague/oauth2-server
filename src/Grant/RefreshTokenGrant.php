@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use DateInterval;
+use Exception;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
@@ -29,7 +31,7 @@ class RefreshTokenGrant extends AbstractGrant
     {
         $this->setRefreshTokenRepository($refreshTokenRepository);
 
-        $this->refreshTokenTTL = new \DateInterval('P1M');
+        $this->refreshTokenTTL = new DateInterval('P1M');
     }
 
     /**
@@ -38,7 +40,7 @@ class RefreshTokenGrant extends AbstractGrant
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
+        DateInterval $accessTokenTTL
     ) {
         // Validate request
         $client = $this->validateClient($request);
@@ -94,7 +96,7 @@ class RefreshTokenGrant extends AbstractGrant
         // Validate refresh token
         try {
             $refreshToken = $this->decrypt($encryptedRefreshToken);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw OAuthServerException::invalidRefreshToken('Cannot decrypt the refresh token', $e);
         }
 
