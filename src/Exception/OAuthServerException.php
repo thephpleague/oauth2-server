@@ -11,6 +11,7 @@ namespace League\OAuth2\Server\Exception;
 
 use Exception;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 
 class OAuthServerException extends Exception
 {
@@ -48,9 +49,9 @@ class OAuthServerException extends Exception
      * @param int         $httpStatusCode HTTP status code to send (default = 400)
      * @param null|string $hint           A helper hint
      * @param null|string $redirectUri    A HTTP URI to redirect the user back to
-     * @param \Throwable  $previous       Previous exception
+     * @param Throwable   $previous       Previous exception
      */
-    public function __construct($message, $code, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null, \Throwable $previous = null)
+    public function __construct($message, $code, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->httpStatusCode = $httpStatusCode;
@@ -104,11 +105,11 @@ class OAuthServerException extends Exception
      *
      * @param string      $parameter The invalid parameter
      * @param null|string $hint
-     * @param \Throwable  $previous  Previous exception
+     * @param Throwable  $previous  Previous exception
      *
      * @return static
      */
-    public static function invalidRequest($parameter, $hint = null, \Throwable $previous = null)
+    public static function invalidRequest($parameter, $hint = null, Throwable $previous = null)
     {
         $errorMessage = 'The request is missing a required parameter, includes an invalid parameter value, ' .
             'includes a parameter more than once, or is otherwise malformed.';
@@ -166,14 +167,14 @@ class OAuthServerException extends Exception
     /**
      * Server error.
      *
-     * @param string     $hint
-     * @param \Throwable $previous
+     * @param string    $hint
+     * @param Throwable $previous
      *
      * @return static
      *
      * @codeCoverageIgnore
      */
-    public static function serverError($hint, \Throwable $previous = null)
+    public static function serverError($hint, Throwable $previous = null)
     {
         return new static(
             'The authorization server encountered an unexpected condition which prevented it from fulfilling'
@@ -189,11 +190,11 @@ class OAuthServerException extends Exception
      * Invalid refresh token.
      *
      * @param null|string $hint
-     * @param \Throwable  $previous
+     * @param Throwable   $previous
      *
      * @return static
      */
-    public static function invalidRefreshToken($hint = null, \Throwable $previous = null)
+    public static function invalidRefreshToken($hint = null, Throwable $previous = null)
     {
         return new static('The refresh token is invalid.', 8, 'invalid_request', 401, $hint, null, $previous);
     }
@@ -203,11 +204,11 @@ class OAuthServerException extends Exception
      *
      * @param null|string $hint
      * @param null|string $redirectUri
-     * @param \Throwable  $previous
+     * @param Throwable  $previous
      *
      * @return static
      */
-    public static function accessDenied($hint = null, $redirectUri = null, \Throwable $previous = null)
+    public static function accessDenied($hint = null, $redirectUri = null, Throwable $previous = null)
     {
         return new static(
             'The resource owner or authorization server denied the request.',
