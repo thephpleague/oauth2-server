@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 - Added a ScopeTrait to provide an implementation for jsonSerialize (PR #952)
+- Ability to nest exceptions (PR #965)
 
 ### Fixed
 - Fix issue where AuthorizationServer is not stateless as ResponseType could store state of a previous request (PR #960)

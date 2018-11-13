@@ -511,12 +511,12 @@ abstract class AbstractGrant implements GrantTypeInterface
             return bin2hex(random_bytes($length));
             // @codeCoverageIgnoreStart
         } catch (TypeError $e) {
-            throw OAuthServerException::serverError('An unexpected error has occurred');
+            throw OAuthServerException::serverError('An unexpected error has occurred', $e);
         } catch (Error $e) {
-            throw OAuthServerException::serverError('An unexpected error has occurred');
+            throw OAuthServerException::serverError('An unexpected error has occurred', $e);
         } catch (Exception $e) {
             // If you get this message, the CSPRNG failed hard.
-            throw OAuthServerException::serverError('Could not generate a random string');
+            throw OAuthServerException::serverError('Could not generate a random string', $e);
         }
         // @codeCoverageIgnoreEnd
     }

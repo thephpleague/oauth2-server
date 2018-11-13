@@ -41,7 +41,7 @@ trait CryptTrait
 
             return Crypto::encryptWithPassword($unencryptedData, $this->encryptionKey);
         } catch (Exception $e) {
-            throw new LogicException($e->getMessage());
+            throw new LogicException($e->getMessage(), null, $e);
         }
     }
 
@@ -63,7 +63,7 @@ trait CryptTrait
 
             return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
         } catch (Exception $e) {
-            throw new LogicException($e->getMessage());
+            throw new LogicException($e->getMessage(), null, $e);
         }
     }
 

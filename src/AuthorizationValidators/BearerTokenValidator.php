@@ -73,7 +73,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
                     throw OAuthServerException::accessDenied('Access token could not be verified');
                 }
             } catch (BadMethodCallException $exception) {
-                throw OAuthServerException::accessDenied('Access token is not signed');
+                throw OAuthServerException::accessDenied('Access token is not signed', null, $exception);
             }
 
             // Ensure access token hasn't expired
@@ -97,10 +97,10 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
                 ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
         } catch (InvalidArgumentException $exception) {
             // JWT couldn't be parsed so return the request as is
-            throw OAuthServerException::accessDenied($exception->getMessage());
+            throw OAuthServerException::accessDenied($exception->getMessage(), null, $exception);
         } catch (RuntimeException $exception) {
             //JWR couldn't be parsed so return the request as is
-            throw OAuthServerException::accessDenied('Error while decoding to JSON');
+            throw OAuthServerException::accessDenied('Error while decoding to JSON', null, $exception);
         }
     }
 }
