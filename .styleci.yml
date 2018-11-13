@@ -4,6 +4,7 @@ enabled:
   - binary_operator_spaces
   - blank_line_before_return
   - concat_with_spaces
+  - fully_qualified_strict_types
   - function_typehint_space
   - hash_to_slash_comment
   - include

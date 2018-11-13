@@ -9,6 +9,9 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use DateInterval;
+use DateTime;
+use Exception;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -18,12 +21,14 @@ use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
+use stdClass;
 
 class AuthCodeGrant extends AbstractAuthorizeGrant
 {
     /**
-     * @var \DateInterval
+     * @var DateInterval
      */
     private $authCodeTTL;
 
@@ -35,19 +40,19 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * @param AuthCodeRepositoryInterface     $authCodeRepository
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
-     * @param \DateInterval                   $authCodeTTL
+     * @param DateInterval                    $authCodeTTL
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
-        \DateInterval $authCodeTTL
+        DateInterval $authCodeTTL
     ) {
         $this->setAuthCodeRepository($authCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->authCodeTTL = $authCodeTTL;
-        $this->refreshTokenTTL = new \DateInterval('P1M');
+        $this->refreshTokenTTL = new DateInterval('P1M');
     }
 
     public function enableCodeExchangeProof()
@@ -60,7 +65,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      *
      * @param ServerRequestInterface $request
      * @param ResponseTypeInterface  $responseType
-     * @param \DateInterval          $accessTokenTTL
+     * @param DateInterval           $accessTokenTTL
      *
      * @throws OAuthServerException
      *
@@ -69,7 +74,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
+        DateInterval $accessTokenTTL
     ) {
         // Validate request
         $client = $this->validateClient($request);
@@ -90,7 +95,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $client,
                 $authCodePayload->user_id
             );
-        } catch (\LogicException  $e) {
+        } catch (LogicException $e) {
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code');
         }
 
@@ -161,7 +166,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Validate the authorization code.
      *
-     * @param \stdClass              $authCodePayload
+     * @param stdClass               $authCodePayload
      * @param ClientEntityInterface  $client
      * @param ServerRequestInterface $request
      */
@@ -311,7 +316,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
     {
         if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
-            throw new \LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
+            throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
         }
 
         $finalRedirectUri = $authorizationRequest->getRedirectUri()
@@ -333,7 +338,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'auth_code_id'          => $authCode->getIdentifier(),
                 'scopes'                => $authCode->getScopes(),
                 'user_id'               => $authCode->getUserIdentifier(),
-                'expire_time'           => (new \DateTime())->add($this->authCodeTTL)->format('U'),
+                'expire_time'           => (new DateTime())->add($this->authCodeTTL)->format('U'),
                 'code_challenge'        => $authorizationRequest->getCodeChallenge(),
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
