@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.3.1] - released 2018-11-15
+
+### Fixed
+- Fix issue with previous release where interface had changed for the AuthorizationServer. Reverted to the previous interface while maintaining functionality changes (PR #970)
+
 ## [7.3.0] - released 2018-11-13
 
 ### Changed
@@ -422,7 +427,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.3.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.3.1...HEAD
+[7.3.1]: https://github.com/thephpleague/oauth2-server/compare/7.3.0...7.3.1
 [7.3.0]: https://github.com/thephpleague/oauth2-server/compare/7.2.0...7.3.0
 [7.2.0]: https://github.com/thephpleague/oauth2-server/compare/7.1.1...7.2.0
 [7.1.1]: https://github.com/thephpleague/oauth2-server/compare/7.1.0...7.1.1

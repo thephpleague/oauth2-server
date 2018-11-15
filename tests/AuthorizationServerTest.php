@@ -91,7 +91,7 @@ class AuthorizationServerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testNewDefaultResponseType()
+    public function testGetResponseType()
     {
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -104,17 +104,13 @@ class AuthorizationServerTest extends TestCase
         );
 
         $abstractGrantReflection = new \ReflectionClass($server);
-        $method = $abstractGrantReflection->getMethod('newResponseType');
+        $method = $abstractGrantReflection->getMethod('getResponseType');
         $method->setAccessible(true);
 
-        $responseTypeA = $method->invoke($server);
-        $responseTypeB = $method->invoke($server);
-        $this->assertInstanceOf(BearerTokenResponse::class, $responseTypeA);
-        $this->assertInstanceOf(BearerTokenResponse::class, $responseTypeB);
-        $this->assertNotSame($responseTypeA, $responseTypeB);
+        $this->assertInstanceOf(BearerTokenResponse::class, $method->invoke($server));
     }
 
-    public function testNewResponseTypeFromPrototype()
+    public function testMultipleRequestsGetDifferentResponseTypeInstances()
     {
         $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
         $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
@@ -144,7 +140,7 @@ class AuthorizationServerTest extends TestCase
         );
 
         $abstractGrantReflection = new \ReflectionClass($server);
-        $method = $abstractGrantReflection->getMethod('newResponseType');
+        $method = $abstractGrantReflection->getMethod('getResponseType');
         $method->setAccessible(true);
 
         $responseTypeA = $method->invoke($server);
