@@ -107,7 +107,56 @@ class AuthorizationServerTest extends TestCase
         $method = $abstractGrantReflection->getMethod('getResponseType');
         $method->setAccessible(true);
 
+        $responseTypeA = $method->invoke($server);
+        $responseTypeB = $method->invoke($server);
+        $this->assertInstanceOf(BearerTokenResponse::class, $responseTypeA);
+        $this->assertInstanceOf(BearerTokenResponse::class, $responseTypeB);
+        $this->assertNotSame($responseTypeA, $responseTypeB);
         $this->assertInstanceOf(BearerTokenResponse::class, $method->invoke($server));
+    }
+
+    public function testGetResponseTypeStateless()
+    {
+        $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
+        $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
+        $responseTypePrototype = new class extends BearerTokenResponse {
+            /* @return null|CryptKey */
+            public function getPrivateKey()
+            {
+                return $this->privateKey;
+            }
+
+            public function getEncryptionKey()
+            {
+                return $this->encryptionKey;
+            }
+        };
+        $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $server = new AuthorizationServer(
+            $clientRepository,
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
+            $privateKey,
+            $encryptionKey,
+            $responseTypePrototype
+        );
+        $abstractGrantReflection = new \ReflectionClass($server);
+        $method = $abstractGrantReflection->getMethod('getResponseType');
+        $method->setAccessible(true);
+        $responseTypeA = $method->invoke($server);
+        $responseTypeB = $method->invoke($server);
+        // prototype should not get changed
+        $this->assertNull($responseTypePrototype->getPrivateKey());
+        $this->assertNull($responseTypePrototype->getEncryptionKey());
+        // generated instances should have keys setup
+        $this->assertSame($privateKey, $responseTypeA->getPrivateKey()->getKeyPath());
+        $this->assertSame($encryptionKey, $responseTypeA->getEncryptionKey());
+        // all instances should be different but based on the same prototype
+        $this->assertSame(get_class($responseTypePrototype), get_class($responseTypeA));
+        $this->assertSame(get_class($responseTypePrototype), get_class($responseTypeB));
+        $this->assertNotSame($responseTypePrototype, $responseTypeA);
+        $this->assertNotSame($responseTypePrototype, $responseTypeB);
+        $this->assertNotSame($responseTypeA, $responseTypeB);
     }
 
     public function testMultipleRequestsGetDifferentResponseTypeInstances()
