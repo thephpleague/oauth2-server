@@ -110,6 +110,43 @@ class AuthorizationServerTest extends TestCase
         $this->assertInstanceOf(BearerTokenResponse::class, $method->invoke($server));
     }
 
+    public function testGetResponseTypeExtended()
+    {
+        $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
+        $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
+
+        $server = new class($clientRepository, $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(), $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(), $privateKey, $encryptionKey) extends AuthorizationServer {
+            protected function getResponseType()
+            {
+                $this->responseType = new class extends BearerTokenResponse {
+                    /* @return null|CryptKey */
+                    public function getPrivateKey()
+                    {
+                        return $this->privateKey;
+                    }
+
+                    public function getEncryptionKey()
+                    {
+                        return $this->encryptionKey;
+                    }
+                };
+
+                return parent::getResponseType();
+            }
+        };
+
+        $abstractGrantReflection = new \ReflectionClass($server);
+        $method = $abstractGrantReflection->getMethod('getResponseType');
+        $method->setAccessible(true);
+        $responseType = $method->invoke($server);
+
+        $this->assertInstanceOf(BearerTokenResponse::class, $responseType);
+        // generated instances should have keys setup
+        $this->assertSame($privateKey, $responseType->getPrivateKey()->getKeyPath());
+        $this->assertSame($encryptionKey, $responseType->getEncryptionKey());
+    }
+
     public function testMultipleRequestsGetDifferentResponseTypeInstances()
     {
         $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
