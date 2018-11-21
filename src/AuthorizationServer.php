@@ -214,6 +214,7 @@ class AuthorizationServer implements EmitterAwareInterface
     protected function getResponseType()
     {
         $responseType = clone $this->responseType;
+
         if ($responseType instanceof AbstractResponseType) {
             $responseType->setPrivateKey($this->privateKey);
         }
