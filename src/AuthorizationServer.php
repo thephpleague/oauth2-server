@@ -114,12 +114,6 @@ class AuthorizationServer implements EmitterAwareInterface
             $responseType = clone $responseType;
         }
 
-        if ($responseType instanceof AbstractResponseType) {
-            $responseType->setPrivateKey($this->privateKey);
-        }
-
-        $responseType->setEncryptionKey($this->encryptionKey);
-
         $this->responseType = $responseType;
     }
 
@@ -219,7 +213,15 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     protected function getResponseType()
     {
-        return clone $this->responseType;
+        $responseType = clone $this->responseType;
+
+        if ($responseType instanceof AbstractResponseType) {
+            $responseType->setPrivateKey($this->privateKey);
+        }
+
+        $responseType->setEncryptionKey($this->encryptionKey);
+
+        return $responseType;
     }
 
     /**
