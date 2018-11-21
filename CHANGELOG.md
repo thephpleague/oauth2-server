@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.3.2] - released 2018-11-21
+
+- Revert setting keys on response type to be inside `getResponseType()` function instead of AuthorizationServer constructor (PR #969)
+
 ## [7.3.1] - released 2018-11-15
 
 ### Fixed
@@ -427,7 +431,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.3.1...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.3.2...HEAD
+[7.3.2]: https://github.com/thephpleague/oauth2-server/compare/7.3.1...7.3.2
 [7.3.1]: https://github.com/thephpleague/oauth2-server/compare/7.3.0...7.3.1
 [7.3.0]: https://github.com/thephpleague/oauth2-server/compare/7.2.0...7.3.0
 [7.2.0]: https://github.com/thephpleague/oauth2-server/compare/7.1.1...7.2.0
