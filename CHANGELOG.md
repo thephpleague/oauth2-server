@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [7.3.2] - released 2018-11-21
 
+### Fixed
 - Revert setting keys on response type to be inside `getResponseType()` function instead of AuthorizationServer constructor (PR #969)
 
 ## [7.3.1] - released 2018-11-15
