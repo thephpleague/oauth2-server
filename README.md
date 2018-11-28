@@ -69,6 +69,7 @@ We use [Travis CI](https://travis-ci.org/), [Scrutinizer](https://scrutinizer-ci
 * [Laravel Passport](https://github.com/laravel/passport)
 * [OAuth 2 Server for CakePHP 3](https://github.com/uafrica/oauth-server)
 * [OAuth 2 Server for Expressive](https://github.com/zendframework/zend-expressive-authentication-oauth2)
+* [Trikoder OAuth 2 Bundle (Symfony)](https://github.com/trikoder/oauth2-bundle)
 
 ## Changelog
 
