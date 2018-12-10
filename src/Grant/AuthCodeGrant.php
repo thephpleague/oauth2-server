@@ -90,11 +90,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         ResponseTypeInterface $responseType,
         \DateInterval $accessTokenTTL
     ) {
-        $clientId = $this->getRequestParameter('client_id', $request, null);
-
-        if ($clientId === null) {
-            throw OAuthServerException::invalidRequest('client_id');
-        }
+        list($clientId) = $this->getClientCredentials($request);
 
         $client = $this->clientRepository->getClientEntity($clientId);
 

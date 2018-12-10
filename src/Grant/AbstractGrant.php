@@ -171,15 +171,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function validateClient(ServerRequestInterface $request)
     {
-        list($basicAuthUser, $basicAuthPassword) = $this->getBasicAuthCredentials($request);
-
-        $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
-
-        if (is_null($clientId)) {
-            throw OAuthServerException::invalidRequest('client_id');
-        }
-
-        $clientSecret = $this->getRequestParameter('client_secret', $request, $basicAuthPassword);
+        list($clientId, $clientSecret) = $this->getClientCredentials($request);
 
         if ($this->clientRepository->validateClient($clientId, $clientSecret, $this->getIdentifier()) === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
@@ -197,6 +189,29 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         return $client;
+    }
+
+    /**
+     * Gets the client credentials from the request from the request body or
+     * the Http Basic Authorization header
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return array
+     */
+    protected function getClientCredentials(ServerRequestInterface $request)
+    {
+        list($basicAuthUser, $basicAuthPassword) = $this->getBasicAuthCredentials($request);
+
+        $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
+
+        if (is_null($clientId)) {
+            throw OAuthServerException::invalidRequest('client_id');
+        }
+
+        $clientSecret = $this->getRequestParameter('client_secret', $request, $basicAuthPassword);
+
+        return [$clientId, $clientSecret];
     }
 
     /**
