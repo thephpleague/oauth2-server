@@ -642,7 +642,7 @@ class AuthCodeGrantTest extends TestCase
             'POST',
             'php://input',
             [
-                //'Authorization' => 'Basic Zm9vOmJhcg==',
+                'Authorization' => 'Basic Zm9vOmJhcg==',
             ],
             [],
             [],
