@@ -610,35 +610,30 @@ class AuthCodeGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
-        $client->setRedirectUri('http://foo/bar');
-        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeEntity = new ScopeEntity();
-        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
-        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
-        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
-        $grant = new AuthCodeGrant(
+        $authCodeGrant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
-            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            $refreshTokenRepositoryMock,
             new \DateInterval('PT10M')
         );
-        $grant->setClientRepository($clientRepositoryMock);
-        $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        $authCodeGrant->setClientRepository($clientRepositoryMock);
+        $authCodeGrant->setScopeRepository($scopeRepositoryMock);
+        $authCodeGrant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $authCodeGrant->setEncryptionKey($this->cryptStub->getKey());
+        $authCodeGrant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -647,7 +642,7 @@ class AuthCodeGrantTest extends TestCase
             'POST',
             'php://input',
             [
-                'Authorization' => 'Basic Zm9vOmJhcg==',
+                //'Authorization' => 'Basic Zm9vOmJhcg==',
             ],
             [],
             [],
@@ -670,7 +665,7 @@ class AuthCodeGrantTest extends TestCase
         );
 
         /** @var StubResponseType $response */
-        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+        $response = $authCodeGrant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
@@ -1035,27 +1030,16 @@ class AuthCodeGrantTest extends TestCase
 
     public function testRespondToAccessTokenRequestExpiredCode()
     {
-        $client = new ClientEntity();
-        $client->setIdentifier('foo');
-        $client->setRedirectUri('http://foo/bar');
-        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
-
-        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
-        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+        $clientRepositoryMock->method('getClientEntity')->willReturn(new ClientEntity());
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
+
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
