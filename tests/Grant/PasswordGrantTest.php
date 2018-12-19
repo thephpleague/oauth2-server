@@ -146,6 +146,7 @@ class PasswordGrantTest extends TestCase
 
     /**
      * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
+     * @expectedExceptionCode 10
      */
     public function testRespondToRequestBadCredentials()
     {
