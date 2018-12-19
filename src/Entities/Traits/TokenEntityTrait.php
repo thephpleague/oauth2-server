@@ -60,7 +60,7 @@ trait TokenEntityTrait
      *
      * @return DateTimeImmutable
      */
-    public function getExpiryDateTime(): DateTimeImmutable
+    public function getExpiryDateTime()
     {
         return $this->expiryDateTime;
     }

@@ -70,7 +70,7 @@ trait AccessTokenTrait
     /**
      * @return DateTimeImmutable
      */
-    abstract public function getExpiryDateTime(): DateTimeImmutable;
+    abstract public function getExpiryDateTime();
 
     /**
      * @return string|int

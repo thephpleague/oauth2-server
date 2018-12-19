@@ -32,7 +32,7 @@ interface RefreshTokenEntityInterface
      *
      * @return DateTimeImmutable
      */
-    public function getExpiryDateTime(): DateTimeImmutable;
+    public function getExpiryDateTime();
 
     /**
      * Set the date time when the token expires.
