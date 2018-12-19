@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Grant;
 
+use DateInterval;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
@@ -74,7 +75,7 @@ class PasswordGrantTest extends TestCase
         );
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
@@ -108,7 +109,7 @@ class PasswordGrantTest extends TestCase
         );
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
     /**
@@ -140,7 +141,7 @@ class PasswordGrantTest extends TestCase
         );
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
     /**
@@ -175,6 +176,6 @@ class PasswordGrantTest extends TestCase
         );
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 }

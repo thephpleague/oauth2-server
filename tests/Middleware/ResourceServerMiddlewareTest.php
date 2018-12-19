@@ -2,6 +2,8 @@
 
 namespace LeagueTests\Middleware;
 
+use DateInterval;
+use DateTimeImmutable;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -27,7 +29,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('test');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
@@ -63,7 +65,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('test');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->sub(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->sub(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 

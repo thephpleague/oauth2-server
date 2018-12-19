@@ -9,6 +9,7 @@
 
 namespace League\OAuth2\Server;
 
+use DateInterval;
 use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
@@ -34,7 +35,7 @@ class AuthorizationServer implements EmitterAwareInterface
     protected $enabledGrantTypes = [];
 
     /**
-     * @var \DateInterval[]
+     * @var DateInterval[]
      */
     protected $grantTypeAccessTokenTTL = [];
 
@@ -112,12 +113,12 @@ class AuthorizationServer implements EmitterAwareInterface
      * Enable a grant type on the server.
      *
      * @param GrantTypeInterface $grantType
-     * @param null|\DateInterval $accessTokenTTL
+     * @param null|DateInterval  $accessTokenTTL
      */
-    public function enableGrantType(GrantTypeInterface $grantType, \DateInterval $accessTokenTTL = null)
+    public function enableGrantType(GrantTypeInterface $grantType, DateInterval $accessTokenTTL = null)
     {
-        if ($accessTokenTTL instanceof \DateInterval === false) {
-            $accessTokenTTL = new \DateInterval('PT1H');
+        if ($accessTokenTTL === null) {
+            $accessTokenTTL = new DateInterval('PT1H');
         }
 
         $grantType->setAccessTokenRepository($this->accessTokenRepository);

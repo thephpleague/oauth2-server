@@ -2,6 +2,7 @@
 
 namespace LeagueTests;
 
+use DateInterval;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
@@ -48,7 +49,7 @@ class AuthorizationServerTest extends TestCase
             new StubResponseType()
         );
 
-        $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
+        $server->enableGrantType(new ClientCredentialsGrant(), new DateInterval('PT1M'));
 
         try {
             $server->respondToAccessTokenRequest(ServerRequestFactory::fromGlobals(), new Response);
@@ -81,7 +82,7 @@ class AuthorizationServerTest extends TestCase
         );
 
         $server->setDefaultScope(self::DEFAULT_SCOPE);
-        $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
+        $server->enableGrantType(new ClientCredentialsGrant(), new DateInterval('PT1M'));
 
         $_POST['grant_type'] = 'client_credentials';
         $_POST['client_id'] = 'foo';
@@ -127,7 +128,7 @@ class AuthorizationServerTest extends TestCase
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
 
         $server->enableGrantType($grant);
@@ -159,7 +160,7 @@ class AuthorizationServerTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
 
@@ -200,7 +201,7 @@ class AuthorizationServerTest extends TestCase
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new \DateInterval('PT10M')
+            new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
 

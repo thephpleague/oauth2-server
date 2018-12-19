@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Grant;
 
+use DateInterval;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -56,7 +57,7 @@ class ClientCredentialsGrantTest extends TestCase
         );
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
     }

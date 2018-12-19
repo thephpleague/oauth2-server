@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Grant;
 
+use DateInterval;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
@@ -325,7 +326,7 @@ class AbstractGrantTest extends TestCase
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setRefreshTokenTTL(new \DateInterval('PT1M'));
+        $grantMock->setRefreshTokenTTL(new DateInterval('PT1M'));
         $grantMock->setRefreshTokenRepository($refreshTokenRepoMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
@@ -356,7 +357,7 @@ class AbstractGrantTest extends TestCase
         /** @var AccessTokenEntityInterface $accessToken */
         $accessToken = $issueAccessTokenMethod->invoke(
             $grantMock,
-            new \DateInterval('PT1H'),
+            new DateInterval('PT1H'),
             new ClientEntity(),
             123,
             [new ScopeEntity()]
@@ -381,7 +382,7 @@ class AbstractGrantTest extends TestCase
             AuthCodeEntityInterface::class,
             $issueAuthCodeMethod->invoke(
                 $grantMock,
-                new \DateInterval('PT1H'),
+                new DateInterval('PT1H'),
                 new ClientEntity(),
                 123,
                 'http://foo/bar',

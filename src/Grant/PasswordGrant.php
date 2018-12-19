@@ -11,6 +11,7 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use DateInterval;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -36,7 +37,7 @@ class PasswordGrant extends AbstractGrant
         $this->setUserRepository($userRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
 
-        $this->refreshTokenTTL = new \DateInterval('P1M');
+        $this->refreshTokenTTL = new DateInterval('P1M');
     }
 
     /**
@@ -45,7 +46,7 @@ class PasswordGrant extends AbstractGrant
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
+        DateInterval $accessTokenTTL
     ) {
         // Validate request
         $client = $this->validateClient($request);

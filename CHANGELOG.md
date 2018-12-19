@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - No longer need to enable PKCE with `enableCodeExchangeProof` flag. Any client sending a code challenge will initiate PKCE checks. (PR #938)
 - Function `getClientEntity()` no longer performs client validation (PR #938)
 - Password Grant now returns an invalid_grant error instead of invalid_credentials if a user cannot be validated (PR #967)
+- Use `DateTimeImmutable()` instead of `DateTime()`, `time()` instead of `(new DateTime())->getTimeStamp()`, and `DateTime::getTimeStamp()` instead of `DateTime::format('U')` (PR #963)
 
 ### Removed
 - `enableCodeExchangeProof` flag (PR #938)

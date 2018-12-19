@@ -9,6 +9,8 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use DateInterval;
+use DateTimeImmutable;
 use League\OAuth2\Server\CodeChallengeVerifiers\CodeChallengeVerifierInterface;
 use League\OAuth2\Server\CodeChallengeVerifiers\PlainVerifier;
 use League\OAuth2\Server\CodeChallengeVerifiers\S256Verifier;
@@ -27,7 +29,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class AuthCodeGrant extends AbstractAuthorizeGrant
 {
     /**
-     * @var \DateInterval
+     * @var DateInterval
      */
     private $authCodeTTL;
 
@@ -44,17 +46,17 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * @param AuthCodeRepositoryInterface     $authCodeRepository
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
-     * @param \DateInterval                   $authCodeTTL
+     * @param DateInterval                    $authCodeTTL
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
-        \DateInterval $authCodeTTL
+        DateInterval $authCodeTTL
     ) {
         $this->setAuthCodeRepository($authCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
         $this->authCodeTTL = $authCodeTTL;
-        $this->refreshTokenTTL = new \DateInterval('P1M');
+        $this->refreshTokenTTL = new DateInterval('P1M');
 
         // SHOULD ONLY DO THIS IS SHA256 is supported
         $s256Verifier = new S256Verifier();
@@ -79,7 +81,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      *
      * @param ServerRequestInterface $request
      * @param ResponseTypeInterface  $responseType
-     * @param \DateInterval          $accessTokenTTL
+     * @param DateInterval           $accessTokenTTL
      *
      * @throws OAuthServerException
      *
@@ -88,7 +90,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
-        \DateInterval $accessTokenTTL
+        DateInterval $accessTokenTTL
     ) {
         list($clientId) = $this->getClientCredentials($request);
 
@@ -350,7 +352,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'auth_code_id'          => $authCode->getIdentifier(),
                 'scopes'                => $authCode->getScopes(),
                 'user_id'               => $authCode->getUserIdentifier(),
-                'expire_time'           => (new \DateTime())->add($this->authCodeTTL)->format('U'),
+                'expire_time'           => (new DateTimeImmutable())->add($this->authCodeTTL)->getTimestamp(),
                 'code_challenge'        => $authorizationRequest->getCodeChallenge(),
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
@@ -360,11 +362,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $this->makeRedirectUri(
                     $finalRedirectUri,
                     [
-                        'code'  => $this->encrypt(
-                            json_encode(
-                                $payload
-                            )
-                        ),
+                        'code'  => $this->encrypt(json_encode($payload)),
                         'state' => $authorizationRequest->getState(),
                     ]
                 )
