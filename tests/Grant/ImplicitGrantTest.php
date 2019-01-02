@@ -280,8 +280,11 @@ class ImplicitGrantTest extends TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
+        $accessTokenEntity = new AccessTokenEntity();
+        $accessTokenEntity->setClient($authRequest->getClient());
+        /** @var AccessTokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessTokenEntity);
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
@@ -308,8 +311,11 @@ class ImplicitGrantTest extends TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
+        $accessTokenEntity = new AccessTokenEntity();
+        $accessTokenEntity->setClient($authRequest->getClient());
+        /** @var AccessTokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessTokenEntity);
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
@@ -332,9 +338,11 @@ class ImplicitGrantTest extends TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
+        $accessTokenEntity = new AccessTokenEntity();
+        $accessTokenEntity->setClient($authRequest->getClient());
         /** @var AccessTokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessTokenEntity);
         $accessTokenRepositoryMock->expects($this->at(0))->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
         $accessTokenRepositoryMock->expects($this->at(1))->method('persistNewAccessToken')->willReturnSelf();
 
@@ -362,9 +370,11 @@ class ImplicitGrantTest extends TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
+        $accessTokenEntity = new AccessTokenEntity();
+        $accessTokenEntity->setClient($authRequest->getClient());
         /** @var AccessTokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessTokenEntity);
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(OAuthServerException::serverError('something bad happened'));
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
@@ -391,9 +401,11 @@ class ImplicitGrantTest extends TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
+        $accessTokenEntity = new AccessTokenEntity();
+        $accessTokenEntity->setClient($authRequest->getClient());
         /** @var AccessTokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessTokenEntity);
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
