@@ -13,6 +13,8 @@ use DateInterval;
 use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
+use League\OAuth2\Server\IdentifierGenerator\IdentifierGenerator;
+use League\OAuth2\Server\IdentifierGenerator\IdentifierGeneratorInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -80,14 +82,20 @@ class AuthorizationServer implements EmitterAwareInterface
     private $defaultScope = '';
 
     /**
+     * @var IdentifierGeneratorInterface
+     */
+    private $identifierGenerator;
+
+    /**
      * New server instance.
      *
-     * @param ClientRepositoryInterface      $clientRepository
-     * @param AccessTokenRepositoryInterface $accessTokenRepository
-     * @param ScopeRepositoryInterface       $scopeRepository
-     * @param CryptKey|string                $privateKey
-     * @param string|Key                     $encryptionKey
-     * @param null|ResponseTypeInterface     $responseType
+     * @param ClientRepositoryInterface             $clientRepository
+     * @param AccessTokenRepositoryInterface        $accessTokenRepository
+     * @param ScopeRepositoryInterface              $scopeRepository
+     * @param CryptKey|string                       $privateKey
+     * @param string|Key                            $encryptionKey
+     * @param null|ResponseTypeInterface            $responseType
+     * @param null|IdentifierGeneratorInterface     $identifierGenerator
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
@@ -95,7 +103,8 @@ class AuthorizationServer implements EmitterAwareInterface
         ScopeRepositoryInterface $scopeRepository,
         $privateKey,
         $encryptionKey,
-        ResponseTypeInterface $responseType = null
+        ResponseTypeInterface $responseType = null,
+        IdentifierGeneratorInterface $identifierGenerator = null
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
@@ -115,6 +124,12 @@ class AuthorizationServer implements EmitterAwareInterface
         }
 
         $this->responseType = $responseType;
+
+        if ($identifierGenerator === null) {
+            $identifierGenerator = new IdentifierGenerator();
+        }
+
+        $this->identifierGenerator = $identifierGenerator;
     }
 
     /**
@@ -136,6 +151,7 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setPrivateKey($this->privateKey);
         $grantType->setEmitter($this->getEmitter());
         $grantType->setEncryptionKey($this->encryptionKey);
+        $grantType->setIdentifierGenerator($this->identifierGenerator);
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
         $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;

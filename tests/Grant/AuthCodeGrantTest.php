@@ -7,6 +7,7 @@ use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
+use League\OAuth2\Server\IdentifierGenerator\IdentifierGeneratorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -542,12 +543,16 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->expects($this->once())->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
@@ -598,6 +603,9 @@ class AuthCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -608,6 +616,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $request = new ServerRequest(
             [],
@@ -665,6 +674,9 @@ class AuthCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -676,6 +688,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $request = new ServerRequest(
             [],
@@ -736,6 +749,9 @@ class AuthCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -747,6 +763,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $request = new ServerRequest(
             [],
@@ -1531,12 +1548,16 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository->expects($this->at(0))->method('persistNewAuthCode')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
         $authCodeRepository->expects($this->at(1))->method('persistNewAuthCode');
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->expects($this->once())->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
@@ -1557,12 +1578,16 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
         $authCodeRepository->method('persistNewAuthCode')->willThrowException(OAuthServerException::serverError('something bad happened'));
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
@@ -1583,11 +1608,15 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
         $authCodeRepository->method('persistNewAuthCode')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new \DateInterval('PT10M')
         );
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
@@ -1614,6 +1643,9 @@ class AuthCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock->expects($this->at(0))->method('persistNewRefreshToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
         $refreshTokenRepositoryMock->expects($this->at(1))->method('persistNewRefreshToken');
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -1624,6 +1656,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $request = new ServerRequest(
             [],
@@ -1685,6 +1718,9 @@ class AuthCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willThrowException(OAuthServerException::serverError('something bad happened'));
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -1695,6 +1731,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $request = new ServerRequest(
             [],
@@ -1756,6 +1793,9 @@ class AuthCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -1766,6 +1806,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $request = new ServerRequest(
             [],

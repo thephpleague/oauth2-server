@@ -6,6 +6,7 @@ use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Grant\ImplicitGrant;
+use League\OAuth2\Server\IdentifierGenerator\IdentifierGeneratorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
@@ -288,10 +289,14 @@ class ImplicitGrantTest extends TestCase
         $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->expects($this->once())->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
@@ -342,10 +347,14 @@ class ImplicitGrantTest extends TestCase
         $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
@@ -371,10 +380,14 @@ class ImplicitGrantTest extends TestCase
         $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $grant->completeAuthorizationRequest($authRequest);
     }
@@ -400,10 +413,14 @@ class ImplicitGrantTest extends TestCase
         $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $grant->completeAuthorizationRequest($authRequest);
     }

@@ -6,6 +6,7 @@ use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
+use League\OAuth2\Server\IdentifierGenerator\IdentifierGeneratorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
@@ -59,12 +60,16 @@ class RefreshTokenGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
         $refreshTokenRepositoryMock->expects($this->once())->method('persistNewRefreshToken')->willReturnSelf();
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
@@ -114,12 +119,16 @@ class RefreshTokenGrantTest extends TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             json_encode(
