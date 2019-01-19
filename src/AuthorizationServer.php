@@ -13,10 +13,10 @@ use DateInterval;
 use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
-use League\OAuth2\Server\IdentifierGenerator\IdentifierGenerator;
-use League\OAuth2\Server\IdentifierGenerator\IdentifierGeneratorInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
+use League\OAuth2\Server\IdentifierGenerator\IdentifierGenerator;
+use League\OAuth2\Server\IdentifierGenerator\IdentifierGeneratorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -89,13 +89,13 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * New server instance.
      *
-     * @param ClientRepositoryInterface             $clientRepository
-     * @param AccessTokenRepositoryInterface        $accessTokenRepository
-     * @param ScopeRepositoryInterface              $scopeRepository
-     * @param CryptKey|string                       $privateKey
-     * @param string|Key                            $encryptionKey
-     * @param null|ResponseTypeInterface            $responseType
-     * @param null|IdentifierGeneratorInterface     $identifierGenerator
+     * @param ClientRepositoryInterface         $clientRepository
+     * @param AccessTokenRepositoryInterface    $accessTokenRepository
+     * @param ScopeRepositoryInterface          $scopeRepository
+     * @param CryptKey|string                   $privateKey
+     * @param string|Key                        $encryptionKey
+     * @param null|ResponseTypeInterface        $responseType
+     * @param null|IdentifierGeneratorInterface $identifierGenerator
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,

@@ -5,13 +5,12 @@ namespace League\OAuth2\Server\IdentifierGenerator;
 use Error;
 use Exception;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\IdentifierGenerator\IdentifierGeneratorInterface;
 use TypeError;
 
 class IdentifierGenerator implements IdentifierGeneratorInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function generateUniqueIdentifier($length = 40)
     {
