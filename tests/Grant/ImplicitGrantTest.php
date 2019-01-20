@@ -285,7 +285,6 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
@@ -313,7 +312,6 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
@@ -339,7 +337,6 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->expects($this->at(1))->method('persistNewAccessToken')->willReturnSelf();
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
@@ -368,7 +365,6 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(OAuthServerException::serverError('something bad happened'));
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
@@ -397,7 +393,6 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
