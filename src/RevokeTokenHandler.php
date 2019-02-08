@@ -122,8 +122,8 @@ class RevokeTokenHandler implements EmitterAwareInterface
      */
     public function getIdentifier()
     {
-		return '';
-	}
+        return '';
+    }
 
     /**
      * Return a revoke token response.

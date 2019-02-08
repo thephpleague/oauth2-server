@@ -227,7 +227,7 @@ class RevokeTokenHandlerTest extends TestCase
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
-                'token'           => $refreshToken
+                'token'           => $refreshToken,
             ]
         );
 
