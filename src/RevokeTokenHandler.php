@@ -161,10 +161,11 @@ class RevokeTokenHandler implements EmitterAwareInterface
         // Attempt to read token
         $accessToken = null;
         $refreshToken = null;
-        if ($hint === 'access_token') {
-            $accessToken = $this->readAsAccessToken($token, $clientId);
-        } else if ($hint === 'refresh_token') {
+        if ($hint === 'refresh_token') {
             $refreshToken = $this->readAsRefreshToken($token, $clientId);
+            if ($refreshToken === null) {
+                $accessToken = $this->readAsAccessToken($token, $clientId);
+            }
         } else {
             $accessToken = $this->readAsAccessToken($token, $clientId);
             if ($accessToken === null) {
