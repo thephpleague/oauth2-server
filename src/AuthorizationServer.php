@@ -247,7 +247,8 @@ class AuthorizationServer implements EmitterAwareInterface
             }
         }
 
-        throw OAuthServerException::invalidRequest('token');
+        $errorMessage = 'Token revocation not supported.';
+        throw new OAuthServerException($errorMessage, 3, 'invalid_request', 400);
     }
 
     /**

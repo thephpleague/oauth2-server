@@ -125,7 +125,8 @@ class RevokeTokenHandler implements EmitterAwareInterface
     public function respondToRevokeTokenRequest(ServerRequestInterface $request, ResponseTypeInterface $response)
     {
         if ($request->getMethod() !== 'POST') {
-            throw OAuthServerException::invalidRequest('method');
+            $errorMessage = 'POST method required.';
+            throw new OAuthServerException($errorMessage, 3, 'invalid_request', 400);
         }
 
         $token = $this->getRequestParameter('token', $request);
@@ -177,18 +178,19 @@ class RevokeTokenHandler implements EmitterAwareInterface
      * @return null|Token
      */
     protected function readAsAccessToken($tokenParam, $clientId) {
+        $token = null;
         try {
             $token = (new Parser())->parse($tokenParam);
-            $clientId = $token->getClaim('aud');
-            if ($clientId !== $clientId) {
-                return null;
-            }
-
-            return $token;
         } catch (Exception $exception) {
             // JWT couldn't be parsed so ignore
             return null;
         }
+
+        $clientId = $token->getClaim('aud');
+        if ($clientId !== $clientId) {
+            throw OAuthServerException::invalidClient();
+        }
+        return $token;
     }
 
     /**
@@ -198,15 +200,18 @@ class RevokeTokenHandler implements EmitterAwareInterface
      * @return null|array
      */
     protected function readAsRefreshToken($tokenParam, $clientId) {
+        $refreshTokenData = null;
         try {
             $refreshToken = $this->decrypt($tokenParam);
             $refreshTokenData = json_decode($refreshToken, true);
-            if ($refreshTokenData['client_id'] !== $clientId) {
-                return null;
-            }
-            return $refreshTokenData;
         } catch (Exception $e) {
+            return null;
             // token couldn't be decrypted so ignore
         }
+
+        if ($refreshTokenData['client_id'] !== $clientId) {
+            throw OAuthServerException::invalidClient();
+        }
+        return $refreshTokenData;
     }
 }
