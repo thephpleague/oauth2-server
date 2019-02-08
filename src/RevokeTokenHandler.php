@@ -10,21 +10,17 @@
 namespace League\OAuth2\Server;
 
 use Exception;
-use InvalidArgumentException;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
-use League\OAuth2\Server\CryptTrait;
-use League\OAuth2\Server\RequestValidatorTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
 
 class RevokeTokenHandler implements EmitterAwareInterface
 {
@@ -66,8 +62,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         $publicKey,
         $canRevokeAccessTokens = true
-    )
-    {
+    ) {
         $this->setRefreshTokenRepository($refreshTokenRepository);
 
         if ($publicKey instanceof CryptKey === false) {
@@ -125,12 +120,13 @@ class RevokeTokenHandler implements EmitterAwareInterface
      *
      * @return string
      */
-    public function getIdentifier() {
+    public function getIdentifier()
+    {
 		return '';
 	}
 
-   /**
-     * Return an revoke token response.
+    /**
+     * Return a revoke token response.
      * https://tools.ietf.org/html/rfc7009
      *
      * @param ServerRequestInterface $request
@@ -180,7 +176,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
                 throw new OAuthServerException($errorMessage, 2, 'unsupported_token_type', 400);
             }
             $this->accessTokenRepository->revokeAccessToken($accessToken->getClaim('jti'));
-        } else if ($refreshToken !== null) {
+        } elseif ($refreshToken !== null) {
             $this->refreshTokenRepository->revokeRefreshToken($refreshToken['refresh_token_id']);
             if ($this->canRevokeAccessTokens) {
                 $this->accessTokenRepository->revokeAccessToken($refreshToken['access_token_id']);
@@ -196,23 +192,25 @@ class RevokeTokenHandler implements EmitterAwareInterface
      *
      * @return null|Token
      */
-    protected function readAsAccessToken($tokenParam, $clientId) {
+    protected function readAsAccessToken($tokenParam, $clientId)
+    {
         $token = null;
         try {
             $token = (new Parser())->parse($tokenParam);
 
             if ($token->verify(new Sha256(), $this->publicKey->getKeyPath()) === false) {
-                return null;
+                return;
             }
         } catch (Exception $exception) {
             // JWT couldn't be parsed so ignore
-            return null;
+            return;
         }
 
         $clientId = $token->getClaim('aud');
         if ($clientId !== $clientId) {
             throw OAuthServerException::invalidClient();
         }
+
         return $token;
     }
 
@@ -222,19 +220,21 @@ class RevokeTokenHandler implements EmitterAwareInterface
      *
      * @return null|array
      */
-    protected function readAsRefreshToken($tokenParam, $clientId) {
+    protected function readAsRefreshToken($tokenParam, $clientId)
+    {
         $refreshTokenData = null;
         try {
             $refreshToken = $this->decrypt($tokenParam);
             $refreshTokenData = json_decode($refreshToken, true);
         } catch (Exception $e) {
-            return null;
+            return;
             // token couldn't be decrypted so ignore
         }
 
         if ($refreshTokenData['client_id'] !== $clientId) {
             throw OAuthServerException::invalidClient();
         }
+
         return $refreshTokenData;
     }
 }

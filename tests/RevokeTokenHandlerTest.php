@@ -3,18 +3,13 @@
 namespace LeagueTests;
 
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\RevokeTokenHandler;
-use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\RevokeTokenHandler;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\CryptTraitStub;
-use LeagueTests\Stubs\RefreshTokenEntity;
-use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
@@ -62,7 +57,7 @@ class RevokeTokenHandlerTest extends TestCase
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
                 'token'           => (string) $accessTokenJWT,
-                'token_type_hint' => 'access_token'
+                'token_type_hint' => 'access_token',
             ]
         );
 
@@ -100,7 +95,7 @@ class RevokeTokenHandlerTest extends TestCase
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
-                'token'           => (string) $accessTokenJWT
+                'token'           => (string) $accessTokenJWT,
             ]
         );
 
@@ -143,7 +138,7 @@ class RevokeTokenHandlerTest extends TestCase
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
                 'token'           => (string) $accessTokenJWT,
-                'token_type_hint' => 'access_token'
+                'token_type_hint' => 'access_token',
             ]
         );
 
@@ -188,7 +183,7 @@ class RevokeTokenHandlerTest extends TestCase
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
                 'token'           => $refreshToken,
-                'token_type_hint' => 'refresh_token'
+                'token_type_hint' => 'refresh_token',
             ]
         );
 
@@ -277,7 +272,7 @@ class RevokeTokenHandlerTest extends TestCase
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
                 'token'           => $refreshToken,
-                'token_type_hint' => 'refresh_token'
+                'token_type_hint' => 'refresh_token',
             ]
         );
 
@@ -307,7 +302,7 @@ class RevokeTokenHandlerTest extends TestCase
         $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
             [
                 'client_id'       => 'foo',
-                'client_secret'   => 'bar'
+                'client_secret'   => 'bar',
             ]
         );
 
@@ -341,7 +336,7 @@ class RevokeTokenHandlerTest extends TestCase
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
                 'token'           => $refreshToken,
-                'token_type_hint' => 'refresh_token'
+                'token_type_hint' => 'refresh_token',
             ]
         );
 
@@ -390,7 +385,7 @@ class RevokeTokenHandlerTest extends TestCase
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
                 'token'           => $refreshToken,
-                'token_type_hint' => 'refresh_token'
+                'token_type_hint' => 'refresh_token',
             ]
         );
 
@@ -435,7 +430,7 @@ class RevokeTokenHandlerTest extends TestCase
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
                 'token'           => $refreshToken,
-                'token_type_hint' => 'refresh_token'
+                'token_type_hint' => 'refresh_token',
             ]
         );
 
@@ -480,7 +475,7 @@ class RevokeTokenHandlerTest extends TestCase
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
                 'token'           => $refreshToken,
-                'token_type_hint' => 'refresh_token'
+                'token_type_hint' => 'refresh_token',
             ]
         );
 

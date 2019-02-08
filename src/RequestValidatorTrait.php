@@ -9,7 +9,6 @@
 
 namespace League\OAuth2\Server;
 
-use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -38,7 +37,7 @@ trait RequestValidatorTrait
     /**
      * Validate the client.
      *
-     * @param ServerRequestInterface    $request
+     * @param ServerRequestInterface $request
      *
      * @throws OAuthServerException
      *
