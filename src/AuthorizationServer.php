@@ -13,6 +13,7 @@ use DateInterval;
 use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
+use League\OAuth2\Server\RevokeTokenHandler;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -33,6 +34,11 @@ class AuthorizationServer implements EmitterAwareInterface
      * @var GrantTypeInterface[]
      */
     protected $enabledGrantTypes = [];
+
+    /**
+     * @var RevokeTokenHandler
+     */
+    protected $revokeTokenHandler = null;
 
     /**
      * @var DateInterval[]
@@ -204,6 +210,39 @@ class AuthorizationServer implements EmitterAwareInterface
         }
 
         throw OAuthServerException::unsupportedGrantType();
+    }
+    /**
+     * Enable the revoke token handler on the server.
+     *
+     * @param RevokeTokenHandler $handler
+     */
+    public function enableRevokeTokenHandler(RevokeTokenHandler $handler)
+    {
+        $handler->setAccessTokenRepository($this->accessTokenRepository);
+        $handler->setClientRepository($this->clientRepository);
+        $handler->setEncryptionKey($this->encryptionKey);
+        $handler->setEmitter($this->getEmitter());
+
+        $this->revokeTokenHandler = $handler;
+    }
+
+    /**
+     * Return an revoke token response.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     *
+     * @throws OAuthServerException
+     *
+     * @return ResponseInterface
+     */
+    public function respondToRevokeTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        if ($this->revokeTokenHandler !== null) {
+            return $this->revokeTokenHandler->respondToRevokeTokenRequest($request, $response);
+        }
+
+        throw OAuthServerException::invalidRequest('token');
     }
 
     /**
