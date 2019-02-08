@@ -12,6 +12,7 @@ namespace League\OAuth2\Server;
 use Exception;
 use InvalidArgumentException;
 use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
@@ -56,17 +57,30 @@ class RevokeTokenHandler implements EmitterAwareInterface
     private $canRevokeAccessTokens;
 
     /**
+     * @var CryptKey
+     */
+    protected $publicKey;
+
+    /**
      * New handler instance.
      *
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
+     * @param CryptKey|string                 $publicKey
      * @param bool                            $canRevokeAccessTokens
      */
     public function __construct(
         RefreshTokenRepositoryInterface $refreshTokenRepository,
+        $publicKey,
         $canRevokeAccessTokens = true
     )
     {
         $this->setRefreshTokenRepository($refreshTokenRepository);
+
+        if ($publicKey instanceof CryptKey === false) {
+            $publicKey = new CryptKey($publicKey);
+        }
+        $this->publicKey = $publicKey;
+
         $this->canRevokeAccessTokens = $canRevokeAccessTokens;
     }
 
@@ -100,6 +114,16 @@ class RevokeTokenHandler implements EmitterAwareInterface
     public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository)
     {
         $this->refreshTokenRepository = $refreshTokenRepository;
+    }
+
+    /**
+     * Set the public key
+     *
+     * @param CryptKey $key
+     */
+    public function setPublicKey(CryptKey $key)
+    {
+        $this->publicKey = $key;
     }
 
     /**
@@ -181,6 +205,10 @@ class RevokeTokenHandler implements EmitterAwareInterface
         $token = null;
         try {
             $token = (new Parser())->parse($tokenParam);
+
+            if ($token->verify(new Sha256(), $this->publicKey->getKeyPath()) === false) {
+                return null;
+            }
         } catch (Exception $exception) {
             // JWT couldn't be parsed so ignore
             return null;
