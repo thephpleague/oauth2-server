@@ -16,7 +16,6 @@ use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
-use League\OAuth2\Server\ClientValidator;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\RequestValidatorTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -30,11 +29,6 @@ use RuntimeException;
 class RevokeTokenHandler implements EmitterAwareInterface
 {
     use EmitterAwareTrait, CryptTrait, RequestValidatorTrait;
-
-    /**
-     * @var ClientValidator
-     */
-    protected $clientValidator;
 
     /**
      * @var ClientRepositoryInterface
