@@ -211,6 +211,7 @@ class AuthorizationServer implements EmitterAwareInterface
 
         throw OAuthServerException::unsupportedGrantType();
     }
+
     /**
      * Enable the revoke token handler on the server.
      *
@@ -239,7 +240,11 @@ class AuthorizationServer implements EmitterAwareInterface
     public function respondToRevokeTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
         if ($this->revokeTokenHandler !== null) {
-            return $this->revokeTokenHandler->respondToRevokeTokenRequest($request, $response);
+            $revokeResponse = $this->revokeTokenHandler->respondToRevokeTokenRequest($request, $this->getResponseType());
+
+            if ($revokeResponse instanceof ResponseTypeInterface) {
+                return $revokeResponse->generateHttpResponse($response);
+            }
         }
 
         throw OAuthServerException::invalidRequest('token');

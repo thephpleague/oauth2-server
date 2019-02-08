@@ -22,7 +22,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use Psr\Http\Message\ResponseInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
@@ -116,13 +116,13 @@ class RevokeTokenHandler implements EmitterAwareInterface
      * https://tools.ietf.org/html/rfc7009
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param ResponseTypeInterface  $response
      *
      * @throws OAuthServerException
      *
-     * @return ResponseInterface
+     * @return ResponseTypeInterface
      */
-    public function respondToRevokeTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function respondToRevokeTokenRequest(ServerRequestInterface $request, ResponseTypeInterface $response)
     {
         if ($request->getMethod() !== 'POST') {
             throw OAuthServerException::invalidRequest('method');
