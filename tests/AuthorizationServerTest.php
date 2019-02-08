@@ -4,6 +4,7 @@ namespace LeagueTests;
 
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\RevokeTokenHandler;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -353,5 +354,73 @@ class AuthorizationServerTest extends TestCase
         );
 
         $server->validateAuthorizationRequest($request);
+    }
+
+    public function testRespondToRevokeRequestUnregistered()
+    {
+        $server = new AuthorizationServer(
+            $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
+            'file://' . __DIR__ . '/Stubs/private.key',
+            base64_encode(random_bytes(36)),
+            new StubResponseType()
+        );
+
+        try {
+            $server->respondToRevokeTokenRequest(ServerRequestFactory::fromGlobals(), new Response);
+        } catch (OAuthServerException $e) {
+            $this->assertEquals('invalid_request', $e->getErrorType());
+            $this->assertEquals(400, $e->getHttpStatusCode());
+        }
+    }
+
+    public function testRespondToRevokeRequest()
+    {
+        $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepository->method('getClientEntity')->willReturn(new ClientEntity());
+
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+
+        $server = new AuthorizationServer(
+            $clientRepository,
+            $accessTokenRepositoryMock,
+            $scopeRepositoryMock,
+            'file://' . __DIR__ . '/Stubs/private.key',
+            base64_encode(random_bytes(36)),
+            new StubResponseType()
+        );
+
+        $server->setDefaultScope(self::DEFAULT_SCOPE);
+        $server->enableRevokeTokenHandler(new RevokeTokenHandler(
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            'file://' . __DIR__ . '/Stubs/public.key'
+        ));
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'token' => 'abcdef',
+                'token_type_hint' => 'access_token',
+                'client_id' => 'foo',
+                'client_secret' => 'bar'
+            ]
+        );
+
+        $response = $server->respondToRevokeTokenRequest($request, new Response);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }
