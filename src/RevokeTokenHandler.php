@@ -199,11 +199,11 @@ class RevokeTokenHandler implements EmitterAwareInterface
             $token = (new Parser())->parse($tokenParam);
 
             if ($token->verify(new Sha256(), $this->publicKey->getKeyPath()) === false) {
-                return;
+                return null;
             }
         } catch (Exception $exception) {
             // JWT couldn't be parsed so ignore
-            return;
+            return null;
         }
 
         $clientId = $token->getClaim('aud');
@@ -227,8 +227,8 @@ class RevokeTokenHandler implements EmitterAwareInterface
             $refreshToken = $this->decrypt($tokenParam);
             $refreshTokenData = json_decode($refreshToken, true);
         } catch (Exception $e) {
-            return;
             // token couldn't be decrypted so ignore
+            return null;
         }
 
         if ($refreshTokenData['client_id'] !== $clientId) {
