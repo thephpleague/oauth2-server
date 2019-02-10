@@ -169,6 +169,9 @@ abstract class AbstractGrant implements GrantTypeInterface
         $this->defaultScope = $scope;
     }
 
+    /**
+     * @param IdentifierGeneratorInterface $identifierGenerator
+     */
     public function setIdentifierGenerator(IdentifierGeneratorInterface $identifierGenerator)
     {
         $this->identifierGenerator = $identifierGenerator;
