@@ -15,6 +15,7 @@ use DateInterval;
 use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\IdentifierGenerator\IdentifierGeneratorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -141,4 +142,11 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * @param string|Key|null $key
      */
     public function setEncryptionKey($key = null);
+
+    /**
+     * Set the identifier generator
+     *
+     * @param IdentifierGeneratorInterface $identifierGenerator
+     */
+    public function setIdentifierGenerator(IdentifierGeneratorInterface $identifierGenerator);
 }
