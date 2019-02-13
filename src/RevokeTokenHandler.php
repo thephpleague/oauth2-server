@@ -138,11 +138,6 @@ class RevokeTokenHandler implements EmitterAwareInterface
      */
     public function respondToRevokeTokenRequest(ServerRequestInterface $request, ResponseTypeInterface $response)
     {
-        if ($request->getMethod() !== 'POST') {
-            $errorMessage = 'POST method required.';
-            throw new OAuthServerException($errorMessage, 3, 'invalid_request', 400);
-        }
-
         $token = $this->getRequestParameter('token', $request);
         $hint = $this->getRequestParameter('token_type_hint', $request);
 
