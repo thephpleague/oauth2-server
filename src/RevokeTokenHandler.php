@@ -167,6 +167,8 @@ class RevokeTokenHandler implements EmitterAwareInterface
      * @param string $tokenParam
      * @param string $clientId
      *
+     * @throws OAuthServerException
+     *
      * @return bool true if token was a refresh token
      */
     protected function revokeAccessToken($tokenParam, $clientId)
@@ -200,6 +202,8 @@ class RevokeTokenHandler implements EmitterAwareInterface
     /**
      * @param string $tokenParam
      * @param string $clientId
+     *
+     * @throws OAuthServerException
      *
      * @return bool true if token was a refresh token
      */
