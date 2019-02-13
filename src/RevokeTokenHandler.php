@@ -154,32 +154,14 @@ class RevokeTokenHandler implements EmitterAwareInterface
             return $response;
         }
 
-        // Attempt to read token
-        $accessToken = null;
-        $refreshToken = null;
+        // Attempt to revoke tokens
         if ($hint === 'refresh_token') {
-            $refreshToken = $this->readAsRefreshToken($token, $clientId);
-            if ($refreshToken === null) {
-                $accessToken = $this->readAsAccessToken($token, $clientId);
+            if (!$this->revokeRefreshToken($token, $clientId)) {
+                $this->revokeAccessToken($token, $clientId);
             }
         } else {
-            $accessToken = $this->readAsAccessToken($token, $clientId);
-            if ($accessToken === null) {
-                $refreshToken = $this->readAsRefreshToken($token, $clientId);
-            }
-        }
-
-        // Revoke tokens
-        if ($accessToken !== null) {
-            if (!$this->canRevokeAccessTokens) {
-                $errorMessage = 'The authorization server does not support the revocation of the presented token type';
-                throw new OAuthServerException($errorMessage, 2, 'unsupported_token_type', 400);
-            }
-            $this->accessTokenRepository->revokeAccessToken($accessToken->getClaim('jti'));
-        } elseif ($refreshToken !== null) {
-            $this->refreshTokenRepository->revokeRefreshToken($refreshToken['refresh_token_id']);
-            if ($this->canRevokeAccessTokens) {
-                $this->accessTokenRepository->revokeAccessToken($refreshToken['access_token_id']);
+            if (!$this->revokeAccessToken($token, $clientId)) {
+                $this->revokeRefreshToken($token, $clientId);
             }
         }
 
@@ -190,20 +172,20 @@ class RevokeTokenHandler implements EmitterAwareInterface
      * @param string $tokenParam
      * @param string $clientId
      *
-     * @return null|Token
+     * @return bool true if token was a refresh token
      */
-    protected function readAsAccessToken($tokenParam, $clientId)
+    protected function revokeAccessToken($tokenParam, $clientId)
     {
         $token = null;
         try {
             $token = (new Parser())->parse($tokenParam);
 
             if ($token->verify(new Sha256(), $this->publicKey->getKeyPath()) === false) {
-                return null;
+                return false;
             }
         } catch (Exception $exception) {
-            // JWT couldn't be parsed so ignore
-            return null;
+            // JWT couldn't be parsed as access token
+            return false;
         }
 
         $clientId = $token->getClaim('aud');
@@ -211,30 +193,40 @@ class RevokeTokenHandler implements EmitterAwareInterface
             throw OAuthServerException::invalidClient();
         }
 
-        return $token;
+        if (!$this->canRevokeAccessTokens) {
+            $errorMessage = 'The authorization server does not support the revocation of the presented token type';
+            throw new OAuthServerException($errorMessage, 2, 'unsupported_token_type', 400);
+        }
+        $this->accessTokenRepository->revokeAccessToken($token->getClaim('jti'));
+
+        return true;
     }
 
     /**
      * @param string $tokenParam
      * @param string $clientId
      *
-     * @return null|array
+     * @return bool true if token was a refresh token
      */
-    protected function readAsRefreshToken($tokenParam, $clientId)
+    protected function revokeRefreshToken($tokenParam, $clientId)
     {
         $refreshTokenData = null;
         try {
             $refreshToken = $this->decrypt($tokenParam);
             $refreshTokenData = json_decode($refreshToken, true);
         } catch (Exception $e) {
-            // token couldn't be decrypted so ignore
-            return null;
+            // token couldn't be decrypted as refresh token
+            return false;
         }
 
         if ($refreshTokenData['client_id'] !== $clientId) {
             throw OAuthServerException::invalidClient();
         }
 
-        return $refreshTokenData;
+        $this->refreshTokenRepository->revokeRefreshToken($refreshTokenData['refresh_token_id']);
+        if ($this->canRevokeAccessTokens) {
+            $this->accessTokenRepository->revokeAccessToken($refreshTokenData['access_token_id']);
+        }
+        return true;
     }
 }
