@@ -226,6 +226,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
         if ($this->canRevokeAccessTokens) {
             $this->accessTokenRepository->revokeAccessToken($refreshTokenData['access_token_id']);
         }
+
         return true;
     }
 }
