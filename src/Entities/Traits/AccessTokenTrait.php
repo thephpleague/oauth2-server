@@ -29,16 +29,12 @@ trait AccessTokenTrait
      */
     public function convertToJWT(CryptKey $privateKey)
     {
-        return (new Builder())
-            ->setAudience($this->getClient()->getIdentifier())
-            ->setId($this->getIdentifier(), true)
-            ->setIssuedAt(time())
-            ->setNotBefore(time())
-            ->setExpiration($this->getExpiryDateTime()->getTimestamp())
-            ->setSubject($this->getUserIdentifier())
-            ->set('scopes', $this->getScopes())
-            ->sign(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()))
-            ->getToken();
+        $builder = new Builder();
+
+        $this->setDataToBuilder($builder);
+        $this->signDataInBuider($builder, $privateKey);
+
+        return $builder->getToken();
     }
 
     /**
@@ -60,4 +56,39 @@ trait AccessTokenTrait
      * @return ScopeEntityInterface[]
      */
     abstract public function getScopes();
+
+    /**
+     * Set data parameters to token builder.
+     *
+     * @param Builder $builder
+     *
+     * @return void
+     */
+    protected function setDataToBuilder(Builder $builder)
+    {
+        $builder
+            ->setAudience($this->getClient()->getIdentifier())
+            ->setId($this->getIdentifier(), true)
+            ->setIssuedAt(time())
+            ->setNotBefore(time())
+            ->setExpiration($this->getExpiryDateTime()->getTimestamp())
+            ->setSubject($this->getUserIdentifier())
+            ->set('scopes', $this->getScopes())
+        ;
+    }
+
+    /**
+     * Sign data in token builder.
+     *
+     * @param Builder $builder
+     *
+     * @return void
+     */
+    protected function signDataInBuider(Builder $builder, CryptKey $privateKey)
+    {
+        $signer = new Sha256();
+        $key = new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase());
+
+        $builder->sign($signer, $key);
+    }
 }
