@@ -61,8 +61,6 @@ trait AccessTokenTrait
      * Set data parameters to token builder.
      *
      * @param Builder $builder
-     *
-     * @return void
      */
     protected function setDataToBuilder(Builder $builder)
     {
@@ -73,16 +71,13 @@ trait AccessTokenTrait
             ->setNotBefore(time())
             ->setExpiration($this->getExpiryDateTime()->getTimestamp())
             ->setSubject($this->getUserIdentifier())
-            ->set('scopes', $this->getScopes())
-        ;
+            ->set('scopes', $this->getScopes());
     }
 
     /**
      * Sign data in token builder.
      *
      * @param Builder $builder
-     *
-     * @return void
      */
     protected function signDataInBuider(Builder $builder, CryptKey $privateKey)
     {
