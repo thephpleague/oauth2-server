@@ -16,6 +16,8 @@ use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use OAuth2ServerExamples\Repositories\AccessTokenRepository;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
@@ -76,6 +78,56 @@ class PasswordGrantTest extends TestCase
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
+    }
+
+    public function testRespondToRequestNullRefreshToken ()
+    {
+        /** @var ClientRepositoryInterface|MockObject $clientRepositoryMock */
+        $client = new ClientEntity();
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        /** @var AccessTokenRepositoryInterface|MockObject $accessTokenRepositoryMock */
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        /** @var UserRepositoryInterface|MockObject $userRepositoryMock */
+        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
+        $userEntity = new UserEntity();
+        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
+
+        /** @var ScopeRepositoryInterface|MockObject $scopeRepositoryMock */
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        /** @var RefreshTokenRepositoryInterface|MockObject $refreshTokenRepositoryMock */
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(null);
+
+        $grant = new PasswordGrant($userRepositoryMock, $refreshTokenRepositoryMock);
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withParsedBody(
+            [
+                'client_id'     => 'foo',
+                'client_secret' => 'bar',
+                'username'      => 'foo',
+                'password'      => 'bar',
+            ]
+        );
+
+        $responseType = new StubResponseType();
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
+        $this->assertNull($responseType->getRefreshToken());
     }
 
     /**

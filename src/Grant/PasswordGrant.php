@@ -35,7 +35,10 @@ class PasswordGrant extends AbstractGrant
         RefreshTokenRepositoryInterface $refreshTokenRepository
     ) {
         $this->setUserRepository($userRepository);
-        $this->setRefreshTokenRepository($refreshTokenRepository);
+
+        if ($refreshTokenRepository !== null) {
+            $this->setRefreshTokenRepository($refreshTokenRepository);
+        }
 
         $this->refreshTokenTTL = new DateInterval('P1M');
     }
@@ -56,17 +59,17 @@ class PasswordGrant extends AbstractGrant
         // Finalize the requested scopes
         $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $user->getIdentifier());
 
-        // Issue and persist new tokens
+        // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);
-        $refreshToken = $this->issueRefreshToken($accessToken);
-
-        // Send events to emitter
         $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
-        $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
-
-        // Inject tokens into response
         $responseType->setAccessToken($accessToken);
-        $responseType->setRefreshToken($refreshToken);
+
+        // Issue and persist new refresh token if given
+        $refreshToken = $this->issueRefreshToken($accessToken);
+        if ($refreshToken !== null) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
+            $responseType->setRefreshToken($refreshToken);
+        }
 
         return $responseType;
     }
