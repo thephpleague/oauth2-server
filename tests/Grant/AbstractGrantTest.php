@@ -18,6 +18,7 @@ use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
@@ -344,6 +345,28 @@ class AbstractGrantTest extends TestCase
         $refreshToken = $issueRefreshTokenMethod->invoke($grantMock, $accessToken);
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $refreshToken);
         $this->assertEquals($accessToken, $refreshToken->getAccessToken());
+    }
+
+    public function testIssueNullRefreshToken()
+    {
+        /** @var RefreshTokenRepositoryInterface|MockObject $refreshTokenRepoMock */
+        $refreshTokenRepoMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepoMock
+            ->expects($this->once())
+            ->method('getNewRefreshToken')
+            ->willReturn(null);
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setRefreshTokenTTL(new \DateInterval('PT1M'));
+        $grantMock->setRefreshTokenRepository($refreshTokenRepoMock);
+
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $issueRefreshTokenMethod = $abstractGrantReflection->getMethod('issueRefreshToken');
+        $issueRefreshTokenMethod->setAccessible(true);
+
+        $accessToken = new AccessTokenEntity();
+        $this->assertNull($issueRefreshTokenMethod->invoke($grantMock, $accessToken));
     }
 
     public function testIssueAccessToken()
