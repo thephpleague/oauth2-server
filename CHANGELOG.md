@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- Refresh Tokens are now optional (#649)
+
 ## [7.3.2] - released 2018-11-21
 
 ### Fixed
