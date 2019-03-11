@@ -35,10 +35,7 @@ class PasswordGrant extends AbstractGrant
         RefreshTokenRepositoryInterface $refreshTokenRepository
     ) {
         $this->setUserRepository($userRepository);
-
-        if ($refreshTokenRepository !== null) {
-            $this->setRefreshTokenRepository($refreshTokenRepository);
-        }
+        $this->setRefreshTokenRepository($refreshTokenRepository);
 
         $this->refreshTokenTTL = new DateInterval('P1M');
     }
