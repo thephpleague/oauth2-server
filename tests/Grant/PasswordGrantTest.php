@@ -16,7 +16,6 @@ use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
-use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
@@ -80,7 +79,7 @@ class PasswordGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
-    public function testRespondToRequestNullRefreshToken ()
+    public function testRespondToRequestNullRefreshToken()
     {
         /** @var ClientRepositoryInterface|MockObject $clientRepositoryMock */
         $client = new ClientEntity();

@@ -478,7 +478,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     {
         $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
         if ($refreshToken === null) {
-            return null;
+            return;
         }
 
         $refreshToken->setExpiryDateTime((new DateTime())->add($this->refreshTokenTTL));
