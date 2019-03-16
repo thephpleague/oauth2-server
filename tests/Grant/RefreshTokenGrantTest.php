@@ -16,7 +16,6 @@ use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
