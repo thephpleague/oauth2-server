@@ -100,23 +100,19 @@ class RefreshTokenGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
 
-        /** @var ClientRepositoryInterface|MockObject $clientRepositoryMock */
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
         $scopeEntity = new ScopeEntity();
         $scopeEntity->setIdentifier('foo');
 
-        /** @var ScopeRepositoryInterface|MockObject $scopeRepositoryMock */
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
 
-        /** @var AccessTokenRepositoryInterface|MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->expects($this->once())->method('persistNewAccessToken')->willReturnSelf();
 
-        /** @var RefreshTokenRepositoryInterface|MockObject $refreshTokenRepositoryMock */
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(null);
         $refreshTokenRepositoryMock->expects($this->never())->method('persistNewRefreshToken');

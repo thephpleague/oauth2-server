@@ -81,28 +81,23 @@ class PasswordGrantTest extends TestCase
 
     public function testRespondToRequestNullRefreshToken()
     {
-        /** @var ClientRepositoryInterface|MockObject $clientRepositoryMock */
         $client = new ClientEntity();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
-        /** @var AccessTokenRepositoryInterface|MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
-        /** @var UserRepositoryInterface|MockObject $userRepositoryMock */
         $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
         $userEntity = new UserEntity();
         $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
 
-        /** @var ScopeRepositoryInterface|MockObject $scopeRepositoryMock */
         $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        /** @var RefreshTokenRepositoryInterface|MockObject $refreshTokenRepositoryMock */
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(null);
 

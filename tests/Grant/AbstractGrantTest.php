@@ -349,7 +349,6 @@ class AbstractGrantTest extends TestCase
 
     public function testIssueNullRefreshToken()
     {
-        /** @var RefreshTokenRepositoryInterface|MockObject $refreshTokenRepoMock */
         $refreshTokenRepoMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepoMock
             ->expects($this->once())
