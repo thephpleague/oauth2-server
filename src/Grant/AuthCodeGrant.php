@@ -268,7 +268,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
 
-        $authorizationRequest = new AuthorizationRequest();
+        $authorizationRequest = $this->createAuthorizationRequest();
+
         $authorizationRequest->setGrantTypeId($this->getIdentifier());
         $authorizationRequest->setClient($client);
         $authorizationRequest->setRedirectUri($redirectUri);
@@ -308,6 +309,14 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         return $authorizationRequest;
+    }
+
+    /**
+     * @return AuthorizationRequest
+     */
+    private function createAuthorizationRequest() {
+
+        return new AuthorizationRequest();
     }
 
     /**
