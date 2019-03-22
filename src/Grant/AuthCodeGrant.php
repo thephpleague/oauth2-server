@@ -314,8 +314,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * @return AuthorizationRequest
      */
-    private function createAuthorizationRequest() {
-
+    private function createAuthorizationRequest()
+    {
         return new AuthorizationRequest();
     }
 
