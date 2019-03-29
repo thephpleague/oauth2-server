@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.3.3] - released 2019-03-29
+### Added
+- Added `error_description` to the error payload to improve standards compliance. The contents of this are copied from the existing `message` value. (PR #1006)
+
+### Deprecated
+- Error payload will not issue `message` value in the next major release (PR #1006)
+
 ## [7.3.2] - released 2018-11-21
 
 ### Fixed
