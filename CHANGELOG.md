@@ -439,7 +439,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.3.2...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.3.3...HEAD
+[7.3.3]: https://github.com/thephpleague/oauth2-server/compare/7.3.2...7.3.3
 [7.3.2]: https://github.com/thephpleague/oauth2-server/compare/7.3.1...7.3.2
 [7.3.1]: https://github.com/thephpleague/oauth2-server/compare/7.3.0...7.3.1
 [7.3.0]: https://github.com/thephpleague/oauth2-server/compare/7.2.0...7.3.0
