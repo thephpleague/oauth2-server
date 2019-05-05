@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Changed
-- Refresh Tokens are now optional (#649)
+- RefreshTokenRepository can now return null, allowing refresh tokens to be optional. (PR #649)
 
 ## [7.3.3] - released 2019-03-29
 ### Added
