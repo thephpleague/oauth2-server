@@ -63,6 +63,7 @@ class PasswordGrant extends AbstractGrant
 
         // Issue and persist new refresh token if given
         $refreshToken = $this->issueRefreshToken($accessToken);
+
         if ($refreshToken !== null) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
             $responseType->setRefreshToken($refreshToken);

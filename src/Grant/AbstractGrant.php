@@ -477,6 +477,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected function issueRefreshToken(AccessTokenEntityInterface $accessToken)
     {
         $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
+
         if ($refreshToken === null) {
             return null;
         }
@@ -485,6 +486,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $refreshToken->setAccessToken($accessToken);
 
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
+
         while ($maxGenerationAttempts-- > 0) {
             $refreshToken->setIdentifier($this->generateUniqueIdentifier());
             try {
