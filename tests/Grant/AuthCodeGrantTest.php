@@ -644,6 +644,73 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
+    public function testRespondToAccessTokenRequestNullRefreshToken()
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(null);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $refreshTokenRepositoryMock,
+            new \DateInterval('PT10M')
+        );
+
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => 'http://foo/bar',
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode(
+                        [
+                            'auth_code_id' => uniqid(),
+                            'expire_time'  => time() + 3600,
+                            'client_id'    => 'foo',
+                            'user_id'      => 123,
+                            'scopes'       => ['foo'],
+                            'redirect_uri' => 'http://foo/bar',
+                        ]
+                    )
+                ),
+            ]
+        );
+
+        /** @var StubResponseType $response */
+        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new \DateInterval('PT10M'));
+
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $response->getAccessToken());
+        $this->assertNull($response->getRefreshToken());
+    }
+
     public function testRespondToAccessTokenRequestCodeChallengePlain()
     {
         $client = new ClientEntity();

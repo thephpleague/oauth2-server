@@ -41,7 +41,6 @@ enabled:
   - print_to_echo
   - short_array_syntax
   - short_scalar_cast
-  - simplified_null_return
   - single_quote
   - spaces_cast
   - standardize_not_equal

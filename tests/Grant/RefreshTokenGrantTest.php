@@ -94,6 +94,63 @@ class RefreshTokenGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
+    public function testRespondToRequestNullRefreshToken()
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeEntity = new ScopeEntity();
+        $scopeEntity->setIdentifier('foo');
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->expects($this->once())->method('persistNewAccessToken')->willReturnSelf();
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(null);
+        $refreshTokenRepositoryMock->expects($this->never())->method('persistNewRefreshToken');
+
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        $oldRefreshToken = $this->cryptStub->doEncrypt(
+            json_encode(
+                [
+                    'client_id'        => 'foo',
+                    'refresh_token_id' => 'zyxwvu',
+                    'access_token_id'  => 'abcdef',
+                    'scopes'           => ['foo'],
+                    'user_id'          => 123,
+                    'expire_time'      => time() + 3600,
+                ]
+            )
+        );
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $oldRefreshToken,
+            'scopes'        => ['foo'],
+        ]);
+
+        $responseType = new StubResponseType();
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
+        $this->assertNull($responseType->getRefreshToken());
+    }
+
     public function testRespondToReducedScopes()
     {
         $client = new ClientEntity();

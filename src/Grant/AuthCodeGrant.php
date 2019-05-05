@@ -145,17 +145,18 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             }
         }
 
-        // Issue and persist access + refresh tokens
+        // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
+        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
+        $responseType->setAccessToken($accessToken);
+
+        // Issue and persist new refresh token if given
         $refreshToken = $this->issueRefreshToken($accessToken);
 
-        // Send events to emitter
-        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
-        $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
-
-        // Inject tokens into response type
-        $responseType->setAccessToken($accessToken);
-        $responseType->setRefreshToken($refreshToken);
+        if ($refreshToken !== null) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
+            $responseType->setRefreshToken($refreshToken);
+        }
 
         // Revoke used auth code
         $this->authCodeRepository->revokeAuthCode($authCodePayload->auth_code_id);
