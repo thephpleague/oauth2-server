@@ -5,6 +5,7 @@ namespace LeagueTests\Grant;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Grant\PasswordGrant;
+use League\OAuth2\Server\IdentifierGenerator\IdentifierGeneratorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
@@ -55,11 +56,15 @@ class PasswordGrantTest extends TestCase
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         $grant = new PasswordGrant($userRepositoryMock, $refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setIdentifierGenerator($identifierGeneratorMock);
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withParsedBody(

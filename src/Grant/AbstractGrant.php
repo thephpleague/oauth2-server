@@ -12,8 +12,6 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use DateTime;
-use Error;
-use Exception;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
@@ -24,6 +22,7 @@ use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
+use League\OAuth2\Server\IdentifierGenerator\IdentifierGeneratorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -34,7 +33,6 @@ use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
-use TypeError;
 
 /**
  * Abstract grant class.
@@ -91,6 +89,11 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @string
      */
     protected $defaultScope;
+
+    /**
+     * @var IdentifierGeneratorInterface
+     */
+    protected $identifierGenerator;
 
     /**
      * @param ClientRepositoryInterface $clientRepository
@@ -164,6 +167,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setDefaultScope($scope)
     {
         $this->defaultScope = $scope;
+    }
+
+    /**
+     * @param IdentifierGeneratorInterface $identifierGenerator
+     */
+    public function setIdentifierGenerator(IdentifierGeneratorInterface $identifierGenerator)
+    {
+        $this->identifierGenerator = $identifierGenerator;
     }
 
     /**
@@ -403,7 +414,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         while ($maxGenerationAttempts-- > 0) {
-            $accessToken->setIdentifier($this->generateUniqueIdentifier());
+            $accessToken->setIdentifier($this->identifierGenerator->generateUniqueIdentifier());
             try {
                 $this->accessTokenRepository->persistNewAccessToken($accessToken);
 
@@ -453,7 +464,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         while ($maxGenerationAttempts-- > 0) {
-            $authCode->setIdentifier($this->generateUniqueIdentifier());
+            $authCode->setIdentifier($this->identifierGenerator->generateUniqueIdentifier());
             try {
                 $this->authCodeRepository->persistNewAuthCode($authCode);
 
@@ -488,7 +499,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         while ($maxGenerationAttempts-- > 0) {
-            $refreshToken->setIdentifier($this->generateUniqueIdentifier());
+            $refreshToken->setIdentifier($this->identifierGenerator->generateUniqueIdentifier());
             try {
                 $this->refreshTokenRepository->persistNewRefreshToken($refreshToken);
 
@@ -499,31 +510,6 @@ abstract class AbstractGrant implements GrantTypeInterface
                 }
             }
         }
-    }
-
-    /**
-     * Generate a new unique identifier.
-     *
-     * @param int $length
-     *
-     * @throws OAuthServerException
-     *
-     * @return string
-     */
-    protected function generateUniqueIdentifier($length = 40)
-    {
-        try {
-            return bin2hex(random_bytes($length));
-            // @codeCoverageIgnoreStart
-        } catch (TypeError $e) {
-            throw OAuthServerException::serverError('An unexpected error has occurred', $e);
-        } catch (Error $e) {
-            throw OAuthServerException::serverError('An unexpected error has occurred', $e);
-        } catch (Exception $e) {
-            // If you get this message, the CSPRNG failed hard.
-            throw OAuthServerException::serverError('Could not generate a random string', $e);
-        }
-        // @codeCoverageIgnoreEnd
     }
 
     /**

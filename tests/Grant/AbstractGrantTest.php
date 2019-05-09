@@ -7,6 +7,7 @@ use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Grant\AbstractGrant;
+use League\OAuth2\Server\IdentifierGenerator\IdentifierGeneratorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -330,10 +331,14 @@ class AbstractGrantTest extends TestCase
             ->method('getNewRefreshToken')
             ->willReturn(new RefreshTokenEntity());
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->expects($this->once())->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setRefreshTokenTTL(new \DateInterval('PT1M'));
         $grantMock->setRefreshTokenRepository($refreshTokenRepoMock);
+        $grantMock->setIdentifierGenerator($identifierGeneratorMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
         $issueRefreshTokenMethod = $abstractGrantReflection->getMethod('issueRefreshToken');
@@ -372,9 +377,13 @@ class AbstractGrantTest extends TestCase
         $accessTokenRepoMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepoMock->method('getNewToken')->willReturn(new AccessTokenEntity());
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->expects($this->once())->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setAccessTokenRepository($accessTokenRepoMock);
+        $grantMock->setIdentifierGenerator($identifierGeneratorMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
         $issueAccessTokenMethod = $abstractGrantReflection->getMethod('issueAccessToken');
@@ -396,9 +405,13 @@ class AbstractGrantTest extends TestCase
         $authCodeRepoMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepoMock->expects($this->once())->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $identifierGeneratorMock = $this->getMockBuilder(IdentifierGeneratorInterface::class)->getMock();
+        $identifierGeneratorMock->expects($this->once())->method('generateUniqueIdentifier')->willReturn(uniqid());
+
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setAuthCodeRepository($authCodeRepoMock);
+        $grantMock->setIdentifierGenerator($identifierGeneratorMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
         $issueAuthCodeMethod = $abstractGrantReflection->getMethod('issueAuthCode');
@@ -479,17 +492,6 @@ class AbstractGrantTest extends TestCase
         $grantMock->setScopeRepository($scopeRepositoryMock);
 
         $grantMock->validateScopes('basic   ');
-    }
-
-    public function testGenerateUniqueIdentifier()
-    {
-        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
-        $method = $abstractGrantReflection->getMethod('generateUniqueIdentifier');
-        $method->setAccessible(true);
-
-        $this->assertInternalType('string', $method->invoke($grantMock));
     }
 
     public function testCanRespondToAuthorizationRequest()
