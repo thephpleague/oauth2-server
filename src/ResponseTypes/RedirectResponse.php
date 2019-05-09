@@ -12,6 +12,7 @@
 namespace League\OAuth2\Server\ResponseTypes;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RedirectResponse extends AbstractResponseType
 {
@@ -33,7 +34,7 @@ class RedirectResponse extends AbstractResponseType
      *
      * @return ResponseInterface
      */
-    public function generateHttpResponse(ResponseInterface $response)
+    public function generateHttpResponse(ResponseInterface $response, ServerRequestInterface $request = null)
     {
         return $response->withStatus(302)->withHeader('Location', $this->redirectUri);
     }

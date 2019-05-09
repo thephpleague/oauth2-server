@@ -44,7 +44,7 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
 
-        $response = $responseType->generateHttpResponse(new Response());
+        $response = $responseType->generateHttpResponse(new Response(), new ServerRequest());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
@@ -86,7 +86,7 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
 
-        $response = $responseType->generateHttpResponse(new Response());
+        $response = $responseType->generateHttpResponse(new Response(), new ServerRequest());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
@@ -100,9 +100,58 @@ class BearerResponseTypeTest extends TestCase
         $this->assertObjectHasAttribute('expires_in', $json);
         $this->assertObjectHasAttribute('access_token', $json);
         $this->assertObjectHasAttribute('refresh_token', $json);
+        $this->assertObjectHasAttribute('scope', $json);
 
         $this->assertObjectHasAttribute('foo', $json);
         $this->assertAttributeEquals('bar', 'foo', $json);
+        $this->assertAttributeEquals('basic', 'scope', $json);
+    }
+
+    public function testGenerateHttpResponseWithInvalidScope()
+    {
+        $responseType = new BearerTokenResponse();
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+
+        $client = new ClientEntity();
+        $client->setIdentifier('clientName');
+
+        $scope = new ScopeEntity();
+        $scope->setIdentifier('basic');
+
+        $accessToken = new AccessTokenEntity();
+        $accessToken->setIdentifier('abcdef');
+        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setClient($client);
+        $accessToken->addScope($scope);
+
+        $refreshToken = new RefreshTokenEntity();
+        $refreshToken->setIdentifier('abcdef');
+        $refreshToken->setAccessToken($accessToken);
+        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+
+        $responseType->setAccessToken($accessToken);
+        $responseType->setRefreshToken($refreshToken);
+
+        $request = new ServerRequest(['scope' => 'invalid']);
+
+        $response = $responseType->generateHttpResponse(new Response(), $request);
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('no-cache', $response->getHeader('pragma')[0]);
+        $this->assertEquals('no-store', $response->getHeader('cache-control')[0]);
+        $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
+
+        $response->getBody()->rewind();
+        $json = json_decode($response->getBody()->getContents());
+        $this->assertAttributeEquals('Bearer', 'token_type', $json);
+        $this->assertObjectHasAttribute('expires_in', $json);
+        $this->assertObjectHasAttribute('access_token', $json);
+        $this->assertObjectHasAttribute('refresh_token', $json);
+        $this->assertObjectHasAttribute('scope', $json);
+
+        $this->assertAttributeEquals('basic', 'scope', $json);
     }
 
     public function testDetermineAccessTokenInHeaderValidToken()
@@ -128,7 +177,7 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
 
-        $response = $responseType->generateHttpResponse(new Response());
+        $response = $responseType->generateHttpResponse(new Response(), new ServerRequest());
         $json = json_decode((string) $response->getBody());
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
@@ -173,7 +222,7 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
 
-        $response = $responseType->generateHttpResponse(new Response());
+        $response = $responseType->generateHttpResponse(new Response(), new ServerRequest());
         $json = json_decode((string) $response->getBody());
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
@@ -215,7 +264,7 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
 
-        $response = $responseType->generateHttpResponse(new Response());
+        $response = $responseType->generateHttpResponse(new Response(), new ServerRequest());
         $json = json_decode((string) $response->getBody());
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();

@@ -199,7 +199,7 @@ class AuthorizationServer implements EmitterAwareInterface
             );
 
             if ($tokenResponse instanceof ResponseTypeInterface) {
-                return $tokenResponse->generateHttpResponse($response);
+                return $tokenResponse->generateHttpResponse($response, $request);
             }
         }
 

@@ -15,6 +15,7 @@ use Defuse\Crypto\Key;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 interface ResponseTypeInterface
 {
@@ -33,7 +34,7 @@ interface ResponseTypeInterface
      *
      * @return ResponseInterface
      */
-    public function generateHttpResponse(ResponseInterface $response);
+    public function generateHttpResponse(ResponseInterface $response, ServerRequestInterface $request = null);
 
     /**
      * Set the encryption key

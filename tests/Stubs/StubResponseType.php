@@ -63,7 +63,7 @@ class StubResponseType extends AbstractResponseType
      *
      * @return ResponseInterface
      */
-    public function generateHttpResponse(ResponseInterface $response)
+    public function generateHttpResponse(ResponseInterface $response, ServerRequestInterface $request = null)
     {
         return new Response();
     }
