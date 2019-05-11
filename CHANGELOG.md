@@ -60,6 +60,41 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Fix issue where AuthorizationServer is not stateless as ResponseType could store state of a previous request (PR #960)
 
+## [7.4.0] - released 2019-05-05
+
+### Changed
+- RefreshTokenRepository can now return null, allowing refresh tokens to be optional. (PR #649)
+
+## [7.3.3] - released 2019-03-29
+
+### Added
+- Added `error_description` to the error payload to improve standards compliance. The contents of this are copied from the existing `message` value. (PR #1006)
+
+### Deprecated
+- Error payload will not issue `message` value in the next major release (PR #1006)
+
+## [7.3.2] - released 2018-11-21
+
+### Fixed
+- Revert setting keys on response type to be inside `getResponseType()` function instead of AuthorizationServer constructor (PR #969)
+
+## [7.3.1] - released 2018-11-15
+
+### Fixed
+- Fix issue with previous release where interface had changed for the AuthorizationServer. Reverted to the previous interface while maintaining functionality changes (PR #970)
+
+## [7.3.0] - released 2018-11-13
+
+### Changed
+- Moved  the `finalizeScopes()` call from `validateAuthorizationRequest` method to the `completeAuthorizationRequest` method so it is called just before the access token is issued (PR #923)
+
+### Added
+- Added a ScopeTrait to provide an implementation for jsonSerialize (PR #952)
+- Ability to nest exceptions (PR #965)
+
+### Fixed
+- Fix issue where AuthorizationServer is not stateless as ResponseType could store state of a previous request (PR #960)
+
 ## [7.2.0] - released 2018-06-23
 
 ### Changed
@@ -460,7 +495,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.4.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.0.0...HEAD
+[8.0.0]: https://github.com/thephpleague/oauth2-server/compare/7.4.0...8.0.0
 [7.4.0]: https://github.com/thephpleague/oauth2-server/compare/7.3.3...7.4.0
 [7.3.3]: https://github.com/thephpleague/oauth2-server/compare/7.3.2...7.3.3
 [7.3.2]: https://github.com/thephpleague/oauth2-server/compare/7.3.1...7.3.2
