@@ -87,7 +87,7 @@ If you have any questions about OAuth _please_ open a ticket here; please **don'
 
 ## Security
 
-If you discover any security related issues, please email `hello@alexbilbie.com` instead of using the issue tracker.
+If you discover any security related issues, please email `andrew@noexceptions.io` instead of using the issue tracker.
 
 ## License
 
