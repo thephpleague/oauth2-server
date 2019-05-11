@@ -58,14 +58,13 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $this->authCodeTTL = $authCodeTTL;
         $this->refreshTokenTTL = new DateInterval('P1M');
 
-        // SHOULD ONLY DO THIS IS SHA256 is supported
-        $s256Verifier = new S256Verifier();
-        $plainVerifier = new PlainVerifier();
+        if (in_array('sha256', hash_algos(), true)) {
+            $s256Verifier = new S256Verifier();
+            $this->codeChallengeVerifiers[$s256Verifier->getMethod()] = $s256Verifier;
+        }
 
-        $this->codeChallengeVerifiers = [
-            $s256Verifier->getMethod() => $s256Verifier,
-            $plainVerifier->getMethod() => $plainVerifier,
-        ];
+        $plainVerifier = new PlainVerifier();
+        $this->codeChallengeVerifiers[$plainVerifier->getMethod()] = $plainVerifier;
     }
 
     /**
