@@ -105,7 +105,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
         $response = $exception->generateHttpResponse(new Response());
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('http://foo/bar?error=invalid_scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope',
+        $this->assertEquals('http://foo/bar?error=invalid_scope&error_description=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed',
             $response->getHeader('location')[0]);
     }
 
@@ -115,7 +115,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
         $response = $exception->generateHttpResponse(new Response(), true);
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('http://foo/bar#error=invalid_scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope',
+        $this->assertEquals('http://foo/bar#error=invalid_scope&error_description=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed',
             $response->getHeader('location')[0]);
     }
 }

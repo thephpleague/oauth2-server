@@ -50,7 +50,7 @@ class AuthorizationServer implements EmitterAwareInterface
     protected $publicKey;
 
     /**
-     * @var null|ResponseTypeInterface
+     * @var ResponseTypeInterface
      */
     protected $responseType;
 
@@ -104,8 +104,16 @@ class AuthorizationServer implements EmitterAwareInterface
         if ($privateKey instanceof CryptKey === false) {
             $privateKey = new CryptKey($privateKey);
         }
+
         $this->privateKey = $privateKey;
         $this->encryptionKey = $encryptionKey;
+
+        if ($responseType === null) {
+            $responseType = new BearerTokenResponse();
+        } else {
+            $responseType = clone $responseType;
+        }
+
         $this->responseType = $responseType;
     }
 
@@ -205,16 +213,15 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     protected function getResponseType()
     {
-        if ($this->responseType instanceof ResponseTypeInterface === false) {
-            $this->responseType = new BearerTokenResponse();
+        $responseType = clone $this->responseType;
+
+        if ($responseType instanceof AbstractResponseType) {
+            $responseType->setPrivateKey($this->privateKey);
         }
 
-        if ($this->responseType instanceof AbstractResponseType === true) {
-            $this->responseType->setPrivateKey($this->privateKey);
-        }
-        $this->responseType->setEncryptionKey($this->encryptionKey);
+        $responseType->setEncryptionKey($this->encryptionKey);
 
-        return $this->responseType;
+        return $responseType;
     }
 
     /**

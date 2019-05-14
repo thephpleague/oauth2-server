@@ -10,6 +10,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
+use DateTime;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -18,6 +19,7 @@ use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ImplicitGrant extends AbstractAuthorizeGrant
@@ -45,21 +47,21 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     /**
      * @param DateInterval $refreshTokenTTL
      *
-     * @throw \LogicException
+     * @throw LogicException
      */
     public function setRefreshTokenTTL(DateInterval $refreshTokenTTL)
     {
-        throw new \LogicException('The Implicit Grant does not return refresh tokens');
+        throw new LogicException('The Implicit Grant does not return refresh tokens');
     }
 
     /**
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      *
-     * @throw \LogicException
+     * @throw LogicException
      */
     public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository)
     {
-        throw new \LogicException('The Implicit Grant does not return refresh tokens');
+        throw new LogicException('The Implicit Grant does not return refresh tokens');
     }
 
     /**
@@ -94,7 +96,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
     ) {
-        throw new \LogicException('This grant does not used this method');
+        throw new LogicException('This grant does not used this method');
     }
 
     /**
@@ -150,13 +152,6 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $redirectUri
         );
 
-        // Finalize the requested scopes
-        $finalizedScopes = $this->scopeRepository->finalizeScopes(
-            $scopes,
-            $this->getIdentifier(),
-            $client
-        );
-
         $stateParameter = $this->getQueryStringParameter('state', $request);
 
         $authorizationRequest = new AuthorizationRequest();
@@ -168,7 +163,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $authorizationRequest->setState($stateParameter);
         }
 
-        $authorizationRequest->setScopes($finalizedScopes);
+        $authorizationRequest->setScopes($scopes);
 
         return $authorizationRequest;
     }
@@ -179,7 +174,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
     {
         if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
-            throw new \LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
+            throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
         }
 
         $finalRedirectUri = ($authorizationRequest->getRedirectUri() === null)
@@ -190,11 +185,19 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         // The user approved the client, redirect them back with an access token
         if ($authorizationRequest->isAuthorizationApproved() === true) {
+            // Finalize the requested scopes
+            $finalizedScopes = $this->scopeRepository->finalizeScopes(
+                $authorizationRequest->getScopes(),
+                $this->getIdentifier(),
+                $authorizationRequest->getClient(),
+                $authorizationRequest->getUser()->getIdentifier()
+            );
+
             $accessToken = $this->issueAccessToken(
                 $this->accessTokenTTL,
                 $authorizationRequest->getClient(),
                 $authorizationRequest->getUser()->getIdentifier(),
-                $authorizationRequest->getScopes()
+                $finalizedScopes
             );
 
             $response = new RedirectResponse();

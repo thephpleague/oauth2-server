@@ -9,6 +9,7 @@
 
 namespace League\OAuth2\Server\Middleware;
 
+use Exception;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Psr\Http\Message\ResponseInterface;
@@ -34,7 +35,7 @@ class ResourceServerMiddleware
      * @param ResponseInterface      $response
      * @param callable               $next
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -43,7 +44,7 @@ class ResourceServerMiddleware
         } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
             // @codeCoverageIgnoreStart
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return (new OAuthServerException($exception->getMessage(), 0, 'unknown_error', 500))
                 ->generateHttpResponse($response);
             // @codeCoverageIgnoreEnd

@@ -81,6 +81,51 @@ class PasswordGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
+    public function testRespondToRequestNullRefreshToken()
+    {
+        $client = new ClientEntity();
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
+        $userEntity = new UserEntity();
+        $userRepositoryMock->method('getUserEntityByUserCredentials')->willReturn($userEntity);
+
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(null);
+
+        $grant = new PasswordGrant($userRepositoryMock, $refreshTokenRepositoryMock);
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+
+        $serverRequest = new ServerRequest();
+        $serverRequest = $serverRequest->withParsedBody(
+            [
+                'client_id'     => 'foo',
+                'client_secret' => 'bar',
+                'username'      => 'foo',
+                'password'      => 'bar',
+            ]
+        );
+
+        $responseType = new StubResponseType();
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+
+        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
+        $this->assertNull($responseType->getRefreshToken());
+    }
+
     /**
      * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
      */

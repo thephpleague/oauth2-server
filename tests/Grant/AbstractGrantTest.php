@@ -340,6 +340,27 @@ class AbstractGrantTest extends TestCase
         $this->assertEquals($accessToken, $refreshToken->getAccessToken());
     }
 
+    public function testIssueNullRefreshToken()
+    {
+        $refreshTokenRepoMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepoMock
+            ->expects($this->once())
+            ->method('getNewRefreshToken')
+            ->willReturn(null);
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setRefreshTokenTTL(new \DateInterval('PT1M'));
+        $grantMock->setRefreshTokenRepository($refreshTokenRepoMock);
+
+        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $issueRefreshTokenMethod = $abstractGrantReflection->getMethod('issueRefreshToken');
+        $issueRefreshTokenMethod->setAccessible(true);
+
+        $accessToken = new AccessTokenEntity();
+        $this->assertNull($issueRefreshTokenMethod->invoke($grantMock, $accessToken));
+    }
+
     public function testIssueAccessToken()
     {
         $accessTokenRepoMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
