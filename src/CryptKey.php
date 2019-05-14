@@ -11,6 +11,9 @@
 
 namespace League\OAuth2\Server;
 
+use LogicException;
+use RuntimeException;
+
 class CryptKey
 {
     const RSA_KEY_PATTERN =
@@ -42,7 +45,7 @@ class CryptKey
         }
 
         if (!file_exists($keyPath) || !is_readable($keyPath)) {
-            throw new \LogicException(sprintf('Key path "%s" does not exist or is not readable', $keyPath));
+            throw new LogicException(sprintf('Key path "%s" does not exist or is not readable', $keyPath));
         }
 
         if ($keyPermissionsCheck === true) {
@@ -64,7 +67,7 @@ class CryptKey
     /**
      * @param string $key
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      *
      * @return string
      */
@@ -79,19 +82,19 @@ class CryptKey
 
         if (!touch($keyPath)) {
             // @codeCoverageIgnoreStart
-            throw new \RuntimeException(sprintf('"%s" key file could not be created', $keyPath));
+            throw new RuntimeException(sprintf('"%s" key file could not be created', $keyPath));
             // @codeCoverageIgnoreEnd
         }
 
         if (file_put_contents($keyPath, $key) === false) {
             // @codeCoverageIgnoreStart
-            throw new \RuntimeException(sprintf('Unable to write key file to temporary directory "%s"', $tmpDir));
+            throw new RuntimeException(sprintf('Unable to write key file to temporary directory "%s"', $tmpDir));
             // @codeCoverageIgnoreEnd
         }
 
         if (chmod($keyPath, 0600) === false) {
             // @codeCoverageIgnoreStart
-            throw new \RuntimeException(sprintf('The key file "%s" file mode could not be changed with chmod to 600', $keyPath));
+            throw new RuntimeException(sprintf('The key file "%s" file mode could not be changed with chmod to 600', $keyPath));
             // @codeCoverageIgnoreEnd
         }
 
