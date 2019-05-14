@@ -31,7 +31,6 @@ This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](ht
 
 The following versions of PHP are supported:
 
-* PHP 7.0
 * PHP 7.1
 * PHP 7.2
 * PHP 7.3
