@@ -484,12 +484,12 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected function issueRefreshToken(AccessTokenEntityInterface $accessToken)
     {
         $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
-        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add($this->refreshTokenTTL));
+
         if ($refreshToken === null) {
             return null;
         }
 
-        $refreshToken->setExpiryDateTime((new DateTime())->add($this->refreshTokenTTL));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
 
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
