@@ -10,7 +10,6 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
-use DateTime;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;

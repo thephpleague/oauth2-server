@@ -11,7 +11,6 @@
 
 namespace League\OAuth2\Server\ResponseTypes;
 
-use DateTime;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
