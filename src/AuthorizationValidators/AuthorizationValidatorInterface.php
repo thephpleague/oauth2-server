@@ -18,8 +18,9 @@ interface AuthorizationValidatorInterface
      *  as attributes.
      *
      * @param ServerRequestInterface $request
+     * @param int                    $leeway
      *
      * @return ServerRequestInterface
      */
-    public function validateAuthorization(ServerRequestInterface $request);
+    public function validateAuthorization(ServerRequestInterface $request, $leeway = 0);
 }

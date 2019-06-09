@@ -56,7 +56,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function validateAuthorization(ServerRequestInterface $request)
+    public function validateAuthorization(ServerRequestInterface $request, $leeway = 0)
     {
         if ($request->hasHeader('authorization') === false) {
             throw OAuthServerException::accessDenied('Missing "Authorization" header');
@@ -77,7 +77,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             }
 
             // Ensure access token hasn't expired
-            $data = new ValidationData();
+            $data = new ValidationData(null, $leeway);
             $data->setCurrentTime(time());
 
             if ($token->validate($data) === false) {

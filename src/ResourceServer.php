@@ -33,16 +33,23 @@ class ResourceServer
     private $authorizationValidator;
 
     /**
+     * @var int
+     */
+    private $leeway;
+
+    /**
      * New server instance.
      *
      * @param AccessTokenRepositoryInterface       $accessTokenRepository
      * @param CryptKey|string                      $publicKey
      * @param null|AuthorizationValidatorInterface $authorizationValidator
+     * @param int                                  $leeway
      */
     public function __construct(
         AccessTokenRepositoryInterface $accessTokenRepository,
         $publicKey,
-        AuthorizationValidatorInterface $authorizationValidator = null
+        AuthorizationValidatorInterface $authorizationValidator = null,
+        $leeway = 0
     ) {
         $this->accessTokenRepository = $accessTokenRepository;
 
@@ -52,6 +59,7 @@ class ResourceServer
         $this->publicKey = $publicKey;
 
         $this->authorizationValidator = $authorizationValidator;
+        $this->leeway = (int) $leeway;
     }
 
     /**
@@ -81,6 +89,6 @@ class ResourceServer
      */
     public function validateAuthenticatedRequest(ServerRequestInterface $request)
     {
-        return $this->getAuthorizationValidator()->validateAuthorization($request);
+        return $this->getAuthorizationValidator()->validateAuthorization($request, $this->leeway);
     }
 }
