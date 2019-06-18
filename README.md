@@ -85,13 +85,9 @@ Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague
 
 If you have any questions about OAuth _please_ open a ticket here; please **don't** email the address below.
 
-## Commercial Support
-
-If you would like help implementing this library into your existing platform, or would be interested in OAuth advice or training for you and your team please get in touch with [Glynde Labs](https://glyndelabs.com).
-
 ## Security
 
-If you discover any security related issues, please email `hello@alexbilbie.com` instead of using the issue tracker.
+If you discover any security related issues, please email `andrew@noexceptions.io` instead of using the issue tracker.
 
 ## License
 
