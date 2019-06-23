@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Exception;
 
+use Exception;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -77,5 +78,20 @@ class OAuthServerExceptionTest extends TestCase
         $exceptionWithoutRedirect = OAuthServerException::accessDenied('Some hint');
 
         $this->assertFalse($exceptionWithoutRedirect->hasRedirect());
+    }
+
+    public function testHasPrevious()
+    {
+        $previous = new Exception('This is the previous');
+        $exceptionWithPrevious = OAuthServerException::accessDenied(null, null, $previous);
+
+        $this->assertSame('This is the previous', $exceptionWithPrevious->getPrevious()->getMessage());
+    }
+
+    public function testDoesNotHavePrevious()
+    {
+        $exceptionWithoutPrevious = OAuthServerException::accessDenied();
+
+        $this->assertNull($exceptionWithoutPrevious->getPrevious());
     }
 }

@@ -13,6 +13,8 @@ namespace League\OAuth2\Server;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Exception;
+use LogicException;
 
 trait CryptTrait
 {
@@ -26,7 +28,7 @@ trait CryptTrait
      *
      * @param string $unencryptedData
      *
-     * @throws \LogicException
+     * @throws LogicException
      *
      * @return string
      */
@@ -38,8 +40,8 @@ trait CryptTrait
             }
 
             return Crypto::encryptWithPassword($unencryptedData, $this->encryptionKey);
-        } catch (\Exception $e) {
-            throw new \LogicException($e->getMessage());
+        } catch (Exception $e) {
+            throw new LogicException($e->getMessage(), null, $e);
         }
     }
 
@@ -48,7 +50,7 @@ trait CryptTrait
      *
      * @param string $encryptedData
      *
-     * @throws \LogicException
+     * @throws LogicException
      *
      * @return string
      */
@@ -60,8 +62,8 @@ trait CryptTrait
             }
 
             return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
-        } catch (\Exception $e) {
-            throw new \LogicException($e->getMessage());
+        } catch (Exception $e) {
+            throw new LogicException($e->getMessage(), null, $e);
         }
     }
 

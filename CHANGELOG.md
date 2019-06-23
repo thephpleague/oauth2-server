@@ -7,13 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
-- Flag, `requireCodeChallengeForPublicClients`, used to reject public clients that do not provide a code challenge for the Auth Code Grant (PR #938)
+- Flag, `requireCodeChallengeForPublicClients`, used to reject public clients that do not provide a code challenge for the Auth Code Grant; use AuthCodeGrant::disableRequireCodeCallengeForPublicClients() to turn off this requirement (PR #938)
 - Public clients can now use the Auth Code Grant (PR #938)
-- `isConfidential` property added to `ClientEntity` to identify type of client (PR #938)
+- `isConfidential` getter added to `ClientEntity` to identify type of client (PR #938)
 - Function `validateClient()` added to validate clients which was previously performed by the `getClientEntity()` function (PR #938)
 
 ### Changed
-- Replace `convertToJWT()` interface with a more generic `__toString()` to improve extensibility (PR #874)
+- Replace `convertToJWT()` interface with a more generic `__toString()` to improve extensibility; AccessTokenEntityInterface now requires `setPrivateKey(CryptKey $privateKey)` so `__toString()` has everything it needs to work (PR #874)
 - The `invalidClient()` function accepts a PSR-7 compliant `$serverRequest` argument to avoid accessing the `$_SERVER` global variable and improve testing (PR #899)
 - `issueAccessToken()` in the Abstract Grant no longer sets access token client, user ID or scopes. These values should already have been set when calling `getNewToken()` (PR #919)
 - No longer need to enable PKCE with `enableCodeExchangeProof` flag. Any client sending a code challenge will initiate PKCE checks. (PR #938)
@@ -23,6 +23,42 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 - `enableCodeExchangeProof` flag (PR #938)
+- Support for PHP 7.0 (PR #1014)
+
+## [7.4.0] - released 2019-05-05
+
+### Changed
+- RefreshTokenRepository can now return null, allowing refresh tokens to be optional. (PR #649)
+
+## [7.3.3] - released 2019-03-29
+
+### Added
+- Added `error_description` to the error payload to improve standards compliance. The contents of this are copied from the existing `message` value. (PR #1006)
+
+### Deprecated
+- Error payload will not issue `message` value in the next major release (PR #1006)
+
+## [7.3.2] - released 2018-11-21
+
+### Fixed
+- Revert setting keys on response type to be inside `getResponseType()` function instead of AuthorizationServer constructor (PR #969)
+
+## [7.3.1] - released 2018-11-15
+
+### Fixed
+- Fix issue with previous release where interface had changed for the AuthorizationServer. Reverted to the previous interface while maintaining functionality changes (PR #970)
+
+## [7.3.0] - released 2018-11-13
+
+### Changed
+- Moved  the `finalizeScopes()` call from `validateAuthorizationRequest` method to the `completeAuthorizationRequest` method so it is called just before the access token is issued (PR #923)
+
+### Added
+- Added a ScopeTrait to provide an implementation for jsonSerialize (PR #952)
+- Ability to nest exceptions (PR #965)
+
+### Fixed
+- Fix issue where AuthorizationServer is not stateless as ResponseType could store state of a previous request (PR #960)
 
 ## [7.2.0] - released 2018-06-23
 
@@ -424,7 +460,12 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.0.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.4.0...HEAD
+[7.4.0]: https://github.com/thephpleague/oauth2-server/compare/7.3.3...7.4.0
+[7.3.3]: https://github.com/thephpleague/oauth2-server/compare/7.3.2...7.3.3
+[7.3.2]: https://github.com/thephpleague/oauth2-server/compare/7.3.1...7.3.2
+[7.3.1]: https://github.com/thephpleague/oauth2-server/compare/7.3.0...7.3.1
+[7.3.0]: https://github.com/thephpleague/oauth2-server/compare/7.2.0...7.3.0
 [7.1.1]: https://github.com/thephpleague/oauth2-server/compare/7.1.0...7.1.1
 [7.1.0]: https://github.com/thephpleague/oauth2-server/compare/7.0.0...7.1.0
 [7.0.0]: https://github.com/thephpleague/oauth2-server/compare/6.1.1...7.0.0

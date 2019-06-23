@@ -4,6 +4,7 @@ enabled:
   - binary_operator_spaces
   - blank_line_before_return
   - concat_with_spaces
+  - fully_qualified_strict_types
   - function_typehint_space
   - hash_to_slash_comment
   - include
@@ -40,7 +41,6 @@ enabled:
   - print_to_echo
   - short_array_syntax
   - short_scalar_cast
-  - simplified_null_return
   - single_quote
   - spaces_cast
   - standardize_not_equal
