@@ -112,10 +112,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         try {
             $authCodePayload = json_decode($this->decrypt($encryptedAuthCode));
 
-
             $this->validateAuthorizationCode($authCodePayload, $client, $request);
-
-
 
             $scopes = $this->scopeRepository->finalizeScopes(
                 $this->validateScopes($authCodePayload->scopes),
