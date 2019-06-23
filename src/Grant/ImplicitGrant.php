@@ -10,7 +10,6 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
-use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
@@ -125,12 +124,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('client_id');
         }
 
-        $client = $this->clientRepository->getClientEntity($clientId);
-
-        if ($client instanceof ClientEntityInterface === false) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient($request);
-        }
+        $client = $this->getClientEntityOrFail($clientId, $request);
 
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
 

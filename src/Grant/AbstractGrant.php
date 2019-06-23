@@ -198,6 +198,33 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * Wrapper around ClientRepository::getClientEntity() that ensures we emit
+     * an event and throw an exception if the repo doesn't return a client
+     * entity.
+     *
+     * This is a bit of defensive coding because the interface contract
+     * doesn't actually enforce non-null returns/exception-on-no-client so
+     * getClientEntity might return null. By contrast, this method will
+     * always either return a ClientEntityInterface or throw.
+     *
+     * @param string                 $clientId
+     * @param ServerRequestInterface $request
+     *
+     * @return ClientEntityInterface
+     */
+    protected function getClientEntityOrFail($clientId, ServerRequestInterface $request)
+    {
+        $client = $this->clientRepository->getClientEntity($clientId);
+
+        if ($client instanceof ClientEntityInterface === false) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidClient($request);
+        }
+
+        return $client;
+    }
+
+    /**
      * Gets the client credentials from the request from the request body or
      * the Http Basic Authorization header
      *

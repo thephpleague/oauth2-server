@@ -97,7 +97,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     ) {
         list($clientId) = $this->getClientCredentials($request);
 
-        $client = $this->clientRepository->getClientEntity($clientId);
+        $client = $this->getClientEntityOrFail($clientId, $request);
 
         // Only validate the client if it is confidential
         if ($client->isConfidential()) {
@@ -113,10 +113,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         try {
             $authCodePayload = json_decode($this->decrypt($encryptedAuthCode));
 
-
             $this->validateAuthorizationCode($authCodePayload, $client, $request);
-
-
 
             $scopes = $this->scopeRepository->finalizeScopes(
                 $this->validateScopes($authCodePayload->scopes),
@@ -252,12 +249,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('client_id');
         }
 
-        $client = $this->clientRepository->getClientEntity($clientId);
-
-        if ($client instanceof ClientEntityInterface === false) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient($request);
-        }
+        $client = $this->getClientEntityOrFail($clientId, $request);
 
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
 
