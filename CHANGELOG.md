@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Public clients can now use the Auth Code Grant (PR #938)
 - `isConfidential` getter added to `ClientEntity` to identify type of client (PR #938)
 - Function `validateClient()` added to validate clients which was previously performed by the `getClientEntity()` function (PR #938)
+- Add a new function to the AbstractGrant class called `getClientEntityOrFail()`. This is a wrapper around the `getClientEntity()` function that ensures we emit and throw an exception if the repo doesn't return a client entity. (PR #1010)
 
 ### Changed
 - Replace `convertToJWT()` interface with a more generic `__toString()` to improve extensibility; AccessTokenEntityInterface now requires `setPrivateKey(CryptKey $privateKey)` so `__toString()` has everything it needs to work (PR #874)
