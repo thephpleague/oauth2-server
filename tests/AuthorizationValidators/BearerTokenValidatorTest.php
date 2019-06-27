@@ -11,10 +11,6 @@ use Zend\Diactoros\ServerRequest;
 
 class BearerTokenValidatorTest extends TestCase
 {
-    /**
-     * @expectedException League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 9
-     */
     public function testThrowExceptionWhenAccessTokenIsNotSigned()
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
@@ -34,6 +30,9 @@ class BearerTokenValidatorTest extends TestCase
 
         $request = new ServerRequest();
         $request = $request->withHeader('authorization', sprintf('Bearer %s', $unsignedJwt));
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(9);
 
         $bearerTokenValidator->validateAuthorization($request);
     }

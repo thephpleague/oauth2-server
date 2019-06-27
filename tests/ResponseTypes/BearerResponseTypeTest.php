@@ -57,7 +57,7 @@ class BearerResponseTypeTest extends TestCase
 
         $response->getBody()->rewind();
         $json = json_decode($response->getBody()->getContents());
-        $this->assertAttributeEquals('Bearer', 'token_type', $json);
+        $this->assertEquals('Bearer', $json->token_type);
         $this->assertObjectHasAttribute('expires_in', $json);
         $this->assertObjectHasAttribute('access_token', $json);
         $this->assertObjectHasAttribute('refresh_token', $json);
@@ -100,13 +100,13 @@ class BearerResponseTypeTest extends TestCase
 
         $response->getBody()->rewind();
         $json = json_decode($response->getBody()->getContents());
-        $this->assertAttributeEquals('Bearer', 'token_type', $json);
+        $this->assertEquals('Bearer', $json->token_type);
         $this->assertObjectHasAttribute('expires_in', $json);
         $this->assertObjectHasAttribute('access_token', $json);
         $this->assertObjectHasAttribute('refresh_token', $json);
 
         $this->assertObjectHasAttribute('foo', $json);
-        $this->assertAttributeEquals('bar', 'foo', $json);
+        $this->assertEquals('bar', $json->foo);
     }
 
     public function testDetermineAccessTokenInHeaderValidToken()

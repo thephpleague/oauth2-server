@@ -7,11 +7,10 @@ use PHPUnit\Framework\TestCase;
 
 class CryptKeyTest extends TestCase
 {
-    /**
-     * @expectedException \LogicException
-     */
     public function testNoFile()
     {
+        $this->expectException(\LogicException::class);
+
         new CryptKey('undefined file');
     }
 
