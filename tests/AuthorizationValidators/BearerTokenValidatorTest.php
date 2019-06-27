@@ -28,8 +28,7 @@ class BearerTokenValidatorTest extends TestCase
             ->set('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken();
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $unsignedJwt));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $unsignedJwt));
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(9);

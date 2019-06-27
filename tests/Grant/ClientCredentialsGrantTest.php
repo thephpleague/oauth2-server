@@ -48,13 +48,10 @@ class ClientCredentialsGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+        ]);
 
         $responseType = new StubResponseType();
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));

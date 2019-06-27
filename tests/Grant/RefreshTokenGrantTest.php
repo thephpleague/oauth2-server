@@ -80,8 +80,7 @@ class RefreshTokenGrantTest extends TestCase
             )
         );
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'refresh_token' => $oldRefreshToken,
@@ -137,8 +136,7 @@ class RefreshTokenGrantTest extends TestCase
             )
         );
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'refresh_token' => $oldRefreshToken,
@@ -192,15 +190,12 @@ class RefreshTokenGrantTest extends TestCase
             )
         );
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'refresh_token' => $oldRefreshToken,
-                'scope'         => 'foo',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $oldRefreshToken,
+            'scope'         => 'foo',
+        ]);
 
         $responseType = new StubResponseType();
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));

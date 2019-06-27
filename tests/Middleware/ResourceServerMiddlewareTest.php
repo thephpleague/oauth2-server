@@ -35,8 +35,7 @@ class ResourceServerMiddlewareTest extends TestCase
 
         $token = (string) $accessToken;
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $token));
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
@@ -71,8 +70,7 @@ class ResourceServerMiddlewareTest extends TestCase
 
         $token = (string) $accessToken;
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $token));
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
@@ -95,8 +93,7 @@ class ResourceServerMiddlewareTest extends TestCase
             'file://' . __DIR__ . '/../Stubs/public.key'
         );
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', '');
+        $request = (new ServerRequest())->withHeader('authorization', '');
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(

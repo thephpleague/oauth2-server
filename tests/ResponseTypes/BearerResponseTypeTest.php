@@ -142,8 +142,7 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
 
         $request = $authorizationValidator->validateAuthorization($request);
 
@@ -185,8 +184,7 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token . 'foo'));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $json->access_token . 'foo'));
 
         try {
             $authorizationValidator->validateAuthorization($request);
@@ -231,8 +229,7 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
 
         try {
             $authorizationValidator->validateAuthorization($request);
@@ -255,8 +252,7 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', 'Bearer blah');
+        $request = (new ServerRequest())->withHeader('authorization', 'Bearer blah');
 
         try {
             $authorizationValidator->validateAuthorization($request);
@@ -279,8 +275,7 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', 'Bearer blah.blah.blah');
+        $request = (new ServerRequest())->withHeader('authorization', 'Bearer blah.blah.blah');
 
         try {
             $authorizationValidator->validateAuthorization($request);
