@@ -308,7 +308,9 @@ class OAuthServerException extends Exception
             $response = $response->withHeader($header, $content);
         }
 
-        $response->getBody()->write(json_encode($payload, $jsonOptions));
+        $responseBody = json_encode($payload, $jsonOptions) ?: 'JSON encoding of payload failed';
+
+        $response->getBody()->write($responseBody);
 
         return $response->withStatus($this->getHttpStatusCode());
     }

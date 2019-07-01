@@ -22,7 +22,7 @@ interface ScopeRepositoryInterface extends RepositoryInterface
      *
      * @param string $identifier The scope identifier
      *
-     * @return ScopeEntityInterface
+     * @return ScopeEntityInterface|null
      */
     public function getScopeEntityByIdentifier($identifier);
 
