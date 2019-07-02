@@ -17,7 +17,6 @@
         "zendframework/zend-diactoros": "^2.1.2",
         "phpstan/phpstan": "^0.11.8",
         "phpstan/phpstan-phpunit": "^0.11.2",
-        "phpstan/phpstan-strict-rules": "^0.11.1",
         "roave/security-advisories": "dev-master"
     },
     "repositories": [
