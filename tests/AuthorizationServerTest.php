@@ -117,35 +117,31 @@ class AuthorizationServerTest extends TestCase
         $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
         $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
 
-        $server = new class($clientRepository, $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(), $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(), $privateKey, $encryptionKey) extends AuthorizationServer {
-            protected function getResponseType()
-            {
-                $this->responseType = new class extends BearerTokenResponse {
-                    /* @return null|CryptKey */
-                    public function getPrivateKey()
-                    {
-                        return $this->privateKey;
-                    }
-
-                    public function getEncryptionKey()
-                    {
-                        return $this->encryptionKey;
-                    }
-                };
-
-                return parent::getResponseType();
-            }
-        };
+        $server = new AuthorizationServer(
+            $clientRepository,
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
+            'file://' . __DIR__ . '/Stubs/private.key',
+            'file://' . __DIR__ . '/Stubs/public.key'
+        );
 
         $abstractGrantReflection = new \ReflectionClass($server);
         $method = $abstractGrantReflection->getMethod('getResponseType');
         $method->setAccessible(true);
+
         $responseType = $method->invoke($server);
 
-        $this->assertInstanceOf(BearerTokenResponse::class, $responseType);
+        $responseTypeReflection = new \ReflectionClass($responseType);
+
+        $privateKeyProperty = $responseTypeReflection->getProperty('privateKey');
+        $privateKeyProperty->setAccessible(true);
+
+        $encryptionKeyProperty = $responseTypeReflection->getProperty('encryptionKey');
+        $encryptionKeyProperty->setAccessible(true);
+
         // generated instances should have keys setup
-        $this->assertSame($privateKey, $responseType->getPrivateKey()->getKeyPath());
-        $this->assertSame($encryptionKey, $responseType->getEncryptionKey());
+        $this->assertSame($privateKey, $privateKeyProperty->getValue($responseType)->getKeyPath());
+        $this->assertSame($encryptionKey, $encryptionKeyProperty->getValue($responseType));
     }
 
     public function testMultipleRequestsGetDifferentResponseTypeInstances()
