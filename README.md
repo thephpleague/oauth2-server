@@ -95,7 +95,7 @@ This package is released under the MIT License. See the bundled [LICENSE](https:
 
 ## Credits
 
-This code is principally developed and maintained by [Andy Millington](https://twitter.com/Sephster) and [Simon Hamp](https://twitter.com/simonhamp).
+This code is principally developed and maintained by [Andy Millington](https://twitter.com/Sephster).
 
 Between 2012 and 2017 this library was developed and maintained by [Alex Bilbie](https://alexbilbie.com/).
 
