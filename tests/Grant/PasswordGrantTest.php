@@ -64,15 +64,12 @@ class PasswordGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'username'      => 'foo',
-                'password'      => 'bar',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'username'      => 'foo',
+            'password'      => 'bar',
+        ]);
 
         $responseType = new StubResponseType();
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
@@ -110,15 +107,12 @@ class PasswordGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'username'      => 'foo',
-                'password'      => 'bar',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'username'      => 'foo',
+            'password'      => 'bar',
+        ]);
 
         $responseType = new StubResponseType();
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
@@ -127,9 +121,6 @@ class PasswordGrantTest extends TestCase
         $this->assertNull($responseType->getRefreshToken());
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testRespondToRequestMissingUsername()
     {
         $client = new ClientEntity();
@@ -146,21 +137,18 @@ class PasswordGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withQueryParams([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+        ]);
 
         $responseType = new StubResponseType();
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testRespondToRequestMissingPassword()
     {
         $client = new ClientEntity();
@@ -177,23 +165,19 @@ class PasswordGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'username'      => 'alex',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'username'      => 'alex',
+        ]);
 
         $responseType = new StubResponseType();
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 10
-     */
     public function testRespondToRequestBadCredentials()
     {
         $client = new ClientEntity();
@@ -211,17 +195,18 @@ class PasswordGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'username'      => 'alex',
-                'password'      => 'whisky',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id' => 'foo',
+            'client_secret' => 'bar',
+            'username' => 'alex',
+            'password' => 'whisky',
+        ]);
 
         $responseType = new StubResponseType();
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(10);
+
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 }

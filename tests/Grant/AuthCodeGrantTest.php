@@ -40,7 +40,7 @@ class AuthCodeGrantTest extends TestCase
 
     const CODE_CHALLENGE = 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM';
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->cryptStub = new CryptTraitStub();
     }
@@ -200,9 +200,6 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooShort()
     {
         $client = new ClientEntity();
@@ -218,28 +215,18 @@ class AuthCodeGrantTest extends TestCase
 
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            null,
-            'php://input',
-            [],
-            [],
-            [
-                'response_type'  => 'code',
-                'client_id'      => 'foo',
-                'redirect_uri'   => 'http://foo/bar',
-                'code_challenge' => str_repeat('A', 42),
-            ]
-        );
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type'  => 'code',
+            'client_id'      => 'foo',
+            'redirect_uri'   => 'http://foo/bar',
+            'code_challenge' => str_repeat('A', 42),
+        ]);
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
 
         $grant->validateAuthorizationRequest($request);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooLong()
     {
         $client = new ClientEntity();
@@ -255,28 +242,18 @@ class AuthCodeGrantTest extends TestCase
 
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            null,
-            'php://input',
-            [],
-            [],
-            [
-                'response_type'  => 'code',
-                'client_id'      => 'foo',
-                'redirect_uri'   => 'http://foo/bar',
-                'code_challenge' => str_repeat('A', 129),
-            ]
-        );
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type'  => 'code',
+            'client_id'      => 'foo',
+            'redirect_uri'   => 'http://foo/bar',
+            'code_challenge' => str_repeat('A', 129),
+        ]);
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
 
         $grant->validateAuthorizationRequest($request);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testValidateAuthorizationRequestCodeChallengeInvalidCharacters()
     {
         $client = new ClientEntity();
@@ -292,29 +269,18 @@ class AuthCodeGrantTest extends TestCase
 
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            null,
-            'php://input',
-            [],
-            [],
-            [
-                'response_type'  => 'code',
-                'client_id'      => 'foo',
-                'redirect_uri'   => 'http://foo/bar',
-                'code_challenge' => str_repeat('A', 42) . '!',
-            ]
-        );
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type' => 'code',
+            'client_id' => 'foo',
+            'redirect_uri' => 'http://foo/bar',
+            'code_challenge' => str_repeat('A', 42) . '!',
+        ]);
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
 
         $grant->validateAuthorizationRequest($request);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 3
-     */
     public function testValidateAuthorizationRequestMissingClientId()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
@@ -326,26 +292,16 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            null,
-            'php://input',
-            $headers = [],
-            $cookies = [],
-            $queryParams = [
-                'response_type' => 'code',
-            ]
-        );
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type' => 'code',
+        ]);
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(3);
 
         $grant->validateAuthorizationRequest($request);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 4
-     */
     public function testValidateAuthorizationRequestInvalidClientId()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
@@ -358,27 +314,17 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            null,
-            'php://input',
-            $headers = [],
-            $cookies = [],
-            $queryParams = [
-                'response_type' => 'code',
-                'client_id'     => 'foo',
-            ]
-        );
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type' => 'code',
+            'client_id'     => 'foo',
+        ]);
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 4
-     */
     public function testValidateAuthorizationRequestBadRedirectUriString()
     {
         $client = new ClientEntity();
@@ -393,28 +339,18 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            null,
-            'php://input',
-            [],
-            [],
-            [
-                'response_type' => 'code',
-                'client_id'     => 'foo',
-                'redirect_uri'  => 'http://bar',
-            ]
-        );
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type' => 'code',
+            'client_id'     => 'foo',
+            'redirect_uri'  => 'http://bar',
+        ]);
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 4
-     */
     public function testValidateAuthorizationRequestBadRedirectUriArray()
     {
         $client = new ClientEntity();
@@ -429,28 +365,18 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            null,
-            'php://input',
-            [],
-            [],
-            [
-                'response_type' => 'code',
-                'client_id'     => 'foo',
-                'redirect_uri'  => 'http://bar',
-            ]
-        );
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type' => 'code',
+            'client_id'     => 'foo',
+            'redirect_uri'  => 'http://bar',
+        ]);
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 3
-     */
     public function testValidateAuthorizationRequestInvalidCodeChallengeMethod()
     {
         $client = new ClientEntity();
@@ -472,22 +398,16 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            null,
-            'php://input',
-            [],
-            [],
-            [
-                'response_type'         => 'code',
-                'client_id'             => 'foo',
-                'redirect_uri'          => 'http://foo/bar',
-                'code_challenge'        => 'foobar',
-                'code_challenge_method' => 'foo',
-            ]
-        );
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type' => 'code',
+            'client_id' => 'foo',
+            'redirect_uri' => 'http://foo/bar',
+            'code_challenge' => 'foobar',
+            'code_challenge_method' => 'foo',
+        ]);
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(3);
 
         $grant->validateAuthorizationRequest($request);
     }
@@ -513,10 +433,6 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 9
-     */
     public function testCompleteAuthorizationRequestDenied()
     {
         $authRequest = new AuthorizationRequest();
@@ -534,6 +450,9 @@ class AuthCodeGrantTest extends TestCase
             new DateInterval('PT10M')
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(9);
 
         $grant->completeAuthorizationRequest($authRequest);
     }
@@ -954,10 +873,6 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 3
-     */
     public function testRespondToAccessTokenRequestMissingRedirectUri()
     {
         $client = new ClientEntity();
@@ -999,13 +914,12 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(3);
+
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 3
-     */
     public function testRespondToAccessTokenRequestRedirectUriMismatch()
     {
         $client = new ClientEntity();
@@ -1048,13 +962,12 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(3);
+
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 3
-     */
     public function testRespondToAccessTokenRequestMissingCode()
     {
         $client = new ClientEntity();
@@ -1092,6 +1005,9 @@ class AuthCodeGrantTest extends TestCase
                 'redirect_uri'  => 'http://foo/bar',
             ]
         );
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(3);
 
         /* @var StubResponseType $response */
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -1711,10 +1627,6 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 7
-     */
     public function testAuthCodeRepositoryFailToPersist()
     {
         $authRequest = new AuthorizationRequest();
@@ -1734,13 +1646,12 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(7);
+
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException
-     * @expectedExceptionCode 100
-     */
     public function testAuthCodeRepositoryFailToPersistUniqueNoInfiniteLoop()
     {
         $authRequest = new AuthorizationRequest();
@@ -1758,6 +1669,9 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
+
+        $this->expectException(\League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException::class);
+        $this->expectExceptionCode(100);
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
@@ -1831,10 +1745,6 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 7
-     */
     public function testRefreshTokenRepositoryFailToPersist()
     {
         $client = new ClientEntity();
@@ -1896,6 +1806,9 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(7);
+
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
@@ -1903,10 +1816,6 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException
-     * @expectedExceptionCode 100
-     */
     public function testRefreshTokenRepositoryFailToPersistUniqueNoInfiniteLoop()
     {
         $client = new ClientEntity();
@@ -1968,6 +1877,9 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
+        $this->expectException(\League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException::class);
+        $this->expectExceptionCode(100);
+
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
@@ -1975,9 +1887,6 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testCompleteAuthorizationRequestNoUser()
     {
         $grant = new AuthCodeGrant(
@@ -1985,6 +1894,8 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
+
+        $this->expectException(\LogicException::class);
 
         $grant->completeAuthorizationRequest(new AuthorizationRequest());
     }
@@ -2011,20 +1922,11 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            null,
-            'php://input',
-            [],
-            [],
-            [
-                'response_type' => 'code',
-                'client_id'     => 'foo',
-                'redirect_uri'  => 'http://foo/bar',
-            ]
-        );
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type' => 'code',
+            'client_id'     => 'foo',
+            'redirect_uri'  => 'http://foo/bar',
+        ]);
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(3);

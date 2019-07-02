@@ -142,19 +142,21 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 );
             }
 
-            if (isset($this->codeChallengeVerifiers[$authCodePayload->code_challenge_method])) {
-                $codeChallengeVerifier = $this->codeChallengeVerifiers[$authCodePayload->code_challenge_method];
+            if (property_exists($authCodePayload, 'code_challenge_method')) {
+                if (isset($this->codeChallengeVerifiers[$authCodePayload->code_challenge_method])) {
+                    $codeChallengeVerifier = $this->codeChallengeVerifiers[$authCodePayload->code_challenge_method];
 
-                if ($codeChallengeVerifier->verifyCodeChallenge($codeVerifier, $authCodePayload->code_challenge) === false) {
-                    throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
+                    if ($codeChallengeVerifier->verifyCodeChallenge($codeVerifier, $authCodePayload->code_challenge) === false) {
+                        throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
+                    }
+                } else {
+                    throw OAuthServerException::serverError(
+                        sprintf(
+                            'Unsupported code challenge method `%s`',
+                            $authCodePayload->code_challenge_method
+                        )
+                    );
                 }
-            } else {
-                throw OAuthServerException::serverError(
-                    sprintf(
-                        'Unsupported code challenge method `%s`',
-                        $authCodePayload->code_challenge_method
-                    )
-                );
             }
         }
 
@@ -351,12 +353,18 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
 
+            $jsonPayload = json_encode($payload);
+
+            if ($jsonPayload === false) {
+                throw new LogicException('An error was encountered when JSON encoding the authorization request response');
+            }
+
             $response = new RedirectResponse();
             $response->setRedirectUri(
                 $this->makeRedirectUri(
                     $finalRedirectUri,
                     [
-                        'code'  => $this->encrypt(json_encode($payload)),
+                        'code'  => $this->encrypt($jsonPayload),
                         'state' => $authorizationRequest->getState(),
                     ]
                 )

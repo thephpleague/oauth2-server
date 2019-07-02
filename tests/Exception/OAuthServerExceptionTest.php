@@ -85,7 +85,9 @@ class OAuthServerExceptionTest extends TestCase
         $previous = new Exception('This is the previous');
         $exceptionWithPrevious = OAuthServerException::accessDenied(null, null, $previous);
 
-        $this->assertSame('This is the previous', $exceptionWithPrevious->getPrevious()->getMessage());
+        $previousMessage = $exceptionWithPrevious->getPrevious() !== null ? $exceptionWithPrevious->getPrevious()->getMessage() : null;
+
+        $this->assertSame('This is the previous', $previousMessage);
     }
 
     public function testDoesNotHavePrevious()

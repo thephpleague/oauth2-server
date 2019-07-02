@@ -111,7 +111,7 @@ class AuthorizationRequest
     }
 
     /**
-     * @return UserEntityInterface
+     * @return UserEntityInterface|null
      */
     public function getUser()
     {

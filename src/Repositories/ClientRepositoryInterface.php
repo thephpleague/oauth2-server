@@ -21,7 +21,7 @@ interface ClientRepositoryInterface extends RepositoryInterface
      *
      * @param string $clientIdentifier The client's identifier
      *
-     * @return ClientEntityInterface
+     * @return ClientEntityInterface|null
      */
     public function getClientEntity($clientIdentifier);
 

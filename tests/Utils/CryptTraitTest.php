@@ -10,7 +10,7 @@ class CryptTraitTest extends TestCase
 {
     protected $cryptStub;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cryptStub = new CryptTraitStub();
     }

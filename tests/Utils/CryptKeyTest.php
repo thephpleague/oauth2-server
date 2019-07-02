@@ -7,11 +7,10 @@ use PHPUnit\Framework\TestCase;
 
 class CryptKeyTest extends TestCase
 {
-    /**
-     * @expectedException \LogicException
-     */
     public function testNoFile()
     {
+        $this->expectException(\LogicException::class);
+
         new CryptKey('undefined file');
     }
 
@@ -27,6 +26,11 @@ class CryptKeyTest extends TestCase
     public function testKeyFileCreation()
     {
         $keyContent = file_get_contents(__DIR__ . '/../Stubs/public.key');
+
+        if (!is_string($keyContent)) {
+            $this->fail('The public key stub is not a string');
+        }
+
         $key = new CryptKey($keyContent);
 
         $this->assertEquals(
@@ -35,6 +39,11 @@ class CryptKeyTest extends TestCase
         );
 
         $keyContent = file_get_contents(__DIR__ . '/../Stubs/private.key.crlf');
+
+        if (!is_string($keyContent)) {
+            $this->fail('The private key (crlf) stub is not a string');
+        }
+
         $key = new CryptKey($keyContent);
 
         $this->assertEquals(
