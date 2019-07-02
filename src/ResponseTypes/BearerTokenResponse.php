@@ -13,8 +13,8 @@ namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
-use Psr\Http\Message\ResponseInterface;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
 
 class BearerTokenResponse extends AbstractResponseType
 {
