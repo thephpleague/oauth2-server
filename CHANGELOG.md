@@ -169,7 +169,7 @@ To address feedback from the security release the following change has been made
 
 - Fixed `finalizeScopes` call (Issue #650)
 
-# [4.1.6] - 2016-09-13
+## [4.1.6] - 2016-09-13
 
 - Less restrictive on Authorization header check (Issue #652)
 
