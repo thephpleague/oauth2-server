@@ -10,11 +10,6 @@
 
 namespace League\OAuth2\Server\Event;
 
-use League\OAuth2\Server\Event\AccessTokenIssuedEvent;
-use League\OAuth2\Server\Event\ClientAuthenticationFailedEvent;
-use League\OAuth2\Server\Event\RefreshTokenClientFailedEvent;
-use League\OAuth2\Server\Event\RefreshTokenIssuedEvent;
-use League\OAuth2\Server\Event\UserAuthenticationFailedEvent;
 use Psr\EventDispatcher\StoppableEventInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
