@@ -28,7 +28,6 @@ class RequestEvent implements StoppableEventInterface
     /**
      * RequestEvent constructor.
      *
-     * @param string                 $name
      * @param ServerRequestInterface $request
      */
     public function __construct(ServerRequestInterface $request)
