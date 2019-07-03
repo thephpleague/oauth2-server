@@ -2,10 +2,10 @@
 
 namespace LeagueTests\Grant;
 
-use League\Event\Emitter;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Event\DummyEventDispatcher;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
@@ -20,7 +20,6 @@ use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
-use League\OAuth2\Server\Event\DummyEventDispatcher;
 
 class AbstractGrantTest extends TestCase
 {

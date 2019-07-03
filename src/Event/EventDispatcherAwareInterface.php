@@ -6,7 +6,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 interface EventDispatcherAwareInterface
 {
-
     /**
      * Set the Emitter.
      *

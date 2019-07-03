@@ -6,7 +6,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 trait EventDispatcherAwareTrait
 {
-
     /**
      * The evetn dispatcher instance.
      *
@@ -41,5 +40,4 @@ trait EventDispatcherAwareTrait
 
         return $this->eventDispatcher;
     }
-
 }

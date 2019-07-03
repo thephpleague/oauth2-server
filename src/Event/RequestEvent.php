@@ -10,13 +10,13 @@
 
 namespace League\OAuth2\Server\Event;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\EventDispatcher\StoppableEventInterface;
-use League\OAuth2\Server\Event\ClientAuthenticationFailedEvent;
 use League\OAuth2\Server\Event\AccessTokenIssuedEvent;
-use League\OAuth2\Server\Event\UserAuthenticationFailedEvent;
-use League\OAuth2\Server\Event\RefreshTokenIssuedEvent;
+use League\OAuth2\Server\Event\ClientAuthenticationFailedEvent;
 use League\OAuth2\Server\Event\RefreshTokenClientFailedEvent;
+use League\OAuth2\Server\Event\RefreshTokenIssuedEvent;
+use League\OAuth2\Server\Event\UserAuthenticationFailedEvent;
+use Psr\EventDispatcher\StoppableEventInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RequestEvent implements StoppableEventInterface
 {
@@ -85,5 +85,4 @@ class RequestEvent implements StoppableEventInterface
     {
         return new RefreshTokenClientFailedEvent($request);
     }
-
 }
