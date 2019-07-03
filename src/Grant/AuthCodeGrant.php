@@ -17,7 +17,7 @@ use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\Event\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -147,14 +147,14 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
-        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
+        $this->getEventDispatcher()->dispatch(RequestEvent::accessTokenIssued($request));
         $responseType->setAccessToken($accessToken);
 
         // Issue and persist new refresh token if given
         $refreshToken = $this->issueRefreshToken($accessToken);
 
         if ($refreshToken !== null) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
+            $this->getEventDispatcher()->dispatch(RequestEvent::refreshTokenIssued($request));
             $responseType->setRefreshToken($refreshToken);
         }
 
@@ -244,7 +244,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         );
 
         if ($client instanceof ClientEntityInterface === false) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            $this->getEventDispatcher()->dispatch(RequestEvent::clientAuthenticationFailed($request));
             throw OAuthServerException::invalidClient();
         }
 
@@ -254,7 +254,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $this->validateRedirectUri($redirectUri, $client, $request);
         } elseif (empty($client->getRedirectUri()) ||
             (\is_array($client->getRedirectUri()) && \count($client->getRedirectUri()) !== 1)) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            $this->getEventDispatcher()->dispatch(RequestEvent::clientAuthenticationFailed($request));
             throw OAuthServerException::invalidClient();
         } else {
             $redirectUri = \is_array($client->getRedirectUri())

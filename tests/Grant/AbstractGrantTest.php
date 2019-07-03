@@ -20,6 +20,7 @@ use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
+use League\OAuth2\Server\Event\DummyEventDispatcher;
 
 class AbstractGrantTest extends TestCase
 {
@@ -27,7 +28,7 @@ class AbstractGrantTest extends TestCase
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setEmitter(new Emitter());
+        $grantMock->setEventDispatcher(new DummyEventDispatcher());
     }
 
     public function testHttpBasicWithPassword()
