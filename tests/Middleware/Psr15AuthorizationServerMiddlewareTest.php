@@ -92,7 +92,7 @@ class Psr15AuthorizationServerMiddlewareTest extends TestCase
         $responseFactoryMock->method('createResponse')->willReturn(new Response());
         $requestHandlerMock = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
         $requestHandlerMock->method('handle')->willReturn(new Response());
-        
+
         $middleware = new Psr15AuthorizationServerMiddleware($server, $responseFactoryMock);
 
         $response = $middleware->process(

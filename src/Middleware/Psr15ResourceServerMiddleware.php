@@ -21,7 +21,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class Psr15ResourceServerMiddleware implements MiddlewareInterface
 {
-
     /**
      * @var ResourceServer
      */
@@ -33,7 +32,7 @@ class Psr15ResourceServerMiddleware implements MiddlewareInterface
     private $responseFactory;
 
     /**
-     * @param ResourceServer $server
+     * @param ResourceServer           $server
      * @param ResponseFactoryInterface $responseFactory
      */
     public function __construct(ResourceServer $server, ResponseFactoryInterface $responseFactory)
@@ -43,7 +42,7 @@ class Psr15ResourceServerMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
+     * @param ServerRequestInterface  $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
      */
@@ -63,5 +62,4 @@ class Psr15ResourceServerMiddleware implements MiddlewareInterface
         // Pass the request on to the next responder in the chain
         return $handler->handle($request);
     }
-
 }

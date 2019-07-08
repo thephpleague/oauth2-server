@@ -21,7 +21,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class Psr15AuthorizationServerMiddleware implements MiddlewareInterface
 {
-
     /**
      * @var AuthorizationServer
      */
@@ -33,7 +32,7 @@ class Psr15AuthorizationServerMiddleware implements MiddlewareInterface
     private $responseFactory;
 
     /**
-     * @param AuthorizationServer $server
+     * @param AuthorizationServer      $server
      * @param ResponseFactoryInterface $responseFactory
      */
     public function __construct(AuthorizationServer $server, ResponseFactoryInterface $responseFactory)
@@ -43,7 +42,7 @@ class Psr15AuthorizationServerMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param ServerRequestInterface $request
+     * @param ServerRequestInterface  $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
      */
@@ -63,5 +62,4 @@ class Psr15AuthorizationServerMiddleware implements MiddlewareInterface
         // Pass the request on to the next responder in the chain
         return $handler->handle($request);
     }
-
 }
