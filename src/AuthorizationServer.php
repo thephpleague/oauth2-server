@@ -125,7 +125,7 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     public function enableGrantType(GrantTypeInterface $grantType, DateInterval $accessTokenTTL = null)
     {
-        if ($accessTokenTTL instanceof DateInterval === false) {
+        if ($accessTokenTTL === null) {
             $accessTokenTTL = new DateInterval('PT1H');
         }
 

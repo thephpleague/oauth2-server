@@ -11,7 +11,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
-use DateTime;
+use DateTimeImmutable;
 use Error;
 use Exception;
 use League\Event\EmitterAwareTrait;
@@ -177,28 +177,17 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function validateClient(ServerRequestInterface $request)
     {
-        list($basicAuthUser, $basicAuthPassword) = $this->getBasicAuthCredentials($request);
+        list($clientId, $clientSecret) = $this->getClientCredentials($request);
 
-        $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
-        if ($clientId === null) {
-            throw OAuthServerException::invalidRequest('client_id');
-        }
-
-        // If the client is confidential require the client secret
-        $clientSecret = $this->getRequestParameter('client_secret', $request, $basicAuthPassword);
-
-        $client = $this->clientRepository->getClientEntity(
-            $clientId,
-            $this->getIdentifier(),
-            $clientSecret,
-            true
-        );
-
-        if ($client instanceof ClientEntityInterface === false) {
+        if ($this->clientRepository->validateClient($clientId, $clientSecret, $this->getIdentifier()) === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient();
+
+            throw OAuthServerException::invalidClient($request);
         }
 
+        $client = $this->getClientEntityOrFail($clientId, $request);
+
+        // If a redirect URI is provided ensure it matches what is pre-registered
         $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
 
         if ($redirectUri !== null) {
@@ -206,6 +195,56 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         return $client;
+    }
+
+    /**
+     * Wrapper around ClientRepository::getClientEntity() that ensures we emit
+     * an event and throw an exception if the repo doesn't return a client
+     * entity.
+     *
+     * This is a bit of defensive coding because the interface contract
+     * doesn't actually enforce non-null returns/exception-on-no-client so
+     * getClientEntity might return null. By contrast, this method will
+     * always either return a ClientEntityInterface or throw.
+     *
+     * @param string                 $clientId
+     * @param ServerRequestInterface $request
+     *
+     * @return ClientEntityInterface
+     */
+    protected function getClientEntityOrFail($clientId, ServerRequestInterface $request)
+    {
+        $client = $this->clientRepository->getClientEntity($clientId);
+
+        if ($client instanceof ClientEntityInterface === false) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            throw OAuthServerException::invalidClient($request);
+        }
+
+        return $client;
+    }
+
+    /**
+     * Gets the client credentials from the request from the request body or
+     * the Http Basic Authorization header
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return array
+     */
+    protected function getClientCredentials(ServerRequestInterface $request)
+    {
+        list($basicAuthUser, $basicAuthPassword) = $this->getBasicAuthCredentials($request);
+
+        $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
+
+        if (is_null($clientId)) {
+            throw OAuthServerException::invalidRequest('client_id');
+        }
+
+        $clientSecret = $this->getRequestParameter('client_secret', $request, $basicAuthPassword);
+
+        return [$clientId, $clientSecret];
     }
 
     /**
@@ -227,12 +266,12 @@ abstract class AbstractGrant implements GrantTypeInterface
             && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient();
+            throw OAuthServerException::invalidClient($request);
         } elseif (\is_array($client->getRedirectUri())
             && \in_array($redirectUri, $client->getRedirectUri(), true) === false
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient();
+            throw OAuthServerException::invalidClient($request);
         }
     }
 
@@ -394,13 +433,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
-        $accessToken->setClient($client);
-        $accessToken->setUserIdentifier($userIdentifier);
-        $accessToken->setExpiryDateTime((new DateTime())->add($accessTokenTTL));
-
-        foreach ($scopes as $scope) {
-            $accessToken->addScope($scope);
-        }
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add($accessTokenTTL));
+        $accessToken->setPrivateKey($this->privateKey);
 
         while ($maxGenerationAttempts-- > 0) {
             $accessToken->setIdentifier($this->generateUniqueIdentifier());
@@ -440,7 +474,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $authCode = $this->authCodeRepository->getNewAuthCode();
-        $authCode->setExpiryDateTime((new DateTime())->add($authCodeTTL));
+        $authCode->setExpiryDateTime((new DateTimeImmutable())->add($authCodeTTL));
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
 
@@ -482,7 +516,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             return null;
         }
 
-        $refreshToken->setExpiryDateTime((new DateTime())->add($this->refreshTokenTTL));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
 
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;

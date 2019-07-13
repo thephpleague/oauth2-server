@@ -12,7 +12,6 @@ env:
   - DEPENDENCIES="--prefer-lowest --prefer-stable"
 
 php:
-  - 7.0
   - 7.1
   - 7.2
   - 7.3
@@ -31,3 +30,4 @@ after_script:
 branches:
   only:
     - master
+    - 8.0.0

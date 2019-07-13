@@ -19,13 +19,20 @@ interface ClientRepositoryInterface extends RepositoryInterface
     /**
      * Get a client.
      *
-     * @param string      $clientIdentifier   The client's identifier
-     * @param null|string $grantType          The grant type used (if sent)
-     * @param null|string $clientSecret       The client's secret (if sent)
-     * @param bool        $mustValidateSecret If true the client must attempt to validate the secret if the client
-     *                                        is confidential
+     * @param string $clientIdentifier The client's identifier
      *
-     * @return ClientEntityInterface
+     * @return ClientEntityInterface|null
      */
-    public function getClientEntity($clientIdentifier, $grantType = null, $clientSecret = null, $mustValidateSecret = true);
+    public function getClientEntity($clientIdentifier);
+
+    /**
+     * Validate a client's secret.
+     *
+     * @param string      $clientIdentifier The client's identifier
+     * @param null|string $clientSecret     The client's secret (if sent)
+     * @param null|string $grantType        The type of grant the client is using (if sent)
+     *
+     * @return bool
+     */
+    public function validateClient($clientIdentifier, $clientSecret, $grantType);
 }

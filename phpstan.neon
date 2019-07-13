@@ -1,8 +1,6 @@
 includes:
 	- vendor/phpstan/phpstan-phpunit/extension.neon
 	- vendor/phpstan/phpstan-phpunit/rules.neon
-	- vendor/phpstan/phpstan-phpunit/strictRules.neon
-	- vendor/phpstan/phpstan-strict-rules/rules.neon
 services:
 	-
 		class: LeagueTests\PHPStan\AbstractGrantExtension

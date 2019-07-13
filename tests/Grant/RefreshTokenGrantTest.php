@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Grant;
 
+use DateInterval;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
@@ -26,7 +27,7 @@ class RefreshTokenGrantTest extends TestCase
      */
     protected $cryptStub;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->cryptStub = new CryptTraitStub();
     }
@@ -79,8 +80,7 @@ class RefreshTokenGrantTest extends TestCase
             )
         );
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'refresh_token' => $oldRefreshToken,
@@ -88,7 +88,7 @@ class RefreshTokenGrantTest extends TestCase
         ]);
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
@@ -136,8 +136,7 @@ class RefreshTokenGrantTest extends TestCase
             )
         );
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'refresh_token' => $oldRefreshToken,
@@ -191,27 +190,20 @@ class RefreshTokenGrantTest extends TestCase
             )
         );
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'refresh_token' => $oldRefreshToken,
-                'scope'         => 'foo',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $oldRefreshToken,
+            'scope'         => 'foo',
+        ]);
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 5
-     */
     public function testRespondToUnexpectedScope()
     {
         $client = new ClientEntity();
@@ -250,24 +242,21 @@ class RefreshTokenGrantTest extends TestCase
             )
         );
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'refresh_token' => $oldRefreshToken,
-                'scope'         => 'foobar',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $oldRefreshToken,
+            'scope'         => 'foobar',
+        ]);
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(5);
+
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 3
-     */
     public function testRespondToRequestMissingOldToken()
     {
         $client = new ClientEntity();
@@ -284,22 +273,19 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+        ]);
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(3);
+
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 8
-     */
     public function testRespondToRequestInvalidOldToken()
     {
         $client = new ClientEntity();
@@ -318,23 +304,20 @@ class RefreshTokenGrantTest extends TestCase
 
         $oldRefreshToken = 'foobar';
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'refresh_token' => $oldRefreshToken,
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $oldRefreshToken,
+        ]);
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(8);
+
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 8
-     */
     public function testRespondToRequestClientMismatch()
     {
         $client = new ClientEntity();
@@ -367,23 +350,20 @@ class RefreshTokenGrantTest extends TestCase
             )
         );
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'refresh_token' => $oldRefreshToken,
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $oldRefreshToken,
+        ]);
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(8);
+
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 8
-     */
     public function testRespondToRequestExpiredToken()
     {
         $client = new ClientEntity();
@@ -413,23 +393,20 @@ class RefreshTokenGrantTest extends TestCase
             )
         );
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'refresh_token' => $oldRefreshToken,
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $oldRefreshToken,
+        ]);
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(8);
+
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 8
-     */
     public function testRespondToRequestRevokedToken()
     {
         $client = new ClientEntity();
@@ -460,16 +437,17 @@ class RefreshTokenGrantTest extends TestCase
             )
         );
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'refresh_token' => $oldRefreshToken,
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $oldRefreshToken,
+        ]);
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(8);
+
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 }

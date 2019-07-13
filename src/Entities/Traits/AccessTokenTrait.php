@@ -9,7 +9,7 @@
 
 namespace League\OAuth2\Server\Entities\Traits;
 
-use DateTime;
+use DateTimeImmutable;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
@@ -21,24 +21,45 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
 trait AccessTokenTrait
 {
     /**
+     * @var CryptKey
+     */
+    private $privateKey;
+
+    /**
+     * Set the private key used to encrypt this access token.
+     */
+    public function setPrivateKey(CryptKey $privateKey)
+    {
+        $this->privateKey = $privateKey;
+    }
+
+    /**
      * Generate a JWT from the access token
      *
      * @param CryptKey $privateKey
      *
      * @return Token
      */
-    public function convertToJWT(CryptKey $privateKey)
+    private function convertToJWT(CryptKey $privateKey)
     {
         return (new Builder())
             ->setAudience($this->getClient()->getIdentifier())
-            ->setId($this->getIdentifier(), true)
+            ->setId($this->getIdentifier())
             ->setIssuedAt(time())
             ->setNotBefore(time())
             ->setExpiration($this->getExpiryDateTime()->getTimestamp())
-            ->setSubject($this->getUserIdentifier())
+            ->setSubject((string) $this->getUserIdentifier())
             ->set('scopes', $this->getScopes())
             ->sign(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()))
             ->getToken();
+    }
+
+    /**
+     * Generate a string representation from the access token
+     */
+    public function __toString()
+    {
+        return (string) $this->convertToJWT($this->privateKey);
     }
 
     /**
@@ -47,7 +68,7 @@ trait AccessTokenTrait
     abstract public function getClient();
 
     /**
-     * @return DateTime
+     * @return DateTimeImmutable
      */
     abstract public function getExpiryDateTime();
 

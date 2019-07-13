@@ -6,6 +6,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Flag, `requireCodeChallengeForPublicClients`, used to reject public clients that do not provide a code challenge for the Auth Code Grant; use AuthCodeGrant::disableRequireCodeCallengeForPublicClients() to turn off this requirement (PR #938)
+- Public clients can now use the Auth Code Grant (PR #938)
+- `isConfidential` getter added to `ClientEntity` to identify type of client (PR #938)
+- Function `validateClient()` added to validate clients which was previously performed by the `getClientEntity()` function (PR #938)
+- Add a new function to the AbstractGrant class called `getClientEntityOrFail()`. This is a wrapper around the `getClientEntity()` function that ensures we emit and throw an exception if the repo doesn't return a client entity. (PR #1010)
+
+### Changed
+- Replace `convertToJWT()` interface with a more generic `__toString()` to improve extensibility; AccessTokenEntityInterface now requires `setPrivateKey(CryptKey $privateKey)` so `__toString()` has everything it needs to work (PR #874)
+- The `invalidClient()` function accepts a PSR-7 compliant `$serverRequest` argument to avoid accessing the `$_SERVER` global variable and improve testing (PR #899)
+- `issueAccessToken()` in the Abstract Grant no longer sets access token client, user ID or scopes. These values should already have been set when calling `getNewToken()` (PR #919)
+- No longer need to enable PKCE with `enableCodeExchangeProof` flag. Any client sending a code challenge will initiate PKCE checks. (PR #938)
+- Function `getClientEntity()` no longer performs client validation (PR #938)
+- Password Grant now returns an invalid_grant error instead of invalid_credentials if a user cannot be validated (PR #967)
+- Use `DateTimeImmutable()` instead of `DateTime()`, `time()` instead of `(new DateTime())->getTimeStamp()`, and `DateTime::getTimeStamp()` instead of `DateTime::format('U')` (PR #963)
+
+### Removed
+- `enableCodeExchangeProof` flag (PR #938)
+- Support for PHP 7.0 (PR #1014)
+- Remove JTI claim from JWT header (PR #1031)
+
 ## [7.4.0] - released 2019-05-05
 
 ### Changed
