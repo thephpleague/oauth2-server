@@ -14,16 +14,33 @@ use OAuth2ServerExamples\Entities\ClientEntity;
 
 class ClientRepository implements ClientRepositoryInterface
 {
+    const CLIENT_NAME = 'My Awesome App';
+    const REDIRECT_URI = 'http://foo/bar';
+
     /**
      * {@inheritdoc}
      */
     public function getClientEntity($clientIdentifier, $grantType = null, $clientSecret = null, $mustValidateSecret = true)
     {
+        $client = new ClientEntity();
+
+        $client->setIdentifier($clientIdentifier);
+        $client->setName(self::CLIENT_NAME);
+        $client->setRedirectUri(self::REDIRECT_URI);
+
+        return $client;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function validateClient($clientIdentifier, $clientSecret, $grantType)
+    {
         $clients = [
             'myawesomeapp' => [
                 'secret'          => password_hash('abc123', PASSWORD_BCRYPT),
-                'name'            => 'My Awesome App',
-                'redirect_uri'    => 'http://foo/bar',
+                'name'            => self::CLIENT_NAME,
+                'redirect_uri'    => self::REDIRECT_URI,
                 'is_confidential' => true,
             ],
         ];
@@ -40,12 +57,5 @@ class ClientRepository implements ClientRepositoryInterface
         ) {
             return;
         }
-
-        $client = new ClientEntity();
-        $client->setIdentifier($clientIdentifier);
-        $client->setName($clients[$clientIdentifier]['name']);
-        $client->setRedirectUri($clients[$clientIdentifier]['redirect_uri']);
-
-        return $client;
     }
 }
