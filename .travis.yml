@@ -30,4 +30,3 @@ after_script:
 branches:
   only:
     - master
-    - 8.0.0
