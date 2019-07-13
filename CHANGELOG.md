@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [8.0.0] - released 2019-07-13
 
 ### Added
 - Flag, `requireCodeChallengeForPublicClients`, used to reject public clients that do not provide a code challenge for the Auth Code Grant; use AuthCodeGrant::disableRequireCodeCallengeForPublicClients() to turn off this requirement (PR #938)
@@ -466,7 +466,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/7.4.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.0.0...HEAD
+[8.0.0]: https://github.com/thephpleague/oauth2-server/compare/7.4.0...8.0.0
 [7.4.0]: https://github.com/thephpleague/oauth2-server/compare/7.3.3...7.4.0
 [7.3.3]: https://github.com/thephpleague/oauth2-server/compare/7.3.2...7.3.3
 [7.3.2]: https://github.com/thephpleague/oauth2-server/compare/7.3.1...7.3.2
