@@ -44,7 +44,7 @@ trait AccessTokenTrait
     {
         return (new Builder())
             ->setAudience($this->getClient()->getIdentifier())
-            ->setId($this->getIdentifier(), true)
+            ->setId($this->getIdentifier())
             ->setIssuedAt(time())
             ->setNotBefore(time())
             ->setExpiration($this->getExpiryDateTime()->getTimestamp())
