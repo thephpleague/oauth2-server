@@ -32,7 +32,7 @@ class ClientRepository implements ClientRepositoryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validateClient($clientIdentifier, $clientSecret, $grantType)
     {
