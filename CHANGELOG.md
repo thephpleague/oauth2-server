@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - `enableCodeExchangeProof` flag (PR #938)
 - Support for PHP 7.0 (PR #1014)
-- Remove JTI claim from JWT header (PR #)
+- Remove JTI claim from JWT header (PR #1031)
 
 ## [7.4.0] - released 2019-05-05
 
