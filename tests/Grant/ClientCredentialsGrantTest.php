@@ -29,6 +29,7 @@ class ClientCredentialsGrantTest extends TestCase
     public function testRespondToRequest()
     {
         $client = new ClientEntity();
+        $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
