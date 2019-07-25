@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Fixed
-- Clients are now prevented from using the Client Credentials grant unless they are confidential (PR #1035)
+- Clients are now explicitly prevented from using the Client Credentials grant unless they are confidential to conform
+ with the OAuth2 spec (PR #1035)
 
 ## [8.0.0] - released 2019-07-13
 
