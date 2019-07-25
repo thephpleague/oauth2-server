@@ -24,8 +24,11 @@ class AuthorizationServerMiddlewareTest extends TestCase
 
     public function testValidResponse()
     {
+        $client = new ClientEntity();
+        $client->setConfidential();
+
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepository->method('getClientEntity')->willReturn(new ClientEntity());
+        $clientRepository->method('getClientEntity')->willReturn($client);
 
         $scopeEntity = new ScopeEntity;
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();

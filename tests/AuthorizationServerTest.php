@@ -62,8 +62,11 @@ class AuthorizationServerTest extends TestCase
 
     public function testRespondToRequest()
     {
+        $client = new ClientEntity();
+        $client->setConfidential();
+
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepository->method('getClientEntity')->willReturn(new ClientEntity());
+        $clientRepository->method('getClientEntity')->willReturn($client);
 
         $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- Clients are now explicitly prevented from using the Client Credentials grant unless they are confidential to conform
+ with the OAuth2 spec (PR #1035)
+
 ## [8.0.0] - released 2019-07-13
 
 ### Added
