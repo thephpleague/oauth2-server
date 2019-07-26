@@ -3,6 +3,7 @@
 namespace LeagueTests\AuthorizationValidators;
 
 use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Signer\Key;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -29,6 +30,18 @@ class BearerTokenValidatorTest extends TestCase
             ->getToken();
 
         $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $unsignedJwt));
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(9);
+
+        $bearerTokenValidator->validateAuthorization($request);
+    }
+
+    public function testThrowExceptionWhenAuthorizationHeaderIsNotSet()
+    {
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $bearerTokenValidator = new BearerTokenValidator($accessTokenRepositoryMock);
+        $request = (new ServerRequest());
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(9);
