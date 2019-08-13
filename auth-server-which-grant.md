@@ -9,14 +9,8 @@ permalink: /authorization-server/which-grant/
 A grant is a method of acquiring an access token. Deciding which grants to implement depends on the type of client the end user will be using, and the experience you want for your users.
 
 <figure>
-    <img src="/images/grants.svg" style="width:100%">
+    <img src="/images/grants.min.svg" style="width:100%">
 </figure>
-
-## First party or third party client?
-
-A first party client is a client that you trust enough to handle the end user's authorization credentials. For example Spotify's iPhone app is owned and developed by Spotify so therefore they implicitly trust it.
-
-A third party client is a client that you don't trust.
 
 ## Access Token Owner?
 
@@ -32,8 +26,6 @@ Depending on whether or not the client is capable of keeping a secret will depen
 
 If the client is a web application that has a server side component then you should implement the [authorization code grant](/authorization-server/auth-code-grant/).
 
-If the client is a web application that has runs entirely on the front end (e.g. a single page web application) you should implement the [implicit grant](/authorization-server/implicit-grant/).
-
-If the client is a native application such as a mobile app you should implement the [password grant](/authorization-server/resource-owner-password-credentials-grant/).
+If the client is a web application that has runs entirely on the front end (e.g. a single page web application) or a native application such as a mobile app you should implement the [authorization code grant](/authorization-server/auth-code-grant/) with the PKCE extension.
 
 Third party native applications should use the [authorization code grant](/authorization-server/auth-code-grant/) (via the native browser, not an embedded browser - e.g. for iOS push the user to Safari or use [SFSafariViewController](https://developer.apple.com/library/ios/documentation/SafariServices/Reference/SFSafariViewController_Ref/), <u>don't</u> use an embedded [WKWebView](https://developer.apple.com/library/ios/documentation/WebKit/Reference/WKWebView_Ref/)).
