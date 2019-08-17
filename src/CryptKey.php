@@ -14,7 +14,7 @@ namespace League\OAuth2\Server;
 use LogicException;
 use RuntimeException;
 
-class CryptKey
+class CryptKey implements CryptKeyInterface
 {
     const RSA_KEY_PATTERN =
         '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
@@ -101,22 +101,12 @@ class CryptKey
         return 'file://' . $keyPath;
     }
 
-    /**
-     * Retrieve key path.
-     *
-     * @return string
-     */
-    public function getKeyPath()
+    public function getKeyPath(): string
     {
         return $this->keyPath;
     }
 
-    /**
-     * Retrieve key pass phrase.
-     *
-     * @return null|string
-     */
-    public function getPassPhrase()
+    public function getPassPhrase(): ?string
     {
         return $this->passPhrase;
     }
