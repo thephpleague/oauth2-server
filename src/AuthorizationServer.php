@@ -82,12 +82,12 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * New server instance.
      *
-     * @param ClientRepositoryInterface $clientRepository
+     * @param ClientRepositoryInterface      $clientRepository
      * @param AccessTokenRepositoryInterface $accessTokenRepository
-     * @param ScopeRepositoryInterface $scopeRepository
-     * @param CryptKeyInterface|string $privateKey
-     * @param string|Key $encryptionKey
-     * @param null|ResponseTypeInterface $responseType
+     * @param ScopeRepositoryInterface       $scopeRepository
+     * @param CryptKeyInterface|string       $privateKey
+     * @param string|Key                     $encryptionKey
+     * @param null|ResponseTypeInterface     $responseType
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
