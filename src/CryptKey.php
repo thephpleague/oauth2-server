@@ -40,7 +40,7 @@ class CryptKey
             $keyPath = $this->saveKeyToFile($keyPath);
         } elseif ($rsaMatch === false) {
             throw new \RuntimeException(
-                sprintf("PCRE error [%d] encountered during key match attempt", preg_last_error())
+                sprintf('PCRE error [%d] encountered during key match attempt', preg_last_error())
             );
         }
 
