@@ -294,14 +294,9 @@ class OAuthServerException extends Exception
 
         $payload = $this->getPayload();
 
-        if ($this->redirectUri !== null) {
-            if ($useFragment === true) {
-                $this->redirectUri .= (strstr($this->redirectUri, '#') === false) ? '#' : '&';
-            } else {
-                $this->redirectUri .= (strstr($this->redirectUri, '?') === false) ? '?' : '&';
-            }
-
-            return $response->withStatus(302)->withHeader('Location', $this->redirectUri . http_build_query($payload));
+        $redirectUri = $this->getRedirectUri($useFragment);
+        if ($redirectUri !== null) {
+            return $response->withStatus(302)->withHeader('Location', $redirectUri);
         }
 
         foreach ($headers as $header => $content) {
@@ -357,6 +352,31 @@ class OAuthServerException extends Exception
     public function hasRedirect()
     {
         return $this->redirectUri !== null;
+    }
+
+    /**
+     * Returns the redirectUri with all necessary args.
+     *
+     * Null will be returned if the exception doesn't contain the redirectUri.
+     *
+     * @param bool $useFragment True if errors should be in the URI fragment instead of query string
+     *
+     * @return string|null
+     */
+    public function getRedirectUri(bool $useFragment = false): ?string
+    {
+        if ($this->redirectUri === null) {
+            return null;
+        }
+
+        $redirectUri = $this->redirectUri;
+        if ($useFragment) {
+            $redirectUri .= strpos($this->redirectUri, '#') === false ? '#' : '&';
+        } else {
+            $redirectUri .= strpos($this->redirectUri, '?') === false ? '?' : '&';
+        }
+
+        return $redirectUri . http_build_query($this->getPayload());
     }
 
     /**
