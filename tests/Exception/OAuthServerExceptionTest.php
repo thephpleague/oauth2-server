@@ -71,6 +71,14 @@ class OAuthServerExceptionTest extends TestCase
         $exceptionWithRedirect = OAuthServerException::accessDenied('some hint', 'https://example.com/error');
 
         $this->assertTrue($exceptionWithRedirect->hasRedirect());
+        $this->assertSame(
+            'https://example.com/error?error=access_denied&error_description=The+resource+owner+or+authorization+server+denied+the+request.&hint=some+hint&message=The+resource+owner+or+authorization+server+denied+the+request.',
+            $exceptionWithRedirect->getRedirectUri()
+        );
+        $this->assertSame(
+            'https://example.com/error#error=access_denied&error_description=The+resource+owner+or+authorization+server+denied+the+request.&hint=some+hint&message=The+resource+owner+or+authorization+server+denied+the+request.',
+            $exceptionWithRedirect->getRedirectUri(true)
+        );
     }
 
     public function testDoesNotHaveRedirect()
@@ -78,6 +86,7 @@ class OAuthServerExceptionTest extends TestCase
         $exceptionWithoutRedirect = OAuthServerException::accessDenied('Some hint');
 
         $this->assertFalse($exceptionWithoutRedirect->hasRedirect());
+        $this->assertNull($exceptionWithoutRedirect->getRedirectUri());
     }
 
     public function testHasPrevious()
