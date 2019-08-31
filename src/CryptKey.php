@@ -102,7 +102,7 @@ class CryptKey implements CryptKeyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getKeyPath()
     {
@@ -110,7 +110,7 @@ class CryptKey implements CryptKeyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPassPhrase()
     {
