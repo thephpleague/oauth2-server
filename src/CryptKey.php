@@ -101,11 +101,17 @@ class CryptKey implements CryptKeyInterface
         return 'file://' . $keyPath;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getKeyPath()
     {
         return $this->keyPath;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getPassPhrase()
     {
         return $this->passPhrase;
