@@ -14,21 +14,21 @@ use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
-use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 
 trait AccessTokenTrait
 {
     /**
-     * @var CryptKey
+     * @var CryptKeyInterface
      */
     private $privateKey;
 
     /**
      * Set the private key used to encrypt this access token.
      */
-    public function setPrivateKey(CryptKey $privateKey)
+    public function setPrivateKey(CryptKeyInterface $privateKey)
     {
         $this->privateKey = $privateKey;
     }
@@ -36,11 +36,11 @@ trait AccessTokenTrait
     /**
      * Generate a JWT from the access token
      *
-     * @param CryptKey $privateKey
+     * @param CryptKeyInterface $privateKey
      *
      * @return Token
      */
-    private function convertToJWT(CryptKey $privateKey)
+    private function convertToJWT(CryptKeyInterface $privateKey)
     {
         return (new Builder())
             ->setAudience($this->getClient()->getIdentifier())

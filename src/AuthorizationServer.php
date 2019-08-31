@@ -40,12 +40,12 @@ class AuthorizationServer implements EmitterAwareInterface
     protected $grantTypeAccessTokenTTL = [];
 
     /**
-     * @var CryptKey
+     * @var CryptKeyInterface
      */
     protected $privateKey;
 
     /**
-     * @var CryptKey
+     * @var CryptKeyInterface
      */
     protected $publicKey;
 
@@ -85,7 +85,7 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param ClientRepositoryInterface      $clientRepository
      * @param AccessTokenRepositoryInterface $accessTokenRepository
      * @param ScopeRepositoryInterface       $scopeRepository
-     * @param CryptKey|string                $privateKey
+     * @param CryptKeyInterface|string       $privateKey
      * @param string|Key                     $encryptionKey
      * @param null|ResponseTypeInterface     $responseType
      */
@@ -101,7 +101,7 @@ class AuthorizationServer implements EmitterAwareInterface
         $this->accessTokenRepository = $accessTokenRepository;
         $this->scopeRepository = $scopeRepository;
 
-        if ($privateKey instanceof CryptKey === false) {
+        if ($privateKey instanceof CryptKeyInterface === false) {
             $privateKey = new CryptKey($privateKey);
         }
 
