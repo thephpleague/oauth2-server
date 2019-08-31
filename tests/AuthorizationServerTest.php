@@ -4,6 +4,7 @@ namespace LeagueTests;
 
 use DateInterval;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -152,7 +153,7 @@ class AuthorizationServerTest extends TestCase
         $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
 
         $responseTypePrototype = new class extends BearerTokenResponse {
-            /* @return null|\League\OAuth2\Server\CryptKeyInterface */
+            /* @return null|CryptKeyInterface */
             public function getPrivateKey()
             {
                 return $this->privateKey;
