@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added (v9)
+- A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
+
 ### Fixed
 - Clients are now explicitly prevented from using the Client Credentials grant unless they are confidential to conform
  with the OAuth2 spec (PR #1035)

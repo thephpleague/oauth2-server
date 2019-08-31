@@ -9,14 +9,14 @@
 
 namespace League\OAuth2\Server\Entities;
 
-use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\CryptKeyInterface;
 
 interface AccessTokenEntityInterface extends TokenInterface
 {
     /**
      * Set a private key used to encrypt the access token.
      */
-    public function setPrivateKey(CryptKey $privateKey);
+    public function setPrivateKey(CryptKeyInterface $privateKey);
 
     /**
      * Generate a string representation of the access token.

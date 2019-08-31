@@ -14,7 +14,7 @@ namespace League\OAuth2\Server\Grant;
 use DateInterval;
 use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
-use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -131,9 +131,9 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * Set the path to the private key.
      *
-     * @param CryptKey $privateKey
+     * @param CryptKeyInterface $privateKey
      */
-    public function setPrivateKey(CryptKey $privateKey);
+    public function setPrivateKey(CryptKeyInterface $privateKey);
 
     /**
      * Set the encryption key
