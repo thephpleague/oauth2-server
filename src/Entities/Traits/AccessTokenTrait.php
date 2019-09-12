@@ -81,4 +81,9 @@ trait AccessTokenTrait
      * @return ScopeEntityInterface[]
      */
     abstract public function getScopes();
+    
+    /**
+     * @return string
+     */
+    abstract public function getIdentifier();
 }
