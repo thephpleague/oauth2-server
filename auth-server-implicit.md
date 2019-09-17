@@ -6,6 +6,8 @@ permalink: /authorization-server/implicit-grant/
 
 # Implicit grant
 
+__It is no longer best practice to use the Implicit Grant__. This grant is documented here for legacy purposes only. Industry best practice recommends using the Authorization Code Grant without a client secret for native and browser-based apps.
+
 The implicit grant is similar to the authorization code grant with two distinct differences.
 
 It is intended to be used for user-agent-based clients (e.g. single page web apps) that can't keep a client secret because all of the application code and storage is easily accessible.
