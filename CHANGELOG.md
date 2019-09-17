@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- If an error is encountered when running `preg_match()` to validate an RSA key, the server will now throw a RuntimeException (PR #1047)
+
 ### Fixed
 - Clients are now explicitly prevented from using the Client Credentials grant unless they are confidential to conform
  with the OAuth2 spec (PR #1035)
