@@ -27,6 +27,7 @@ class ClientRepository implements ClientRepositoryInterface
         $client->setIdentifier($clientIdentifier);
         $client->setName(self::CLIENT_NAME);
         $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setConfidential();
 
         return $client;
     }
