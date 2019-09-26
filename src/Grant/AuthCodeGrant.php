@@ -199,7 +199,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('code', 'Authorization code has been revoked');
         }
 
-        if ($authCodePayload->client_id !== $client->getIdentifier()) {
+        if ((string) $authCodePayload->client_id !== (string) $client->getIdentifier()) {
             throw OAuthServerException::invalidRequest('code', 'Authorization code was not issued to this client');
         }
 
