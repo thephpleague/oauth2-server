@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Clients are now explicitly prevented from using the Client Credentials grant unless they are confidential to conform
  with the OAuth2 spec (PR #1035)
 - Abstract method `getIdentifier()` added to AccessTokenTrait. The trait cannot be used without the `getIdentifier()` 
-method being defined. (PR #1051)
+method being defined (PR #1051)
+- An exception is now thrown if a refresh token is accidentally sent in place of an authorization code when using the 
+Auth Code Grant (PR #1057)
 
 ## [8.0.0] - released 2019-07-13
 
