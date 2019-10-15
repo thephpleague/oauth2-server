@@ -43,15 +43,14 @@ trait AccessTokenTrait
     private function convertToJWT(CryptKey $privateKey)
     {
         return (new Builder())
-            ->setAudience($this->getClient()->getIdentifier())
-            ->setId($this->getIdentifier())
-            ->setIssuedAt(time())
-            ->setNotBefore(time())
-            ->setExpiration($this->getExpiryDateTime()->getTimestamp())
-            ->setSubject((string) $this->getUserIdentifier())
-            ->set('scopes', $this->getScopes())
-            ->sign(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()))
-            ->getToken();
+            ->permittedFor($this->getClient()->getIdentifier())
+            ->identifiedBy($this->getIdentifier())
+            ->issuedAt(time())
+            ->canOnlyBeUsedAfter(time())
+            ->expiresAt($this->getExpiryDateTime()->getTimestamp())
+            ->relatedTo((string) $this->getUserIdentifier())
+            ->withClaim('scopes', $this->getScopes())
+            ->getToken(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()));
     }
 
     /**
