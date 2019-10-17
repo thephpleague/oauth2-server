@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- Replaced deprecated methods with recommended ones when using `Lcobucci\JWT\Builder` to build a JWT token. (PR #1060)
+
 ### Fixed
 - Clients are now explicitly prevented from using the Client Credentials grant unless they are confidential to conform
  with the OAuth2 spec (PR #1035)
