@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Changed
+- If an error is encountered when running `preg_match()` to validate an RSA key, the server will now throw a RuntimeException (PR #1047)
 - Replaced deprecated methods with recommended ones when using `Lcobucci\JWT\Builder` to build a JWT token. (PR #1060)
 
 ### Fixed
