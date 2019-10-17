@@ -1013,6 +1013,56 @@ class AuthCodeGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
+    public function testRespondToAccessTokenRequestWithRefreshTokenInsteadOfAuthCode()
+    {
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn(new ClientEntity());
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M')
+        );
+
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => 'http://foo/bar',
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode(
+                        [
+                            'client_id'        => 'foo',
+                            'refresh_token_id' => 'zyxwvu',
+                            'access_token_id'  => 'abcdef',
+                            'scopes'           => ['foo'],
+                            'user_id'          => 123,
+                            'expire_time'      => time() + 3600,
+                        ]
+                    )
+                ),
+            ]
+        );
+
+        try {
+            /* @var StubResponseType $response */
+            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
+        } catch (OAuthServerException $e) {
+            $this->assertEquals($e->getHint(), 'Authorization code malformed');
+        }
+    }
+
     public function testRespondToAccessTokenRequestExpiredCode()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
