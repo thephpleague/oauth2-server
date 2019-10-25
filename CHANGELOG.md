@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- When storing a key, we no longer touch the file before writing it as this is an unnecessary step (PR #XXX)
+
 ### Fixed
 - Clients are now explicitly prevented from using the Client Credentials grant unless they are confidential to conform
  with the OAuth2 spec (PR #1035)
