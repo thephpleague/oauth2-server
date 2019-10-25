@@ -84,12 +84,6 @@ class CryptKey
             return 'file://' . $keyPath;
         }
 
-        if (!touch($keyPath)) {
-            // @codeCoverageIgnoreStart
-            throw new RuntimeException(sprintf('"%s" key file could not be created', $keyPath));
-            // @codeCoverageIgnoreEnd
-        }
-
         if (file_put_contents($keyPath, $key) === false) {
             // @codeCoverageIgnoreStart
             throw new RuntimeException(sprintf('Unable to write key file to temporary directory "%s"', $tmpDir));
