@@ -191,6 +191,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         ClientEntityInterface $client,
         ServerRequestInterface $request
     ) {
+        if (!property_exists($authCodePayload, 'auth_code_id')) {
+            throw OAuthServerException::invalidRequest('code', 'Authorization code malformed');
+        }
+
         if (time() > $authCodePayload->expire_time) {
             throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
         }

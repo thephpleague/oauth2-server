@@ -36,8 +36,12 @@ class CryptKey
      */
     public function __construct($keyPath, $passPhrase = null, $keyPermissionsCheck = true)
     {
-        if (preg_match(self::RSA_KEY_PATTERN, $keyPath)) {
+        if ($rsaMatch = preg_match(static::RSA_KEY_PATTERN, $keyPath)) {
             $keyPath = $this->saveKeyToFile($keyPath);
+        } elseif ($rsaMatch === false) {
+            throw new \RuntimeException(
+                sprintf('PCRE error [%d] encountered during key match attempt', preg_last_error())
+            );
         }
 
         if (strpos($keyPath, 'file://') !== 0) {
