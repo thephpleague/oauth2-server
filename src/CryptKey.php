@@ -83,7 +83,7 @@ class CryptKey
         if (file_exists($keyPath)) {
             return 'file://' . $keyPath;
         }
- 
+
         if (file_put_contents($keyPath, $key) === false) {
             // @codeCoverageIgnoreStart
             throw new RuntimeException(sprintf('Unable to write key file to temporary directory "%s"', $tmpDir));
