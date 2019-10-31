@@ -1,6 +1,7 @@
 {
     "require": {
-        "slim/slim": "^3.0.0"
+        "slim/slim": "^3.0.0",
+        "league/oauth2-server": "^8.0"
     },
     "require-dev": {
         "league/event": "^2.2",
