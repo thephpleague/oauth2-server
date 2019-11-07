@@ -10,7 +10,7 @@ This grant is a great user experience for <u>trusted</u> first party clients bot
 
 ## Flow
 
-The client will ask the user for their authorization credentials (ususally a username and password).
+The client will ask the user for their authorization credentials (usually a username and password).
 
 The client then sends a POST request with following body parameters to the authorization server:
 
