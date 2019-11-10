@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
-- Added PSR15/17 compatible middleware (PR #1029)
+- Add PSR15 compatible middleware (PR #1029)
 
 ### Changed
 - If an error is encountered when running `preg_match()` to validate an RSA key, the server will now throw a RuntimeException (PR #1047)
