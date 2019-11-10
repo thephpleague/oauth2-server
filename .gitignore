@@ -6,4 +6,5 @@ phpunit.xml
 examples/public.key
 examples/private.key
 build
+*.orig
 /nbproject

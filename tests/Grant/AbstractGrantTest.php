@@ -2,7 +2,8 @@
 
 namespace LeagueTests\Grant;
 
-use League\Event\Emitter;
+use DateInterval;
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
@@ -23,21 +24,13 @@ use Zend\Diactoros\ServerRequest;
 
 class AbstractGrantTest extends TestCase
 {
-    public function testGetSet()
-    {
-        /** @var AbstractGrant $grantMock */
-        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setEmitter(new Emitter());
-    }
-
     public function testHttpBasicWithPassword()
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ' . base64_encode('Open:Sesame'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . base64_encode('Open:Sesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -50,8 +43,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ' . base64_encode('Open:'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . base64_encode('Open:'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -64,8 +56,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withHeader('Authorization', 'Foo ' . base64_encode('Open:Sesame'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Foo ' . base64_encode('Open:Sesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -78,8 +69,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ||');
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ||');
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -92,8 +82,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withHeader('Authorization', 'Basic ' . base64_encode('OpenSesame'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . base64_encode('OpenSesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -113,16 +102,14 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id' => 'foo',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id' => 'foo',
+        ]);
+
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
 
-        $result = $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
+        $result = $validateClientMethod->invoke($grantMock, $serverRequest);
         $this->assertEquals($client, $result);
     }
 
@@ -139,14 +126,12 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody(
-            [
-                'client_id'     => 'foo',
-                'client_secret' => 'bar',
-                'redirect_uri'  => 'http://foo/bar',
-            ]
-        );
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'redirect_uri'  => 'http://foo/bar',
+        ]);
+
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
 
@@ -154,9 +139,6 @@ class AbstractGrantTest extends TestCase
         $this->assertEquals($client, $result);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testValidateClientMissingClientId()
     {
         $client = new ClientEntity();
@@ -173,16 +155,15 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
 
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testValidateClientMissingClientSecret()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn(null);
+        $clientRepositoryMock->method('validateClient')->willReturn(false);
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -190,24 +171,22 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id' => 'foo',
         ]);
 
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
 
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testValidateClientInvalidClientSecret()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn(null);
+        $clientRepositoryMock->method('validateClient')->willReturn(false);
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -215,8 +194,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'foo',
         ]);
@@ -224,12 +202,11 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
 
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testValidateClientInvalidRedirectUri()
     {
         $client = new ClientEntity();
@@ -243,8 +220,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'    => 'foo',
             'redirect_uri' => 'http://bar/foo',
         ]);
@@ -252,12 +228,11 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
 
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testValidateClientInvalidRedirectUriArray()
     {
         $client = new ClientEntity();
@@ -271,8 +246,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'    => 'foo',
             'redirect_uri' => 'http://bar/foo',
         ]);
@@ -280,16 +254,15 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
 
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testValidateClientBadClient()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn(null);
+        $clientRepositoryMock->method('validateClient')->willReturn(false);
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -297,14 +270,15 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
         ]);
 
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
 
         $validateClientMethod->invoke($grantMock, $serverRequest, true);
     }
@@ -314,8 +288,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->method('getIdentifier')->willReturn('foobar');
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'grant_type' => 'foobar',
         ]);
 
@@ -332,7 +305,7 @@ class AbstractGrantTest extends TestCase
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setRefreshTokenTTL(new \DateInterval('PT1M'));
+        $grantMock->setRefreshTokenTTL(new DateInterval('PT1M'));
         $grantMock->setRefreshTokenRepository($refreshTokenRepoMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
@@ -374,6 +347,7 @@ class AbstractGrantTest extends TestCase
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grantMock->setAccessTokenRepository($accessTokenRepoMock);
 
         $abstractGrantReflection = new \ReflectionClass($grantMock);
@@ -383,7 +357,7 @@ class AbstractGrantTest extends TestCase
         /** @var AccessTokenEntityInterface $accessToken */
         $accessToken = $issueAccessTokenMethod->invoke(
             $grantMock,
-            new \DateInterval('PT1H'),
+            new DateInterval('PT1H'),
             new ClientEntity(),
             123,
             [new ScopeEntity()]
@@ -408,7 +382,7 @@ class AbstractGrantTest extends TestCase
             AuthCodeEntityInterface::class,
             $issueAuthCodeMethod->invoke(
                 $grantMock,
-                new \DateInterval('PT1H'),
+                new DateInterval('PT1H'),
                 new ClientEntity(),
                 123,
                 'http://foo/bar',
@@ -426,8 +400,7 @@ class AbstractGrantTest extends TestCase
         $method = $abstractGrantReflection->getMethod('getCookieParameter');
         $method->setAccessible(true);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withCookieParams([
+        $serverRequest = (new ServerRequest())->withCookieParams([
             'foo' => 'bar',
         ]);
 
@@ -444,8 +417,7 @@ class AbstractGrantTest extends TestCase
         $method = $abstractGrantReflection->getMethod('getQueryStringParameter');
         $method->setAccessible(true);
 
-        $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withQueryParams([
+        $serverRequest = (new ServerRequest())->withQueryParams([
             'foo' => 'bar',
         ]);
 
@@ -466,9 +438,6 @@ class AbstractGrantTest extends TestCase
         $this->assertEquals([$scope], $grantMock->validateScopes('basic   '));
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     */
     public function testValidateScopesBadScope()
     {
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
@@ -477,6 +446,8 @@ class AbstractGrantTest extends TestCase
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setScopeRepository($scopeRepositoryMock);
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
 
         $grantMock->validateScopes('basic   ');
     }
@@ -489,7 +460,7 @@ class AbstractGrantTest extends TestCase
         $method = $abstractGrantReflection->getMethod('generateUniqueIdentifier');
         $method->setAccessible(true);
 
-        $this->assertInternalType('string', $method->invoke($grantMock));
+        $this->assertIsString($method->invoke($grantMock));
     }
 
     public function testCanRespondToAuthorizationRequest()
@@ -498,21 +469,21 @@ class AbstractGrantTest extends TestCase
         $this->assertFalse($grantMock->canRespondToAuthorizationRequest(new ServerRequest()));
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testValidateAuthorizationRequest()
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+
+        $this->expectException(\LogicException::class);
+
         $grantMock->validateAuthorizationRequest(new ServerRequest());
     }
 
-    /**
-     * @expectedException \LogicException
-     */
     public function testCompleteAuthorizationRequest()
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+
+        $this->expectException(\LogicException::class);
+
         $grantMock->completeAuthorizationRequest(new AuthorizationRequest());
     }
 }

@@ -31,12 +31,11 @@ This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](ht
 
 The following versions of PHP are supported:
 
-* PHP 7.0
 * PHP 7.1
 * PHP 7.2
 * PHP 7.3
 
-The `openssl` extension is also required.
+The `openssl` and `json` extensions are also required.
 
 All HTTP messages passed to the server should be [PSR-7 compliant](https://www.php-fig.org/psr/psr-7/). This ensures interoperability with other packages and frameworks.
 
@@ -86,13 +85,9 @@ Bugs and feature request are tracked on [GitHub](https://github.com/thephpleague
 
 If you have any questions about OAuth _please_ open a ticket here; please **don't** email the address below.
 
-## Commercial Support
-
-If you would like help implementing this library into your existing platform, or would be interested in OAuth advice or training for you and your team please get in touch with [Glynde Labs](https://glyndelabs.com).
-
 ## Security
 
-If you discover any security related issues, please email `hello@alexbilbie.com` instead of using the issue tracker.
+If you discover any security related issues, please email `andrew@noexceptions.io` instead of using the issue tracker.
 
 ## License
 
@@ -100,7 +95,7 @@ This package is released under the MIT License. See the bundled [LICENSE](https:
 
 ## Credits
 
-This code is principally developed and maintained by [Andy Millington](https://twitter.com/Sephster) and [Simon Hamp](https://twitter.com/simonhamp).
+This code is principally developed and maintained by [Andy Millington](https://twitter.com/Sephster).
 
 Between 2012 and 2017 this library was developed and maintained by [Alex Bilbie](https://alexbilbie.com/).
 

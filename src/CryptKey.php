@@ -36,8 +36,12 @@ class CryptKey
      */
     public function __construct($keyPath, $passPhrase = null, $keyPermissionsCheck = true)
     {
-        if (preg_match(self::RSA_KEY_PATTERN, $keyPath)) {
+        if ($rsaMatch = preg_match(static::RSA_KEY_PATTERN, $keyPath)) {
             $keyPath = $this->saveKeyToFile($keyPath);
+        } elseif ($rsaMatch === false) {
+            throw new \RuntimeException(
+                sprintf('PCRE error [%d] encountered during key match attempt', preg_last_error())
+            );
         }
 
         if (strpos($keyPath, 'file://') !== 0) {
@@ -78,12 +82,6 @@ class CryptKey
 
         if (file_exists($keyPath)) {
             return 'file://' . $keyPath;
-        }
-
-        if (!touch($keyPath)) {
-            // @codeCoverageIgnoreStart
-            throw new RuntimeException(sprintf('"%s" key file could not be created', $keyPath));
-            // @codeCoverageIgnoreEnd
         }
 
         if (file_put_contents($keyPath, $key) === false) {

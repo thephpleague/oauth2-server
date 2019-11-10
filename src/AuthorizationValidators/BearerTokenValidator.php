@@ -63,7 +63,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         }
 
         $header = $request->getHeader('authorization');
-        $jwt = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header[0]));
+        $jwt = trim((string) preg_replace('/^(?:\s+)?Bearer\s/', '', $header[0]));
 
         try {
             // Attempt to parse and validate the JWT

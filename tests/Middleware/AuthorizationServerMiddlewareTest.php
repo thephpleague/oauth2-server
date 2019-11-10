@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Middleware;
 
+use DateInterval;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -23,8 +24,11 @@ class AuthorizationServerMiddlewareTest extends TestCase
 
     public function testValidResponse()
     {
+        $client = new ClientEntity();
+        $client->setConfidential();
+
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepository->method('getClientEntity')->willReturn(new ClientEntity());
+        $clientRepository->method('getClientEntity')->willReturn($client);
 
         $scopeEntity = new ScopeEntity;
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
@@ -66,7 +70,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
     public function testOAuthErrorResponse()
     {
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepository->method('getClientEntity')->willReturn(null);
+        $clientRepository->method('validateClient')->willReturn(false);
 
         $server = new AuthorizationServer(
             $clientRepository,
@@ -77,7 +81,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
             new StubResponseType()
         );
 
-        $server->enableGrantType(new ClientCredentialsGrant(), new \DateInterval('PT1M'));
+        $server->enableGrantType(new ClientCredentialsGrant(), new DateInterval('PT1M'));
 
         $_POST['grant_type'] = 'client_credentials';
         $_POST['client_id'] = 'foo';
