@@ -17,7 +17,7 @@ class CryptTraitTest extends TestCase
 
     public function testEncryptDecryptWithPassword()
     {
-        $this->cryptStub->setEncryptionKey(base64_encode(random_bytes(36)));
+        $this->cryptStub->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $this->encryptDecrypt();
     }

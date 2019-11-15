@@ -87,7 +87,7 @@ $app->group('/api', function () {
     $this->get('/user', function (ServerRequestInterface $request, ResponseInterface $response) {
         $params = [];
 
-        if (in_array('basic', $request->getAttribute('oauth_scopes', []))) {
+        if (\in_array('basic', $request->getAttribute('oauth_scopes', []))) {
             $params = [
                 'id'   => 1,
                 'name' => 'Alex',
@@ -95,12 +95,12 @@ $app->group('/api', function () {
             ];
         }
 
-        if (in_array('email', $request->getAttribute('oauth_scopes', []))) {
+        if (\in_array('email', $request->getAttribute('oauth_scopes', []))) {
             $params['email'] = 'alex@example.com';
         }
 
         $body = new Stream('php://temp', 'r+');
-        $body->write(json_encode($params));
+        $body->write(\json_encode($params));
 
         return $response->withBody($body);
     });

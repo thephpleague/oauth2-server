@@ -31,8 +31,8 @@ class S256Verifier implements CodeChallengeVerifierInterface
      */
     public function verifyCodeChallenge($codeVerifier, $codeChallenge)
     {
-        return hash_equals(
-            strtr(rtrim(base64_encode(hash('sha256', $codeVerifier, true)), '='), '+/', '-_'),
+        return \hash_equals(
+            \strtr(\rtrim(\base64_encode(\hash('sha256', $codeVerifier, true)), '='), '+/', '-_'),
             $codeChallenge
         );
     }

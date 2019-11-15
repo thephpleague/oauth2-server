@@ -43,7 +43,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $accessRepositoryMock,
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/../Stubs/private.key',
-            base64_encode(random_bytes(36)),
+            \base64_encode(\random_bytes(36)),
             new StubResponseType()
         );
 
@@ -61,7 +61,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $request,
             new Response(),
             function () {
-                return func_get_args()[1];
+                return \func_get_args()[1];
             }
         );
         $this->assertEquals(200, $response->getStatusCode());
@@ -77,7 +77,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/../Stubs/private.key',
-            base64_encode(random_bytes(36)),
+            \base64_encode(\random_bytes(36)),
             new StubResponseType()
         );
 
@@ -95,7 +95,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $request,
             new Response(),
             function () {
-                return func_get_args()[1];
+                return \func_get_args()[1];
             }
         );
 

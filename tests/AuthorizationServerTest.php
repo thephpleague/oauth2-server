@@ -34,9 +34,9 @@ class AuthorizationServerTest extends TestCase
     public function setUp(): void
     {
         // Make sure the keys have the correct permissions.
-        chmod(__DIR__ . '/Stubs/private.key', 0600);
-        chmod(__DIR__ . '/Stubs/public.key', 0600);
-        chmod(__DIR__ . '/Stubs/private.key.crlf', 0600);
+        \chmod(__DIR__ . '/Stubs/private.key', 0600);
+        \chmod(__DIR__ . '/Stubs/public.key', 0600);
+        \chmod(__DIR__ . '/Stubs/private.key.crlf', 0600);
     }
 
     public function testRespondToRequestInvalidGrantType()
@@ -46,7 +46,7 @@ class AuthorizationServerTest extends TestCase
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
-            base64_encode(random_bytes(36)),
+            \base64_encode(\random_bytes(36)),
             new StubResponseType()
         );
 
@@ -81,7 +81,7 @@ class AuthorizationServerTest extends TestCase
             $accessTokenRepositoryMock,
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/Stubs/private.key',
-            base64_encode(random_bytes(36)),
+            \base64_encode(\random_bytes(36)),
             new StubResponseType()
         );
 
@@ -192,8 +192,8 @@ class AuthorizationServerTest extends TestCase
         $this->assertSame($encryptionKey, $responseTypeA->getEncryptionKey());
 
         // all instances should be different but based on the same prototype
-        $this->assertSame(get_class($responseTypePrototype), get_class($responseTypeA));
-        $this->assertSame(get_class($responseTypePrototype), get_class($responseTypeB));
+        $this->assertSame(\get_class($responseTypePrototype), \get_class($responseTypeA));
+        $this->assertSame(\get_class($responseTypePrototype), \get_class($responseTypeB));
         $this->assertNotSame($responseTypePrototype, $responseTypeA);
         $this->assertNotSame($responseTypePrototype, $responseTypeB);
         $this->assertNotSame($responseTypeA, $responseTypeB);

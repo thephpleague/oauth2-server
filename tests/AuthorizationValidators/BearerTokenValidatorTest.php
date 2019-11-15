@@ -21,14 +21,14 @@ class BearerTokenValidatorTest extends TestCase
         $unsignedJwt = (new Builder())
             ->permittedFor('client-id')
             ->identifiedBy('token-id', true)
-            ->issuedAt(time())
-            ->canOnlyBeUsedAfter(time())
-            ->expiresAt(time())
+            ->issuedAt(\time())
+            ->canOnlyBeUsedAfter(\time())
+            ->expiresAt(\time())
             ->relatedTo('user-id')
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken();
 
-        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $unsignedJwt));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $unsignedJwt));
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(9);

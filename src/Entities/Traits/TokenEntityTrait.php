@@ -52,7 +52,7 @@ trait TokenEntityTrait
      */
     public function getScopes()
     {
-        return array_values($this->scopes);
+        return \array_values($this->scopes);
     }
 
     /**

@@ -120,7 +120,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $this->getServerParameter('PHP_AUTH_USER', $request)
         );
 
-        if (is_null($clientId)) {
+        if (\is_null($clientId)) {
             throw OAuthServerException::invalidRequest('client_id');
         }
 
@@ -130,12 +130,12 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         if ($redirectUri !== null) {
             $this->validateRedirectUri($redirectUri, $client, $request);
-        } elseif (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
+        } elseif (\is_array($client->getRedirectUri()) && \count($client->getRedirectUri()) !== 1
             || empty($client->getRedirectUri())) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient($request);
         } else {
-            $redirectUri = is_array($client->getRedirectUri())
+            $redirectUri = \is_array($client->getRedirectUri())
                 ? $client->getRedirectUri()[0]
                 : $client->getRedirectUri();
         }
@@ -171,7 +171,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         }
 
         $finalRedirectUri = ($authorizationRequest->getRedirectUri() === null)
-            ? is_array($authorizationRequest->getClient()->getRedirectUri())
+            ? \is_array($authorizationRequest->getClient()->getRedirectUri())
                 ? $authorizationRequest->getClient()->getRedirectUri()[0]
                 : $authorizationRequest->getClient()->getRedirectUri()
             : $authorizationRequest->getRedirectUri();
