@@ -30,7 +30,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . base64_encode('Open:Sesame'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . \base64_encode('Open:Sesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -43,7 +43,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . base64_encode('Open:'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . \base64_encode('Open:'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -56,7 +56,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Foo ' . base64_encode('Open:Sesame'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Foo ' . \base64_encode('Open:Sesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -82,7 +82,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new \ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . base64_encode('OpenSesame'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . \base64_encode('OpenSesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 

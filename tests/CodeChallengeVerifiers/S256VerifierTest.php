@@ -32,6 +32,6 @@ class S256VerifierTest extends TestCase
 
     private function createCodeChallenge($codeVerifier)
     {
-        return strtr(rtrim(base64_encode(hash('sha256', $codeVerifier, true)), '='), '+/', '-_');
+        return \strtr(\rtrim(\base64_encode(\hash('sha256', $codeVerifier, true)), '='), '+/', '-_');
     }
 }

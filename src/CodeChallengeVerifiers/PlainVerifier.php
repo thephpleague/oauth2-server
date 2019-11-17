@@ -31,6 +31,6 @@ class PlainVerifier implements CodeChallengeVerifierInterface
      */
     public function verifyCodeChallenge($codeVerifier, $codeChallenge)
     {
-        return hash_equals($codeVerifier, $codeChallenge);
+        return \hash_equals($codeVerifier, $codeChallenge);
     }
 }

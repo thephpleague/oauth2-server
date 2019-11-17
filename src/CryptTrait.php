@@ -39,7 +39,7 @@ trait CryptTrait
                 return Crypto::encrypt($unencryptedData, $this->encryptionKey);
             }
 
-            if (is_string($this->encryptionKey)) {
+            if (\is_string($this->encryptionKey)) {
                 return Crypto::encryptWithPassword($unencryptedData, $this->encryptionKey);
             }
 
@@ -65,7 +65,7 @@ trait CryptTrait
                 return Crypto::decrypt($encryptedData, $this->encryptionKey);
             }
 
-            if (is_string($this->encryptionKey)) {
+            if (\is_string($this->encryptionKey)) {
                 return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
             }
 

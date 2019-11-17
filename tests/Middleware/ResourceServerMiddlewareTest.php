@@ -35,16 +35,16 @@ class ResourceServerMiddlewareTest extends TestCase
 
         $token = (string) $accessToken;
 
-        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $token));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $token));
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
             $request,
             new Response(),
             function () {
-                $this->assertEquals('test', func_get_args()[0]->getAttribute('oauth_access_token_id'));
+                $this->assertEquals('test', \func_get_args()[0]->getAttribute('oauth_access_token_id'));
 
-                return func_get_args()[1];
+                return \func_get_args()[1];
             }
         );
 
@@ -70,16 +70,16 @@ class ResourceServerMiddlewareTest extends TestCase
 
         $token = (string) $accessToken;
 
-        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $token));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $token));
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
             $request,
             new Response(),
             function () {
-                $this->assertEquals('test', func_get_args()[0]->getAttribute('oauth_access_token_id'));
+                $this->assertEquals('test', \func_get_args()[0]->getAttribute('oauth_access_token_id'));
 
-                return func_get_args()[1];
+                return \func_get_args()[1];
             }
         );
 
@@ -100,7 +100,7 @@ class ResourceServerMiddlewareTest extends TestCase
             $request,
             new Response(),
             function () {
-                return func_get_args()[1];
+                return \func_get_args()[1];
             }
         );
 

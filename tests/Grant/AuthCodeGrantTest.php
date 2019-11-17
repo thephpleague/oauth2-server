@@ -219,7 +219,7 @@ class AuthCodeGrantTest extends TestCase
             'response_type'  => 'code',
             'client_id'      => 'foo',
             'redirect_uri'   => 'http://foo/bar',
-            'code_challenge' => str_repeat('A', 42),
+            'code_challenge' => \str_repeat('A', 42),
         ]);
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
@@ -246,7 +246,7 @@ class AuthCodeGrantTest extends TestCase
             'response_type'  => 'code',
             'client_id'      => 'foo',
             'redirect_uri'   => 'http://foo/bar',
-            'code_challenge' => str_repeat('A', 129),
+            'code_challenge' => \str_repeat('A', 129),
         ]);
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
@@ -273,7 +273,7 @@ class AuthCodeGrantTest extends TestCase
             'response_type' => 'code',
             'client_id' => 'foo',
             'redirect_uri' => 'http://foo/bar',
-            'code_challenge' => str_repeat('A', 42) . '!',
+            'code_challenge' => \str_repeat('A', 42) . '!',
         ]);
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
@@ -505,10 +505,10 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id' => uniqid(),
-                            'expire_time'  => time() + 3600,
+                            'auth_code_id' => \uniqid(),
+                            'expire_time'  => \time() + 3600,
                             'client_id'    => 'foo',
                             'user_id'      => 123,
                             'scopes'       => ['foo'],
@@ -570,11 +570,11 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id' => uniqid(),
+                            'auth_code_id' => \uniqid(),
                             'client_id' => 'foo',
-                            'expire_time'  => time() + 3600,
+                            'expire_time'  => \time() + 3600,
                             'user_id'      => 123,
                             'scopes'       => ['foo'],
                             'redirect_uri' => 'http://foo/bar',
@@ -638,10 +638,10 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id' => uniqid(),
-                            'expire_time'  => time() + 3600,
+                            'auth_code_id' => \uniqid(),
+                            'expire_time'  => \time() + 3600,
                             'client_id'    => 'foo',
                             'user_id'      => 123,
                             'scopes'       => ['foo'],
@@ -706,10 +706,10 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id' => uniqid(),
-                            'expire_time'  => time() + 3600,
+                            'auth_code_id' => \uniqid(),
+                            'expire_time'  => \time() + 3600,
                             'client_id'    => 'foo',
                             'user_id'      => 123,
                             'scopes'       => ['foo'],
@@ -777,10 +777,10 @@ class AuthCodeGrantTest extends TestCase
                 'redirect_uri'  => 'http://foo/bar',
                 'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id'          => uniqid(),
-                            'expire_time'           => time() + 3600,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
                             'client_id'             => 'foo',
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
@@ -850,10 +850,10 @@ class AuthCodeGrantTest extends TestCase
                 'redirect_uri'  => 'http://foo/bar',
                 'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id'          => uniqid(),
-                            'expire_time'           => time() + 3600,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
                             'client_id'             => 'foo',
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
@@ -902,10 +902,10 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'  => 'foo',
                 'grant_type' => 'authorization_code',
                 'code'       => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id'          => uniqid(),
-                            'expire_time'           => time() + 3600,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
                             'client_id'             => 'foo',
                             'redirect_uri'          => 'http://foo/bar',
                         ]
@@ -950,10 +950,10 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type' => 'authorization_code',
                 'redirect_uri' => 'http://bar/foo',
                 'code'       => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id'          => uniqid(),
-                            'expire_time'           => time() + 3600,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
                             'client_id'             => 'foo',
                             'redirect_uri'          => 'http://foo/bar',
                         ]
@@ -1041,14 +1041,14 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
                             'client_id'        => 'foo',
                             'refresh_token_id' => 'zyxwvu',
                             'access_token_id'  => 'abcdef',
                             'scopes'           => ['foo'],
                             'user_id'          => 123,
-                            'expire_time'      => time() + 3600,
+                            'expire_time'      => \time() + 3600,
                         ]
                     )
                 ),
@@ -1091,10 +1091,10 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id' => uniqid(),
-                            'expire_time'  => time() - 3600,
+                            'auth_code_id' => \uniqid(),
+                            'expire_time'  => \time() - 3600,
                             'client_id'    => 'foo',
                             'user_id'      => 123,
                             'scopes'       => ['foo'],
@@ -1155,10 +1155,10 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id' => uniqid(),
-                            'expire_time'  => time() + 3600,
+                            'auth_code_id' => \uniqid(),
+                            'expire_time'  => \time() + 3600,
                             'client_id'    => 'foo',
                             'user_id'      => 123,
                             'scopes'       => ['foo'],
@@ -1216,10 +1216,10 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id' => uniqid(),
-                            'expire_time'  => time() + 3600,
+                            'auth_code_id' => \uniqid(),
+                            'expire_time'  => \time() + 3600,
                             'client_id'    => 'bar',
                             'user_id'      => 123,
                             'scopes'       => ['foo'],
@@ -1337,10 +1337,10 @@ class AuthCodeGrantTest extends TestCase
                 'redirect_uri'  => 'http://foo/bar',
                 'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id'          => uniqid(),
-                            'expire_time'           => time() + 3600,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
                             'client_id'             => 'foo',
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
@@ -1410,10 +1410,10 @@ class AuthCodeGrantTest extends TestCase
                 'redirect_uri'  => 'http://foo/bar',
                 'code_verifier' => 'nope',
                 'code'          => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id'          => uniqid(),
-                            'expire_time'           => time() + 3600,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
                             'client_id'             => 'foo',
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
@@ -1483,10 +1483,10 @@ class AuthCodeGrantTest extends TestCase
                 'redirect_uri'  => 'http://foo/bar',
                 'code_verifier' => 'dqX7C-RbqjHYtytmhGTigKdZCXfxq-+xbsk9_GxUcaE', // Malformed code. Contains `+`.
                 'code'          => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id'          => uniqid(),
-                            'expire_time'           => time() + 3600,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
                             'client_id'             => 'foo',
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
@@ -1556,10 +1556,10 @@ class AuthCodeGrantTest extends TestCase
                 'redirect_uri'  => 'http://foo/bar',
                 'code_verifier' => 'dqX7C-RbqjHY', // Malformed code. Invalid length.
                 'code'          => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id'          => uniqid(),
-                            'expire_time'           => time() + 3600,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
                             'client_id'             => 'foo',
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
@@ -1628,10 +1628,10 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id'          => uniqid(),
-                            'expire_time'           => time() + 3600,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
                             'client_id'             => 'foo',
                             'user_id'               => 123,
                             'scopes'                => ['foo'],
@@ -1774,10 +1774,10 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id' => uniqid(),
-                            'expire_time'  => time() + 3600,
+                            'auth_code_id' => \uniqid(),
+                            'expire_time'  => \time() + 3600,
                             'client_id'    => 'foo',
                             'user_id'      => 123,
                             'scopes'       => ['foo'],
@@ -1842,10 +1842,10 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id' => uniqid(),
-                            'expire_time'  => time() + 3600,
+                            'auth_code_id' => \uniqid(),
+                            'expire_time'  => \time() + 3600,
                             'client_id'    => 'foo',
                             'user_id'      => 123,
                             'scopes'       => ['foo'],
@@ -1913,10 +1913,10 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
                 'code'         => $this->cryptStub->doEncrypt(
-                    json_encode(
+                    \json_encode(
                         [
-                            'auth_code_id' => uniqid(),
-                            'expire_time'  => time() + 3600,
+                            'auth_code_id' => \uniqid(),
+                            'expire_time'  => \time() + 3600,
                             'client_id'    => 'foo',
                             'user_id'      => 123,
                             'scopes'       => ['foo'],

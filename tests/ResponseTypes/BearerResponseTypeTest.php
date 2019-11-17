@@ -24,7 +24,7 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -56,7 +56,7 @@ class BearerResponseTypeTest extends TestCase
         $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
 
         $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents());
+        $json = \json_decode($response->getBody()->getContents());
         $this->assertEquals('Bearer', $json->token_type);
         $this->assertObjectHasAttribute('expires_in', $json);
         $this->assertObjectHasAttribute('access_token', $json);
@@ -67,7 +67,7 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponseWithParams();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -99,7 +99,7 @@ class BearerResponseTypeTest extends TestCase
         $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
 
         $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents());
+        $json = \json_decode($response->getBody()->getContents());
         $this->assertEquals('Bearer', $json->token_type);
         $this->assertObjectHasAttribute('expires_in', $json);
         $this->assertObjectHasAttribute('access_token', $json);
@@ -113,7 +113,7 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -134,7 +134,7 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $json = json_decode((string) $response->getBody());
+        $json = \json_decode((string) $response->getBody());
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
@@ -142,7 +142,7 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $json->access_token));
 
         $request = $authorizationValidator->validateAuthorization($request);
 
@@ -158,7 +158,7 @@ class BearerResponseTypeTest extends TestCase
 
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -179,12 +179,12 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $json = json_decode((string) $response->getBody());
+        $json = \json_decode((string) $response->getBody());
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $json->access_token . 'foo'));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $json->access_token . 'foo'));
 
         try {
             $authorizationValidator->validateAuthorization($request);
@@ -200,7 +200,7 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -221,7 +221,7 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $json = json_decode((string) $response->getBody());
+        $json = \json_decode((string) $response->getBody());
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(true);
@@ -229,7 +229,7 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $json->access_token));
 
         try {
             $authorizationValidator->validateAuthorization($request);
@@ -245,7 +245,7 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
@@ -268,7 +268,7 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
