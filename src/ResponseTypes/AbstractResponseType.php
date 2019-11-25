@@ -14,6 +14,7 @@ namespace League\OAuth2\Server\ResponseTypes;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 
 abstract class AbstractResponseType implements ResponseTypeInterface
@@ -29,6 +30,11 @@ abstract class AbstractResponseType implements ResponseTypeInterface
      * @var RefreshTokenEntityInterface
      */
     protected $refreshToken;
+
+    /**
+     * @var DeviceCodeEntityInterface
+     */
+    protected $deviceCode;
 
     /**
      * @var CryptKey
@@ -49,6 +55,14 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     public function setRefreshToken(RefreshTokenEntityInterface $refreshToken)
     {
         $this->refreshToken = $refreshToken;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeviceCode(DeviceCodeEntityInterface $deviceCode)
+    {
+        $this->deviceCode = $deviceCode;
     }
 
     /**

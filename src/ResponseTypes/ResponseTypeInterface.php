@@ -13,6 +13,7 @@ namespace League\OAuth2\Server\ResponseTypes;
 
 use Defuse\Crypto\Key;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -27,6 +28,11 @@ interface ResponseTypeInterface
      * @param RefreshTokenEntityInterface $refreshToken
      */
     public function setRefreshToken(RefreshTokenEntityInterface $refreshToken);
+
+    /**
+     * @param DeviceCodeEntityInterface $deviceCode
+     */
+    public function setDeviceCode(DeviceCodeEntityInterface $deviceCode);
 
     /**
      * @param ResponseInterface $response
