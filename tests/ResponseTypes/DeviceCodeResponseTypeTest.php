@@ -33,10 +33,10 @@ class DeviceCodeResponseTypeTest extends TestCase
         $deviceCode->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $deviceCode->setClient($client);
         $deviceCode->addScope($scope);
-        $deviceCode->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
 
         $responseType->setDeviceCode($deviceCode);
+        $responseType->setPayload('test');
 
         $response = $responseType->generateHttpResponse(new Response());
 
@@ -50,6 +50,7 @@ class DeviceCodeResponseTypeTest extends TestCase
         $json = \json_decode($response->getBody()->getContents());
         $this->assertObjectHasAttribute('expires_in', $json);
         $this->assertObjectHasAttribute('device_code', $json);
+        $this->assertEquals('test', $json->device_code);
         $this->assertObjectHasAttribute('verification_uri', $json);
         $this->assertObjectHasAttribute('user_code', $json);
     }

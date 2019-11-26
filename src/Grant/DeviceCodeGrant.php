@@ -106,8 +106,24 @@ class DeviceCodeGrant extends AbstractGrant
             $deviceRequest->getScopes()
         );
 
+        $payload = [
+            'client_id' => $deviceCode->getClient()->getIdentifier(),
+            'device_code_id' => $deviceCode->getIdentifier(),
+            'scopes' => $deviceCode->getScopes(),
+            'user_code' => $deviceCode->getUserCode(),
+            'expire_time' => $deviceCode->getExpiryDateTime()->getTimestamp(),
+            'verification_uri' => $deviceCode->getVerificationUri()
+        ];
+
+        $jsonPayload = \json_encode($payload);
+
+        if ($jsonPayload === false) {
+            throw new LogicException('An error was encountered when JSON encoding the authorization request response');
+        }
+
         $response = new DeviceCodeResponse();
         $response->setDeviceCode($deviceCode);
+        $response->setPayload($this->encrypt($jsonPayload));
 
         return $response;
     }

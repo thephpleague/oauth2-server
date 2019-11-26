@@ -18,6 +18,16 @@ use Psr\Http\Message\ResponseInterface;
 class DeviceCodeResponse extends AbstractResponseType
 {
     /**
+     * @var DeviceCodeEntityInterface
+     */
+    protected $deviceCode;
+
+    /**
+     * @var string
+     */
+    protected $payload;
+
+    /**
      * {@inheritdoc}
      */
     public function generateHttpResponse(ResponseInterface $response)
@@ -26,7 +36,7 @@ class DeviceCodeResponse extends AbstractResponseType
 
         $responseParams = [
             'expires_in'   => $expireDateTime - \time(),
-            'device_code' => (string) $this->deviceCode,
+            'device_code' => $this->payload,
             'user_code' => $this->deviceCode->getUserCode(),
             'verification_uri' => $this->deviceCode->getVerificationUri()
         ];
@@ -46,6 +56,19 @@ class DeviceCodeResponse extends AbstractResponseType
         $response->getBody()->write($responseParams);
 
         return $response;
+    }
+
+    public function setPayload($payload)
+    {
+        $this->payload = $payload;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeviceCode(DeviceCodeEntityInterface $deviceCode)
+    {
+        $this->deviceCode = $deviceCode;
     }
 
     /**

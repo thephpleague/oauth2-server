@@ -1,7 +1,7 @@
 <?php
 /**
- * @author      Alex Bilbie <hello@alexbilbie.com>
- * @copyright   Copyright (c) Alex Bilbie
+ * @author      Luca Degasperi <luca@lucadegasperi.com>
+ * @copyright   Copyright (c) Luca Degasperi
  * @license     http://mit-license.org/
  *
  * @link        https://github.com/thephpleague/oauth2-server
@@ -10,21 +10,11 @@
 namespace League\OAuth2\Server\Entities\Traits;
 
 use DateTimeImmutable;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Key;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Token;
-use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 
 trait DeviceCodeTrait
 {
-    /**
-     * @var CryptKey
-     */
-    private $privateKey;
-
     /**
      * @var string
      */
@@ -34,42 +24,6 @@ trait DeviceCodeTrait
      * @var string
      */
     private $verificationUri;
-
-    /**
-     * Set the private key used to encrypt this access token.
-     */
-    public function setPrivateKey(CryptKey $privateKey)
-    {
-        $this->privateKey = $privateKey;
-    }
-
-    /**
-     * Generate a JWT from the access token
-     *
-     * @param CryptKey $privateKey
-     *
-     * @return Token
-     */
-    private function convertToJWT(CryptKey $privateKey)
-    {
-        return (new Builder())
-            ->permittedFor($this->getClient()->getIdentifier())
-            ->identifiedBy($this->getIdentifier())
-            ->issuedAt(\time())
-            ->canOnlyBeUsedAfter(\time())
-            ->expiresAt($this->getExpiryDateTime()->getTimestamp())
-            ->relatedTo($this->getUserCode())
-            ->withClaim('scopes', $this->getScopes())
-            ->getToken(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()));
-    }
-
-    /**
-     * Generate a string representation from the access token
-     */
-    public function __toString()
-    {
-        return (string) $this->convertToJWT($this->privateKey);
-    }
 
     /**
      * @return string
@@ -87,6 +41,23 @@ trait DeviceCodeTrait
     public function setUserCode($userCode)
     {
         $this->userCode = $userCode;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getVerificationUri()
+    {
+        return $this->verificationUri;
+    }
+
+    /**
+     * @param string $verificationUri
+     */
+    public function setVerificationUri($verificationUri)
+    {
+        $this->verificationUri = $verificationUri;
     }
 
     /**
@@ -108,20 +79,4 @@ trait DeviceCodeTrait
      * @return string
      */
     abstract public function getIdentifier();
-
-    /**
-     * @return string
-     */
-    public function getVerificationUri()
-    {
-        return $this->verificationUri;
-    }
-
-    /**
-     * @param string $verificationUri
-     */
-    public function setVerificationUri($verificationUri)
-    {
-        $this->verificationUri = $verificationUri;
-    }
 }

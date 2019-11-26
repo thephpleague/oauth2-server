@@ -30,9 +30,4 @@ interface DeviceCodeEntityInterface extends TokenInterface
      * @param string $verificationUri
      */
     public function setVerificationUri($verificationUri);
-
-    /**
-     * Generate a string representation of the access token.
-     */
-    public function __toString();
 }
