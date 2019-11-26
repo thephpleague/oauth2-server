@@ -34,21 +34,6 @@ interface DeviceCodeRepositoryInterface extends RepositoryInterface
     /**
      * Get a device code entity.
      *
-     * @param string                $userCode
-     * @param string                $grantType
-     * @param ClientEntityInterface $clientEntity
-     *
-     * @return DeviceCodeEntityInterface|null
-     */
-    public function getDeviceCodeEntityByUserCode(
-        $userCode,
-        $grantType,
-        ClientEntityInterface $clientEntity
-    );
-
-    /**
-     * Get a device code entity.
-     *
      * @param string $deviceCode
      * @param string $grantType
      * @param ClientEntityInterface $clientEntity

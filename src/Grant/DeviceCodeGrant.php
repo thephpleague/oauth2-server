@@ -42,7 +42,7 @@ class DeviceCodeGrant extends AbstractGrant
      * @param DeviceCodeRepositoryInterface $deviceCodeRepository
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param DateInterval $deviceCodeTTL
-     * @param $retryInterval
+     * @param int $retryInterval
      */
     public function __construct(
         DeviceCodeRepositoryInterface $deviceCodeRepository,
