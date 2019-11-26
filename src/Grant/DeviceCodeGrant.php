@@ -39,6 +39,11 @@ class DeviceCodeGrant extends AbstractGrant
     private $retryInterval;
 
     /**
+     * @var string
+     */
+    private $verificationUri;
+
+    /**
      * @param DeviceCodeRepositoryInterface $deviceCodeRepository
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      * @param DateInterval $deviceCodeTTL
@@ -102,7 +107,7 @@ class DeviceCodeGrant extends AbstractGrant
         $deviceCode = $this->issueDeviceCode(
             $this->deviceCodeTTL,
             $deviceRequest->getClient(),
-            'verification_uri',
+            $this->verificationUri,
             $deviceRequest->getScopes()
         );
 
@@ -222,6 +227,16 @@ class DeviceCodeGrant extends AbstractGrant
         }
 
         return $deviceCode;
+    }
+
+    /**
+     * Set the verification uri
+     *
+     * @param $verificationUri
+     */
+    public function setVerificationUri($verificationUri)
+    {
+        $this->verificationUri = $verificationUri;
     }
 
     /**
