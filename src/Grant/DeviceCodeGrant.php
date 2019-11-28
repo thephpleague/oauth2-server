@@ -21,6 +21,7 @@ use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -231,7 +232,7 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * Set the verification uri
      *
-     * @param $verificationUri
+     * @param string $verificationUri
      */
     public function setVerificationUri($verificationUri)
     {
