@@ -232,7 +232,8 @@ class DeviceCodeGrant extends AbstractGrant
      *
      * @return \stdClass
      */
-    protected function decodeDeviceCode($encryptedDeviceCode) {
+    protected function decodeDeviceCode($encryptedDeviceCode)
+    {
         try {
             return \json_decode($this->decrypt($encryptedDeviceCode));
         } catch (LogicException $e) {
