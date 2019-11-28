@@ -6,12 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Add PSR15 compatible middleware (PR #1029)
+
 ### Changed
 - If an error is encountered when running `preg_match()` to validate an RSA key, the server will now throw a RuntimeException (PR #1047)
 - Replaced deprecated methods with recommended ones when using `Lcobucci\JWT\Builder` to build a JWT token. (PR #1060)
 - When storing a key, we no longer touch the file before writing it as this is an unnecessary step (PR #1064)
 - Prefix native PHP functions in namespaces with backslashes for micro-optimisations (PR #1071)
-
 
 ### Fixed
 - Clients are now explicitly prevented from using the Client Credentials grant unless they are confidential to conform
