@@ -15,8 +15,8 @@ use DateInterval;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
+use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
@@ -44,10 +44,10 @@ class DeviceCodeGrant extends AbstractGrant
     private $verificationUri;
 
     /**
-     * @param DeviceCodeRepositoryInterface $deviceCodeRepository
+     * @param DeviceCodeRepositoryInterface   $deviceCodeRepository
      * @param RefreshTokenRepositoryInterface $refreshTokenRepository
-     * @param DateInterval $deviceCodeTTL
-     * @param int $retryInterval
+     * @param DateInterval                    $deviceCodeTTL
+     * @param int                             $retryInterval
      */
     public function __construct(
         DeviceCodeRepositoryInterface $deviceCodeRepository,
@@ -117,7 +117,7 @@ class DeviceCodeGrant extends AbstractGrant
             'scopes' => $deviceCode->getScopes(),
             'user_code' => $deviceCode->getUserCode(),
             'expire_time' => $deviceCode->getExpiryDateTime()->getTimestamp(),
-            'verification_uri' => $deviceCode->getVerificationUri()
+            'verification_uri' => $deviceCode->getVerificationUri(),
         ];
 
         $jsonPayload = \json_encode($payload);
@@ -209,7 +209,6 @@ class DeviceCodeGrant extends AbstractGrant
             if ($deviceCodePayload->client_id !== $client->getIdentifier()) {
                 throw OAuthServerException::invalidRequest('device_code', 'Device code was not issued to this client');
             }
-
         } catch (\LogicException $e) {
             throw OAuthServerException::invalidRequest('device_code', 'Cannot decrypt the device code', $e);
         }

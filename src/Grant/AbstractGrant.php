@@ -519,14 +519,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue a device code.
      *
-     * @param DateInterval $deviceCodeTTL
-     * @param ClientEntityInterface $client
-     * @param string $verificationUri
+     * @param DateInterval           $deviceCodeTTL
+     * @param ClientEntityInterface  $client
+     * @param string                 $verificationUri
      * @param ScopeEntityInterface[] $scopes
      *
      * @return DeviceCodeEntityInterface
-     * @throws OAuthServerException
      *
+     * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
     protected function issueDeviceCode(
@@ -627,16 +627,17 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param int $length
      *
      * @return string
-     * @throws OAuthServerException
      *
+     * @throws OAuthServerException
      */
     protected function generateUniqueUserCode($length = 8)
     {
         try {
             $userCode = '';
-            while(strlen($userCode) < $length) {
-                $userCode .= (string)\random_int(0, 9);
+            while (\strlen($userCode) < $length) {
+                $userCode .= (string) \random_int(0, 9);
             }
+
             return $userCode;
             // @codeCoverageIgnoreStart
         } catch (TypeError $e) {

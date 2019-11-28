@@ -275,7 +275,7 @@ class OAuthServerException extends Exception
      * Expired token error.
      *
      * @param null|string $hint
-     * @param Throwable $previous Previous exception
+     * @param Throwable   $previous Previous exception
      *
      * @return static
      */

@@ -7,13 +7,11 @@ use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Grant\DeviceCodeGrant;
-use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
@@ -23,7 +21,6 @@ use LeagueTests\Stubs\DeviceCodeEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
-use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 
@@ -60,7 +57,7 @@ class DeviceCodeGrantTest extends TestCase
 
         $request = (new ServerRequest())->withParsedBody([
             'client_id' => 'foo',
-            'scope' => 'basic'
+            'scope' => 'basic',
         ]);
 
         $this->assertTrue($grant->canRespondToDeviceAuthorizationRequest($request));
@@ -89,7 +86,7 @@ class DeviceCodeGrantTest extends TestCase
 
         $request = (new ServerRequest())->withParsedBody([
             'client_id' => 'foo',
-            'scope' => 'basic'
+            'scope' => 'basic',
         ]);
 
         $this->assertInstanceOf(DeviceAuthorizationRequest::class, $grant->validateDeviceAuthorizationRequest($request));
@@ -117,7 +114,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = (new ServerRequest())->withParsedBody([
-            'scope' => 'basic'
+            'scope' => 'basic',
         ]);
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
@@ -145,7 +142,7 @@ class DeviceCodeGrantTest extends TestCase
 
         $request = (new ServerRequest())->withParsedBody([
             'client_id' => 'bar',
-            'scope' => 'basic'
+            'scope' => 'basic',
         ]);
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
@@ -218,7 +215,7 @@ class DeviceCodeGrantTest extends TestCase
                         'verification_uri' => 'http://foo/bar',
                     ]
                 )
-            )
+            ),
         ]);
 
         $responseType = new StubResponseType();
@@ -267,7 +264,6 @@ class DeviceCodeGrantTest extends TestCase
 
     public function testRespondToRequestMissingDeviceCode()
     {
-
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
@@ -295,7 +291,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
-            'client_id' => 'foo'
+            'client_id' => 'foo',
         ]);
 
         $responseType = new StubResponseType();

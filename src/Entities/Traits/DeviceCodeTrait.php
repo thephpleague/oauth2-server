@@ -43,7 +43,6 @@ trait DeviceCodeTrait
         $this->userCode = $userCode;
     }
 
-
     /**
      * @return string
      */

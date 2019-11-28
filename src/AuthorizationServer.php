@@ -183,8 +183,8 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param ServerRequestInterface $request
      *
      * @return DeviceAuthorizationRequest
-     * @throws OAuthServerException
      *
+     * @throws OAuthServerException
      */
     public function validateDeviceAuthorizationRequest(ServerRequestInterface $request)
     {
@@ -201,10 +201,9 @@ class AuthorizationServer implements EmitterAwareInterface
      * Complete a device authorization request
      *
      * @param DeviceAuthorizationRequest $deviceRequest
-     * @param ResponseInterface $response
+     * @param ResponseInterface          $response
      *
      * @return ResponseInterface
-     *
      */
     public function completeDeviceAuthorizationRequest(DeviceAuthorizationRequest $deviceRequest, ResponseInterface $response)
     {

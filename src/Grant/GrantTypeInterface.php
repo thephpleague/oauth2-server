@@ -15,7 +15,6 @@ use DateInterval;
 use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -102,11 +101,11 @@ interface GrantTypeInterface extends EmitterAwareInterface
      */
     public function canRespondToAccessTokenRequest(ServerRequestInterface $request);
 
-
     /**
      * The grant type should return true if it is able to response to a device authorization request
      *
      * @param ServerRequestInterface $request
+     *
      * @return bool
      */
     public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request);
