@@ -191,7 +191,7 @@ class DeviceCodeGrant extends AbstractGrant
         if (\is_null($encryptedDeviceCode)) {
             throw OAuthServerException::invalidRequest('device_code');
         }
-        
+
         $deviceCodePayload = $this->decodeDeviceCode($encryptedDeviceCode);
 
         if (!\property_exists($deviceCodePayload, 'device_code_id')) {
