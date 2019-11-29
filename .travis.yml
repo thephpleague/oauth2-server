@@ -1,6 +1,6 @@
 language: php
 
-dist: xenial
+dist: bionic
 sudo: false
 
 cache:
