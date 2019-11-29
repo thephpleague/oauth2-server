@@ -4,7 +4,7 @@
     "homepage": "https://oauth2.thephpleague.com/",
     "license": "MIT",
     "require": {
-        "php": ">=7.1.0",
+        "php": ">=7.2.0",
         "ext-openssl": "*",
         "league/event": "^2.2",
         "lcobucci/jwt": "^3.3.1",
@@ -13,7 +13,7 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.5.13 || ^8.2.3",
+        "phpunit/phpunit": "^8.4.3",
         "zendframework/zend-diactoros": "^2.1.2",
         "phpstan/phpstan": "^0.11.8",
         "phpstan/phpstan-phpunit": "^0.11.2",
