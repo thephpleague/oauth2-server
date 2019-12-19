@@ -256,6 +256,6 @@ class DeviceCodeGrant extends AbstractGrant
      */
     public function getIdentifier()
     {
-        return 'device_code';
+        return 'urn:ietf:params:oauth:grant-type:device_code';
     }
 }
