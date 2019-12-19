@@ -44,7 +44,7 @@ class DeviceCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
         $grant = new DeviceCodeGrant($deviceCodeRepositoryMock, $refreshTokenRepositoryMock, new DateInterval('PT10M'), 5);
-        $this->assertEquals('device_code', $grant->getIdentifier());
+        $this->assertEquals('urn:ietf:params:oauth:grant-type:device_code', $grant->getIdentifier());
     }
 
     public function testCanRespondToDeviceAuthorizationRequest()
