@@ -13,6 +13,8 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use DateTimeImmutable;
+use Error;
+use Exception;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -24,14 +26,13 @@ use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
+use TypeError;
 
 /**
  * Device Code grant class.
  */
 class DeviceCodeGrant extends AbstractGrant
 {
-    const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
-
     /**
      * @var DeviceCodeRepositoryInterface
      */
