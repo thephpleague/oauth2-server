@@ -333,9 +333,10 @@ class DeviceCodeGrant extends AbstractGrant
     {
         try {
             $userCode = '';
+            $userCodeCharacters = 'BCDFGHJKLMNPQRSTVWXZ';
 
             while (\strlen($userCode) < $length) {
-                $userCode .= (string) \random_int(0, 9);
+                $userCode .= $userCodeCharacters[\random_int(0, 19)];
             }
 
             return $userCode;
