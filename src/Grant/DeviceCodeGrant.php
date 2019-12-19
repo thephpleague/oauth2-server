@@ -30,6 +30,8 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class DeviceCodeGrant extends AbstractGrant
 {
+    const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
+
     /**
      * @var DeviceCodeRepositoryInterface
      */
@@ -318,5 +320,34 @@ class DeviceCodeGrant extends AbstractGrant
         }
     }
 
+    /**
+     * Generate a new unique user code.
+     *
+     * @param int $length
+     *
+     * @return string
+     *
+     * @throws OAuthServerException
+     */
+    protected function generateUniqueUserCode($length = 8)
+    {
+        try {
+            $userCode = '';
 
+            while (\strlen($userCode) < $length) {
+                $userCode .= (string) \random_int(0, 9);
+            }
+
+            return $userCode;
+            // @codeCoverageIgnoreStart
+        } catch (TypeError $e) {
+            throw OAuthServerException::serverError('An unexpected error has occurred', $e);
+        } catch (Error $e) {
+            throw OAuthServerException::serverError('An unexpected error has occurred', $e);
+        } catch (Exception $e) {
+            // If you get this message, the CSPRNG failed hard.
+            throw OAuthServerException::serverError('Could not generate a random string', $e);
+        }
+        // @codeCoverageIgnoreEnd
+    }
 }

@@ -562,36 +562,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Generate a new unique user code.
-     *
-     * @param int $length
-     *
-     * @return string
-     *
-     * @throws OAuthServerException
-     */
-    protected function generateUniqueUserCode($length = 8)
-    {
-        try {
-            $userCode = '';
-            while (\strlen($userCode) < $length) {
-                $userCode .= (string) \random_int(0, 9);
-            }
-
-            return $userCode;
-            // @codeCoverageIgnoreStart
-        } catch (TypeError $e) {
-            throw OAuthServerException::serverError('An unexpected error has occurred', $e);
-        } catch (Error $e) {
-            throw OAuthServerException::serverError('An unexpected error has occurred', $e);
-        } catch (Exception $e) {
-            // If you get this message, the CSPRNG failed hard.
-            throw OAuthServerException::serverError('Could not generate a random string', $e);
-        }
-        // @codeCoverageIgnoreEnd
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function canRespondToAccessTokenRequest(ServerRequestInterface $request)
