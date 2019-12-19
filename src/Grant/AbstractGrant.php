@@ -611,7 +611,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateDeviceAuthorizationRequest(ServerRequestInterface $request)
     {
-        throw new LogicException('This grant cannot validate an authorization request');
+        throw new LogicException('This grant cannot validate a device authorization request');
     }
 
     /**
