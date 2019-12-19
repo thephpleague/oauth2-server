@@ -20,7 +20,6 @@ use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
-use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -28,7 +27,6 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
@@ -69,11 +67,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @var AuthCodeRepositoryInterface
      */
     protected $authCodeRepository;
-
-    /**
-     * @var DeviceCodeRepositoryInterface
-     */
-    protected $deviceCodeRepository;
 
     /**
      * @var RefreshTokenRepositoryInterface
@@ -138,14 +131,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setAuthCodeRepository(AuthCodeRepositoryInterface $authCodeRepository)
     {
         $this->authCodeRepository = $authCodeRepository;
-    }
-
-    /**
-     * @param DeviceCodeRepositoryInterface $deviceCodeRepository
-     */
-    public function setDeviceCodeRepository(DeviceCodeRepositoryInterface $deviceCodeRepository)
-    {
-        $this->deviceCodeRepository = $deviceCodeRepository;
     }
 
     /**
@@ -508,51 +493,6 @@ abstract class AbstractGrant implements GrantTypeInterface
                 $this->authCodeRepository->persistNewAuthCode($authCode);
 
                 return $authCode;
-            } catch (UniqueTokenIdentifierConstraintViolationException $e) {
-                if ($maxGenerationAttempts === 0) {
-                    throw $e;
-                }
-            }
-        }
-    }
-
-    /**
-     * Issue a device code.
-     *
-     * @param DateInterval           $deviceCodeTTL
-     * @param ClientEntityInterface  $client
-     * @param string                 $verificationUri
-     * @param ScopeEntityInterface[] $scopes
-     *
-     * @return DeviceCodeEntityInterface
-     *
-     * @throws OAuthServerException
-     * @throws UniqueTokenIdentifierConstraintViolationException
-     */
-    protected function issueDeviceCode(
-        DateInterval $deviceCodeTTL,
-        ClientEntityInterface $client,
-        $verificationUri,
-        array $scopes = []
-    ) {
-        $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
-
-        $deviceCode = $this->deviceCodeRepository->getNewDeviceCode();
-        $deviceCode->setExpiryDateTime((new DateTimeImmutable())->add($deviceCodeTTL));
-        $deviceCode->setClient($client);
-        $deviceCode->setVerificationUri($verificationUri);
-
-        foreach ($scopes as $scope) {
-            $deviceCode->addScope($scope);
-        }
-
-        while ($maxGenerationAttempts-- > 0) {
-            $deviceCode->setIdentifier($this->generateUniqueIdentifier());
-            $deviceCode->setUserCode($this->generateUniqueUserCode());
-            try {
-                $this->deviceCodeRepository->persistNewDeviceCode($deviceCode);
-
-                return $deviceCode;
             } catch (UniqueTokenIdentifierConstraintViolationException $e) {
                 if ($maxGenerationAttempts === 0) {
                     throw $e;

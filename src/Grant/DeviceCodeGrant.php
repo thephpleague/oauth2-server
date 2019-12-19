@@ -12,6 +12,7 @@
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
+use DateTimeImmutable;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -29,6 +30,11 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class DeviceCodeGrant extends AbstractGrant
 {
+    /**
+     * @var DeviceCodeRepositoryInterface
+     */
+    protected $deviceCodeRepository;
+
     /**
      * @var DateInterval
      */
@@ -258,4 +264,59 @@ class DeviceCodeGrant extends AbstractGrant
     {
         return 'urn:ietf:params:oauth:grant-type:device_code';
     }
+
+    /**
+     * @param DeviceCodeRepositoryInterface $deviceCodeRepository
+     */
+    public function setDeviceCodeRepository(DeviceCodeRepositoryInterface $deviceCodeRepository)
+    {
+        $this->deviceCodeRepository = $deviceCodeRepository;
+    }
+
+    /**
+     * Issue a device code.
+     *
+     * @param DateInterval           $deviceCodeTTL
+     * @param ClientEntityInterface  $client
+     * @param string                 $verificationUri
+     * @param ScopeEntityInterface[] $scopes
+     *
+     * @return DeviceCodeEntityInterface
+     *
+     * @throws OAuthServerException
+     * @throws UniqueTokenIdentifierConstraintViolationException
+     */
+    protected function issueDeviceCode(
+        DateInterval $deviceCodeTTL,
+        ClientEntityInterface $client,
+        $verificationUri,
+        array $scopes = []
+    ) {
+        $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
+
+        $deviceCode = $this->deviceCodeRepository->getNewDeviceCode();
+        $deviceCode->setExpiryDateTime((new DateTimeImmutable())->add($deviceCodeTTL));
+        $deviceCode->setClient($client);
+        $deviceCode->setVerificationUri($verificationUri);
+
+        foreach ($scopes as $scope) {
+            $deviceCode->addScope($scope);
+        }
+
+        while ($maxGenerationAttempts-- > 0) {
+            $deviceCode->setIdentifier($this->generateUniqueIdentifier());
+            $deviceCode->setUserCode($this->generateUniqueUserCode());
+            try {
+                $this->deviceCodeRepository->persistNewDeviceCode($deviceCode);
+
+                return $deviceCode;
+            } catch (UniqueTokenIdentifierConstraintViolationException $e) {
+                if ($maxGenerationAttempts === 0) {
+                    throw $e;
+                }
+            }
+        }
+    }
+
+
 }
