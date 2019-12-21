@@ -17,7 +17,7 @@ use OAuth2ServerExamples\Entities\DeviceCodeEntity;
 class DeviceCodeRepository implements DeviceCodeRepositoryInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getNewDeviceCode()
     {
@@ -25,7 +25,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function persistNewDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity)
     {
@@ -33,7 +33,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDeviceCodeEntityByDeviceCode($deviceCode, $grantType, ClientEntityInterface $clientEntity)
     {
@@ -46,7 +46,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function revokeDeviceCode($codeId)
     {
@@ -54,7 +54,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isDeviceCodeRevoked($codeId)
     {
