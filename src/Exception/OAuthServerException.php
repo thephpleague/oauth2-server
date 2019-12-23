@@ -306,6 +306,25 @@ class OAuthServerException extends Exception
     }
 
     /**
+     * Slow down error used with the Device Authorization Grant.
+     *
+     * @param string    $hint
+     * @param Throwable $previous Previous exception
+     *
+     * @return static
+     */
+    public static function slowDown($hint = '')
+    {
+        return new static(
+            'example message',
+            13,
+            'slow_down',
+            400,
+            $hint
+        );
+    }
+
+    /**
      * @return string
      */
     public function getErrorType()

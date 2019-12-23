@@ -21,6 +21,7 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
+use League\OAuth2\Server\Repositories\DeviceAuthorizationRequestRepository;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
@@ -41,6 +42,11 @@ class DeviceCodeGrant extends AbstractGrant
     protected $deviceCodeRepository;
 
     /**
+     * @var DeviceAuthorizationRequestRepository
+     */
+    protected $deviceAuthorizationRequestRepository;
+
+    /**
      * @var DateInterval
      */
     private $deviceCodeTTL;
@@ -56,18 +62,21 @@ class DeviceCodeGrant extends AbstractGrant
     private $verificationUri;
 
     /**
-     * @param DeviceCodeRepositoryInterface   $deviceCodeRepository
-     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
-     * @param DateInterval                    $deviceCodeTTL
-     * @param int                             $retryInterval
+     * @param DeviceCodeRepositoryInterface        $deviceCodeRepository
+     * @param DeviceAuthorizationRequestRepository $deviceAuthorizationRequestRepository,
+     * @param RefreshTokenRepositoryInterface      $refreshTokenRepository
+     * @param DateInterval                         $deviceCodeTTL
+     * @param int                                  $retryInterval
      */
     public function __construct(
         DeviceCodeRepositoryInterface $deviceCodeRepository,
+        DeviceAuthorizationRequestRepository $deviceAuthorizationRequestRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         DateInterval $deviceCodeTTL,
         $retryInterval = 5
     ) {
         $this->setDeviceCodeRepository($deviceCodeRepository);
+        $this->setDeviceAuthorizationRequestRepository($deviceAuthorizationRequestRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
 
         $this->refreshTokenTTL = new DateInterval('P1M');
@@ -158,8 +167,13 @@ class DeviceCodeGrant extends AbstractGrant
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $deviceCode = $this->validateDeviceCode($request, $client);
 
-        // TODO: if the request is too fast, respond with slow down
+        $lastRequest = $this->deviceAuthorizationRequestRepository->getLast($client->getIdentifier());
 
+        if ($lastRequest !== null && $lastRequest->getTimestamp() + $this->retryInterval > \time()) {
+            throw OAuthServerException::slowDown();
+        }
+
+        $this->deviceAuthorizationRequestRepository->persist($client->getIdentifier());
 
         // if device code has no user associated, respond with pending
         if (\is_null($deviceCode->getUserIdentifier())) {
@@ -273,9 +287,18 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * @param DeviceCodeRepositoryInterface $deviceCodeRepository
      */
-    public function setDeviceCodeRepository(DeviceCodeRepositoryInterface $deviceCodeRepository)
+    private function setDeviceCodeRepository(DeviceCodeRepositoryInterface $deviceCodeRepository)
     {
         $this->deviceCodeRepository = $deviceCodeRepository;
+    }
+
+    /**
+     * @param DeviceAuthorizationRequestRepository $deviceAuthorizationRequestRepository
+     */
+    private function setDeviceAuthorizationRequestRepository(
+        DeviceAuthorizationRequestRepository $deviceAuthorizationRequestRepository
+    ) {
+        $this->deviceAuthorizationRequestRepository = $deviceAuthorizationRequestRepository;
     }
 
     /**
