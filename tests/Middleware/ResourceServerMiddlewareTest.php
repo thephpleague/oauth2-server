@@ -11,8 +11,8 @@ use League\OAuth2\Server\ResourceServer;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 
 class ResourceServerMiddlewareTest extends TestCase
 {

@@ -20,7 +20,7 @@ use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequest;
 
 class ImplicitGrantTest extends TestCase
 {

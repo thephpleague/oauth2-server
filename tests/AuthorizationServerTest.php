@@ -23,9 +23,9 @@ use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequestFactory;
 
 class AuthorizationServerTest extends TestCase
 {

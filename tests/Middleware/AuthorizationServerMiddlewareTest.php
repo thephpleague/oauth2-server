@@ -15,8 +15,8 @@ use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
 
 class AuthorizationServerMiddlewareTest extends TestCase
 {

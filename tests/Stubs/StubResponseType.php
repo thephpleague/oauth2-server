@@ -8,7 +8,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response;
+use Laminas\Diactoros\Response;
 
 class StubResponseType extends AbstractResponseType
 {
