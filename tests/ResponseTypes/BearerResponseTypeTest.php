@@ -4,6 +4,8 @@ namespace LeagueTests\ResponseTypes;
 
 use DateInterval;
 use DateTimeImmutable;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -15,8 +17,6 @@ use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
 
 class BearerResponseTypeTest extends TestCase
 {

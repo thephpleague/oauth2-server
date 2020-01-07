@@ -2,12 +2,12 @@
 
 namespace LeagueTests\AuthorizationValidators;
 
+use Laminas\Diactoros\ServerRequest;
 use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\ServerRequest;
 
 class BearerTokenValidatorTest extends TestCase
 {

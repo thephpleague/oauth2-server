@@ -3,6 +3,8 @@
 namespace LeagueTests\Middleware;
 
 use DateInterval;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -15,8 +17,6 @@ use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
 
 class AuthorizationServerMiddlewareTest extends TestCase
 {
