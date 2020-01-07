@@ -26,9 +26,6 @@ method being defined (PR #1051)
 - An exception is now thrown if a refresh token is accidentally sent in place of an authorization code when using the 
 Auth Code Grant (PR #1057)
 
-### Security
-- Replaced deprecated Zend Diactoros with new package. (PR #1079) 
-
 ## [8.0.0] - released 2019-07-13
 
 ### Added
