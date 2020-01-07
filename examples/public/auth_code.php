@@ -7,6 +7,7 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+use Laminas\Diactoros\Stream;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
@@ -19,7 +20,6 @@ use OAuth2ServerExamples\Repositories\ScopeRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Laminas\Diactoros\Stream;
 
 include __DIR__ . '/../vendor/autoload.php';
 

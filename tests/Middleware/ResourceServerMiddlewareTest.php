@@ -4,6 +4,8 @@ namespace LeagueTests\Middleware;
 
 use DateInterval;
 use DateTimeImmutable;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -11,8 +13,6 @@ use League\OAuth2\Server\ResourceServer;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use PHPUnit\Framework\TestCase;
-use Laminas\Diactoros\Response;
-use Laminas\Diactoros\ServerRequest;
 
 class ResourceServerMiddlewareTest extends TestCase
 {
