@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replaced deprecated methods with recommended ones when using `Lcobucci\JWT\Builder` to build a JWT token. (PR #1060)
 - When storing a key, we no longer touch the file before writing it as this is an unnecessary step (PR #1064)
 - Prefix native PHP functions in namespaces with backslashes for micro-optimisations (PR #1071)
-- Replaced deprecated Zend Diactoros with new package. (PR #1079) 
 
 ### Removed
 - Support for PHP 7.1 (PR #1075)
@@ -26,6 +25,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 method being defined (PR #1051)
 - An exception is now thrown if a refresh token is accidentally sent in place of an authorization code when using the 
 Auth Code Grant (PR #1057)
+
+### Security
+- Replaced deprecated Zend Diactoros with new package. (PR #1079) 
 
 ## [8.0.0] - released 2019-07-13
 
