@@ -1174,6 +1174,7 @@ class AuthCodeGrantTest extends TestCase
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
             $this->assertEquals($e->getHint(), 'Authorization code has been revoked');
+            $this->assertEquals($e->getErrorType(), 'invalid_grant');
         }
     }
 
