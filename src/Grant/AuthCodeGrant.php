@@ -350,12 +350,16 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'client_id'             => $authCode->getClient()->getIdentifier(),
                 'redirect_uri'          => $authCode->getRedirectUri(),
                 'auth_code_id'          => $authCode->getIdentifier(),
-                'scopes'                => $authCode->getScopes(),
+                'scopes'                => [],
                 'user_id'               => $authCode->getUserIdentifier(),
                 'expire_time'           => (new DateTimeImmutable())->add($this->authCodeTTL)->getTimestamp(),
                 'code_challenge'        => $authorizationRequest->getCodeChallenge(),
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
+            
+            foreach ($authCode->getScopes() as $scope) {
+                $payload['scopes'][] = $scope->getIdentifier();
+            }
 
             $jsonPayload = \json_encode($payload);
 
