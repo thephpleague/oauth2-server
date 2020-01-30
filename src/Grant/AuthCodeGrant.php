@@ -356,7 +356,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'code_challenge'        => $authorizationRequest->getCodeChallenge(),
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
-            
+
             foreach ($authCode->getScopes() as $scope) {
                 $payload['scopes'][] = $scope->getIdentifier();
             }
