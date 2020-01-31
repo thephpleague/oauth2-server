@@ -23,7 +23,7 @@ class ResourceServer
     private $accessTokenRepository;
 
     /**
-     * @var CryptKey
+     * @var CryptKeyInterface
      */
     private $publicKey;
 
@@ -36,7 +36,7 @@ class ResourceServer
      * New server instance.
      *
      * @param AccessTokenRepositoryInterface       $accessTokenRepository
-     * @param CryptKey|string                      $publicKey
+     * @param CryptKeyInterface|string             $publicKey
      * @param null|AuthorizationValidatorInterface $authorizationValidator
      */
     public function __construct(
@@ -46,7 +46,7 @@ class ResourceServer
     ) {
         $this->accessTokenRepository = $accessTokenRepository;
 
-        if ($publicKey instanceof CryptKey === false) {
+        if ($publicKey instanceof CryptKeyInterface === false) {
             $publicKey = new CryptKey($publicKey);
         }
         $this->publicKey = $publicKey;
