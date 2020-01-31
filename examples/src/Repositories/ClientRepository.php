@@ -27,6 +27,7 @@ class ClientRepository implements ClientRepositoryInterface
         $client->setIdentifier($clientIdentifier);
         $client->setName(self::CLIENT_NAME);
         $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setConfidential();
 
         return $client;
     }
@@ -38,7 +39,7 @@ class ClientRepository implements ClientRepositoryInterface
     {
         $clients = [
             'myawesomeapp' => [
-                'secret'          => password_hash('abc123', PASSWORD_BCRYPT),
+                'secret'          => \password_hash('abc123', PASSWORD_BCRYPT),
                 'name'            => self::CLIENT_NAME,
                 'redirect_uri'    => self::REDIRECT_URI,
                 'is_confidential' => true,
@@ -46,13 +47,13 @@ class ClientRepository implements ClientRepositoryInterface
         ];
 
         // Check if client is registered
-        if (array_key_exists($clientIdentifier, $clients) === false) {
+        if (\array_key_exists($clientIdentifier, $clients) === false) {
             return;
         }
 
         if (
             $clients[$clientIdentifier]['is_confidential'] === true
-            && password_verify($clientSecret, $clients[$clientIdentifier]['secret']) === false
+            && \password_verify($clientSecret, $clients[$clientIdentifier]['secret']) === false
         ) {
             return;
         }

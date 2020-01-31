@@ -238,7 +238,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
 
-        if (is_null($clientId)) {
+        if (\is_null($clientId)) {
             throw OAuthServerException::invalidRequest('client_id');
         }
 
@@ -263,7 +263,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         ServerRequestInterface $request
     ) {
         if (\is_string($client->getRedirectUri())
-            && (strcmp($client->getRedirectUri(), $redirectUri) !== 0)
+            && (\strcmp($client->getRedirectUri(), $redirectUri) !== 0)
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient($request);
@@ -315,7 +315,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     private function convertScopesQueryStringToArray($scopes)
     {
-        return array_filter(explode(self::SCOPE_DELIMITER_STRING, trim($scopes)), function ($scope) {
+        return \array_filter(\explode(self::SCOPE_DELIMITER_STRING, \trim($scopes)), function ($scope) {
             return !empty($scope);
         });
     }
@@ -354,19 +354,19 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         $header = $request->getHeader('Authorization')[0];
-        if (strpos($header, 'Basic ') !== 0) {
+        if (\strpos($header, 'Basic ') !== 0) {
             return [null, null];
         }
 
-        if (!($decoded = base64_decode(substr($header, 6)))) {
+        if (!($decoded = \base64_decode(\substr($header, 6)))) {
             return [null, null];
         }
 
-        if (strpos($decoded, ':') === false) {
+        if (\strpos($decoded, ':') === false) {
             return [null, null]; // HTTP Basic header without colon isn't valid
         }
 
-        return explode(':', $decoded, 2);
+        return \explode(':', $decoded, 2);
     }
 
     /**
@@ -547,7 +547,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected function generateUniqueIdentifier($length = 40)
     {
         try {
-            return bin2hex(random_bytes($length));
+            return \bin2hex(\random_bytes($length));
             // @codeCoverageIgnoreStart
         } catch (TypeError $e) {
             throw OAuthServerException::serverError('An unexpected error has occurred', $e);
@@ -568,7 +568,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $requestParameters = (array) $request->getParsedBody();
 
         return (
-            array_key_exists('grant_type', $requestParameters)
+            \array_key_exists('grant_type', $requestParameters)
             && $requestParameters['grant_type'] === $this->getIdentifier()
         );
     }

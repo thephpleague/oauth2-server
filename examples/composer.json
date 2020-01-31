@@ -7,7 +7,7 @@
         "lcobucci/jwt": "^3.3",
         "psr/http-message": "^1.0",
         "defuse/php-encryption": "^2.2",
-        "zendframework/zend-diactoros": "^2.1.0"
+        "laminas/laminas-diactoros": "^2.1.2"
     },
     "autoload": {
         "psr-4": {

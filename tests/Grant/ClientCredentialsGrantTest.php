@@ -3,6 +3,7 @@
 namespace LeagueTests\Grant;
 
 use DateInterval;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -14,7 +15,6 @@ use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\ServerRequest;
 
 class ClientCredentialsGrantTest extends TestCase
 {

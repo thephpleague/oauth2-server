@@ -10,7 +10,7 @@ class CryptTraitStub
 
     public function __construct()
     {
-        $this->setEncryptionKey(base64_encode(random_bytes(36)));
+        $this->setEncryptionKey(\base64_encode(\random_bytes(36)));
     }
 
     public function getKey()
