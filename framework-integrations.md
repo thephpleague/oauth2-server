@@ -8,7 +8,7 @@ permalink: /framework-integrations/
 
 * [CakePHP 3](https://github.com/uafrica/oauth-server)
 * [Drupal](https://www.drupal.org/project/simple_oauth)
-* [Expressive (Official)](https://docs.zendframework.com/zend-expressive-authentication-oauth2/)
+* [OAuth 2 Server for Mezzio](https://github.com/mezzio/mezzio-authentication-oauth2)
 * [Laravel Passport (Official)](https://laravel.com/docs/passport)
 * [Nette Framework](https://github.com/lookyman/nette-oauth2-server)
 * [Phalcon Framework](https://github.com/tegaphilip/padlock)
