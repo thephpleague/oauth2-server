@@ -57,7 +57,7 @@ class ClientRepository implements ClientRepositoryInterface
         ) {
             return false;
         }
-        
+
         return true;
     }
 }
