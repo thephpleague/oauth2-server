@@ -51,6 +51,7 @@ class RefreshTokenGrantTest extends TestCase
         $scopeEntity->setIdentifier('foo');
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturn([$scopeEntity]);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
@@ -107,6 +108,7 @@ class RefreshTokenGrantTest extends TestCase
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturn([$scopeEntity]);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
@@ -169,6 +171,7 @@ class RefreshTokenGrantTest extends TestCase
         $scope->setIdentifier('foo');
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturn([$scope]);
 
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
@@ -447,6 +450,76 @@ class RefreshTokenGrantTest extends TestCase
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(8);
+
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
+    }
+
+    public function testRespondToRequestFinalizeScopes()
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $fooScopeEntity = new ScopeEntity();
+        $fooScopeEntity->setIdentifier('foo');
+
+        $barScopeEntity = new ScopeEntity();
+        $barScopeEntity->setIdentifier('bar');
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($fooScopeEntity, $barScopeEntity);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+
+        $scopes = [$fooScopeEntity, $barScopeEntity];
+        $finalizedScopes = [$fooScopeEntity];
+
+        $scopeRepositoryMock
+            ->expects($this->once())
+            ->method('finalizeScopes')
+            ->with($scopes, $grant->getIdentifier(), $client)
+            ->willReturn($finalizedScopes);
+
+        $accessTokenRepositoryMock
+            ->method('getNewToken')
+            ->with($client, $finalizedScopes)
+            ->willReturn(new AccessTokenEntity());
+
+        $oldRefreshToken = $this->cryptStub->doEncrypt(
+            \json_encode(
+                [
+                    'client_id'        => 'foo',
+                    'refresh_token_id' => 'zyxwvu',
+                    'access_token_id'  => 'abcdef',
+                    'scopes'           => ['foo', 'bar'],
+                    'user_id'          => 123,
+                    'expire_time'      => \time() + 3600,
+                ]
+            )
+        );
+
+        $serverRequest = (new ServerRequest())->withParsedBody([
+           'client_id'     => 'foo',
+           'client_secret' => 'bar',
+           'refresh_token' => $oldRefreshToken,
+           'scope'         =>  ['foo', 'bar'],
+       ]);
+
+        $responseType = new StubResponseType();
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
