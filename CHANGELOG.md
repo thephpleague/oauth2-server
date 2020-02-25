@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - When storing a key, we no longer touch the file before writing it as this is an unnecessary step (PR #1064)
 - Prefix native PHP functions in namespaces with backslashes for micro-optimisations (PR #1071)
 
+### Changed (v9)
+- Added an exception hint when user credential check fails for the Password Grant (PR #XX)
+
 ### Removed
 - Support for PHP 7.1 (PR #1075)
 
