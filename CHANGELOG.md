@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Prefix native PHP functions in namespaces with backslashes for micro-optimisations (PR #1071)
 
 ### Changed (v9)
-- Added an exception hint when user credential check fails for the Password Grant (PR #XX)
+- Added an exception hint when user credential check fails for the Password Grant (PR #1098)
 
 ### Removed
 - Support for PHP 7.1 (PR #1075)
