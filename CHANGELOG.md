@@ -13,13 +13,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added support for PHP 7.4 (PR #1075)
 
 ### Fixed (v9)
-- If a refresh token has expired, been revoked, cannot be decrypted, or does not belong to the correct client, the server will now issue an `invalid_grant` error and a HTTP 400 response. In previous versions the server incorrectly issued an `invalid_request` and HTTP 401 response (PR #1042)
+- If a refresh token has expired, been revoked, cannot be decrypted, or does not belong to the correct client, the server will now issue an `invalid_grant` error and a HTTP 400 response. In previous versions the server incorrectly issued an `invalid_request` and HTTP 401 response (PR #1042) (PR #1082)
 
 ### Changed
 - If an error is encountered when running `preg_match()` to validate an RSA key, the server will now throw a RuntimeException (PR #1047)
 - Replaced deprecated methods with recommended ones when using `Lcobucci\JWT\Builder` to build a JWT token. (PR #1060)
 - When storing a key, we no longer touch the file before writing it as this is an unnecessary step (PR #1064)
 - Prefix native PHP functions in namespaces with backslashes for micro-optimisations (PR #1071)
+
+### Changed (v9)
+- Added an exception hint when user credential check fails for the Password Grant (PR #1098)
 
 ### Removed
 - Support for PHP 7.1 (PR #1075)
