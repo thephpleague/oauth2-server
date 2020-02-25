@@ -60,7 +60,7 @@ class CryptKeyTest extends TestCase
     public function testPcreErrorExceptions()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/^PCRE error/');
+        $this->expectExceptionMessageMatches('/^PCRE error/');
 
         new class('foobar foobar foobar') extends CryptKey {
             const RSA_KEY_PATTERN = '/(?:\D+|<\d+>)*[!?]/';

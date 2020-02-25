@@ -13,7 +13,7 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.4.3",
+        "phpunit/phpunit": "^8.4.3 || ^9.0",
         "laminas/laminas-diactoros": "^2.1.2",
         "phpstan/phpstan": "^0.11.8",
         "phpstan/phpstan-phpunit": "^0.11.2",

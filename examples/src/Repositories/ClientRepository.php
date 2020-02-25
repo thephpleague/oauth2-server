@@ -48,14 +48,16 @@ class ClientRepository implements ClientRepositoryInterface
 
         // Check if client is registered
         if (\array_key_exists($clientIdentifier, $clients) === false) {
-            return;
+            return false;
         }
 
         if (
             $clients[$clientIdentifier]['is_confidential'] === true
             && \password_verify($clientSecret, $clients[$clientIdentifier]['secret']) === false
         ) {
-            return;
+            return false;
         }
+
+        return true;
     }
 }

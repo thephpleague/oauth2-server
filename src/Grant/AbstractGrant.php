@@ -88,7 +88,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $privateKey;
 
     /**
-     * @string
+     * @var string
      */
     protected $defaultScope;
 
