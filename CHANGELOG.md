@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 method being defined (PR #1051)
 - An exception is now thrown if a refresh token is accidentally sent in place of an authorization code when using the 
 Auth Code Grant (PR #1057)
+- Can now send access token request without being forced to specify a redirect URI (PR #1096)
 
 ## [8.0.0] - released 2019-07-13
 

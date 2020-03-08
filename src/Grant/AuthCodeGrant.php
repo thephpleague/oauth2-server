@@ -265,15 +265,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             (\is_array($client->getRedirectUri()) && \count($client->getRedirectUri()) !== 1)) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient($request);
-        } else {
-            $redirectUri = \is_array($client->getRedirectUri())
-                ? $client->getRedirectUri()[0]
-                : $client->getRedirectUri();
         }
+
+        $defaultClientRedirectUri = \is_array($client->getRedirectUri())
+            ? $client->getRedirectUri()[0]
+            : $client->getRedirectUri();
 
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            $redirectUri
+            $defaultClientRedirectUri
         );
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
@@ -281,7 +281,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $authorizationRequest = new AuthorizationRequest();
         $authorizationRequest->setGrantTypeId($this->getIdentifier());
         $authorizationRequest->setClient($client);
-        $authorizationRequest->setRedirectUri($this->getQueryStringParameter('redirect_uri', $request));
+        $authorizationRequest->setRedirectUri($redirectUri);
 
         if ($stateParameter !== null) {
             $authorizationRequest->setState($stateParameter);
