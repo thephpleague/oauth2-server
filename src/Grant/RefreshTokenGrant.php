@@ -14,6 +14,7 @@ namespace League\OAuth2\Server\Grant;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
 use League\OAuth2\Server\Entity\RefreshTokenEntity;
+use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
@@ -163,6 +164,11 @@ class RefreshTokenGrant extends AbstractGrant
 
         // Get the scopes for the original session
         $session = $oldAccessToken->getSession();
+
+        if (!$this->isClientValid($client, $session)) {
+            throw new Exception\InvalidClientException();
+        }
+
         $scopes = $this->formatScopes($session->getScopes());
 
         // Get and validate any requested scopes
@@ -219,5 +225,18 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         return $this->server->getTokenType()->generateResponse();
+    }
+
+    /**
+     * Checks if the client used on the request is the same that owns this session
+     *
+     * @param ClientEntity  $client
+     * @param SessionEntity $session
+     *
+     * @return bool
+     */
+    private function isClientValid(ClientEntity $client, SessionEntity $session)
+    {
+        return $client->getId() === $session->getClient()->getId();
     }
 }
