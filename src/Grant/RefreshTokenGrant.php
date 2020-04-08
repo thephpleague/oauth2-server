@@ -5,6 +5,7 @@
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
+ *
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
@@ -112,7 +113,6 @@ class RefreshTokenGrant extends AbstractGrant
         return $this->requireClientSecret;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -141,6 +141,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         if (($client instanceof ClientEntity) === false) {
             $this->server->getEventEmitter()->emit(new Event\ClientAuthenticationFailedEvent($this->server->getRequest()));
+
             throw new Exception\InvalidClientException();
         }
 
