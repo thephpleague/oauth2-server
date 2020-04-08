@@ -2,7 +2,6 @@
 /**
  * OAuth 2.0 Refresh token grant.
  *
- * @package     league/oauth2-server
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
@@ -64,7 +63,7 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
-     * Get the TTL of the refresh token
+     * Get the TTL of the refresh token.
      *
      * @return int
      */
