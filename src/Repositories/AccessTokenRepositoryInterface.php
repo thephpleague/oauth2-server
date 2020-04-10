@@ -24,11 +24,13 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
      *
      * @param ClientEntityInterface  $clientEntity
      * @param ScopeEntityInterface[] $scopes
-     * @param mixed                  $userIdentifier
+     * @param string|null            $userIdentifier
+     * @param string|null            $authorizedAuthCodeIdentifier
+     * @param string|null            $authorizedAccessTokenIdentifier
      *
      * @return AccessTokenEntityInterface
      */
-    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null);
+    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null, $authorizedAuthCodeIdentifier = null, $authorizedAccessTokenIdentifier = null);
 
     /**
      * Persists a new access token to permanent storage.
