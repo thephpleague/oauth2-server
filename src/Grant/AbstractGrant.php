@@ -418,6 +418,8 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param ClientEntityInterface  $client
      * @param string|null            $userIdentifier
      * @param ScopeEntityInterface[] $scopes
+     * @param string|null            $authorizedAuthCodeIdentifier
+     * @param string|null            $authorizedAccessTokenIdentifier
      *
      * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
@@ -428,11 +430,13 @@ abstract class AbstractGrant implements GrantTypeInterface
         DateInterval $accessTokenTTL,
         ClientEntityInterface $client,
         $userIdentifier,
-        array $scopes = []
+        array $scopes = [],
+        $authorizedAuthCodeIdentifier = null,
+        $authorizedAccessTokenIdentifier = null
     ) {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
-        $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
+        $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier, $authorizedAuthCodeIdentifier, $authorizedAccessTokenIdentifier);
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add($accessTokenTTL));
         $accessToken->setPrivateKey($this->privateKey);
 
