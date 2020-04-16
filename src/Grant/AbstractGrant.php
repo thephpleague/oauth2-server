@@ -15,7 +15,7 @@ use DateTimeImmutable;
 use Error;
 use Exception;
 use League\Event\EmitterAwareTrait;
-use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
@@ -83,7 +83,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $refreshTokenTTL;
 
     /**
-     * @var CryptKey
+     * @var CryptKeyInterface
      */
     protected $privateKey;
 
@@ -151,9 +151,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Set the private key
      *
-     * @param CryptKey $key
+     * @param CryptKeyInterface $key
      */
-    public function setPrivateKey(CryptKey $key)
+    public function setPrivateKey(CryptKeyInterface $key)
     {
         $this->privateKey = $key;
     }

@@ -6,8 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added (v9)
+- A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
+- The authorization server can now finalize scopes when a client uses a refresh token (PR #1094)
+
 ### Added
 - Added support for PHP 7.4 (PR #1075)
+
+### Fixed (v9)
+- If a refresh token has expired, been revoked, cannot be decrypted, or does not belong to the correct client, the server will now issue an `invalid_grant` error and a HTTP 400 response. In previous versions the server incorrectly issued an `invalid_request` and HTTP 401 response (PR #1042) (PR #1082)
 
 ### Changed
 - If an error is encountered when running `preg_match()` to validate an RSA key, the server will now throw a RuntimeException (PR #1047)
