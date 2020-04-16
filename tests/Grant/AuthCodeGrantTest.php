@@ -2018,6 +2018,7 @@ class AuthCodeGrantTest extends TestCase
             'response_type' => 'code',
             'client_id'     => 'foo',
             'redirect_uri'  => 'http://foo/bar',
+            'state'         => 'foo',
         ]);
 
         $this->expectException(OAuthServerException::class);
