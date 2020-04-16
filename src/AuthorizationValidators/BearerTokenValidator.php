@@ -83,24 +83,24 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             if ($token->validate($data) === false) {
                 throw OAuthServerException::accessDenied('Access token is invalid');
             }
-
-            // Check if token has been revoked
-            if ($this->accessTokenRepository->isAccessTokenRevoked($token->getClaim('jti'))) {
-                throw OAuthServerException::accessDenied('Access token has been revoked');
-            }
-
-            // Return the request with additional attributes
-            return $request
-                ->withAttribute('oauth_access_token_id', $token->getClaim('jti'))
-                ->withAttribute('oauth_client_id', $token->getClaim('aud'))
-                ->withAttribute('oauth_user_id', $token->getClaim('sub'))
-                ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
         } catch (InvalidArgumentException $exception) {
             // JWT couldn't be parsed so return the request as is
             throw OAuthServerException::accessDenied($exception->getMessage(), null, $exception);
         } catch (RuntimeException $exception) {
-            //JWR couldn't be parsed so return the request as is
+            // JWT couldn't be parsed so return the request as is
             throw OAuthServerException::accessDenied('Error while decoding to JSON', null, $exception);
         }
+
+        // Check if token has been revoked
+        if ($this->accessTokenRepository->isAccessTokenRevoked($token->getClaim('jti'))) {
+            throw OAuthServerException::accessDenied('Access token has been revoked');
+        }
+
+        // Return the request with additional attributes
+        return $request
+            ->withAttribute('oauth_access_token_id', $token->getClaim('jti'))
+            ->withAttribute('oauth_client_id', $token->getClaim('aud'))
+            ->withAttribute('oauth_user_id', $token->getClaim('sub'))
+            ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
     }
 }

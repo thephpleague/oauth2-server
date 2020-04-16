@@ -1,4 +1,7 @@
 build:
+    environment:
+        php:
+            version: 7.4
     nodes:
         analysis:
             tests:

@@ -160,6 +160,48 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
+    public function testValidateAuthorizationRequestWithoutRedirectUri()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+        $client->setConfidential();
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type' => 'code',
+                'client_id'     => 'foo',
+            ]
+        );
+
+        $authorizationRequest = $grant->validateAuthorizationRequest($request);
+        $this->assertInstanceOf(AuthorizationRequest::class, $authorizationRequest);
+
+        $this->assertEmpty($authorizationRequest->getRedirectUri());
+    }
+
     public function testValidateAuthorizationRequestCodeChallenge()
     {
         $client = new ClientEntity();
