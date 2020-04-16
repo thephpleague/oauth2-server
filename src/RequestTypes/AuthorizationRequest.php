@@ -13,7 +13,7 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 
-class AuthorizationRequest
+class AuthorizationRequest implements AuthorizationRequestInterface
 {
     /**
      * The grant type identifier
