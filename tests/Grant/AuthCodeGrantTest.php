@@ -475,6 +475,29 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
+    public function testCompleteAuthorizationRequestWithMultipleRedirectUrisOnClient()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri(['uriOne', 'uriTwo']);
+        $authRequest = new AuthorizationRequest();
+        $authRequest->setAuthorizationApproved(true);
+        $authRequest->setClient($client);
+        $authRequest->setGrantTypeId('authorization_code');
+        $authRequest->setUser(new UserEntity());
+
+        $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
+        $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
+
+        $grant = new AuthCodeGrant(
+            $authCodeRepository,
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M')
+        );
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+
+        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
+    }
+
     public function testCompleteAuthorizationRequestDenied()
     {
         $authRequest = new AuthorizationRequest();
@@ -2019,6 +2042,7 @@ class AuthCodeGrantTest extends TestCase
             'response_type' => 'code',
             'client_id'     => 'foo',
             'redirect_uri'  => 'http://foo/bar',
+            'state'         => 'foo',
         ]);
 
         $this->expectException(OAuthServerException::class);

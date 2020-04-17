@@ -22,6 +22,7 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
@@ -327,7 +328,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
+    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest)
     {
         if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
             throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
@@ -392,11 +393,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Get the client redirect URI if not set in the request.
      *
-     * @param AuthorizationRequest $authorizationRequest
+     * @param AuthorizationRequestInterface $authorizationRequest
      *
      * @return string
      */
-    private function getClientRedirectUri(AuthorizationRequest $authorizationRequest)
+    private function getClientRedirectUri(AuthorizationRequestInterface $authorizationRequest)
     {
         return \is_array($authorizationRequest->getClient()->getRedirectUri())
                 ? $authorizationRequest->getClient()->getRedirectUri()[0]

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added (v9)
 - A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
 - The authorization server can now finalize scopes when a client uses a refresh token (PR #1094)
+- An AuthorizationRequestInterface to make it easier to extend the AuthorizationRequest (PR #1110)
 
 ### Added
 - Added support for PHP 7.4 (PR #1075)
