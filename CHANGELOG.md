@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed (v9)
 - Authorization Request objects are now created through the factory method, `createAuthorizationRequest()` (PR #1111)
+- Changed parameters for `finalizeScopes()` to allow a reference to an auth code ID (PR #1112)
 
 ### Changed
 - If an error is encountered when running `preg_match()` to validate an RSA key, the server will now throw a RuntimeException (PR #1047)

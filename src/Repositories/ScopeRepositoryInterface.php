@@ -34,6 +34,7 @@ interface ScopeRepositoryInterface extends RepositoryInterface
      * @param string                 $grantType
      * @param ClientEntityInterface  $clientEntity
      * @param null|string            $userIdentifier
+     * @param null|string            $authCodeId
      *
      * @return ScopeEntityInterface[]
      */
@@ -41,6 +42,7 @@ interface ScopeRepositoryInterface extends RepositoryInterface
         array $scopes,
         $grantType,
         ClientEntityInterface $clientEntity,
-        $userIdentifier = null
+        $userIdentifier = null,
+        $authCodeId = null
     );
 }
