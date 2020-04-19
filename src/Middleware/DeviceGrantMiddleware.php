@@ -33,7 +33,7 @@ class DeviceGrantMiddleware implements MiddlewareInterface
         $lastRequestTimeStamp = $this->deviceAuthorizationRequestRepository->getLast($deviceCode);
 
          // If the request is within the last 5 seconds, issue a slowdown notification
-        if ($lastRequestTimeStamp + 5 > time()) {
+        if ($lastRequestTimeStamp + 5 > \time()) {
             return OAuthServerException::slowDown()->generateHttpResponse($this->responseFactory->createResponse());
         }
 
