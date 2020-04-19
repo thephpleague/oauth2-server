@@ -18,8 +18,7 @@ class DeviceGrantMiddleware implements MiddlewareInterface
     public function __construct(
         DeviceAuthorizationRequestRepository $deviceAuthorizationRequestRepository,
         ResponseFactoryInterface $responseFactory
-    )
-    {
+    ) {
         $this->deviceAuthorizationRequestRepository = $deviceAuthorizationRequestRepository;
         $this->responseFactory = $responseFactory;
     }
@@ -32,7 +31,7 @@ class DeviceGrantMiddleware implements MiddlewareInterface
         // Get the last timestamp this client requested an access code
         $lastRequestTimeStamp = $this->deviceAuthorizationRequestRepository->getLast($deviceCode);
 
-         // If the request is within the last 5 seconds, issue a slowdown notification
+        // If the request is within the last 5 seconds, issue a slowdown notification
         if ($lastRequestTimeStamp + 5 > \time()) {
             return OAuthServerException::slowDown()->generateHttpResponse($this->responseFactory->createResponse());
         }
