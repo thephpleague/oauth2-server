@@ -26,5 +26,5 @@ interface DeviceAuthorizationRequestRepository extends RepositoryInterface
     /**
      * @param string $deviceCode
      */
-    public function persist();
+    public function persist($deviceCode);
 }
