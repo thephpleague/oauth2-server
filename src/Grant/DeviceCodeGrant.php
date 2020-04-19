@@ -173,7 +173,7 @@ class DeviceCodeGrant extends AbstractGrant
             throw OAuthServerException::slowDown();
         }
 
-        $this->deviceAuthorizationRequestRepository->persist($client->getIdentifier());
+        $this->deviceAuthorizationRequestRepository->persist($deviceCode);
 
         // if device code has no user associated, respond with pending
         if (\is_null($deviceCode->getUserIdentifier())) {
