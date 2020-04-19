@@ -18,7 +18,8 @@ class DeviceGrantMiddleware implements MiddlewareInterface
     public function __construct(
         DeviceAuthorizationRequestRepository $deviceAuthorizationRequestRepository,
         ResponseFactoryInterface $responseFactory
-    ) {
+    )
+    {
         $this->deviceAuthorizationRequestRepository = $deviceAuthorizationRequestRepository;
         $this->responseFactory = $responseFactory;
     }
