@@ -45,10 +45,10 @@ class ResourceServer
     /**
      * New server instance.
      *
-     * @param AccessTokenRepositoryInterface            $accessTokenRepository
-     * @param CryptKeyInterface|string                  $publicKey
-     * @param null|AuthorizationValidatorInterface      $authorizationValidator
-     * @param null|ExceptionResponseHandlerInterface    $exceptionResponseHandler
+     * @param AccessTokenRepositoryInterface         $accessTokenRepository
+     * @param CryptKeyInterface|string               $publicKey
+     * @param null|AuthorizationValidatorInterface   $authorizationValidator
+     * @param null|ExceptionResponseHandlerInterface $exceptionResponseHandler
      */
     public function __construct(
         AccessTokenRepositoryInterface $accessTokenRepository,
