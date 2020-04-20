@@ -3,11 +3,7 @@
 namespace LeagueTests\Exception;
 
 use Exception;
-use Laminas\Diactoros\Response;
-use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Grant\AbstractGrant;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 class OAuthServerExceptionTest extends TestCase

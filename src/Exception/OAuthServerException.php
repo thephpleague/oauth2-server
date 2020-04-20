@@ -10,7 +10,6 @@
 namespace League\OAuth2\Server\Exception;
 
 use Exception;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 

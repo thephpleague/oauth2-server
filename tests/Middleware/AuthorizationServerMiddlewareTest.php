@@ -3,7 +3,6 @@
 namespace LeagueTests\Middleware;
 
 use DateInterval;
-use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\AuthorizationServer;

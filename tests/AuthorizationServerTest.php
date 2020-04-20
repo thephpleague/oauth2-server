@@ -8,7 +8,6 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKeyInterface;
-use League\OAuth2\Server\Exception\ExceptionResponseHandler;
 use League\OAuth2\Server\Exception\ExceptionResponseHandlerInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
