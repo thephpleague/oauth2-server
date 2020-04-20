@@ -57,7 +57,7 @@ $app->post(
         } catch (OAuthServerException $exception) {
 
             // All instances of OAuthServerException can be converted to a PSR-7 response
-            return $exception->generateHttpResponse($response);
+            return $server->generateHttpResponse($exception, $response);
         } catch (\Exception $exception) {
 
             // Catch unexpected exceptions

@@ -11,12 +11,17 @@ namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
+use League\OAuth2\Server\Exception\ExceptionResponseHandler;
+use League\OAuth2\Server\Exception\ExceptionResponseHandlerInterface;
+use League\OAuth2\Server\Exception\ExceptionResponseHandlerTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ResourceServer
 {
+    use ExceptionResponseHandlerTrait;
+
     /**
      * @var AccessTokenRepositoryInterface
      */
@@ -33,16 +38,23 @@ class ResourceServer
     private $authorizationValidator;
 
     /**
+     * @var ExceptionResponseHandlerInterface
+     */
+    private $exceptionResponseHandler;
+
+    /**
      * New server instance.
      *
-     * @param AccessTokenRepositoryInterface       $accessTokenRepository
-     * @param CryptKeyInterface|string             $publicKey
-     * @param null|AuthorizationValidatorInterface $authorizationValidator
+     * @param AccessTokenRepositoryInterface         $accessTokenRepository
+     * @param CryptKeyInterface|string               $publicKey
+     * @param null|AuthorizationValidatorInterface   $authorizationValidator
+     * @param null|ExceptionResponseHandlerInterface $exceptionResponseHandler
      */
     public function __construct(
         AccessTokenRepositoryInterface $accessTokenRepository,
         $publicKey,
-        AuthorizationValidatorInterface $authorizationValidator = null
+        AuthorizationValidatorInterface $authorizationValidator = null,
+        ExceptionResponseHandlerInterface $exceptionResponseHandler = null
     ) {
         $this->accessTokenRepository = $accessTokenRepository;
 
@@ -52,6 +64,11 @@ class ResourceServer
         $this->publicKey = $publicKey;
 
         $this->authorizationValidator = $authorizationValidator;
+
+        if ($exceptionResponseHandler === null) {
+            $exceptionResponseHandler = new ExceptionResponseHandler();
+        }
+        $this->exceptionResponseHandler = $exceptionResponseHandler;
     }
 
     /**

@@ -13,6 +13,9 @@ use DateInterval;
 use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
+use League\OAuth2\Server\Exception\ExceptionResponseHandler;
+use League\OAuth2\Server\Exception\ExceptionResponseHandlerInterface;
+use League\OAuth2\Server\Exception\ExceptionResponseHandlerTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -27,7 +30,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class AuthorizationServer implements EmitterAwareInterface
 {
-    use EmitterAwareTrait;
+    use EmitterAwareTrait,
+        ExceptionResponseHandlerTrait;
 
     /**
      * @var GrantTypeInterface[]
@@ -80,14 +84,20 @@ class AuthorizationServer implements EmitterAwareInterface
     private $defaultScope = '';
 
     /**
+     * @var ExceptionResponseHandlerInterface
+     */
+    private $exceptionResponseHandler;
+
+    /**
      * New server instance.
      *
-     * @param ClientRepositoryInterface      $clientRepository
-     * @param AccessTokenRepositoryInterface $accessTokenRepository
-     * @param ScopeRepositoryInterface       $scopeRepository
-     * @param CryptKeyInterface|string       $privateKey
-     * @param string|Key                     $encryptionKey
-     * @param null|ResponseTypeInterface     $responseType
+     * @param ClientRepositoryInterface              $clientRepository
+     * @param AccessTokenRepositoryInterface         $accessTokenRepository
+     * @param ScopeRepositoryInterface               $scopeRepository
+     * @param CryptKeyInterface|string               $privateKey
+     * @param string|Key                             $encryptionKey
+     * @param null|ResponseTypeInterface             $responseType
+     * @param null|ExceptionResponseHandlerInterface $exceptionResponseHandler
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
@@ -95,7 +105,8 @@ class AuthorizationServer implements EmitterAwareInterface
         ScopeRepositoryInterface $scopeRepository,
         $privateKey,
         $encryptionKey,
-        ResponseTypeInterface $responseType = null
+        ResponseTypeInterface $responseType = null,
+        ExceptionResponseHandlerInterface $exceptionResponseHandler = null
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
@@ -115,6 +126,11 @@ class AuthorizationServer implements EmitterAwareInterface
         }
 
         $this->responseType = $responseType;
+
+        if ($exceptionResponseHandler === null) {
+            $exceptionResponseHandler = new ExceptionResponseHandler();
+        }
+        $this->exceptionResponseHandler = $exceptionResponseHandler;
     }
 
     /**

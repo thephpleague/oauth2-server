@@ -42,12 +42,11 @@ class ResourceServerMiddleware
         try {
             $request = $this->server->validateAuthenticatedRequest($request);
         } catch (OAuthServerException $exception) {
-            return $exception->generateHttpResponse($response);
-            // @codeCoverageIgnoreStart
+            return $this->server->generateHttpResponse($exception, $response);
         } catch (Exception $exception) {
-            return (new OAuthServerException($exception->getMessage(), 0, 'unknown_error', 500))
-                ->generateHttpResponse($response);
-            // @codeCoverageIgnoreEnd
+            $serverException = new OAuthServerException($exception->getMessage(), 0, 'unknown_error', 500);
+
+            return $this->server->generateHttpResponse($serverException, $response);
         }
 
         // Pass the request and response on to the next responder in the chain

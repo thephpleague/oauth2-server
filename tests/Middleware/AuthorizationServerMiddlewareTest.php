@@ -6,6 +6,7 @@ use DateInterval;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Exception\ExceptionResponseHandler;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Middleware\AuthorizationServerMiddleware;
@@ -17,6 +18,8 @@ use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class AuthorizationServerMiddlewareTest extends TestCase
 {
@@ -105,7 +108,8 @@ class AuthorizationServerMiddlewareTest extends TestCase
     public function testOAuthErrorResponseRedirectUri()
     {
         $exception = OAuthServerException::invalidScope('test', 'http://foo/bar');
-        $response = $exception->generateHttpResponse(new Response());
+        $exceptionResponseHandler = new ExceptionResponseHandler();
+        $response = $exceptionResponseHandler->generateHttpResponse($exception, new Response());
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('http://foo/bar?error=invalid_scope&error_description=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed',
@@ -115,10 +119,36 @@ class AuthorizationServerMiddlewareTest extends TestCase
     public function testOAuthErrorResponseRedirectUriFragment()
     {
         $exception = OAuthServerException::invalidScope('test', 'http://foo/bar');
-        $response = $exception->generateHttpResponse(new Response(), true);
+        $exceptionResponseHandler = new ExceptionResponseHandler();
+        $response = $exceptionResponseHandler->generateHttpResponse($exception, new Response(), true);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('http://foo/bar#error=invalid_scope&error_description=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed',
             $response->getHeader('location')[0]);
+    }
+
+    public function testExceptionIsTurnedIntoOAuthServerException(): void
+    {
+        $responseMock = $this->createMock(ResponseInterface::class);
+        $serverMock = $this->createMock(AuthorizationServer::class);
+        $serverMock->expects($this->once())
+            ->method('respondToAccessTokenRequest')
+            ->willThrowException(new \Exception('foo'));
+
+        $serverMock->expects($this->once())
+            ->method('generateHttpResponse')
+            ->willReturn($responseMock);
+
+        $middleware = new AuthorizationServerMiddleware($serverMock);
+
+        $response = $middleware->__invoke(
+            $this->createMock(ServerRequestInterface::class),
+            new Response(),
+            function () {
+                return \func_get_args()[1];
+            }
+        );
+
+        $this->assertSame($responseMock, $response);
     }
 }

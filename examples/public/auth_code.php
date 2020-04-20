@@ -59,7 +59,6 @@ $app = new App([
         return $server;
     },
 ]);
-
 $app->get('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
     /* @var \League\OAuth2\Server\AuthorizationServer $server */
     $server = $app->getContainer()->get(AuthorizationServer::class);
@@ -79,7 +78,7 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
         // Return the HTTP redirect response
         return $server->completeAuthorizationRequest($authRequest, $response);
     } catch (OAuthServerException $exception) {
-        return $exception->generateHttpResponse($response);
+        return $server->generateHttpResponse($exception, $response);
     } catch (\Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
@@ -95,7 +94,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
     try {
         return $server->respondToAccessTokenRequest($request, $response);
     } catch (OAuthServerException $exception) {
-        return $exception->generateHttpResponse($response);
+        return $server->generateHttpResponse($exception, $response);
     } catch (\Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());

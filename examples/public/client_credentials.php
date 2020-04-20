@@ -64,7 +64,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
     } catch (OAuthServerException $exception) {
 
         // All instances of OAuthServerException can be formatted into a HTTP response
-        return $exception->generateHttpResponse($response);
+        return $server->generateHttpResponse($exception, $response);
     } catch (\Exception $exception) {
 
         // Unknown exception

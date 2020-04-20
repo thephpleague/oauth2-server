@@ -68,7 +68,7 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
         // Return the HTTP redirect response
         return $server->completeAuthorizationRequest($authRequest, $response);
     } catch (OAuthServerException $exception) {
-        return $exception->generateHttpResponse($response);
+        return $server->generateHttpResponse($exception, $response);
     } catch (\Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
