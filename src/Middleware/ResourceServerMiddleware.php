@@ -45,6 +45,7 @@ class ResourceServerMiddleware
             return $this->server->generateHttpResponse($exception, $response);
         } catch (Exception $exception) {
             $serverException = new OAuthServerException($exception->getMessage(), 0, 'unknown_error', 500);
+
             return $this->server->generateHttpResponse($serverException, $response);
         }
 
