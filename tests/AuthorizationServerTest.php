@@ -8,6 +8,8 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKeyInterface;
+use League\OAuth2\Server\Exception\ExceptionResponseHandler;
+use League\OAuth2\Server\Exception\ExceptionResponseHandlerInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -344,5 +346,35 @@ class AuthorizationServerTest extends TestCase
         $this->expectExceptionCode(2);
 
         $server->validateAuthorizationRequest($request);
+    }
+
+    public function testGenerateHttpResponseFromExceptionIsProxiesExceptionResponseHandlerMethod()
+    {
+        $exception = OAuthServerException::invalidScope('foo', 'https://bar.test');
+        $existingResponse = new Response();
+        $useFragment = true;
+        $jsonOptions = 0;
+
+        $responseMock = $this->createMock(ResponseInterface::class);
+        $exceptionResponseHandlerMock = $this->createMock(ExceptionResponseHandlerInterface::class);
+        $exceptionResponseHandlerMock
+            ->expects($this->once())
+            ->method('generateHttpResponse')
+            ->with($exception, $existingResponse, $useFragment, $jsonOptions)
+            ->willReturn($responseMock);
+
+        $server = new AuthorizationServer(
+            $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
+            'file://' . __DIR__ . '/Stubs/private.key',
+            \base64_encode(\random_bytes(36)),
+            new StubResponseType(),
+            $exceptionResponseHandlerMock
+        );
+
+        $response = $server->generateHttpResponse($exception, $existingResponse, $useFragment, $jsonOptions);
+
+        $this->assertSame($responseMock, $response);
     }
 }
