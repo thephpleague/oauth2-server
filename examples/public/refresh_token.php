@@ -62,7 +62,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
     try {
         return $server->respondToAccessTokenRequest($request, $response);
     } catch (OAuthServerException $exception) {
-        return $exception->generateHttpResponse($response);
+        return $server->generateHttpResponse($exception, $response);
     } catch (\Exception $exception) {
         $response->getBody()->write($exception->getMessage());
 

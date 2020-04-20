@@ -280,42 +280,6 @@ class OAuthServerException extends Exception
     }
 
     /**
-     * Generate a HTTP response.
-     *
-     * @param ResponseInterface $response
-     * @param bool              $useFragment True if errors should be in the URI fragment instead of query string
-     * @param int               $jsonOptions options passed to json_encode
-     *
-     * @return ResponseInterface
-     */
-    public function generateHttpResponse(ResponseInterface $response, $useFragment = false, $jsonOptions = 0)
-    {
-        $headers = $this->getHttpHeaders();
-
-        $payload = $this->getPayload();
-
-        if ($this->redirectUri !== null) {
-            if ($useFragment === true) {
-                $this->redirectUri .= (\strstr($this->redirectUri, '#') === false) ? '#' : '&';
-            } else {
-                $this->redirectUri .= (\strstr($this->redirectUri, '?') === false) ? '?' : '&';
-            }
-
-            return $response->withStatus(302)->withHeader('Location', $this->redirectUri . \http_build_query($payload));
-        }
-
-        foreach ($headers as $header => $content) {
-            $response = $response->withHeader($header, $content);
-        }
-
-        $responseBody = \json_encode($payload, $jsonOptions) ?: 'JSON encoding of payload failed';
-
-        $response->getBody()->write($responseBody);
-
-        return $response->withStatus($this->getHttpStatusCode());
-    }
-
-    /**
      * Get all headers that have to be send with the error response.
      *
      * @return array Array with header values

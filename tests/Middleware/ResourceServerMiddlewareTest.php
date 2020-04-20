@@ -6,13 +6,17 @@ use DateInterval;
 use DateTimeImmutable;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Middleware\AuthorizationServerMiddleware;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ResourceServerMiddlewareTest extends TestCase
 {
@@ -105,5 +109,30 @@ class ResourceServerMiddlewareTest extends TestCase
         );
 
         $this->assertEquals(401, $response->getStatusCode());
+    }
+
+    public function testExceptionIsTurnedIntoOAuthServerException(): void
+    {
+        $responseMock = $this->createMock(ResponseInterface::class);
+        $serverMock = $this->createMock(ResourceServer::class);
+        $serverMock->expects($this->once())
+            ->method('validateAuthenticatedRequest')
+            ->willThrowException(new \Exception('foo'));
+
+        $serverMock->expects($this->once())
+            ->method('generateHttpResponse')
+            ->willReturn($responseMock);
+
+        $middleware = new ResourceServerMiddleware($serverMock);
+
+        $response = $middleware->__invoke(
+            $this->createMock(ServerRequestInterface::class),
+            new Response(),
+            function () {
+                return \func_get_args()[1];
+            }
+        );
+
+        $this->assertSame($responseMock, $response);
     }
 }
