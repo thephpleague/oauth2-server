@@ -15,6 +15,7 @@ use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\ExceptionResponseHandler;
 use League\OAuth2\Server\Exception\ExceptionResponseHandlerInterface;
+use League\OAuth2\Server\Exception\ExceptionResponseHandlerTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -29,7 +30,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class AuthorizationServer implements EmitterAwareInterface
 {
-    use EmitterAwareTrait;
+    use EmitterAwareTrait,
+        ExceptionResponseHandlerTrait;
 
     /**
      * @var GrantTypeInterface[]
@@ -248,14 +250,5 @@ class AuthorizationServer implements EmitterAwareInterface
     public function setDefaultScope($defaultScope)
     {
         $this->defaultScope = $defaultScope;
-    }
-
-    public function generateHttpResponse(
-        OAuthServerException $exception,
-        ResponseInterface $response,
-        $useFragment = false,
-        $jsonOptions = 0
-    ) {
-        return $this->exceptionResponseHandler->generateHttpResponse($exception, $response, $useFragment, $jsonOptions);
     }
 }
