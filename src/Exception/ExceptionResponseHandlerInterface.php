@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 interface ExceptionResponseHandlerInterface
 {
     /**
-     * Generate a HTTP response from a OAuthServerException
+     * Generate a HTTP response from am OAuthServerException
      *
      * @param OAuthServerException  $exception
      * @param ResponseInterface     $response

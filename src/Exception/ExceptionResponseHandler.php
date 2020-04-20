@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 class ExceptionResponseHandler implements ExceptionResponseHandlerInterface
 {
     /**
-     * Generate a HTTP response.
+     * Generate a HTTP response from am OAuthServerException
      *
      * @param OAuthServerException  $exception
      * @param ResponseInterface     $response
@@ -30,13 +30,7 @@ class ExceptionResponseHandler implements ExceptionResponseHandlerInterface
 
         $redirectUri = $exception->getRedirectUri();
         if ($redirectUri !== null) {
-            if ($useFragment === true) {
-                $redirectUri .= (\strstr($redirectUri, '#') === false) ? '#' : '&';
-            } else {
-                $redirectUri .= (\strstr($redirectUri, '?') === false) ? '?' : '&';
-            }
-
-            return $response->withStatus(302)->withHeader('Location', $redirectUri . \http_build_query($payload));
+            return $this->generateRedirectResponse($redirectUri, $response, $payload, $useFragment);
         }
 
         foreach ($headers as $header => $content) {
@@ -48,5 +42,31 @@ class ExceptionResponseHandler implements ExceptionResponseHandlerInterface
         $response->getBody()->write($responseBody);
 
         return $response->withStatus($exception->getHttpStatusCode());
+    }
+
+    /**
+     * Generate a HTTP response from am OAuthServerException
+     *
+     * @param string            $redirectUri
+     * @param ResponseInterface $response
+     * @param string[]          $payload
+     * @param bool              $useFragment
+     *
+     * @return ResponseInterface
+     */
+    protected function generateRedirectResponse(
+        string $redirectUri,
+        ResponseInterface $response,
+        $payload,
+        $useFragment
+    ): ResponseInterface {
+        if ($useFragment === true) {
+            $querySeparator = '#';
+        } else {
+            $querySeparator = '?';
+        }
+        $redirectUri .= (\strstr($redirectUri, '?') === false) ? $querySeparator : '&';
+
+        return $response->withStatus(302)->withHeader('Location', $redirectUri . \http_build_query($payload));
     }
 }
