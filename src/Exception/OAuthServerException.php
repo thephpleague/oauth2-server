@@ -376,4 +376,12 @@ class OAuthServerException extends Exception
     {
         return $this->hint;
     }
+
+    /**
+     * @return null|string
+     */
+    public function getRedirectUri()
+    {
+        return $this->redirectUri;
+    }
 }

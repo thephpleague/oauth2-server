@@ -96,4 +96,12 @@ class OAuthServerExceptionTest extends TestCase
 
         $this->assertNull($exceptionWithoutPrevious->getPrevious());
     }
+
+    public function testGetRedirectUri(): void
+    {
+        $redirectUri = 'https://bar.test';
+        $exception = OAuthServerException::invalidScope('foo', $redirectUri);
+
+        $this->assertSame($redirectUri, $exception->getRedirectUri());
+    }
 }
