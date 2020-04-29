@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.1.0] - released 2020-04-29
+
 ### Added
 - Added support for PHP 7.4 (PR #1075)
 
@@ -26,7 +28,7 @@ method being defined (PR #1051)
 - An exception is now thrown if a refresh token is accidentally sent in place of an authorization code when using the 
 Auth Code Grant (PR #1057)
 - Can now send access token request without being forced to specify a redirect URI (PR #1096)
-- In the BearerTokenValidator, if an implementation is using PDO, there is a possibility that a RuntimeException will be thrown when checking if an access token is revoked. This scenario no longer incorrectly issues an exception with a hint mentioning an issue with JSON decoding. (PR #XX)
+- In the BearerTokenValidator, if an implementation is using PDO, there is a possibility that a RuntimeException will be thrown when checking if an access token is revoked. This scenario no longer incorrectly issues an exception with a hint mentioning an issue with JSON decoding. (PR #1107)
 
 ## [8.0.0] - released 2019-07-13
 
@@ -490,7 +492,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.0.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.1.0...HEAD
+[8.1.0]: https://github.com/thephpleague/oauth2-server/compare/8.0.0...8.1.0
 [8.0.0]: https://github.com/thephpleague/oauth2-server/compare/7.4.0...8.0.0
 [7.4.0]: https://github.com/thephpleague/oauth2-server/compare/7.3.3...7.4.0
 [7.3.3]: https://github.com/thephpleague/oauth2-server/compare/7.3.2...7.3.3
