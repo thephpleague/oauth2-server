@@ -19,6 +19,22 @@ use Psr\Http\Message\ResponseInterface;
 class BearerTokenResponse extends AbstractResponseType
 {
     /**
+     * Construct the refresh token payload.
+     *
+     * @return false|string
+     */
+    protected function getRefreshTokenPayload()
+    {
+        return \json_encode([
+            'client_id'        => $this->accessToken->getClient()->getIdentifier(),
+            'refresh_token_id' => $this->refreshToken->getIdentifier(),
+            'access_token_id'  => $this->accessToken->getIdentifier(),
+            'scopes'           => $this->accessToken->getScopes(),
+            'user_id'          => $this->accessToken->getUserIdentifier(),
+            'expire_time'      => $this->refreshToken->getExpiryDateTime()->getTimestamp(),
+        ]);
+    }
+    /**
      * {@inheritdoc}
      */
     public function generateHttpResponse(ResponseInterface $response)
@@ -32,14 +48,7 @@ class BearerTokenResponse extends AbstractResponseType
         ];
 
         if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
-            $refreshTokenPayload = \json_encode([
-                'client_id'        => $this->accessToken->getClient()->getIdentifier(),
-                'refresh_token_id' => $this->refreshToken->getIdentifier(),
-                'access_token_id'  => $this->accessToken->getIdentifier(),
-                'scopes'           => $this->accessToken->getScopes(),
-                'user_id'          => $this->accessToken->getUserIdentifier(),
-                'expire_time'      => $this->refreshToken->getExpiryDateTime()->getTimestamp(),
-            ]);
+            $refreshTokenPayload = $this->getRefreshTokenPayload();
 
             if ($refreshTokenPayload === false) {
                 throw new LogicException('Error encountered JSON encoding the refresh token payload');
