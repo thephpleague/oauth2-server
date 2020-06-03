@@ -43,10 +43,17 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
-    {
+    public function getNewToken(
+        ClientEntityInterface $clientEntity,
+        array $scopes,
+        $userIdentifier = null,
+        array $claims = []
+    ) {
         $accessToken = new AccessTokenEntity();
         $accessToken->setClient($clientEntity);
+        foreach ($claims as $claim) {
+            $accessToken->addClaim($claim);
+        }
         foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
         }

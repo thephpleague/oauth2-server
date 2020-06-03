@@ -10,6 +10,7 @@
 namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\ClaimEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
@@ -22,13 +23,19 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     /**
      * Create a new access token
      *
-     * @param ClientEntityInterface  $clientEntity
+     * @param ClientEntityInterface $clientEntity
      * @param ScopeEntityInterface[] $scopes
-     * @param mixed                  $userIdentifier
+     * @param array $claims
+     * @param ClaimEntityInterface[] $userIdentifier
      *
      * @return AccessTokenEntityInterface
      */
-    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null);
+    public function getNewToken(
+        ClientEntityInterface $clientEntity,
+        array $scopes,
+        $userIdentifier = null,
+        array $claims = []
+    );
 
     /**
      * Persists a new access token to permanent storage.

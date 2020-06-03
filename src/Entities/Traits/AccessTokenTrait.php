@@ -15,6 +15,7 @@ use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Entities\ClaimEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 
@@ -42,13 +43,20 @@ trait AccessTokenTrait
      */
     private function convertToJWT(CryptKey $privateKey)
     {
-        return (new Builder())
-            ->permittedFor($this->getClient()->getIdentifier())
+        $builder = new Builder();
+        $builder->permittedFor($this->getClient()->getIdentifier())
             ->identifiedBy($this->getIdentifier())
             ->issuedAt(\time())
             ->canOnlyBeUsedAfter(\time())
             ->expiresAt($this->getExpiryDateTime()->getTimestamp())
-            ->relatedTo((string) $this->getUserIdentifier())
+            ->relatedTo((string)$this->getUserIdentifier());
+
+        foreach ($this->getClaims() as $claim){
+            $builder->withClaim($claim->getName(), $claim->getValue());
+        }
+
+        return $builder
+            // Set scope claim late to prevent it from being overridden.
             ->withClaim('scopes', $this->getScopes())
             ->getToken(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()));
     }
@@ -80,6 +88,11 @@ trait AccessTokenTrait
      * @return ScopeEntityInterface[]
      */
     abstract public function getScopes();
+
+    /**
+     * @return ClaimEntityInterface[]
+     */
+    abstract public function getClaims();
 
     /**
      * @return string

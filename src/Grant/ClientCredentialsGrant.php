@@ -48,8 +48,13 @@ class ClientCredentialsGrant extends AbstractGrant
         // Finalize the requested scopes
         $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client);
 
+        $privateClaims = [];
+        if($this->claimRepository){
+            $privateClaims = $this->claimRepository->getClaims();
+        }
+
         // Issue and persist access token
-        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, null, $finalizedScopes);
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, null, $finalizedScopes, $privateClaims);
 
         // Send event to emitter
         $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
