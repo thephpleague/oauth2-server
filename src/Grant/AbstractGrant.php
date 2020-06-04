@@ -127,7 +127,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * @param ClaimRepositoryInterface $claimRepository
      */
-    public function setClaimRepository(ClaimRepositoryInterface $claimRepository)
+    public function setClaimRepository(?ClaimRepositoryInterface $claimRepository)
     {
         $this->claimRepository = $claimRepository;
     }

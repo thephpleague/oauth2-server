@@ -94,15 +94,16 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param CryptKey|string                $privateKey
      * @param string|Key                     $encryptionKey
      * @param null|ResponseTypeInterface     $responseType
+     * @param null|ClaimRepositoryInterface  $claimRepository
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
         AccessTokenRepositoryInterface $accessTokenRepository,
         ScopeRepositoryInterface $scopeRepository,
-        ClaimRepositoryInterface $claimRepository,
         $privateKey,
         $encryptionKey,
-        ResponseTypeInterface $responseType = null
+        ResponseTypeInterface $responseType = null,
+        ClaimRepositoryInterface $claimRepository = null
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;

@@ -127,7 +127,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * @param ClaimRepositoryInterface $claimRepository
      */
-    public function setClaimRepository(ClaimRepositoryInterface $claimRepository);
+    public function setClaimRepository(?ClaimRepositoryInterface $claimRepository);
 
     /**
      * Set the default scope.
