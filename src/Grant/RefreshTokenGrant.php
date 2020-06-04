@@ -64,7 +64,7 @@ class RefreshTokenGrant extends AbstractGrant
         $this->refreshTokenRepository->revokeRefreshToken($oldRefreshToken['refresh_token_id']);
 
         $privateClaims = [];
-        if($this->claimRepository){
+        if ($this->claimRepository) {
             $privateClaims = $this->claimRepository->getClaims(
                 $privateClaims,
                 $this->getIdentifier(),

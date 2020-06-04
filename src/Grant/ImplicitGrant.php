@@ -187,7 +187,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             );
 
             $privateClaims = [];
-            if($this->claimRepository) {
+            if ($this->claimRepository) {
                 $privateClaims = $this->claimRepository->getClaims(
                     $privateClaims,
                     $this->getIdentifier(),

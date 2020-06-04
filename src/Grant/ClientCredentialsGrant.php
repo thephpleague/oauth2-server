@@ -49,7 +49,7 @@ class ClientCredentialsGrant extends AbstractGrant
         $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client);
 
         $privateClaims = [];
-        if($this->claimRepository) {
+        if ($this->claimRepository) {
             $privateClaims = $this->claimRepository->getClaims($privateClaims, $this->getIdentifier(), $client);
         }
 
