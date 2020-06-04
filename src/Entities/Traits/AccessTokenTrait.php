@@ -49,9 +49,9 @@ trait AccessTokenTrait
             ->issuedAt(\time())
             ->canOnlyBeUsedAfter(\time())
             ->expiresAt($this->getExpiryDateTime()->getTimestamp())
-            ->relatedTo((string)$this->getUserIdentifier());
+            ->relatedTo((string) $this->getUserIdentifier());
 
-        foreach ($this->getClaims() as $claim){
+        foreach ($this->getClaims() as $claim) {
             $builder->withClaim($claim->getName(), $claim->getValue());
         }
 

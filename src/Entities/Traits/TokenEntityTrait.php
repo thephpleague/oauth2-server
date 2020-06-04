@@ -81,8 +81,6 @@ trait TokenEntityTrait
         return $this->claims;
     }
 
-
-
     /**
      * Get the token's expiry date time.
      *
