@@ -10,6 +10,7 @@
 namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\ClaimEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 
 /**
  * Claim repository interface.
@@ -22,5 +23,9 @@ interface ClaimRepositoryInterface extends RepositoryInterface
      *
      * @return ClaimEntityInterface[]
      */
-    public function getClaims();
+    public function getClaims(
+        array $claims,
+        $grantType,
+        ClientEntityInterface $clientEntity,
+        $userIdentifier = null);
 }

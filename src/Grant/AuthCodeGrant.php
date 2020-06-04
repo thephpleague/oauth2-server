@@ -161,7 +161,12 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
         $privateClaims = [];
         if($this->claimRepository){
-            $privateClaims = $this->claimRepository->getClaims();
+            $privateClaims = $this->claimRepository->getClaims(
+                $privateClaims,
+                $this->getIdentifier(),
+                $client,
+                $authCodePayload->user_id
+            );
         }
 
         // Issue and persist new access token

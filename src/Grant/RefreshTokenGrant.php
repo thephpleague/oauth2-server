@@ -63,9 +63,14 @@ class RefreshTokenGrant extends AbstractGrant
         $this->accessTokenRepository->revokeAccessToken($oldRefreshToken['access_token_id']);
         $this->refreshTokenRepository->revokeRefreshToken($oldRefreshToken['refresh_token_id']);
 
-        $privateClaim = [];
+        $privateClaims = [];
         if($this->claimRepository){
-            $privateClaim = $this->claimRepository->getClaims();
+            $privateClaims = $this->claimRepository->getClaims(
+                $privateClaims,
+                $this->getIdentifier(),
+                $client,
+                $oldRefreshToken['user_id']
+            );
         }
 
         // Issue and persist new access token
@@ -74,7 +79,7 @@ class RefreshTokenGrant extends AbstractGrant
             $client,
             $oldRefreshToken['user_id'],
             $scopes,
-            $privateClaim
+            $privateClaims
         );
         $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
         $responseType->setAccessToken($accessToken);
