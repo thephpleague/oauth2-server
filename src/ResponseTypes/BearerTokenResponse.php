@@ -34,6 +34,7 @@ class BearerTokenResponse extends AbstractResponseType
             'expire_time'      => $this->refreshToken->getExpiryDateTime()->getTimestamp(),
         ]);
     }
+
     /**
      * {@inheritdoc}
      */
