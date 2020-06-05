@@ -17,6 +17,7 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
+use LeagueTests\Stubs\ClaimEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
@@ -360,7 +361,8 @@ class AbstractGrantTest extends TestCase
             new DateInterval('PT1H'),
             new ClientEntity(),
             123,
-            [new ScopeEntity()]
+            [new ScopeEntity()],
+            [new ClaimEntity('private', 'claim')]
         );
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $accessToken);
     }
