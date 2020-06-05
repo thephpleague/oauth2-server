@@ -71,7 +71,7 @@ class AuthorizationServer implements EmitterAwareInterface
     private $scopeRepository;
 
     /**
-     * @var ClaimRepositoryInterface
+     * @var null|ClaimRepositoryInterface
      */
     private $claimRepository;
 

@@ -65,7 +65,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $scopeRepository;
 
     /**
-     * @var ClaimRepositoryInterface
+     * @var null|ClaimRepositoryInterface
      */
     protected $claimRepository;
 
