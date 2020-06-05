@@ -3,12 +3,10 @@
 
 namespace LeagueTests\Stubs;
 
-
 use League\OAuth2\Server\Entities\ClaimEntityInterface;
 
 class ClaimEntity implements ClaimEntityInterface
 {
-
     private $name;
     private $value;
 
