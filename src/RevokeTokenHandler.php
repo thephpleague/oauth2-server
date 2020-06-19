@@ -151,12 +151,12 @@ class RevokeTokenHandler implements EmitterAwareInterface
 
         // Attempt to revoke tokens
         if ($hint === 'refresh_token') {
-            if (!$this->revokeRefreshToken($token, $clientId)) {
-                $this->revokeAccessToken($token, $clientId);
+            if (!$this->revokeRefreshToken($token, $clientId, $request)) {
+                $this->revokeAccessToken($token, $clientId, $request);
             }
         } else {
-            if (!$this->revokeAccessToken($token, $clientId)) {
-                $this->revokeRefreshToken($token, $clientId);
+            if (!$this->revokeAccessToken($token, $clientId, $request)) {
+                $this->revokeRefreshToken($token, $clientId, $request);
             }
         }
 
@@ -171,7 +171,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
      *
      * @return bool true if token was a refresh token
      */
-    protected function revokeAccessToken($tokenParam, $clientId)
+    protected function revokeAccessToken($tokenParam, $clientId, ServerRequestInterface $request)
     {
         $token = null;
         try {
@@ -187,7 +187,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
 
         $clientId = $token->getClaim('aud');
         if ($clientId !== $clientId) {
-            throw OAuthServerException::invalidClient();
+            throw OAuthServerException::invalidClient($request);
         }
 
         if (!$this->canRevokeAccessTokens) {
@@ -207,7 +207,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
      *
      * @return bool true if token was a refresh token
      */
-    protected function revokeRefreshToken($tokenParam, $clientId)
+    protected function revokeRefreshToken($tokenParam, $clientId, ServerRequestInterface $request)
     {
         $refreshTokenData = null;
         try {
@@ -219,7 +219,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
         }
 
         if ($refreshTokenData['client_id'] !== $clientId) {
-            throw OAuthServerException::invalidClient();
+            throw OAuthServerException::invalidClient($request);
         }
 
         $this->refreshTokenRepository->revokeRefreshToken($refreshTokenData['refresh_token_id']);

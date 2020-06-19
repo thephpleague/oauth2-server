@@ -21,7 +21,7 @@ class RevokeTokenHandlerTest extends TestCase
      */
     protected $cryptStub;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->cryptStub = new CryptTraitStub();
     }
@@ -47,16 +47,16 @@ class RevokeTokenHandlerTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('test');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->sub(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new \DateTimeImmutable())->sub(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
-        $accessTokenJWT = $accessToken->convertToJWT(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
-                'token'           => (string) $accessTokenJWT,
+                'token'           => (string) $accessToken,
                 'token_type_hint' => 'access_token',
             ]
         );
@@ -86,16 +86,16 @@ class RevokeTokenHandlerTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('test');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->sub(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new \DateTimeImmutable())->sub(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
-        $accessTokenJWT = $accessToken->convertToJWT(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
-                'token'           => (string) $accessTokenJWT,
+                'token'           => (string) $accessToken,
             ]
         );
 
@@ -103,10 +103,6 @@ class RevokeTokenHandlerTest extends TestCase
         $handler->respondToRevokeTokenRequest($serverRequest, $responseType);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 2
-     */
     public function testRespondToRequestValidAccessTokenButCannotRevokeAccessTokens()
     {
         $client = new ClientEntity();
@@ -128,19 +124,22 @@ class RevokeTokenHandlerTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('test');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->sub(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new \DateTimeImmutable())->sub(new \DateInterval('PT1H')));
         $accessToken->setClient($client);
-        $accessTokenJWT = $accessToken->convertToJWT(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
 
         $serverRequest = new ServerRequest();
         $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
-                'token'           => (string) $accessTokenJWT,
+                'token'           => (string) $accessToken,
                 'token_type_hint' => 'access_token',
             ]
         );
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(2);
 
         $responseType = new StubResponseType();
         $handler->respondToRevokeTokenRequest($serverRequest, $responseType);
@@ -344,10 +343,6 @@ class RevokeTokenHandlerTest extends TestCase
         $handler->respondToRevokeTokenRequest($serverRequest, $responseType);
     }
 
-    /**
-     * @expectedException \League\OAuth2\Server\Exception\OAuthServerException
-     * @expectedExceptionCode 4
-     */
     public function testRespondToRequestClientMismatch()
     {
         $client = new ClientEntity();
@@ -388,6 +383,9 @@ class RevokeTokenHandlerTest extends TestCase
                 'token_type_hint' => 'refresh_token',
             ]
         );
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(4);
 
         $responseType = new StubResponseType();
         $handler->respondToRevokeTokenRequest($serverRequest, $responseType);
