@@ -22,7 +22,7 @@ final class AbstractGrantExtension implements DynamicMethodReturnTypeExtension
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), [
+        return \in_array($methodReflection->getName(), [
             'getRequestParameter',
             'getQueryStringParameter',
             'getCookieParameter',

@@ -49,23 +49,23 @@ $app->get(
             ],
         ];
 
-        $totalUsers = count($users);
+        $totalUsers = \count($users);
 
         // If the access token doesn't have the `basic` scope hide users' names
-        if (in_array('basic', $request->getAttribute('oauth_scopes')) === false) {
+        if (\in_array('basic', $request->getAttribute('oauth_scopes')) === false) {
             for ($i = 0; $i < $totalUsers; $i++) {
                 unset($users[$i]['name']);
             }
         }
 
         // If the access token doesn't have the `email` scope hide users' email addresses
-        if (in_array('email', $request->getAttribute('oauth_scopes')) === false) {
+        if (\in_array('email', $request->getAttribute('oauth_scopes')) === false) {
             for ($i = 0; $i < $totalUsers; $i++) {
                 unset($users[$i]['email']);
             }
         }
 
-        $response->getBody()->write(json_encode($users));
+        $response->getBody()->write(\json_encode($users));
 
         return $response->withStatus(200);
     }

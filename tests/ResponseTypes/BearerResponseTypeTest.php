@@ -2,6 +2,10 @@
 
 namespace LeagueTests\ResponseTypes;
 
+use DateInterval;
+use DateTimeImmutable;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -13,8 +17,6 @@ use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
 
 class BearerResponseTypeTest extends TestCase
 {
@@ -22,7 +24,7 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -32,14 +34,15 @@ class BearerResponseTypeTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
@@ -53,8 +56,8 @@ class BearerResponseTypeTest extends TestCase
         $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
 
         $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents());
-        $this->assertAttributeEquals('Bearer', 'token_type', $json);
+        $json = \json_decode($response->getBody()->getContents());
+        $this->assertEquals('Bearer', $json->token_type);
         $this->assertObjectHasAttribute('expires_in', $json);
         $this->assertObjectHasAttribute('access_token', $json);
         $this->assertObjectHasAttribute('refresh_token', $json);
@@ -64,7 +67,7 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponseWithParams();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -74,14 +77,15 @@ class BearerResponseTypeTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
@@ -95,21 +99,21 @@ class BearerResponseTypeTest extends TestCase
         $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
 
         $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents());
-        $this->assertAttributeEquals('Bearer', 'token_type', $json);
+        $json = \json_decode($response->getBody()->getContents());
+        $this->assertEquals('Bearer', $json->token_type);
         $this->assertObjectHasAttribute('expires_in', $json);
         $this->assertObjectHasAttribute('access_token', $json);
         $this->assertObjectHasAttribute('refresh_token', $json);
 
         $this->assertObjectHasAttribute('foo', $json);
-        $this->assertAttributeEquals('bar', 'foo', $json);
+        $this->assertEquals('bar', $json->foo);
     }
 
     public function testDetermineAccessTokenInHeaderValidToken()
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -117,19 +121,20 @@ class BearerResponseTypeTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $json = json_decode((string) $response->getBody());
+        $json = \json_decode((string) $response->getBody());
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
@@ -137,8 +142,7 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $json->access_token));
 
         $request = $authorizationValidator->validateAuthorization($request);
 
@@ -154,7 +158,7 @@ class BearerResponseTypeTest extends TestCase
 
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -162,25 +166,25 @@ class BearerResponseTypeTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $json = json_decode((string) $response->getBody());
+        $json = \json_decode((string) $response->getBody());
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token . 'foo'));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $json->access_token . 'foo'));
 
         try {
             $authorizationValidator->validateAuthorization($request);
@@ -196,7 +200,7 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -204,19 +208,20 @@ class BearerResponseTypeTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
         $refreshToken->setAccessToken($accessToken);
-        $refreshToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
 
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $json = json_decode((string) $response->getBody());
+        $json = \json_decode((string) $response->getBody());
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(true);
@@ -224,8 +229,7 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $json->access_token));
 
         try {
             $authorizationValidator->validateAuthorization($request);
@@ -241,15 +245,14 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', 'Bearer blah');
+        $request = (new ServerRequest())->withHeader('authorization', 'Bearer blah');
 
         try {
             $authorizationValidator->validateAuthorization($request);
@@ -265,15 +268,14 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', 'Bearer blah.blah.blah');
+        $request = (new ServerRequest())->withHeader('authorization', 'Bearer blah.blah.blah');
 
         try {
             $authorizationValidator->validateAuthorization($request);

@@ -15,8 +15,8 @@ class ClientEntity implements ClientEntityInterface
         $this->redirectUri = $uri;
     }
 
-    public function setName($name)
+    public function setConfidential()
     {
-        $this->name = $name;
+        $this->isConfidential = true;
     }
 }

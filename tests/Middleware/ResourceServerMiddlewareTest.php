@@ -2,6 +2,10 @@
 
 namespace LeagueTests\Middleware;
 
+use DateInterval;
+use DateTimeImmutable;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -9,8 +13,6 @@ use League\OAuth2\Server\ResourceServer;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
 
 class ResourceServerMiddlewareTest extends TestCase
 {
@@ -27,22 +29,22 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('test');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->add(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $token = $accessToken->convertToJWT(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $token = (string) $accessToken;
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $token));
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
             $request,
             new Response(),
             function () {
-                $this->assertEquals('test', func_get_args()[0]->getAttribute('oauth_access_token_id'));
+                $this->assertEquals('test', \func_get_args()[0]->getAttribute('oauth_access_token_id'));
 
-                return func_get_args()[1];
+                return \func_get_args()[1];
             }
         );
 
@@ -62,22 +64,22 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('test');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new \DateTime())->sub(new \DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->sub(new DateInterval('PT1H')));
         $accessToken->setClient($client);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $token = $accessToken->convertToJWT(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $token = (string) $accessToken;
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', sprintf('Bearer %s', $token));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $token));
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
             $request,
             new Response(),
             function () {
-                $this->assertEquals('test', func_get_args()[0]->getAttribute('oauth_access_token_id'));
+                $this->assertEquals('test', \func_get_args()[0]->getAttribute('oauth_access_token_id'));
 
-                return func_get_args()[1];
+                return \func_get_args()[1];
             }
         );
 
@@ -91,15 +93,14 @@ class ResourceServerMiddlewareTest extends TestCase
             'file://' . __DIR__ . '/../Stubs/public.key'
         );
 
-        $request = new ServerRequest();
-        $request = $request->withHeader('authorization', '');
+        $request = (new ServerRequest())->withHeader('authorization', '');
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
             $request,
             new Response(),
             function () {
-                return func_get_args()[1];
+                return \func_get_args()[1];
             }
         );
 

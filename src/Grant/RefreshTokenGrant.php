@@ -48,13 +48,13 @@ class RefreshTokenGrant extends AbstractGrant
         $scopes = $this->validateScopes($this->getRequestParameter(
             'scope',
             $request,
-            implode(self::SCOPE_DELIMITER_STRING, $oldRefreshToken['scopes']))
+            \implode(self::SCOPE_DELIMITER_STRING, $oldRefreshToken['scopes']))
         );
 
         // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
         // the request doesn't include any new scopes
         foreach ($scopes as $scope) {
-            if (in_array($scope->getIdentifier(), $oldRefreshToken['scopes'], true) === false) {
+            if (\in_array($scope->getIdentifier(), $oldRefreshToken['scopes'], true) === false) {
                 throw OAuthServerException::invalidScope($scope->getIdentifier());
             }
         }
@@ -63,17 +63,18 @@ class RefreshTokenGrant extends AbstractGrant
         $this->accessTokenRepository->revokeAccessToken($oldRefreshToken['access_token_id']);
         $this->refreshTokenRepository->revokeRefreshToken($oldRefreshToken['refresh_token_id']);
 
-        // Issue and persist new tokens
+        // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $oldRefreshToken['user_id'], $scopes);
+        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
+        $responseType->setAccessToken($accessToken);
+
+        // Issue and persist new refresh token if given
         $refreshToken = $this->issueRefreshToken($accessToken);
 
-        // Send events to emitter
-        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
-        $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
-
-        // Inject tokens into response
-        $responseType->setAccessToken($accessToken);
-        $responseType->setRefreshToken($refreshToken);
+        if ($refreshToken !== null) {
+            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
+            $responseType->setRefreshToken($refreshToken);
+        }
 
         return $responseType;
     }
@@ -89,7 +90,7 @@ class RefreshTokenGrant extends AbstractGrant
     protected function validateOldRefreshToken(ServerRequestInterface $request, $clientId)
     {
         $encryptedRefreshToken = $this->getRequestParameter('refresh_token', $request);
-        if (is_null($encryptedRefreshToken)) {
+        if (\is_null($encryptedRefreshToken)) {
             throw OAuthServerException::invalidRequest('refresh_token');
         }
 
@@ -100,13 +101,13 @@ class RefreshTokenGrant extends AbstractGrant
             throw OAuthServerException::invalidRefreshToken('Cannot decrypt the refresh token', $e);
         }
 
-        $refreshTokenData = json_decode($refreshToken, true);
+        $refreshTokenData = \json_decode($refreshToken, true);
         if ($refreshTokenData['client_id'] !== $clientId) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_CLIENT_FAILED, $request));
             throw OAuthServerException::invalidRefreshToken('Token is not linked to client');
         }
 
-        if ($refreshTokenData['expire_time'] < time()) {
+        if ($refreshTokenData['expire_time'] < \time()) {
             throw OAuthServerException::invalidRefreshToken('Token has expired');
         }
 

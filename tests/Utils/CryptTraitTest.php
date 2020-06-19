@@ -10,14 +10,14 @@ class CryptTraitTest extends TestCase
 {
     protected $cryptStub;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cryptStub = new CryptTraitStub();
     }
 
     public function testEncryptDecryptWithPassword()
     {
-        $this->cryptStub->setEncryptionKey(base64_encode(random_bytes(36)));
+        $this->cryptStub->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $this->encryptDecrypt();
     }

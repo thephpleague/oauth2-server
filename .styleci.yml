@@ -11,6 +11,7 @@ enabled:
   - lowercase_cast
   - method_separation
   - native_function_casing
+  - native_function_invocation
   - no_blank_lines_after_class_opening
   - no_blank_lines_between_uses
   - no_duplicate_semicolons
@@ -41,7 +42,6 @@ enabled:
   - print_to_echo
   - short_array_syntax
   - short_scalar_cast
-  - simplified_null_return
   - single_quote
   - spaces_cast
   - standardize_not_equal

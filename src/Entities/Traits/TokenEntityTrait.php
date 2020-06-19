@@ -9,7 +9,7 @@
 
 namespace League\OAuth2\Server\Entities\Traits;
 
-use DateTime;
+use DateTimeImmutable;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 
@@ -21,7 +21,7 @@ trait TokenEntityTrait
     protected $scopes = [];
 
     /**
-     * @var DateTime
+     * @var DateTimeImmutable
      */
     protected $expiryDateTime;
 
@@ -52,13 +52,13 @@ trait TokenEntityTrait
      */
     public function getScopes()
     {
-        return array_values($this->scopes);
+        return \array_values($this->scopes);
     }
 
     /**
      * Get the token's expiry date time.
      *
-     * @return DateTime
+     * @return DateTimeImmutable
      */
     public function getExpiryDateTime()
     {
@@ -68,9 +68,9 @@ trait TokenEntityTrait
     /**
      * Set the date time when the token expires.
      *
-     * @param DateTime $dateTime
+     * @param DateTimeImmutable $dateTime
      */
-    public function setExpiryDateTime(DateTime $dateTime)
+    public function setExpiryDateTime(DateTimeImmutable $dateTime)
     {
         $this->expiryDateTime = $dateTime;
     }
