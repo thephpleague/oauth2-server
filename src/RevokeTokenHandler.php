@@ -19,7 +19,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class RevokeTokenHandler implements EmitterAwareInterface
@@ -130,13 +130,13 @@ class RevokeTokenHandler implements EmitterAwareInterface
      * https://tools.ietf.org/html/rfc7009
      *
      * @param ServerRequestInterface $request
-     * @param ResponseTypeInterface  $response
+     * @param ResponseInterface  $response
      *
      * @throws OAuthServerException
      *
-     * @return ResponseTypeInterface
+     * @return ResponseInterface
      */
-    public function respondToRevokeTokenRequest(ServerRequestInterface $request, ResponseTypeInterface $response)
+    public function respondToRevokeTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
         $token = $this->getRequestParameter('token', $request);
         $hint = $this->getRequestParameter('token_type_hint', $request);
@@ -191,7 +191,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
         }
 
         if (!$this->canRevokeAccessTokens) {
-            $errorMessage = 'The authorization server does not support the revocation of the presented token type';
+            $errorMessage = 'The authorization server does not support the revocation of the presented token type.';
             throw new OAuthServerException($errorMessage, 2, 'unsupported_token_type', 400);
         }
         $this->accessTokenRepository->revokeAccessToken($token->getClaim('jti'));
