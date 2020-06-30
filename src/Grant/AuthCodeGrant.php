@@ -273,7 +273,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            $defaultClientRedirectUri
+            $redirectUri ?? $defaultClientRedirectUri
         );
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
