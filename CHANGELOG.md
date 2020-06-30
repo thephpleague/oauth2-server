@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+- If you provide a valid redirect_uri with the auth code grant and an invalid scope, the server will use the given 
+redirect_uri instead of the default client redirect uri
+
+
 ## [8.1.0] - released 2020-04-29
 
 ### Added
