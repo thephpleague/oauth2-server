@@ -12,7 +12,7 @@ The findings of this library have been fixed in the following releases - `5.1.4`
 
 ### 5.1.4
 
-Version `5.1.4` is a backwards compatbile with other `5.1.x` releases.
+Version `5.1.4` is a backwards compatible with other `5.1.x` releases.
 
 You will notice in your server logs a message like this:
 
