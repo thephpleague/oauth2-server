@@ -7,6 +7,7 @@ use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
+use League\OAuth2\Server\Entities\ClaimEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -362,7 +363,7 @@ class AbstractGrantTest extends TestCase
             new ClientEntity(),
             123,
             [new ScopeEntity()],
-            [new ClaimEntity('private', 'claim')]
+            []
         );
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $accessToken);
     }
