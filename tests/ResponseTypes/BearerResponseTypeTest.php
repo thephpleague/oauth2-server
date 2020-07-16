@@ -66,7 +66,7 @@ class BearerResponseTypeTest extends TestCase
         $this->assertObjectHasAttribute('access_token', $json);
         $this->assertObjectHasAttribute('refresh_token', $json);
         // Extract payload from access token
-        $payload = \json_decode(\base64_decode(\explode('.',$json->access_token)[1]));
+        $payload = \json_decode(\base64_decode(\explode('.', $json->access_token)[1]));
         $this->assertObjectHasAttribute('_private', $payload);
         $this->assertIsArray($payload->_private);
         $this->assertCount(1, $payload->_private);
