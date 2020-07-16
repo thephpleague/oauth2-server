@@ -58,7 +58,7 @@ class PasswordGrant extends AbstractGrant
 
         $privateClaims = [];
         if ($this->claimRepository) {
-            $privateClaims = $this->claimRepository->getClaims($privateClaims, $this->getIdentifier(), $client, $user->getIdentifier());
+            $privateClaims = $this->claimRepository->getClaims($this->getIdentifier(), $client, $user->getIdentifier());
         }
 
         // Issue and persist new access token

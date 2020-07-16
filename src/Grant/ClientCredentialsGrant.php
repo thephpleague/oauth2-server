@@ -50,7 +50,7 @@ class ClientCredentialsGrant extends AbstractGrant
 
         $privateClaims = [];
         if ($this->claimRepository) {
-            $privateClaims = $this->claimRepository->getClaims($privateClaims, $this->getIdentifier(), $client);
+            $privateClaims = $this->claimRepository->getClaims($this->getIdentifier(), $client);
         }
 
         // Issue and persist access token

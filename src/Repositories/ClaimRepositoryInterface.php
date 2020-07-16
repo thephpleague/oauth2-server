@@ -20,12 +20,14 @@ interface ClaimRepositoryInterface extends RepositoryInterface
     /**
      * Returns claims
      *
+     * @param string                $grantType
+     * @param ClientEntityInterface $clientEntity
+     * @param string|null           $userIdentifier
      *
      * @return ClaimEntityInterface[]
      */
     public function getClaims(
-        array $claims,
-        $grantType,
+        string $grantType,
         ClientEntityInterface $clientEntity,
         $userIdentifier = null);
 }
