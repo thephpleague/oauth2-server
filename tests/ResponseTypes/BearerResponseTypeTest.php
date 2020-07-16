@@ -33,7 +33,7 @@ class BearerResponseTypeTest extends TestCase
         $scope = new ScopeEntity();
         $scope->setIdentifier('basic');
 
-        $claim = new ClaimEntity('_private', 'claim');
+        $claim = new ClaimEntity('_private', [42]);
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
@@ -65,6 +65,12 @@ class BearerResponseTypeTest extends TestCase
         $this->assertObjectHasAttribute('expires_in', $json);
         $this->assertObjectHasAttribute('access_token', $json);
         $this->assertObjectHasAttribute('refresh_token', $json);
+        // Extract payload from access token
+        $payload = \json_decode(\base64_decode(\explode('.',$json->access_token)[1]));
+        $this->assertObjectHasAttribute('_private', $payload);
+        $this->assertIsArray($payload->_private);
+        $this->assertCount(1, $payload->_private);
+        $this->assertEquals(42, $payload->_private[0]);
     }
 
     public function testGenerateHttpResponseWithExtraParams()
