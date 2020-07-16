@@ -9,9 +9,7 @@
 
 namespace League\OAuth2\Server\Entities;
 
-use JsonSerializable;
-
-interface ClaimEntityInterface extends JsonSerializable
+interface ClaimEntityInterface
 {
     /**
      * Get the claim's name.
