@@ -10,7 +10,6 @@
 namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\ClaimEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
@@ -26,15 +25,13 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
      * @param ClientEntityInterface  $clientEntity
      * @param ScopeEntityInterface[] $scopes
      * @param string|null            $userIdentifier
-     * @param ClaimEntityInterface[] $claims
      *
      * @return AccessTokenEntityInterface
      */
     public function getNewToken(
         ClientEntityInterface $clientEntity,
         array $scopes,
-        $userIdentifier = null,
-        array $claims = []
+        $userIdentifier = null
     );
 
     /**
