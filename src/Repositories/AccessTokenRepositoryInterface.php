@@ -24,7 +24,7 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
      *
      * @param ClientEntityInterface  $clientEntity
      * @param ScopeEntityInterface[] $scopes
-     * @param string|null            $userIdentifier
+     * @param mixed                  $userIdentifier
      *
      * @return AccessTokenEntityInterface
      */
