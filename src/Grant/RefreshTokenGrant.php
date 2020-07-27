@@ -65,7 +65,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         $privateClaims = [];
 
-        if ($this->claimRepository) {
+        if ($this->claimRepository !== null) {
             $privateClaims = $this->claimRepository->getClaims(
                 $this->getIdentifier(),
                 $client,
