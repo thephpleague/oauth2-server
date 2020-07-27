@@ -453,6 +453,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add($accessTokenTTL));
         $accessToken->setPrivateKey($this->privateKey);
+
         foreach ($claims as $claim) {
             $accessToken->addClaim($claim);
         }
