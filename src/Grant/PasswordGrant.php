@@ -57,7 +57,8 @@ class PasswordGrant extends AbstractGrant
         $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $user->getIdentifier());
 
         $privateClaims = [];
-        if ($this->claimRepository) {
+
+        if ($this->claimRepository !== null) {
             $privateClaims = $this->claimRepository->getClaims($this->getIdentifier(), $client, $user->getIdentifier());
         }
 
