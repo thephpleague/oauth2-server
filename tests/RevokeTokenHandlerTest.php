@@ -2,6 +2,7 @@
 
 namespace LeagueTests;
 
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -12,7 +13,6 @@ use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\StubResponseType;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\ServerRequest;
 
 class RevokeTokenHandlerTest extends TestCase
 {
@@ -52,7 +52,7 @@ class RevokeTokenHandlerTest extends TestCase
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
+        $serverRequest = $serverRequest->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
@@ -91,7 +91,7 @@ class RevokeTokenHandlerTest extends TestCase
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
+        $serverRequest = $serverRequest->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
@@ -129,7 +129,7 @@ class RevokeTokenHandlerTest extends TestCase
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/Stubs/private.key'));
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
+        $serverRequest = $serverRequest->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
@@ -177,7 +177,7 @@ class RevokeTokenHandlerTest extends TestCase
         );
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
+        $serverRequest = $serverRequest->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
@@ -222,7 +222,7 @@ class RevokeTokenHandlerTest extends TestCase
         );
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
+        $serverRequest = $serverRequest->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
@@ -266,7 +266,7 @@ class RevokeTokenHandlerTest extends TestCase
         );
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
+        $serverRequest = $serverRequest->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
@@ -298,7 +298,7 @@ class RevokeTokenHandlerTest extends TestCase
         $handler->setEncryptionKey($this->cryptStub->getKey());
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
+        $serverRequest = $serverRequest->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
@@ -330,7 +330,7 @@ class RevokeTokenHandlerTest extends TestCase
         $refreshToken = 'foobar';
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
+        $serverRequest = $serverRequest->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
@@ -375,7 +375,7 @@ class RevokeTokenHandlerTest extends TestCase
         );
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
+        $serverRequest = $serverRequest->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
@@ -423,7 +423,7 @@ class RevokeTokenHandlerTest extends TestCase
         );
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
+        $serverRequest = $serverRequest->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
@@ -468,7 +468,7 @@ class RevokeTokenHandlerTest extends TestCase
         );
 
         $serverRequest = new ServerRequest();
-        $serverRequest = $serverRequest->withMethod('POST')->withParsedBody(
+        $serverRequest = $serverRequest->withParsedBody(
             [
                 'client_id'       => 'foo',
                 'client_secret'   => 'bar',
