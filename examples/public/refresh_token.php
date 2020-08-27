@@ -27,7 +27,7 @@ $app = new App([
     AuthorizationServer::class => function () {
         // Init our repositories
         $clientRepository = new ClientRepository();
-        $accessTokenRepository = new AccessTokenRepository();
+        $accessTokenRepository = new AccessTokenRepository('thephpleague.com');
         $scopeRepository = new ScopeRepository();
         $refreshTokenRepository = new RefreshTokenRepository();
 

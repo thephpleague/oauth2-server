@@ -16,6 +16,20 @@ use OAuth2ServerExamples\Entities\AccessTokenEntity;
 
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
+
+    /**
+     * @var string
+     */
+    private $issuer;
+
+    /**
+     * @param string $domain token issuer identifier
+     */
+    public function __construct($issuer)
+    {
+        $this->$issuer = $issuer;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -51,6 +65,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
             $accessToken->addScope($scope);
         }
         $accessToken->setUserIdentifier($userIdentifier);
+        $accessToken->setIssuer($this->domain);
 
         return $accessToken;
     }

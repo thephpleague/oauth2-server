@@ -21,7 +21,9 @@ $app = new App([
         // Setup the authorization server
         $server = new AuthorizationServer(
             new ClientRepository(),                 // instance of ClientRepositoryInterface
-            new AccessTokenRepository(),            // instance of AccessTokenRepositoryInterface
+            new AccessTokenRepository(
+                'thephpleague.com'
+            ),                                      // instance of AccessTokenRepositoryInterface
             new ScopeRepository(),                  // instance of ScopeRepositoryInterface
             'file://' . __DIR__ . '/../private.key',    // path to private key
             'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'      // encryption key

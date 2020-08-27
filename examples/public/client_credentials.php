@@ -27,7 +27,7 @@ $app = new App([
         // Init our repositories
         $clientRepository = new ClientRepository(); // instance of ClientRepositoryInterface
         $scopeRepository = new ScopeRepository(); // instance of ScopeRepositoryInterface
-        $accessTokenRepository = new AccessTokenRepository(); // instance of AccessTokenRepositoryInterface
+        $accessTokenRepository = new AccessTokenRepository('thephpleague.com'); // instance of AccessTokenRepositoryInterface
 
         // Path to public and private keys
         $privateKey = 'file://' . __DIR__ . '/../private.key';

@@ -32,7 +32,7 @@ $app = new App([
     AuthorizationServer::class => function () {
         // Init our repositories
         $clientRepository = new ClientRepository();
-        $accessTokenRepository = new AccessTokenRepository();
+        $accessTokenRepository = new AccessTokenRepository('thephpleague.com');
         $scopeRepository = new ScopeRepository();
         $authCodeRepository = new AuthCodeRepository();
         $refreshTokenRepository = new RefreshTokenRepository();
@@ -70,7 +70,7 @@ $app = new App([
         $publicKeyPath = 'file://' . __DIR__ . '/../public.key';
 
         $server = new ResourceServer(
-            new AccessTokenRepository(),
+            new AccessTokenRepository('thephpleague.com'),
             $publicKeyPath
         );
 

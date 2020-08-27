@@ -48,7 +48,14 @@ trait AccessTokenTrait
             ->issuedAt(\time())
             ->canOnlyBeUsedAfter(\time())
             ->expiresAt($this->getExpiryDateTime()->getTimestamp())
-            ->relatedTo((string) $this->getUserIdentifier())
+            ->relatedTo((string) $this->getUserIdentifier());
+
+        if ($this->getIssuer()) {
+            $builder->issuedBy($this->getIssuer());
+        }
+
+        return $builder
+            // Set scope claim late to prevent it from being overridden.
             ->withClaim('scopes', $this->getScopes())
             ->getToken(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()));
     }
@@ -85,4 +92,9 @@ trait AccessTokenTrait
      * @return string
      */
     abstract public function getIdentifier();
+
+    /**
+     * @return string
+     */
+    abstract public function getIssuer();
 }

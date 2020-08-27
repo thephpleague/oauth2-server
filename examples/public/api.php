@@ -12,7 +12,7 @@ $app = new App([
     // Add the resource server to the DI container
     ResourceServer::class => function () {
         $server = new ResourceServer(
-            new AccessTokenRepository(),            // instance of AccessTokenRepositoryInterface
+            new AccessTokenRepository('thephpleague.com'),            // instance of AccessTokenRepositoryInterface
             'file://' . __DIR__ . '/../public.key'  // the authorization server's public key
         );
 
