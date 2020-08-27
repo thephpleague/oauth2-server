@@ -19,7 +19,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use Psr\Http\Message\ResponseInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class RevokeTokenHandler implements EmitterAwareInterface
@@ -130,13 +130,13 @@ class RevokeTokenHandler implements EmitterAwareInterface
      * https://tools.ietf.org/html/rfc7009
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface  $response
+     * @param ResponseTypeInterface  $responseType
      *
      * @throws OAuthServerException
      *
-     * @return ResponseInterface
+     * @return ResponseTypeInterface
      */
-    public function respondToRevokeTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function respondToRevokeTokenRequest(ServerRequestInterface $request, ResponseTypeInterface $responseType)
     {
         $token = $this->getRequestParameter('token', $request);
         $hint = $this->getRequestParameter('token_type_hint', $request);
@@ -146,7 +146,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
         $clientId = $client->getIdentifier();
 
         if (is_null($token)) {
-            return $response;
+            return $responseType;
         }
 
         // Attempt to revoke tokens
@@ -160,7 +160,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
             }
         }
 
-        return $response;
+        return $responseType;
     }
 
     /**
