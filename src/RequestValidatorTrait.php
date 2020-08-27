@@ -18,12 +18,12 @@ trait RequestValidatorTrait
     /**
      * Get the Emitter.
      *
-     * @return League\Event\EmitterInterface
+     * @return \League\Event\EmitterInterface
      */
     abstract public function getEmitter();
 
     /**
-     * @return League\OAuth2\Server\Repositories\ClientRepositoryInterface
+     * @return \League\OAuth2\Server\Repositories\ClientRepositoryInterface
      */
     abstract public function getClientRepository();
 
