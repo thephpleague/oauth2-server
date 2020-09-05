@@ -362,7 +362,7 @@ class OAuthServerException extends Exception
     /**
      * Returns the Redirect URI used for redirecting.
      *
-     * @return string | null
+     * @return string|null
      */
     public function getRedirectUri()
     {
