@@ -96,4 +96,11 @@ class OAuthServerExceptionTest extends TestCase
 
         $this->assertNull($exceptionWithoutPrevious->getPrevious());
     }
+
+    public function testCanGetRedirectionUri()
+    {
+        $exceptionWithRedirect = OAuthServerException::accessDenied('some hint', 'https://example.com/error');
+
+	$this->assertSame('https://example.com/error', $exceptionWithRedirect->getRedirectUri());
+    }
 }
