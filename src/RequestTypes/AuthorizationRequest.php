@@ -79,6 +79,13 @@ class AuthorizationRequest
     protected $codeChallengeMethod;
 
     /**
+     * The nonce parameter on the authorization request
+     *
+     * @var string
+     */
+    protected $nonce;
+
+    /**
      * @return string
      */
     public function getGrantTypeId()
@@ -190,6 +197,21 @@ class AuthorizationRequest
         $this->state = $state;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getNonce()
+    {
+        return $this->nonce;
+    }
+
+    /**
+     * @param string $nonce
+     */
+    public function setNonce($nonce)
+    {
+        $this->nonce = $nonce;
+    }
     /**
      * @return string
      */
