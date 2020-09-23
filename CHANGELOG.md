@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Fix typo in parameter hint. `code_challenged` changed to `code_challenge`. Thrown by Auth Code Grant when the code challenge does not match the regex. (PR #1130) 
+- Undefined offset was returned when no client redirect URI was set. Now throw an invalidClient exception if no redirect URI is set against a client (PR #1140)
 
 ## [8.1.1] - released 2020-07-01
 
