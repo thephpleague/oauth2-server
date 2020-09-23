@@ -47,10 +47,10 @@ class RefreshTokenGrant extends AbstractGrant
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
         $scopes = $this->validateScopes(
             $this->getRequestParameter(
-            'scope',
-            $request,
-            \implode(self::SCOPE_DELIMITER_STRING, $oldRefreshToken['scopes'])
-        )
+                'scope',
+                $request,
+                \implode(self::SCOPE_DELIMITER_STRING, $oldRefreshToken['scopes'])
+            )
         );
 
         // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
