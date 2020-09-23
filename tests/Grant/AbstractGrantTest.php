@@ -92,7 +92,7 @@ class AbstractGrantTest extends TestCase
     public function testValidateClientPublic()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri('http://foo.bar');
+        $client->setRedirectUri('http://foo/bar');
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);

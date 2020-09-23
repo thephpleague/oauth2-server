@@ -65,7 +65,7 @@ class AuthorizationServerTest extends TestCase
         $client = new ClientEntity();
 
         $client->setConfidential();
-        $client->setRedirectUri('http://foo.bar');
+        $client->setRedirectUri('http://foo/bar');
 
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn($client);
