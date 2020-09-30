@@ -1,5 +1,7 @@
 preset: psr2
 
+risky: true
+
 enabled:
   - binary_operator_spaces
   - blank_line_before_return

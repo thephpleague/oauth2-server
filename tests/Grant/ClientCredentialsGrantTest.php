@@ -31,6 +31,7 @@ class ClientCredentialsGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setConfidential();
+        $client->setRedirectUri('http://foo/bar');
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
