@@ -372,8 +372,11 @@ class AuthorizationServerTest extends TestCase
 
     public function testRespondToRevokeRequest()
     {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo.bar');
+
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepository->method('getClientEntity')->willReturn(new ClientEntity());
+        $clientRepository->method('getClientEntity')->willReturn($client);
 
         $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
