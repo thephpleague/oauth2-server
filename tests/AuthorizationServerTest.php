@@ -358,7 +358,7 @@ class AuthorizationServerTest extends TestCase
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
-            \base64_encode(random_bytes(36)),
+            \base64_encode(\random_bytes(36)),
             new StubResponseType()
         );
 
@@ -391,7 +391,7 @@ class AuthorizationServerTest extends TestCase
             $accessTokenRepositoryMock,
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/Stubs/private.key',
-            \base64_encode(random_bytes(36)),
+            \base64_encode(\random_bytes(36)),
             new StubResponseType()
         );
 
