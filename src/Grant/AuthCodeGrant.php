@@ -21,7 +21,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
-use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
@@ -119,7 +119,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $this->validateScopes($authCodePayload->scopes),
                 $this->getIdentifier(),
                 $client,
-                $authCodePayload->user_id
+                $authCodePayload->user_id,
+                $authCodePayload->auth_code_id
             );
         } catch (LogicException $e) {
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code', $e);
@@ -210,7 +211,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         if ($this->authCodeRepository->isAuthCodeRevoked($authCodePayload->auth_code_id) === true) {
-            throw OAuthServerException::invalidRequest('code', 'Authorization code has been revoked');
+            throw OAuthServerException::invalidGrant('Authorization code has been revoked');
         }
 
         if ($authCodePayload->client_id !== $client->getIdentifier()) {
@@ -288,7 +289,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
 
-        $authorizationRequest = new AuthorizationRequest();
+        $authorizationRequest = $this->createAuthorizationRequest();
         $authorizationRequest->setGrantTypeId($this->getIdentifier());
         $authorizationRequest->setClient($client);
         $authorizationRequest->setRedirectUri($redirectUri);
@@ -337,7 +338,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
+    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest)
     {
         if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
             throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
@@ -402,11 +403,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Get the client redirect URI if not set in the request.
      *
-     * @param AuthorizationRequest $authorizationRequest
+     * @param AuthorizationRequestInterface $authorizationRequest
      *
      * @return string
      */
-    private function getClientRedirectUri(AuthorizationRequest $authorizationRequest)
+    private function getClientRedirectUri(AuthorizationRequestInterface $authorizationRequest)
     {
         return \is_array($authorizationRequest->getClient()->getRedirectUri())
                 ? $authorizationRequest->getClient()->getRedirectUri()[0]

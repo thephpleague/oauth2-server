@@ -11,6 +11,9 @@
 
 namespace League\OAuth2\Server\Grant;
 
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
+
 abstract class AbstractAuthorizeGrant extends AbstractGrant
 {
     /**
@@ -25,5 +28,13 @@ abstract class AbstractAuthorizeGrant extends AbstractGrant
         $uri .= (\strstr($uri, $queryDelimiter) === false) ? $queryDelimiter : '&';
 
         return $uri . \http_build_query($params);
+    }
+
+    /**
+     * @return AuthorizationRequestInterface
+     */
+    protected function createAuthorizationRequest()
+    {
+        return new AuthorizationRequest();
     }
 }

@@ -14,12 +14,12 @@ namespace League\OAuth2\Server\Grant;
 use DateInterval;
 use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
-use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClaimRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -75,7 +75,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * @param ServerRequestInterface $request
      *
-     * @return AuthorizationRequest
+     * @return AuthorizationRequestInterface
      */
     public function validateAuthorizationRequest(ServerRequestInterface $request);
 
@@ -84,11 +84,11 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * The AuthorizationRequest object's $userId property must be set to the authenticated user and the
      * $authorizationApproved property must reflect their desire to authorize or deny the client.
      *
-     * @param AuthorizationRequest $authorizationRequest
+     * @param AuthorizationRequestInterface $authorizationRequest
      *
      * @return ResponseTypeInterface
      */
-    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest);
+    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest);
 
     /**
      * The grant type should return true if it is able to respond to this request.
@@ -139,9 +139,9 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * Set the path to the private key.
      *
-     * @param CryptKey $privateKey
+     * @param CryptKeyInterface $privateKey
      */
-    public function setPrivateKey(CryptKey $privateKey);
+    public function setPrivateKey(CryptKeyInterface $privateKey);
 
     /**
      * Set the encryption key

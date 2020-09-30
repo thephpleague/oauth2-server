@@ -15,7 +15,7 @@ use DateTimeImmutable;
 use Error;
 use Exception;
 use League\Event\EmitterAwareTrait;
-use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
@@ -33,7 +33,7 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
-use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use TypeError;
@@ -91,7 +91,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $refreshTokenTTL;
 
     /**
-     * @var CryptKey
+     * @var CryptKeyInterface
      */
     protected $privateKey;
 
@@ -167,9 +167,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Set the private key
      *
-     * @param CryptKey $key
+     * @param CryptKeyInterface $key
      */
-    public function setPrivateKey(CryptKey $key)
+    public function setPrivateKey(CryptKeyInterface $key)
     {
         $this->privateKey = $key;
     }
@@ -614,7 +614,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
+    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest)
     {
         throw new LogicException('This grant cannot complete an authorization request');
     }
