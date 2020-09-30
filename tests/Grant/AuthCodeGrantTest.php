@@ -3,6 +3,7 @@
 namespace LeagueTests\Grant;
 
 use DateInterval;
+use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -571,6 +572,7 @@ class AuthCodeGrantTest extends TestCase
     public function testRespondToAccessTokenRequestUsingHttpBasicAuth()
     {
         $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
         $client->setIdentifier('foo');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
@@ -920,6 +922,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setConfidential();
+        $client->setRedirectUri('http://foo/bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -967,6 +970,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('foo');
         $client->setConfidential();
+        $client->setRedirectUri('http://bar/foo');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -1057,8 +1061,11 @@ class AuthCodeGrantTest extends TestCase
 
     public function testRespondToAccessTokenRequestWithRefreshTokenInsteadOfAuthCode()
     {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn(new ClientEntity());
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -1101,14 +1108,17 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Authorization code malformed');
+            $this->assertEquals('Authorization code malformed', $e->getHint());
         }
     }
 
     public function testRespondToAccessTokenRequestExpiredCode()
     {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn(new ClientEntity());
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -2022,6 +2032,93 @@ class AuthCodeGrantTest extends TestCase
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(3);
+
+        $grant->validateAuthorizationRequest($request);
+    }
+
+    public function testUseValidRedirectUriIfScopeCheckFails()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri(['http://foo/bar', 'http://bar/foo']);
+        $client->setConfidential();
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(null);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type' => 'code',
+                'client_id' => 'foo',
+                'redirect_uri' => 'http://bar/foo',
+            ]
+        );
+
+        // At this point I need to validate the auth request
+        try {
+            $grant->validateAuthorizationRequest($request);
+        } catch (OAuthServerException $e) {
+            $response = $e->generateHttpResponse(new Response());
+
+            $this->assertStringStartsWith('http://bar/foo', $response->getHeader('Location')[0]);
+        }
+    }
+
+    public function testThrowExceptionWhenNoClientRedirectUriRegistered()
+    {
+        $client = (new ClientEntity())->setConfidential();
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(null);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M')
+        );
+
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type' => 'code',
+                'client_id' => 'foo',
+                'redirect_uri' => 'http://bar/foo',
+            ]
+        );
+
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
     }

@@ -64,7 +64,9 @@ class AuthorizationServerTest extends TestCase
     public function testRespondToRequest()
     {
         $client = new ClientEntity();
+
         $client->setConfidential();
+        $client->setRedirectUri('http://foo/bar');
 
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn($client);
@@ -285,6 +287,8 @@ class AuthorizationServerTest extends TestCase
     public function testValidateAuthorizationRequestWithMissingRedirectUri()
     {
         $client = new ClientEntity();
+        $client->setConfidential();
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
