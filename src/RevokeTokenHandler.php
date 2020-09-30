@@ -145,7 +145,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
         $client = $this->validateClient($request);
         $clientId = $client->getIdentifier();
 
-        if (is_null($token)) {
+        if (\is_null($token)) {
             return $responseType;
         }
 
@@ -212,7 +212,7 @@ class RevokeTokenHandler implements EmitterAwareInterface
         $refreshTokenData = null;
         try {
             $refreshToken = $this->decrypt($tokenParam);
-            $refreshTokenData = json_decode($refreshToken, true);
+            $refreshTokenData = \json_decode($refreshToken, true);
         } catch (Exception $e) {
             // token couldn't be decrypted as refresh token
             return false;

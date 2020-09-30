@@ -168,14 +168,14 @@ class RevokeTokenHandlerTest extends TestCase
         $handler->setEncryptionKey($this->cryptStub->getKey());
 
         $refreshToken = $this->cryptStub->doEncrypt(
-            json_encode(
+            \json_encode(
                 [
                     'client_id'        => 'foo',
                     'refresh_token_id' => 'zyxwvu',
                     'access_token_id'  => 'abcdef',
                     'scopes'           => ['foo'],
                     'user_id'          => 123,
-                    'expire_time'      => time() + 3600,
+                    'expire_time'      => \time() + 3600,
                 ]
             )
         );
@@ -214,14 +214,14 @@ class RevokeTokenHandlerTest extends TestCase
         $handler->setEncryptionKey($this->cryptStub->getKey());
 
         $refreshToken = $this->cryptStub->doEncrypt(
-            json_encode(
+            \json_encode(
                 [
                     'client_id'        => 'foo',
                     'refresh_token_id' => 'zyxwvu',
                     'access_token_id'  => 'abcdef',
                     'scopes'           => ['foo'],
                     'user_id'          => 123,
-                    'expire_time'      => time() + 3600,
+                    'expire_time'      => \time() + 3600,
                 ]
             )
         );
@@ -259,14 +259,14 @@ class RevokeTokenHandlerTest extends TestCase
         $handler->setEncryptionKey($this->cryptStub->getKey());
 
         $refreshToken = $this->cryptStub->doEncrypt(
-            json_encode(
+            \json_encode(
                 [
                     'client_id'        => 'foo',
                     'refresh_token_id' => 'zyxwvu',
                     'access_token_id'  => 'abcdef',
                     'scopes'           => ['foo'],
                     'user_id'          => 123,
-                    'expire_time'      => time() + 3600,
+                    'expire_time'      => \time() + 3600,
                 ]
             )
         );
@@ -371,14 +371,14 @@ class RevokeTokenHandlerTest extends TestCase
         $handler->setEncryptionKey($this->cryptStub->getKey());
 
         $refreshToken = $this->cryptStub->doEncrypt(
-            json_encode(
+            \json_encode(
                 [
                     'client_id'        => 'bar',
                     'refresh_token_id' => 'zyxwvu',
                     'access_token_id'  => 'abcdef',
                     'scopes'           => ['foo'],
                     'user_id'          => 123,
-                    'expire_time'      => time() + 3600,
+                    'expire_time'      => \time() + 3600,
                 ]
             )
         );
@@ -420,14 +420,14 @@ class RevokeTokenHandlerTest extends TestCase
         $handler->setEncryptionKey($this->cryptStub->getKey());
 
         $refreshToken = $this->cryptStub->doEncrypt(
-            json_encode(
+            \json_encode(
                 [
                     'client_id'        => 'foo',
                     'refresh_token_id' => 'zyxwvu',
                     'access_token_id'  => 'abcdef',
                     'scopes'           => ['foo'],
                     'user_id'          => 123,
-                    'expire_time'      => time() - 3600,
+                    'expire_time'      => \time() - 3600,
                 ]
             )
         );
@@ -466,14 +466,14 @@ class RevokeTokenHandlerTest extends TestCase
         $handler->setEncryptionKey($this->cryptStub->getKey());
 
         $refreshToken = $this->cryptStub->doEncrypt(
-            json_encode(
+            \json_encode(
                 [
                     'client_id'        => 'foo',
                     'refresh_token_id' => 'zyxwvu',
                     'access_token_id'  => 'abcdef',
                     'scopes'           => ['foo'],
                     'user_id'          => 123,
-                    'expire_time'      => time() + 3600,
+                    'expire_time'      => \time() + 3600,
                 ]
             )
         );
