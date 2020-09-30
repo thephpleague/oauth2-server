@@ -360,6 +360,16 @@ class OAuthServerException extends Exception
     }
 
     /**
+     * Returns the Redirect URI used for redirecting.
+     *
+     * @return string|null
+     */
+    public function getRedirectUri()
+    {
+        return $this->redirectUri;
+    }
+
+    /**
      * Returns the HTTP status code to send when the exceptions is output.
      *
      * @return int

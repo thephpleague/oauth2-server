@@ -70,6 +70,7 @@ We use [Travis CI](https://travis-ci.org/), [Scrutinizer](https://scrutinizer-ci
 * [OAuth 2 Server for CakePHP 3](https://github.com/uafrica/oauth-server)
 * [OAuth 2 Server for Mezzio](https://github.com/mezzio/mezzio-authentication-oauth2)
 * [Trikoder OAuth 2 Bundle (Symfony)](https://github.com/trikoder/oauth2-bundle)
+* [Heimdall for CodeIgniter 4](https://github.com/ezralazuardy/heimdall)
 
 ## Changelog
 

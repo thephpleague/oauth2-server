@@ -216,7 +216,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     {
         $client = $this->clientRepository->getClientEntity($clientId);
 
-        if ($client instanceof ClientEntityInterface === false) {
+        if ($client instanceof ClientEntityInterface === false || empty($client->getRedirectUri())) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient($request);
         }

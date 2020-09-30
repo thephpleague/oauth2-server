@@ -37,6 +37,8 @@ class PasswordGrantTest extends TestCase
     public function testRespondToRequest()
     {
         $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -81,6 +83,8 @@ class PasswordGrantTest extends TestCase
     public function testRespondToRequestNullRefreshToken()
     {
         $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -181,6 +185,8 @@ class PasswordGrantTest extends TestCase
     public function testRespondToRequestBadCredentials()
     {
         $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 

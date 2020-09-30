@@ -44,6 +44,8 @@ class RefreshTokenGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -99,6 +101,7 @@ class RefreshTokenGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
@@ -156,6 +159,8 @@ class RefreshTokenGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -211,6 +216,8 @@ class RefreshTokenGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -264,6 +271,8 @@ class RefreshTokenGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -293,6 +302,8 @@ class RefreshTokenGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -325,6 +336,8 @@ class RefreshTokenGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -371,6 +384,8 @@ class RefreshTokenGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -414,6 +429,8 @@ class RefreshTokenGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 

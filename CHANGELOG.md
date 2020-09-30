@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Add a `getRedirectUri` function to the `OAuthServerException` class (PR #1123)
+
+### Fixed
+- Fix typo in parameter hint. `code_challenged` changed to `code_challenge`. Thrown by Auth Code Grant when the code challenge does not match the regex. (PR #1130) 
+- Undefined offset was returned when no client redirect URI was set. Now throw an invalidClient exception if no redirect URI is set against a client (PR #1140)
+
+## [8.1.1] - released 2020-07-01
+
+### Fixed
+- If you provide a valid redirect_uri with the auth code grant and an invalid scope, the server will use the given 
+redirect_uri instead of the default client redirect uri (PR #1126)
+
+
+## [8.1.0] - released 2020-04-29
 
 ### Added (v9)
 - A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
@@ -38,7 +53,7 @@ method being defined (PR #1051)
 - An exception is now thrown if a refresh token is accidentally sent in place of an authorization code when using the 
 Auth Code Grant (PR #1057)
 - Can now send access token request without being forced to specify a redirect URI (PR #1096)
-- In the BearerTokenValidator, if an implementation is using PDO, there is a possibility that a RuntimeException will be thrown when checking if an access token is revoked. This scenario no longer incorrectly issues an exception with a hint mentioning an issue with JSON decoding. (PR #XX)
+- In the BearerTokenValidator, if an implementation is using PDO, there is a possibility that a RuntimeException will be thrown when checking if an access token is revoked. This scenario no longer incorrectly issues an exception with a hint mentioning an issue with JSON decoding. (PR #1107)
 
 ## [8.0.0] - released 2019-07-13
 
@@ -502,7 +517,9 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.0.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.1.1...HEAD
+[8.1.1]: https://github.com/thephpleague/oauth2-server/compare/8.1.0...8.1.1
+[8.1.0]: https://github.com/thephpleague/oauth2-server/compare/8.0.0...8.1.0
 [8.0.0]: https://github.com/thephpleague/oauth2-server/compare/7.4.0...8.0.0
 [7.4.0]: https://github.com/thephpleague/oauth2-server/compare/7.3.3...7.4.0
 [7.3.3]: https://github.com/thephpleague/oauth2-server/compare/7.3.2...7.3.3
