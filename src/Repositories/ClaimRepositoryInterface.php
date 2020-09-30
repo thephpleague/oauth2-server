@@ -29,5 +29,6 @@ interface ClaimRepositoryInterface extends RepositoryInterface
     public function getClaims(
         string $grantType,
         ClientEntityInterface $clientEntity,
-        $userIdentifier = null);
+        $userIdentifier = null
+    );
 }
