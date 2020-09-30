@@ -57,7 +57,8 @@ class PasswordGrant extends AbstractGrant
             $scopes,
             $this->getIdentifier(),
             $client,
-            $user->getIdentifier());
+            $user->getIdentifier()
+        );
 
         $privateClaims = [];
 
