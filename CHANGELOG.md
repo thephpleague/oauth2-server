@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
 - The authorization server can now finalize scopes when a client uses a refresh token (PR #1094)
 - An AuthorizationRequestInterface to make it easier to extend the AuthorizationRequest (PR #1110)
+- Ability to set custom claims on a JWT (PR #1122)
 
 ### Added
 - Add a `getRedirectUri` function to the `OAuthServerException` class (PR #1123)
