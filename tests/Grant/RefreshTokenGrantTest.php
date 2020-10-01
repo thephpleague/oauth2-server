@@ -481,7 +481,7 @@ class RefreshTokenGrantTest extends TestCase
         $client = new ClientEntity();
 
         $client->setIdentifier('foo');
-	$client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri('http://foo/bar');
 
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
