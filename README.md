@@ -2,7 +2,7 @@
 
 [![Latest Version](http://img.shields.io/packagist/v/league/oauth2-server.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/thephpleague/oauth2-server/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/oauth2-server)
+[![Build Status](https://github.com/thephpleague/oauth2-server/workflows/tests/badge.svg)](https://github.com/thephpleague/oauth2-server/actions)
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-server.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-server)
@@ -59,9 +59,9 @@ vendor/bin/phpunit
 vendor/bin/phpstan analyse -l 7 -c phpstan.neon src tests
 ```
 
-## Continous Integration
+## Continuous Integration
 
-We use [Travis CI](https://travis-ci.org/), [Scrutinizer](https://scrutinizer-ci.com/), and [StyleCI](https://styleci.io/) for continuous integration. Check out [our](https://github.com/thephpleague/oauth2-server/blob/master/.travis.yml) [configuration](https://github.com/thephpleague/oauth2-server/blob/master/.scrutinizer.yml) [files](https://github.com/thephpleague/oauth2-server/blob/master/.styleci.yml) if you'd like to know more.
+We use [Github Actions](https://github.com/features/actions), [Scrutinizer](https://scrutinizer-ci.com/), and [StyleCI](https://styleci.io/) for continuous integration. Check out [our](https://github.com/thephpleague/oauth2-server/blob/master/.github/workflows/tests.yml) [configuration](https://github.com/thephpleague/oauth2-server/blob/master/.scrutinizer.yml) [files](https://github.com/thephpleague/oauth2-server/blob/master/.styleci.yml) if you'd like to know more.
 
 ## Community Integrations
 
