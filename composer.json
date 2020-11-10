@@ -7,7 +7,7 @@
         "php": ">=7.2.0",
         "ext-openssl": "*",
         "league/event": "^2.2",
-        "lcobucci/jwt": "^3.3.1",
+        "lcobucci/jwt": "^3.4 || ^4.0",
         "psr/http-message": "^1.0.1",
         "defuse/php-encryption": "^2.2.1",
         "ext-json": "*"
@@ -16,7 +16,7 @@
         "phpunit/phpunit": "^8.5.4 || ^9.1.3",
         "laminas/laminas-diactoros": "^2.3.0",
         "phpstan/phpstan": "^0.11.19",
-        "phpstan/phpstan-phpunit": "^0.11.2",
+        "phpstan/phpstan-phpunit": "^0.12.6",
         "roave/security-advisories": "dev-master"
     },
     "repositories": [
