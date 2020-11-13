@@ -39,7 +39,7 @@ jobs:
         run: vendor/bin/phpunit --verbose --coverage-clover=coverage.clover
 
       - name: Code coverage
-        if: ${{ github.ref == 'master' }}
+        if: github.ref == 'refs/heads/master'
         run: |
           wget https://scrutinizer-ci.com/ocular.phar
           php ocular.phar code-coverage:upload --format=php-clover coverage.clover
