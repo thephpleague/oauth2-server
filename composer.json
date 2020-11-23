@@ -7,7 +7,7 @@
         "php": ">=7.2.0",
         "ext-openssl": "*",
         "league/event": "^2.2",
-        "lcobucci/jwt": "^3.4@dev || ^4.0@dev",
+        "lcobucci/jwt": "^3.4@dev || ^4.0@beta",
         "psr/http-message": "^1.0.1",
         "defuse/php-encryption": "^2.2.1",
         "ext-json": "*"
