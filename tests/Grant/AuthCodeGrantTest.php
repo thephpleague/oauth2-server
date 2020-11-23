@@ -1715,8 +1715,16 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
-        $authCodeRepository->expects($this->at(0))->method('persistNewAuthCode')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
-        $authCodeRepository->expects($this->at(1))->method('persistNewAuthCode');
+        $matcher = $this->exactly(2);
+
+        $authCodeRepository
+            ->expects($matcher)
+            ->method('persistNewAuthCode')
+            ->willReturnCallback(function () use ($matcher) {
+                if ($matcher->getInvocationCount() === 1) {
+                    throw UniqueTokenIdentifierConstraintViolationException::create();
+                }
+            });
 
         $grant = new AuthCodeGrant(
             $authCodeRepository,
@@ -1797,8 +1805,17 @@ class AuthCodeGrantTest extends TestCase
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
-        $refreshTokenRepositoryMock->expects($this->at(0))->method('persistNewRefreshToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
-        $refreshTokenRepositoryMock->expects($this->at(1))->method('persistNewRefreshToken');
+
+        $matcher = $this->exactly(2);
+
+        $refreshTokenRepositoryMock
+            ->expects($matcher)
+            ->method('persistNewRefreshToken')
+            ->willReturnCallback(function () use ($matcher) {
+                if ($matcher->getInvocationCount() === 1) {
+                    throw UniqueTokenIdentifierConstraintViolationException::create();
+                }
+            });
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),

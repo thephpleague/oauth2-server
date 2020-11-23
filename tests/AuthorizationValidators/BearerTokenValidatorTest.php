@@ -2,33 +2,82 @@
 
 namespace LeagueTests\AuthorizationValidators;
 
+use DateInterval;
+use DateTimeZone;
+use Exception;
+use DateTimeImmutable;
 use Laminas\Diactoros\ServerRequest;
-use Lcobucci\JWT\Builder;
+use Lcobucci\Clock\FrozenClock;
+use Lcobucci\Clock\SystemClock;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Signer\Key\LocalFileReference;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\Constraint\ValidAt;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class BearerTokenValidatorTest extends TestCase
 {
-    public function testThrowExceptionWhenAccessTokenIsNotSigned()
+
+    private $jwtConfiguration;
+
+    public function testBearerTokenValidatorAcceptsValidToken()
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $bearerTokenValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $bearerTokenValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $unsignedJwt = (new Builder())
+        $bearerTokenValidatorReflection = new ReflectionClass(BearerTokenValidator::class);
+        $jwtConfiguration = $bearerTokenValidatorReflection->getProperty('jwtConfiguration');
+        $jwtConfiguration->setAccessible(true);
+
+        $validJwt = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
             ->permittedFor('client-id')
-            ->identifiedBy('token-id', true)
-            ->issuedAt(\time())
-            ->canOnlyBeUsedAfter(\time())
-            ->expiresAt(\time())
+            ->identifiedBy('token-id')
+            ->issuedAt(new DateTimeImmutable())
+            ->canOnlyBeUsedAfter(new DateTimeImmutable())
+            ->expiresAt((new DateTimeImmutable())->add(new DateInterval('PT1H')))
             ->relatedTo('user-id')
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
-            ->getToken();
+            ->getToken(new Sha256(), LocalFileReference::file( __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $unsignedJwt));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $validJwt->toString()));
+
+        $response = $bearerTokenValidator->validateAuthorization($request);
+
+        $this->assertArrayHasKey('authorization', $response->getHeaders());
+    }
+
+    public function testBearerTokenValidatorRejectsExpiredToken()
+    {
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+
+        $bearerTokenValidator = new BearerTokenValidator($accessTokenRepositoryMock);
+        $bearerTokenValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $bearerTokenValidatorReflection = new ReflectionClass(BearerTokenValidator::class);
+        $jwtConfiguration = $bearerTokenValidatorReflection->getProperty('jwtConfiguration');
+        $jwtConfiguration->setAccessible(true);
+
+        $expiredJwt = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
+            ->permittedFor('client-id')
+            ->identifiedBy('token-id')
+            ->issuedAt(new DateTimeImmutable())
+            ->canOnlyBeUsedAfter(new DateTimeImmutable())
+            ->expiresAt((new DateTimeImmutable())->sub(new DateInterval('PT1H')))
+            ->relatedTo('user-id')
+            ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
+            ->getToken(new Sha256(), LocalFileReference::file( __DIR__ . '/../Stubs/private.key'));
+
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $expiredJwt->toString()));
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(9);
