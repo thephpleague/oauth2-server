@@ -32,8 +32,8 @@ jobs:
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
 
-      - name: Run PHPStan
-        run: vendor/bin/phpstan analyse -l 7 -c phpstan.neon src tests
+      #- name: Run PHPStan
+      #  run: vendor/bin/phpstan analyse -l 7 -c phpstan.neon src tests
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose --coverage-clover=coverage.clover
