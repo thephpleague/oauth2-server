@@ -18,7 +18,7 @@
         "phpstan/phpstan": "^0.12.56",
         "phpstan/phpstan-phpunit": "^0.12.16",
         "roave/security-advisories": "dev-master",
-        "roave/backward-compatibility-check": "^5.0"
+        "roave/backward-compatibility-check": "^4.4 || ^5.0"
     },
     "repositories": [
         {
