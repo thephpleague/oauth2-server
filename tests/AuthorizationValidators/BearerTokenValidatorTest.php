@@ -15,9 +15,6 @@ use ReflectionClass;
 
 class BearerTokenValidatorTest extends TestCase
 {
-
-    private $jwtConfiguration;
-
     public function testBearerTokenValidatorAcceptsValidToken()
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
