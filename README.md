@@ -29,11 +29,11 @@ This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](ht
 
 ## Requirements
 
-The following versions of PHP are supported:
+The latest version of this package supports the following versions of PHP:
 
-* PHP 7.2
 * PHP 7.3
 * PHP 7.4
+* PHP 8.0
 
 The `openssl` and `json` extensions are also required.
 
