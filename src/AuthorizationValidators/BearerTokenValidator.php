@@ -95,13 +95,6 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             // Attempt to parse and validate the JWT
             $token = $this->jwtConfiguration->parser()->parse($jwt);
 
-            /*$this->jwtConfiguration->setValidationConstraints(
-                new SignedWith(
-                    new Sha256(),
-                    LocalFileReference::file($this->publicKey->getKeyPath())
-                )
-            );*/
-
             $constraints = $this->jwtConfiguration->validationConstraints();
 
             try {
@@ -123,8 +116,20 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         // Return the request with additional attributes
         return $request
             ->withAttribute('oauth_access_token_id', $claims->get('jti'))
-            ->withAttribute('oauth_client_id', $claims->get('aud'))
+            ->withAttribute('oauth_client_id', $this->convertSingleRecordAudToString($claims->get('aud')))
             ->withAttribute('oauth_user_id', $claims->get('sub'))
             ->withAttribute('oauth_scopes', $claims->get('scopes'));
+    }
+
+    /**
+     * Convert single record arrays into strings to ensure backwards compatibility between v4 and v3.x of lcobucci/jwt
+     *
+     * @param $aud
+     *
+     * @return array|string
+     */
+    private function convertSingleRecordAudToString($aud)
+    {
+        return count($aud) === 1 ? $aud[0] : $aud;
     }
 }

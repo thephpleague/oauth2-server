@@ -147,7 +147,7 @@ class BearerResponseTypeTest extends TestCase
         $request = $authorizationValidator->validateAuthorization($request);
 
         $this->assertEquals('abcdef', $request->getAttribute('oauth_access_token_id'));
-        $this->assertContains('clientName', $request->getAttribute('oauth_client_id'));
+        $this->assertEquals('clientName', $request->getAttribute('oauth_client_id'));
         $this->assertEquals('123', $request->getAttribute('oauth_user_id'));
         $this->assertEquals([], $request->getAttribute('oauth_scopes'));
     }
