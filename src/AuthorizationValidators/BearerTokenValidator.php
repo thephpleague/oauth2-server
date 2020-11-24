@@ -124,7 +124,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     /**
      * Convert single record arrays into strings to ensure backwards compatibility between v4 and v3.x of lcobucci/jwt
      *
-     * @param $aud
+     * @param mixed $aud
      *
      * @return array|string
      */

@@ -55,8 +55,6 @@ trait AccessTokenTrait
     /**
      * Generate a JWT from the access token
      *
-     * @param CryptKey $privateKey
-     *
      * @return Token
      */
     private function convertToJWT()
