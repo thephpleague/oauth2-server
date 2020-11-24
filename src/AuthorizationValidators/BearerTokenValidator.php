@@ -74,7 +74,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         );
 
         $this->jwtConfiguration->setValidationConstraints(
-            new ValidAt(new SystemClock(new DateTimeZone(date_default_timezone_get()))),
+            new ValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
             new SignedWith(new Sha256(), LocalFileReference::file($this->publicKey->getKeyPath()))
         );
     }
@@ -130,6 +130,6 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
      */
     private function convertSingleRecordAudToString($aud)
     {
-        return is_countable($aud) && count($aud) === 1 ? $aud[0] : $aud;
+        return \is_countable($aud) && \count($aud) === 1 ? $aud[0] : $aud;
     }
 }

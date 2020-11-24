@@ -3,22 +3,12 @@
 namespace LeagueTests\AuthorizationValidators;
 
 use DateInterval;
-use DateTimeZone;
-use Exception;
 use DateTimeImmutable;
 use Laminas\Diactoros\ServerRequest;
-use Lcobucci\Clock\FrozenClock;
-use Lcobucci\Clock\SystemClock;
-use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Key\LocalFileReference;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use Lcobucci\JWT\Validation\Constraint\ValidAt;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
