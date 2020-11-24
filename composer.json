@@ -68,6 +68,5 @@
         "psr-4": {
             "LeagueTests\\": "tests/"
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
