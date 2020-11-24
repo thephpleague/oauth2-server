@@ -57,7 +57,7 @@ class OAuthServerException extends Exception
      * @param null|string $redirectUri    A HTTP URI to redirect the user back to
      * @param Throwable   $previous       Previous exception
      */
-    final public function __construct($message, $code, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null, Throwable $previous = null)
+    public function __construct($message, $code, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->httpStatusCode = $httpStatusCode;
