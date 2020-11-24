@@ -43,7 +43,7 @@ trait AccessTokenTrait
     {
         $privateKeyPassPhrase = $this->privateKey->getPassPhrase();
 
-        $verificationKey = empty($privateKeyPassPhrase) ? InMemory::empty() : $privateKeyPassPhrase;
+        $verificationKey = empty($privateKeyPassPhrase) ? InMemory::plainText('') : $privateKeyPassPhrase;
 
         $this->jwtConfiguration = Configuration::forAsymmetricSigner(
             new Sha256(),

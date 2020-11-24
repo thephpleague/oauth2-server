@@ -9,9 +9,7 @@
 
 namespace League\OAuth2\Server\AuthorizationValidators;
 
-use DateTimeImmutable;
 use DateTimeZone;
-use Lcobucci\Clock\FrozenClock;
 use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
@@ -72,7 +70,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     {
         $this->jwtConfiguration = Configuration::forSymmetricSigner(
             new Sha256(),
-            InMemory::empty()
+            InMemory::plainText('')
         );
 
         $this->jwtConfiguration->setValidationConstraints(
