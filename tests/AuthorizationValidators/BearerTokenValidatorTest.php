@@ -37,7 +37,7 @@ class BearerTokenValidatorTest extends TestCase
             ->expiresAt((new DateTimeImmutable())->add(new DateInterval('PT1H')))
             ->relatedTo('user-id')
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
-            ->getToken(new Sha256(), LocalFileReference::file( __DIR__ . '/../Stubs/private.key'));
+            ->getToken(new Sha256(), LocalFileReference::file(__DIR__ . '/../Stubs/private.key'));
 
         $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $validJwt->toString()));
 
@@ -65,7 +65,7 @@ class BearerTokenValidatorTest extends TestCase
             ->expiresAt((new DateTimeImmutable())->sub(new DateInterval('PT1H')))
             ->relatedTo('user-id')
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
-            ->getToken(new Sha256(), LocalFileReference::file( __DIR__ . '/../Stubs/private.key'));
+            ->getToken(new Sha256(), LocalFileReference::file(__DIR__ . '/../Stubs/private.key'));
 
         $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $expiredJwt->toString()));
 
