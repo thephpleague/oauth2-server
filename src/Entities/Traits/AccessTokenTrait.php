@@ -39,6 +39,9 @@ trait AccessTokenTrait
         $this->privateKey = $privateKey;
     }
 
+    /**
+     * Initialise the JWT Configuration.
+     */
     public function initJwtConfiguration()
     {
         $privateKeyPassPhrase = $this->privateKey->getPassPhrase();

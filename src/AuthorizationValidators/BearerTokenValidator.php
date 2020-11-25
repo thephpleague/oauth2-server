@@ -66,6 +66,9 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         $this->initJwtConfiguration();
     }
 
+    /**
+     * Initialise the JWT configuration.
+     */
     private function initJwtConfiguration()
     {
         $this->jwtConfiguration = Configuration::forSymmetricSigner(
