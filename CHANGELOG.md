@@ -5,8 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [8.2.0] - released 2020-11-25
 ### Added
 - Add a `getRedirectUri` function to the `OAuthServerException` class (PR #1123)
+- Support for PHP 8.0 (PR #1146)
+
+### Removed
+- Removed support for PHP 7.2 (PR #1146)
 
 ### Fixed
 - Fix typo in parameter hint. `code_challenged` changed to `code_challenge`. Thrown by Auth Code Grant when the code challenge does not match the regex. (PR #1130) 
@@ -505,7 +511,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.1.1...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.2.0...HEAD
+[8.2.0]: https://github.com/thephpleague/oauth2-server/compare/8.1.1...8.2.0
 [8.1.1]: https://github.com/thephpleague/oauth2-server/compare/8.1.0...8.1.1
 [8.1.0]: https://github.com/thephpleague/oauth2-server/compare/8.0.0...8.1.0
 [8.0.0]: https://github.com/thephpleague/oauth2-server/compare/7.4.0...8.0.0
