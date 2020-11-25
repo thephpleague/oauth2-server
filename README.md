@@ -6,7 +6,6 @@
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-server.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-server)
-[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
 
 `league/oauth2-server` is a standards compliant implementation of an [OAuth 2.0](https://tools.ietf.org/html/rfc6749) authorization server written in PHP which makes working with OAuth 2.0 trivial. You can easily configure an OAuth 2.0 server to protect your API with access tokens, or allow clients to request new access tokens and refresh them.
 
@@ -29,11 +28,11 @@ This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](ht
 
 ## Requirements
 
-The following versions of PHP are supported:
+The latest version of this package supports the following versions of PHP:
 
-* PHP 7.2
 * PHP 7.3
 * PHP 7.4
+* PHP 8.0
 
 The `openssl` and `json` extensions are also required.
 
@@ -52,11 +51,10 @@ You can contribute to the documentation in the [gh-pages branch](https://github.
 
 ## Testing
 
-The library uses [PHPUnit](https://phpunit.de/) for unit tests and [PHPStan](https://github.com/phpstan/phpstan) for static analysis of the code.
+The library uses [PHPUnit](https://phpunit.de/) for unit tests.
 
 ```
 vendor/bin/phpunit
-vendor/bin/phpstan analyse -l 7 -c phpstan.neon src tests
 ```
 
 ## Continuous Integration

@@ -276,8 +276,17 @@ class ImplicitGrantTest extends TestCase
         /** @var AccessTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
-        $accessTokenRepositoryMock->expects($this->at(0))->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
-        $accessTokenRepositoryMock->expects($this->at(1))->method('persistNewAccessToken')->willReturnSelf();
+
+        $matcher = $this->exactly(2);
+
+        $accessTokenRepositoryMock
+            ->expects($matcher)
+            ->method('persistNewAccessToken')
+            ->willReturnCallback(function () use ($matcher) {
+                if ($matcher->getInvocationCount() === 1) {
+                    throw UniqueTokenIdentifierConstraintViolationException::create();
+                }
+            });
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
