@@ -42,17 +42,17 @@ trait AccessTokenTrait
      */
     private function convertToJWT(CryptKey $privateKey)
     {
+       $expiresAtTimestamp = $this->getExpiryDateTime()->getTimestamp();
         return (new Builder())
             ->permittedFor($this->getClient()->getIdentifier())
             ->identifiedBy($this->getIdentifier())
-            ->issuedAt(new DateTimeImmutable())
-            ->canOnlyBeUsedAfter(new DateTimeImmutable())
-            ->expiresAt(new DateTimeImmutable($this->getExpiryDateTime()->getTimestamp()))
+            ->issuedAt(new \DateTimeImmutable())
+            ->canOnlyBeUsedAfter(new \DateTimeImmutable())
+            ->expiresAt((new \DateTimeImmutable())->setTimestamp($expiresAtTimestamp))
             ->relatedTo((string) $this->getUserIdentifier())
             ->withClaim('scopes', $this->getScopes())
             ->getToken(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()));
     }
-
     /**
      * Generate a string representation from the access token
      */
