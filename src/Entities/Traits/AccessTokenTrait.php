@@ -45,9 +45,9 @@ trait AccessTokenTrait
         return (new Builder())
             ->permittedFor($this->getClient()->getIdentifier())
             ->identifiedBy($this->getIdentifier())
-            ->issuedAt(\time())
-            ->canOnlyBeUsedAfter(\time())
-            ->expiresAt($this->getExpiryDateTime()->getTimestamp())
+            ->issuedAt(new DateTimeImmutable())
+            ->canOnlyBeUsedAfter(new DateTimeImmutable())
+            ->expiresAt(new DateTimeImmutable($this->getExpiryDateTime()->getTimestamp()))
             ->relatedTo((string) $this->getUserIdentifier())
             ->withClaim('scopes', $this->getScopes())
             ->getToken(new Sha256(), new Key($privateKey->getKeyPath(), $privateKey->getPassPhrase()));
