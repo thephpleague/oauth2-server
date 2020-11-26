@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.2.1] - released 2020-11-26
+### Fixed
+- If you have a password on your private key, it is now passed correctly to the JWT configuration object. (PR #1159)
+
 ## [8.2.0] - released 2020-11-25
 ### Added
 - Add a `getRedirectUri` function to the `OAuthServerException` class (PR #1123)
@@ -511,7 +515,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.2.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.2.1...HEAD
+[8.2.1]: https://github.com/thephpleague/oauth2-server/compare/8.2.0...8.2.1
 [8.2.0]: https://github.com/thephpleague/oauth2-server/compare/8.1.1...8.2.0
 [8.1.1]: https://github.com/thephpleague/oauth2-server/compare/8.1.0...8.1.1
 [8.1.0]: https://github.com/thephpleague/oauth2-server/compare/8.0.0...8.1.0
