@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.2.1] - released 2020-11-26
+### Fixed
+- If you have a password on your private key, it is now passed correctly to the JWT configuration object. (PR #XXXX)
+
 ## [8.2.0] - released 2020-11-25
 ### Added
 - Add a `getRedirectUri` function to the `OAuthServerException` class (PR #1123)
