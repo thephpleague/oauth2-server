@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.2.2] - released 2020-11-30
+- Fix issue where the private key passphrase isn't correctly passed to JWT library (PR #1164)
+
 ## [8.2.1] - released 2020-11-26
 ### Fixed
 - If you have a password on your private key, it is now passed correctly to the JWT configuration object. (PR #1159)
