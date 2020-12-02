@@ -37,7 +37,7 @@ jobs:
 
       - name: Code coverage
         if: github.ref == 'refs/heads/master' && ${{ matrix.php }} != 8.0
-        echo "::debug::The matrix is set to ${{ matrix.php }}"
         run: |
+          echo "::debug::The matrix is set to ${{ matrix.php }}"
           wget https://scrutinizer-ci.com/ocular.phar
           php ocular.phar code-coverage:upload --format=php-clover coverage.clover
