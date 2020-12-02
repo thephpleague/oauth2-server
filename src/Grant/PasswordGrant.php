@@ -14,10 +14,12 @@ namespace League\OAuth2\Server\Grant;
 use DateInterval;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
+use League\OAuth2\Server\Events\IssuedAccessToken;
+use League\OAuth2\Server\Events\IssuedRefreshToken;
+use League\OAuth2\Server\Events\UserAuthenticationFailed;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
-use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -58,14 +60,14 @@ class PasswordGrant extends AbstractGrant
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);
-        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
+        $this->eventDispatcher()->dispatch(new IssuedAccessToken($request));
         $responseType->setAccessToken($accessToken);
 
         // Issue and persist new refresh token if given
         $refreshToken = $this->issueRefreshToken($accessToken);
 
         if ($refreshToken !== null) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
+            $this->eventDispatcher()->dispatch(new IssuedRefreshToken($request));
             $responseType->setRefreshToken($refreshToken);
         }
 
@@ -102,7 +104,7 @@ class PasswordGrant extends AbstractGrant
         );
 
         if ($user instanceof UserEntityInterface === false) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
+            $this->eventDispatcher()->dispatch(new UserAuthenticationFailed($request));
 
             throw OAuthServerException::invalidGrant();
         }

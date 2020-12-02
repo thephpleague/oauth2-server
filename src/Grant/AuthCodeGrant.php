@@ -17,10 +17,12 @@ use League\OAuth2\Server\CodeChallengeVerifiers\PlainVerifier;
 use League\OAuth2\Server\CodeChallengeVerifiers\S256Verifier;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
+use League\OAuth2\Server\Events\ClientAuthenticationFailed;
+use League\OAuth2\Server\Events\IssuedAccessToken;
+use League\OAuth2\Server\Events\IssuedRefreshToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -95,7 +97,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
     ) {
-        list($clientId) = $this->getClientCredentials($request);
+        [$clientId] = $this->getClientCredentials($request);
 
         $client = $this->getClientEntityOrFail($clientId, $request);
 
@@ -162,14 +164,14 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
-        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
+        $this->eventDispatcher()->dispatch(new IssuedAccessToken($request));
         $responseType->setAccessToken($accessToken);
 
         // Issue and persist new refresh token if given
         $refreshToken = $this->issueRefreshToken($accessToken);
 
         if ($refreshToken !== null) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
+            $this->eventDispatcher()->dispatch(new IssuedRefreshToken($request));
             $responseType->setRefreshToken($refreshToken);
         }
 
@@ -262,7 +264,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         if ($redirectUri !== null) {
             $this->validateRedirectUri($redirectUri, $client, $request);
         } elseif (\is_array($client->getRedirectUri()) && \count($client->getRedirectUri()) !== 1) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            $this->eventDispatcher()->dispatch(new ClientAuthenticationFailed($request));
 
             throw OAuthServerException::invalidClient($request);
         }
