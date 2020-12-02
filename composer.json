@@ -4,7 +4,7 @@
     "homepage": "https://oauth2.thephpleague.com/",
     "license": "MIT",
     "require": {
-        "php": "^7.3 || ^8.0",
+        "php": "^7.2 || ^8.0",
         "ext-openssl": "*",
         "league/event": "^2.2",
         "lcobucci/jwt": "^3.4 || ^4.0",
