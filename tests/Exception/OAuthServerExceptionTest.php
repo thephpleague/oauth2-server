@@ -29,12 +29,46 @@ class OAuthServerExceptionTest extends TestCase
         }
     }
 
+    public function testInvalidClientExceptionSetsBearerAuthenticateHeader()
+    {
+        $serverRequest = (new ServerRequest())
+            ->withParsedBody([
+                'client_id' => 'foo',
+            ])
+            ->withAddedHeader('Authorization', 'Bearer fakeauthdetails');
+
+        try {
+            $this->issueInvalidClientException($serverRequest);
+        } catch (OAuthServerException $e) {
+            $response = $e->generateHttpResponse(new Response());
+
+            $this->assertEquals(['Bearer realm="OAuth"'], $response->getHeader('WWW-Authenticate'));
+        }
+    }
+
     public function testInvalidClientExceptionOmitsAuthenticateHeader()
     {
         $serverRequest = (new ServerRequest())
             ->withParsedBody([
                 'client_id' => 'foo',
             ]);
+
+        try {
+            $this->issueInvalidClientException($serverRequest);
+        } catch (OAuthServerException $e) {
+            $response = $e->generateHttpResponse(new Response());
+
+            $this->assertFalse($response->hasHeader('WWW-Authenticate'));
+        }
+    }
+
+    public function testInvalidClientExceptionOmitsAuthenticateHeaderGivenEmptyAuthorizationHeader()
+    {
+        $serverRequest = (new ServerRequest())
+            ->withParsedBody([
+                'client_id' => 'foo',
+            ])
+            ->withAddedHeader('Authorization', '');
 
         try {
             $this->issueInvalidClientException($serverRequest);
