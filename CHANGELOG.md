@@ -5,25 +5,37 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
-### Added (v9)
-- A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
-- The authorization server can now finalize scopes when a client uses a refresh token (PR #1094)
-- An AuthorizationRequestInterface to make it easier to extend the AuthorizationRequest (PR #1110)
-
-### Added
-- Add a `getRedirectUri` function to the `OAuthServerException` class (PR #1123)
-
 ### Fixed (v9)
 - If a refresh token has expired, been revoked, cannot be decrypted, or does not belong to the correct client, the server will now issue an `invalid_grant` error and a HTTP 400 response. In previous versions the server incorrectly issued an `invalid_request` and HTTP 401 response (PR #1042) (PR #1082)
-
-### Fixed
-- Fix typo in parameter hint. `code_challenged` changed to `code_challenge`. Thrown by Auth Code Grant when the code challenge does not match the regex. (PR #1130) 
-- Undefined offset was returned when no client redirect URI was set. Now throw an invalidClient exception if no redirect URI is set against a client (PR #1140)
 
 ### Changed (v9)
 - Authorization Request objects are now created through the factory method, `createAuthorizationRequest()` (PR #1111)
 - Changed parameters for `finalizeScopes()` to allow a reference to an auth code ID (PR #1112)
+
+
+## [8.2.3] - released 2020-12-02
+### Added
+- Re-added support for PHP 7.2 (PR #1165, #1167)
+
+## [8.2.2] - released 2020-11-30
+### Fixed
+- Fix issue where the private key passphrase isn't correctly passed to JWT library (PR #1164)
+
+## [8.2.1] - released 2020-11-26
+### Fixed
+- If you have a password on your private key, it is now passed correctly to the JWT configuration object. (PR #1159)
+
+## [8.2.0] - released 2020-11-25
+### Added
+- Add a `getRedirectUri` function to the `OAuthServerException` class (PR #1123)
+- Support for PHP 8.0 (PR #1146)
+
+### Removed
+- Removed support for PHP 7.2 (PR #1146)
+
+### Fixed
+- Fix typo in parameter hint. `code_challenged` changed to `code_challenge`. Thrown by Auth Code Grant when the code challenge does not match the regex. (PR #1130) 
+- Undefined offset was returned when no client redirect URI was set. Now throw an invalidClient exception if no redirect URI is set against a client (PR #1140)
 
 ## [8.1.1] - released 2020-07-01
 
@@ -517,7 +529,11 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.1.1...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.2.3...HEAD
+[8.2.3]: https://github.com/thephpleague/oauth2-server/compare/8.2.2...8.2.3
+[8.2.2]: https://github.com/thephpleague/oauth2-server/compare/8.2.1...8.2.2
+[8.2.1]: https://github.com/thephpleague/oauth2-server/compare/8.2.0...8.2.1
+[8.2.0]: https://github.com/thephpleague/oauth2-server/compare/8.1.1...8.2.0
 [8.1.1]: https://github.com/thephpleague/oauth2-server/compare/8.1.0...8.1.1
 [8.1.0]: https://github.com/thephpleague/oauth2-server/compare/8.0.0...8.1.0
 [8.0.0]: https://github.com/thephpleague/oauth2-server/compare/7.4.0...8.0.0
