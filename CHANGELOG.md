@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added (v9)
+- A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
+- The authorization server can now finalize scopes when a client uses a refresh token (PR #1094)
+- An AuthorizationRequestInterface to make it easier to extend the AuthorizationRequest (PR #1110)
+
 ### Fixed (v9)
 - If a refresh token has expired, been revoked, cannot be decrypted, or does not belong to the correct client, the server will now issue an `invalid_grant` error and a HTTP 400 response. In previous versions the server incorrectly issued an `invalid_request` and HTTP 401 response (PR #1042) (PR #1082)
 
