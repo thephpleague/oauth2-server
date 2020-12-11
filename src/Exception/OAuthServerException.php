@@ -157,16 +157,6 @@ class OAuthServerException extends Exception
     }
 
     /**
-     * Invalid credentials error.
-     *
-     * @return static
-     */
-    public static function invalidCredentials()
-    {
-        return new static('The user credentials were incorrect.', 6, 'invalid_credentials', 401);
-    }
-
-    /**
      * Server error.
      *
      * @param Throwable $previous
