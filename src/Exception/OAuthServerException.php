@@ -29,11 +29,6 @@ class OAuthServerException extends Exception
     /**
      * @var null|string
      */
-    private $hint;
-
-    /**
-     * @var null|string
-     */
     private $redirectUri;
 
     /**
@@ -53,24 +48,19 @@ class OAuthServerException extends Exception
      * @param int         $code           Error code
      * @param string      $errorType      Error type
      * @param int         $httpStatusCode HTTP status code to send (default = 400)
-     * @param null|string $hint           A helper hint
      * @param null|string $redirectUri    A HTTP URI to redirect the user back to
      * @param Throwable   $previous       Previous exception
      */
-    public function __construct($message, $code, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null, Throwable $previous = null)
+    public function __construct($message, $code, $errorType, $httpStatusCode = 400, $redirectUri = null, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->httpStatusCode = $httpStatusCode;
         $this->errorType = $errorType;
-        $this->hint = $hint;
         $this->redirectUri = $redirectUri;
         $this->payload = [
             'error'             => $errorType,
             'error_description' => $message,
         ];
-        if ($hint !== null) {
-            $this->payload['hint'] = $hint;
-        }
     }
 
     /**
@@ -118,28 +108,22 @@ class OAuthServerException extends Exception
      */
     public static function unsupportedGrantType()
     {
-        $errorMessage = 'The authorization grant type is not supported by the authorization server.';
-        $hint = 'Check that all required parameters have been provided';
+        $errorMessage = 'The grant type is not supported by the authorization server.';
 
-        return new static($errorMessage, 2, 'unsupported_grant_type', 400, $hint);
+        return new static($errorMessage, 2, 'unsupported_grant_type', 400);
     }
 
     /**
      * Invalid request error.
      *
-     * @param string      $parameter The invalid parameter
-     * @param null|string $hint
-     * @param Throwable   $previous  Previous exception
+     * @param string      $errorMessage The error message
+     * @param Throwable   $previous     Previous exception
      *
      * @return static
      */
-    public static function invalidRequest($parameter, $hint = null, Throwable $previous = null)
+    public static function invalidRequest($errorMessage, Throwable $previous = null)
     {
-        $errorMessage = 'The request is missing a required parameter, includes an invalid parameter value, ' .
-            'includes a parameter more than once, or is otherwise malformed.';
-        $hint = ($hint === null) ? \sprintf('Check the `%s` parameter', $parameter) : $hint;
-
-        return new static($errorMessage, 3, 'invalid_request', 400, $hint, null, $previous);
+        return new static($errorMessage, 3, 'invalid_request', 400, null, $previous);
     }
 
     /**
@@ -170,16 +154,7 @@ class OAuthServerException extends Exception
     {
         $errorMessage = 'The requested scope is invalid, unknown, or malformed';
 
-        if (empty($scope)) {
-            $hint = 'Specify a scope in the request or set a default scope';
-        } else {
-            $hint = \sprintf(
-                'Check the `%s` scope',
-                \htmlspecialchars($scope, ENT_QUOTES, 'UTF-8', false)
-            );
-        }
-
-        return new static($errorMessage, 5, 'invalid_scope', 400, $hint, $redirectUri);
+        return new static($errorMessage, 5, 'invalid_scope', 400, $redirectUri);
     }
 
     /**
@@ -195,18 +170,17 @@ class OAuthServerException extends Exception
     /**
      * Server error.
      *
-     * @param string    $hint
      * @param Throwable $previous
      *
      * @return static
      *
      * @codeCoverageIgnore
      */
-    public static function serverError($hint, Throwable $previous = null)
+    public static function serverError(Throwable $previous = null)
     {
         return new static(
             'The authorization server encountered an unexpected condition which prevented it from fulfilling'
-            . ' the request: ' . $hint,
+            . ' the request',
             7,
             'server_error',
             500,
@@ -219,33 +193,30 @@ class OAuthServerException extends Exception
     /**
      * Invalid refresh token.
      *
-     * @param null|string $hint
      * @param Throwable   $previous
      *
      * @return static
      */
-    public static function invalidRefreshToken($hint = null, Throwable $previous = null)
+    public static function invalidRefreshToken(Throwable $previous = null)
     {
-        return new static('The refresh token is invalid.', 8, 'invalid_grant', 400, $hint, null, $previous);
+        return new static('The refresh token is invalid.', 8, 'invalid_grant', 400, null, $previous);
     }
 
     /**
      * Access denied.
      *
-     * @param null|string $hint
      * @param null|string $redirectUri
      * @param Throwable   $previous
      *
      * @return static
      */
-    public static function accessDenied($hint = null, $redirectUri = null, Throwable $previous = null)
+    public static function accessDenied($redirectUri = null, Throwable $previous = null)
     {
         return new static(
             'The resource owner or authorization server denied the request.',
             9,
             'access_denied',
             401,
-            $hint,
             $redirectUri,
             $previous
         );
@@ -254,20 +225,15 @@ class OAuthServerException extends Exception
     /**
      * Invalid grant.
      *
-     * @param string $hint
-     *
      * @return static
      */
-    public static function invalidGrant($hint = '')
+    public static function invalidGrant($message)
     {
         return new static(
-            'The provided authorization grant (e.g., authorization code, resource owner credentials) or refresh token '
-                . 'is invalid, expired, revoked, does not match the redirection URI used in the authorization request, '
-                . 'or was issued to another client.',
+            $message,
             10,
             'invalid_grant',
             400,
-            $hint
         );
     }
 
@@ -377,13 +343,5 @@ class OAuthServerException extends Exception
     public function getHttpStatusCode()
     {
         return $this->httpStatusCode;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getHint()
-    {
-        return $this->hint;
     }
 }
