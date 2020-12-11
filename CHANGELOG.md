@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - The server will now only recognise and handle an authorization header if the value of the header is non-empty. This is to circumvent issues where some common frameworks set this header even if no value is present (PR #1170)
 
+## [8.2.4] - released 2020-12-10
+### Fixed
+- Reverted the enforcement of at least one redirect_uri for a client. This change has instead been moved to version 9 (PR #1169)
+
 ## [8.2.3] - released 2020-12-02
 ### Added
 - Re-added support for PHP 7.2 (PR #1165, #1167)
@@ -525,7 +529,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.2.3...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.2.4...HEAD
+[8.2.4]: https://github.com/thephpleague/oauth2-server/compare/8.2.3...8.2.4
 [8.2.3]: https://github.com/thephpleague/oauth2-server/compare/8.2.2...8.2.3
 [8.2.2]: https://github.com/thephpleague/oauth2-server/compare/8.2.1...8.2.2
 [8.2.1]: https://github.com/thephpleague/oauth2-server/compare/8.2.0...8.2.1
