@@ -102,21 +102,21 @@ class RefreshTokenGrant extends AbstractGrant
         try {
             $refreshToken = $this->decrypt($encryptedRefreshToken);
         } catch (Exception $e) {
-            throw OAuthServerException::invalidRefreshToken('Cannot decrypt the refresh token', $e);
+            throw OAuthServerException::invalidGrant('Cannot decrypt the refresh token', $e);
         }
 
         $refreshTokenData = \json_decode($refreshToken, true);
         if ($refreshTokenData['client_id'] !== $clientId) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_CLIENT_FAILED, $request));
-            throw OAuthServerException::invalidRefreshToken('Token is not linked to client');
+            throw OAuthServerException::invalidGrant('Refresh token is not linked to given client');
         }
 
         if ($refreshTokenData['expire_time'] < \time()) {
-            throw OAuthServerException::invalidRefreshToken('Token has expired');
+            throw OAuthServerException::invalidGrant('Refresh token has expired');
         }
 
         if ($this->refreshTokenRepository->isRefreshTokenRevoked($refreshTokenData['refresh_token_id']) === true) {
-            throw OAuthServerException::invalidRefreshToken('Token has been revoked');
+            throw OAuthServerException::invalidGrant('Refresh token has been revoked');
         }
 
         return $refreshTokenData;

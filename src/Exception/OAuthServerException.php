@@ -180,18 +180,6 @@ class OAuthServerException extends Exception
     }
 
     /**
-     * Invalid refresh token.
-     *
-     * @param Throwable   $previous
-     *
-     * @return static
-     */
-    public static function invalidRefreshToken(Throwable $previous = null)
-    {
-        return new static('The refresh token is invalid.', 8, 'invalid_grant', 400, null, $previous);
-    }
-
-    /**
      * Access denied.
      *
      * @param null|string $redirectUri
@@ -199,10 +187,10 @@ class OAuthServerException extends Exception
      *
      * @return static
      */
-    public static function accessDenied($redirectUri = null, Throwable $previous = null)
+    public static function accessDenied($errorMessage, $redirectUri = null, Throwable $previous = null)
     {
         return new static(
-            'The resource owner or authorization server denied the request.',
+            $errorMessage,
             9,
             'access_denied',
             401,
@@ -214,15 +202,20 @@ class OAuthServerException extends Exception
     /**
      * Invalid grant.
      *
+     * @param string    $errorMessage
+     * @param Throwable $previous
+     *
      * @return static
      */
-    public static function invalidGrant($message)
+    public static function invalidGrant($errorMessage, Throwable $previous)
     {
         return new static(
-            $message,
+            $errorMessage,
             10,
             'invalid_grant',
             400,
+            null,
+            $previous
         );
     }
 
