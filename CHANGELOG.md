@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- The server will now only recognise and handle an authorization header if the value of the header is non-empty. This is to circumvent issues where some common frameworks set this header even if no value is present (PR #1170)
+
 ## [8.2.4] - released 2020-12-10
 ### Fixed
 - Reverted the enforcement of at least one redirect_uri for a client. This change has instead been moved to version 9 (PR #1169)
