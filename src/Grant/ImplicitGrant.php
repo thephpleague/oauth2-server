@@ -133,7 +133,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         } elseif (\is_array($client->getRedirectUri()) && \count($client->getRedirectUri()) !== 1
             || empty($client->getRedirectUri())) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient($request);
+            throw OAuthServerException::invalidClient('Could not find a redirect_uri to use with the request', $request);
         } else {
             $redirectUri = \is_array($client->getRedirectUri())
                 ? $client->getRedirectUri()[0]

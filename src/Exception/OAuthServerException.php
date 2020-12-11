@@ -129,13 +129,14 @@ class OAuthServerException extends Exception
     /**
      * Invalid client error.
      *
+     * @param string                 $errorMessage
      * @param ServerRequestInterface $serverRequest
      *
      * @return static
      */
-    public static function invalidClient(ServerRequestInterface $serverRequest)
+    public static function invalidClient($errorMessage, ServerRequestInterface $serverRequest)
     {
-        $exception = new static('Client authentication failed', 4, 'invalid_client', 401);
+        $exception = new static($errorMessage, 4, 'invalid_client', 401);
 
         $exception->setServerRequest($serverRequest);
 
