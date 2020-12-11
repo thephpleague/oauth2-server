@@ -121,7 +121,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         );
 
         if (\is_null($clientId)) {
-            throw OAuthServerException::invalidRequest('client_id');
+            throw OAuthServerException::invalidRequest('client_id parameter is missing from the request');
         }
 
         $client = $this->getClientEntityOrFail($clientId, $request);

@@ -88,13 +88,13 @@ class PasswordGrant extends AbstractGrant
         $username = $this->getRequestParameter('username', $request);
 
         if (\is_null($username)) {
-            throw OAuthServerException::invalidRequest('username');
+            throw OAuthServerException::invalidRequest('username parameter is missing from the request');
         }
 
         $password = $this->getRequestParameter('password', $request);
 
         if (\is_null($password)) {
-            throw OAuthServerException::invalidRequest('password');
+            throw OAuthServerException::invalidRequest('password parameter is missing from the request');
         }
 
         $user = $this->userRepository->getUserEntityByUserCredentials(
