@@ -146,15 +146,13 @@ class OAuthServerException extends Exception
     /**
      * Invalid scope error.
      *
-     * @param string      $scope       The bad scope
-     * @param null|string $redirectUri A HTTP URI to redirect the user back to
+     * @param string      $errorMessage The error message
+     * @param null|string $redirectUri  A HTTP URI to redirect the user back to
      *
      * @return static
      */
-    public static function invalidScope($scope, $redirectUri = null)
+    public static function invalidScope($errorMessage, $redirectUri = null)
     {
-        $errorMessage = 'The requested scope is invalid, unknown, or malformed';
-
         return new static($errorMessage, 5, 'invalid_scope', 400, $redirectUri);
     }
 

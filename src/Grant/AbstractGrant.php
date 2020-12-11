@@ -297,7 +297,10 @@ abstract class AbstractGrant implements GrantTypeInterface
             $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeItem);
 
             if ($scope instanceof ScopeEntityInterface === false) {
-                throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
+                throw OAuthServerException::invalidScope(
+                    $scopeItem . ' is not a recognised scope identifier',
+                    $redirectUri
+                );
             }
 
             $validScopes[] = $scope;

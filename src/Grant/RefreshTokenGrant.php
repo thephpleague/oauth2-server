@@ -57,7 +57,7 @@ class RefreshTokenGrant extends AbstractGrant
         // the request doesn't include any new scopes
         foreach ($scopes as $scope) {
             if (\in_array($scope->getIdentifier(), $oldRefreshToken['scopes'], true) === false) {
-                throw OAuthServerException::invalidScope($scope->getIdentifier());
+                throw OAuthServerException::invalidScope('Scope ' . $scope->getIdentifier() . ' cannot be granted');
             }
         }
 
