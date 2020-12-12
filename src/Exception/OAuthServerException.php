@@ -116,8 +116,8 @@ class OAuthServerException extends Exception
     /**
      * Invalid request error.
      *
-     * @param string      $errorMessage The error message
-     * @param Throwable   $previous     Previous exception
+     * @param string    $errorMessage The error message
+     * @param Throwable $previous     Previous exception
      *
      * @return static
      */

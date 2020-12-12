@@ -57,7 +57,8 @@ class PasswordGrant extends AbstractGrant
             $scopes,
             $this->getIdentifier(),
             $client,
-            $user->getIdentifier());
+            $user->getIdentifier()
+        );
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);
