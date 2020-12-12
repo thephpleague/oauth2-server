@@ -10,13 +10,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - The authorization server can now finalize scopes when a client uses a refresh token (PR #1094)
 - An AuthorizationRequestInterface to make it easier to extend the AuthorizationRequest (PR #1110)
 
-### Fixed (v9)
-- If a refresh token has expired, been revoked, cannot be decrypted, or does not belong to the correct client, the server will now issue an `invalid_grant` error and a HTTP 400 response. In previous versions the server incorrectly issued an `invalid_request` and HTTP 401 response (PR #1042) (PR #1082)
-
 ### Changed (v9)
 - Authorization Request objects are now created through the factory method, `createAuthorizationRequest()` (PR #1111)
 - Changed parameters for `finalizeScopes()` to allow a reference to an auth code ID (PR #1112)
 
+### Removed (v9)
+- Removed message property from OAuthException HTTP response. Now just use error_description as per the OAuth 2 spec (PR #XXXX)
+
+### Fixed (v9)
+- If a refresh token has expired, been revoked, cannot be decrypted, or does not belong to the correct client, the server will now issue an `invalid_grant` error and a HTTP 400 response. In previous versions the server incorrectly issued an `invalid_request` and HTTP 401 response (PR #1042) (PR #1082)
 
 ## [8.2.3] - released 2020-12-02
 ### Added
