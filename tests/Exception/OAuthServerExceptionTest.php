@@ -92,7 +92,7 @@ class OAuthServerExceptionTest extends TestCase
 
     public function testDoesNotHavePrevious()
     {
-        $exceptionWithoutPrevious = OAuthServerException::accessDenied();
+        $exceptionWithoutPrevious = OAuthServerException::accessDenied('Generic error message');
 
         $this->assertNull($exceptionWithoutPrevious->getPrevious());
     }

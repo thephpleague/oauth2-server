@@ -191,7 +191,7 @@ class BearerResponseTypeTest extends TestCase
         } catch (OAuthServerException $e) {
             $this->assertEquals(
                 'Access token could not be verified',
-                $e->getHint()
+                $e->getMessage()
             );
         }
     }
@@ -236,7 +236,7 @@ class BearerResponseTypeTest extends TestCase
         } catch (OAuthServerException $e) {
             $this->assertEquals(
                 'Access token has been revoked',
-                $e->getHint()
+                $e->getMessage()
             );
         }
     }
@@ -259,7 +259,7 @@ class BearerResponseTypeTest extends TestCase
         } catch (OAuthServerException $e) {
             $this->assertEquals(
                 'The JWT string must have two dots',
-                $e->getHint()
+                $e->getMessage()
             );
         }
     }
@@ -282,7 +282,7 @@ class BearerResponseTypeTest extends TestCase
         } catch (OAuthServerException $e) {
             $this->assertEquals(
                 'Error while decoding from JSON',
-                $e->getHint()
+                $e->getMessage()
             );
         }
     }

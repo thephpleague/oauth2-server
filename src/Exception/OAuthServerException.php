@@ -207,7 +207,7 @@ class OAuthServerException extends Exception
      *
      * @return static
      */
-    public static function invalidGrant($errorMessage, Throwable $previous)
+    public static function invalidGrant($errorMessage, Throwable $previous = null)
     {
         return new static(
             $errorMessage,

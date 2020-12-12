@@ -327,7 +327,7 @@ class RefreshTokenGrantTest extends TestCase
         $responseType = new StubResponseType();
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
-        $this->expectExceptionCode(8);
+        $this->expectExceptionCode(10);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
@@ -375,7 +375,7 @@ class RefreshTokenGrantTest extends TestCase
         $responseType = new StubResponseType();
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
-        $this->expectExceptionCode(8);
+        $this->expectExceptionCode(10);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
@@ -420,7 +420,7 @@ class RefreshTokenGrantTest extends TestCase
         $responseType = new StubResponseType();
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
-        $this->expectExceptionCode(8);
+        $this->expectExceptionCode(10);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
@@ -466,7 +466,7 @@ class RefreshTokenGrantTest extends TestCase
         $responseType = new StubResponseType();
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
-        $this->expectExceptionCode(8);
+        $this->expectExceptionCode(10);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
