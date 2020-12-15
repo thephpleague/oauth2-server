@@ -47,6 +47,11 @@ class OAuthServerException extends Exception
     private $serverRequest;
 
     /**
+     * @var string
+     */
+    private $state;
+
+    /**
      * Throw a new exception.
      *
      * @param string      $message        Error message
@@ -55,19 +60,24 @@ class OAuthServerException extends Exception
      * @param int         $httpStatusCode HTTP status code to send (default = 400)
      * @param null|string $hint           A helper hint
      * @param null|string $redirectUri    A HTTP URI to redirect the user back to
+     * @param null|string $state          The state parameter from the original request
      * @param Throwable   $previous       Previous exception
      */
-    public function __construct($message, $code, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null, Throwable $previous = null)
+    public function __construct($message, $code, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null, $state = null, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
+
         $this->httpStatusCode = $httpStatusCode;
         $this->errorType = $errorType;
         $this->hint = $hint;
+        $this->state = $state;
         $this->redirectUri = $redirectUri;
         $this->payload = [
             'error'             => $errorType,
             'error_description' => $message,
+            'state'             => $state,
         ];
+
         if ($hint !== null) {
             $this->payload['hint'] = $hint;
         }
