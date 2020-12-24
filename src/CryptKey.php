@@ -14,7 +14,6 @@ namespace League\OAuth2\Server;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Key\LocalFileReference;
-
 use LogicException;
 
 class CryptKey
