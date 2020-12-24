@@ -16,7 +16,6 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Key\LocalFileReference;
 
 use LogicException;
-use RuntimeException;
 
 class CryptKey
 {
@@ -50,7 +49,13 @@ class CryptKey
     {
         $this->passPhrase = $passPhrase;
 
-        if (\is_file($keyPath)) {
+        if (\strpos($keyPath, self::FILE_PREFIX) !== 0 && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
+          $contents = $keyPath;
+          $this->key = InMemory::plainText($keyPath, $this->passPhrase ?? '');
+          $this->keyPath = '';
+          // There's no file, so no need for permission check.
+          $keyPermissionsCheck = false;
+        } else if (\is_file($keyPath)) {
             if (\strpos($keyPath, self::FILE_PREFIX) !== 0) {
                 $keyPath = self::FILE_PREFIX . $keyPath;
             }
@@ -58,21 +63,15 @@ class CryptKey
             if (!\is_readable($keyPath)) {
                 throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $keyPath));
             }
-            $isFileKey = true;
             $contents = \file_get_contents($keyPath);
             $this->keyPath = $keyPath;
             $this->key = LocalFileReference::file($this->keyPath, $this->passPhrase ?? '');
-        } else {
-            $isFileKey = false;
-            $contents = $keyPath;
-            $this->key = InMemory::plainText($keyPath, $this->passPhrase ?? '');
-            $this->keyPath = '';
-            // There's no file, so no need for permission check.
-            $keyPermissionsCheck = false;
+            if (!$this->isValidKey($contents, $this->passPhrase ?? '')) {
+              throw new LogicException('Unable to read key from file ' . $keyPath);
+            }
         }
-        if (!$this->isValidKey($contents, $this->passPhrase ?? '')) {
-          throw new LogicException('Unable to read key' . ($isFileKey ? " from file $keyPath" : ''));
-        }
+        else
+           throw new LogicException('Unable to read key from file ' . $keyPath);
 
         if ($keyPermissionsCheck === true) {
             // Verify the permissions of the key
