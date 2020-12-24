@@ -46,7 +46,7 @@ trait AccessTokenTrait
     {
         $this->jwtConfiguration = Configuration::forAsymmetricSigner(
             new Sha256(),
-            LocalFileReference::file($this->privateKey->getKeyPath(), $this->privateKey->getPassPhrase() ?? ''),
+            $this->privateKey->getKey(),
             InMemory::plainText('')
         );
     }

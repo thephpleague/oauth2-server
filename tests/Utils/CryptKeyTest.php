@@ -23,7 +23,7 @@ class CryptKeyTest extends TestCase
         $this->assertEquals('secret', $key->getPassPhrase());
     }
 
-    public function testKeyFileCreation()
+    public function testKeyString()
     {
         $keyContent = \file_get_contents(__DIR__ . '/../Stubs/public.key');
 
@@ -33,7 +33,10 @@ class CryptKeyTest extends TestCase
 
         $key = new CryptKey($keyContent);
 
-        $this->assertEquals(self::generateKeyPath($keyContent), $key->getKeyPath());
+        $this->assertEquals(
+            $keyContent,
+            $key->getKey()->contents()
+        );
 
         $keyContent = \file_get_contents(__DIR__ . '/../Stubs/private.key.crlf');
 
@@ -43,7 +46,10 @@ class CryptKeyTest extends TestCase
 
         $key = new CryptKey($keyContent);
 
-        $this->assertEquals(self::generateKeyPath($keyContent), $key->getKeyPath());
+        $this->assertEquals(
+            $keyContent,
+            $key->getKey()->contents()
+        );
     }
 
     public function testUnsupportedKeyType()
@@ -83,9 +89,8 @@ class CryptKeyTest extends TestCase
             \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
 
             $key = new CryptKey($keyContent, 'mystrongpassword');
-            $path = self::generateKeyPath($keyContent);
 
-            $this->assertEquals($path, $key->getKeyPath());
+            $this->assertEquals('', $key->getKeyPath());
             $this->assertEquals('mystrongpassword', $key->getPassPhrase());
         } catch (\Throwable $e) {
             $this->fail('The EC key was not created');
@@ -109,9 +114,8 @@ class CryptKeyTest extends TestCase
             \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
 
             $key = new CryptKey($keyContent, 'mystrongpassword');
-            $path = self::generateKeyPath($keyContent);
 
-            $this->assertEquals($path, $key->getKeyPath());
+            $this->assertEquals('', $key->getKeyPath());
             $this->assertEquals('mystrongpassword', $key->getPassPhrase());
         } catch (\Throwable $e) {
             $this->fail('The RSA key was not created');

@@ -11,6 +11,10 @@
 
 namespace League\OAuth2\Server;
 
+use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Signer\Key\LocalFileReference;
+
 use LogicException;
 use RuntimeException;
 
@@ -21,6 +25,11 @@ class CryptKey
         '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
 
     private const FILE_PREFIX = 'file://';
+
+    /**
+     * @var Key
+     */
+    protected $key;
 
     /**
      * @var string
@@ -52,10 +61,17 @@ class CryptKey
             $isFileKey = true;
             $contents = \file_get_contents($keyPath);
             $this->keyPath = $keyPath;
+            $this->key = LocalFileReference::file($this->keyPath, $this->passPhrase ?? '');
         } else {
             $isFileKey = false;
             $contents = $keyPath;
-            $this->keyPath = $this->saveKeyToFile($keyPath);
+            $this->key = InMemory::plainText($keyPath, $this->passPhrase ?? '');
+            $this->keyPath = '';
+            // There's no file, so no need for permission check.
+            $keyPermissionsCheck = false;
+        }
+        if (!$this->isValidKey($contents, $this->passPhrase ?? '')) {
+          throw new LogicException('Unable to read key' . ($isFileKey ? " from file $keyPath" : ''));
         }
 
         if ($keyPermissionsCheck === true) {
@@ -72,41 +88,16 @@ class CryptKey
                 );
             }
         }
-
-        if (!$this->isValidKey($contents, $this->passPhrase ?? '')) {
-            throw new LogicException('Unable to read key' . ($isFileKey ? " from file $keyPath" : ''));
-        }
     }
 
     /**
-     * @param string $key
+     * Get key
      *
-     * @throws RuntimeException
-     *
-     * @return string
+     * @return Key
      */
-    private function saveKeyToFile($key)
+    public function getKey(): Key
     {
-        $tmpDir = \sys_get_temp_dir();
-        $keyPath = $tmpDir . '/' . \sha1($key) . '.key';
-
-        if (\file_exists($keyPath)) {
-            return self::FILE_PREFIX . $keyPath;
-        }
-
-        if (\file_put_contents($keyPath, $key) === false) {
-            // @codeCoverageIgnoreStart
-            throw new RuntimeException(\sprintf('Unable to write key file to temporary directory "%s"', $tmpDir));
-            // @codeCoverageIgnoreEnd
-        }
-
-        if (\chmod($keyPath, 0600) === false) {
-            // @codeCoverageIgnoreStart
-            throw new RuntimeException(\sprintf('The key file "%s" file mode could not be changed with chmod to 600', $keyPath));
-            // @codeCoverageIgnoreEnd
-        }
-
-        return self::FILE_PREFIX . $keyPath;
+        return $this->key;
     }
 
     /**
