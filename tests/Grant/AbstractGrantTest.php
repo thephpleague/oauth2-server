@@ -431,13 +431,13 @@ class AbstractGrantTest extends TestCase
     {
         $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+        $scopeRepositoryMock->expects($this->exactly(3))->method('getScopeEntityByIdentifier')->willReturn($scope);
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setScopeRepository($scopeRepositoryMock);
 
-        $this->assertEquals([$scope], $grantMock->validateScopes('basic   '));
+        $this->assertEquals([$scope, $scope, $scope], $grantMock->validateScopes('basic  test 0    '));
     }
 
     public function testValidateScopesBadScope()

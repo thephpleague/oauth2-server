@@ -316,7 +316,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     private function convertScopesQueryStringToArray($scopes)
     {
         return \array_filter(\explode(self::SCOPE_DELIMITER_STRING, \trim($scopes)), function ($scope) {
-            return !empty($scope);
+            return $scope !== '';
         });
     }
 
