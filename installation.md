@@ -31,7 +31,7 @@ openssl genrsa -out private.key 2048
 If you want to provide a passphrase for your private key run this command instead:
 
 ~~~ shell
-openssl genrsa -passout pass:_passphrase_ -out private.key 2048
+openssl genrsa -aes128 -passout pass:_passphrase_ -out private.key 2048
 ~~~
 
 then extract the public key from the private key:
