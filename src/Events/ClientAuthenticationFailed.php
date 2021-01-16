@@ -6,11 +6,11 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class ClientAuthenticationFailed extends AbstractEvent
 {
-    /** @var string */
+    /** @var string|null */
     private $clientId;
 
     public function __construct(
-        string $clientId,
+        ?string $clientId,
         ServerRequestInterface $request
     ) {
         parent::__construct($request);
@@ -18,7 +18,7 @@ final class ClientAuthenticationFailed extends AbstractEvent
         $this->clientId = $clientId;
     }
 
-    public function getClientId(): string
+    public function getClientId(): ?string
     {
         return $this->clientId;
     }

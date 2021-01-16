@@ -6,11 +6,11 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class UserAuthenticationFailed extends AbstractEvent
 {
-    /** @var string */
+    /** @var string|null */
     private $username;
 
     public function __construct(
-        string $username,
+        ?string $username,
         ServerRequestInterface $request
     ) {
         parent::__construct($request);
@@ -18,7 +18,7 @@ final class UserAuthenticationFailed extends AbstractEvent
         $this->username = $username;
     }
 
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
         return $this->username;
     }

@@ -6,14 +6,14 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class RefreshTokenClientFailed extends AbstractEvent
 {
-    /** @var string */
+    /** @var string|null */
     private $clientId;
 
     /** @var array */
     private $refreshTokenData;
 
     public function __construct(
-        string $clientId,
+        ?string $clientId,
         array $refreshTokenData,
         ServerRequestInterface $request
     ) {
@@ -23,7 +23,7 @@ final class RefreshTokenClientFailed extends AbstractEvent
         $this->refreshTokenData = $refreshTokenData;
     }
 
-    public function getClientId(): string
+    public function getClientId(): ?string
     {
         return $this->clientId;
     }
