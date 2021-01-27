@@ -57,7 +57,8 @@ class PasswordGrant extends AbstractGrant
             $scopes,
             $this->getIdentifier(),
             $client,
-            $user->getIdentifier());
+            $user->getIdentifier()
+        );
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);
@@ -88,13 +89,13 @@ class PasswordGrant extends AbstractGrant
         $username = $this->getRequestParameter('username', $request);
 
         if (\is_null($username)) {
-            throw OAuthServerException::invalidRequest('username');
+            throw OAuthServerException::invalidRequest('username parameter is missing from the request');
         }
 
         $password = $this->getRequestParameter('password', $request);
 
         if (\is_null($password)) {
-            throw OAuthServerException::invalidRequest('password');
+            throw OAuthServerException::invalidRequest('password parameter is missing from the request');
         }
 
         $user = $this->userRepository->getUserEntityByUserCredentials(
@@ -107,7 +108,7 @@ class PasswordGrant extends AbstractGrant
         if ($user instanceof UserEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
 
-            throw OAuthServerException::invalidGrant();
+            throw OAuthServerException::invalidGrant('Could not retrieve the user instance');
         }
 
         return $user;

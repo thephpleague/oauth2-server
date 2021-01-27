@@ -1131,7 +1131,7 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals('Authorization code malformed', $e->getHint());
+            $this->assertEquals('The auth_code_id property is missing from the auth code', $e->getMessage());
         }
     }
 
@@ -1184,7 +1184,7 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Authorization code has expired');
+            $this->assertEquals('Authorization code has expired', $e->getMessage());
         }
     }
 
@@ -1248,8 +1248,8 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Authorization code has been revoked');
-            $this->assertEquals($e->getErrorType(), 'invalid_grant');
+            $this->assertEquals('Authorization code has been revoked', $e->getMessage());
+            $this->assertEquals('invalid_grant', $e->getErrorType());
         }
     }
 
@@ -1310,7 +1310,7 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Authorization code was not issued to this client');
+            $this->assertEquals('Authorization code was not issued to this client', $e->getMessage());
         }
     }
 
@@ -1360,7 +1360,7 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Cannot decrypt the authorization code');
+            $this->assertEquals('Cannot decrypt the authorization code', $e->getMessage());
         }
     }
 
@@ -1433,7 +1433,7 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Failed to verify `code_verifier`.');
+            $this->assertEquals('Failed to verify `code_verifier`.', $e->getMessage());
         }
     }
 
@@ -1506,7 +1506,7 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
+            $this->assertEquals('The code_verifier contains illegal characters', $e->getMessage());
         }
     }
 
@@ -1579,7 +1579,7 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
+            $this->assertEquals('The code_verifier contains illegal characters', $e->getMessage());
         }
     }
 
@@ -1652,7 +1652,7 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Code Verifier must follow the specifications of RFC-7636.');
+            $this->assertEquals('The code_verifier contains illegal characters', $e->getMessage());
         }
     }
 
@@ -1724,7 +1724,7 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            $this->assertEquals($e->getHint(), 'Check the `code_verifier` parameter');
+            $this->assertEquals('The code_verifier is missing', $e->getMessage());
         }
     }
 
@@ -1771,7 +1771,7 @@ class AuthCodeGrantTest extends TestCase
 
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
-        $authCodeRepository->method('persistNewAuthCode')->willThrowException(OAuthServerException::serverError('something bad happened'));
+        $authCodeRepository->method('persistNewAuthCode')->willThrowException(OAuthServerException::serverError());
 
         $grant = new AuthCodeGrant(
             $authCodeRepository,
@@ -1907,7 +1907,7 @@ class AuthCodeGrantTest extends TestCase
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
-        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willThrowException(OAuthServerException::serverError('something bad happened'));
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willThrowException(OAuthServerException::serverError());
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),

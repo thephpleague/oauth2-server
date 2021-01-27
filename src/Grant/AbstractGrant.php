@@ -182,7 +182,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         if ($this->clientRepository->validateClient($clientId, $clientSecret, $this->getIdentifier()) === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
 
-            throw OAuthServerException::invalidClient($request);
+            throw OAuthServerException::invalidClient('Client authentication failure', $request);
         }
 
         $client = $this->getClientEntityOrFail($clientId, $request);
@@ -218,7 +218,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         if ($client instanceof ClientEntityInterface === false || empty($client->getRedirectUri())) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient($request);
+            throw OAuthServerException::invalidClient('Client instance could not be retrieved or client redirect_uri missing', $request);
         }
 
         return $client;
@@ -239,7 +239,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
 
         if (\is_null($clientId)) {
-            throw OAuthServerException::invalidRequest('client_id');
+            throw OAuthServerException::invalidRequest('client_id parameter is missing from the request');
         }
 
         $clientSecret = $this->getRequestParameter('client_secret', $request, $basicAuthPassword);
@@ -266,12 +266,12 @@ abstract class AbstractGrant implements GrantTypeInterface
             && (\strcmp($client->getRedirectUri(), $redirectUri) !== 0)
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient($request);
+            throw OAuthServerException::invalidClient('Invalid redirect_uri provided', $request);
         } elseif (\is_array($client->getRedirectUri())
             && \in_array($redirectUri, $client->getRedirectUri(), true) === false
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient($request);
+            throw OAuthServerException::invalidClient('Invalid redirect_uri provided', $request);
         }
     }
 
@@ -297,7 +297,10 @@ abstract class AbstractGrant implements GrantTypeInterface
             $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeItem);
 
             if ($scope instanceof ScopeEntityInterface === false) {
-                throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
+                throw OAuthServerException::invalidScope(
+                    $scopeItem . ' is not a recognised scope identifier',
+                    $redirectUri
+                );
             }
 
             $validScopes[] = $scope;

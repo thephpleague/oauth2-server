@@ -21,7 +21,7 @@ class ResourceServerTest extends TestCase
         try {
             $server->validateAuthenticatedRequest(ServerRequestFactory::fromGlobals());
         } catch (OAuthServerException $e) {
-            $this->assertEquals('Missing "Authorization" header', $e->getHint());
+            $this->assertEquals('Missing "Authorization" header', $e->getMessage());
         }
     }
 }
