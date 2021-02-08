@@ -93,6 +93,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $defaultScope;
 
     /**
+     * @var bool
+     */
+    protected $revokeRefreshTokens;
+
+    /**
      * @param ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository)
@@ -167,6 +172,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * @param bool $revokeRefreshTokens
+     */
+    public function setRevokeRefreshTokens(bool $revokeRefreshTokens)
+    {
+        $this->revokeRefreshTokens = $revokeRefreshTokens;
+    }
+
+    /**
      * Validate the client.
      *
      * @param ServerRequestInterface $request
@@ -177,7 +190,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function validateClient(ServerRequestInterface $request)
     {
-        list($clientId, $clientSecret) = $this->getClientCredentials($request);
+        [$clientId, $clientSecret] = $this->getClientCredentials($request);
 
         if ($this->clientRepository->validateClient($clientId, $clientSecret, $this->getIdentifier()) === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
@@ -234,7 +247,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function getClientCredentials(ServerRequestInterface $request)
     {
-        list($basicAuthUser, $basicAuthPassword) = $this->getBasicAuthCredentials($request);
+        [$basicAuthUser, $basicAuthPassword] = $this->getBasicAuthCredentials($request);
 
         $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
 

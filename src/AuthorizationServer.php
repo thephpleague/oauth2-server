@@ -80,6 +80,11 @@ class AuthorizationServer implements EmitterAwareInterface
     private $defaultScope = '';
 
     /**
+     * @var bool
+     */
+    private $revokeRefreshTokens;
+
+    /**
      * New server instance.
      *
      * @param ClientRepositoryInterface      $clientRepository
@@ -88,6 +93,7 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param CryptKey|string                $privateKey
      * @param string|Key                     $encryptionKey
      * @param null|ResponseTypeInterface     $responseType
+     * @param bool                           $revokeRefreshTokens
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
@@ -95,7 +101,8 @@ class AuthorizationServer implements EmitterAwareInterface
         ScopeRepositoryInterface $scopeRepository,
         $privateKey,
         $encryptionKey,
-        ResponseTypeInterface $responseType = null
+        ResponseTypeInterface $responseType = null,
+        bool $revokeRefreshTokens = true
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
@@ -115,6 +122,7 @@ class AuthorizationServer implements EmitterAwareInterface
         }
 
         $this->responseType = $responseType;
+        $this->revokeRefreshTokens = $revokeRefreshTokens;
     }
 
     /**
@@ -136,6 +144,7 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setPrivateKey($this->privateKey);
         $grantType->setEmitter($this->getEmitter());
         $grantType->setEncryptionKey($this->encryptionKey);
+        $grantType->setRevokeRefreshTokens($this->revokeRefreshTokens);
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
         $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;

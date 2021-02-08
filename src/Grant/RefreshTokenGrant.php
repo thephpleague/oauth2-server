@@ -63,7 +63,9 @@ class RefreshTokenGrant extends AbstractGrant
 
         // Expire old tokens
         $this->accessTokenRepository->revokeAccessToken($oldRefreshToken['access_token_id']);
-        $this->refreshTokenRepository->revokeRefreshToken($oldRefreshToken['refresh_token_id']);
+        if ($this->revokeRefreshTokens) {
+            $this->refreshTokenRepository->revokeRefreshToken($oldRefreshToken['refresh_token_id']);
+        }
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $oldRefreshToken['user_id'], $scopes);
@@ -71,11 +73,13 @@ class RefreshTokenGrant extends AbstractGrant
         $responseType->setAccessToken($accessToken);
 
         // Issue and persist new refresh token if given
-        $refreshToken = $this->issueRefreshToken($accessToken);
+        if ($this->revokeRefreshTokens) {
+            $refreshToken = $this->issueRefreshToken($accessToken);
 
-        if ($refreshToken !== null) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
-            $responseType->setRefreshToken($refreshToken);
+            if ($refreshToken !== null) {
+                $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
+                $responseType->setRefreshToken($refreshToken);
+            }
         }
 
         return $responseType;
