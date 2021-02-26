@@ -17,7 +17,7 @@ Actualmente tiene soporte para los siguientes tipos de consesión:
 * Concesión de credenciales de contraseña del propietario del recurso(Resource owner password credentials grant).
 * Actualización de la Concesión. (Refresh grant).
 
-Se siguientes RFCś (Request for Comments que en español significa *olicitud de comentarios.* ) son implementados:
+Se siguientes RFCś (Request for Comments que en español significa *Solicitud de comentarios.* ) son implementados:
 
 * [RFC6749 "OAuth 2.0"](https://tools.ietf.org/html/rfc6749)
 * [RFC6750 "Framework de Autorización: uso del token por el portador (The OAuth 2.0 Authorization Framework: Bearer Token Usage)"](https://tools.ietf.org/html/rfc6750)
@@ -28,7 +28,7 @@ Esta libraría fue creada por Alex Bilbie. Encuentralo en Twitter como [@alexbil
 
 ## Requerimientos.
 
-La ultima versión del *Servidor OAuth 2.0 para PHP* soporta las siguientes versiones de PHP :
+La ultima versión del *Servidor OAuth 2.0 para PHP* es compatible con las siguientes versiones de PHP :
 
 * PHP 7.2
 * PHP 7.3
@@ -61,7 +61,7 @@ vendor/bin/phpunit
 
 ## Integraticiones Continuas.
 
-Nosotros usamos las [Acciones de Github](https://github.com/features/actions), [Scrutinizer](https://scrutinizer-ci.com/), y [StyleCI](https://styleci.io/) para continuar la integración. Revisa [nuestra](https://github.com/thephpleague/oauth2-server/blob/master/.github/workflows/tests.yml) [configuración](https://github.com/thephpleague/oauth2-server/blob/master/.scrutinizer.yml) de [archivos](https://github.com/thephpleague/oauth2-server/blob/master/.styleci.yml) si quieres conocer más.
+Nosotros usamos las [Acciones de Github](https://github.com/features/actions), [Scrutinizer](https://scrutinizer-ci.com/), y [StyleCI](https://styleci.io/) para continuar la integración. Si quieres conocer más, revisa [nuestra](https://github.com/thephpleague/oauth2-server/blob/master/.github/workflows/tests.yml) [configuración](https://github.com/thephpleague/oauth2-server/blob/master/.scrutinizer.yml) de [archivos](https://github.com/thephpleague/oauth2-server/blob/master/.styleci.yml).
 
 ## Integraciones Comunitarias.
 
@@ -78,13 +78,13 @@ Mira los [registros de cambio del projecto](https://github.com/thephpleague/oaut
 
 ## Contribuir
 
-Toda contribución es bienvenida. For favor mira [CONTRIBUTING.md](https://github.com/thephpleague/oauth2-server/blob/master/CONTRIBUTING.md) y el [CODIGO DE_CONDUCTA.md](https://github.com/thephpleague/oauth2-server/blob/master/CODE_OF_CONDUCT.md) para ver más detalles.
+Toda contribución es bienvenida. Para ver más detalles revisa [CONTRIBUTING.md](https://github.com/thephpleague/oauth2-server/blob/master/CONTRIBUTING.md) y el [CODIGO DE_CONDUCTA.md](https://github.com/thephpleague/oauth2-server/blob/master/CODE_OF_CONDUCT.md).
 
 ## Soporte
 
 El seguimiento de Errores (Bugs) y dudas sobre alguna función o caracteristica, se realiza en [GitHub](https://github.com/thephpleague/oauth2-server/issues).
 
-Si tienes alguna pregunta sobre OAuth _por favor_ abre un nuevo tema ahi; **No envien** correos electronicos ni cuentas personales, no se realizara ningun seguimiento privado a sus dudas y errores, somos una comunidad y hay que fomentarla para crecer, al igual que tu, alguien más puede llegar a tener la misma duda, generemos aportes como comunidad.
+Si tienes alguna pregunta sobre OAuth _por favor_ abre un nuevo tema ahi; **No envien** correos electronicos ni cuentas personales, no se realizara ningun seguimiento privado a sus dudas y errores, somos una comunidad y hay que fomentarla para crecer, al igual que tu, alguien más puede llegar a tener la misma duda, generemos contenido como comunidad.
 
 ## Seguridad
 
