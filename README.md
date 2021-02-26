@@ -1,4 +1,4 @@
-# PHP OAuth 2.0 Server [read in spanish (leer en Español)]([leer en ingles (read in english)](https://github.com/thephpleague/oauth2-server/blob/master/README_ES.md).
+# PHP OAuth 2.0 Server [read in spanish (leer en Español (read in spanish)](https://github.com/thephpleague/oauth2-server/blob/master/README_ES.md).
 
 [![Latest Version](http://img.shields.io/packagist/v/league/oauth2-server.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
