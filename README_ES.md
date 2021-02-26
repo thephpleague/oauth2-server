@@ -7,7 +7,7 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-server.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-server)
 
-`league/oauth2-server` Cumple con los estándares de implementación que debe tener un servidor de autorización [OAuth 2.0](https://tools.ietf.org/html/rfc6749), esta escrito en PHP, trabajar con el puede ser trivial, es facil configurarlo para proteger las APIS con tokens de acceso, tambien puede puermitir a los clientes que soliciten nuevos tokens y estos pueden ser actualizados.
+`league/oauth2-server` Cumple con los estándares de implementación que debe tener un servidor de autorización [OAuth 2.0](https://tools.ietf.org/html/rfc6749), esta escrito en PHP, trabajar con el puede ser trivial, es facil configurarlo para proteger las APIS con tokens de acceso, tambien permitir a los clientes puedan solicitar nuevos tokens, los cuales pueden ser actualizados.
 
 Actualmente tiene soporte para los siguientes tipos de consesión:
 
