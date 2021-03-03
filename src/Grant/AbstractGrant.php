@@ -22,7 +22,7 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Events\ClientAuthenticationFailed;
-use League\OAuth2\Server\Events\EventDispatchableTrait;
+use League\OAuth2\Server\Events\EventDispatcherAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\RedirectUriValidators\RedirectUriValidator;
@@ -42,7 +42,7 @@ use TypeError;
  */
 abstract class AbstractGrant implements GrantTypeInterface
 {
-    use EventDispatchableTrait, CryptTrait;
+    use EventDispatcherAwareTrait, CryptTrait;
 
     const SCOPE_DELIMITER_STRING = ' ';
 

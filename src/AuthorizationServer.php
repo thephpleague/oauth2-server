@@ -11,8 +11,8 @@ namespace League\OAuth2\Server;
 
 use DateInterval;
 use Defuse\Crypto\Key;
-use League\OAuth2\Server\Events\EventDispatchableInterface;
-use League\OAuth2\Server\Events\EventDispatchableTrait;
+use League\OAuth2\Server\Events\EventDispatcherAwareInterface;
+use League\OAuth2\Server\Events\EventDispatcherAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -25,9 +25,9 @@ use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class AuthorizationServer implements EventDispatchableInterface
+class AuthorizationServer implements EventDispatcherAwareInterface
 {
-    use EventDispatchableTrait;
+    use EventDispatcherAwareTrait;
 
     /**
      * @var GrantTypeInterface[]

@@ -4,7 +4,7 @@ namespace League\OAuth2\Server\Events;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-trait EventDispatchableTrait
+trait EventDispatcherAwareTrait
 {
     /** @var EventDispatcherInterface|null */
     protected $eventDispatcher;
