@@ -14,7 +14,7 @@ trait EventDispatcherAwareTrait
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function dispatchEvent(object $event): object
+    protected function dispatchEvent(object $event): object
     {
         if ($this->eventDispatcher !== null) {
             return $this->eventDispatcher->dispatch($event);
