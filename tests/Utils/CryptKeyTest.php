@@ -21,9 +21,10 @@ class CryptKeyTest extends TestCase
 
         $this->assertEquals('file://' . $keyFile, $key->getKeyPath());
         $this->assertEquals('secret', $key->getPassPhrase());
+        $this->assertTrue($key->isFilePath());
     }
 
-    public function testKeyFileCreation()
+    public function testInmemoryKeyCreation()
     {
         $keyContent = \file_get_contents(__DIR__ . '/../Stubs/public.key');
 
@@ -33,10 +34,8 @@ class CryptKeyTest extends TestCase
 
         $key = new CryptKey($keyContent);
 
-        $this->assertEquals(
-            'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key',
-            $key->getKeyPath()
-        );
+        $this->assertEquals($keyContent, $key->getKeyPath());
+        $this->assertFalse($key->isFilePath());
 
         $keyContent = \file_get_contents(__DIR__ . '/../Stubs/private.key.crlf');
 
@@ -46,10 +45,8 @@ class CryptKeyTest extends TestCase
 
         $key = new CryptKey($keyContent);
 
-        $this->assertEquals(
-            'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key',
-            $key->getKeyPath()
-        );
+        $this->assertEquals($keyContent, $key->getKeyPath());
+        $this->assertFalse($key->isFilePath());
     }
 
     /**
