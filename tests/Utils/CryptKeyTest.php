@@ -74,7 +74,7 @@ class CryptKeyTest extends TestCase
         $key = (new CryptKey($keyPath, $keyPass))->createSignerKey();
 
         $this->assertEquals(LocalFileReference::file($keyPath, $keyPass), $key);
-        $this->assertNotEquals(InMemory::plainText(file_get_contents($keyPath), $keyPass), $key);
+        $this->assertNotEquals(InMemory::plainText(\file_get_contents($keyPath), $keyPass), $key);
     }
 
     public function testCreateInmemorySignerKey()
@@ -82,11 +82,9 @@ class CryptKeyTest extends TestCase
         $keyPath = __DIR__ . '/../Stubs/public.key';
         $keyPass = 'secret';
 
-        $key = (new CryptKey(file_get_contents($keyPath), $keyPass))->createSignerKey();
+        $key = (new CryptKey(\file_get_contents($keyPath), $keyPass))->createSignerKey();
 
-        $this->assertEquals(InMemory::plainText(file_get_contents($keyPath), $keyPass), $key);
+        $this->assertEquals(InMemory::plainText(\file_get_contents($keyPath), $keyPass), $key);
         $this->assertNotEquals(LocalFileReference::file($keyPath, $keyPass), $key);
     }
-
-
 }

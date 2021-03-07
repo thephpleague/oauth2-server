@@ -380,8 +380,8 @@ class AuthorizationServerTest extends TestCase
                 'file://' . __DIR__ . '/Stubs/public.key',
             ],
             'inmemory key' => [
-                file_get_contents(__DIR__ . '/Stubs/private.key'),
-                file_get_contents(__DIR__ . '/Stubs/public.key'),
+                \file_get_contents(__DIR__ . '/Stubs/private.key'),
+                \file_get_contents(__DIR__ . '/Stubs/public.key'),
             ],
         ];
     }

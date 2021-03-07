@@ -374,11 +374,10 @@ class AbstractGrantTest extends TestCase
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $accessToken);
 
         try {
-            $token = (string)$accessToken;
+            $token = (string) $accessToken;
             $this->assertNotEmpty($token);
         } catch (\Throwable $e) {
             $this->fail('The access token have not been issue. ' . $e->getMessage());
-
         }
     }
 
@@ -508,7 +507,7 @@ class AbstractGrantTest extends TestCase
     {
         return [
             'file key' => ['file://' . __DIR__ . '/../Stubs/private.key'],
-            'inmemory key' => [file_get_contents(__DIR__ . '/../Stubs/private.key')],
+            'inmemory key' => [\file_get_contents(__DIR__ . '/../Stubs/private.key')],
         ];
     }
 }

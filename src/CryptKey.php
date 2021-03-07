@@ -33,16 +33,16 @@ class CryptKey
     protected $passPhrase;
 
     /**
-     * @param string $keyPath
+     * @param string      $keyPath
      * @param null|string $passPhrase
-     * @param bool $keyPermissionsCheck
+     * @param bool        $keyPermissionsCheck
      */
     public function __construct($keyPath, $passPhrase = null, $keyPermissionsCheck = true)
     {
         $this->keyPath = $keyPath;
         $this->passPhrase = $passPhrase;
 
-        if (is_file($this->keyPath) && !$this->isFilePath()) {
+        if (\is_file($this->keyPath) && !$this->isFilePath()) {
             $this->keyPath = self::FILE_PREFIX . $this->keyPath;
         }
 

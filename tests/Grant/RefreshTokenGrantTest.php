@@ -499,7 +499,7 @@ class RefreshTokenGrantTest extends TestCase
     {
         return [
             'file key' => ['file://' . __DIR__ . '/../Stubs/private.key'],
-            'inmemory key' => [file_get_contents(__DIR__ . '/../Stubs/private.key')],
+            'inmemory key' => [\file_get_contents(__DIR__ . '/../Stubs/private.key')],
         ];
     }
 }
