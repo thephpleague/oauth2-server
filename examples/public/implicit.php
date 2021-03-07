@@ -46,7 +46,7 @@ $app = new App([
 
         // Setup EventDispatcher
         $dispatcher = new EventDispatcher();
-        $dispatcher->subscribeTo(ClientAuthenticationFailed::class, function(ClientAuthenticationFailed $event){
+        $dispatcher->subscribeTo(ClientAuthenticationFailed::class, function (ClientAuthenticationFailed $event) {
             // Handle client authentication failure
         });
         $server->useEventDispatcher($dispatcher);

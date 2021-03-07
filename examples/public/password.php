@@ -33,13 +33,13 @@ $app = new App([
 
         // Setup EventDispatcher
         $dispatcher = new EventDispatcher();
-        $dispatcher->subscribeTo(UserAuthenticationFailed::class, function(UserAuthenticationFailed $event){
+        $dispatcher->subscribeTo(UserAuthenticationFailed::class, function (UserAuthenticationFailed $event) {
             // Handle user authentication failure
         });
-        $dispatcher->subscribeTo(AccessTokenIssued::class, function(AccessTokenIssued $event){
+        $dispatcher->subscribeTo(AccessTokenIssued::class, function (AccessTokenIssued $event) {
             // Handle access token issue
         });
-        $dispatcher->subscribeTo(RefreshTokenIssued::class, function(RefreshTokenIssued $event){
+        $dispatcher->subscribeTo(RefreshTokenIssued::class, function (RefreshTokenIssued $event) {
             // Handle refresh token issue
         });
         $server->useEventDispatcher($dispatcher);

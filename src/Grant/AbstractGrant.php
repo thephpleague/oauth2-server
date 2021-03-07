@@ -225,7 +225,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * getClientEntity might return null. By contrast, this method will
      * always either return a ClientEntityInterface or throw.
      *
-     * @param string $clientId
+     * @param string                 $clientId
      * @param ServerRequestInterface $request
      *
      * @return ClientEntityInterface

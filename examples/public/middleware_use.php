@@ -55,16 +55,16 @@ $app = new App([
 
         // Setup EventDispatcher
         $dispatcher = new EventDispatcher();
-        $dispatcher->subscribeTo(ClientAuthenticationFailed::class, function(ClientAuthenticationFailed $event){
+        $dispatcher->subscribeTo(ClientAuthenticationFailed::class, function (ClientAuthenticationFailed $event) {
             // Handle client authentication failure
         });
-        $dispatcher->subscribeTo(RefreshTokenClientFailed::class, function(RefreshTokenClientFailed $event){
+        $dispatcher->subscribeTo(RefreshTokenClientFailed::class, function (RefreshTokenClientFailed $event) {
             // Handle refresh token client failure
         });
-        $dispatcher->subscribeTo(AccessTokenIssued::class, function(AccessTokenIssued $event){
+        $dispatcher->subscribeTo(AccessTokenIssued::class, function (AccessTokenIssued $event) {
             // Handle access token issue
         });
-        $dispatcher->subscribeTo(RefreshTokenIssued::class, function(RefreshTokenIssued $event){
+        $dispatcher->subscribeTo(RefreshTokenIssued::class, function (RefreshTokenIssued $event) {
             // Handle refresh token issue
         });
         $server->useEventDispatcher($dispatcher);
