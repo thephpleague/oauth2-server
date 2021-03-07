@@ -11,6 +11,8 @@
 
 namespace League\OAuth2\Server;
 
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Signer\Key\LocalFileReference;
 use LogicException;
 
 class CryptKey
@@ -100,5 +102,21 @@ class CryptKey
     public function getPassPhrase()
     {
         return $this->passPhrase;
+    }
+
+    /**
+     * Create signer key
+     *
+     * @internal Remove when the JWT configuration is moved to the dependency injection container
+     *
+     * @return \Lcobucci\JWT\Signer\Key
+     */
+    public function createSignerKey(): \Lcobucci\JWT\Signer\Key
+    {
+        if ($this->isFilePath()) {
+            return LocalFileReference::file($this->keyPath, $this->passPhrase ?? '');
+        }
+
+        return InMemory::plainText($this->keyPath, $this->passPhrase ?? '');
     }
 }

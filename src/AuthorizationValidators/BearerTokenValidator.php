@@ -14,7 +14,6 @@ use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Signer\Key\LocalFileReference;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token\InvalidTokenStructure;
 use Lcobucci\JWT\Token\UnsupportedHeaderFound;
@@ -78,7 +77,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
 
         $this->jwtConfiguration->setValidationConstraints(
             new ValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
-            new SignedWith(new Sha256(), LocalFileReference::file($this->publicKey->getKeyPath()))
+            new SignedWith(new Sha256(), $this->publicKey->createSignerKey())
         );
     }
 

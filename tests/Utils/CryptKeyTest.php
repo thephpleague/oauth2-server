@@ -2,6 +2,8 @@
 
 namespace LeagueTests\Utils;
 
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Signer\Key\LocalFileReference;
 use League\OAuth2\Server\CryptKey;
 use PHPUnit\Framework\TestCase;
 
@@ -63,4 +65,28 @@ class CryptKeyTest extends TestCase
             const RSA_KEY_PATTERN = '/(?:\D+|<\d+>)*[!?]/';
         };
     }
+
+    public function testCreateFileSignerKey()
+    {
+        $keyPath = __DIR__ . '/../Stubs/public.key';
+        $keyPass = 'secret';
+
+        $key = (new CryptKey($keyPath, $keyPass))->createSignerKey();
+
+        $this->assertEquals(LocalFileReference::file($keyPath, $keyPass), $key);
+        $this->assertNotEquals(InMemory::plainText(file_get_contents($keyPath), $keyPass), $key);
+    }
+
+    public function testCreateInmemorySignerKey()
+    {
+        $keyPath = __DIR__ . '/../Stubs/public.key';
+        $keyPass = 'secret';
+
+        $key = (new CryptKey(file_get_contents($keyPath), $keyPass))->createSignerKey();
+
+        $this->assertEquals(InMemory::plainText(file_get_contents($keyPath), $keyPass), $key);
+        $this->assertNotEquals(LocalFileReference::file($keyPath, $keyPass), $key);
+    }
+
+
 }
