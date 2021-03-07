@@ -22,7 +22,10 @@ class AuthorizationServerMiddlewareTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
 
-    public function testValidResponse()
+    /**
+     * @dataProvider privateKeys
+     */
+    public function testValidResponse($privateKey)
     {
         $client = new ClientEntity();
         $client->setConfidential();
@@ -43,7 +46,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $clientRepository,
             $accessRepositoryMock,
             $scopeRepositoryMock,
-            'file://' . __DIR__ . '/../Stubs/private.key',
+            $privateKey,
             \base64_encode(\random_bytes(36)),
             new StubResponseType()
         );
@@ -68,7 +71,10 @@ class AuthorizationServerMiddlewareTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testOAuthErrorResponse()
+    /**
+     * @dataProvider privateKeys
+     */
+    public function testOAuthErrorResponse($privateKey)
     {
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('validateClient')->willReturn(false);
@@ -77,7 +83,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $clientRepository,
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-            'file://' . __DIR__ . '/../Stubs/private.key',
+            $privateKey,
             \base64_encode(\random_bytes(36)),
             new StubResponseType()
         );
@@ -125,5 +131,13 @@ class AuthorizationServerMiddlewareTest extends TestCase
             'http://foo/bar#error=invalid_scope&error_description=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed',
             $response->getHeader('location')[0]
         );
+    }
+
+    public function privateKeys(): array
+    {
+        return [
+            'file key' => ['file://' . __DIR__ . '/../Stubs/private.key'],
+            'inmemory key' => [file_get_contents(__DIR__ . '/../Stubs/private.key')],
+        ];
     }
 }

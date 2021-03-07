@@ -204,7 +204,10 @@ class ImplicitGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testCompleteAuthorizationRequest()
+    /**
+     * @dataProvider privateKeys
+     */
+    public function testCompleteAuthorizationRequest($privateKey)
     {
         $client = new ClientEntity();
         $client->setIdentifier('identifier');
@@ -226,14 +229,17 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPrivateKey(new CryptKey($privateKey));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    public function testCompleteAuthorizationRequestDenied()
+    /**
+     * @dataProvider privateKeys
+     */
+    public function testCompleteAuthorizationRequestDenied($privateKey)
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(false);
@@ -249,7 +255,7 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPrivateKey(new CryptKey($privateKey));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
@@ -259,7 +265,10 @@ class ImplicitGrantTest extends TestCase
         $grant->completeAuthorizationRequest($authRequest);
     }
 
-    public function testAccessTokenRepositoryUniqueConstraintCheck()
+    /**
+     * @dataProvider privateKeys
+     */
+    public function testAccessTokenRepositoryUniqueConstraintCheck($privateKey)
     {
         $client = new ClientEntity();
         $client->setIdentifier('identifier');
@@ -292,14 +301,17 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPrivateKey(new CryptKey($privateKey));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    public function testAccessTokenRepositoryFailToPersist()
+    /**
+     * @dataProvider privateKeys
+     */
+    public function testAccessTokenRepositoryFailToPersist($privateKey)
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -316,7 +328,7 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPrivateKey(new CryptKey($privateKey));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
@@ -326,7 +338,10 @@ class ImplicitGrantTest extends TestCase
         $grant->completeAuthorizationRequest($authRequest);
     }
 
-    public function testAccessTokenRepositoryFailToPersistUniqueNoInfiniteLoop()
+    /**
+     * @dataProvider privateKeys
+     */
+    public function testAccessTokenRepositoryFailToPersistUniqueNoInfiniteLoop($privateKey)
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -343,7 +358,7 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new \DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPrivateKey(new CryptKey($privateKey));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
@@ -380,5 +395,13 @@ class ImplicitGrantTest extends TestCase
         $this->expectException(\LogicException::class);
 
         $grant->completeAuthorizationRequest(new AuthorizationRequest());
+    }
+
+    public function privateKeys(): array
+    {
+        return [
+            'file key' => ['file://' . __DIR__ . '/../Stubs/private.key'],
+            'inmemory key' => [file_get_contents(__DIR__ . '/../Stubs/private.key')],
+        ];
     }
 }

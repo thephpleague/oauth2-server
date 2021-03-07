@@ -11,11 +11,14 @@ use PHPUnit\Framework\TestCase;
 
 class ResourceServerTest extends TestCase
 {
-    public function testValidateAuthenticatedRequest()
+    /**
+     * @dataProvider publicKeys
+     */
+    public function testValidateAuthenticatedRequest($publicKey)
     {
         $server = new ResourceServer(
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
-            'file://' . __DIR__ . '/Stubs/public.key'
+            $publicKey
         );
 
         try {
@@ -24,4 +27,13 @@ class ResourceServerTest extends TestCase
             $this->assertEquals('Missing "Authorization" header', $e->getHint());
         }
     }
+
+    public function publicKeys(): array
+    {
+        return [
+            'file key' => ['file://' . __DIR__ . '/Stubs/public.key'],
+            'inmemory key' => [file_get_contents(__DIR__ . '/Stubs/public.key')],
+        ];
+    }
+
 }
