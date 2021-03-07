@@ -347,8 +347,10 @@ class AbstractGrantTest extends TestCase
      */
     public function testIssueAccessToken($privateKey)
     {
+        $client = new ClientEntity();
+        $client->setIdentifier('client-id');
         $accessTokenEntity = new AccessTokenEntity();
-        $accessTokenEntity->setClient(new ClientEntity());
+        $accessTokenEntity->setClient($client);
         $accessTokenRepoMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepoMock->method('getNewToken')->willReturn($accessTokenEntity);
 
@@ -365,7 +367,7 @@ class AbstractGrantTest extends TestCase
         $accessToken = $issueAccessTokenMethod->invoke(
             $grantMock,
             new DateInterval('PT1H'),
-            new ClientEntity(),
+            $client,
             123,
             [new ScopeEntity()]
         );
