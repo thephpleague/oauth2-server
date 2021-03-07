@@ -52,7 +52,7 @@ class CryptKey
             throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $keyPath));
         }
 
-        if ($keyPermissionsCheck === true) {
+        if ($keyPermissionsCheck === true && PHP_OS_FAMILY !== 'Windows') {
             // Verify the permissions of the key
             $keyPathPerms = \decoct(\fileperms($keyPath) & 0777);
             if (\in_array($keyPathPerms, ['400', '440', '600', '640', '660'], true) === false) {
