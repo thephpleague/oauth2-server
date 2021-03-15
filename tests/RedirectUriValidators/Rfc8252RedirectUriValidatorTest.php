@@ -3,7 +3,6 @@
 
 namespace LeagueTests\RedirectUriValidators;
 
-
 use League\OAuth2\Server\RedirectUriValidators\Rfc8252RedirectUriValidator;
 use LeagueTests\Stubs\ClientEntity;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +20,8 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $validator = new Rfc8252RedirectUriValidator($client);
 
-        $this->assertFalse($validator->validateRedirectUri($redirectUri),
+        $this->assertFalse(
+            $validator->validateRedirectUri($redirectUri),
             'Non loopback URI must match in every part');
     }
 
@@ -36,7 +36,8 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $validator = new Rfc8252RedirectUriValidator($client);
 
-        $this->assertTrue($validator->validateRedirectUri($redirectUri),
+        $this->assertTrue(
+            $validator->validateRedirectUri($redirectUri),
             'Redirect URI must be valid when matching in every part');
     }
 
@@ -49,7 +50,8 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $validator = new Rfc8252RedirectUriValidator($client);
 
-        $this->assertFalse($validator->validateRedirectUri($redirectUri),
+        $this->assertFalse(
+            $validator->validateRedirectUri($redirectUri),
             'Valid loopback redirect URI can change only the port number');
     }
 
@@ -62,7 +64,8 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $validator = new Rfc8252RedirectUriValidator($client);
 
-        $this->assertTrue($validator->validateRedirectUri($redirectUri),
+        $this->assertTrue(
+            $validator->validateRedirectUri($redirectUri),
             'Loopback redirect URI can change the port number');
     }
 
@@ -75,7 +78,8 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $validator = new Rfc8252RedirectUriValidator($client);
 
-        $this->assertTrue($validator->validateRedirectUri($redirectUri),
+        $this->assertTrue(
+            $validator->validateRedirectUri($redirectUri),
             'Loopback redirect URI can change the port number');
     }
 }
