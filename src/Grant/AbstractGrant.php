@@ -24,6 +24,7 @@ use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
+use League\OAuth2\Server\RedirectUriValidators\Rfc8252RedirectUriValidator;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -262,15 +263,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         ClientEntityInterface $client,
         ServerRequestInterface $request
     ) {
-        if (\is_string($client->getRedirectUri())
-            && (\strcmp($client->getRedirectUri(), $redirectUri) !== 0)
-        ) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient($request);
-        } elseif (\is_array($client->getRedirectUri())
-            && \in_array($redirectUri, $client->getRedirectUri(), true) === false
-        ) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+        $validator = new Rfc8252RedirectUriValidator($client);
+        if (!$validator->validateRedirectUri($redirectUri)) {
             throw OAuthServerException::invalidClient($request);
         }
     }
