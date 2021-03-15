@@ -37,18 +37,18 @@ class Rfc8252RedirectUriValidator
 
     private function allowDifferentPort(array $parsedUrl)
     {
-       foreach ($this->getClientRedirectUris() as $clientRedirectUri) {
+        foreach ($this->getClientRedirectUris() as $clientRedirectUri) {
             if ($parsedUrl == $this->parseUrl($clientRedirectUri)) {
                 return true;
             }
-       }
+        }
 
-       return false;
+        return false;
     }
 
     private function parseUrl(string $url)
     {
-        $parsedUrl = parse_url($url);
+        $parsedUrl = \parse_url($url);
         $parsedUrl['port'] = 80;
 
         return $parsedUrl;
@@ -59,7 +59,7 @@ class Rfc8252RedirectUriValidator
         $clientRedirectUri = $this->client->getRedirectUri();
         if (\is_string($clientRedirectUri)) {
             return [$clientRedirectUri];
-        } else if (\is_array($clientRedirectUri)) {
+        } elseif (\is_array($clientRedirectUri)) {
             return $clientRedirectUri;
         } else {
             return [];

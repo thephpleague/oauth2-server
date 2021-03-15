@@ -22,7 +22,8 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $this->assertFalse(
             $validator->validateRedirectUri($redirectUri),
-            'Non loopback URI must match in every part');
+            'Non loopback URI must match in every part'
+        );
     }
 
     public function testValidNonLoopbackUri()
@@ -38,7 +39,8 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $this->assertTrue(
             $validator->validateRedirectUri($redirectUri),
-            'Redirect URI must be valid when matching in every part');
+            'Redirect URI must be valid when matching in every part'
+        );
     }
 
     public function testInvalidLoopbackUri()
@@ -52,7 +54,8 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $this->assertFalse(
             $validator->validateRedirectUri($redirectUri),
-            'Valid loopback redirect URI can change only the port number');
+            'Valid loopback redirect URI can change only the port number'
+        );
     }
 
     public function testValidLoopbackUri()
@@ -66,7 +69,8 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $this->assertTrue(
             $validator->validateRedirectUri($redirectUri),
-            'Loopback redirect URI can change the port number');
+            'Loopback redirect URI can change the port number'
+        );
     }
 
     public function testValidIpv4LoopbackUri()
@@ -80,6 +84,7 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $this->assertTrue(
             $validator->validateRedirectUri($redirectUri),
-            'Loopback redirect URI can change the port number');
+            'Loopback redirect URI can change the port number'
+        );
     }
 }
