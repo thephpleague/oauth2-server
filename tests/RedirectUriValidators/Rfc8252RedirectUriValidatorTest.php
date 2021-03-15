@@ -65,4 +65,17 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
         $this->assertTrue($validator->validateRedirectUri($redirectUri),
             'Loopback redirect URI can change the port number');
     }
+
+    public function testValidIpv4LoopbackUri()
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://[::1]:8443/endpoint');
+
+        $redirectUri = 'http://[::1]:8080/endpoint';
+
+        $validator = new Rfc8252RedirectUriValidator($client);
+
+        $this->assertTrue($validator->validateRedirectUri($redirectUri),
+            'Loopback redirect URI can change the port number');
+    }
 }
