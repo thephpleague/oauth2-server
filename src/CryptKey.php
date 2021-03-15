@@ -52,7 +52,7 @@ class CryptKey
             throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $keyPath));
         }
 
-        if ($keyPermissionsCheck === true) {
+        if (PHP_OS_FAMILY !== 'Windows' && $keyPermissionsCheck === true) {
             // Verify the permissions of the key
             $keyPathPerms = \decoct(\fileperms($keyPath) & 0777);
             if (\in_array($keyPathPerms, ['400', '440', '600', '640', '660'], true) === false) {
@@ -90,7 +90,7 @@ class CryptKey
             // @codeCoverageIgnoreEnd
         }
 
-        if (\chmod($keyPath, 0600) === false) {
+        if (PHP_OS_FAMILY !== 'Windows' && \chmod($keyPath, 0600) === false) {
             // @codeCoverageIgnoreStart
             throw new RuntimeException(\sprintf('The key file "%s" file mode could not be changed with chmod to 600', $keyPath));
             // @codeCoverageIgnoreEnd
