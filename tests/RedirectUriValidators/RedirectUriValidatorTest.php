@@ -1,13 +1,12 @@
 <?php
 
-
 namespace LeagueTests\RedirectUriValidators;
 
-use League\OAuth2\Server\RedirectUriValidators\Rfc8252RedirectUriValidator;
+use League\OAuth2\Server\RedirectUriValidators\RedirectUriValidator;
 use LeagueTests\Stubs\ClientEntity;
 use PHPUnit\Framework\TestCase;
 
-class Rfc8252RedirectUriValidatorTest extends TestCase
+class RedirectUriValidatorTest extends TestCase
 {
     public function testInvalidNonLoopbackUri()
     {
@@ -18,7 +17,7 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
         ]);
         $redirectUri = 'https://example.com/endpoint';
 
-        $validator = new Rfc8252RedirectUriValidator($client);
+        $validator = new RedirectUriValidator($client);
 
         $this->assertFalse(
             $validator->validateRedirectUri($redirectUri),
@@ -35,7 +34,7 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
         ]);
         $redirectUri = 'https://example.com:8443/endpoint';
 
-        $validator = new Rfc8252RedirectUriValidator($client);
+        $validator = new RedirectUriValidator($client);
 
         $this->assertTrue(
             $validator->validateRedirectUri($redirectUri),
@@ -50,7 +49,7 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $redirectUri = 'http://127.0.0.1:8443/different/endpoint';
 
-        $validator = new Rfc8252RedirectUriValidator($client);
+        $validator = new RedirectUriValidator($client);
 
         $this->assertFalse(
             $validator->validateRedirectUri($redirectUri),
@@ -65,7 +64,7 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $redirectUri = 'http://127.0.0.1:8080/endpoint';
 
-        $validator = new Rfc8252RedirectUriValidator($client);
+        $validator = new RedirectUriValidator($client);
 
         $this->assertTrue(
             $validator->validateRedirectUri($redirectUri),
@@ -80,7 +79,7 @@ class Rfc8252RedirectUriValidatorTest extends TestCase
 
         $redirectUri = 'http://[::1]:8080/endpoint';
 
-        $validator = new Rfc8252RedirectUriValidator($client);
+        $validator = new RedirectUriValidator($client);
 
         $this->assertTrue(
             $validator->validateRedirectUri($redirectUri),

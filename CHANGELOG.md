@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
+The server will now validate redirect uris according to rfc8252 (PR #1203)
+
+### Fixed
 - The server will now only recognise and handle an authorization header if the value of the header is non-empty. This is to circumvent issues where some common frameworks set this header even if no value is present (PR #1170)
 
 ## [8.2.4] - released 2020-12-10
