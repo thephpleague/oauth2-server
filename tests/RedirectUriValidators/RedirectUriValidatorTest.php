@@ -72,7 +72,7 @@ class RedirectUriValidatorTest extends TestCase
         );
     }
 
-    public function testValidIpv4LoopbackUri()
+    public function testValidIpv6LoopbackUri()
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://[::1]:8443/endpoint');
