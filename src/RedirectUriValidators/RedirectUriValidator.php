@@ -91,9 +91,11 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     /**
      * Parse an url like \parse_url, excluding the port
      *
+     * @param string $url
+     *
      * @return array
      */
-    private function parseUrl(string $url)
+    private function parseUrl($url)
     {
         $parsedUrl = \parse_url($url);
         unset($parsedUrl['port']);
