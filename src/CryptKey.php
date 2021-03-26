@@ -17,7 +17,7 @@ use RuntimeException;
 class CryptKey
 {
     const RSA_KEY_PATTERN =
-        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
+        '/^(-----BEGIN (RSA |EC )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA |EC )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
 
     /**
      * @var string
