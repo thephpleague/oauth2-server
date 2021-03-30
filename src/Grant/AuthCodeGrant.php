@@ -186,7 +186,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      * @param ClientEntityInterface  $client
      * @param ServerRequestInterface $request
      */
-    private function validateAuthorizationCode(
+    protected function validateAuthorizationCode(
         $authCodePayload,
         ClientEntityInterface $client,
         ServerRequestInterface $request
