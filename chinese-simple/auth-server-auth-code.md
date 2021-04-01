@@ -1,59 +1,59 @@
 ---
-layout: default
-title: Authorization code grant
-permalink: /authorization-server/auth-code-grant/
+布局：默认
+标题：授权码授予
+永久链接：/authorization-server/auth-code-grant/
 ---
 
-# Authorization code grant
+# 授权码授予
 
-The authorization code grant should be very familiar if you've ever signed into a web app using your Facebook or Google account.
+如果您曾经使用Facebook或Google帐户登录过网络应用程序，则授权码授予应该非常熟悉。
 
-## Flow
+## 流程
 
-### Part One
+### 第一部分
 
-The client will redirect the user to the authorization server with the following parameters in the query string:
+客户端将使用查询字符串中的以下参数将用户重定向到授权服务器：
 
-* `response_type` with the value `code`
-* `client_id` with the client identifier
-* `redirect_uri` with the client redirect URI. This parameter is optional, but if not send the user will be redirected to a pre-registered redirect URI.
-* `scope` a space delimited list of scopes
-* `state` with a [CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) token. This parameter is optional but highly recommended. You should store the value of the CSRF token in the user's session to be validated when they return.
+* `response_type` 的值为 `code`
+* `client_id` 带有客户端标识符
+* `redirect_uri` 客户端重定向URI。此参数是可选的，但是如果不发送，则用户将被重定向到预注册的重定向URI
+* `scope`  用空格分隔的范围列表
+* 带有[CSRF]（https://en.wikipedia.org/wiki/Cross-site_request_forgery）令牌的`state`。此参数是可选的，但强烈建议使用。您应该将CSRF令牌的值存储在用户会话中，以便他们返回时进行验证。
 
-All of these parameters will be validated by the authorization server.
+所有这些参数将由授权服务器验证。
 
-The user will then be asked to login to the authorization server and approve the client.
+然后将要求用户登录授权服务器并批准客户端。
 
-If the user approves the client they will be redirected from the authorization server to the client's redirect URI with the following parameters in the query string:
+如果用户批准了客户端，则将使用查询字符串中的以下参数将它们从授权服务器重定向到客户端的重定向URI：
 
-* `code` with the authorization code
-* `state` with the state parameter sent in the original request. You should compare this value with the value stored in the user's session to ensure the authorization code obtained is in response to requests made by this client rather than another client application.
+* `code` 和授权码
+* `state` 带有在原始请求中发送的state参数。您应该将此值与用户会话中存储的值进行比较，以确保获得的授权码是响应此客户端而不是另一个客户端应用程序发出的请求的。
 
-### Part Two
+### 第二部分
 
-The client will now send a POST request to the authorization server with the following parameters:
+客户端现在将使用以下参数将POST请求发送到授权服务器：
 
-* `grant_type` with the value of `authorization_code`
-* `client_id` with the client identifier
-* `client_secret` with the client secret
-* `redirect_uri` with the same redirect URI the user was redirect back to
-* `code` with the authorization code from the query string
- 
-Note that you need to decode the `code` query string first. You can do that with `urldecode($code)`.
+* 值为 `authorization_code`的`grant_type` 
+* `client_id` 客户端标识符
+* `client_secret` 客户端密钥
+* `redirect_uri` 用户重定向url相同的链接
+* `code` 带有查询字符串中的授权码
 
-The authorization server will respond with a JSON object containing the following properties:
+请注意，您需要先对`code`查询字符串进行解码。你可以用`urldecode($code)`来做到这一点。
 
-* `token_type` with the value `Bearer`
-* `expires_in` with an integer representing the TTL of the access token
-* `access_token` a JWT signed with the authorization server's private key
-* `refresh_token` an encrypted payload that can be used to refresh the access token when it expires.
+授权服务器将使用包含以下属性的JSON对象进行响应： 
 
-## Setup
+* `token_type` 值是 `Bearer`
+* `expires_in` 其整数表示访问令牌的TTL
+* `access_token` 用授权服务器的私钥签名的JWT
+* `refresh_token` 加密的有效字符串，可用于在过期时刷新访问令牌。
 
-Wherever you initialize your objects, initialize a new instance of the authorization server and bind the storage interfaces and authorization code grant:
+## 使用说明
+
+无论在何处初始化对象，都将初始化授权服务器的新实例，并绑定存储接口和授权代码授权：
 
 ~~~ php
-// Init our repositories
+// 初始化仓库
 $clientRepository = new ClientRepository(); // instance of ClientRepositoryInterface
 $scopeRepository = new ScopeRepository(); // instance of ScopeRepositoryInterface
 $accessTokenRepository = new AccessTokenRepository(); // instance of AccessTokenRepositoryInterface
@@ -61,10 +61,10 @@ $authCodeRepository = new AuthCodeRepository(); // instance of AuthCodeRepositor
 $refreshTokenRepository = new RefreshTokenRepository(); // instance of RefreshTokenRepositoryInterface
 
 $privateKey = 'file://path/to/private.key';
-//$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // if private key has a pass phrase
+//$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // 如果私钥有密码短语
 $encryptionKey = 'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'; // generate using base64_encode(random_bytes(32))
 
-// Setup the authorization server
+// 设置授权服务器
 $server = new \League\OAuth2\Server\AuthorizationServer(
     $clientRepository,
     $accessTokenRepository,
@@ -76,51 +76,51 @@ $server = new \League\OAuth2\Server\AuthorizationServer(
 $grant = new \League\OAuth2\Server\Grant\AuthCodeGrant(
      $authCodeRepository,
      $refreshTokenRepository,
-     new \DateInterval('PT10M') // authorization codes will expire after 10 minutes
+     new \DateInterval('PT10M') // 授权代码将在10分钟后过期
  );
 
-$grant->setRefreshTokenTTL(new \DateInterval('P1M')); // refresh tokens will expire after 1 month
+$grant->setRefreshTokenTTL(new \DateInterval('P1M')); // 刷新令牌将在1个月后过期
 
-// Enable the authentication code grant on the server
+// 在服务器上启用身份验证代码授予
 $server->enableGrantType(
     $grant,
-    new \DateInterval('PT1H') // access tokens will expire after 1 hour
+    new \DateInterval('PT1H') //访问令牌将在1小时后过期
 );
 ~~~
 
-## Implementation
+## 样例
 
-_Please note: These examples here demonstrate usage with the Slim Framework; Slim is not a requirement to use this library, you just need something that generates PSR7-compatible HTTP requests and responses._
+请注意：这里的这些示例演示了Slim框架的用法；Slim不是使用这个库的要求，您只需要生成与PSR7兼容的HTTP请求和响应的东西就可以_._
 
-The client will redirect the user to an authorization endpoint.
+客户端将用户重定向到授权端
 
 ~~~ php
 $app->get('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($server) {
    
     try {
     
-        // Validate the HTTP request and return an AuthorizationRequest object.
+        // 验证HTTP请求并返回AuthorizationRequest对象.
         $authRequest = $server->validateAuthorizationRequest($request);
         
-        // The auth request object can be serialized and saved into a user's session.
-        // You will probably want to redirect the user at this point to a login endpoint.
+        // 可以将auth请求对象序列化并保存到用户的会话中.
+        // 此时，您可能需要将用户重定向到登录端点.
         
-        // Once the user has logged in set the user on the AuthorizationRequest
+        // 一旦用户登录，就在AuthorizationRequest上设置该用户
         $authRequest->setUser(new UserEntity()); // an instance of UserEntityInterface
         
-        // At this point you should redirect the user to an authorization page.
-        // This form will ask the user to approve the client and the scopes requested.
+        // 此时，您应该将用户重定向到授权页面。
+        // 此表单将要求用户批准客户端和请求的范围。
         
-        // Once the user has approved or denied the client update the status
+        // 用户批准或拒绝后，客户端将更新状态
         // (true = approved, false = denied)
         $authRequest->setAuthorizationApproved(true);
         
-        // Return the HTTP redirect response
+        // 返回HTTP重定向响应
         return $server->completeAuthorizationRequest($authRequest, $response);
         
     } catch (OAuthServerException $exception) {
     
-        // All instances of OAuthServerException can be formatted into a HTTP response
+        // 可以将OAuthServerException的所有实例格式化为HTTP响应
         return $exception->generateHttpResponse($response);
         
     } catch (\Exception $exception) {
@@ -134,19 +134,19 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
 });
 ~~~
 
-The client will request an access token using an authorization code so create an `/access_token` endpoint.
+客户端将使用授权码请求访问令牌，因此创建`/access_token`端点
 
 ~~~ php
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($server) {
 
     try {
     
-        // Try to respond to the request
+        // 尝试回应请求
         return $server->respondToAccessTokenRequest($request, $response);
 
     } catch (\League\OAuth2\Server\Exception\OAuthServerException $exception) {
     
-        // All instances of OAuthServerException can be formatted into a HTTP response
+        // 可以将OAuthServerException的所有实例格式化为HTTP响应
         return $exception->generateHttpResponse($response);
         
     } catch (\Exception $exception) {

@@ -1,9 +1,9 @@
 ---
-layout: default
-title: Authorization server custom grants
-permalink: /authorization-server/custom-grants/
+布局：默认
+标题：授权服务器自定义授权
+永久链接：/ authorization-server / custom-grants /
 ---
 
-# Authorization server custom grants
+## 授权服务器自定义授权
 
 ## TODO

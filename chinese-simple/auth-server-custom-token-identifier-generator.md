@@ -1,9 +1,9 @@
 ---
-layout: default
-title: Authorization server custom token identifier generator
-permalink: /authorization-server/custom-token-identifier-generator/
+布局：默认
+标题：授权服务器自定义令牌标识符生成器
+永久链接：/authorization-server/custom-token-identifier-generator/
 ---
 
-# Authorization server custom token identifier generator
+## 授权服务器自定义令牌标识符生成器
 
 ## TODO

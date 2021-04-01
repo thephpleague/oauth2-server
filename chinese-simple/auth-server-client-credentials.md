@@ -1,31 +1,31 @@
 ---
-layout: default
-title: Client credentials grant
-permalink: /authorization-server/client-credentials-grant/
+布局：默认
+标题：客户凭证授予
+永久链接：/authorization-server/client-credentials-grant/
 ---
 
-# Client credentials grant
+# 客户凭证授予
 
-This grant is suitable for machine-to-machine authentication, for example for use in a cron job which is performing maintenance tasks over an API. Another example would be a client making requests to an API that don’t require user’s permission.
+该授权适用于机器对机器的身份验证，例如，用于在通过API执行维护任务的cron作业中使用。另一个示例是客户端向不需要用户许可的API发出请求。.
 
-## Flow
+## 流程
 
-The client sends a POST request with following body parameters to the authorization server:
+客户端将带有以下主体参数的POST请求发送到授权服务器：
 
-* `grant_type` with the value `client_credentials`
-* `client_id` with the client's ID
-* `client_secret` with the client's secret
-* `scope` with a space-delimited list of requested scope permissions.
+* 带有 `client_credentials`的`grant_type` 
+* `client_id` 客户端ID
+* `client_secret` 客户端密钥
+* `scope` 带有以空格分隔的请求范围权限列表
 
-The authorization server will respond with a JSON object containing the following properties:
+授权服务器将使用包含以下属性的JSON对象进行响应：
 
-* `token_type` with the value `Bearer`
-* `expires_in` with an integer representing the TTL of the access token
-* `access_token` a JWT signed with the authorization server's private key
+* `token_type` 值为 `Bearer`
+* `expires_in` 代表访问令牌的TTL，用整数表示
+* `access_token` 用授权服务器的私钥签名的JWT
 
-## Setup
+## 使用说明
 
-Wherever you initialize your objects, initialize a new instance of the authorization server and bind the storage interfaces and authorization code grant:
+无论在何处初始化对象，都将初始化授权服务器的新实例，并绑定存储接口和授权代码授权:
 
 ~~~ php
 // Init our repositories
@@ -38,7 +38,7 @@ $privateKey = 'file://path/to/private.key';
 //$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // if private key has a pass phrase
 $encryptionKey = 'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'; // generate using base64_encode(random_bytes(32))
 
-// Setup the authorization server
+// 设置授权服务器
 $server = new \League\OAuth2\Server\AuthorizationServer(
     $clientRepository,
     $accessTokenRepository,
@@ -47,18 +47,18 @@ $server = new \League\OAuth2\Server\AuthorizationServer(
     $encryptionKey
 );
 
-// Enable the client credentials grant on the server
+//在服务器上启用客户端凭据授予
 $server->enableGrantType(
     new \League\OAuth2\Server\Grant\ClientCredentialsGrant(),
-    new \DateInterval('PT1H') // access tokens will expire after 1 hour
+    new \DateInterval('PT1H') // 访问令牌将在1小时后过期
 );
 ~~~
 
-## Implementation
+## 样例
 
-_Please note: These examples here demonstrate usage with the Slim Framework; Slim is not a requirement to use this library, you just need something that generates PSR7-compatible HTTP requests and responses._
+请注意：这里的这些示例演示了Slim框架的用法；Slim不是使用这个库的要求，您只需要生成与PSR7兼容的HTTP请求和响应的东西就可以_._
 
-The client will request an access token so create an `/access_token` endpoint.
+客户端将请求访问令牌，因此创建一个`/ access_token`端点
 
 ~~~ php
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
@@ -73,7 +73,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
         
     } catch (\League\OAuth2\Server\Exception\OAuthServerException $exception) {
     
-        // All instances of OAuthServerException can be formatted into a HTTP response
+        // 可以将OAuthServerException的所有实例格式化为HTTP响应
         return $exception->generateHttpResponse($response);
         
     } catch (\Exception $exception) {
