@@ -1,16 +1,16 @@
 ---
-layout: default
-title: Authorization server events
-permalink: /authorization-server/events/
+布局：默认
+标题：授权服务器事件
+永久链接：/authorization-server/events/
 ---
 
-# Authorization server events
+# 授权服务器事件
 
-During the lifecycle of a request passing through the authorization server a number of events may be emitted.
+在通过授权服务器的请求的生命周期中，可能会发出许多事件。
 
-You can subscribe to these events by attaching listeners to the authorization server.
+您可以通过将侦听器附加到授权服务器来订阅这些事件。
 
-To access the emitter call this method:
+要访问发射器，请调用此方法：
 
 ~~~ php
 $server->getEmitter(); // returns instance of \League\Event\EmitterInterface
@@ -27,9 +27,9 @@ $server->getEmitter()->addListener(
 );
 ~~~
 
-This event is emitted when a client fails to authenticate. You might wish to listen to this event in order to ban clients that fail to authenticate after `n` number of attempts.
+客户端身份验证失败时，将发出此事件。您可能希望侦听此事件，以禁止在`n`次尝试后未能通过身份验证的客户端。
 
-You can retrieve the request object that was used by calling `getRequest()` on the event object passed into your callable.
+您可以通过传递给可调用对象的事件对象上的调用`getRequest()`来检索所使用的请求对象。
 
 ## user.authentication.failed
 
@@ -42,6 +42,6 @@ $server->getEmitter()->addListener(
 );
 ~~~
 
-This event is emitted when a user fails to authenticate. You might wish to listen to this event in order to reset passwords or ban users that fail to authenticate after `n` number of attempts.
+用户验证失败时，将发出此事件。您可能希望侦听此事件，以重置密码或禁止在`n`次尝试后无法通过身份验证的用户。
 
-You can retrieve the request object that was used by calling `getRequest()` on the event object passed into your callable.
+您可以通过传递给可调用对象的事件对象上的调用`getRequest()`来检索所使用的请求对象。

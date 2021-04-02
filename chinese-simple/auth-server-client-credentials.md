@@ -54,11 +54,11 @@ $server->enableGrantType(
 );
 ~~~
 
-## 样例
+## 示例
 
 请注意：这里的这些示例演示了Slim框架的用法；Slim不是使用这个库的要求，您只需要生成与PSR7兼容的HTTP请求和响应的东西就可以_._
 
-客户端将请求访问令牌，因此创建一个`/ access_token`端点
+客户端将请求访问令牌，因此创建一个`/access_token`端点
 
 ~~~ php
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {

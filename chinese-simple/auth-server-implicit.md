@@ -1,45 +1,45 @@
 ---
-layout: default
-title: Implicit grant
-permalink: /authorization-server/implicit-grant/
+布局：默认
+标题：隐式授予
+永久链接：/authorization-server/implicit-grant/
 ---
 
-# Implicit grant
+# 隐式授予
 
-__It is no longer best practice to use the Implicit Grant__. This grant is documented here for legacy purposes only. Industry best practice recommends using the Authorization Code Grant without a client secret for native and browser-based apps.
+__这种方式已不再是最佳实践__. 文档仅仅是记录下这种授权方式. 业界最佳实践建议，对于本机和基于浏览器的应用程序，不使用客户密码的情况下使用授权代码授予。
 
-The implicit grant is similar to the authorization code grant with two distinct differences.
+隐式授权类似于授权码授权，但有两个明显的区别。
 
-It is intended to be used for user-agent-based clients (e.g. single page web apps) that can't keep a client secret because all of the application code and storage is easily accessible.
+它旨在用于基于用户代理的客户端（例如单页Web应用程序），由于所有应用程序代码和存储都易于访问，因此无法将客户端保密。
 
-Secondly instead of the authorization server returning an authorization code which is exchanged for an access token, the authorization server returns an access token.
+其次，代替授权服务器返回被交换访问令牌的授权代码，授权服务器返回访问令牌。
 
-## Flow
+## 流程
 
-The client will redirect the user to the authorization server with the following parameters in the query string:
+客户端将使用查询字符串中的以下参数将用户重定向到授权服务器：
 
-* `response_type` with the value `token`
-* `client_id` with the client identifier
-* `redirect_uri` with the client redirect URI. This parameter is optional, but if not sent the user will be redirected to a pre-registered redirect URI.
-* `scope` a space delimited list of scopes
-* `state` with a [CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) token. This parameter is optional but highly recommended. You should store the value of the CSRF token in the user's session to be validated when they return.
+* `response_type` 的值为 `token`
+* `client_id` 带有客户端标识符
+* `redirect_uri` 户端重定向URI。此参数是可选的，但是如果不发送，则用户将被重定向到预注册的重定向URI
+* `scope` 用空格分隔的范围列表
+* `state` with a [CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery) token。此参数是可选的，但强烈建议使用。您应该将CSRF令牌的值存储在用户会话中，以便他们返回时进行验证。
 
-All of these parameters will be validated by the authorization server.
+所有这些参数将由授权服务器验证。
 
-The user will then be asked to login to the authorization server and approve the client.
+然后将要求用户登录授权服务器并批准客户端。
 
-If the user approves the client they will be redirected back to the authorization server with the following parameters in the query string:
+如果用户批准了客户端，则将使用查询字符串中的以下参数将其重定向回授权服务器:
 
-* `token_type` with the value `Bearer`
-* `expires_in` with an integer representing the TTL of the access token
-* `access_token` a JWT signed with the authorization server's private key
-* `state` with the state parameter sent in the original request. You should compare this value with the value stored in the user's session to ensure the authorization code obtained is in response to requests made by this client rather than another client application.
+* `token_type` 值为 `Bearer`
+* `expires_in` 代表访问令牌的TTL，用整数表示
+* `access_token` 用授权服务器的私钥签名的JWT
+* `state` 带有在原始请求中发送的state参数。您应该将此值与用户会话中存储的值进行比较，以确保获得的授权码是响应此客户端而不是另一个客户端应用程序发出的请求的。
 
-****Note**** this grant does <u>not</u> return a refresh token.
+****Note**** 该授权**不会**返回一个 `refresh token`.
 
 ## Setup
 
-Wherever you initialize your objects, initialize a new instance of the authorization server and bind the storage interfaces and authorization code grant:
+无论在何处初始化对象，都将初始化授权服务器的新实例，并绑定存储接口和授权代码授权：
 
 ~~~ php
 // Init our repositories
@@ -68,9 +68,9 @@ $server->enableGrantType(
 );
 ~~~
 
-## Implementation
+## 示例
 
-_Please note: These examples here demonstrate usage with the Slim Framework; Slim is not a requirement to use this library, you just need something that generates PSR7-compatible HTTP requests and responses._
+请注意：这里的这些示例演示了Slim框架的用法；Slim不是使用这个库的要求，您只需要生成与PSR7兼容的HTTP请求和响应的东西就可以_._
 
 The client will redirect the user to an authorization endpoint.
 
