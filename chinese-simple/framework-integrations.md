@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Framework Integrations
+title: 框架整合
 permalink: /framework-integrations/
 ---
 
@@ -12,7 +12,7 @@ permalink: /framework-integrations/
 * [Laravel Passport (Official)](https://laravel.com/docs/passport)
 * [Nette Framework](https://github.com/lookyman/nette-oauth2-server)
 * [Phalcon Framework](https://github.com/tegaphilip/padlock)
-* Slim (or any PSR7-supporting framework) - See the examples in this repository
+* Slim （或任何支持PSR7的框架）-请参阅此存储库中的示例
 * [Symfony](https://github.com/trikoder/oauth2-bundle)
 
-Have you made a framework integration or written a blog post or tutorial? Please open a PR against the `gh-pages` branch and update this page.
+您是否进行了框架集成或撰写了博客文章或教程？ 请针对`gh-pages`分支打开PR，并更新此页面。

@@ -1,33 +1,70 @@
 ---
-layout: default
-title: Refresh token grant
+布局：默认
+标题：刷新令牌授予
 permalink: /authorization-server/refresh-token-grant/
 ---
 
-# Refresh token grant
+# 刷新令牌授予
 
-Access tokens eventually expire; however some grants respond with a refresh token which enables the client to refresh the access token.
+访问令牌最终会过期； 但是，某些授予使用刷新令牌进行响应，该刷新令牌使客户端可以刷新访问令牌。
 
-## Flow
+## 流程
 
-The client sends a POST request with following body parameters to the authorization server:
+* 客户端将带有以下主体参数的POST请求发送到授权服务器：
 
-* `grant_type` with the value `refresh_token`
-* `refresh_token` with the refresh token
-* `client_id` with the the client's ID
-* `client_secret` with the client's secret
-* `scope` with a space-delimited list of requested scope permissions. This is optional; if not sent the original scopes will be used, otherwise you can request a reduced set of scopes.
+* 带有 `refresh_token`的`grant_type` 
+* `refresh_token` 刷新token
+* `client_id` 客户端ID
+* `client_secret` 客户端密钥
+* `scope` 以空格分隔的请求范围权限列表。这是可选的；如果未发送，则将使用原始范围，否则，您可以请求缩小的范围集。
 
-The authorization server will respond with a JSON object containing the following properties:
+授权服务器将使用包含以下属性的JSON对象进行响应：
 
-* `token_type` with the value `Bearer`
-* `expires_in` with an integer representing the TTL of the access token
-* `access_token` a new JWT signed with the authorization server's private key
-* `refresh_token` an encrypted payload that can be used to refresh the access token when it expires
+* `token_type` 值为 `Bearer`
+* `expires_in` 代表访问令牌的TTL，用整数表示
+* `access_token` 使用授权服务器的私钥签名的新JWT
+* `refresh_token` 加密的有效字符串，可用于在过期时刷新访问令牌。
 
-## Setup
+## 使用说明
 
-Wherever you initialize your objects, initialize a new instance of the authorization server and bind the storage interfaces and authorization code grant:
+无论在何处初始化对象，都将初始化授权服务器的新实例，并绑定存储接口和授权代码授权:
+
+~~~ php
+// Init our repositories
+$clientRepository = new ClientRepository(); // instance of ClientRepositoryInterface
+$scopeRepository = new ScopeRepository(); // instance of ScopeRepositoryInterface
+$accessTokenRepository = new AccessTokenRepository(); // instance of AccessTokenRepositoryInterface
+$userRepository = new UserRepository(); // instance of UserRepositoryInterface
+$refreshTokenRepository = new RefreshTokenRepository(); // instance of RefreshTokenRepositoryInterface
+
+// 公钥和私钥的路径
+$privateKey = 'file://path/to/private.key';
+//$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // if private key has a pass phrase
+$encryptionKey = 'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'; // generate using base64_encode(random_bytes(32))
+
+// Setup the authorization server
+$server = new \League\OAuth2\Server\AuthorizationServer(
+    $clientRepository,
+    $accessTokenRepository,
+    $scopeRepository,
+    $privateKey,
+    $encryptionKey
+);
+
+$grant = new \League\OAuth2\Server\Grant\PasswordGrant(
+     $userRepository,
+     $refreshTokenRepository
+);
+
+$grant->setRefreshTokenTTL(new \DateInterval('P1M')); // refresh tokens will expire after 1 month
+
+// Enable the password grant on the server
+$server->enableGrantType(
+    $grant,
+    new \DateInterval('PT1H') // access tokens will expire after 1 hour
+);
+​~~~:
+~~~
 
 ~~~ php
 // Init our repositories
@@ -60,9 +97,9 @@ $server->enableGrantType(
 );
 ~~~
 
-## Implementation
+## 示例
 
-The client will request an access token so create an `/access_token` endpoint.
+客户端将请求一个访问令牌，以便创建一个 `/access_token` 端点.
 
 ~~~ php
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {

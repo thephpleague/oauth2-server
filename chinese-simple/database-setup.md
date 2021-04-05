@@ -1,18 +1,18 @@
 ---
 layout: default
-title: Database Setup
+title: 数据库设置
 permalink: /database-setup/
 ---
 
 # Database Setup
 
-This library has been developed so that you can use any type of backend storage; relational, document, key value, columnar or even hardcoded.
+已经开发了该库，因此您可以使用任何类型的后端存储；例如， 关系，文档，键值，列式或什至是硬编码的。
 
-The documentation for each of the repository interfaces describes what sort of data you might want to store not how to store it.
+每个存储库接口的文档都描述了您可能希望存储哪种数据，而不是如何存储。
 
-* [Access Token Repository Interface documentation](/access-token-repository-interface/)
-* [Client Repository Interface documentation](/client-repository-interface/)
-* [Refresh Token Repository Interface documentation](/refresh-token-repository-interface/)
-* [Scope Repository Interface documentation](/scope-repository-interface/)
-* [Auth Code Repository Interface documentation](/auth-code-repository-interface/)
-* [User Repository Interface documentation](/user-repository-interface/)
+* [访问令牌存储库接口文档](/access-token-repository-interface/)
+* [客户端库接口文档](/client-repository-interface/)
+* [刷新令牌存储库接口文档](/refresh-token-repository-interface/)
+* [范围存储库接口文档](/scope-repository-interface/)
+* [授权码接口文档](/auth-code-repository-interface/)
+* [用户存储库接口文档](/user-repository-interface/)

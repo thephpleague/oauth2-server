@@ -1,36 +1,36 @@
 ---
-layout: default
-title: Resource owner password credentials grant
-permalink: /authorization-server/resource-owner-password-credentials-grant/
+布局：默认
+标题：资源所有者密码凭据授予
+永久链接: /authorization-server/resource-owner-password-credentials-grant/
 ---
 
-# Resource owner password credentials grant
+# 资源所有者密码凭据授予
 
-This grant is a great user experience for <u>trusted</u> first party clients both on the web and in native applications.
+对于Web和本机应用程序中的<u>受信任的</u>第一方客户端，此赠款都是很好的用户体验
 
-## Flow
+## 流程
 
-The client will ask the user for their authorization credentials (usually a username and password).
+客户端将要求用户提供其授权凭证（通常是用户名和密码）
 
-The client then sends a POST request with following body parameters to the authorization server:
+然后，客户端将带有以下主体参数的POST请求发送到授权服务器：
 
-* `grant_type` with the value `password`
-* `client_id` with the the client's ID
-* `client_secret` with the client's secret
-* `scope` with a space-delimited list of requested scope permissions.
-* `username` with the user's username
-* `password` with the user's password
+* `grant_type` 的值为 `password`
+* `client_id` 客户端ID 
+* `client_secret` 客户端
+* `scope` 以空格分隔的请求范围权限列表
+* `username` 用户名
+* `password` 用户密码
 
-The authorization server will respond with a JSON object containing the following properties:
+授权服务器将使用包含以下属性的JSON对象进行响应：
 
-* `token_type` with the value `Bearer`
-* `expires_in` with an integer representing the TTL of the access token
-* `access_token` a JWT signed with the authorization server's private key
-* `refresh_token` an encrypted payload that can be used to refresh the access token when it expires.
+* `token_type` 值为 `Bearer`
+* `expires_in` 代表访问令牌的TTL，用整数表示
+* `access_token` 用授权服务器的私钥签名的JWT
+* `refresh_token` 加密的有效字符串，可用于在过期时刷新访问令牌。
 
-## Setup
+## 使用说明
 
-Wherever you initialize your objects, initialize a new instance of the authorization server and bind the storage interfaces and authorization code grant:
+无论在何处初始化对象，都将初始化授权服务器的新实例，并绑定存储接口和授权代码授权:
 
 ~~~ php
 // Init our repositories
@@ -40,7 +40,7 @@ $accessTokenRepository = new AccessTokenRepository(); // instance of AccessToken
 $userRepository = new UserRepository(); // instance of UserRepositoryInterface
 $refreshTokenRepository = new RefreshTokenRepository(); // instance of RefreshTokenRepositoryInterface
 
-// Path to public and private keys
+// 公钥和私钥的路径
 $privateKey = 'file://path/to/private.key';
 //$privateKey = new CryptKey('file://path/to/private.key', 'passphrase'); // if private key has a pass phrase
 $encryptionKey = 'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'; // generate using base64_encode(random_bytes(32))
@@ -68,11 +68,11 @@ $server->enableGrantType(
 );
 ~~~
 
-## Implementation
+## 示例
 
-_Please note: These examples here demonstrate usage with the Slim Framework; Slim is not a requirement to use this library, you just need something that generates PSR7-compatible HTTP requests and responses._
+请注意：这里的这些示例演示了Slim框架的用法；Slim不是使用这个库的要求，您只需要生成与PSR7兼容的HTTP请求和响应的东西就可以_._
 
-The client will request an access token so create an `/access_token` endpoint.
+客户端将请求访问令牌，因此创建一个`/access_token`端点。
 
 ~~~ php
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {

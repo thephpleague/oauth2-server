@@ -1,62 +1,61 @@
 ---
 layout: default
-title: Which OAuth 2.0 grant should I use?
+title: 我应该使用哪个OAuth 2.0授权？
 permalink: /authorization-server/which-grant/
 ---
 
-# Which OAuth 2.0 grant should I implement?
+# 我应该使用哪一种OAuth 2.0授权？
 
-A grant is a method of acquiring an access token. Deciding which grants to implement depends on the type of client the end user will be using, and the experience you want for your users.
+授权是一种获取访问令牌的方法。确定要实施的授权方法取决于最终用户将使用的客户端类型，以及您希望为用户提供的体验。
 
 <figure>
     <img src="/images/grants.min.svg" style="width:100%">
 </figure>
 
 
-## Terminology
+## 术语
 
-Some of the terminology used in the OAuth 2 framework is detailed here, to help you choose the correct grant for your use-case.
+此处详细介绍了OAuth 2框架中使用的一些术语，以帮助您为用例选择正确的授权。
 
-### First party or third party client?
+### 第一方还是第三方客户？
 
-A first party client is a client that you trust enough to handle the end user's authorization credentials. For example Spotify's iPhone app is owned and developed by Spotify so therefore they implicitly trust it.
+第一方客户端是您足够信任的客户端，可以处理最终用户的授权凭据。例如，Spotify的iPhone应用程序由Spotify拥有和开发，因此他们暗中信任它。
 
-A third party client is a client that you don't trust.
+第三方客户是您不信任的客户。
 
-### Access Token Owner?
+### 访问令牌所有者？
 
-An access token represents a permission granted to a client to access some protected resources.
+访问令牌表示授予客户端访问某些受保护资源的权限。
+如果您要授权计算机访问资源，并且不需要用户许可就可以访问上述资源，则应实施[客户端凭据授予](/authorization-server/client-credentials-grant/).
 
-If you are authorizing a machine to access resources and you don't require the permission of a user to access said resources you should implement the [client credentials grant](/authorization-server/client-credentials-grant/).
+如果需要用户的许可才能访问资源，则需要确定客户端类型。
 
-If you require the permission of a user to access resources you need to determine the client type.
+### 客户类型？
 
-### Client Type?
+取决于客户端是否能够保守秘密，将取决于客户端应使用哪种授权。
 
-Depending on whether or not the client is capable of keeping a secret will depend on which grant the client should use.
+如果客户端是完全在前端运行的Web应用程序（例如单页Web应用程序）或本机应用程序（例如移动应用程序），则应实施[授权码授予](/authorization-server/auth-code-grant/).
 
-If the client is a web application that has a server side component then you should implement the [authorization code grant](/authorization-server/auth-code-grant/).
+如果客户端是完全在前端运行的Web应用程序（例如单页Web应用程序）或本机应用程序（例如移动应用程序），则应实施[授权码授予](/authorization-server/auth-code-grant/) （带有PKCE扩展名）
 
-If the client is a web application that has runs entirely on the front end (e.g. a single page web application) or a native application such as a mobile app you should implement the [authorization code grant](/authorization-server/auth-code-grant/) with the PKCE extension.
+第三方本机应用程序应使用[授权代码授予](/authorization-server/auth-code-grant/) (通过本机浏览器，而不是嵌入式浏览器-例如，对于iOS，将用户推送到Safari或使用[SFSafariViewController](https://developer.apple.com/library/ios/documentation/SafariServices/Reference/SFSafariViewController_Ref/), <u>请勿</u> 使用嵌入式 [WKWebView](https://developer.apple.com/library/ios/documentation/WebKit/Reference/WKWebView_Ref/)).
 
-Third party native applications should use the [authorization code grant](/authorization-server/auth-code-grant/) (via the native browser, not an embedded browser - e.g. for iOS push the user to Safari or use [SFSafariViewController](https://developer.apple.com/library/ios/documentation/SafariServices/Reference/SFSafariViewController_Ref/), <u>don't</u> use an embedded [WKWebView](https://developer.apple.com/library/ios/documentation/WebKit/Reference/WKWebView_Ref/)).
+## 旧版授权
 
-## Legacy Grants
+_Password Grant_和_Implicit Grant_未包含在我们的推荐图中，因为这些授权有很多缺点和/或不再被视为最佳实践。
 
-The _Password Grant_ and _Implicit Grant_ are not included in our recommendation diagram as these grants have several drawbacks and/or are no longer considered to be best practice.
+### 密码授予
 
-### Password Grant
+我们**强烈**建议您出于多种原因在密码授权上使用授权码流程。
 
-We *strongly* recommend that you use the Authorization Code flow over the Password grant for several reasons.
+授权代码授予将重定向到授权服务器。这为授权服务器提供了提示用户输入多因素身份验证选项，利用单点登录会话或使用第三方身份提供者的机会。
 
-The Authorization Code Grant redirects to the authorization server. This provides the authorization server with the opportunity to prompt the user for multi-factor authentication options, take advantage of single-sign-on sessions, or use third-party identity providers.
+密码授予不提供任何内置机制，必须使用自定义代码进行扩展。
 
-The Password grant does not provide any built-in mechanism for these and must be extended with custom code.
+### 隐式授予
 
-### Implicit Grant
+建议客户不再使用“隐式授予”。推荐给本机应用程序的PKCE不能保护此授权。
 
-It is recommended that clients no longer use the Implict Grant. This grant cannot be protected by PKCE which is recommended for native apps.
+此外，在没有用户交互的情况下，无法刷新通过隐式流的访问令牌授予，这使得授权代码授予流（可以发出刷新令牌）成为需要刷新访问令牌的本机应用程序授权的更为实用的选择。
 
-In addition, access tokens grants via the implicit flow cannot be refreshed without user interaction, making the authorization code grant flow, which can issue refresh tokens, the more practical option for native app authorizations that require refreshing of access tokens.
-
-You should use the Authorization Code flow with no secret for native and browser-based apps.
+对于本机和基于浏览器的应用程序，您不应使用授权码流。

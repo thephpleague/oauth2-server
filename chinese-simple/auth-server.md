@@ -1,35 +1,34 @@
 ---
 layout: default
-title: The Authorization Server
+title: 授权服务器
 permalink: /authorization-server/index
 ---
 
-# The Authorization Server
+# 授权服务器
 
-The Authorization server authorizes and accepts authorization requests from a client. It is responsible for issuing access and refresh tokens.
+授权服务器授权并接受来自客户端的授权请求。它负责发布访问和刷新令牌。
 
 ## enableGrantType() :null|DateInterval
 
-By default, an instantiated AuthorizationServer will not accept any grant types. To add a grant type, call the `enableGrantType` method, passing it a `GrantTypeInterface` for the grant tht should be enabled and an optional DateInterval, specifying the default time to live for any access tokens issued by the grant type.
+默认情况下，实例化的AuthorizationServer将不接受任何授予类型。要添加授权类型，请调用` enableGrantType`方法，并向其传递一个` GrantTypeInterface`用于授权，并启用一个可选的DateInterval，指定该授权类型发出的任何访问令牌的默认生存时间。
 
 ## validateAuthorizationRequest() : AuthorizationRequest
 
-This function is used to validate an incoming authorization request, checking that a user has authorized a client to access their protected resources. If the check passes, the server will issue an instance of `AuthorizationRequest`, which can be used with the `completeAuthorizationRequest()` method. 
-
-This Authorization Code and Implicit Grant make use of this method.
+此功能用于验证传入的授权请求，检查用户是否已授权客户端访问其受保护的资源。如果检查通过，则服务器将发出`AuthorizationRequest`的实例，该实例可与` completeAuthorizationRequest()`方法一起使用。
+此授权码和隐式授予使用此方法。
 
 ## completeAuthorizationRequest() : ResponseInterface
 
-To complete...
+未完待续...
 
 ## respondToAccessTokenRequest() : ResponseInterface
 
-This method is used to respond to a request for an access token. It will validate the client and authorization code received as part of the request, and if successful, issue an access token to the client.
+此方法用于响应对访问令牌的请求。它将验证客户端和作为请求的一部分收到的授权代码，如果成功，则向客户端发出访问令牌。
 
 ## getResponseType() : ResponseTypeInterface
 
-Used to get the response type that grants will return. The response type must be an implementation of the `ResponseTypeInterface`. If it is not, a default `BearerTokenResponse` is issued.
+用于获取授权将返回的响应类型。响应类型必须是`ResponseTypeInterface`的实现。如果不是，则发出默认的` BearerTokenResponse`。
 
 ## setDefaultScope() : null
 
-When the Authorization Server is first instantiated, it has no default scope set. If the server receieves an authorization request that does not specify any scope, it will reject the request by issuing an invalid scope response. If a default scope is set using this method, authorization requests without a scope will be assigned the default scope set for the server.
+首次实例化授权服务器时，没有设置默认范围。如果服务器收到未指定任何范围的授权请求，它将通过发出无效的范围响应来拒绝该请求。如果使用此方法设置了默认范围，则将为没有范围的授权请求分配服务器的默认范围集。
