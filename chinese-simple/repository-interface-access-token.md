@@ -1,14 +1,14 @@
 ---
 layout: default
-title: AccessTokenRepositoryInterface documentation
+title: AccessTokenRepositoryInterface文档
 permalink: /access-token-repository-interface/
 ---
 
-# Access Token Repository Interface
+# 访问令牌存储库接口
 
 ## getNewToken() : AccessTokenEntityInterface
 
-This method should return an implementation of `\League\OAuth2\Server\Entities\AccessTokenEntityInterface`. You can use the following traits to help you implement the required methods from that interface:
+此方法应该返回 `\League\OAuth2\Server\Entities\AccessTokenEntityInterface`接口的实现. 您可以使用以下`traits `来帮助您从该接口实现所需的方法：
 
 * `League\OAuth2\Server\Entities\Traits\AccessTokenTrait`
 * `League\OAuth2\Server\Entities\Traits\EntityTrait`
@@ -16,22 +16,22 @@ This method should return an implementation of `\League\OAuth2\Server\Entities\A
 
 ## persistNewAccessToken() : void
 
-When a new access token is created this method will be called. You don't have to do anything here but for auditing you probably want to.
+创建新的访问令牌时，将调用此方法。您无需在此处做任何事情，但可能需要进行审核。
 
-The access token entity passed in has a number of methods you can call which contain data worth saving to a database:
+传入的访问令牌实体具有许多可以调用的方法，这些方法包含值得保存到数据库的数据：
 
-* `getIdentifier() : string` this is randomly generated unique identifier (of 80+ characters in length) for the access token.
-* `getExpiryDateTime() :  \DateTime` the expiry date and time of the access token.
-* `getUserIdentifier() : string|null` the user identifier represented by the access token. 
-* `getScopes() : ScopeEntityInterface[]` an array of scope entities
-* `getClient()->getIdentifier() : string` the identifier of the client who requested the access token.
+* `getIdentifier() : string` 这是随机生成的访问令牌的唯一标识符（长度超过80个字符）
+* `getExpiryDateTime() :  \DateTime` 访问令牌的到期日期和时间。
+* `getUserIdentifier() : string|null` 访问令牌表示的用户标识符。
+* `getScopes() : ScopeEntityInterface[]` 范围实体数组
+* `getClient()->getIdentifier() : string` 求访问令牌的客户端的标识符。
 
-JWT access tokens contain an expiry date and so will be rejected automatically when used. You can safely clean up expired access tokens from your database.
+JWT访问令牌包含到期日期，因此在使用时将被自动拒绝。您可以安全地从数据库中清除过期的访问令牌。
 
 ## revokeAccessToken() : void
 
-This method is called when a refresh token is used to reissue an access token. The original access token is revoked a new access token is issued.
+当使用刷新令牌重新发出访问令牌时，将调用此方法。原始访问令牌被吊销，新的访问令牌被发布.
 
 ## isAccessTokenRevoked() : boolean
 
-This method is called when an access token is validated by the resource server middleware. Return `true` if the access token has been manually revoked before it expired. If the token is still valid return `false`.
+当资源服务器中间件验证访问令牌时，将调用此方法。如果访问令牌在过期之前已被手动吊销，则返回` true`。如果令牌仍然有效，则返回`false`。

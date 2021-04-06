@@ -1,7 +1,7 @@
 ---
-布局：默认
-标题：客户凭证授予
-永久链接：/authorization-server/client-credentials-grant/
+layout: default
+title: 客户凭证授予
+permalink: /authorization-server/client-credentials-grant/
 ---
 
 # 客户凭证授予

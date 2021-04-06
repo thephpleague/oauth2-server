@@ -1,21 +1,21 @@
 ---
 layout: default
-title: Requirements
+title: 要求
 permalink: /requirements/
 ---
 
-# Requirements
+# 要求
 
-In order to prevent man-in-the-middle attacks, the authorization server MUST require the use of TLS with server authentication as defined by [RFC2818](https://tools.ietf.org/html/rfc2818) for any request sent to the authorization and token endpoints.  The client MUST validate the authorization server's TLS certificate as defined by [RFC6125](https://tools.ietf.org/html/rfc6125) and in accordance with its requirements for server identity authentication.
+为了防止中间人攻击，授权服务器必须要求对[RFC2818](https://tools.ietf.org/html/rfc2818)定义的服务器身份验证使用TLS。到授权和令牌端点。客户端必须按照[RFC6125](https://tools.ietf.org/html/rfc6125)的定义并根据其对服务器身份验证的要求，验证授权服务器的TLS证书。
 
-This library uses key cryptography in order to encrypt and decrypt, as well as verify the integrity of signatures. See the [installation](/installation) page for details on how to generate the keys.
+该库使用密钥密码术来加密和解密，以及验证签名的完整性。有关如何生成密钥的详细信息，请参见[安装](/installation)页面。
 
-The following versions of PHP are supported:
+支持以下版本的PHP：
 
 * PHP 7.2
 * PHP 7.3
 * PHP 7.4
 
-The `openssl` and `json` extensions are also required.
+需要安装扩展`openssl` 和`json` 
 
-All HTTP messages passed to the server should be [PSR-7 compliant](https://www.php-fig.org/psr/psr-7/). This ensures interoperability between other packages and frameworks.
+传递到服务器的所有HTTP消息均应为[符合PSR-7规范](https://www.php-fig.org/psr/psr-7/)。这样可以确保其他程序包和框架之间的互操作性。

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: V4 Docs
+title: V4 文档
 permalink: /V4-docs/
 ---
 

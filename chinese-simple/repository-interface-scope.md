@@ -1,23 +1,23 @@
 ---
 layout: default
-title: ScopeRepositoryInterface documentation
+title: ScopeRepositoryInterface 文档
 permalink: /scope-repository-interface/
 ---
 
-# Scope Repository Interface
+# 作用域存储库接口
 
 ## getScopeEntityByIdentifier() : ScopeEntityInterface
 
-This method is called to validate a scope.
+调用此方法以验证范围。
 
-If the scope is valid you should return an instance of `\League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface`
+如果范围有效，则应返回 `\League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface`的实例
 
 ## finalizeScopes() : ScopeEntityInterface[]
 
-This method is called right before an access token or authorization code is created.
+在创建访问令牌或授权代码之前立即调用此方法。
 
-Given a client, grant type and optional user identifier validate the set of scopes requested are valid and optionally append additional scopes or remove requested scopes.
+在给定客户端的情况下，授予类型和可选的用户标识符将验证所请求的范围集是否有效，并可以选择附加其他范围或删除所请求的范围。
 
-This method is useful for integrating with your own app's permissions system.
+此方法对于与您自己的应用程序的权限系统集成很有用。
 
-You must return an array of `ScopeEntityInterface` instances; either the original scopes or an updated set.
+您必须返回一个ScopeEntityInterface实例数组； 原始范围或更新的范围。

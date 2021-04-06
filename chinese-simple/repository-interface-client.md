@@ -1,6 +1,6 @@
 ---
 layout: default
-title: ClientRepositoryInterface documentation
+title: ClientRepositoryInterface 文档
 permalink: /client-repository-interface/
 ---
 
@@ -8,17 +8,17 @@ permalink: /client-repository-interface/
 
 ## getClientEntity() : ClientEntityInterface
 
-This method should return an implementation of `\League\OAuth2\Server\Entities\ClientEntityInterface`. You can use the following traits to help you implement the required methods from that interface:
+此方法应该返回 `\League\OAuth2\Server\Entities\ClientEntityInterface`接口的实现对象. 您可以使用以下`traits `来帮助您从该接口实现所需的方法：
 
 * `\League\OAuth2\Server\Entities\Traits\ClientTrait`
 * `\League\OAuth2\Server\Entities\Traits\EntityTrait`
 
 ## validateClient() : bool
 
-This method is called to validate a client's credentials.
+调用此方法以验证客户的凭据。
 
-The client secret may or may not be provided depending on the request sent by the client. If the client is confidential (i.e. is capable of securely storing a secret) then the secret must be validated.
+根据客户端发送的请求，可以提供或可以不提供客户端机密。 如果客户端是机密的（即能够安全存储机密信息），则必须验证机密信息。
 
-You can use the grant type to determine if the client is permitted to use the grant type.
+您可以使用授权类型来确定是否允许客户端使用授权类型。
 
-If the client's credentials are validated you should return `true`, otherwise return `false`.
+如果客户的凭据已通过验证，则应返回“ true”，否则返回“ false”。

@@ -1,7 +1,7 @@
 ---
-布局：默认
-标题：授权码授予
-永久链接：/authorization-server/auth-code-grant/
+layout: default
+title: 授权码授予
+permalink: /authorization-server/auth-code-grant/
 ---
 
 # 授权码授予

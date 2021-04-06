@@ -1,46 +1,46 @@
 ---
 layout: default
-title: Securing your API
+title: 保护您的API
 permalink: /resource-server/securing-your-api/
 ---
 
-# Securing your API
+# 保护您的API
 
-This library provides a PSR-7 friendly resource server middleware that can validate access tokens.
+该库提供了PSR-7友好的资源服务器中间件，可以验证访问令牌。
 
-## Setup
+## 设置
 
-Wherever you intialize your objects, initialize a new instance of the resource server with the storage interfaces:
+无论您在何处初始化对象，都可以使用存储接口初始化资源服务器的新实例：
 
 ~~~ php
-// Init our repositories
+// 初始化我们的仓库
 $accessTokenRepository = new AccessTokenRepository(); // instance of AccessTokenRepositoryInterface
 
-// Path to authorization server's public key
+// 授权服务器公钥的路径
 $publicKeyPath = 'file://path/to/public.key';
         
-// Setup the authorization server
+// 设置授权服务器
 $server = new \League\OAuth2\Server\ResourceServer(
     $accessTokenRepository,
     $publicKeyPath
 );
 ~~~
 
-Then add the middleware to your stack:
+添加中间件到您的逻辑中
 
 ~~~ php
 new \League\OAuth2\Server\Middleware\ResourceServerMiddleware($server);
 ~~~
 
-## Implementation
+## 使用
 
-The authorization header on an incoming request will automatically be validated.
+传入请求上的授权标头将被自动验证。
 
-If the access token is valid the following attributes will be set on the ServerRequest:
+如果访问令牌有效，则将在ServerRequest上设置以下属性：
 
-* `oauth_access_token_id` - the access token identifier
-* `oauth_client_id` - the client identifier
-* `oauth_user_id` - the user identifier represented by the access token
-* `oauth_scopes` - an array of string scope identifiers
+* `oauth_access_token_id` - 访问令牌标识符
+* `oauth_client_id` - 客户端标识符
+* `oauth_user_id` -访问令牌代表的用户标识符
+* `oauth_scopes` - 字符串作用域标识符数组
 
-If the authorization is invalid an instance of `OAuthServerException::accessDenied` will be thrown.
+如果授权无效，则将抛出`OAuthServerException::accessDenied`实例。

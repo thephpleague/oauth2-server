@@ -1,45 +1,44 @@
 ---
 layout: default
-title: Upgrade Guide
+title: 升级指南
 permalink: /upgrade-guide/
 ---
 
-# Upgrade Guide
+# 升级指南
 
 ## 7.x.x &rarr; 8.x.x
 
-Version `8.x.x` requires PHP 7.1.0 or higher. This is a major release so contains some breaking changes from version
-`7.x.x`. Please read the following notes carefully when upgrading your system.
+版本`8.x.x`需要PHP 7.1.0或更高版本。这是一个主要版本，因此包含一些与版本有关的重大更改
+`7.x.x`。升级系统时，请仔细阅读以下注意事项。
 
-### Public Key Code Exchange (PKCE)
-The `enableCodeExchangeProof` flag has been removed from the AuthCodeGrant. This flag was used to determine whether PKCE
-checks should be enabled on the server. The server will now initiate PKCE checks whenever a client sends a _code
-challenge_.
+### 公钥代码交换（PKCE）
+`enableCodeExchangeProof`标志已从`AuthCodeGrant`中删除。此标志用于确定PKCE是否
+应该在服务器上启用检查。服务器现在将在客户端发送_code challenge_时启动PKCE检查。
 
-The _AuthCodeGrant_ has a new flag, `requireCodeChallengeForPublicClients`. The flag defaults to true and requires all
-public clients to provide a PKCE code challenge when requesting an access token. If you want to disable this, you can
-call the function `disableRequireCodeChallengeForPublicClients()` which will set the flag to false. For security, we 
-recommend you keep this flag set to true.
+_`AuthCodeGrant_`具有一个新标记， `requireCodeChallengeForPublicClients`.该标志默认为`true`，并要求所有
+公共客户端在请求访问令牌时提供PKCE _code challenge_
 
-#### Client Entity Interface
-To identify a client as public or confidential, version 8 of the server calls the new `isConfidential()` function. You
-will need to update your client entity implementation to include this new function.
+如果要禁用此功能，可以调用函数`disableRequireCodeChallengeForPublicClients()`将标志设置为`false`。为了安全，我们
+建议您将此标志设置为`true`。
 
-### Invalid User for Password Grant
-If a user cannot be validated when using the _Password Grant_, the server will return an `invalid_grant` error.
-Previously the server returned an `invalid_credentials` error. You should notify or update any clients that might expect
- to receive an `invalid_credentials` error in this scenario.
+#### 客户端实体接口
+为了将客户端标识为公共客户端还是机密客户端，服务器的版本8调用了新的`isConfidential()`函数。你
+将需要更新您的客户实体实施，以包括此新功能。
 
-### Crypt Trait
-The `encrypt()` and `decrypt()` functions now throw exceptions if no encryption key is set when running these functions.
+### 密码授予的无效用户
+如果在使用_Password Grant_时无法验证用户，则服务器将返回`invalid_grant`错误。
+以前，服务器返回了`invalid_credentials`错误。您应该通知或更新任何可能期望的客户
+ 在这种情况下会收到`invalid_credentials`错误。
 
-### Access Tokens
-Access tokens no longer have the function `convertToJwt()`. This has been replaced with the magic method `__toString()`.
+### 加密
+现在，如果在运行这些函数时未设置任何加密密钥，则`encrypt()`和`decrypt()`函数会引发异常。
+
+### 访问令牌
+访问令牌不再具有功能`convertToJwt()`。它已被魔术方法`__toString()`取代。
 
 ### DateTimeImmutable
-Most instances of `DateTime` have been replaced with `DateTimeImmutable` instances. You should change your code to use
-`DateTimeImmutable` where the library has made these changes. The affected interfaces and their functions are as
-follows:
+大多数`DateTime`实例已被`DateTimeImmutable`实例替换。您应该更改代码以使用
+库进行了这些更改的`DateTimeImmutable`。受影响的接口及其功能如下
 
 #### RefreshTokenEntityInterface
 - `getExpiryDateTime()`
@@ -49,18 +48,18 @@ follows:
 - `getExpiryDateTime()`
 - `setExpiryDateTime()`
 
-Please note that any traits that implement these interfaces have also been updated.
+请注意，实现这些接口的所有特征也已更新。
 
 ### JWT Headers
 
-We no longer set the JTI claim in the header of an issued JWT. The JTI claim is now only present in the payload of the 
-JWT. If any of your code retrieved the JTI from the header, you must update it to retrieve this claim from the payload.
+我们不再在已发布的JWT的标头中设置JTI声明。现在，JTI声明仅存在于
+智威汤逊如果您的任何代码从标头中检索了JTI，则必须对其进行更新以从有效负载中检索此声明。
 
 ## 6.x.x &rarr; 7.x.x
 
-Version `7.x.x` requires PHP 7.0.0 or higher. This version is not backwards compatible with version `6.x.x` of the library.
+版本`7.x.x`需要PHP 7.0.0或更高版本。该版本与该库的版本6.x.x不向后兼容。
 
-The interface for `getClientEntity()` in the `clientRepositoryInterface` has changed. The `$grantType` argument must now default to `null`.
+clientRepositoryInterface中的`getClientEntity()`接口已更改。 `$grantType`参数现在必须默认为`null`。
 
 ```patch
   public function getClientEntity(
@@ -71,11 +70,11 @@ The interface for `getClientEntity()` in the `clientRepositoryInterface` has cha
       $mustValidateSecret = true
   );
 ```
-Please see the [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md) for a complete list of all changes.
+有关所有更改的完整列表，请参见[changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md).
 
 ## 5.1.x &rarr; 6.x.x
 
-Version `6.x.x` is not backwards compatible with version `5.1.x` but only requires you to make one line of code change:
+版本`6.x.x`与版本` 5.1.x`不向后兼容，仅要求您更改一行代码：
 
 ```patch
   $server = new AuthorizationServer(
@@ -88,10 +87,10 @@ Version `6.x.x` is not backwards compatible with version `5.1.x` but only requir
   );
 ```
 
-All you need to do is replace the public key that was being passed into the constructor of `AuthorizationServer` with a 32 bit encryption key.
+您需要做的就是用32位加密密钥替换传递到`AuthorizationServer`构造函数中的公共密钥。
 
-To generate an encryption key for the `AuthorizationServer` run the following command in the terminal:
+要为` AuthorizationServer`生成加密密钥，请在终端中运行以下命令：
 
 ~~~ shell
 php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
-~~~ 
+~~~

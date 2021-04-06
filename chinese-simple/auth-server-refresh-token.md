@@ -1,6 +1,6 @@
 ---
-布局：默认
-标题：刷新令牌授予
+layout: default
+title: 刷新令牌授予
 permalink: /authorization-server/refresh-token-grant/
 ---
 

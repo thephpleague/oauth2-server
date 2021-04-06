@@ -1,7 +1,7 @@
 ---
-布局：默认
-标题：隐式授予
-永久链接：/authorization-server/implicit-grant/
+layout: default
+title: 隐式授予
+permalink: /authorization-server/implicit-grant/
 ---
 
 # 隐式授予

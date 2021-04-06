@@ -1,6 +1,6 @@
 ---
 layout: default
-title: 我应该使用哪个OAuth 2.0授权？
+title:我应该使用哪个OAuth 2.0授权
 permalink: /authorization-server/which-grant/
 ---
 

@@ -11,17 +11,17 @@ title: Introduction
 [![Build Status](https://img.shields.io/travis/thephpleague/oauth2-server/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/oauth2-server)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-server.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-server)
 
-`league/oauth2-server` is a standards compliant implementation of an [OAuth 2.0](https://tools.ietf.org/html/rfc6749) authorization server written in PHP which makes working with OAuth 2.0 trivial. You can easily configure an OAuth 2.0 server to protect your API with access tokens, or allow clients to request new access tokens and refresh them.
+`league/oauth2-server` 是使用PHP编写的授权服务器的符合标准的实现，因此可以轻松使用 [OAuth 2.0](https://tools.ietf.org/html/rfc6749) 您可以轻松地配置OAuth 2.0服务器，以使用访问令牌保护您的API，或者允许客户端请求新的访问令牌并刷新它们。
 
-Out of the box it supports the following grants:
+开箱即用,它支持以下方式：
 
-* Authorization code grant
-* Implicit grant
-* Client credentials grant
-* Resource owner password credentials grant
-* Refresh grant
+* 授权码授予
+* 隐式授予
+* 客户凭证授予
+* 资源所有者密码凭据授予
+* 刷新授权
 
-The following RFCs are implemented:
+实现了以下RFC：
 
 * [RFC6749 "OAuth 2.0"](https://tools.ietf.org/html/rfc6749)
 * [RFC6750 " The OAuth 2.0 Authorization Framework: Bearer Token Usage"](https://tools.ietf.org/html/rfc6750)
@@ -29,19 +29,19 @@ The following RFCs are implemented:
 * [RFC7636 "Proof Key for Code Exchange by OAuth Public Clients"](https://tools.ietf.org/html/rfc7636)
 
 <!--
-You can also easily make your own [custom grants]().
+您也可以轻松制作自己的[自定义授权]().
 -->
 
-This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](https://twitter.com/alexbilbie).
+该库是由Alex Bilbie创建的. 可以在 Twitter[@alexbilbie](https://twitter.com/alexbilbie)找到他.
 
 ## Changelog
 
-Please see the [project's changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md) for a complete history of changes to this library.
+请参阅 [project's changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md) 以获取对该库所做更改的完整历史记录。
 
-The latest release is [![GitHub tag](https://img.shields.io/github/tag/thephpleague/oauth2-server.svg)](https://github.com/thephpleague/oauth2-server/releases)
+最新版本是 [![GitHub tag](https://img.shields.io/github/tag/thephpleague/oauth2-server.svg)](https://github.com/thephpleague/oauth2-server/releases)
 
 ## Support
 
-Please ask questions on the [Github issues page](https://github.com/thephpleague/oauth2-server/issues).
+请在 [Github issues page](https://github.com/thephpleague/oauth2-server/issues)上提问.
 
-For commercial support and custom implementations please visit [Glynde Labs](https://glyndelabs.com).
+有关商业支持和自定义实施的信息，请访问 [Glynde Labs](https://glyndelabs.com).

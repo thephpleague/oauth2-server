@@ -1,17 +1,17 @@
 ---
 layout: default
-title: UserRepositoryInterface documentation
+title: UserRepositoryInterface 文档
 permalink: /user-repository-interface/
 ---
 
-# User Repository Interface
+# 用户存储库接口
 
 ## getUserEntityByUserCredentials() : UserEntityInterface
 
-This method is called to validate a user's credentials.
+调用此方法以验证用户的凭据。
 
-You can use the grant type to determine if the user is permitted to use the grant type.
+您可以使用授权类型来确定是否允许用户使用授权类型。
 
-You can use the client entity to determine to if the user is permitted to use the client.
+您可以使用客户端实体来确定是否允许用户使用客户端。
 
-If the client's credentials are validated you should return an instance of `\League\OAuth2\Server\Entities\Interfaces\UserEntityInterface`
+如果客户端的凭据已通过验证，则应返回 `\League\OAuth2\Server\Entities\Interfaces\UserEntityInterface`的实例

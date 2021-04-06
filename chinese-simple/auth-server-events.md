@@ -1,7 +1,7 @@
 ---
-布局：默认
-标题：授权服务器事件
-永久链接：/authorization-server/events/
+layout: default
+title: 授权服务器事件
+permalink: /authorization-server/events/
 ---
 
 # 授权服务器事件

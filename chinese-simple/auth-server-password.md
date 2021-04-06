@@ -1,7 +1,7 @@
 ---
-布局：默认
-标题：资源所有者密码凭据授予
-永久链接: /authorization-server/resource-owner-password-credentials-grant/
+layout: default
+title: 资源所有者密码凭据授予
+permalink: /authorization-server/resource-owner-password-credentials-grant/
 ---
 
 # 资源所有者密码凭据授予

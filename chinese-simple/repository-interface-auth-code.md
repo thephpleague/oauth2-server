@@ -1,14 +1,14 @@
 ---
 layout: default
-title: AuthCodeRepositoryInterface documentation
+title: AuthCodeRepositoryInterface文档
 permalink: /auth-code-repository-interface/
 ---
 
-# Auth Code Repository Interface
+# 身份验证代码存储库接口
 
 ## getNewAuthCode() : AuthCodeEntityInterface
 
-This method should return an implementation of `\League\OAuth2\Server\Entities\AuthCodeEntityInterface`. You can use the following traits to help you implement the required methods from that interface:
+此方法应该返回  `\League\OAuth2\Server\Entities\AuthCodeEntityInterface`接口的实现对象. 您可以使用以下`traits `来帮助您从该接口实现所需的方法：
 
 * `League\OAuth2\Server\Entities\Traits\EntityTrait`
 * `League\OAuth2\Server\Entities\Traits\TokenEntityTrait`
@@ -16,22 +16,22 @@ This method should return an implementation of `\League\OAuth2\Server\Entities\A
 
 ## persistNewAuthCode() : void
 
-When a new auth code is created this method will be called. You don't have to do anything here but for auditing you probably want to.
+创建新的访问令牌时，将调用此方法。您无需在此处做任何事情，但可能需要进行审核。
 
-The auth code entity passed in has a number of methods you can call which contain data worth saving to a database:
+传入的auth代码实体具有许多可以调用的方法，这些方法包含值得保存到数据库的数据：
 
-* `getIdentifier() : string` this is randomly generated unique identifier (of 80+ characters in length) for the auth code.
-* `getExpiryDateTime() :  \DateTimeImmutable` the expiry date and time of the auth code.
-* `getUserIdentifier() : string|null` the user identifier represented by the auth code. 
-* `getScopes() : ScopeEntityInterface[]` an array of scope entities
-* `getClient()->getIdentifier() : string` the identifier of the client who requested the auth code.
+* `getIdentifier() : string`  这是随机生成的访问令牌的唯一标识符（长度超过80个字符）
+* `getExpiryDateTime() :  \DateTimeImmutable` 验证码的到期日期和时间。
+* `getUserIdentifier() : string|null` 验证码表示的用户标识符。
+* `getScopes() : ScopeEntityInterface[]` 范围实体数组
+* `getClient()->getIdentifier() : string` 请求身份验证代码的客户端的标识符。
 
-The auth codes contain an expiry date and so will be rejected automatically if used when expired. You can safely clean up expired auth codes from your database.
+身份验证代码包含有效期，因此，如果在过期时使用，则会被自动拒绝。您可以安全地从数据库中清除过期的身份验证代码。
 
 ## revokeAuthCode() : void
 
-This method is called when an authorization code is exchanged for an access token. You can also use it in your own business logic.
+当将授权代码交换为访问令牌时，将调用此方法。您也可以在自己的业务逻辑中使用它。
 
 ## isAuthCodeRevoked() : boolean
 
-This method is called before an authorization code is exchanged for an access token by the authorization server. Return `true` if the auth code has been manually revoked before it expired. If the auth code is still valid return `false`.
+在授权服务器将授权代码交换访问令牌之前，将调用此方法。如果auth代码在过期之前已被手动吊销，则返回true。如果验证码仍然有效，则返回“ false”.

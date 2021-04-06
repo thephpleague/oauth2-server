@@ -1,17 +1,17 @@
 ---
 layout: default
-title: Terminology
+title: 术语
 permalink: /terminology/
 ---
 
-# Terminology
+# 术语
 
-* `Access token` - A token used to access protected resources.
-* `Authorization code` - An intermediary token generated when a user authorizes a client to access protected resources on their behalf. The client receives this token and exchanges it for an access token.
-* `Authorization server` - A server which issues access tokens after successfully authenticating a client and resource owner, and authorizing the request.
-* `Client` - An application which accesses protected resources on behalf of the resource owner (such as a user).  The client could be hosted on a server, desktop, mobile or other device.
-* `Grant` - A grant is a method of acquiring an access token.
-* `Resource server` - A server which sits in front of protected resources (for example "tweets", users' photos, or personal data) and is capable of accepting and responding to protected resource requests using access tokens.
-* `Resource owner` - The user who authorizes an application to access their account. The application's access to the user's account is limited to the "scope" of the authorization granted (e.g. read or write access).
-* `Scope` - A permission.
-* `JWT` - A JSON Web Token is a method for representing claims securely between two parties as defined in [RFC 7519](https://tools.ietf.org/html/rfc7519). 
+* `Access token` - 访问令牌，用于访问受保护资源的令牌。
+* `Authorization code` - 授权码，当用户授权客户端代表其访问受保护资源时生成的中间令牌。客户端接收此令牌并将其交换为访问令牌。
+* `Authorization server` - 授权服务器，在成功验证客户端和资源所有者并授权请求后发出访问令牌的服务器。
+* `Client` - 代表资源所有者（例如用户）访问受保护资源的应用程序。客户端可以托管在服务器，台式机，移动设备或其他设备上。
+* `Grant` - 授权是一种获取访问令牌的方法
+* `Resource server` - 位于受保护资源（例如“ tweets”，用户的照片或个人数据）前面的服务器，能够使用访问令牌接受和响应受保护资源的请求。
+* `Resource owner` - 授权应用程序访问其帐户的用户。应用程序对用户帐户的访问权限仅限于所授予的授权的“范围”（例如，读或写访问权限）。
+* `Scope` - 权限
+* `JWT` - JSON Web令牌是一种用于在[RFC 7519](https://tools.ietf.org/html/rfc7519)中定义的各方之间安全地表示声明的方法。
