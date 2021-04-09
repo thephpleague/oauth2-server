@@ -38,7 +38,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     public function validateRedirectUri($redirectUri)
     {
         $parsedUrl = $this->parseUrl($redirectUri);
-        if ($this->isLoopbackAddress($parsedUrl)) {
+        if ($this->isLoopbackUri($parsedUrl)) {
             return $this->allowDifferentPort($parsedUrl);
         } else {
             return $this->matchExactUri($redirectUri);
@@ -46,13 +46,15 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     }
 
     /**
-     * Determine if the given url is a loopback url.
+     * According to section 7.3 of rfc8252, loopback uris are:
+     *   - "http://127.0.0.1:{port}/{path}" for IPv4
+     *   - "http://[::1]:{port}/{path}" for IPv6
      *
      * @param array $parsedUri As returned by parseUrl
      *
      * @return bool
      */
-    private function isLoopbackAddress(array $parsedUri)
+    private function isLoopbackUri(array $parsedUri)
     {
         return $parsedUri['scheme'] === 'http'
             && (\in_array($parsedUri['host'], ['127.0.0.1', '[::1]'], true));
