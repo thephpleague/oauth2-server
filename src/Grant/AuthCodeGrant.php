@@ -106,7 +106,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
 
-        if ($encryptedAuthCode === null) {
+        if (!\is_string($encryptedAuthCode)) {
             throw OAuthServerException::invalidRequest('code');
         }
 
@@ -260,6 +260,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
 
         if ($redirectUri !== null) {
+            if (!\is_string($redirectUri)) {
+                throw OAuthServerException::invalidRequest('redirect_uri');
+            }
+
             $this->validateRedirectUri($redirectUri, $client, $request);
         } elseif (empty($client->getRedirectUri()) ||
             (\is_array($client->getRedirectUri()) && \count($client->getRedirectUri()) !== 1)) {

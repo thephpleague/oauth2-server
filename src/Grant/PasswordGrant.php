@@ -84,13 +84,13 @@ class PasswordGrant extends AbstractGrant
     {
         $username = $this->getRequestParameter('username', $request);
 
-        if (\is_null($username)) {
+        if (!\is_string($username)) {
             throw OAuthServerException::invalidRequest('username');
         }
 
         $password = $this->getRequestParameter('password', $request);
 
-        if (\is_null($password)) {
+        if (!\is_string($password)) {
             throw OAuthServerException::invalidRequest('password');
         }
 
