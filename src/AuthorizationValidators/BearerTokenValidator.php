@@ -16,7 +16,7 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Key\LocalFileReference;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
+use Lcobucci\JWT\Validation\Constraint\ValidAt;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
@@ -74,7 +74,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         );
 
         $this->jwtConfiguration->setValidationConstraints(
-            new StrictValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
+            new ValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
             new SignedWith(new Sha256(), LocalFileReference::file($this->publicKey->getKeyPath()))
         );
     }
