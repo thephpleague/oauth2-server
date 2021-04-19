@@ -41,7 +41,7 @@ class CryptKey
         $this->keyPath = $keyPath;
         $this->passPhrase = $passPhrase;
 
-        if (is_file($this->keyPath) && !$this->isFilePath()) {
+        if (\is_file($this->keyPath) && !$this->isFilePath()) {
             $this->keyPath = self::FILE_PREFIX . $this->keyPath;
         }
 
@@ -50,7 +50,7 @@ class CryptKey
                 throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $this->keyPath));
             }
 
-            $contents = file_get_contents($this->keyPath);
+            $contents = \file_get_contents($this->keyPath);
         } else {
             $contents = $keyPath;
         }
@@ -60,7 +60,7 @@ class CryptKey
                 $this->keyPath = $this->saveKeyToFile($keyPath);
             }
         } else {
-            throw new LogicException('Unable to read key' . ($this->isFilePath() ? " from file $keyPath" : '' ));
+            throw new LogicException('Unable to read key' . ($this->isFilePath() ? " from file $keyPath" : ''));
         }
 
         if ($keyPermissionsCheck === true) {
@@ -122,13 +122,17 @@ class CryptKey
     {
         try {
             RSA::load($contents, $passPhrase);
+
             return true;
-        } catch (NoKeyLoadedException $e) {}
+        } catch (NoKeyLoadedException $e) {
+        }
 
         try {
             EC::load($contents, $passPhrase);
+
             return true;
-        } catch (NoKeyLoadedException $e) {}
+        } catch (NoKeyLoadedException $e) {
+        }
 
         return false;
     }
