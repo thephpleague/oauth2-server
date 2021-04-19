@@ -12,12 +12,14 @@
 namespace League\OAuth2\Server;
 
 use LogicException;
+use phpseclib3\Crypt\EC;
+use phpseclib3\Crypt\RSA;
+use phpseclib3\Exception\NoKeyLoadedException;
 use RuntimeException;
 
 class CryptKey
 {
-    const RSA_KEY_PATTERN =
-        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
+    private const FILE_PREFIX = 'file://';
 
     /**
      * @var string
@@ -36,36 +38,45 @@ class CryptKey
      */
     public function __construct($keyPath, $passPhrase = null, $keyPermissionsCheck = true)
     {
-        if ($rsaMatch = \preg_match(static::RSA_KEY_PATTERN, $keyPath)) {
-            $keyPath = $this->saveKeyToFile($keyPath);
-        } elseif ($rsaMatch === false) {
-            throw new \RuntimeException(
-                \sprintf('PCRE error [%d] encountered during key match attempt', \preg_last_error())
-            );
+        $this->keyPath = $keyPath;
+        $this->passPhrase = $passPhrase;
+
+        if (is_file($this->keyPath) && !$this->isFilePath()) {
+            $this->keyPath = self::FILE_PREFIX . $this->keyPath;
         }
 
-        if (\strpos($keyPath, 'file://') !== 0) {
-            $keyPath = 'file://' . $keyPath;
+        if ($this->isFilePath()) {
+            if (!\file_exists($this->keyPath) || !\is_readable($this->keyPath)) {
+                throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $this->keyPath));
+            }
+
+            $contents = file_get_contents($this->keyPath);
+        } else {
+            $contents = $keyPath;
         }
 
-        if (!\file_exists($keyPath) || !\is_readable($keyPath)) {
-            throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $keyPath));
+        if ($this->isValidKey($contents, $this->passPhrase ?? '')) {
+            if (!$this->isFilePath()) {
+                $this->keyPath = $this->saveKeyToFile($keyPath);
+            }
+        } else {
+            throw new LogicException('Unable to read key' . ($this->isFilePath() ? " from file $keyPath" : '' ));
         }
 
         if ($keyPermissionsCheck === true) {
             // Verify the permissions of the key
-            $keyPathPerms = \decoct(\fileperms($keyPath) & 0777);
+            $keyPathPerms = \decoct(\fileperms($this->keyPath) & 0777);
             if (\in_array($keyPathPerms, ['400', '440', '600', '640', '660'], true) === false) {
-                \trigger_error(\sprintf(
-                    'Key file "%s" permissions are not correct, recommend changing to 600 or 660 instead of %s',
-                    $keyPath,
-                    $keyPathPerms
-                ), E_USER_NOTICE);
+                \trigger_error(
+                    \sprintf(
+                        'Key file "%s" permissions are not correct, recommend changing to 600 or 660 instead of %s',
+                        $this->keyPath,
+                        $keyPathPerms
+                    ),
+                    E_USER_NOTICE
+                );
             }
         }
-
-        $this->keyPath = $keyPath;
-        $this->passPhrase = $passPhrase;
     }
 
     /**
@@ -81,7 +92,7 @@ class CryptKey
         $keyPath = $tmpDir . '/' . \sha1($key) . '.key';
 
         if (\file_exists($keyPath)) {
-            return 'file://' . $keyPath;
+            return self::FILE_PREFIX . $keyPath;
         }
 
         if (\file_put_contents($keyPath, $key) === false) {
@@ -96,7 +107,40 @@ class CryptKey
             // @codeCoverageIgnoreEnd
         }
 
-        return 'file://' . $keyPath;
+        return self::FILE_PREFIX . $keyPath;
+    }
+
+    /**
+     * Validate key contents.
+     *
+     * @param string $contents
+     * @param string $passPhrase
+     *
+     * @return bool
+     */
+    private function isValidKey($contents, $passPhrase)
+    {
+        try {
+            RSA::load($contents, $passPhrase);
+            return true;
+        } catch (NoKeyLoadedException $e) {}
+
+        try {
+            EC::load($contents, $passPhrase);
+            return true;
+        } catch (NoKeyLoadedException $e) {}
+
+        return false;
+    }
+
+    /**
+     * Checks whether the key is a file.
+     *
+     * @return bool
+     */
+    private function isFilePath()
+    {
+        return \strpos($this->keyPath, self::FILE_PREFIX) === 0;
     }
 
     /**

@@ -51,19 +51,4 @@ class CryptKeyTest extends TestCase
             $key->getKeyPath()
         );
     }
-
-    /**
-     * Test whether we get a RuntimeException if a PCRE error is encountered.
-     *
-     * @link https://www.php.net/manual/en/function.preg-last-error.php
-     */
-    public function testPcreErrorExceptions()
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageMatches('/^PCRE error/');
-
-        new class('foobar foobar foobar') extends CryptKey {
-            const RSA_KEY_PATTERN = '/(?:\D+|<\d+>)*[!?]/';
-        };
-    }
 }
