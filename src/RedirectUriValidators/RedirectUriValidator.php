@@ -41,9 +41,8 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      */
     public function validateRedirectUri($redirectUri)
     {
-        $parsedUrl = $this->parseUrlAndRemovePort($redirectUri);
-        if ($this->isLoopbackUri($parsedUrl)) {
-            return $this->matchUriExcludingPort($parsedUrl);
+        if ($this->isLoopbackUri($redirectUri)) {
+            return $this->matchUriExcludingPort($redirectUri);
         }
 
         return $this->matchExactUri($redirectUri);
@@ -54,18 +53,20 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      *   - "http://127.0.0.1:{port}/{path}" for IPv4
      *   - "http://[::1]:{port}/{path}" for IPv6
      *
-     * @param array $parsedUri As returned by parseUrlAndRemovePort
+     * @param string $redirectUri
      *
      * @return bool
      */
-    private function isLoopbackUri(array $parsedUri)
+    private function isLoopbackUri($redirectUri)
     {
-        return $parsedUri['scheme'] === 'http'
-            && (\in_array($parsedUri['host'], ['127.0.0.1', '[::1]'], true));
+        $parsedUrl = parse_url($redirectUri);
+
+        return $parsedUrl['scheme'] === 'http'
+            && (\in_array($parsedUrl['host'], ['127.0.0.1', '[::1]'], true));
     }
 
     /**
-     * Find an exact match among client uris
+     * Find an exact match among allowed uris
      *
      * @param string $redirectUri
      *
@@ -77,14 +78,16 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     }
 
     /**
-     * Find a match among client uris, allowing for different port numbers
+     * Find a match among allowed uris, allowing for different port numbers
      *
-     * @param array $parsedUrl As returned by parseUrlAndRemovePort
+     * @param string $redirectUri
      *
      * @return bool Return true if a match is found, false otherwise
      */
-    private function matchUriExcludingPort(array $parsedUrl)
+    private function matchUriExcludingPort($redirectUri)
     {
+        $parsedUrl = $this->parseUrlAndRemovePort($redirectUri);
+
         foreach ($this->allowedRedirectUris as $redirectUri) {
             if ($parsedUrl === $this->parseUrlAndRemovePort($redirectUri)) {
                 return true;
