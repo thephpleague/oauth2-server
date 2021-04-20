@@ -10,79 +10,66 @@ class RedirectUriValidatorTest extends TestCase
 {
     public function testInvalidNonLoopbackUri()
     {
-        $client = new ClientEntity();
-        $client->setRedirectUri([
+        $validator = new RedirectUriValidator([
             'https://example.com:8443/endpoint',
             'https://example.com/different/endpoint',
         ]);
-        $redirectUri = 'https://example.com/endpoint';
 
-        $validator = new RedirectUriValidator($client);
+        $invalidRedirectUri = 'https://example.com/endpoint';
 
         $this->assertFalse(
-            $validator->validateRedirectUri($redirectUri),
+            $validator->validateRedirectUri($invalidRedirectUri),
             'Non loopback URI must match in every part'
         );
     }
 
     public function testValidNonLoopbackUri()
     {
-        $client = new ClientEntity();
-        $client->setRedirectUri([
+        $validator = new RedirectUriValidator([
             'https://example.com:8443/endpoint',
             'https://example.com/different/endpoint',
         ]);
-        $redirectUri = 'https://example.com:8443/endpoint';
 
-        $validator = new RedirectUriValidator($client);
+        $validRedirectUri = 'https://example.com:8443/endpoint';
 
         $this->assertTrue(
-            $validator->validateRedirectUri($redirectUri),
+            $validator->validateRedirectUri($validRedirectUri),
             'Redirect URI must be valid when matching in every part'
         );
     }
 
     public function testInvalidLoopbackUri()
     {
-        $client = new ClientEntity();
-        $client->setRedirectUri('http://127.0.0.1:8443/endpoint');
+        $validator = new RedirectUriValidator('http://127.0.0.1:8443/endpoint');
 
-        $redirectUri = 'http://127.0.0.1:8443/different/endpoint';
-
-        $validator = new RedirectUriValidator($client);
+        $invalidRedirectUri = 'http://127.0.0.1:8443/different/endpoint';
 
         $this->assertFalse(
-            $validator->validateRedirectUri($redirectUri),
+            $validator->validateRedirectUri($invalidRedirectUri),
             'Valid loopback redirect URI can change only the port number'
         );
     }
 
     public function testValidLoopbackUri()
     {
-        $client = new ClientEntity();
-        $client->setRedirectUri('http://127.0.0.1:8443/endpoint');
+        $validator = new RedirectUriValidator('http://127.0.0.1:8443/endpoint');
 
-        $redirectUri = 'http://127.0.0.1:8080/endpoint';
-
-        $validator = new RedirectUriValidator($client);
+        $validRedirectUri = 'http://127.0.0.1:8080/endpoint';
 
         $this->assertTrue(
-            $validator->validateRedirectUri($redirectUri),
+            $validator->validateRedirectUri($validRedirectUri),
             'Loopback redirect URI can change the port number'
         );
     }
 
     public function testValidIpv6LoopbackUri()
     {
-        $client = new ClientEntity();
-        $client->setRedirectUri('http://[::1]:8443/endpoint');
+        $validator = new RedirectUriValidator('http://[::1]:8443/endpoint');
 
-        $redirectUri = 'http://[::1]:8080/endpoint';
-
-        $validator = new RedirectUriValidator($client);
+        $validRedirectUri = 'http://[::1]:8080/endpoint';
 
         $this->assertTrue(
-            $validator->validateRedirectUri($redirectUri),
+            $validator->validateRedirectUri($validRedirectUri),
             'Loopback redirect URI can change the port number'
         );
     }

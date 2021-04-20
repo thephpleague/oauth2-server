@@ -14,18 +14,24 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
 class RedirectUriValidator implements RedirectUriValidatorInterface
 {
     /**
-     * @var ClientEntityInterface
+     * @var array
      */
-    private $client;
+    private $allowedRedirectUris;
 
     /**
-     * New validator instance for the given client
+     * New validator instance for the given uri
      *
-     * @param ClientEntityInterface $client
+     * @param string|array $allowedRedirectUris
      */
-    public function __construct(ClientEntityInterface $client)
+    public function __construct($allowedRedirectUri)
     {
-        $this->client = $client;
+        if (\is_string($allowedRedirectUri)) {
+            $this->allowedRedirectUris = [ $allowedRedirectUri ];
+        } elseif (\is_array($allowedRedirectUri)) {
+            $this->allowedRedirectUris = $allowedRedirectUri;
+        } else {
+            $this->allowedRedirectUris = [];
+        }
     }
 
     /**
@@ -69,7 +75,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      */
     private function matchExactUri($redirectUri)
     {
-        return \in_array($redirectUri, $this->getClientRedirectUris(), true);
+        return \in_array($redirectUri, $this->allowedRedirectUris, true);
     }
 
     /**
@@ -81,8 +87,8 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      */
     private function allowDifferentPort(array $parsedUrl)
     {
-        foreach ($this->getClientRedirectUris() as $clientRedirectUri) {
-            if ($parsedUrl == $this->parseUrl($clientRedirectUri)) {
+        foreach ($this->allowedRedirectUris as $redirectUri) {
+            if ($parsedUrl == $this->parseUrl($redirectUri)) {
                 return true;
             }
         }
@@ -103,22 +109,5 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
         unset($parsedUrl['port']);
 
         return $parsedUrl;
-    }
-
-    /**
-     * Retrieve allowed client redirect uris
-     *
-     * @return array
-     */
-    private function getClientRedirectUris()
-    {
-        $clientRedirectUri = $this->client->getRedirectUri();
-        if (\is_string($clientRedirectUri)) {
-            return [$clientRedirectUri];
-        } elseif (\is_array($clientRedirectUri)) {
-            return $clientRedirectUri;
-        }
-
-        return [];
     }
 }
