@@ -40,9 +40,9 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
         $parsedUrl = $this->parseUrl($redirectUri);
         if ($this->isLoopbackUri($parsedUrl)) {
             return $this->allowDifferentPort($parsedUrl);
-        } else {
-            return $this->matchExactUri($redirectUri);
         }
+
+        return $this->matchExactUri($redirectUri);
     }
 
     /**
@@ -117,8 +117,8 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
             return [$clientRedirectUri];
         } elseif (\is_array($clientRedirectUri)) {
             return $clientRedirectUri;
-        } else {
-            return [];
         }
+
+        return [];
     }
 }
