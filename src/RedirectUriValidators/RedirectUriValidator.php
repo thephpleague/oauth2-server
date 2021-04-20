@@ -88,8 +88,8 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     {
         $parsedUrl = $this->parseUrlAndRemovePort($redirectUri);
 
-        foreach ($this->allowedRedirectUris as $redirectUri) {
-            if ($parsedUrl === $this->parseUrlAndRemovePort($redirectUri)) {
+        foreach ($this->allowedRedirectUris as $allowedRedirectUri) {
+            if ($parsedUrl === $this->parseUrlAndRemovePort($allowedRedirectUri)) {
                 return true;
             }
         }
