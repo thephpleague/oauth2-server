@@ -9,8 +9,6 @@
 
 namespace League\OAuth2\Server\RedirectUriValidators;
 
-use League\OAuth2\Server\Entities\ClientEntityInterface;
-
 class RedirectUriValidator implements RedirectUriValidatorInterface
 {
     /**
@@ -43,9 +41,9 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      */
     public function validateRedirectUri($redirectUri)
     {
-        $parsedUrl = $this->parseUrl($redirectUri);
+        $parsedUrl = $this->parseUrlAndRemovePort($redirectUri);
         if ($this->isLoopbackUri($parsedUrl)) {
-            return $this->allowDifferentPort($parsedUrl);
+            return $this->matchUriExcludingPort($parsedUrl);
         }
 
         return $this->matchExactUri($redirectUri);
@@ -56,7 +54,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      *   - "http://127.0.0.1:{port}/{path}" for IPv4
      *   - "http://[::1]:{port}/{path}" for IPv6
      *
-     * @param array $parsedUri As returned by parseUrl
+     * @param array $parsedUri As returned by parseUrlAndRemovePort
      *
      * @return bool
      */
@@ -81,14 +79,14 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     /**
      * Find a match among client uris, allowing for different port numbers
      *
-     * @param array $parsedUrl As returned by parseUrl
+     * @param array $parsedUrl As returned by parseUrlAndRemovePort
      *
      * @return bool Return true if a match is found, false otherwise
      */
-    private function allowDifferentPort(array $parsedUrl)
+    private function matchUriExcludingPort(array $parsedUrl)
     {
         foreach ($this->allowedRedirectUris as $redirectUri) {
-            if ($parsedUrl === $this->parseUrl($redirectUri)) {
+            if ($parsedUrl === $this->parseUrlAndRemovePort($redirectUri)) {
                 return true;
             }
         }
@@ -103,7 +101,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      *
      * @return array
      */
-    private function parseUrl($url)
+    private function parseUrlAndRemovePort($url)
     {
         $parsedUrl = \parse_url($url);
         unset($parsedUrl['port']);
