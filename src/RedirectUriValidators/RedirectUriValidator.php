@@ -88,7 +88,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     private function allowDifferentPort(array $parsedUrl)
     {
         foreach ($this->allowedRedirectUris as $redirectUri) {
-            if ($parsedUrl == $this->parseUrl($redirectUri)) {
+            if ($parsedUrl === $this->parseUrl($redirectUri)) {
                 return true;
             }
         }
