@@ -24,7 +24,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     public function __construct($allowedRedirectUri)
     {
         if (\is_string($allowedRedirectUri)) {
-            $this->allowedRedirectUris = [ $allowedRedirectUri ];
+            $this->allowedRedirectUris = [$allowedRedirectUri];
         } elseif (\is_array($allowedRedirectUri)) {
             $this->allowedRedirectUris = $allowedRedirectUri;
         } else {
@@ -59,7 +59,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      */
     private function isLoopbackUri($redirectUri)
     {
-        $parsedUrl = parse_url($redirectUri);
+        $parsedUrl = \parse_url($redirectUri);
 
         return $parsedUrl['scheme'] === 'http'
             && (\in_array($parsedUrl['host'], ['127.0.0.1', '[::1]'], true));

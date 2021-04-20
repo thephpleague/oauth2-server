@@ -3,7 +3,6 @@
 namespace LeagueTests\RedirectUriValidators;
 
 use League\OAuth2\Server\RedirectUriValidators\RedirectUriValidator;
-use LeagueTests\Stubs\ClientEntity;
 use PHPUnit\Framework\TestCase;
 
 class RedirectUriValidatorTest extends TestCase
