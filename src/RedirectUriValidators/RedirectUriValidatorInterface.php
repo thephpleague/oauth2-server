@@ -1,7 +1,7 @@
 <?php
 /**
  * @author      Sebastiano Degan <sebdeg87@gmail.com>
- * @copyright   Copyright (c) Sebastiano Degan
+ * @copyright   Copyright (c) Alex Bilbie
  * @license     http://mit-license.org/
  *
  * @link        https://github.com/thephpleague/oauth2-server
