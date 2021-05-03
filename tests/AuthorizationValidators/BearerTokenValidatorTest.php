@@ -41,6 +41,11 @@ class BearerTokenValidatorTest extends TestCase
         $validRequest = $bearerTokenValidator->validateAuthorization($request);
 
         $this->assertArrayHasKey('authorization', $validRequest->getHeaders());
+
+        $this->assertEquals('token-id', $validRequest->getAttribute('oauth_access_token_id'));
+        $this->assertEquals('client-id', $validRequest->getAttribute('oauth_client_id'));
+        $this->assertEquals('user-id', $validRequest->getAttribute('oauth_user_id'));
+        $this->assertEquals('scope1 scope2 scope3 scope4', $validRequest->getAttribute('oauth_scopes'));
     }
 
     public function testBearerTokenValidatorRejectsExpiredToken()
