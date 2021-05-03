@@ -34,6 +34,8 @@ class BearerTokenValidatorTest extends TestCase
             ->expiresAt((new DateTimeImmutable())->add(new DateInterval('PT1H')))
             ->relatedTo('user-id')
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
+            ->withClaim('attr1', 'value')
+            ->withClaim('attr2', 42)
             ->getToken(new Sha256(), LocalFileReference::file(__DIR__ . '/../Stubs/private.key'));
 
         $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $validJwt->toString()));
@@ -46,6 +48,7 @@ class BearerTokenValidatorTest extends TestCase
         $this->assertEquals('client-id', $validRequest->getAttribute('oauth_client_id'));
         $this->assertEquals('user-id', $validRequest->getAttribute('oauth_user_id'));
         $this->assertEquals('scope1 scope2 scope3 scope4', $validRequest->getAttribute('oauth_scopes'));
+        $this->assertEquals(['attr1' => 'value', 'attr2' => 42], $validRequest->getAttribute('oauth_custom_claims'));
     }
 
     public function testBearerTokenValidatorRejectsExpiredToken()

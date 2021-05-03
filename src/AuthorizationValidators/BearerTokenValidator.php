@@ -118,7 +118,8 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             ->withAttribute('oauth_access_token_id', $claims->get('jti'))
             ->withAttribute('oauth_client_id', $this->convertSingleRecordAudToString($claims->get('aud')))
             ->withAttribute('oauth_user_id', $claims->get('sub'))
-            ->withAttribute('oauth_scopes', $claims->get('scopes'));
+            ->withAttribute('oauth_scopes', $claims->get('scopes'))
+            ->withAttribute('oauth_custom_claims', $this->extractCustomClaims($claims->all()));
     }
 
     /**
@@ -131,5 +132,17 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     private function convertSingleRecordAudToString($aud)
     {
         return \is_array($aud) && \count($aud) === 1 ? $aud[0] : $aud;
+    }
+
+    /**
+     * Extract custom claims
+     *
+     * @param array $claims
+     *
+     * @return array
+     */
+    private function extractCustomClaims($claims)
+    {
+        return \array_diff_key($claims, \array_flip(['jti', 'aud', 'sub', 'scopes', 'iat', 'nbf', 'exp']));
     }
 }
