@@ -24,7 +24,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class BearerTokenValidator implements AuthorizationValidatorInterface
+class BearerTokenValidator implements AuthorizationValidatorInterface, PublicKeyAwareInterface
 {
     use CryptTrait;
 

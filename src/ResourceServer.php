@@ -11,6 +11,7 @@ namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
+use League\OAuth2\Server\AuthorizationValidators\PublicKeyAwareInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -63,7 +64,7 @@ class ResourceServer
             $this->authorizationValidator = new BearerTokenValidator($this->accessTokenRepository);
         }
 
-        if ($this->authorizationValidator instanceof BearerTokenValidator === true) {
+        if ($this->authorizationValidator instanceof PublicKeyAwareInterface) {
             $this->authorizationValidator->setPublicKey($this->publicKey);
         }
 
