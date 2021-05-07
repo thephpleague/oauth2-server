@@ -59,11 +59,11 @@ class ResourceServer
      */
     protected function getAuthorizationValidator()
     {
-        if ($this->authorizationValidator instanceof AuthorizationValidatorInterface === false) {
+        if ($this->authorizationValidator === null) {
             $this->authorizationValidator = new BearerTokenValidator($this->accessTokenRepository);
         }
 
-        if ($this->authorizationValidator instanceof BearerTokenValidator === true) {
+        if ($this->authorizationValidator instanceof BearerTokenValidator) {
             $this->authorizationValidator->setPublicKey($this->publicKey);
         }
 
