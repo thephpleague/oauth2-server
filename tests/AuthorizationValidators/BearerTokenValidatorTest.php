@@ -38,9 +38,9 @@ class BearerTokenValidatorTest extends TestCase
 
         $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $validJwt->toString()));
 
-        $response = $bearerTokenValidator->validateAuthorization($request);
+        $validRequest = $bearerTokenValidator->validateAuthorization($request);
 
-        $this->assertArrayHasKey('authorization', $response->getHeaders());
+        $this->assertArrayHasKey('authorization', $validRequest->getHeaders());
     }
 
     public function testBearerTokenValidatorRejectsExpiredToken()
