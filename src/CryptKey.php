@@ -19,6 +19,10 @@ use RuntimeException;
 
 class CryptKey
 {
+    /** @deprecated left for backward compatibility check */
+    const RSA_KEY_PATTERN =
+        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
+
     private const FILE_PREFIX = 'file://';
 
     /**
