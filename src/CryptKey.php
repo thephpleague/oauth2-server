@@ -121,13 +121,13 @@ class CryptKey
      */
     private function isValidKey($contents, $passPhrase)
     {
-        $pkey = openssl_pkey_get_private($contents, $passPhrase) ?: openssl_pkey_get_public($contents);
+        $pkey = \openssl_pkey_get_private($contents, $passPhrase) ?: \openssl_pkey_get_public($contents);
         if ($pkey === false) {
             return false;
         }
-        $details = openssl_pkey_get_details($pkey);
+        $details = \openssl_pkey_get_details($pkey);
 
-        return $details !== false && in_array(
+        return $details !== false && \in_array(
             $details['type'] ?? -1,
             [OPENSSL_KEYTYPE_RSA, OPENSSL_KEYTYPE_EC],
             true
