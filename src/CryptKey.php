@@ -12,9 +12,6 @@
 namespace League\OAuth2\Server;
 
 use LogicException;
-use phpseclib3\Crypt\EC;
-use phpseclib3\Crypt\RSA;
-use phpseclib3\Exception\NoKeyLoadedException;
 use RuntimeException;
 
 class CryptKey
@@ -124,21 +121,17 @@ class CryptKey
      */
     private function isValidKey($contents, $passPhrase)
     {
-        try {
-            RSA::load($contents, $passPhrase);
-
-            return true;
-        } catch (NoKeyLoadedException $e) {
+        $pkey = openssl_pkey_get_private($contents, $passPhrase) ?: openssl_pkey_get_public($contents);
+        if ($pkey === false) {
+            return false;
         }
+        $details = openssl_pkey_get_details($pkey);
 
-        try {
-            EC::load($contents, $passPhrase);
-
-            return true;
-        } catch (NoKeyLoadedException $e) {
-        }
-
-        return false;
+        return $details !== false && in_array(
+            $details['type'] ?? -1,
+            [OPENSSL_KEYTYPE_RSA, OPENSSL_KEYTYPE_EC],
+            true
+        );
     }
 
     /**

@@ -10,8 +10,7 @@
         "lcobucci/jwt": "^3.4 || ~4.0.0",
         "psr/http-message": "^1.0.1",
         "defuse/php-encryption": "^2.2.1",
-        "ext-json": "*",
-        "phpseclib/phpseclib": "~3.0"
+        "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.5.13",
