@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- The server will now validate redirect uris according to rfc8252 (PR #1203)
 - Events emitted now include the refresh token and access token payloads (PR #1211)
 
 ### Fixed
