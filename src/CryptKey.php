@@ -39,29 +39,23 @@ class CryptKey
      */
     public function __construct($keyPath, $passPhrase = null, $keyPermissionsCheck = true)
     {
-        $this->keyPath = $keyPath;
         $this->passPhrase = $passPhrase;
 
-        if (\is_file($this->keyPath) && !$this->isFilePath()) {
-            $this->keyPath = self::FILE_PREFIX . $this->keyPath;
-        }
-
-        if ($this->isFilePath()) {
-            if (!\file_exists($this->keyPath) || !\is_readable($this->keyPath)) {
-                throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $this->keyPath));
+        if (\is_file($keyPath)) {
+            if (\strpos($keyPath, self::FILE_PREFIX) !== 0) {
+                $keyPath = self::FILE_PREFIX . $keyPath;
             }
 
-            $contents = \file_get_contents($this->keyPath);
+            if (!\is_readable($keyPath)) {
+                throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $keyPath));
+            }
+            $isFileKey = true;
+            $contents = \file_get_contents($keyPath);
+            $this->keyPath = $keyPath;
         } else {
+            $isFileKey = false;
             $contents = $keyPath;
-        }
-
-        if ($this->isValidKey($contents, $this->passPhrase ?? '')) {
-            if (!$this->isFilePath()) {
-                $this->keyPath = $this->saveKeyToFile($keyPath);
-            }
-        } else {
-            throw new LogicException('Unable to read key' . ($this->isFilePath() ? " from file $keyPath" : ''));
+            $this->keyPath = $this->saveKeyToFile($keyPath);
         }
 
         if ($keyPermissionsCheck === true) {
@@ -78,6 +72,10 @@ class CryptKey
                 );
             }
         }
+
+        if (!$this->isValidKey($contents, $this->passPhrase ?? '')) {
+            throw new LogicException('Unable to read key' . ($isFileKey ? " from file $keyPath" : ''));
+        }
     }
 
     /**
@@ -92,7 +90,7 @@ class CryptKey
         $tmpDir = \sys_get_temp_dir();
         $keyPath = $tmpDir . '/' . \sha1($key) . '.key';
 
-        if (\file_exists($keyPath)) {
+        if (\is_readable($keyPath)) {
             return self::FILE_PREFIX . $keyPath;
         }
 
@@ -132,16 +130,6 @@ class CryptKey
             [OPENSSL_KEYTYPE_RSA, OPENSSL_KEYTYPE_EC],
             true
         );
-    }
-
-    /**
-     * Checks whether the key is a file.
-     *
-     * @return bool
-     */
-    private function isFilePath()
-    {
-        return \strpos($this->keyPath, self::FILE_PREFIX) === 0;
     }
 
     /**

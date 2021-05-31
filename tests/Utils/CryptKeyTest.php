@@ -51,4 +51,81 @@ class CryptKeyTest extends TestCase
             $key->getKeyPath()
         );
     }
+
+    public function testUnsupportedKeyType()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Unable to read key');
+
+        try {
+            // Create the keypair
+            $res = \openssl_pkey_new([
+                'digest_alg' => 'sha512',
+                'private_key_bits' => 2048,
+                'private_key_type' => OPENSSL_KEYTYPE_DSA,
+            ]);
+            // Get private key
+            \openssl_pkey_export($res, $privkey, 'mystrongpassword');
+            $path = 'file://' . \sys_get_temp_dir() . '/' . \sha1($privkey) . '.key';
+
+            new CryptKey($privkey, 'mystrongpassword');
+        } finally {
+            if (isset($path)) {
+                @unlink($path);
+            }
+        }
+    }
+
+    public function testECKeyType()
+    {
+        try {
+            // Create the keypair
+            $res = \openssl_pkey_new([
+                'digest_alg' => 'sha512',
+                'curve_name' => 'prime256v1',
+                'private_key_type' => OPENSSL_KEYTYPE_EC,
+            ]);
+            // Get private key
+            \openssl_pkey_export($res, $privkey, 'mystrongpassword');
+
+            $key = new CryptKey($privkey, 'mystrongpassword');
+            $path = 'file://' . \sys_get_temp_dir() . '/' . \sha1($privkey) . '.key';
+
+            $this->assertEquals($path, $key->getKeyPath());
+            $this->assertEquals('mystrongpassword', $key->getPassPhrase());
+
+        } catch (\Throwable $e) {
+            $this->fail('The EC key was not created');
+        } finally {
+            if (isset($path)) {
+                @unlink($path);
+            }
+        }
+    }
+
+    public function testRSAKeyType()
+    {
+        try {
+            // Create the keypair
+            $res = \openssl_pkey_new([
+                 'digest_alg' => 'sha512',
+                 'private_key_bits' => 2048,
+                 'private_key_type' => OPENSSL_KEYTYPE_RSA,
+            ]);
+            // Get private key
+            \openssl_pkey_export($res, $privkey, 'mystrongpassword');
+
+            $key = new CryptKey($privkey, 'mystrongpassword');
+            $path = 'file://' . \sys_get_temp_dir() . '/' . \sha1($privkey) . '.key';
+
+            $this->assertEquals($path, $key->getKeyPath());
+            $this->assertEquals('mystrongpassword', $key->getPassPhrase());
+        } catch (\Throwable $e) {
+            $this->fail('The RSA key was not created');
+        } finally {
+            if (isset($path)) {
+                @unlink($path);
+            }
+        }
+    }
 }
