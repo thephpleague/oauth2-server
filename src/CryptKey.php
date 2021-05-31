@@ -90,7 +90,7 @@ class CryptKey
         $tmpDir = \sys_get_temp_dir();
         $keyPath = $tmpDir . '/' . \sha1($key) . '.key';
 
-        if (\is_readable($keyPath)) {
+        if (\file_exists($keyPath)) {
             return self::FILE_PREFIX . $keyPath;
         }
 
