@@ -137,4 +137,11 @@ class OAuthServerExceptionTest extends TestCase
 
         $this->assertSame('https://example.com/error', $exceptionWithRedirect->getRedirectUri());
     }
+
+    public function testInvalidCredentialsIsInvalidGrant()
+    {
+        $exception = OAuthServerException::invalidCredentials();
+
+        $this->assertSame('invalid_grant', $exception->getErrorType());
+    }
 }
