@@ -79,7 +79,7 @@ class RefreshTokenGrant extends AbstractGrant
             $refreshToken = $this->issueRefreshToken($accessToken);
 
             if ($refreshToken !== null) {
-            $this->getEmitter()->emit(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
+                $this->getEmitter()->emit(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
                 $responseType->setRefreshToken($refreshToken);
             }
         }
