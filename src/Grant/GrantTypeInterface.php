@@ -141,11 +141,4 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * @param string|Key|null $key
      */
     public function setEncryptionKey($key = null);
-
-    /**
-     * Enables ability to prevent refresh tokens from being revoked.
-     *
-     * @param bool $revokeRefreshTokens
-     */
-    public function setRevokeRefreshTokens(bool $revokeRefreshTokens);
 }
