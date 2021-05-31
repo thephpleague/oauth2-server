@@ -5,8 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- The server will now validate redirect uris according to rfc8252 (PR #1203)
+- Events emitted now include the refresh token and access token payloads (PR #1211)
+
+### Changed
+- Keys are now validated using `openssl_pkey_get_private()` and openssl_pkey_get_public()` instead of regex matching (PR #1215)
+
 ### Fixed
 - The server will now only recognise and handle an authorization header if the value of the header is non-empty. This is to circumvent issues where some common frameworks set this header even if no value is present (PR #1170)
+- Added type validation for redirect uri, client ID, client secret, scopes, auth code, state, username, and password inputs (PR #1210)
 
 ## [8.2.4] - released 2020-12-10
 ### Fixed

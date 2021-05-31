@@ -24,6 +24,7 @@ use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
+use League\OAuth2\Server\RedirectUriValidators\RedirectUriValidator;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -191,6 +192,10 @@ abstract class AbstractGrant implements GrantTypeInterface
         $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
 
         if ($redirectUri !== null) {
+            if (!\is_string($redirectUri)) {
+                throw OAuthServerException::invalidRequest('redirect_uri');
+            }
+
             $this->validateRedirectUri($redirectUri, $client, $request);
         }
 
@@ -238,11 +243,15 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
 
-        if (\is_null($clientId)) {
+        if (!\is_string($clientId)) {
             throw OAuthServerException::invalidRequest('client_id');
         }
 
         $clientSecret = $this->getRequestParameter('client_secret', $request, $basicAuthPassword);
+
+        if ($clientSecret !== null && !\is_string($clientSecret)) {
+            throw OAuthServerException::invalidRequest('client_secret');
+        }
 
         return [$clientId, $clientSecret];
     }
@@ -262,14 +271,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         ClientEntityInterface $client,
         ServerRequestInterface $request
     ) {
-        if (\is_string($client->getRedirectUri())
-            && (\strcmp($client->getRedirectUri(), $redirectUri) !== 0)
-        ) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-            throw OAuthServerException::invalidClient($request);
-        } elseif (\is_array($client->getRedirectUri())
-            && \in_array($redirectUri, $client->getRedirectUri(), true) === false
-        ) {
+        $validator = new RedirectUriValidator($client->getRedirectUri());
+        if (!$validator->validateRedirectUri($redirectUri)) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient($request);
         }
@@ -287,8 +290,14 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateScopes($scopes, $redirectUri = null)
     {
-        if (!\is_array($scopes)) {
+        if ($scopes === null) {
+            $scopes = [];
+        } elseif (\is_string($scopes)) {
             $scopes = $this->convertScopesQueryStringToArray($scopes);
+        }
+
+        if (!\is_array($scopes)) {
+            throw OAuthServerException::invalidRequest('scope');
         }
 
         $validScopes = [];
@@ -313,7 +322,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @return array
      */
-    private function convertScopesQueryStringToArray($scopes)
+    private function convertScopesQueryStringToArray(string $scopes)
     {
         return \array_filter(\explode(self::SCOPE_DELIMITER_STRING, \trim($scopes)), function ($scope) {
             return $scope !== '';

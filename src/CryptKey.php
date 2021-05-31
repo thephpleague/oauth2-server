@@ -16,8 +16,11 @@ use RuntimeException;
 
 class CryptKey
 {
+    /** @deprecated left for backward compatibility check */
     const RSA_KEY_PATTERN =
         '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
+
+    private const FILE_PREFIX = 'file://';
 
     /**
      * @var string
@@ -36,36 +39,43 @@ class CryptKey
      */
     public function __construct($keyPath, $passPhrase = null, $keyPermissionsCheck = true)
     {
-        if ($rsaMatch = \preg_match(static::RSA_KEY_PATTERN, $keyPath)) {
-            $keyPath = $this->saveKeyToFile($keyPath);
-        } elseif ($rsaMatch === false) {
-            throw new \RuntimeException(
-                \sprintf('PCRE error [%d] encountered during key match attempt', \preg_last_error())
-            );
-        }
+        $this->passPhrase = $passPhrase;
 
-        if (\strpos($keyPath, 'file://') !== 0) {
-            $keyPath = 'file://' . $keyPath;
-        }
+        if (\is_file($keyPath)) {
+            if (\strpos($keyPath, self::FILE_PREFIX) !== 0) {
+                $keyPath = self::FILE_PREFIX . $keyPath;
+            }
 
-        if (!\file_exists($keyPath) || !\is_readable($keyPath)) {
-            throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $keyPath));
+            if (!\is_readable($keyPath)) {
+                throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $keyPath));
+            }
+            $isFileKey = true;
+            $contents = \file_get_contents($keyPath);
+            $this->keyPath = $keyPath;
+        } else {
+            $isFileKey = false;
+            $contents = $keyPath;
+            $this->keyPath = $this->saveKeyToFile($keyPath);
         }
 
         if ($keyPermissionsCheck === true) {
             // Verify the permissions of the key
-            $keyPathPerms = \decoct(\fileperms($keyPath) & 0777);
+            $keyPathPerms = \decoct(\fileperms($this->keyPath) & 0777);
             if (\in_array($keyPathPerms, ['400', '440', '600', '640', '660'], true) === false) {
-                \trigger_error(\sprintf(
-                    'Key file "%s" permissions are not correct, recommend changing to 600 or 660 instead of %s',
-                    $keyPath,
-                    $keyPathPerms
-                ), E_USER_NOTICE);
+                \trigger_error(
+                    \sprintf(
+                        'Key file "%s" permissions are not correct, recommend changing to 600 or 660 instead of %s',
+                        $this->keyPath,
+                        $keyPathPerms
+                    ),
+                    E_USER_NOTICE
+                );
             }
         }
 
-        $this->keyPath = $keyPath;
-        $this->passPhrase = $passPhrase;
+        if (!$this->isValidKey($contents, $this->passPhrase ?? '')) {
+            throw new LogicException('Unable to read key' . ($isFileKey ? " from file $keyPath" : ''));
+        }
     }
 
     /**
@@ -81,7 +91,7 @@ class CryptKey
         $keyPath = $tmpDir . '/' . \sha1($key) . '.key';
 
         if (\file_exists($keyPath)) {
-            return 'file://' . $keyPath;
+            return self::FILE_PREFIX . $keyPath;
         }
 
         if (\file_put_contents($keyPath, $key) === false) {
@@ -96,7 +106,30 @@ class CryptKey
             // @codeCoverageIgnoreEnd
         }
 
-        return 'file://' . $keyPath;
+        return self::FILE_PREFIX . $keyPath;
+    }
+
+    /**
+     * Validate key contents.
+     *
+     * @param string $contents
+     * @param string $passPhrase
+     *
+     * @return bool
+     */
+    private function isValidKey($contents, $passPhrase)
+    {
+        $pkey = \openssl_pkey_get_private($contents, $passPhrase) ?: \openssl_pkey_get_public($contents);
+        if ($pkey === false) {
+            return false;
+        }
+        $details = \openssl_pkey_get_details($pkey);
+
+        return $details !== false && \in_array(
+            $details['type'] ?? -1,
+            [OPENSSL_KEYTYPE_RSA, OPENSSL_KEYTYPE_EC],
+            true
+        );
     }
 
     /**
