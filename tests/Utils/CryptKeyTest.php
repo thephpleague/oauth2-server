@@ -33,10 +33,7 @@ class CryptKeyTest extends TestCase
 
         $key = new CryptKey($keyContent);
 
-        $this->assertEquals(
-            'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key',
-            $key->getKeyPath()
-        );
+        $this->assertEquals(self::generateKeyPath($keyContent), $key->getKeyPath());
 
         $keyContent = \file_get_contents(__DIR__ . '/../Stubs/private.key.crlf');
 
@@ -46,24 +43,92 @@ class CryptKeyTest extends TestCase
 
         $key = new CryptKey($keyContent);
 
-        $this->assertEquals(
-            'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key',
-            $key->getKeyPath()
-        );
+        $this->assertEquals(self::generateKeyPath($keyContent), $key->getKeyPath());
+    }
+
+    public function testUnsupportedKeyType()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Unable to read key');
+
+        try {
+            // Create the keypair
+            $res = \openssl_pkey_new([
+                'digest_alg' => 'sha512',
+                'private_key_bits' => 2048,
+                'private_key_type' => OPENSSL_KEYTYPE_DSA,
+            ]);
+            // Get private key
+            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
+            $path = self::generateKeyPath($keyContent);
+
+            new CryptKey($keyContent, 'mystrongpassword');
+        } finally {
+            if (isset($path)) {
+                @\unlink($path);
+            }
+        }
+    }
+
+    public function testECKeyType()
+    {
+        try {
+            // Create the keypair
+            $res = \openssl_pkey_new([
+                'digest_alg' => 'sha512',
+                'curve_name' => 'prime256v1',
+                'private_key_type' => OPENSSL_KEYTYPE_EC,
+            ]);
+            // Get private key
+            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
+
+            $key = new CryptKey($keyContent, 'mystrongpassword');
+            $path = self::generateKeyPath($keyContent);
+
+            $this->assertEquals($path, $key->getKeyPath());
+            $this->assertEquals('mystrongpassword', $key->getPassPhrase());
+        } catch (\Throwable $e) {
+            $this->fail('The EC key was not created');
+        } finally {
+            if (isset($path)) {
+                @\unlink($path);
+            }
+        }
+    }
+
+    public function testRSAKeyType()
+    {
+        try {
+            // Create the keypair
+            $res = \openssl_pkey_new([
+                 'digest_alg' => 'sha512',
+                 'private_key_bits' => 2048,
+                 'private_key_type' => OPENSSL_KEYTYPE_RSA,
+            ]);
+            // Get private key
+            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
+
+            $key = new CryptKey($keyContent, 'mystrongpassword');
+            $path = self::generateKeyPath($keyContent);
+
+            $this->assertEquals($path, $key->getKeyPath());
+            $this->assertEquals('mystrongpassword', $key->getPassPhrase());
+        } catch (\Throwable $e) {
+            $this->fail('The RSA key was not created');
+        } finally {
+            if (isset($path)) {
+                @\unlink($path);
+            }
+        }
     }
 
     /**
-     * Test whether we get a RuntimeException if a PCRE error is encountered.
+     * @param string $keyContent
      *
-     * @link https://www.php.net/manual/en/function.preg-last-error.php
+     * @return string
      */
-    public function testPcreErrorExceptions()
+    private static function generateKeyPath($keyContent)
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageMatches('/^PCRE error/');
-
-        new class('foobar foobar foobar') extends CryptKey {
-            const RSA_KEY_PATTERN = '/(?:\D+|<\d+>)*[!?]/';
-        };
+        return 'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key';
     }
 }
