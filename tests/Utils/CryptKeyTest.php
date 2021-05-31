@@ -33,10 +33,7 @@ class CryptKeyTest extends TestCase
 
         $key = new CryptKey($keyContent);
 
-        $this->assertEquals(
-            'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key',
-            $key->getKeyPath()
-        );
+        $this->assertEquals(self::generateKeyPath($keyContent), $key->getKeyPath());
 
         $keyContent = \file_get_contents(__DIR__ . '/../Stubs/private.key.crlf');
 
@@ -46,10 +43,7 @@ class CryptKeyTest extends TestCase
 
         $key = new CryptKey($keyContent);
 
-        $this->assertEquals(
-            'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key',
-            $key->getKeyPath()
-        );
+        $this->assertEquals(self::generateKeyPath($keyContent), $key->getKeyPath());
     }
 
     public function testUnsupportedKeyType()
@@ -65,13 +59,13 @@ class CryptKeyTest extends TestCase
                 'private_key_type' => OPENSSL_KEYTYPE_DSA,
             ]);
             // Get private key
-            \openssl_pkey_export($res, $privkey, 'mystrongpassword');
-            $path = 'file://' . \sys_get_temp_dir() . '/' . \sha1($privkey) . '.key';
+            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
+            $path = self::generateKeyPath($keyContent);
 
-            new CryptKey($privkey, 'mystrongpassword');
+            new CryptKey($keyContent, 'mystrongpassword');
         } finally {
             if (isset($path)) {
-                @unlink($path);
+                @\unlink($path);
             }
         }
     }
@@ -86,19 +80,18 @@ class CryptKeyTest extends TestCase
                 'private_key_type' => OPENSSL_KEYTYPE_EC,
             ]);
             // Get private key
-            \openssl_pkey_export($res, $privkey, 'mystrongpassword');
+            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
 
-            $key = new CryptKey($privkey, 'mystrongpassword');
-            $path = 'file://' . \sys_get_temp_dir() . '/' . \sha1($privkey) . '.key';
+            $key = new CryptKey($keyContent, 'mystrongpassword');
+            $path = self::generateKeyPath($keyContent);
 
             $this->assertEquals($path, $key->getKeyPath());
             $this->assertEquals('mystrongpassword', $key->getPassPhrase());
-
         } catch (\Throwable $e) {
             $this->fail('The EC key was not created');
         } finally {
             if (isset($path)) {
-                @unlink($path);
+                @\unlink($path);
             }
         }
     }
@@ -113,10 +106,10 @@ class CryptKeyTest extends TestCase
                  'private_key_type' => OPENSSL_KEYTYPE_RSA,
             ]);
             // Get private key
-            \openssl_pkey_export($res, $privkey, 'mystrongpassword');
+            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
 
-            $key = new CryptKey($privkey, 'mystrongpassword');
-            $path = 'file://' . \sys_get_temp_dir() . '/' . \sha1($privkey) . '.key';
+            $key = new CryptKey($keyContent, 'mystrongpassword');
+            $path = self::generateKeyPath($keyContent);
 
             $this->assertEquals($path, $key->getKeyPath());
             $this->assertEquals('mystrongpassword', $key->getPassPhrase());
@@ -124,8 +117,18 @@ class CryptKeyTest extends TestCase
             $this->fail('The RSA key was not created');
         } finally {
             if (isset($path)) {
-                @unlink($path);
+                @\unlink($path);
             }
         }
+    }
+
+    /**
+     * @param string $keyContent
+     *
+     * @return string
+     */
+    private static function generateKeyPath($keyContent)
+    {
+        return 'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key';
     }
 }
