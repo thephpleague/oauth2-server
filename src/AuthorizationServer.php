@@ -82,7 +82,7 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * @var bool
      */
-    private $revokeRefreshTokens;
+    private $revokeRefreshTokens = true;
 
     /**
      * New server instance.
@@ -93,7 +93,6 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param CryptKey|string                $privateKey
      * @param string|Key                     $encryptionKey
      * @param null|ResponseTypeInterface     $responseType
-     * @param bool                           $revokeRefreshTokens
      */
     public function __construct(
         ClientRepositoryInterface $clientRepository,
@@ -101,8 +100,7 @@ class AuthorizationServer implements EmitterAwareInterface
         ScopeRepositoryInterface $scopeRepository,
         $privateKey,
         $encryptionKey,
-        ResponseTypeInterface $responseType = null,
-        bool $revokeRefreshTokens = true
+        ResponseTypeInterface $responseType = null
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
@@ -122,7 +120,6 @@ class AuthorizationServer implements EmitterAwareInterface
         }
 
         $this->responseType = $responseType;
-        $this->revokeRefreshTokens = $revokeRefreshTokens;
     }
 
     /**
@@ -241,5 +238,15 @@ class AuthorizationServer implements EmitterAwareInterface
     public function setDefaultScope($defaultScope)
     {
         $this->defaultScope = $defaultScope;
+    }
+
+    /**
+     * Sets wether to revoke refresh tokens or not (for all grant types).
+     *
+     * @param bool $revokeRefreshTokens
+     */
+    public function setRevokeRefreshTokens(bool $revokeRefreshTokens): void
+    {
+        $this->revokeRefreshTokens = $revokeRefreshTokens;
     }
 }
