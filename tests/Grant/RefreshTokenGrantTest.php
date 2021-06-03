@@ -69,7 +69,7 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setRevokeRefreshTokens(true);
+        $grant->revokeRefreshTokens(true);
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             \json_encode(
@@ -183,7 +183,7 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setRevokeRefreshTokens(true);
+        $grant->revokeRefreshTokens(true);
 
         $oldRefreshToken = $this->cryptStub->doEncrypt(
             \json_encode(
@@ -523,7 +523,7 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $grant->setRevokeRefreshTokens(true);
+        $grant->revokeRefreshTokens(true);
         $grant->respondToAccessTokenRequest($serverRequest, new StubResponseType(), new DateInterval('PT5M'));
 
         Assert::assertTrue($refreshTokenRepositoryMock->isRefreshTokenRevoked($refreshTokenId));

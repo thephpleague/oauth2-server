@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - The server will now validate redirect uris according to rfc8252 (PR #1203)
 - Events emitted now include the refresh token and access token payloads (PR #1211)
+- Use the `revokeRefreshTokens()` function to decide whether refresh tokens are revoked or not upon use (PR #1189)
 
 ### Changed
 - Keys are now validated using `openssl_pkey_get_private()` and openssl_pkey_get_public()` instead of regex matching (PR #1215)

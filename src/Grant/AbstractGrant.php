@@ -175,7 +175,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * @param bool $revokeRefreshTokens
      */
-    public function setRevokeRefreshTokens(bool $revokeRefreshTokens)
+    public function revokeRefreshTokens(bool $revokeRefreshTokens)
     {
         $this->revokeRefreshTokens = $revokeRefreshTokens;
     }

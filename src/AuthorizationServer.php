@@ -141,7 +141,7 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setPrivateKey($this->privateKey);
         $grantType->setEmitter($this->getEmitter());
         $grantType->setEncryptionKey($this->encryptionKey);
-        $grantType->setRevokeRefreshTokens($this->revokeRefreshTokens);
+        $grantType->revokeRefreshTokens($this->revokeRefreshTokens);
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
         $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
@@ -245,7 +245,7 @@ class AuthorizationServer implements EmitterAwareInterface
      *
      * @param bool $revokeRefreshTokens
      */
-    public function setRevokeRefreshTokens(bool $revokeRefreshTokens): void
+    public function revokeRefreshTokens(bool $revokeRefreshTokens): void
     {
         $this->revokeRefreshTokens = $revokeRefreshTokens;
     }
