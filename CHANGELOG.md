@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.3.1] - released 2021-06-04
+### Fixed
+- Revert check on clientID. We will no longer require this to be a string (PR #1233)
+
 ## [8.3.0] - released 2021-06-03
 ### Added
 - The server will now validate redirect uris according to rfc8252 (PR #1203)
@@ -541,7 +545,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.1...HEAD
+[8.3.1]: https://github.com/thephpleague/oauth2-server/compare/8.3.0...8.3.1
 [8.3.0]: https://github.com/thephpleague/oauth2-server/compare/8.2.4...8.3.0
 [8.2.4]: https://github.com/thephpleague/oauth2-server/compare/8.2.3...8.2.4
 [8.2.3]: https://github.com/thephpleague/oauth2-server/compare/8.2.2...8.2.3
