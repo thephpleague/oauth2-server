@@ -120,7 +120,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             $this->getServerParameter('PHP_AUTH_USER', $request)
         );
 
-        if (!\is_string($clientId)) {
+        if (\is_null($clientId)) {
             throw OAuthServerException::invalidRequest('client_id');
         }
 

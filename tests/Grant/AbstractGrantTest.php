@@ -89,38 +89,6 @@ class AbstractGrantTest extends TestCase
         $this->assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
     }
 
-    public function testGetClientCredentialsClientIdNotAString()
-    {
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-
-        /** @var AbstractGrant $grantMock */
-        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setClientRepository($clientRepositoryMock);
-
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
-
-        $serverRequest = new ServerRequest(
-            [],
-            [],
-            null,
-            'POST',
-            'php://input',
-            [],
-            [],
-            [],
-            [
-                'client_id'     => ['not', 'a', 'string'],
-                'client_secret' => 'client_secret',
-            ]
-        );
-        $getClientCredentialsMethod = $abstractGrantReflection->getMethod('getClientCredentials');
-        $getClientCredentialsMethod->setAccessible(true);
-
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
-
-        $getClientCredentialsMethod->invoke($grantMock, $serverRequest, true, true);
-    }
-
     public function testGetClientCredentialsClientSecretNotAString()
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
