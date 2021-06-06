@@ -19,6 +19,7 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -179,6 +180,41 @@ class AuthorizationServer implements EmitterAwareInterface
     {
         return $this->enabledGrantTypes[$authRequest->getGrantTypeId()]
             ->completeAuthorizationRequest($authRequest)
+            ->generateHttpResponse($response);
+    }
+
+    /**
+     * Validate a device authorization request
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return DeviceAuthorizationRequest
+     *
+     * @throws OAuthServerException
+     */
+    public function validateDeviceAuthorizationRequest(ServerRequestInterface $request)
+    {
+        foreach ($this->enabledGrantTypes as $grantType) {
+            if ($grantType->canRespondToDeviceAuthorizationRequest($request)) {
+                return $grantType->validateDeviceAuthorizationRequest($request);
+            }
+        }
+
+        throw OAuthServerException::unsupportedGrantType();
+    }
+
+    /**
+     * Complete a device authorization request
+     *
+     * @param DeviceAuthorizationRequest $deviceRequest
+     * @param ResponseInterface          $response
+     *
+     * @return ResponseInterface
+     */
+    public function completeDeviceAuthorizationRequest(DeviceAuthorizationRequest $deviceRequest, ResponseInterface $response)
+    {
+        return $this->enabledGrantTypes[$deviceRequest->getGrantTypeId()]
+            ->completeDeviceAuthorizationRequest($deviceRequest)
             ->generateHttpResponse($response);
     }
 

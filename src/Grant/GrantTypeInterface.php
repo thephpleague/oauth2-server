@@ -19,6 +19,7 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -99,6 +100,40 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * @return bool
      */
     public function canRespondToAccessTokenRequest(ServerRequestInterface $request);
+
+    /**
+     * The grant type should return true if it is able to response to a device authorization request
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return bool
+     */
+    public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request);
+
+    /**
+     * If the grant can respond to a device authorization request this method should be called to validate the parameters of
+     * the request.
+     *
+     * If the validation is successful a DeviceAuthorizationRequest object will be returned. This object can be safely
+     * serialized in a user's session, and can be used during user authentication and authorization.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return DeviceAuthorizationRequest
+     */
+    public function validateDeviceAuthorizationRequest(ServerRequestInterface $request);
+
+    /**
+     * If the grant can respond to a device authorization request this method should be called to validate the parameters of
+     * the request.
+     *
+     * If the validation is successful a DeviceCode object will be returned.
+     *
+     * @param DeviceAuthorizationRequest $deviceAuthorizationRequest
+     *
+     * @return ResponseTypeInterface
+     */
+    public function completeDeviceAuthorizationRequest(DeviceAuthorizationRequest $deviceAuthorizationRequest);
 
     /**
      * Set the client repository.
