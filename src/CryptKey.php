@@ -54,7 +54,7 @@ class CryptKey
             $this->keyPath = '';
             // There's no file, so no need for permission check.
             $keyPermissionsCheck = false;
-        } else if (\is_file($keyPath)) {
+        } elseif (\is_file($keyPath)) {
             if (\strpos($keyPath, self::FILE_PREFIX) !== 0) {
                 $keyPath = self::FILE_PREFIX . $keyPath;
             }
@@ -66,11 +66,11 @@ class CryptKey
             $this->keyPath = $keyPath;
             $this->key = LocalFileReference::file($this->keyPath, $this->passPhrase ?? '');
             if (!$this->isValidKey($contents, $this->passPhrase ?? '')) {
-               throw new LogicException('Unable to read key from file ' . $keyPath);
+                throw new LogicException('Unable to read key from file ' . $keyPath);
             }
         }
         else {
-           throw new LogicException('Unable to read key from file ' . $keyPath);
+            throw new LogicException('Unable to read key from file ' . $keyPath);
         }
 
         if ($keyPermissionsCheck === true) {
