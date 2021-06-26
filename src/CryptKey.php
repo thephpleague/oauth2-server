@@ -11,9 +11,6 @@
 
 namespace League\OAuth2\Server;
 
-use Lcobucci\JWT\Signer\Key;
-use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Signer\Key\LocalFileReference;
 use LogicException;
 
 class CryptKey
@@ -25,9 +22,9 @@ class CryptKey
     private const FILE_PREFIX = 'file://';
 
     /**
-     * @var Key
+     * @var string Key contents
      */
-    protected $key;
+    protected $keyContents;
 
     /**
      * @var string
@@ -49,8 +46,7 @@ class CryptKey
         $this->passPhrase = $passPhrase;
 
         if (\strpos($keyPath, self::FILE_PREFIX) !== 0 && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
-            $contents = $keyPath;
-            $this->key = InMemory::plainText($keyPath, $this->passPhrase ?? '');
+            $this->keyContents = $keyPath;
             $this->keyPath = '';
             // There's no file, so no need for permission check.
             $keyPermissionsCheck = false;
@@ -62,10 +58,9 @@ class CryptKey
             if (!\is_readable($keyPath)) {
                 throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $keyPath));
             }
-            $contents = \file_get_contents($keyPath);
+            $this->keyContents = \file_get_contents($keyPath);
             $this->keyPath = $keyPath;
-            $this->key = LocalFileReference::file($this->keyPath, $this->passPhrase ?? '');
-            if (!$this->isValidKey($contents, $this->passPhrase ?? '')) {
+            if (!$this->isValidKey($this->keyContents, $this->passPhrase ?? '')) {
                 throw new LogicException('Unable to read key from file ' . $keyPath);
             }
         } else {
@@ -89,13 +84,13 @@ class CryptKey
     }
 
     /**
-     * Get key
+     * Get key contents
      *
-     * @return Key
+     * @return string Key contents
      */
-    public function getKey(): Key
+    public function getKeyContents(): string
     {
-        return $this->key;
+        return $this->keyContents;
     }
 
     /**

@@ -35,7 +35,7 @@ class CryptKeyTest extends TestCase
 
         $this->assertEquals(
             $keyContent,
-            $key->getKey()->contents()
+            $key->getKeyContents()
         );
 
         $keyContent = \file_get_contents(__DIR__ . '/../Stubs/private.key.crlf');
@@ -48,7 +48,7 @@ class CryptKeyTest extends TestCase
 
         $this->assertEquals(
             $keyContent,
-            $key->getKey()->contents()
+            $key->getKeyContents()
         );
     }
 

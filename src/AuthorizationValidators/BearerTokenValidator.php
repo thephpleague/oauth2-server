@@ -77,7 +77,10 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             \class_exists(StrictValidAt::class)
                 ? new StrictValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get())))
                 : new ValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
-            new SignedWith(new Sha256(), $this->publicKey->getKey())
+            new SignedWith(
+                new Sha256(),
+                InMemory::plainText($this->publicKey->getKeyContents(), $this->publicKey->getPassPhrase() ?? ''),
+            )
         );
     }
 
