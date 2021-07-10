@@ -15,12 +15,16 @@ use League\Event\EmitterAwareInterface;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
+use League\OAuth2\Server\IntrospectionValidators\BearerTokenValidator;
+use League\OAuth2\Server\IntrospectionValidators\IntrospectionValidatorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
+use League\OAuth2\Server\ResponseTypes\BearerTokenIntrospectionResponse;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use League\OAuth2\Server\ResponseTypes\IntrospectionResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -53,6 +57,21 @@ class AuthorizationServer implements EmitterAwareInterface
      * @var ResponseTypeInterface
      */
     protected $responseType;
+
+    /**
+     * @var null|IntrospectionResponse
+     */
+    protected $introspectionResponseType;
+
+    /**
+     * @var null|IntrospectionValidatorInterface
+     */
+    protected $introspectionValidator;
+
+    /**
+     * @var null|Introspector
+     */
+    protected $introspector;
 
     /**
      * @var ClientRepositoryInterface
@@ -210,6 +229,103 @@ class AuthorizationServer implements EmitterAwareInterface
         }
 
         throw OAuthServerException::unsupportedGrantType();
+    }
+
+    /**
+     * Set the introspection response type.
+     *
+     * @param IntrospectionResponse $reponseType
+     */
+    public function setIntrospectionReponseType(IntrospectionResponse $reponseType)
+    {
+        $this->introspectionResponseType = $reponseType;
+    }
+
+    /**
+     * Set the validator used for introspection requests.
+     *
+     * @param IntrospectionValidatorInterface $introspectionValidator
+     */
+    public function setIntrospectionValidator(IntrospectionValidatorInterface $introspectionValidator)
+    {
+        $this->introspectionValidator = $introspectionValidator;
+    }
+
+    /**
+     * Get the introspection response.
+     *
+     * @return IntrospectionResponse
+     */
+    protected function getIntrospectionResponseType()
+    {
+        if ($this->introspectionResponseType instanceof IntrospectionResponse === false) {
+            $this->introspectionResponseType = new BearerTokenIntrospectionResponse();
+        }
+
+        return $this->introspectionResponseType;
+    }
+
+    /**
+     * Get the introspection response
+     *
+     * @return IntrospectionValidatorInterface
+     */
+    protected function getIntrospectionValidator()
+    {
+        if ($this->introspectionValidator instanceof IntrospectionValidatorInterface === false) {
+            $this->introspectionValidator = new BearerTokenValidator($this->accessTokenRepository);
+        }
+
+        return $this->introspectionValidator;
+    }
+
+    /**
+     * Return an introspection response.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     *
+     * @return ResponseInterface
+     */
+    public function respondToIntrospectionRequest(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $introspector = $this->getIntrospector();
+
+        $introspectionResponse = $introspector->respondToIntrospectionRequest(
+            $request,
+            $this->getIntrospectionResponseType()
+        );
+
+        return $introspectionResponse->generateHttpResponse($response);
+    }
+
+    /**
+     * Validate an introspection request.
+     *
+     * @param ServerRequestInterface $request
+     */
+    public function validateIntrospectionRequest(ServerRequestInterface $request)
+    {
+        $introspector = $this->getIntrospector();
+        $introspector->validateIntrospectionRequest($request);
+    }
+
+    /**
+     * Returns the introspector.
+     *
+     * @return Introspector
+     */
+    private function getIntrospector()
+    {
+        if (!isset($this->introspector)) {
+            $this->introspector = new Introspector(
+                $this->accessTokenRepository,
+                $this->privateKey,
+                $this->getIntrospectionValidator()
+            );
+        }
+
+        return $this->introspector;
     }
 
     /**
