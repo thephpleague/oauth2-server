@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Changed
-- Conditionally support the `StrictValidAt()` method in lcobucci/jwt so we can use version 4.1x of the library (PR #1236)
+- Conditionally support the `StrictValidAt()` method in lcobucci/jwt so we can use version 4.1.x or greater of the library (PR #1236)
 
 ## [8.3.1] - released 2021-06-04
 ### Fixed
