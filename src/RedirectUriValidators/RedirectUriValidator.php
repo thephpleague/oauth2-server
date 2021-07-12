@@ -41,6 +41,11 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      */
     public function validateRedirectUri($redirectUri)
     {
+        $redirectUri = \filter_var($redirectUri, FILTER_VALIDATE_URL);
+        if ($redirectUri === false) {
+            return false;
+        }
+
         if ($this->isLoopbackUri($redirectUri)) {
             return $this->matchUriExcludingPort($redirectUri);
         }
