@@ -12,7 +12,6 @@
 namespace League\OAuth2\Server;
 
 use LogicException;
-use RuntimeException;
 
 class CryptKey
 {
@@ -21,6 +20,11 @@ class CryptKey
         '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
 
     private const FILE_PREFIX = 'file://';
+
+    /**
+     * @var string Key contents
+     */
+    protected $keyContents;
 
     /**
      * @var string
@@ -41,7 +45,12 @@ class CryptKey
     {
         $this->passPhrase = $passPhrase;
 
-        if (\is_file($keyPath)) {
+        if (\strpos($keyPath, self::FILE_PREFIX) !== 0 && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
+            $this->keyContents = $keyPath;
+            $this->keyPath = '';
+            // There's no file, so no need for permission check.
+            $keyPermissionsCheck = false;
+        } elseif (\is_file($keyPath)) {
             if (\strpos($keyPath, self::FILE_PREFIX) !== 0) {
                 $keyPath = self::FILE_PREFIX . $keyPath;
             }
@@ -49,13 +58,13 @@ class CryptKey
             if (!\is_readable($keyPath)) {
                 throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $keyPath));
             }
-            $isFileKey = true;
-            $contents = \file_get_contents($keyPath);
+            $this->keyContents = \file_get_contents($keyPath);
             $this->keyPath = $keyPath;
+            if (!$this->isValidKey($this->keyContents, $this->passPhrase ?? '')) {
+                throw new LogicException('Unable to read key from file ' . $keyPath);
+            }
         } else {
-            $isFileKey = false;
-            $contents = $keyPath;
-            $this->keyPath = $this->saveKeyToFile($keyPath);
+            throw new LogicException('Unable to read key from file ' . $keyPath);
         }
 
         if ($keyPermissionsCheck === true) {
@@ -72,41 +81,16 @@ class CryptKey
                 );
             }
         }
-
-        if (!$this->isValidKey($contents, $this->passPhrase ?? '')) {
-            throw new LogicException('Unable to read key' . ($isFileKey ? " from file $keyPath" : ''));
-        }
     }
 
     /**
-     * @param string $key
+     * Get key contents
      *
-     * @throws RuntimeException
-     *
-     * @return string
+     * @return string Key contents
      */
-    private function saveKeyToFile($key)
+    public function getKeyContents(): string
     {
-        $tmpDir = \sys_get_temp_dir();
-        $keyPath = $tmpDir . '/' . \sha1($key) . '.key';
-
-        if (\file_exists($keyPath)) {
-            return self::FILE_PREFIX . $keyPath;
-        }
-
-        if (\file_put_contents($keyPath, $key) === false) {
-            // @codeCoverageIgnoreStart
-            throw new RuntimeException(\sprintf('Unable to write key file to temporary directory "%s"', $tmpDir));
-            // @codeCoverageIgnoreEnd
-        }
-
-        if (\chmod($keyPath, 0600) === false) {
-            // @codeCoverageIgnoreStart
-            throw new RuntimeException(\sprintf('The key file "%s" file mode could not be changed with chmod to 600', $keyPath));
-            // @codeCoverageIgnoreEnd
-        }
-
-        return self::FILE_PREFIX . $keyPath;
+        return $this->keyContents;
     }
 
     /**
