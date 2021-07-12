@@ -72,4 +72,16 @@ class RedirectUriValidatorTest extends TestCase
             'Loopback redirect URI can change the port number'
         );
     }
+
+    public function testMaformedLoopbackUri()
+    {
+        $validator = new RedirectUriValidator('http://127.0.0.1:8443/endpoint');
+
+        $invalidRedirectUri = '127.0.0.1:8443/endpoint';
+
+        $this->assertFalse(
+            $validator->validateRedirectUri($invalidRedirectUri),
+            'Valid loopback redirect URI must contain the scheme'
+        );
+    }
 }
