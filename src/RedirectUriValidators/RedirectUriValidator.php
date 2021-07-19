@@ -19,7 +19,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     /**
      * New validator instance for the given uri
      *
-     * @param string|array $allowedRedirectUris
+     * @param string|array $allowedRedirectUri
      */
     public function __construct($allowedRedirectUri)
     {
@@ -30,6 +30,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
         } else {
             $this->allowedRedirectUris = [];
         }
+        $this->allowedRedirectUris = \array_filter($this->allowedRedirectUris, [__CLASS__, 'isValidHttpUrl']);
     }
 
     /**
@@ -41,8 +42,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      */
     public function validateRedirectUri($redirectUri)
     {
-        $redirectUri = \filter_var($redirectUri, FILTER_VALIDATE_URL);
-        if ($redirectUri === false) {
+        if (!self::isValidHttpUrl($redirectUri)) {
             return false;
         }
 
@@ -115,5 +115,22 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
         unset($parsedUrl['port']);
 
         return $parsedUrl;
+    }
+
+    /**
+     * Checking that the URL is the correct HTTP URL
+     *
+     * @param string $url
+     *
+     * @return bool
+     */
+    private static function isValidHttpUrl($url)
+    {
+        $validated = \filter_var($url, FILTER_VALIDATE_URL);
+        if ($validated === false) {
+            return false;
+        }
+
+        return \in_array(\parse_url($url, PHP_URL_SCHEME), ['http', 'https'], true);
     }
 }
