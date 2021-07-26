@@ -94,12 +94,30 @@ class RedirectUriValidatorTest extends TestCase
     /**
      * @see https://datatracker.ietf.org/doc/html/rfc8252#section-7.1
      */
-    public function testPrivateUseURISchemeRedirection()
+    public function testValidPrivateUseURISchemeRedirection()
     {
         $validator = new RedirectUriValidator('com.example.app:/oauth2redirect/example-provider');
         $this->assertTrue($validator->validateRedirectUri('com.example.app:/oauth2redirect/example-provider'));
 
         $validator = new RedirectUriValidator('msal://redirect');
         $this->assertTrue($validator->validateRedirectUri('msal://redirect'));
+    }
+
+    public function testInvalidUrlWithFragment()
+    {
+        $validator = new RedirectUriValidator('https://example.com/endpoint#fragment');
+        $this->assertFalse($validator->validateRedirectUri('https://example.com/endpoint#fragment'));
+
+        $validator = new RedirectUriValidator('http://127.0.0.1:8080/endpoint#fragment');
+        $this->assertFalse($validator->validateRedirectUri('http://127.0.0.1:8080/endpoint#fragment'));
+    }
+
+    public function testIvalidUrlWithOnlyPath()
+    {
+        $validator = new RedirectUriValidator('/path/to/endpoint');
+        $this->assertFalse($validator->validateRedirectUri('/path/to/endpoint'));
+
+        $validator = new RedirectUriValidator('//host/path/to/endpoint');
+        $this->assertFalse($validator->validateRedirectUri('//host/path/to/endpoint'));
     }
 }

@@ -128,6 +128,32 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     {
         $parsedUrl = \parse_url($url);
 
-        return $parsedUrl !== false && (isset($parsedUrl['host']) || isset($parsedUrl['path']));
+        if ($parsedUrl === false) {
+            return false; // obviously invalid url
+        }
+
+        /**
+         * @see https://datatracker.ietf.org/doc/html/rfc6749#section-3.1.2
+         *
+         * The redirection endpoint URI
+         * - MUST be an absolute URI as defined by [RFC3986] Section 4.3.
+         * - MAY include an "application/x-www-form-urlencoded" formatted (per Appendix B) query
+         *   component ([RFC3986] Section 3.4), which MUST be retained when adding
+         *   additional query parameters.
+         * - MUST NOT include a fragment component.
+         *
+         * @see https://datatracker.ietf.org/doc/html/rfc3986#appendix-A
+         * absolute-URI  = scheme ":" hier-part [ "?" query ]
+         */
+
+        if (empty($parsedUrl['scheme']) || !empty($parsedUrl['fragment'])) {
+            return false;
+        }
+
+        if (\in_array(\strtolower($parsedUrl['scheme']), ['http', 'https'], true)) {
+            return \filter_var($url, FILTER_VALIDATE_URL) !== false;
+        }
+
+        return !empty($parsedUrl['host']) || !empty($parsedUrl['path']);
     }
 }
