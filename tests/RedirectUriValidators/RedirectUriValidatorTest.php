@@ -84,4 +84,22 @@ class RedirectUriValidatorTest extends TestCase
             'Valid loopback redirect URI must contain the scheme'
         );
     }
+
+    public function testValidUrn()
+    {
+        $validator = new RedirectUriValidator('urn:ietf:wg:oauth:2.0:oob');
+        $this->assertTrue($validator->validateRedirectUri('urn:ietf:wg:oauth:2.0:oob'));
+    }
+
+    /**
+     * @see https://datatracker.ietf.org/doc/html/rfc8252#section-7.1
+     */
+    public function testPrivateUseURISchemeRedirection()
+    {
+        $validator = new RedirectUriValidator('com.example.app:/oauth2redirect/example-provider');
+        $this->assertTrue($validator->validateRedirectUri('com.example.app:/oauth2redirect/example-provider'));
+
+        $validator = new RedirectUriValidator('msal://redirect');
+        $this->assertTrue($validator->validateRedirectUri('msal://redirect'));
+    }
 }

@@ -30,7 +30,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
         } else {
             $this->allowedRedirectUris = [];
         }
-        $this->allowedRedirectUris = \array_filter($this->allowedRedirectUris, [__CLASS__, 'isValidHttpUrl']);
+        $this->allowedRedirectUris = \array_filter($this->allowedRedirectUris, [__CLASS__, 'isValidRedirectUrl']);
     }
 
     /**
@@ -42,7 +42,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      */
     public function validateRedirectUri($redirectUri)
     {
-        if (!self::isValidHttpUrl($redirectUri)) {
+        if (!self::isValidRedirectUrl($redirectUri)) {
             return false;
         }
 
@@ -118,19 +118,15 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     }
 
     /**
-     * Checking that the URL is the correct HTTP URL
+     * Checking that the URL is the correct URI or URN
      *
      * @param string $url
      *
      * @return bool
      */
-    private static function isValidHttpUrl($url)
+    private static function isValidRedirectUrl($url)
     {
-        $validated = \filter_var($url, FILTER_VALIDATE_URL);
-        if ($validated === false) {
-            return false;
-        }
-
-        return \in_array(\parse_url($url, PHP_URL_SCHEME), ['http', 'https'], true);
+        $parsedUrl = \parse_url($url);
+        return $parsedUrl !== false && (isset($parsedUrl['host']) || isset($parsedUrl['path']));
     }
 }
