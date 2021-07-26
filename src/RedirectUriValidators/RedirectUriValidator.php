@@ -132,7 +132,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
             return false; // obviously invalid url
         }
 
-        /**
+        /*
          * @see https://datatracker.ietf.org/doc/html/rfc6749#section-3.1.2
          *
          * The redirection endpoint URI
