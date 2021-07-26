@@ -127,6 +127,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     private static function isValidRedirectUrl($url)
     {
         $parsedUrl = \parse_url($url);
+
         return $parsedUrl !== false && (isset($parsedUrl['host']) || isset($parsedUrl['path']));
     }
 }
