@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Conditionally support the `StrictValidAt()` method in lcobucci/jwt so we can use version 4.1.x or greater of the library (PR #1236)
 - When providing invalid credentials, the library now responds with the error message _The user credentials were incorrect_ (PR #1230)
 - Keys are always stored in memory now and are not written to a file in the /tmp directory (PR #1180)
+- The regex for matching the bearer token has been simplified (PR #1238)
 
 ## [8.3.1] - released 2021-06-04
 ### Fixed
