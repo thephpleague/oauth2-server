@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [8.3.2] - released 2021-07-27
 ### Changed
 - Conditionally support the `StrictValidAt()` method in lcobucci/jwt so we can use version 4.1.x or greater of the library (PR #1236)
 - When providing invalid credentials, the library now responds with the error message _The user credentials were incorrect_ (PR #1230)
@@ -550,7 +552,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.1...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.2...HEAD
+[8.3.2]: https://github.com/thephpleague/oauth2-server/compare/8.3.1...8.3.2
 [8.3.1]: https://github.com/thephpleague/oauth2-server/compare/8.3.0...8.3.1
 [8.3.0]: https://github.com/thephpleague/oauth2-server/compare/8.2.4...8.3.0
 [8.2.4]: https://github.com/thephpleague/oauth2-server/compare/8.2.3...8.2.4
