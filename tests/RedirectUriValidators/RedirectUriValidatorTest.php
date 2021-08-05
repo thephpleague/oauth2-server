@@ -75,8 +75,9 @@ class RedirectUriValidatorTest extends TestCase
 
     /**
      * @dataProvider provideUriCases
+     *
      * @param string $uri
-     * @param bool $valid
+     * @param bool   $valid
      */
     public function testRedirectUri($uri, $valid)
     {
