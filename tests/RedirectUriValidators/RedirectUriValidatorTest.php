@@ -88,6 +88,10 @@ class RedirectUriValidatorTest extends TestCase
     public function provideUriCases()
     {
         return [
+            'Valid URL' => ['https://example.com', true],
+            'Valid URL with path' => ['https://example.com/endpoint', true],
+            'Valid URL with port' => ['https://example.com:8443/endpoint', true],
+            'Valid URL with query' => ['http://example.com:8080/endpoint?foo=BAR', true],
             'Valid URN' => ['urn:ietf:wg:oauth:2.0:oob', true],
             'Valid Private Use URI Scheme Host' => ['msal://redirect', true],
             'Valid Private Use URI Scheme Path' => ['com.example.app:/oauth2redirect/example-provider', true],
