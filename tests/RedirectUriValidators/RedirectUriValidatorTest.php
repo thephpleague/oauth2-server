@@ -73,51 +73,28 @@ class RedirectUriValidatorTest extends TestCase
         );
     }
 
-    public function testMaformedLoopbackUri()
-    {
-        $validator = new RedirectUriValidator('http://127.0.0.1:8443/endpoint');
-
-        $invalidRedirectUri = '127.0.0.1:8443/endpoint';
-
-        $this->assertFalse(
-            $validator->validateRedirectUri($invalidRedirectUri),
-            'Valid loopback redirect URI must contain the scheme'
-        );
-    }
-
-    public function testValidUrn()
-    {
-        $validator = new RedirectUriValidator('urn:ietf:wg:oauth:2.0:oob');
-        $this->assertTrue($validator->validateRedirectUri('urn:ietf:wg:oauth:2.0:oob'));
-    }
-
     /**
-     * @see https://datatracker.ietf.org/doc/html/rfc8252#section-7.1
+     * @dataProvider provideUriCases
+     * @param string $uri
+     * @param bool $valid
      */
-    public function testValidPrivateUseURISchemeRedirection()
+    public function testRedirectUri($uri, $valid)
     {
-        $validator = new RedirectUriValidator('com.example.app:/oauth2redirect/example-provider');
-        $this->assertTrue($validator->validateRedirectUri('com.example.app:/oauth2redirect/example-provider'));
-
-        $validator = new RedirectUriValidator('msal://redirect');
-        $this->assertTrue($validator->validateRedirectUri('msal://redirect'));
+        $validator = new RedirectUriValidator($uri);
+        $this->assertEquals($valid, $validator->validateRedirectUri($uri));
     }
 
-    public function testInvalidUrlWithFragment()
+    public function provideUriCases()
     {
-        $validator = new RedirectUriValidator('https://example.com/endpoint#fragment');
-        $this->assertFalse($validator->validateRedirectUri('https://example.com/endpoint#fragment'));
-
-        $validator = new RedirectUriValidator('http://127.0.0.1:8080/endpoint#fragment');
-        $this->assertFalse($validator->validateRedirectUri('http://127.0.0.1:8080/endpoint#fragment'));
-    }
-
-    public function testIvalidUrlWithOnlyPath()
-    {
-        $validator = new RedirectUriValidator('/path/to/endpoint');
-        $this->assertFalse($validator->validateRedirectUri('/path/to/endpoint'));
-
-        $validator = new RedirectUriValidator('//host/path/to/endpoint');
-        $this->assertFalse($validator->validateRedirectUri('//host/path/to/endpoint'));
+        return [
+            'Valid URN' => ['urn:ietf:wg:oauth:2.0:oob', true],
+            'Valid Private Use URI Scheme Host' => ['msal://redirect', true],
+            'Valid Private Use URI Scheme Path' => ['com.example.app:/oauth2redirect/example-provider', true],
+            'Invalid loopback without scheme' => ['127.0.0.1:8443/endpoint', false],
+            'Invalid HTTPS URL with fragment' => ['https://example.com/endpoint#fragment', false],
+            'Invalid HTTP URL with port and fragment' => ['http://127.0.0.1:8080/endpoint#fragment', false],
+            'Invalid path without scheme ' => ['/path/to/endpoint', false],
+            'Invalid host and path without scheme ' => ['//host/path/to/endpoint', false],
+        ];
     }
 }
