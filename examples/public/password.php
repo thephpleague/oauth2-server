@@ -1,6 +1,10 @@
 <?php
 
+use League\Event\EventDispatcher;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Events\AccessTokenIssued;
+use League\OAuth2\Server\Events\RefreshTokenIssued;
+use League\OAuth2\Server\Events\UserAuthenticationFailed;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
@@ -27,13 +31,26 @@ $app = new App([
             'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'      // encryption key
         );
 
+        // Setup EventDispatcher
+        $dispatcher = new EventDispatcher();
+        $dispatcher->subscribeTo(UserAuthenticationFailed::class, function (UserAuthenticationFailed $event) {
+            // Handle user authentication failure
+        });
+        $dispatcher->subscribeTo(AccessTokenIssued::class, function (AccessTokenIssued $event) {
+            // Handle access token issue
+        });
+        $dispatcher->subscribeTo(RefreshTokenIssued::class, function (RefreshTokenIssued $event) {
+            // Handle refresh token issue
+        });
+        $server->useEventDispatcher($dispatcher);
+
+        // Enable the password grant on the server with a token TTL of 1 hour
         $grant = new PasswordGrant(
             new UserRepository(),           // instance of UserRepositoryInterface
             new RefreshTokenRepository()    // instance of RefreshTokenRepositoryInterface
         );
         $grant->setRefreshTokenTTL(new \DateInterval('P1M')); // refresh tokens will expire after 1 month
 
-        // Enable the password grant on the server with a token TTL of 1 hour
         $server->enableGrantType(
             $grant,
             new \DateInterval('PT1H') // access tokens will expire after 1 hour

@@ -8,7 +8,11 @@
  */
 
 use Laminas\Diactoros\Stream;
+use League\Event\EventDispatcher;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Events\AccessTokenIssued;
+use League\OAuth2\Server\Events\ClientAuthenticationFailed;
+use League\OAuth2\Server\Events\RefreshTokenIssued;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use OAuth2ServerExamples\Entities\UserEntity;
@@ -45,6 +49,19 @@ $app = new App([
             $privateKeyPath,
             'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'
         );
+
+        // Setup EventDispatcher
+        $dispatcher = new EventDispatcher();
+        $dispatcher->subscribeTo(ClientAuthenticationFailed::class, function (ClientAuthenticationFailed $event) {
+            // Handle client authentication failure
+        });
+        $dispatcher->subscribeTo(AccessTokenIssued::class, function (AccessTokenIssued $event) {
+            // Handle access token issue
+        });
+        $dispatcher->subscribeTo(RefreshTokenIssued::class, function (RefreshTokenIssued $event) {
+            // Handle refresh token issue
+        });
+        $server->useEventDispatcher($dispatcher);
 
         // Enable the authentication code grant on the server with a token TTL of 1 hour
         $server->enableGrantType(

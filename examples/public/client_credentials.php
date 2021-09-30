@@ -8,7 +8,9 @@
  */
 
 use Laminas\Diactoros\Stream;
+use League\Event\EventDispatcher;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Events\ClientAuthenticationFailed;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
@@ -41,6 +43,13 @@ $app = new App([
             $privateKey,
             'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'
         );
+
+        // Setup EventDispatcher
+        $dispatcher = new EventDispatcher();
+        $dispatcher->subscribeTo(ClientAuthenticationFailed::class, function (ClientAuthenticationFailed $event) {
+            // Handle client authentication failure
+        });
+        $server->useEventDispatcher($dispatcher);
 
         // Enable the client credentials grant on the server
         $server->enableGrantType(

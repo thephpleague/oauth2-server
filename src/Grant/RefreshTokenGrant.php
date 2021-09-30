@@ -13,11 +13,11 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use Exception;
+use League\OAuth2\Server\Events\AccessTokenIssued;
+use League\OAuth2\Server\Events\RefreshTokenClientFailed;
+use League\OAuth2\Server\Events\RefreshTokenIssued;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use League\OAuth2\Server\RequestAccessTokenEvent;
-use League\OAuth2\Server\RequestEvent;
-use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -71,7 +71,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $oldRefreshToken['user_id'], $scopes);
-        $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
+        $this->dispatchEvent(new AccessTokenIssued($accessToken, $request));
         $responseType->setAccessToken($accessToken);
 
         // Issue and persist new refresh token if given
@@ -79,7 +79,7 @@ class RefreshTokenGrant extends AbstractGrant
             $refreshToken = $this->issueRefreshToken($accessToken);
 
             if ($refreshToken !== null) {
-                $this->getEmitter()->emit(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
+                $this->dispatchEvent(new RefreshTokenIssued($refreshToken, $request));
                 $responseType->setRefreshToken($refreshToken);
             }
         }
@@ -111,7 +111,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         $refreshTokenData = \json_decode($refreshToken, true);
         if ($refreshTokenData['client_id'] !== $clientId) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_CLIENT_FAILED, $request));
+            $this->dispatchEvent(new RefreshTokenClientFailed($clientId, $refreshTokenData, $request));
             throw OAuthServerException::invalidRefreshToken('Token is not linked to client');
         }
 

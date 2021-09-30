@@ -13,8 +13,8 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use Defuse\Crypto\Key;
-use League\Event\EmitterAwareInterface;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Events\EventDispatcherAwareInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -25,7 +25,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Grant type interface.
  */
-interface GrantTypeInterface extends EmitterAwareInterface
+interface GrantTypeInterface extends EventDispatcherAwareInterface
 {
     /**
      * Set refresh token TTL.

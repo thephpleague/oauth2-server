@@ -7,7 +7,11 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+use League\Event\EventDispatcher;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Events\AccessTokenIssued;
+use League\OAuth2\Server\Events\RefreshTokenClientFailed;
+use League\OAuth2\Server\Events\RefreshTokenIssued;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
@@ -41,6 +45,19 @@ $app = new App([
             $privateKeyPath,
             'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen'
         );
+
+        // Setup EventDispatcher
+        $dispatcher = new EventDispatcher();
+        $dispatcher->subscribeTo(RefreshTokenClientFailed::class, function (RefreshTokenClientFailed $event) {
+            // Handle refresh token client failure
+        });
+        $dispatcher->subscribeTo(AccessTokenIssued::class, function (AccessTokenIssued $event) {
+            // Handle access token issue
+        });
+        $dispatcher->subscribeTo(RefreshTokenIssued::class, function (RefreshTokenIssued $event) {
+            // Handle refresh token issue
+        });
+        $server->useEventDispatcher($dispatcher);
 
         // Enable the refresh token grant on the server
         $grant = new RefreshTokenGrant($refreshTokenRepository);
