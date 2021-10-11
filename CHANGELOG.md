@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.3.3] - released 2021-10-11
+### Security
+- Removed the use of `LocalFileReference()` in lcobucci/jwt. Function deprecated as per [GHSA-7322-jrq4-x5hf](https://github.com/lcobucci/jwt/security/advisories/GHSA-7322-jrq4-x5hf) (PR #1249)
+
 ## [8.3.2] - released 2021-07-27
 ### Changed
 - Conditionally support the `StrictValidAt()` method in lcobucci/jwt so we can use version 4.1.x or greater of the library (PR #1236)
@@ -552,7 +556,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.2...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.3...HEAD
+[8.3.3]: https://github.com/thephpleague/oauth2-server/compare/8.3.2...8.3.3
 [8.3.2]: https://github.com/thephpleague/oauth2-server/compare/8.3.1...8.3.2
 [8.3.1]: https://github.com/thephpleague/oauth2-server/compare/8.3.0...8.3.1
 [8.3.0]: https://github.com/thephpleague/oauth2-server/compare/8.2.4...8.3.0
