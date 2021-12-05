@@ -23,6 +23,7 @@ The following RFCs are implemented:
 * [RFC6750 " The OAuth 2.0 Authorization Framework: Bearer Token Usage"](https://tools.ietf.org/html/rfc6750)
 * [RFC7519 "JSON Web Token (JWT)"](https://tools.ietf.org/html/rfc7519)
 * [RFC7636 "Proof Key for Code Exchange by OAuth Public Clients"](https://tools.ietf.org/html/rfc7636)
+* [RFC7662 "OAuth 2.0 Token Introspection"](https://tools.ietf.org/html/rfc7662)
 
 This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](https://twitter.com/alexbilbie).
 
