@@ -6,7 +6,7 @@ use Lcobucci\JWT\Token;
 use League\OAuth2\Server\ResponseTypes\BearerTokenIntrospectionResponse;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
+use Laminas\Diactoros\Response;
 
 class BearerTokenIntrospectionResponseTest extends TestCase
 {
@@ -19,23 +19,26 @@ class BearerTokenIntrospectionResponseTest extends TestCase
         $this->assertCorrectIntrospectionHeaders($response);
 
         $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents());
-        $this->assertAttributeEquals(false, 'active', $json);
+        $json = json_decode($response->getBody()->getContents(), true);
+        $this->assertEquals([
+            'active' => false
+        ], $json);
     }
 
     public function testValidIntrospectionResponse()
     {
         $responseType = $this->getMockBuilder(BearerTokenIntrospectionResponse::class)
-            ->setMethods(['getTokenFromRequest'])
+            ->onlyMethods([
+                'getTokenFromRequest',
+                'getClaimFromToken'
+            ])
             ->getMock();
 
         $tokenMock = $this->getMockBuilder(Token::class)
             ->getMock();
 
-        $tokenMock->method('getClaim')->willReturn('value');
-
-        $responseType->method('getTokenFromRequest')
-            ->willReturn($tokenMock);
+        $responseType->method('getTokenFromRequest')->willReturn($tokenMock);
+        $responseType->method('getClaimFromToken')->willReturn('value');
 
         $responseType->setValidity(true);
         $response = $responseType->generateHttpResponse(new Response());
@@ -44,30 +47,37 @@ class BearerTokenIntrospectionResponseTest extends TestCase
         $this->assertCorrectIntrospectionHeaders($response);
 
         $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents());
-        $this->assertAttributeEquals(true, 'active', $json);
-        $this->assertAttributeEquals('access_token', 'token_type', $json);
-        $this->assertAttributeEquals('value', 'scope', $json);
-        $this->assertAttributeEquals('value', 'client_id', $json);
-        $this->assertAttributeEquals('value', 'exp', $json);
-        $this->assertAttributeEquals('value', 'iat', $json);
-        $this->assertAttributeEquals('value', 'sub', $json);
-        $this->assertAttributeEquals('value', 'jti', $json);
+        $json = json_decode($response->getBody()->getContents(), true);
+        $this->assertEquals([
+            'active' => true,
+            'token_type' => 'access_token',
+            'scope' => 'value',
+            'client_id' => 'value',
+            'exp' => 'value',
+            'iat' => 'value',
+            'sub' => 'value',
+            'jti' => 'value',
+        ], $json);
     }
 
     public function testValidIntrospectionResponseWithExtraParams()
     {
         $responseType = $this->getMockBuilder(BearerTokenIntrospectionResponse::class)
-            ->setMethods(['getTokenFromRequest', 'getExtraParams'])
+            ->onlyMethods([
+                'getTokenFromRequest',
+                'getClaimFromToken',
+                'getExtraParams'
+            ])
             ->getMock();
 
         $tokenMock = $this->getMockBuilder(Token::class)
             ->getMock();
 
-        $tokenMock->method('getClaim')->willReturn('value');
-
         $responseType->method('getTokenFromRequest')
             ->willReturn($tokenMock);
+
+        $responseType->method('getClaimFromToken')
+            ->willReturn('value');
 
         $responseType->method('getExtraParams')
             ->willReturn(['extra' => 'param']);
@@ -79,16 +89,18 @@ class BearerTokenIntrospectionResponseTest extends TestCase
         $this->assertCorrectIntrospectionHeaders($response);
 
         $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents());
-        $this->assertAttributeEquals(true, 'active', $json);
-        $this->assertAttributeEquals('access_token', 'token_type', $json);
-        $this->assertAttributeEquals('value', 'scope', $json);
-        $this->assertAttributeEquals('value', 'client_id', $json);
-        $this->assertAttributeEquals('value', 'exp', $json);
-        $this->assertAttributeEquals('value', 'iat', $json);
-        $this->assertAttributeEquals('value', 'sub', $json);
-        $this->assertAttributeEquals('value', 'jti', $json);
-        $this->assertAttributeEquals('param', 'extra', $json);
+        $json = json_decode($response->getBody()->getContents(), true);
+        $this->assertEquals([
+            'active' => true,
+            'token_type' => 'access_token',
+            'scope' => 'value',
+            'client_id' => 'value',
+            'iat' => 'value',
+            'exp' => 'value',
+            'sub' => 'value',
+            'jti' => 'value',
+            'extra' => 'param'
+        ], $json);
     }
 
     private function assertCorrectIntrospectionHeaders(ResponseInterface $response)

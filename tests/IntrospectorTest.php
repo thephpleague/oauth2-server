@@ -13,7 +13,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class IntrospectorTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         // Make sure the keys have the correct permissions.
         chmod(__DIR__ . '/Stubs/private.key', 0600);

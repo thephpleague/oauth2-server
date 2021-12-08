@@ -88,7 +88,7 @@ class Introspector
     {
         if ($this->introspectionValidator instanceof IntrospectionValidatorInterface === false) {
             $this->introspectionValidator = new BearerTokenValidator($this->accessTokenRepository);
-            $this->introspectionValidator->setPrivateKey($this->privateKey);
+            $this->introspectionValidator->setPublicKey($this->privateKey);
         }
 
         return $this->introspectionValidator;

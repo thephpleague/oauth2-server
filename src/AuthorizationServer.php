@@ -234,11 +234,11 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * Set the introspection response type.
      *
-     * @param IntrospectionResponse $reponseType
+     * @param IntrospectionResponse $responseType
      */
-    public function setIntrospectionReponseType(IntrospectionResponse $reponseType)
+    public function setIntrospectionResponseType(IntrospectionResponse $responseType)
     {
-        $this->introspectionResponseType = $reponseType;
+        $this->introspectionResponseType = $responseType;
     }
 
     /**
@@ -274,6 +274,8 @@ class AuthorizationServer implements EmitterAwareInterface
     {
         if ($this->introspectionValidator instanceof IntrospectionValidatorInterface === false) {
             $this->introspectionValidator = new BearerTokenValidator($this->accessTokenRepository);
+
+            $this->introspectionValidator->setPublicKey($this->publicKey);
         }
 
         return $this->introspectionValidator;

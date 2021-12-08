@@ -2,11 +2,35 @@
 
 namespace League\OAuth2\Server\ResponseTypes;
 
-use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
+use Lcobucci\JWT\UnencryptedToken;
 
 class BearerTokenIntrospectionResponse extends IntrospectionResponse
 {
+    /**
+     * @var Configuration|null
+     */
+    private $jwtConfiguration;
+
+    public function __construct()
+    {
+        $this->initJwtConfiguration();
+    }
+
+
+    /**
+     * Initialise the JWT configuration.
+     */
+    private function initJwtConfiguration()
+    {
+        $this->jwtConfiguration = Configuration::forSymmetricSigner(
+            new Sha256(), InMemory::plainText('')
+        );
+    }
+
     /**
      * Add the token data to the response.
      *
@@ -19,12 +43,12 @@ class BearerTokenIntrospectionResponse extends IntrospectionResponse
         $responseParams = [
             'active' => true,
             'token_type' => 'access_token',
-            'scope' => $token->getClaim('scopes', ''),
-            'client_id' => $token->getClaim('aud'),
-            'exp' => $token->getClaim('exp'),
-            'iat' => $token->getClaim('iat'),
-            'sub' => $token->getClaim('sub'),
-            'jti' => $token->getClaim('jti'),
+            'scope' => $this->getClaimFromToken($token, 'scopes', ''),
+            'client_id' => $this->getClaimFromToken($token, 'aud'),
+            'exp' => $this->getClaimFromToken($token, 'exp'),
+            'iat' => $this->getClaimFromToken($token, 'iat'),
+            'sub' => $this->getClaimFromToken($token, 'sub'),
+            'jti' => $this->getClaimFromToken($token, 'jti'),
         ];
 
         return array_merge($this->getExtraParams(), $responseParams);
@@ -39,7 +63,21 @@ class BearerTokenIntrospectionResponse extends IntrospectionResponse
     {
         $jwt = $this->request->getParsedBody()['token'] ?? null;
 
-        return (new Parser())
+        return $this->jwtConfiguration->parser()
             ->parse($jwt);
+    }
+
+    /**
+     * Gets single claim from the JWT token.
+     *
+     * @param UnencryptedToken $token
+     * @param string $claim
+     * @param mixed|null $default
+     *
+     * @return mixed
+     */
+    protected function getClaimFromToken(UnencryptedToken $token, string $claim, $default = null)
+    {
+        return $token->claims()->get($claim, $default);
     }
 }

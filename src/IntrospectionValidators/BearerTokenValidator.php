@@ -2,12 +2,16 @@
 
 namespace League\OAuth2\Server\IntrospectionValidators;
 
+use DateTimeZone;
 use InvalidArgumentException;
-use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Signer\Keychain;
+use Lcobucci\Clock\SystemClock;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
-use Lcobucci\JWT\ValidationData;
+use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,9 +24,14 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
     private $accessTokenRepository;
 
     /**
-     * @var \League\OAuth2\Server\CryptKey
+     * @var CryptKey
      */
-    protected $privateKey;
+    protected $publicKey;
+
+    /**
+     * @var Configuration
+     */
+    protected $jwtConfiguration;
 
     /**
      * @param AccessTokenRepositoryInterface $accessTokenRepository
@@ -35,11 +44,34 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
     /**
      * Set the private key.
      *
-     * @param \League\OAuth2\Server\CryptKey $key
+     * @param CryptKey $key
      */
-    public function setPrivateKey(CryptKey $key)
+    public function setPublicKey(CryptKey $key)
     {
-        $this->privateKey = $key;
+        $this->publicKey = $key;
+
+        $this->initJwtConfiguration();
+    }
+
+    /**
+     * Initialise the JWT configuration.
+     */
+    private function initJwtConfiguration()
+    {
+        $this->jwtConfiguration = Configuration::forSymmetricSigner(
+            new Sha256(),
+            InMemory::plainText('')
+        );
+
+        $this->jwtConfiguration->setValidationConstraints(
+            \class_exists(StrictValidAt::class)
+                ? new StrictValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get())))
+                : new LooseValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
+            new SignedWith(
+                new Sha256(),
+                InMemory::plainText($this->publicKey->getKeyContents(), $this->publicKey->getPassPhrase() ?? '')
+            )
+        );
     }
 
     /**
@@ -54,9 +86,8 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
         }
 
         if (
-            $this->isTokenRevoked($token) ||
-            $this->isTokenExpired($token) ||
-            $this->isTokenUnverified($token)
+            !$this->isTokenValid($token) ||
+            $this->isTokenRevoked($token)
         ) {
             return false;
         }
@@ -75,41 +106,8 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
     {
         $jwt = $request->getParsedBody()['token'] ?? null;
 
-        return (new Parser())
+        return $this->jwtConfiguration->parser()
             ->parse($jwt);
-    }
-
-    /**
-     * Checks whether the token is unverified.
-     *
-     * @param Token $token
-     *
-     * @return bool
-     */
-    private function isTokenUnverified(Token $token)
-    {
-        $keychain = new Keychain();
-
-        $key = $keychain->getPrivateKey(
-            $this->privateKey->getKeyPath(),
-            $this->privateKey->getPassPhrase()
-        );
-
-        return $token->verify(new Sha256(), $key->getContent()) === false;
-    }
-
-    /**
-     * Ensure access token hasn't expired.
-     *
-     * @param Token $token
-     *
-     * @return bool
-     */
-    private function isTokenExpired(Token $token)
-    {
-        $data = new ValidationData(time());
-
-        return !$token->validate($data);
     }
 
     /**
@@ -121,6 +119,20 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
      */
     private function isTokenRevoked(Token $token)
     {
-        return $this->accessTokenRepository->isAccessTokenRevoked($token->getClaim('jti'));
+        return $this->accessTokenRepository->isAccessTokenRevoked($token->claims()->get('jti'));
+    }
+
+    /**
+     * Check if the given token is valid
+     *
+     * @param Token $token
+     *
+     * @return bool
+     */
+    private function isTokenValid(Token $token)
+    {
+        $constraints = $this->jwtConfiguration->validationConstraints();
+
+        return $this->jwtConfiguration->validator()->validate($token, ...$constraints);
     }
 }
