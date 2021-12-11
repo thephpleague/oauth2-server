@@ -1,11 +1,11 @@
 <?php
 
-namespace League\OAuth2\Server\ResponseTypes;
+namespace League\OAuth2\Server\ResponseTypes\Introspection;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class IntrospectionResponse extends AbstractResponseType
+abstract class AbstractResponseType implements ResponseTypeInterface
 {
     /**
      * @var bool
@@ -42,7 +42,7 @@ class IntrospectionResponse extends AbstractResponseType
      *
      * @return array
      */
-    protected function validIntrospectionResponse()
+    protected function validIntrospectionResponse(): array
     {
         $responseParams = [
             'active' => true,
@@ -56,7 +56,7 @@ class IntrospectionResponse extends AbstractResponseType
      *
      * @return array
      */
-    protected function invalidIntrospectionResponse()
+    protected function invalidIntrospectionResponse(): array
     {
         return [
             'active' => false,
@@ -68,7 +68,7 @@ class IntrospectionResponse extends AbstractResponseType
      *
      * @return array
      */
-    public function getIntrospectionResponseParams()
+    public function getIntrospectionResponseParams(): array
     {
         return $this->isValid() ?
             $this->validIntrospectionResponse() :
@@ -80,7 +80,7 @@ class IntrospectionResponse extends AbstractResponseType
      *
      * @return bool
      */
-    protected function isValid()
+    protected function isValid(): bool
     {
         return $this->valid === true;
     }
@@ -92,7 +92,7 @@ class IntrospectionResponse extends AbstractResponseType
      *
      * @return ResponseInterface
      */
-    public function generateHttpResponse(ResponseInterface $response)
+    public function generateHttpResponse(ResponseInterface $response): ResponseInterface
     {
         $responseParams = $this->getIntrospectionResponseParams();
 
@@ -109,12 +109,12 @@ class IntrospectionResponse extends AbstractResponseType
 
     /**
      * Add custom fields to your Introspection response here, then set your introspection
-     * reponse in AuthorizationServer::setIntrospectionResponseType() to pull in your version of
+     * response in AuthorizationServer::setIntrospectionResponseType() to pull in your version of
      * this class rather than the default.
      *
      * @return array
      */
-    protected function getExtraParams()
+    protected function getExtraParams(): array
     {
         return [];
     }

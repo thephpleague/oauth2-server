@@ -2,17 +2,18 @@
 
 namespace LeagueTests\ResponseTypes;
 
+use Laminas\Diactoros\Response;
 use Lcobucci\JWT\Token;
-use League\OAuth2\Server\ResponseTypes\BearerTokenIntrospectionResponse;
+use Lcobucci\JWT\UnencryptedToken;
+use League\OAuth2\Server\ResponseTypes\Introspection\BearerTokenResponse;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Laminas\Diactoros\Response;
 
 class BearerTokenIntrospectionResponseTest extends TestCase
 {
     public function testInvalidIntrospectionResponse()
     {
-        $responseType = new BearerTokenIntrospectionResponse();
+        $responseType = new BearerTokenResponse();
         $response = $responseType->generateHttpResponse(new Response());
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -27,14 +28,14 @@ class BearerTokenIntrospectionResponseTest extends TestCase
 
     public function testValidIntrospectionResponse()
     {
-        $responseType = $this->getMockBuilder(BearerTokenIntrospectionResponse::class)
+        $responseType = $this->getMockBuilder(BearerTokenResponse::class)
             ->onlyMethods([
                 'getTokenFromRequest',
                 'getClaimFromToken'
             ])
             ->getMock();
 
-        $tokenMock = $this->getMockBuilder(Token::class)
+        $tokenMock = $this->getMockBuilder(UnencryptedToken::class)
             ->getMock();
 
         $responseType->method('getTokenFromRequest')->willReturn($tokenMock);
@@ -62,7 +63,7 @@ class BearerTokenIntrospectionResponseTest extends TestCase
 
     public function testValidIntrospectionResponseWithExtraParams()
     {
-        $responseType = $this->getMockBuilder(BearerTokenIntrospectionResponse::class)
+        $responseType = $this->getMockBuilder(BearerTokenResponse::class)
             ->onlyMethods([
                 'getTokenFromRequest',
                 'getClaimFromToken',
@@ -70,7 +71,7 @@ class BearerTokenIntrospectionResponseTest extends TestCase
             ])
             ->getMock();
 
-        $tokenMock = $this->getMockBuilder(Token::class)
+        $tokenMock = $this->getMockBuilder(UnencryptedToken::class)
             ->getMock();
 
         $responseType->method('getTokenFromRequest')

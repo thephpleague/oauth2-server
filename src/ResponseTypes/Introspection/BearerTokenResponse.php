@@ -1,6 +1,8 @@
 <?php
 
-namespace League\OAuth2\Server\ResponseTypes;
+declare(strict_types=1);
+
+namespace League\OAuth2\Server\ResponseTypes\Introspection;
 
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
@@ -8,7 +10,7 @@ use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\UnencryptedToken;
 
-class BearerTokenIntrospectionResponse extends IntrospectionResponse
+class BearerTokenResponse extends AbstractResponseType
 {
     /**
      * @var Configuration|null
@@ -26,9 +28,7 @@ class BearerTokenIntrospectionResponse extends IntrospectionResponse
      */
     private function initJwtConfiguration()
     {
-        $this->jwtConfiguration = Configuration::forSymmetricSigner(
-            new Sha256(), InMemory::plainText('')
-        );
+        $this->jwtConfiguration = Configuration::forSymmetricSigner(new Sha256(), InMemory::empty());
     }
 
     /**
@@ -36,7 +36,7 @@ class BearerTokenIntrospectionResponse extends IntrospectionResponse
      *
      * @return array
      */
-    protected function validIntrospectionResponse()
+    protected function validIntrospectionResponse(): array
     {
         $token = $this->getTokenFromRequest();
 
@@ -57,26 +57,26 @@ class BearerTokenIntrospectionResponse extends IntrospectionResponse
     /**
      * Gets the token from the request body.
      *
-     * @return Token
+     * @return UnencryptedToken|Token
      */
     protected function getTokenFromRequest()
     {
-        $jwt = $this->request->getParsedBody()['token'] ?? null;
+        $jwt = $this->request->getParsedBody()['token'] ?? '';
 
         return $this->jwtConfiguration->parser()
             ->parse($jwt);
     }
 
     /**
-     * Gets single claim from the JWT token.
+     * Gets a single claim from the JWT token.
      *
-     * @param UnencryptedToken $token
+     * @param UnencryptedToken|Token\Plain $token
      * @param string $claim
      * @param mixed|null $default
      *
      * @return mixed
      */
-    protected function getClaimFromToken(UnencryptedToken $token, string $claim, $default = null)
+    protected function getClaimFromToken($token, string $claim, $default = null)
     {
         return $token->claims()->get($claim, $default);
     }

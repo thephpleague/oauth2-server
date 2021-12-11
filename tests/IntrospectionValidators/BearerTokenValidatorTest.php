@@ -7,7 +7,9 @@ use DateTimeImmutable;
 use Laminas\Diactoros\ServerRequest;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\IntrospectionValidators\BearerTokenValidator;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use PHPUnit\Framework\TestCase;
@@ -17,11 +19,32 @@ use SebastianBergmann\CodeCoverage\InvalidArgumentException;
 
 class BearerTokenValidatorTest extends TestCase
 {
+    public function testThrowExceptionWhenRequestMethodIsNotPost()
+    {
+        $this->expectException(OAuthServerException::class);
+
+        $validator = $this->getMockBuilder(BearerTokenValidator::class)
+            ->setMethodsExcept([
+                'validateIntrospection'
+            ])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
+
+        $requestMock->method('getMethod')->willReturn('GET');
+
+        $validator->validateIntrospection($requestMock);
+    }
+
     public function testReturnsFalseWhenNoTokenPassed()
     {
         $validator = $this->getMockBuilder(BearerTokenValidator::class)
+            ->setMethodsExcept([
+                'validateIntrospection'
+            ])
             ->disableOriginalConstructor()
-            ->setMethods(['getTokenFromRequest'])
             ->getMock();
 
         $validator->method('getTokenFromRequest')->will(
@@ -30,6 +53,8 @@ class BearerTokenValidatorTest extends TestCase
 
         $requestMock = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
+
+        $requestMock->method('getMethod')->willReturn('POST');
 
         $this->assertFalse($validator->validateIntrospection($requestMock));
     }
@@ -59,9 +84,15 @@ class BearerTokenValidatorTest extends TestCase
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest())->withParsedBody(['token' => $validJwt->toString()]);
+        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
 
-        $this->assertFalse($bearerTokenValidator->validateIntrospection($request));
+        $requestMock->method('getMethod')->willReturn('POST');
+        $requestMock->method('getParsedBody')->willReturn([
+            'token' => $validJwt->toString()
+        ]);
+
+        $this->assertFalse($bearerTokenValidator->validateIntrospection($requestMock));
     }
 
     public function testReturnsFalseWhenTokenIsExpired()
@@ -86,12 +117,18 @@ class BearerTokenValidatorTest extends TestCase
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest())->withParsedBody(['token' => $validJwt->toString()]);
+        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
 
-        $this->assertFalse($bearerTokenValidator->validateIntrospection($request));
+        $requestMock->method('getMethod')->willReturn('POST');
+        $requestMock->method('getParsedBody')->willReturn([
+            'token' => $validJwt->toString()
+        ]);
+
+        $this->assertFalse($bearerTokenValidator->validateIntrospection($requestMock));
     }
 
-    public function testReturnsFalseWhenTokenIsInvalid()
+    public function testReturnsFalseWhenTokenIsIssuedByDifferentPrivateKey()
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)
             ->getMock();
@@ -103,7 +140,7 @@ class BearerTokenValidatorTest extends TestCase
         $jwtConfiguration = $bearerTokenValidatorReflection->getProperty('jwtConfiguration');
         $jwtConfiguration->setAccessible(true);
 
-        $validJwt = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
+        $invalidJwt = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
             ->permittedFor('client-id')
             ->identifiedBy('token-id')
             ->issuedAt(new DateTimeImmutable())
@@ -113,15 +150,24 @@ class BearerTokenValidatorTest extends TestCase
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key.crlf'));
 
-        $request = (new ServerRequest())->withParsedBody(['token' => $validJwt->toString()]);
+        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
 
-        $this->assertFalse($bearerTokenValidator->validateIntrospection($request));
+        $requestMock->method('getMethod')->willReturn('POST');
+        $requestMock->method('getParsedBody')->willReturn([
+            'token' => $invalidJwt->toString()
+        ]);
+
+        $this->assertFalse($bearerTokenValidator->validateIntrospection($requestMock));
     }
 
     public function testReturnsTrueWhenTokenIsValid()
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)
             ->getMock();
+
+        $accessTokenRepositoryMock->method('isAccessTokenRevoked')
+            ->willReturn(false);
 
         $bearerTokenValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $bearerTokenValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
@@ -140,8 +186,14 @@ class BearerTokenValidatorTest extends TestCase
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest())->withParsedBody(['token' => $validJwt->toString()]);
+        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
 
-        $this->assertTrue($bearerTokenValidator->validateIntrospection($request));
+        $requestMock->method('getMethod')->willReturn('POST');
+        $requestMock->method('getParsedBody')->willReturn([
+            'token' => $validJwt->toString()
+        ]);
+
+        $this->assertTrue($bearerTokenValidator->validateIntrospection($requestMock));
     }
 }

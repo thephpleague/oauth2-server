@@ -12,7 +12,9 @@ use Lcobucci\JWT\Token;
 use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
+use Lcobucci\JWT\Validation\Constraint\ValidAt;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -56,17 +58,14 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
     /**
      * Initialise the JWT configuration.
      */
-    private function initJwtConfiguration()
+    private function initJwtConfiguration(): void
     {
-        $this->jwtConfiguration = Configuration::forSymmetricSigner(
-            new Sha256(),
-            InMemory::plainText('')
-        );
+        $this->jwtConfiguration = Configuration::forSymmetricSigner(new Sha256(), InMemory::empty());
 
         $this->jwtConfiguration->setValidationConstraints(
             \class_exists(StrictValidAt::class)
                 ? new StrictValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get())))
-                : new LooseValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
+                : new ValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
             new SignedWith(
                 new Sha256(),
                 InMemory::plainText($this->publicKey->getKeyContents(), $this->publicKey->getPassPhrase() ?? '')
@@ -77,8 +76,10 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function validateIntrospection(ServerRequestInterface $request)
+    public function validateIntrospection(ServerRequestInterface $request): bool
     {
+        $this->validateIntrospectionRequest($request);
+
         try {
             $token = $this->getTokenFromRequest($request);
         } catch (InvalidArgumentException $e) {
@@ -102,12 +103,26 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
      *
      * @return Token
      */
-    public function getTokenFromRequest(ServerRequestInterface $request)
+    public function getTokenFromRequest(ServerRequestInterface $request): Token
     {
-        $jwt = $request->getParsedBody()['token'] ?? null;
+        $jwt = $request->getParsedBody()['token'] ?? '';
 
         return $this->jwtConfiguration->parser()
             ->parse($jwt);
+    }
+
+    /**
+     * Validate the introspection request.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @throws OAuthServerException
+     */
+    private function validateIntrospectionRequest(ServerRequestInterface $request)
+    {
+        if ($request->getMethod() !== 'POST') {
+            throw OAuthServerException::accessDenied('Invalid request method');
+        }
     }
 
     /**
@@ -117,7 +132,7 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
      *
      * @return bool
      */
-    private function isTokenRevoked(Token $token)
+    private function isTokenRevoked(Token $token): bool
     {
         return $this->accessTokenRepository->isAccessTokenRevoked($token->claims()->get('jti'));
     }
@@ -129,7 +144,7 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
      *
      * @return bool
      */
-    private function isTokenValid(Token $token)
+    private function isTokenValid(Token $token): bool
     {
         $constraints = $this->jwtConfiguration->validationConstraints();
 
