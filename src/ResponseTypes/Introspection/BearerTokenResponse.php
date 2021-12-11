@@ -26,7 +26,7 @@ class BearerTokenResponse extends AbstractResponseType
     /**
      * Initialise the JWT configuration.
      */
-    private function initJwtConfiguration()
+    private function initJwtConfiguration(): void
     {
         $this->jwtConfiguration = Configuration::forSymmetricSigner(new Sha256(), InMemory::empty());
     }

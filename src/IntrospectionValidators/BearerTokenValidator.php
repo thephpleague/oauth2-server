@@ -48,7 +48,7 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
      *
      * @param CryptKey $key
      */
-    public function setPublicKey(CryptKey $key)
+    public function setPublicKey(CryptKey $key): void
     {
         $this->publicKey = $key;
 
@@ -118,7 +118,7 @@ class BearerTokenValidator implements IntrospectionValidatorInterface
      *
      * @throws OAuthServerException
      */
-    private function validateIntrospectionRequest(ServerRequestInterface $request)
+    private function validateIntrospectionRequest(ServerRequestInterface $request): void
     {
         if ($request->getMethod() !== 'POST') {
             throw OAuthServerException::accessDenied('Invalid request method');

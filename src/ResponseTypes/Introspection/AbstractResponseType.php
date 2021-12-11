@@ -22,7 +22,7 @@ abstract class AbstractResponseType implements ResponseTypeInterface
      *
      * @param bool $bool
      */
-    public function setValidity(bool $bool)
+    public function setValidity(bool $bool): void
     {
         $this->valid = $bool;
     }
@@ -32,7 +32,7 @@ abstract class AbstractResponseType implements ResponseTypeInterface
      *
      * @param ServerRequestInterface $request
      */
-    public function setRequest(ServerRequestInterface $request)
+    public function setRequest(ServerRequestInterface $request): void
     {
         $this->request = $request;
     }
@@ -108,8 +108,8 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     }
 
     /**
-     * Add custom fields to your Introspection response here, then set your introspection
-     * response in AuthorizationServer::setIntrospectionResponseType() to pull in your version of
+     * Add custom fields to your Introspection response here, then add your introspection
+     * response to IntrospectionServer constructor to pull in your version of
      * this class rather than the default.
      *
      * @return array
