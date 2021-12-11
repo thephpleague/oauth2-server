@@ -48,7 +48,7 @@ abstract class AbstractResponseType implements ResponseTypeInterface
             'active' => true,
         ];
 
-        return array_merge($this->getExtraParams(), $responseParams);
+        return \array_merge($this->getExtraParams(), $responseParams);
     }
 
     /**
@@ -102,7 +102,7 @@ abstract class AbstractResponseType implements ResponseTypeInterface
                 ->withHeader('cache-control', 'no-store')
                 ->withHeader('content-type', 'application/json; charset=UTF-8');
 
-        $response->getBody()->write(json_encode($responseParams));
+        $response->getBody()->write(\json_encode($responseParams));
 
         return $response;
     }

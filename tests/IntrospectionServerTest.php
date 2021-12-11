@@ -4,11 +4,8 @@ namespace LeagueTests;
 
 use DateInterval;
 use DateTimeImmutable;
-use Defuse\Crypto\Key;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
-use Laminas\Diactoros\Stream;
-use Laminas\Diactoros\StreamFactory;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
@@ -18,19 +15,17 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\IntrospectionServer;
 use League\OAuth2\Server\IntrospectionValidators\IntrospectionValidatorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\Introspection\AbstractResponseType;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamInterface;
 
 class IntrospectionServerTest extends TestCase
 {
     public function setUp(): void
     {
         // Make sure the keys have the correct permissions.
-        chmod(__DIR__ . '/Stubs/public.key', 0600);
+        \chmod(__DIR__ . '/Stubs/public.key', 0600);
     }
 
     public function testIfGetRequestThrowsInvalidMethodException()
@@ -112,11 +107,11 @@ class IntrospectionServerTest extends TestCase
         $response = $introspectionServer->respondToIntrospectionRequest($request, new Response);
         $response->getBody()->rewind();
 
-        $responseData = json_decode($response->getBody()->getContents(), true);
+        $responseData = \json_decode($response->getBody()->getContents(), true);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals([
-            'active' => false
+            'active' => false,
         ], $responseData);
     }
 
@@ -153,26 +148,26 @@ class IntrospectionServerTest extends TestCase
 
         $response = $introspectionServer->respondToIntrospectionRequest($requestMock, new Response);
         $response->getBody()->rewind();
-        $responseData = json_decode($response->getBody()->getContents(), true);
+        $responseData = \json_decode($response->getBody()->getContents(), true);
 
         $this->assertEquals([
             'active' => true,
             'token_type' => 'access_token',
             'scope' => [
-                'a', 'b', 'c'
+                'a', 'b', 'c',
             ],
             'client_id' => [
-                'clientName'
+                'clientName',
             ],
             'exp' => [
                 'date' => '2017-01-01 00:00:00.000000',
                 'timezone_type' => 1,
-                'timezone' => '+00:00'
+                'timezone' => '+00:00',
             ],
             'iat' => [
                 'date' => '2016-01-01 00:00:00.000000',
                 'timezone_type' => 1,
-                'timezone' => '+00:00'
+                'timezone' => '+00:00',
             ],
             'sub' => '123',
             'jti' => 'test',

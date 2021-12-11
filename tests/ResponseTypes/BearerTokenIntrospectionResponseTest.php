@@ -3,7 +3,6 @@
 namespace LeagueTests\ResponseTypes;
 
 use Laminas\Diactoros\Response;
-use Lcobucci\JWT\Token;
 use Lcobucci\JWT\UnencryptedToken;
 use League\OAuth2\Server\ResponseTypes\Introspection\BearerTokenResponse;
 use PHPUnit\Framework\TestCase;
@@ -20,9 +19,9 @@ class BearerTokenIntrospectionResponseTest extends TestCase
         $this->assertCorrectIntrospectionHeaders($response);
 
         $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents(), true);
+        $json = \json_decode($response->getBody()->getContents(), true);
         $this->assertEquals([
-            'active' => false
+            'active' => false,
         ], $json);
     }
 
@@ -31,7 +30,7 @@ class BearerTokenIntrospectionResponseTest extends TestCase
         $responseType = $this->getMockBuilder(BearerTokenResponse::class)
             ->onlyMethods([
                 'getTokenFromRequest',
-                'getClaimFromToken'
+                'getClaimFromToken',
             ])
             ->getMock();
 
@@ -48,7 +47,7 @@ class BearerTokenIntrospectionResponseTest extends TestCase
         $this->assertCorrectIntrospectionHeaders($response);
 
         $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents(), true);
+        $json = \json_decode($response->getBody()->getContents(), true);
         $this->assertEquals([
             'active' => true,
             'token_type' => 'access_token',
@@ -67,7 +66,7 @@ class BearerTokenIntrospectionResponseTest extends TestCase
             ->onlyMethods([
                 'getTokenFromRequest',
                 'getClaimFromToken',
-                'getExtraParams'
+                'getExtraParams',
             ])
             ->getMock();
 
@@ -90,7 +89,7 @@ class BearerTokenIntrospectionResponseTest extends TestCase
         $this->assertCorrectIntrospectionHeaders($response);
 
         $response->getBody()->rewind();
-        $json = json_decode($response->getBody()->getContents(), true);
+        $json = \json_decode($response->getBody()->getContents(), true);
         $this->assertEquals([
             'active' => true,
             'token_type' => 'access_token',
@@ -100,7 +99,7 @@ class BearerTokenIntrospectionResponseTest extends TestCase
             'exp' => 'value',
             'sub' => 'value',
             'jti' => 'value',
-            'extra' => 'param'
+            'extra' => 'param',
         ], $json);
     }
 

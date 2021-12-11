@@ -9,8 +9,8 @@ use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator as Authori
 use League\OAuth2\Server\IntrospectionValidators\BearerTokenValidator as IntrospectionBearerTokenValidator;
 use League\OAuth2\Server\IntrospectionValidators\IntrospectionValidatorInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\Introspection\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\Introspection\AbstractResponseType;
+use League\OAuth2\Server\ResponseTypes\Introspection\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\Introspection\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,11 +43,11 @@ class IntrospectionServer
     protected $introspectionValidator;
 
     public function __construct(
-        AccessTokenRepositoryInterface  $accessTokenRepository,
+        AccessTokenRepositoryInterface $accessTokenRepository,
         $publicKey,
         IntrospectionValidatorInterface $introspectionValidator = null,
         AuthorizationValidatorInterface $authorizationValidator = null,
-        ResponseTypeInterface           $responseType = null
+        ResponseTypeInterface $responseType = null
     ) {
         $this->accessTokenRepository = $accessTokenRepository;
 
@@ -102,7 +102,7 @@ class IntrospectionServer
      * Return an introspection response.
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
+     * @param ResponseInterface      $response
      *
      * @return ResponseInterface
      *

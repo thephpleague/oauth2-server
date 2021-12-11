@@ -4,10 +4,8 @@ namespace LeagueTests\IntrospectionValidators;
 
 use DateInterval;
 use DateTimeImmutable;
-use Laminas\Diactoros\ServerRequest;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\IntrospectionValidators\BearerTokenValidator;
@@ -25,7 +23,7 @@ class BearerTokenValidatorTest extends TestCase
 
         $validator = $this->getMockBuilder(BearerTokenValidator::class)
             ->setMethodsExcept([
-                'validateIntrospection'
+                'validateIntrospection',
             ])
             ->disableOriginalConstructor()
             ->getMock();
@@ -42,7 +40,7 @@ class BearerTokenValidatorTest extends TestCase
     {
         $validator = $this->getMockBuilder(BearerTokenValidator::class)
             ->setMethodsExcept([
-                'validateIntrospection'
+                'validateIntrospection',
             ])
             ->disableOriginalConstructor()
             ->getMock();
@@ -89,7 +87,7 @@ class BearerTokenValidatorTest extends TestCase
 
         $requestMock->method('getMethod')->willReturn('POST');
         $requestMock->method('getParsedBody')->willReturn([
-            'token' => $validJwt->toString()
+            'token' => $validJwt->toString(),
         ]);
 
         $this->assertFalse($bearerTokenValidator->validateIntrospection($requestMock));
@@ -122,7 +120,7 @@ class BearerTokenValidatorTest extends TestCase
 
         $requestMock->method('getMethod')->willReturn('POST');
         $requestMock->method('getParsedBody')->willReturn([
-            'token' => $validJwt->toString()
+            'token' => $validJwt->toString(),
         ]);
 
         $this->assertFalse($bearerTokenValidator->validateIntrospection($requestMock));
@@ -155,7 +153,7 @@ class BearerTokenValidatorTest extends TestCase
 
         $requestMock->method('getMethod')->willReturn('POST');
         $requestMock->method('getParsedBody')->willReturn([
-            'token' => $invalidJwt->toString()
+            'token' => $invalidJwt->toString(),
         ]);
 
         $this->assertFalse($bearerTokenValidator->validateIntrospection($requestMock));
@@ -191,7 +189,7 @@ class BearerTokenValidatorTest extends TestCase
 
         $requestMock->method('getMethod')->willReturn('POST');
         $requestMock->method('getParsedBody')->willReturn([
-            'token' => $validJwt->toString()
+            'token' => $validJwt->toString(),
         ]);
 
         $this->assertTrue($bearerTokenValidator->validateIntrospection($requestMock));

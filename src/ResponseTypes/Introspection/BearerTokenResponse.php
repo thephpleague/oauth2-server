@@ -22,7 +22,6 @@ class BearerTokenResponse extends AbstractResponseType
         $this->initJwtConfiguration();
     }
 
-
     /**
      * Initialise the JWT configuration.
      */
@@ -51,7 +50,7 @@ class BearerTokenResponse extends AbstractResponseType
             'jti' => $this->getClaimFromToken($token, 'jti'),
         ];
 
-        return array_merge($this->getExtraParams(), $responseParams);
+        return \array_merge($this->getExtraParams(), $responseParams);
     }
 
     /**
@@ -71,8 +70,8 @@ class BearerTokenResponse extends AbstractResponseType
      * Gets a single claim from the JWT token.
      *
      * @param UnencryptedToken|Token\Plain $token
-     * @param string $claim
-     * @param mixed|null $default
+     * @param string                       $claim
+     * @param mixed|null                   $default
      *
      * @return mixed
      */
