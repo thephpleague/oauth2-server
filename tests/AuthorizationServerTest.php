@@ -21,11 +21,13 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\GrantType;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class AuthorizationServerTest extends TestCase
 {
@@ -37,6 +39,23 @@ class AuthorizationServerTest extends TestCase
         \chmod(__DIR__ . '/Stubs/private.key', 0600);
         \chmod(__DIR__ . '/Stubs/public.key', 0600);
         \chmod(__DIR__ . '/Stubs/private.key.crlf', 0600);
+    }
+
+    public function testGrantTypeGetsEnabled()
+    {
+        $server = new AuthorizationServer(
+            $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
+            'file://' . __DIR__ . '/Stubs/private.key',
+            \base64_encode(\random_bytes(36)),
+            new StubResponseType()
+        );
+
+        $server->enableGrantType(new GrantType(), new DateInterval('PT1M'));
+
+        $authRequest = $server->validateAuthorizationRequest($this->createMock(ServerRequestInterface::class));
+        $this->assertSame(GrantType::class, $authRequest->getGrantTypeId());
     }
 
     public function testRespondToRequestInvalidGrantType()
