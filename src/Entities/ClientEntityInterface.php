@@ -9,6 +9,9 @@
 
 namespace League\OAuth2\Server\Entities;
 
+use DateInterval;
+use League\OAuth2\Server\Grant\GrantTypeInterface;
+
 interface ClientEntityInterface
 {
     /**
@@ -40,4 +43,37 @@ interface ClientEntityInterface
      * @return bool
      */
     public function isConfidential();
+
+    /**
+     * Returns the access token lifetime for this client and the given grant type. If this
+     * client can not determine the desired lifetime, it returns null, indicating that the default
+     * from the grant type should be used.
+     *
+     * @param GrantTypeInterface $grantType
+     *
+     * @return DateInterval|null
+     */
+    public function getAccessTokenLifeTime(GrantTypeInterface $grantType): ?DateInterval;
+
+    /**
+     * Returns the refresh token lifetime for this client and the given grant type. If this
+     * client can not determine the desired lifetime, it returns null, indicating that the default
+     * from the grant type should be used.
+     *
+     * @param GrantTypeInterface $grantType
+     *
+     * @return DateInterval|null
+     */
+    public function getRefreshTokenLifeTime(GrantTypeInterface $grantType): ?DateInterval;
+
+    /**
+     * Returns the auth code lifetime for this client and the given grant type. If this
+     * client can not determine the desired lifetime, it returns null, indicating that the default
+     * from the grant type should be used.
+     *
+     * @param GrantTypeInterface $grantType
+     *
+     * @return DateInterval|null
+     */
+    public function getAuthCodeLifeTime(GrantTypeInterface $grantType): ?DateInterval;
 }

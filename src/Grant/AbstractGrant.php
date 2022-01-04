@@ -455,7 +455,15 @@ abstract class AbstractGrant implements GrantTypeInterface
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
+
+        // Calculate expiry time - use the one from the client if set, otherwise
+        // use the value from the grant (passed as parameter).
+        $clientAccessTokenTTL = $client->getAccessTokenLifeTime($this);
+        if (null !== $clientAccessTokenTTL) {
+            $accessTokenTTL = $clientAccessTokenTTL;
+        }
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add($accessTokenTTL));
+
         $accessToken->setPrivateKey($this->privateKey);
 
         while ($maxGenerationAttempts-- > 0) {
@@ -496,7 +504,15 @@ abstract class AbstractGrant implements GrantTypeInterface
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $authCode = $this->authCodeRepository->getNewAuthCode();
+
+        // Calculate expiry time - use the one from the client if set, otherwise
+        // use the value from the grant (passed as parameter).
+        $clientAuthCodeTTL = $client->getAuthCodeLifeTime($this);
+        if (null !== $clientAuthCodeTTL) {
+            $authCodeTTL = $clientAuthCodeTTL;
+        }
         $authCode->setExpiryDateTime((new DateTimeImmutable())->add($authCodeTTL));
+
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
 
@@ -538,7 +554,9 @@ abstract class AbstractGrant implements GrantTypeInterface
             return null;
         }
 
-        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add($this->refreshTokenTTL));
+        $refreshTokenTTL = $accessToken->getClient()->getRefreshTokenLifeTime($this) ?? $this->refreshTokenTTL;
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add($refreshTokenTTL));
+
         $refreshToken->setAccessToken($accessToken);
 
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
