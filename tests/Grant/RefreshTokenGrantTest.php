@@ -563,6 +563,7 @@ class RefreshTokenGrantTest extends TestCase
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturn([$scopeEntity]);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
@@ -621,6 +622,7 @@ class RefreshTokenGrantTest extends TestCase
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturn([$scopeEntity]);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
