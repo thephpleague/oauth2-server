@@ -5,7 +5,7 @@ namespace LeagueTests\AuthorizationValidators;
 use DateInterval;
 use DateTimeImmutable;
 use Laminas\Diactoros\ServerRequest;
-use Lcobucci\JWT\Signer\Key\LocalFileReference;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
@@ -34,13 +34,13 @@ class BearerTokenValidatorTest extends TestCase
             ->expiresAt((new DateTimeImmutable())->add(new DateInterval('PT1H')))
             ->relatedTo('user-id')
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
-            ->getToken(new Sha256(), LocalFileReference::file(__DIR__ . '/../Stubs/private.key'));
+            ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
         $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $validJwt->toString()));
 
-        $response = $bearerTokenValidator->validateAuthorization($request);
+        $validRequest = $bearerTokenValidator->validateAuthorization($request);
 
-        $this->assertArrayHasKey('authorization', $response->getHeaders());
+        $this->assertArrayHasKey('authorization', $validRequest->getHeaders());
     }
 
     public function testBearerTokenValidatorRejectsExpiredToken()
@@ -62,7 +62,7 @@ class BearerTokenValidatorTest extends TestCase
             ->expiresAt((new DateTimeImmutable())->sub(new DateInterval('PT1H')))
             ->relatedTo('user-id')
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
-            ->getToken(new Sha256(), LocalFileReference::file(__DIR__ . '/../Stubs/private.key'));
+            ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
         $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $expiredJwt->toString()));
 
