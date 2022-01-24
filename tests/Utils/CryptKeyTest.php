@@ -94,10 +94,6 @@ class CryptKeyTest extends TestCase
             $this->assertEquals('mystrongpassword', $key->getPassPhrase());
         } catch (\Throwable $e) {
             $this->fail('The EC key was not created');
-        } finally {
-            if (isset($path)) {
-                @\unlink($path);
-            }
         }
     }
 
@@ -119,10 +115,6 @@ class CryptKeyTest extends TestCase
             $this->assertEquals('mystrongpassword', $key->getPassPhrase());
         } catch (\Throwable $e) {
             $this->fail('The RSA key was not created');
-        } finally {
-            if (isset($path)) {
-                @\unlink($path);
-            }
         }
     }
 

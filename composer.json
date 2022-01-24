@@ -15,7 +15,7 @@
     "require-dev": {
         "phpunit/phpunit": "^9.5.11",
         "laminas/laminas-diactoros": "^2.8.0",
-        "phpstan/phpstan": "^1.4.1",
+        "phpstan/phpstan": "^1.4",
         "phpstan/phpstan-phpunit": "^1.0.0",
         "roave/security-advisories": "dev-master"
     },
@@ -67,6 +67,11 @@
     "autoload-dev": {
         "psr-4": {
             "LeagueTests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ocramius/package-versions": true
         }
     }
 }
