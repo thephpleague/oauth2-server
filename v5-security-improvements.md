@@ -20,7 +20,7 @@ You will notice in your server logs a message like this:
 
 To supress this notice once you have instantiated an instance of `\League\OAuth2\Server\AuthorizationServer` you should call the `setEncryptionKey()` method passing in at least 32 bytes of random data.
 
-You can generate this using `base64_encode(random_bytes(32))`. Alternatively if you're using a framework such as Laravel which has a encryption key already generated you can pass in that (in the case of Laravel use `env('APP_KEY')`).
+You can generate this using `base64_encode(random_bytes(32))`. Alternatively if you're using a framework such as Laravel which has a encryption key already generated you can pass in that (in the case of Laravel use `config('app.key')`).
 
 For example:
 
