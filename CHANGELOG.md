@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- GrantTypeInterface has a new function, `revokeRefreshTokens()` for enabling or disabling refresh tokens after use (PR #XXXX)
 - A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
 - The authorization server can now finalize scopes when a client uses a refresh token (PR #1094)
 - An AuthorizationRequestInterface to make it easier to extend the AuthorizationRequest (PR #1110)
