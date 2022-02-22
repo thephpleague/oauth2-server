@@ -3,3 +3,6 @@ parameters:
     paths:
         - src
         - tests
+    ignoreErrors:
+        - '#Method League\\OAuth2\\Server\\Grant\\AbstractGrant::issueAccessToken\(\) should return string but return statement is missing\.#'
+        - '#Method League\\OAuth2\\Server\\Grant\\AbstractGrant::issueAuthCode\(\) should return League\\OAuth2\\Server\\Entities\\AuthCodeEntityInterface but return statement is missing\.#'
