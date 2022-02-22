@@ -84,9 +84,7 @@ class CryptKey implements CryptKeyInterface
     }
 
     /**
-     * Get key contents
-     *
-     * @return string Key contents
+     * {@inheritdoc}
      */
     public function getKeyContents(): string
     {
