@@ -14,6 +14,7 @@ use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
 use Lcobucci\JWT\Validation\Constraint\ValidAt;
@@ -109,6 +110,10 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             $this->jwtConfiguration->validator()->assert($token, ...$constraints);
         } catch (RequiredConstraintsViolated $exception) {
             throw OAuthServerException::accessDenied('Access token could not be verified');
+        }
+
+        if (! $token instanceof UnencryptedToken) {
+            throw OAuthServerException::accessDenied('Access token is not an instance of UnencryptedToken');
         }
 
         $claims = $token->claims();
