@@ -21,12 +21,12 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      *
      * @param string|array $allowedRedirectUris
      */
-    public function __construct($allowedRedirectUri)
+    public function __construct($allowedRedirectUris)
     {
-        if (\is_string($allowedRedirectUri)) {
-            $this->allowedRedirectUris = [$allowedRedirectUri];
-        } elseif (\is_array($allowedRedirectUri)) {
-            $this->allowedRedirectUris = $allowedRedirectUri;
+        if (\is_string($allowedRedirectUris)) {
+            $this->allowedRedirectUris = [$allowedRedirectUris];
+        } elseif (\is_array($allowedRedirectUris)) {
+            $this->allowedRedirectUris = $allowedRedirectUris;
         } else {
             $this->allowedRedirectUris = [];
         }
