@@ -61,6 +61,10 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     {
         $parsedUrl = \parse_url($redirectUri);
 
+        if ($parsedUrl === false) {
+            return false;
+        }
+
         return $parsedUrl['scheme'] === 'http'
             && (\in_array($parsedUrl['host'], ['127.0.0.1', '[::1]'], true));
     }
