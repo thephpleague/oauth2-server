@@ -110,6 +110,6 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     {
         $uri = Uri::createFromString($url);
 
-        return (string) $uri->withPort(NULL);
+        return (string) $uri->withPort(null);
     }
 }
