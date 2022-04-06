@@ -9,6 +9,8 @@
 
 namespace League\OAuth2\Server\RedirectUriValidators;
 
+use League\Uri\Uri;
+
 class RedirectUriValidator implements RedirectUriValidatorInterface
 {
     /**
@@ -59,10 +61,10 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      */
     private function isLoopbackUri($redirectUri)
     {
-        $parsedUrl = \parse_url($redirectUri);
+        $uri = Uri::createFromString($redirectUri);
 
-        return $parsedUrl['scheme'] === 'http'
-            && (\in_array($parsedUrl['host'], ['127.0.0.1', '[::1]'], true));
+        return $uri->getScheme() === 'http'
+            && (\in_array($uri->getHost(), ['127.0.0.1', '[::1]'], true));
     }
 
     /**
@@ -106,9 +108,8 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      */
     private function parseUrlAndRemovePort($url)
     {
-        $parsedUrl = \parse_url($url);
-        unset($parsedUrl['port']);
+        $uri = Uri::createFromString($url);
 
-        return $parsedUrl;
+        return (string) $uri->withPort(null);
     }
 }
