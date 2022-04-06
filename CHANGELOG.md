@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Server previously rejected valid uris with custom schemes. Now use league/uri for parsing to accept all valid uris (PR #1274)
 
 ## [8.3.3] - released 2021-10-11
 ### Security
