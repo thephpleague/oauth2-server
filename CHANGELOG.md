@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [8.3.4] - released 2022-04-07
 ### Fixed
 - Server previously rejected valid uris with custom schemes. Now use league/uri for parsing to accept all valid uris (PR #1274)
 
@@ -558,7 +560,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.3...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.4...HEAD
+[8.3.4]: https://github.com/thephpleague/oauth2-server/compare/8.3.3...8.3.4
 [8.3.3]: https://github.com/thephpleague/oauth2-server/compare/8.3.2...8.3.3
 [8.3.2]: https://github.com/thephpleague/oauth2-server/compare/8.3.1...8.3.2
 [8.3.1]: https://github.com/thephpleague/oauth2-server/compare/8.3.0...8.3.1
