@@ -9,8 +9,8 @@
 
 namespace League\OAuth2\Server\RedirectUriValidators;
 
-use League\Uri\Uri;
 use League\Uri\Exceptions\SyntaxError;
+use League\Uri\Uri;
 
 class RedirectUriValidator implements RedirectUriValidatorInterface
 {
@@ -65,7 +65,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
         try {
             $uri = Uri::createFromString($redirectUri);
         } catch (SyntaxError $e) {
-           return false;
+            return false;
         }
 
         return $uri->getScheme() === 'http'
