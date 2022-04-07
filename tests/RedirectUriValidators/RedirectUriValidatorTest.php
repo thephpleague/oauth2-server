@@ -73,9 +73,33 @@ class RedirectUriValidatorTest extends TestCase
         );
     }
 
-    public function testCanValidateLoopbackUri()
+    public function testCanValidateUrn()
     {
-        $validator = new RedirectUriValidator('http://127.0.0.1:8888/endpoint');
-        $this->assertEquals(true, $validator->validateRedirectUri('http://127.0.0.1:9999/endpoint'));
+        $validator = new RedirectUriValidator('urn:ietf:wg:oauth:2.0:oob');
+
+        $this->assertTrue(
+            $validator->validateRedirectUri('urn:ietf:wg:oauth:2.0:oob'),
+            'An invalid pre-registered urn was provided'
+        );
+    }
+
+    public function canValidateCustomSchemeHost()
+    {
+        $validator = new RedirectUriValidator('msal://redirect');
+
+        $this->assertTrue(
+            $validator->validateRedirectUri('msal://redirect'),
+            'An invalid, pre-registered, custom scheme uri was provided'
+        );
+    }
+
+    public function canValidateCustomSchemePath()
+    {
+        $validator = new RedirectUriValidator('com.example.app:/oauth2redirect/example-provider');
+
+        $this->assertTrue(
+            $validator->validateRedirectUri('com.example.app:/oauth2redirect/example-provider'),
+            'An invalid, pre-registered, custom scheme uri was provided'
+        );
     }
 }
