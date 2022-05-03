@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
-- Use InMemory::empty() instead of InMemory::plainText('') to avoid new empty string exception thrown by lcobucci/jwt (PR #1282)
+- Use string 'empty' instead of InMemory::plainText('') to avoid new empty string exception thrown by lcobucci/jwt (PR #1282)
 
 ## [8.3.4] - released 2022-04-07
 ### Fixed
