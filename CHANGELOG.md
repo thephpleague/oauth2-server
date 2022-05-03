@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Use InMemory::plainText('empty', 'empty') instead of InMemory::plainText('') to avoid [new empty string exception](https://github.com/lcobucci/jwt/pull/833) thrown by lcobucci/jwt (PR #1282)
 
 ## [8.3.4] - released 2022-04-07
 ### Fixed
