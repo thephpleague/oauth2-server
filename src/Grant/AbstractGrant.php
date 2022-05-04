@@ -303,14 +303,8 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateScopes($scopes, $redirectUri = null)
     {
-        if ($scopes === null) {
-            $scopes = [];
-        } elseif (\is_string($scopes)) {
-            $scopes = $this->convertScopesQueryStringToArray($scopes);
-        }
-
         if (!\is_array($scopes)) {
-            throw OAuthServerException::invalidRequest('scope');
+            $scopes = $this->convertScopesQueryStringToArray($scopes);
         }
 
         $validScopes = [];
