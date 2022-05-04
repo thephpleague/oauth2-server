@@ -43,11 +43,6 @@ class ResourceServerMiddleware
             $request = $this->server->validateAuthenticatedRequest($request);
         } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
-            // @codeCoverageIgnoreStart
-        } catch (Exception $exception) {
-            return (new OAuthServerException($exception->getMessage(), 0, 'unknown_error', 500))
-                ->generateHttpResponse($response);
-            // @codeCoverageIgnoreEnd
         }
 
         // Pass the request and response on to the next responder in the chain
