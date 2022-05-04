@@ -262,7 +262,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         $clientSecret = $this->getRequestParameter('client_secret', $request, $basicAuthPassword);
 
-        if ($clientSecret !== null && !\is_string($clientSecret)) {
+        if ($clientSecret === null) {
             throw OAuthServerException::invalidRequest('client_secret');
         }
 
