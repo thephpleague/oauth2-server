@@ -151,10 +151,6 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
 
-        if ($stateParameter !== null && !\is_string($stateParameter)) {
-            throw OAuthServerException::invalidRequest('state');
-        }
-
         $authorizationRequest = $this->createAuthorizationRequest();
         $authorizationRequest->setGrantTypeId($this->getIdentifier());
         $authorizationRequest->setClient($client);
