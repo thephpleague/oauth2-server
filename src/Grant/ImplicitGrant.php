@@ -225,7 +225,8 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $finalRedirectUri,
                 [
                     'state' => $authorizationRequest->getState(),
-                ]
+                ],
+                $this->queryDelimiter
             )
         );
     }
