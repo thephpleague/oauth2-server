@@ -37,6 +37,11 @@ class OAuthServerException extends Exception
     private $redirectUri;
 
     /**
+     * @var string
+     */
+    private $queryDelimiter;
+
+    /**
      * @var array
      */
     private $payload;
@@ -56,14 +61,16 @@ class OAuthServerException extends Exception
      * @param null|string $hint           A helper hint
      * @param null|string $redirectUri    A HTTP URI to redirect the user back to
      * @param Throwable   $previous       Previous exception
+     * @param string      $queryDelimiter Query delimiter of the redirect URI
      */
-    public function __construct($message, $code, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null, Throwable $previous = null)
+    public function __construct($message, $code, $errorType, $httpStatusCode = 400, $hint = null, $redirectUri = null, Throwable $previous = null, $queryDelimiter = '?')
     {
         parent::__construct($message, $code, $previous);
         $this->httpStatusCode = $httpStatusCode;
         $this->errorType = $errorType;
         $this->hint = $hint;
         $this->redirectUri = $redirectUri;
+        $this->queryDelimiter = $queryDelimiter;
         $this->payload = [
             'error'             => $errorType,
             'error_description' => $message,
@@ -161,12 +168,13 @@ class OAuthServerException extends Exception
     /**
      * Invalid scope error.
      *
-     * @param string      $scope       The bad scope
-     * @param null|string $redirectUri A HTTP URI to redirect the user back to
+     * @param string      $scope          The bad scope
+     * @param null|string $redirectUri    A HTTP URI to redirect the user back to
+     * @param string      $queryDelimiter Query delimiter of the redirect URI
      *
      * @return static
      */
-    public static function invalidScope($scope, $redirectUri = null)
+    public static function invalidScope($scope, $redirectUri = null, $queryDelimiter = '?')
     {
         $errorMessage = 'The requested scope is invalid, unknown, or malformed';
 
@@ -179,7 +187,7 @@ class OAuthServerException extends Exception
             );
         }
 
-        return new static($errorMessage, 5, 'invalid_scope', 400, $hint, $redirectUri);
+        return new static($errorMessage, 5, 'invalid_scope', 400, $hint, $redirectUri, null, $queryDelimiter);
     }
 
     /**
@@ -235,10 +243,11 @@ class OAuthServerException extends Exception
      * @param null|string $hint
      * @param null|string $redirectUri
      * @param Throwable   $previous
+     * @param string      $queryDelimiter
      *
      * @return static
      */
-    public static function accessDenied($hint = null, $redirectUri = null, Throwable $previous = null)
+    public static function accessDenied($hint = null, $redirectUri = null, Throwable $previous = null, $queryDelimiter = '?')
     {
         return new static(
             'The resource owner or authorization server denied the request.',
@@ -247,7 +256,8 @@ class OAuthServerException extends Exception
             401,
             $hint,
             $redirectUri,
-            $previous
+            $previous,
+            $queryDelimiter
         );
     }
 
@@ -295,11 +305,8 @@ class OAuthServerException extends Exception
         $payload = $this->getPayload();
 
         if ($this->redirectUri !== null) {
-            if ($useFragment === true) {
-                $this->redirectUri .= (\strstr($this->redirectUri, '#') === false) ? '#' : '&';
-            } else {
-                $this->redirectUri .= (\strstr($this->redirectUri, '?') === false) ? '?' : '&';
-            }
+            $queryDelimiter = $useFragment === true ? '#' : $this->queryDelimiter;
+            $this->redirectUri .= (\strstr($this->redirectUri, $queryDelimiter) === false) ? $queryDelimiter : '&';
 
             return $response->withStatus(302)->withHeader('Location', $this->redirectUri . \http_build_query($payload));
         }
