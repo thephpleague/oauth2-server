@@ -178,11 +178,10 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
         }
 
-        $finalRedirectUri = ($authorizationRequest->getRedirectUri() === null)
-            ? \is_array($authorizationRequest->getClient()->getRedirectUri())
-                ? $authorizationRequest->getClient()->getRedirectUri()[0]
-                : $authorizationRequest->getClient()->getRedirectUri()
-            : $authorizationRequest->getRedirectUri();
+        $clientUri = $authorizationRequest->getClient()->getRedirectUri();
+        $finalRedirectUri = $authorizationRequest->getRedirectUri()
+            ?? (is_array($clientUri) ? $clientUri[0] : $clientUri)
+            ?? '';
 
         // The user approved the client, redirect them back with an access token
         if ($authorizationRequest->isAuthorizationApproved() === true) {

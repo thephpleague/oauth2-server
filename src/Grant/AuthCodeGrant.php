@@ -341,7 +341,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         $finalRedirectUri = $authorizationRequest->getRedirectUri()
-                          ?? $this->getClientRedirectUri($authorizationRequest);
+                          ?? $this->getClientRedirectUri($authorizationRequest)
+                          ?? '';
 
         // The user approved the client, redirect them back with an auth code
         if ($authorizationRequest->isAuthorizationApproved() === true) {
