@@ -180,7 +180,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         $clientUri = $authorizationRequest->getClient()->getRedirectUri();
         $finalRedirectUri = $authorizationRequest->getRedirectUri()
-            ?? (is_array($clientUri) ? $clientUri[0] : $clientUri)
+            ?? (\is_array($clientUri) ? $clientUri[0] : $clientUri)
             ?? '';
 
         // The user approved the client, redirect them back with an access token
