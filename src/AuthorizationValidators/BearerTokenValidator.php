@@ -44,11 +44,18 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     private $jwtConfiguration;
 
     /**
-     * @param AccessTokenRepositoryInterface $accessTokenRepository
+     * @var \DateInterval|null
      */
-    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository)
+    private $jwtValidAtDateLeeway;
+
+    /**
+     * @param AccessTokenRepositoryInterface $accessTokenRepository
+     * @param \DateInterval|null $jwtValidAtDateLeeway
+     */
+    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository, \DateInterval $jwtValidAtDateLeeway = null)
     {
         $this->accessTokenRepository = $accessTokenRepository;
+        $this->jwtValidAtDateLeeway = $jwtValidAtDateLeeway;
     }
 
     /**
@@ -73,10 +80,11 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             InMemory::plainText('empty', 'empty')
         );
 
+        $clock = new SystemClock(new DateTimeZone(\date_default_timezone_get()));
         $this->jwtConfiguration->setValidationConstraints(
             \class_exists(StrictValidAt::class)
-                ? new StrictValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get())))
-                : new ValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
+                ? new StrictValidAt($clock, $this->jwtValidAtDateLeeway)
+                : new ValidAt($clock, $this->jwtValidAtDateLeeway),
             new SignedWith(
                 new Sha256(),
                 InMemory::plainText($this->publicKey->getKeyContents(), $this->publicKey->getPassPhrase() ?? '')
