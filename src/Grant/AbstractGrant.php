@@ -14,7 +14,6 @@ use DateInterval;
 use DateTimeImmutable;
 use Error;
 use Exception;
-use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -22,6 +21,7 @@ use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\EventEmitting\EmitterAwarePolyfill;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\RedirectUriValidators\RedirectUriValidator;
@@ -42,7 +42,7 @@ use TypeError;
  */
 abstract class AbstractGrant implements GrantTypeInterface
 {
-    use EmitterAwareTrait, CryptTrait;
+    use EmitterAwarePolyfill, CryptTrait;
 
     const SCOPE_DELIMITER_STRING = ' ';
 
