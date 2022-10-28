@@ -6,7 +6,7 @@ namespace League\OAuth2\Server\EventEmitting;
 use League\Event\HasEventName;
 use Psr\EventDispatcher\StoppableEventInterface;
 
-class AbstractEvent implements  StoppableEventInterface, HasEventName
+class AbstractEvent implements StoppableEventInterface, HasEventName
 {
     /**
      * @var string
