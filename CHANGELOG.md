@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Authorization Request objects are now created through the factory method, `createAuthorizationRequest()` (PR #1111)
 - Changed parameters for `finalizeScopes()` to allow a reference to an auth code ID (PR #1112)
 
+### [8.3.6] - released 2022-11-14
+### Fixed
+- Use LooseValidAt instead of StrictValidAt so that users aren't forced to use claims such as NBF in their JWT tokens (PR #1312)
+
+### [8.3.5] - released 2022-05-12
+### Fixed
+- Use InMemory::plainText('empty', 'empty') instead of InMemory::plainText('') to avoid [new empty string exception](https://github.com/lcobucci/jwt/pull/833) thrown by lcobucci/jwt (PR #1282)
+
+## [8.3.4] - released 2022-04-07
+### Fixed
+- Server previously rejected valid uris with custom schemes. Now use league/uri for parsing to accept all valid uris (PR #1274)
+
 ## [8.3.3] - released 2021-10-11
 ### Security
 - Removed the use of `LocalFileReference()` in lcobucci/jwt. Function deprecated as per [GHSA-7322-jrq4-x5hf](https://github.com/lcobucci/jwt/security/advisories/GHSA-7322-jrq4-x5hf) (PR #1249)
@@ -568,7 +580,10 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.3...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.6...HEAD
+[8.3.6]: https://github.com/thephpleague/oauth2-server/compare/8.3.5...8.3.6
+[8.3.5]: https://github.com/thephpleague/oauth2-server/compare/8.3.4...8.3.5
+[8.3.4]: https://github.com/thephpleague/oauth2-server/compare/8.3.3...8.3.4
 [8.3.3]: https://github.com/thephpleague/oauth2-server/compare/8.3.2...8.3.3
 [8.3.2]: https://github.com/thephpleague/oauth2-server/compare/8.3.1...8.3.2
 [8.3.1]: https://github.com/thephpleague/oauth2-server/compare/8.3.0...8.3.1

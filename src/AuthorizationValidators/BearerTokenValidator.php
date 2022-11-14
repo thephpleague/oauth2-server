@@ -16,7 +16,7 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
+use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\ValidAt;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use League\OAuth2\Server\CryptKeyInterface;
@@ -71,12 +71,12 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     {
         $this->jwtConfiguration = Configuration::forSymmetricSigner(
             new Sha256(),
-            InMemory::plainText('')
+            InMemory::plainText('empty', 'empty')
         );
 
         $this->jwtConfiguration->setValidationConstraints(
-            \class_exists(StrictValidAt::class)
-                ? new StrictValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get())))
+            \class_exists(LooseValidAt::class)
+                ? new LooseValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get())))
                 : new ValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
             new SignedWith(
                 new Sha256(),
