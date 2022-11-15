@@ -20,7 +20,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class BearerResponseTypeTest extends TestCase
 {
-    public function testGenerateHttpResponse()
+    public function testGenerateHttpResponse(): void
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -63,7 +63,7 @@ class BearerResponseTypeTest extends TestCase
         $this->assertObjectHasAttribute('refresh_token', $json);
     }
 
-    public function testGenerateHttpResponseWithExtraParams()
+    public function testGenerateHttpResponseWithExtraParams(): void
     {
         $responseType = new BearerTokenResponseWithParams();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -109,7 +109,7 @@ class BearerResponseTypeTest extends TestCase
         $this->assertEquals('bar', $json->foo);
     }
 
-    public function testDetermineAccessTokenInHeaderValidToken()
+    public function testDetermineAccessTokenInHeaderValidToken(): void
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -152,7 +152,7 @@ class BearerResponseTypeTest extends TestCase
         $this->assertEquals([], $request->getAttribute('oauth_scopes'));
     }
 
-    public function testDetermineAccessTokenInHeaderInvalidJWT()
+    public function testDetermineAccessTokenInHeaderInvalidJWT(): void
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
@@ -196,7 +196,7 @@ class BearerResponseTypeTest extends TestCase
         }
     }
 
-    public function testDetermineAccessTokenInHeaderRevokedToken()
+    public function testDetermineAccessTokenInHeaderRevokedToken(): void
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -241,7 +241,7 @@ class BearerResponseTypeTest extends TestCase
         }
     }
 
-    public function testDetermineAccessTokenInHeaderInvalidToken()
+    public function testDetermineAccessTokenInHeaderInvalidToken(): void
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -264,7 +264,7 @@ class BearerResponseTypeTest extends TestCase
         }
     }
 
-    public function testDetermineMissingBearerInHeader()
+    public function testDetermineMissingBearerInHeader(): void
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));

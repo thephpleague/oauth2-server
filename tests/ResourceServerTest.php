@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class ResourceServerTest extends TestCase
 {
-    public function testValidateAuthenticatedRequest()
+    public function testValidateAuthenticatedRequest(): void
     {
         $server = new ResourceServer(
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
