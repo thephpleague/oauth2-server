@@ -16,40 +16,30 @@ class StubResponseType extends AbstractResponseType
     {
     }
 
-    public function getAccessToken()
+    public function getAccessToken(): AccessTokenEntityInterface
     {
         return $this->accessToken;
     }
 
-    public function getRefreshToken()
+    public function getRefreshToken(): RefreshTokenEntityInterface|null
     {
         return $this->refreshToken;
     }
 
-    /**
-     * @param \League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken
-     */
-    public function setAccessToken(AccessTokenEntityInterface $accessToken)
+    public function setAccessToken(AccessTokenEntityInterface $accessToken): void
     {
         $this->accessToken = $accessToken;
     }
 
-    /**
-     * @param \League\OAuth2\Server\Entities\RefreshTokenEntityInterface $refreshToken
-     */
-    public function setRefreshToken(RefreshTokenEntityInterface $refreshToken)
+    public function setRefreshToken(RefreshTokenEntityInterface $refreshToken): void
     {
         $this->refreshToken = $refreshToken;
     }
 
     /**
-     * @param ServerRequestInterface $request
-     *
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
-     *
-     * @return \Psr\Http\Message\ServerRequestInterface
      */
-    public function validateAccessToken(ServerRequestInterface $request)
+    public function validateAccessToken(ServerRequestInterface $request): ServerRequestInterface
     {
         if ($request->getHeader('authorization')[0] === 'Basic test') {
             return $request->withAttribute('oauth_access_token_id', 'test');
@@ -58,12 +48,7 @@ class StubResponseType extends AbstractResponseType
         throw OAuthServerException::accessDenied();
     }
 
-    /**
-     * @param ResponseInterface $response
-     *
-     * @return ResponseInterface
-     */
-    public function generateHttpResponse(ResponseInterface $response)
+    public function generateHttpResponse(ResponseInterface $response): ResponseInterface
     {
         return new Response();
     }
