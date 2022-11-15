@@ -6,12 +6,14 @@ namespace LeagueTests\Stubs;
 
 use DateInterval;
 use League\Event\EmitterInterface;
-use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -61,8 +63,9 @@ final class GrantType implements GrantTypeInterface
         return $authRequest;
     }
 
-    public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
+    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest)
     {
+        return new BearerTokenResponse();
     }
 
     public function canRespondToAccessTokenRequest(ServerRequestInterface $request)
@@ -86,11 +89,15 @@ final class GrantType implements GrantTypeInterface
     {
     }
 
-    public function setPrivateKey(CryptKey $privateKey)
+    public function setPrivateKey(CryptKeyInterface $privateKey)
     {
     }
 
     public function setEncryptionKey($key = null)
+    {
+    }
+
+    public function revokeRefreshTokens(bool $willRevoke)
     {
     }
 }

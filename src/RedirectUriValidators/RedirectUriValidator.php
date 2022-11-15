@@ -109,7 +109,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      *
      * @param string $url
      *
-     * @return array
+     * @return string
      */
     private function parseUrlAndRemovePort($url)
     {
