@@ -19,25 +19,25 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class GrantType implements GrantTypeInterface
 {
-    private $emitter;
+    private EmitterInterface $emitter;
 
-    public function setEmitter(EmitterInterface $emitter = null)
+    public function setEmitter(EmitterInterface $emitter = null): self
     {
         $this->emitter = $emitter;
 
         return $this;
     }
 
-    public function getEmitter()
+    public function getEmitter(): EmitterInterface
     {
         return $this->emitter;
     }
 
-    public function setRefreshTokenTTL(DateInterval $refreshTokenTTL)
+    public function setRefreshTokenTTL(DateInterval $refreshTokenTTL): void
     {
     }
 
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return 'grant_type_identifier';
     }
@@ -50,12 +50,12 @@ final class GrantType implements GrantTypeInterface
         return $responseType;
     }
 
-    public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
+    public function canRespondToAuthorizationRequest(ServerRequestInterface $request): bool
     {
         return true;
     }
 
-    public function validateAuthorizationRequest(ServerRequestInterface $request)
+    public function validateAuthorizationRequest(ServerRequestInterface $request): AuthorizationRequest
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setGrantTypeId(self::class);
@@ -63,41 +63,41 @@ final class GrantType implements GrantTypeInterface
         return $authRequest;
     }
 
-    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest)
+    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): BearerTokenResponse
     {
         return new BearerTokenResponse();
     }
 
-    public function canRespondToAccessTokenRequest(ServerRequestInterface $request)
+    public function canRespondToAccessTokenRequest(ServerRequestInterface $request): bool
     {
         return true;
     }
 
-    public function setClientRepository(ClientRepositoryInterface $clientRepository)
+    public function setClientRepository(ClientRepositoryInterface $clientRepository): void
     {
     }
 
-    public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository)
+    public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository): void
     {
     }
 
-    public function setScopeRepository(ScopeRepositoryInterface $scopeRepository)
+    public function setScopeRepository(ScopeRepositoryInterface $scopeRepository): void
     {
     }
 
-    public function setDefaultScope($scope)
+    public function setDefaultScope($scope): void
     {
     }
 
-    public function setPrivateKey(CryptKeyInterface $privateKey)
+    public function setPrivateKey(CryptKeyInterface $privateKey): void
     {
     }
 
-    public function setEncryptionKey($key = null)
+    public function setEncryptionKey($key = null): void
     {
     }
 
-    public function revokeRefreshTokens(bool $willRevoke)
+    public function revokeRefreshTokens(bool $willRevoke): void
     {
     }
 }
