@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class RedirectUriValidatorTest extends TestCase
 {
-    public function testInvalidNonLoopbackUri()
+    public function testInvalidNonLoopbackUri(): void
     {
         $validator = new RedirectUriValidator([
             'https://example.com:8443/endpoint',
@@ -22,7 +22,7 @@ class RedirectUriValidatorTest extends TestCase
         );
     }
 
-    public function testValidNonLoopbackUri()
+    public function testValidNonLoopbackUri(): void
     {
         $validator = new RedirectUriValidator([
             'https://example.com:8443/endpoint',
@@ -37,7 +37,7 @@ class RedirectUriValidatorTest extends TestCase
         );
     }
 
-    public function testInvalidLoopbackUri()
+    public function testInvalidLoopbackUri(): void
     {
         $validator = new RedirectUriValidator('http://127.0.0.1:8443/endpoint');
 
@@ -49,7 +49,7 @@ class RedirectUriValidatorTest extends TestCase
         );
     }
 
-    public function testValidLoopbackUri()
+    public function testValidLoopbackUri(): void
     {
         $validator = new RedirectUriValidator('http://127.0.0.1:8443/endpoint');
 
@@ -61,7 +61,7 @@ class RedirectUriValidatorTest extends TestCase
         );
     }
 
-    public function testValidIpv6LoopbackUri()
+    public function testValidIpv6LoopbackUri(): void
     {
         $validator = new RedirectUriValidator('http://[::1]:8443/endpoint');
 
@@ -73,7 +73,7 @@ class RedirectUriValidatorTest extends TestCase
         );
     }
 
-    public function testCanValidateUrn()
+    public function testCanValidateUrn(): void
     {
         $validator = new RedirectUriValidator('urn:ietf:wg:oauth:2.0:oob');
 
@@ -83,7 +83,7 @@ class RedirectUriValidatorTest extends TestCase
         );
     }
 
-    public function canValidateCustomSchemeHost()
+    public function canValidateCustomSchemeHost(): void
     {
         $validator = new RedirectUriValidator('msal://redirect');
 
@@ -93,7 +93,7 @@ class RedirectUriValidatorTest extends TestCase
         );
     }
 
-    public function canValidateCustomSchemePath()
+    public function canValidateCustomSchemePath(): void
     {
         $validator = new RedirectUriValidator('com.example.app:/oauth2redirect/example-provider');
 
