@@ -10,6 +10,9 @@ class ClientEntity implements ClientEntityInterface
 {
     use EntityTrait, ClientTrait;
 
+    /**
+     * @param string|string[] $uri
+     */
     public function setRedirectUri(string|array $uri): void
     {
         $this->redirectUri = $uri;

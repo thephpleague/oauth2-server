@@ -7,7 +7,11 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 
 class BearerTokenResponseWithParams extends BearerTokenResponse
 {
-    protected function getExtraParams(AccessTokenEntityInterface $accessToken)
+
+    /**
+     * @return array<string, string>
+     */
+    protected function getExtraParams(AccessTokenEntityInterface $accessToken): array
     {
         return ['foo' => 'bar', 'token_type' => 'Should not overwrite'];
     }
