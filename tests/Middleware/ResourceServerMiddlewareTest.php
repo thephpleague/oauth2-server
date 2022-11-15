@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class ResourceServerMiddlewareTest extends TestCase
 {
-    public function testValidResponse()
+    public function testValidResponse(): void
     {
         $server = new ResourceServer(
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
@@ -51,7 +51,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testValidResponseExpiredToken()
+    public function testValidResponseExpiredToken(): void
     {
         $server = new ResourceServer(
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
@@ -86,7 +86,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $this->assertEquals(401, $response->getStatusCode());
     }
 
-    public function testErrorResponse()
+    public function testErrorResponse(): void
     {
         $server = new ResourceServer(
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
