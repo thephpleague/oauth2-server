@@ -262,7 +262,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         $clientSecret = $this->getRequestParameter('client_secret', $request, $basicAuthPassword);
 
-        if ($clientSecret === null) {
+        if ($clientSecret !== null && !\is_string($clientSecret)) {
             throw OAuthServerException::invalidRequest('client_secret');
         }
 
@@ -303,8 +303,14 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     public function validateScopes($scopes, $redirectUri = null)
     {
-        if (!\is_array($scopes)) {
+        if ($scopes === null) {
+            $scopes = [];
+        } elseif (\is_string($scopes)) {
             $scopes = $this->convertScopesQueryStringToArray($scopes);
+        }
+
+        if (!\is_array($scopes)) {
+            throw OAuthServerException::invalidRequest('scope');
         }
 
         $validScopes = [];
