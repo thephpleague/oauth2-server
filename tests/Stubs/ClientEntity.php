@@ -10,12 +10,12 @@ class ClientEntity implements ClientEntityInterface
 {
     use EntityTrait, ClientTrait;
 
-    public function setRedirectUri($uri)
+    public function setRedirectUri(string|array $uri): void
     {
         $this->redirectUri = $uri;
     }
 
-    public function setConfidential()
+    public function setConfidential(): void
     {
         $this->isConfidential = true;
     }
