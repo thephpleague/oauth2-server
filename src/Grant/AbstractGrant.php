@@ -294,8 +294,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate scopes in the request.
      *
-     * @param string|array $scopes
-     * @param string       $redirectUri
+     * @param null|string|array $scopes
+     * @param string            $redirectUri
      *
      * @throws OAuthServerException
      *
@@ -349,7 +349,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param ServerRequestInterface $request
      * @param mixed                  $default
      *
-     * @return null|string
+     * @return mixed
      */
     protected function getRequestParameter($parameter, ServerRequestInterface $request, $default = null)
     {
