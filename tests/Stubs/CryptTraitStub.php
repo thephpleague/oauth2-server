@@ -2,6 +2,7 @@
 
 namespace LeagueTests\Stubs;
 
+use Defuse\Crypto\Key;
 use League\OAuth2\Server\CryptTrait;
 
 class CryptTraitStub
@@ -13,17 +14,17 @@ class CryptTraitStub
         $this->setEncryptionKey(\base64_encode(\random_bytes(36)));
     }
 
-    public function getKey()
+    public function getKey(): string|Key|null
     {
         return $this->encryptionKey;
     }
 
-    public function doEncrypt($unencryptedData)
+    public function doEncrypt(string $unencryptedData): string
     {
         return $this->encrypt($unencryptedData);
     }
 
-    public function doDecrypt($encryptedData)
+    public function doDecrypt(string $encryptedData): string
     {
         return $this->decrypt($encryptedData);
     }
