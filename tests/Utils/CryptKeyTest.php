@@ -7,14 +7,14 @@ use PHPUnit\Framework\TestCase;
 
 class CryptKeyTest extends TestCase
 {
-    public function testNoFile()
+    public function testNoFile(): void
     {
         $this->expectException(\LogicException::class);
 
         new CryptKey('undefined file');
     }
 
-    public function testKeyCreation()
+    public function testKeyCreation(): void
     {
         $keyFile = __DIR__ . '/../Stubs/public.key';
         $key = new CryptKey($keyFile, 'secret');
@@ -23,7 +23,7 @@ class CryptKeyTest extends TestCase
         $this->assertEquals('secret', $key->getPassPhrase());
     }
 
-    public function testKeyString()
+    public function testKeyString(): void
     {
         $keyContent = \file_get_contents(__DIR__ . '/../Stubs/public.key');
 
@@ -52,7 +52,7 @@ class CryptKeyTest extends TestCase
         );
     }
 
-    public function testUnsupportedKeyType()
+    public function testUnsupportedKeyType(): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Unable to read key');
@@ -76,7 +76,7 @@ class CryptKeyTest extends TestCase
         }
     }
 
-    public function testECKeyType()
+    public function testECKeyType(): void
     {
         try {
             // Create the keypair
@@ -97,7 +97,7 @@ class CryptKeyTest extends TestCase
         }
     }
 
-    public function testRSAKeyType()
+    public function testRSAKeyType(): void
     {
         try {
             // Create the keypair

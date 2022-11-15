@@ -8,28 +8,28 @@ use PHPUnit\Framework\TestCase;
 
 class CryptTraitTest extends TestCase
 {
-    protected $cryptStub;
+    protected CryptTraitStub $cryptStub;
 
     protected function setUp(): void
     {
         $this->cryptStub = new CryptTraitStub();
     }
 
-    public function testEncryptDecryptWithPassword()
+    public function testEncryptDecryptWithPassword(): void
     {
         $this->cryptStub->setEncryptionKey(\base64_encode(\random_bytes(36)));
 
         $this->encryptDecrypt();
     }
 
-    public function testEncryptDecryptWithKey()
+    public function testEncryptDecryptWithKey(): void
     {
         $this->cryptStub->setEncryptionKey(Key::createNewRandomKey());
 
         $this->encryptDecrypt();
     }
 
-    private function encryptDecrypt()
+    private function encryptDecrypt(): void
     {
         $payload = 'alex loves whisky';
         $encrypted = $this->cryptStub->doEncrypt($payload);
