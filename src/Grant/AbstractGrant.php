@@ -294,8 +294,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate scopes in the request.
      *
-     * @param string|array $scopes
-     * @param string       $redirectUri
+     * @param string|array|null $scopes
+     * @param string            $redirectUri
      *
      * @throws OAuthServerException
      *
