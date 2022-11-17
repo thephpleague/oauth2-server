@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- You can now set a leeway for time drift between servers when validating a JWT (PR #1304)
 
 ### [8.3.6] - released 2022-11-14
 ### Fixed
