@@ -107,7 +107,7 @@ class BearerTokenValidatorTest extends TestCase
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
-        // We fake generating this token 10 seconds into the future, an extreme example of possible time drift between servers
+        // We fake generating this token 20 seconds into the future, an extreme example of possible time drift between servers
         $future = (new DateTimeImmutable())->add(new DateInterval('PT20S'));
 
         $bearerTokenValidator = new BearerTokenValidator($accessTokenRepositoryMock, new \DateInterval('PT10S'));
