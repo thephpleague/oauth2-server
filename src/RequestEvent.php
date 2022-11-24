@@ -22,6 +22,11 @@ class RequestEvent extends Event
     const ACCESS_TOKEN_ISSUED = 'access_token.issued';
 
     /**
+     * This event can be used to extent claims of the id_token
+     */
+    const ID_TOKEN_CLAIMS_CREATED = 'id_token_claims.created';
+
+    /**
      * @var ServerRequestInterface
      */
     private $request;
