@@ -3,14 +3,15 @@
 namespace League\OAuth2\Server;
 
 use Lcobucci\JWT\Token\Builder;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * IdTokenClaimsCreated Events helps to extend claims of the id_token
+ * IdTokenClaimsCreated Event helps to extend claims of the id_token
+ *
+ * A usecase is to add nonce If requested by the client
  *
  * @author Marc Riemer <mail@marcriemer.de>
  */
-class IdTokenClaimsCreated extends RequestEvent
+final class IdTokenClaimsCreated extends IdTokenEvent
 {
     /**
      * Builder
@@ -19,9 +20,9 @@ class IdTokenClaimsCreated extends RequestEvent
      */
     private $builder;
 
-    public function __construct($name, ServerRequestInterface $request, Builder $builder)
+    public function __construct($name, Builder $builder)
     {
-        parent::__construct($name, $request);
+        parent::__construct($name);
         $this->builder = $builder;
     }
 

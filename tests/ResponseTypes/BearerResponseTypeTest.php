@@ -8,6 +8,9 @@ use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT as JWT;
+use Lcobucci\JWT\Encoding\ChainedFormatter;
+use Lcobucci\JWT\Encoding\JoseEncoder;
+use Lcobucci\JWT\Token\Builder;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\ClaimExtractor;
 use League\OAuth2\Server\CryptKey;
@@ -16,6 +19,7 @@ use League\OAuth2\Server\Entities\ClaimSetInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClaimSetRepositoryInterface;
+use League\OAuth2\Server\Repositories\IdTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\IdTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
@@ -72,6 +76,23 @@ class BearerResponseTypeTest extends TestCase
 
     public function testGenerateHttpResponseWithIdToken()
     {
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => 'https://example.com/callback',
+                'code'         => 'code'
+            ]
+        );
+
         $claimSetRepository = new class() implements ClaimSetRepositoryInterface {
             public function getClaimSetEntry(AccessTokenEntityInterface $accessToken): ClaimSetInterface
             {
@@ -97,26 +118,34 @@ class BearerResponseTypeTest extends TestCase
             }
         };
 
-        $nonce = \uniqid();
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            'POST',
-            'php://input',
-            [],
-            [],
-            [],
-            [
-                'grant_type'   => 'authorization_code',
-                'client_id'    => 'foo',
-                'redirect_uri' => 'http://foo/bar',
-                'code'         => 'code',
-                'nonce'        => $nonce,
-            ]
-        );
+        $IdTokenRepository = (new class() implements IdTokenRepositoryInterface
+        {
+            private $issuer;
 
-        $responseType = new IdTokenResponse($request, $claimSetRepository, $claimExtrator = new ClaimExtractor());
+            public function getBuilder(AccessTokenEntityInterface $accessToken): Builder
+            {
+                $builder = (new Builder(new JoseEncoder(), ChainedFormatter::withUnixTimestampDates()))
+                    ->permittedFor($accessToken->getClient()->getIdentifier())
+                    ->issuedBy($this->issuer)
+                    ->issuedAt(new \DateTimeImmutable())
+                    ->expiresAt($accessToken->getExpiryDateTime())
+                    ->relatedTo($accessToken->getUserIdentifier())
+                    ->withClaim("nonce", "s6G31Kolwu9p");
+
+                return $builder;
+            }
+
+            public function setIssuer($issuer) {
+                
+                $this->issuer = $issuer;
+
+                return $this;
+            }
+        })->setIssuer(\sprintf('%s://%s', $request->getUri()->getScheme(), $request->getUri()->getHost()));
+        
+        
+
+        $responseType = new IdTokenResponse($IdTokenRepository, $claimSetRepository, $claimExtrator = new ClaimExtractor());
 
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
@@ -202,7 +231,7 @@ class BearerResponseTypeTest extends TestCase
             $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue($claim, $value)));
         }
 
-        $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue('nonce', $nonce)));
+        $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue('nonce', "s6G31Kolwu9p")));
     }
 
     public function testGenerateHttpResponseWithExtraParams()

@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
  *
  * @author Marc Riemer <mail@marcriemer.de>
  */
-class IdTokenIssued extends RequestEvent
+final class IdTokenIssued extends IdTokenEvent
 {
     /**
      * Token
@@ -18,12 +18,6 @@ class IdTokenIssued extends RequestEvent
      * @var Token
      */
     private $token;
-
-    public function __construct($name, ServerRequestInterface $request, Token $token)
-    {
-        parent::__construct($name, $request);
-        $this->token = $token;
-    }
 
     /**
      * Get Token
@@ -33,5 +27,11 @@ class IdTokenIssued extends RequestEvent
     public function getToken(): Token
     {
         return $this->token;
+    }
+
+    public function __construct($name, Token $token)
+    {
+        parent::__construct($name);
+        $this->token = $token;
     }
 }

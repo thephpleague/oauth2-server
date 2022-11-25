@@ -2,11 +2,8 @@
 
 namespace League\OAuth2\Server\ResponseTypes;
 
-use Lcobucci\JWT\Encoding\ChainedFormatter;
-use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Token\Builder;
 use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\ClaimExtractor;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -15,8 +12,8 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\IdTokenClaimsCreated;
 use League\OAuth2\Server\IdTokenIssued;
 use League\OAuth2\Server\Repositories\ClaimSetRepositoryInterface;
+use League\OAuth2\Server\Repositories\IdTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * OpenidConfigurationResponse
@@ -31,11 +28,10 @@ class IdTokenResponse extends BearerTokenResponse
     use EmitterAwareTrait;
 
     public function __construct(
-        protected ServerRequestInterface $request,
+        protected IdTokenRepositoryInterface $builder,
         protected ClaimSetRepositoryInterface $claimRepository,
         protected ?ClaimExtractor $extractor = null
-    )
-    {
+    ) {
         if (!$extractor) {
             $this->extractor = new ClaimExtractor();
         }
@@ -55,16 +51,7 @@ class IdTokenResponse extends BearerTokenResponse
 
         $claimSet = $this->claimRepository->getClaimSetEntry($accessToken);
 
-        $builder = (new Builder(new JoseEncoder(), ChainedFormatter::withUnixTimestampDates()))
-            ->permittedFor($accessToken->getClient()->getIdentifier())
-            ->issuedBy(\sprintf(
-                '%s://%s',
-                $this->request->getUri()->getScheme(),
-                $this->request->getUri()->getHost()
-            ))
-            ->issuedAt(new \DateTimeImmutable())
-            ->expiresAt($accessToken->getExpiryDateTime())
-            ->relatedTo($accessToken->getUserIdentifier());
+        $builder = $this->builder->getBuilder($accessToken);
 
         if ($claimSet instanceof ClaimSetInterface) {
             foreach ($this->extractor->extract($accessToken->getScopes(), $claimSet->getClaims()) as $claimName => $claimValue) {
@@ -72,13 +59,8 @@ class IdTokenResponse extends BearerTokenResponse
             }
         }
 
-        // https://openid.net/specs/openid-connect-core-1_0.html#NonceNotes
-        if (\array_key_exists($nonce = 'nonce', $this->request->getParsedBody())) {
-            $builder->withClaim($nonce, $this->request->getParsedBody()[$nonce]);
-        }
-
         $this->getEmitter()->emit(
-            new IdTokenClaimsCreated(RequestEvent::ID_TOKEN_CLAIMS_CREATED, $this->request, $builder)
+            new IdTokenClaimsCreated(RequestEvent::ID_TOKEN_CLAIMS_CREATED, $builder)
         );
 
         $token = $builder->getToken(
@@ -87,7 +69,7 @@ class IdTokenResponse extends BearerTokenResponse
         );
 
         $this->getEmitter()->emit(
-            new IdTokenIssued(RequestEvent::ID_TOKEN_ISSUED, $this->request, $token)
+            new IdTokenIssued(RequestEvent::ID_TOKEN_ISSUED, $token)
         );
 
         return [
