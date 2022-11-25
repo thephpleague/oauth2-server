@@ -22,7 +22,6 @@ class IdTokenClaimsCreated extends RequestEvent
     public function __construct($name, ServerRequestInterface $request, Builder $builder)
     {
         parent::__construct($name, $request);
-        $this->request = $request;
         $this->builder = $builder;
     }
 

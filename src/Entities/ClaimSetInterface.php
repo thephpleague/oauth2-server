@@ -9,7 +9,7 @@ namespace League\OAuth2\Server\Entities;
  * @author Marc Riemer <mail@marcriemer.de>
  * @license http://opensource.org/licenses/MIT MIT
  */
-interface ClaimSetEntryInterface extends ClaimSetInterface
+interface ClaimSetInterface
 {
-    public function getScope(): string;
+    public function getClaims(): array;
 }

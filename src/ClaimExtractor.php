@@ -17,6 +17,11 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
  */
 class ClaimExtractor
 {
+    /**
+     * claimSets
+     *
+     * @var ClaimSetEntryInterface[]
+     */
     protected $claimSets = [];
 
     protected $protectedClaims = ['profile', 'email', 'address', 'phone'];
@@ -24,61 +29,24 @@ class ClaimExtractor
     /**
      * ClaimExtractor constructor
      * 
-     * @param ClaimSet[] $claimSets
+     * @param ClaimSetEntryInterface[] $claimSets
      */
     public function __construct(array $claimSets = [])
     {
-        // Add Default OpenID Connect Claims
-        // @see http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims
-        $this->addClaimSet(
-            new ClaimSetEntry('profile', [
-                'name',
-                'family_name',
-                'given_name',
-                'middle_name',
-                'nickname',
-                'preferred_username',
-                'profile',
-                'picture',
-                'website',
-                'gender',
-                'birthdate',
-                'zoneinfo',
-                'locale',
-                'updated_at'
-            ])
-        );        
-        $this->addClaimSet(
-            new ClaimSetEntry('email', [
-                'email',
-                'email_verified'
-            ])
-        );
-        $this->addClaimSet(
-            new ClaimSetEntry('address', [
-                'address'
-            ])
-        );
-        $this->addClaimSet(
-            new ClaimSetEntry('phone', [
-                'phone_number',
-                'phone_number_verified'
-            ])
-        );
-
+        $this->claimSets = self::getDefaultClaimSetEnties();        
         foreach ($claimSets as $claimSet) {
             $this->addClaimSet($claimSet);
         }
     }
 
     /**
-     * @param ClaimSetInterface $claimSet
+     * @param ClaimSetEntryInterface $claimSetEntry
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function addClaimSet(ClaimSetEntryInterface $claimSet): ClaimExtractor
+    public function addClaimSet(ClaimSetEntryInterface $claimSetEntry): ClaimExtractor
     {
-        $scope = $claimSet->getScope();
+        $scope = $claimSetEntry->getScope();
 
         if (in_array($scope, $this->protectedClaims) && !empty($this->claimSets[$scope])) {
             throw new \InvalidArgumentException(
@@ -86,31 +54,34 @@ class ClaimExtractor
             );
         }
 
-        $this->claimSets[$scope] = $claimSet;
+        $this->claimSets[$scope] = $claimSetEntry->getClaims();
 
         return $this;
     }
 
     /**
      * @param string $scope
-     * @return ClaimSet|null
+     * 
+     * @return ClaimSetEntryInterface|null
      */
-    public function getClaimSet(string$scope)
+    public function getClaimSet(string $scope): ?ClaimSetEntryInterface
     {
-        if (!$this->hasClaimSet($scope)) {
-            return null;
+        foreach($this->claimSets as $set) {
+            if ($set->getScope() === $scope) {
+                return $set;
+            }
         }
-
-        return $this->claimSets[$scope];
+        return null;
     }
 
     /**
-     * @param string $scope
-     * @return bool
-     */
-    public function hasClaimSet(string $scope): bool
+     * Get claimSets
+     *
+     * @return  array
+     */ 
+    public function getClaimSets(): array
     {
-        return array_key_exists($scope, $this->claimSets);
+        return $this->claimSets;
     }
 
     /**
@@ -150,5 +121,45 @@ class ClaimExtractor
         }
 
         return $claimData;
+    }
+
+    /**
+     * Create a array default openID connect claims
+     *
+     * @see http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims
+     * 
+     * @return ClaimSetEntry[]
+     */
+    public static function getDefaultClaimSetEnties(): array
+    {
+        return [
+            new ClaimSetEntry('profile', [
+                'name',
+                'family_name',
+                'given_name',
+                'middle_name',
+                'nickname',
+                'preferred_username',
+                'profile',
+                'picture',
+                'website',
+                'gender',
+                'birthdate',
+                'zoneinfo',
+                'locale',
+                'updated_at'
+            ]),
+            new ClaimSetEntry('email', [
+                'email',
+                'email_verified'
+            ]),
+            new ClaimSetEntry('address', [
+                'address'
+            ]),
+            new ClaimSetEntry('phone', [
+                'phone_number',
+                'phone_number_verified'
+            ])
+        ];
     }
 }
