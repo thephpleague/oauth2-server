@@ -4,7 +4,7 @@ namespace League\OAuth2\Server\Entities;
 
 /**
  * ClaimSetEntry
- * 
+ *
  * @author Steve Rhoades <sedonami@gmail.com>
  * @author Marc Riemer <mail@marcriemer.de>
  * @license http://opensource.org/licenses/MIT MIT
@@ -12,9 +12,11 @@ namespace League\OAuth2\Server\Entities;
 class ClaimSetEntry implements ClaimSetEntryInterface
 {
     public function __construct(
-        protected string $scope, 
-        protected array $claims)
-    {}
+        protected string $scope,
+        protected array $claims
+    )
+    {
+    }
 
     /**
      * Get scope

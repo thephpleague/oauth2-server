@@ -25,7 +25,7 @@ class RequestEvent extends Event
     /**
      * This event can be used to extent claims of the id_token
      */
-    const ID_TOKEN_CLAIMS_CREATED = 'id_token.claims.created'; 
+    const ID_TOKEN_CLAIMS_CREATED = 'id_token.claims.created';
 
     /**
      * @var ServerRequestInterface

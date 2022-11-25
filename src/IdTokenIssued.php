@@ -7,10 +7,10 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * An id_token has been issued
- * 
+ *
  * @author Marc Riemer <mail@marcriemer.de>
  */
-class IdTokenIssued extends RequestEvent 
+class IdTokenIssued extends RequestEvent
 {
     /**
      * Token
@@ -28,8 +28,8 @@ class IdTokenIssued extends RequestEvent
     /**
      * Get Token
      *
-     * @return  Token
-     */ 
+     * @return Token
+     */
     public function getToken(): Token
     {
         return $this->token;

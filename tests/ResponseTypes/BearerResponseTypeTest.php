@@ -72,28 +72,27 @@ class BearerResponseTypeTest extends TestCase
 
     public function testGenerateHttpResponseWithIdToken()
     {
-        $claimSetRepository = new class() implements ClaimSetRepositoryInterface
-        {
+        $claimSetRepository = new class() implements ClaimSetRepositoryInterface {
             public function getClaimSetEntry(AccessTokenEntityInterface $accessToken): ClaimSetInterface
             {
-                $claimSet = new class() implements ClaimSetInterface
-                {
+                $claimSet = new class() implements ClaimSetInterface {
                     public array $claims = [];
+
                     public function getClaims(): array
                     {
                         return $this->claims;
                     }
                 };
-                foreach(ClaimExtractor::getDefaultClaimSetEnties() as $setEntry) {
-                    foreach($accessToken->getScopes() as $scope) {
+                foreach (ClaimExtractor::getDefaultClaimSetEnties() as $setEntry) {
+                    foreach ($accessToken->getScopes() as $scope) {
                         if ($setEntry->getScope() === $scope->getIdentifier()) {
-                            foreach($setEntry->getClaims() as $claim)  {
+                            foreach ($setEntry->getClaims() as $claim) {
                                 $claimSet->claims[$claim] = $claim;
                             }
                         }
-                    } 
-                    
+                    }
                 }
+
                 return $claimSet;
             }
         };
@@ -112,8 +111,8 @@ class BearerResponseTypeTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => 'http://foo/bar',
-                'code'         => "code",
-                'nonce'        => $nonce
+                'code'         => 'code',
+                'nonce'        => $nonce,
             ]
         );
 
@@ -168,32 +167,42 @@ class BearerResponseTypeTest extends TestCase
         $this->assertObjectHasAttribute('expires_in', $json);
         $this->assertObjectHasAttribute('access_token', $json);
         $this->assertObjectHasAttribute('refresh_token', $json);
-        
+
         $this->assertObjectHasAttribute('id_token', $json);
 
         $token = (new JWT\Token\Parser(new JWT\Encoding\JoseEncoder()))->parse($json->id_token);
         $validator = new JWT\Validation\Validator();
-        
-        $this->assertTrue($validator->validate($token, 
-            new JWT\Validation\Constraint\SignedWith(new JWT\Signer\Rsa\Sha256(), JWT\Signer\Key\InMemory::file(__DIR__ . '/../Stubs/public.key', ""))));
-        
-        $this->assertTrue($validator->validate($token, 
-            new JWT\Validation\Constraint\IssuedBy(sprintf("%s://%s", $request->getUri()->getScheme(), $request->getUri()->getHost()))));
-        
-        $this->assertTrue($validator->validate($token, 
-            new JWT\Validation\Constraint\PermittedFor($client->getIdentifier())));
-        
-        $this->assertTrue($validator->validate($token, 
-            new JWT\Validation\Constraint\RelatedTo($accessToken->getUserIdentifier())));
 
-        $this->assertTrue($validator->validate($token, 
-            new JWT\Validation\Constraint\LooseValidAt(new SystemClock($accessToken->getExpiryDateTime()->getTimezone()))));
-        
-        foreach($claimExtrator->extract($accessToken->getScopes(), $claimSetRepository->getClaimSetEntry($accessToken)->getClaims()) as $claim => $value) {
-           $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue($claim, $value)));
+        $this->assertTrue($validator->validate(
+            $token,
+            new JWT\Validation\Constraint\SignedWith(new JWT\Signer\Rsa\Sha256(), JWT\Signer\Key\InMemory::file(__DIR__ . '/../Stubs/public.key', ''))
+        ));
+
+        $this->assertTrue($validator->validate(
+            $token,
+            new JWT\Validation\Constraint\IssuedBy(\sprintf('%s://%s', $request->getUri()->getScheme(), $request->getUri()->getHost()))
+        ));
+
+        $this->assertTrue($validator->validate(
+            $token,
+            new JWT\Validation\Constraint\PermittedFor($client->getIdentifier())
+        ));
+
+        $this->assertTrue($validator->validate(
+            $token,
+            new JWT\Validation\Constraint\RelatedTo($accessToken->getUserIdentifier())
+        ));
+
+        $this->assertTrue($validator->validate(
+            $token,
+            new JWT\Validation\Constraint\LooseValidAt(new SystemClock($accessToken->getExpiryDateTime()->getTimezone()))
+        ));
+
+        foreach ($claimExtrator->extract($accessToken->getScopes(), $claimSetRepository->getClaimSetEntry($accessToken)->getClaims()) as $claim => $value) {
+            $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue($claim, $value)));
         }
-        
-        $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue("nonce", $nonce)));
+
+        $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue('nonce', $nonce)));
     }
 
     public function testGenerateHttpResponseWithExtraParams()
