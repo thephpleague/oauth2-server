@@ -3,7 +3,6 @@
 namespace League\OAuth2\Server;
 
 use Lcobucci\JWT\Token;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * An id_token has been issued

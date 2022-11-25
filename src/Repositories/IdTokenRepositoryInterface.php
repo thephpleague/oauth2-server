@@ -17,6 +17,7 @@ interface IdTokenRepositoryInterface
      * Creates new token builder and may add some standard claims
      *
      * @param AccessTokenEntityInterface $token Issued access token
+     *
      * @return Builder
      */
     public function getBuilder(AccessTokenEntityInterface $token): Builder;

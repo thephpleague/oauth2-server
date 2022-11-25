@@ -89,7 +89,7 @@ class BearerResponseTypeTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => 'https://example.com/callback',
-                'code'         => 'code'
+                'code'         => 'code',
             ]
         );
 
@@ -118,8 +118,7 @@ class BearerResponseTypeTest extends TestCase
             }
         };
 
-        $IdTokenRepository = (new class() implements IdTokenRepositoryInterface
-        {
+        $IdTokenRepository = (new class() implements IdTokenRepositoryInterface {
             private $issuer;
 
             public function getBuilder(AccessTokenEntityInterface $accessToken): Builder
@@ -130,20 +129,20 @@ class BearerResponseTypeTest extends TestCase
                     ->issuedAt(new \DateTimeImmutable())
                     ->expiresAt($accessToken->getExpiryDateTime())
                     ->relatedTo($accessToken->getUserIdentifier())
-                    ->withClaim("nonce", "s6G31Kolwu9p");
+                    ->withClaim('nonce', 's6G31Kolwu9p');
 
                 return $builder;
             }
 
-            public function setIssuer($issuer) {
-                
+            public function setIssuer($issuer)
+            {
                 $this->issuer = $issuer;
 
                 return $this;
             }
         })->setIssuer(\sprintf('%s://%s', $request->getUri()->getScheme(), $request->getUri()->getHost()));
-        
-        
+
+
 
         $responseType = new IdTokenResponse($IdTokenRepository, $claimSetRepository, $claimExtrator = new ClaimExtractor());
 
@@ -231,7 +230,7 @@ class BearerResponseTypeTest extends TestCase
             $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue($claim, $value)));
         }
 
-        $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue('nonce', "s6G31Kolwu9p")));
+        $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue('nonce', 's6G31Kolwu9p')));
     }
 
     public function testGenerateHttpResponseWithExtraParams()

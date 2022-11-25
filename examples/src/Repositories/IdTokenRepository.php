@@ -32,7 +32,7 @@ class IdTokenRepository implements IdTokenRepositoryInterface
             ->relatedTo($accessToken->getUserIdentifier());
 
         if ($this->nonce) {
-            $builder->withClaim("nonce", $this->nonce);
+            $builder->withClaim('nonce', $this->nonce);
         }
 
         return $builder;
