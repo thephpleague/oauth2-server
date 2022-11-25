@@ -20,13 +20,7 @@ class RequestEvent extends Event
 
     const REFRESH_TOKEN_ISSUED = 'refresh_token.issued';
     const ACCESS_TOKEN_ISSUED = 'access_token.issued';
-    const ID_TOKEN_ISSUED = 'id_token.issued';
-
-    /**
-     * This event can be used to extent claims of the id_token
-     */
-    const ID_TOKEN_CLAIMS_CREATED = 'id_token.claims.created';
-
+    
     /**
      * @var ServerRequestInterface
      */
