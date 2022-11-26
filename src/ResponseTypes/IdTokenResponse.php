@@ -5,13 +5,15 @@ namespace League\OAuth2\Server\ResponseTypes;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\Event\EmitterAwareTrait;
+use League\Event\EmitterInterface;
 use League\OAuth2\Server\ClaimExtractor;
+use League\OAuth2\Server\ClaimExtractorIntercace;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClaimSetInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
-use League\OAuth2\Server\IdTokenClaimsCreated;
+use League\OAuth2\Server\IdTokenClaimsCreatedEvent;
 use League\OAuth2\Server\IdTokenEvent;
-use League\OAuth2\Server\IdTokenIssued;
+use League\OAuth2\Server\IdTokenIssuedEvent;
 use League\OAuth2\Server\Repositories\ClaimSetRepositoryInterface;
 use League\OAuth2\Server\Repositories\IdTokenRepositoryInterface;
 
@@ -30,11 +32,13 @@ class IdTokenResponse extends BearerTokenResponse
     public function __construct(
         protected IdTokenRepositoryInterface $builder,
         protected ClaimSetRepositoryInterface $claimRepository,
-        protected ?ClaimExtractor $extractor = null
+        EmitterInterface $emitter,
+        protected ?ClaimExtractorIntercace $extractor = null
     ) {
         if (!$extractor) {
             $this->extractor = new ClaimExtractor();
         }
+        $this->setEmitter($emitter);
     }
 
     /**
@@ -60,7 +64,7 @@ class IdTokenResponse extends BearerTokenResponse
         }
 
         $this->getEmitter()->emit(
-            new IdTokenClaimsCreated(IdTokenEvent::ID_TOKEN_CLAIMS_CREATED, $builder)
+            new IdTokenClaimsCreatedEvent(IdTokenEvent::ID_TOKEN_CLAIMS_CREATED, $builder)
         );
 
         $token = $builder->getToken(
@@ -69,7 +73,7 @@ class IdTokenResponse extends BearerTokenResponse
         );
 
         $this->getEmitter()->emit(
-            new IdTokenIssued(IdTokenEvent::ID_TOKEN_ISSUED, $token)
+            new IdTokenIssuedEvent(IdTokenEvent::ID_TOKEN_ISSUED, $token)
         );
 
         return [

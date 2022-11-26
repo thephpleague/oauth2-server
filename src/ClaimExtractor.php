@@ -14,7 +14,7 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
  * @author Steve Rhoades <sedonami@gmail.com>
  * @author Marc Riemer <mail@marcriemer.de>
  */
-class ClaimExtractor
+class ClaimExtractor implements ClaimExtractorIntercace
 {
     /**
      * claimSets
@@ -87,12 +87,7 @@ class ClaimExtractor
     }
 
     /**
-     * For given scopes and aggregated claims get all claims that have been configured on the extractor.
-     *
-     * @param array $scopes
-     * @param array $claims
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function extract(array $scopes, array $claims): array
     {

@@ -9,7 +9,7 @@ use Lcobucci\JWT\Token;
  *
  * @author Marc Riemer <mail@marcriemer.de>
  */
-final class IdTokenIssued extends IdTokenEvent
+final class IdTokenIssuedEvent extends IdTokenEvent
 {
     /**
      * Token
