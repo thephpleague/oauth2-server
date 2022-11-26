@@ -2,10 +2,9 @@
 
 namespace League\OAuth2\Server;
 
-interface ClaimExtractorIntercace 
+interface ClaimExtractorIntercace
 {
- 
- /**
+    /**
      * For given scopes and aggregated claims get all claims that have been configured on the extractor.
      *
      * @param array $scopes
@@ -14,5 +13,4 @@ interface ClaimExtractorIntercace
      * @return array
      */
     public function extract(array $scopes, array $claims): array;
-
 }
