@@ -14,7 +14,6 @@ use League\OAuth2\Server\IdTokenEvent;
 use League\OAuth2\Server\IdTokenIssued;
 use League\OAuth2\Server\Repositories\ClaimSetRepositoryInterface;
 use League\OAuth2\Server\Repositories\IdTokenRepositoryInterface;
-use League\OAuth2\Server\RequestEvent;
 
 /**
  * OpenidConfigurationResponse
