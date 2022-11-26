@@ -14,8 +14,7 @@ class ClaimSetEntry implements ClaimSetEntryInterface
     public function __construct(
         protected string $scope,
         protected array $claims
-    )
-    {
+    ) {
     }
 
     /**
