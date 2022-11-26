@@ -10,6 +10,7 @@ use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClaimSetInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\IdTokenClaimsCreated;
+use League\OAuth2\Server\IdTokenEvent;
 use League\OAuth2\Server\IdTokenIssued;
 use League\OAuth2\Server\Repositories\ClaimSetRepositoryInterface;
 use League\OAuth2\Server\Repositories\IdTokenRepositoryInterface;
@@ -60,7 +61,7 @@ class IdTokenResponse extends BearerTokenResponse
         }
 
         $this->getEmitter()->emit(
-            new IdTokenClaimsCreated(RequestEvent::ID_TOKEN_CLAIMS_CREATED, $builder)
+            new IdTokenClaimsCreated(IdTokenEvent::ID_TOKEN_CLAIMS_CREATED, $builder)
         );
 
         $token = $builder->getToken(
@@ -69,7 +70,7 @@ class IdTokenResponse extends BearerTokenResponse
         );
 
         $this->getEmitter()->emit(
-            new IdTokenIssued(RequestEvent::ID_TOKEN_ISSUED, $token)
+            new IdTokenIssued(IdTokenEvent::ID_TOKEN_ISSUED, $token)
         );
 
         return [
