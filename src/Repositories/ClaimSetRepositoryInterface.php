@@ -4,6 +4,7 @@ namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClaimSetInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * ClaimSetRepositoryInterface resolve claims for id_token.
@@ -17,9 +18,11 @@ interface ClaimSetRepositoryInterface
     /**
      * Get ClaimSetEntries
      *
-     * @param AccessTokenEntityInterface $authCode
+     * Access AccessTokenEntityInterface and ServerRequestInterface returned by the resource server after successfull authorization
+     *
+     * @param AccessTokenEntityInterface|ServerRequestInterface $resource
      *
      * @return ClaimSetInterface
      */
-    public function getClaimSetEntry(AccessTokenEntityInterface $authCode): ClaimSetInterface;
+    public function getClaimSetEntry(AccessTokenEntityInterface|ServerRequestInterface $resource): ClaimSetInterface;
 }
