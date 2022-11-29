@@ -29,15 +29,47 @@ class IdTokenResponse extends BearerTokenResponse
 {
     use EmitterAwareTrait;
 
+    /**
+     * IdTokenRepositoryInterface
+     *
+     * @var IdTokenRepositoryInterface
+     */
+    protected $builder;
+
+    /**
+     * ClaimSetRepositoryInterface
+     *
+     * @var ClaimSetRepositoryInterface
+     */
+    protected $claimRepository;
+
+    /**
+     * EmitterInterface
+     *
+     * @var EmitterInterface
+     */
+    protected $emitter;
+
+    /**
+     * ClaimExtractorIntercace
+     *
+     * @var ClaimExtractorIntercace
+     */
+    protected $extractor;
+
     public function __construct(
-        protected IdTokenRepositoryInterface $builder,
-        protected ClaimSetRepositoryInterface $claimRepository,
+        IdTokenRepositoryInterface $builder,
+        ClaimSetRepositoryInterface $claimRepository,
         EmitterInterface $emitter,
-        protected ?ClaimExtractorIntercace $extractor = null
+        ?ClaimExtractorIntercace $extractor = null
     ) {
         if (!$extractor) {
             $this->extractor = new ClaimExtractor();
+        } else {
+            $this->extractor = $extractor;
         }
+        $this->builder = $builder;
+        $this->claimRepository = $claimRepository;
         $this->setEmitter($emitter);
     }
 

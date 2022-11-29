@@ -11,10 +11,22 @@ namespace League\OAuth2\Server\Entities;
  */
 class ClaimSetEntry implements ClaimSetEntryInterface
 {
+    /**
+     * @var string
+     */
+    protected $scope;
+
+    /**
+     * @var array
+     */
+    protected $claims;
+
     public function __construct(
-        protected string $scope,
-        protected array $claims
+        string $scope,
+        array $claims
     ) {
+        $this->scope = $scope;
+        $this->claims = $claims;
     }
 
     /**
