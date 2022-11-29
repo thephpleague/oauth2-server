@@ -11,6 +11,7 @@ use Lcobucci\JWT as JWT;
 use Lcobucci\JWT\Encoding\ChainedFormatter;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Token\Builder;
+use League\Event\EmitterInterface;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\ClaimExtractor;
 use League\OAuth2\Server\CryptKey;
@@ -142,9 +143,8 @@ class BearerResponseTypeTest extends TestCase
             }
         })->setIssuer(\sprintf('%s://%s', $request->getUri()->getScheme(), $request->getUri()->getHost()));
 
-
-
-        $responseType = new IdTokenResponse($IdTokenRepository, $claimSetRepository, $claimExtrator = new ClaimExtractor());
+        $responseType = new IdTokenResponse($IdTokenRepository, $claimSetRepository, 
+        $this->getMockBuilder(EmitterInterface::class)->getMock(), $claimExtrator = new ClaimExtractor());
 
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
