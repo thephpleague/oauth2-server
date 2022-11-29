@@ -143,8 +143,12 @@ class BearerResponseTypeTest extends TestCase
             }
         })->setIssuer(\sprintf('%s://%s', $request->getUri()->getScheme(), $request->getUri()->getHost()));
 
-        $responseType = new IdTokenResponse($IdTokenRepository, $claimSetRepository, 
-        $this->getMockBuilder(EmitterInterface::class)->getMock(), $claimExtrator = new ClaimExtractor());
+        $responseType = new IdTokenResponse(
+            $IdTokenRepository,
+            $claimSetRepository,
+            $this->getMockBuilder(EmitterInterface::class)->getMock(),
+            $claimExtrator = new ClaimExtractor()
+        );
 
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
