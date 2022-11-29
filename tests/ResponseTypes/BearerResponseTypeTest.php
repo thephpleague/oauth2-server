@@ -91,10 +91,10 @@ class BearerResponseTypeTest extends TestCase
             ]
         );
 
-        $claimSetRepository = new class () implements ClaimSetRepositoryInterface {
+        $claimSetRepository = new class() implements ClaimSetRepositoryInterface {
             public function getClaimSetEntry(AccessTokenEntityInterface $accessToken): ClaimSetInterface
             {
-                $claimSet = new class () implements ClaimSetInterface {
+                $claimSet = new class() implements ClaimSetInterface {
                     public array $claims = [];
 
                     public function getClaims(): array
@@ -116,12 +116,12 @@ class BearerResponseTypeTest extends TestCase
             }
         };
 
-        $IdTokenRepository = (new class () implements IdTokenRepositoryInterface {
+        $IdTokenRepository = (new class() implements IdTokenRepositoryInterface {
             private $issuer;
 
             public function getBuilder(AccessTokenEntityInterface $accessToken): JWT\Builder
             {
-                if (class_exists("\Lcobucci\JWT\Encoding\JoseEncoder")) {
+                if (\class_exists("\Lcobucci\JWT\Encoding\JoseEncoder")) {
                     $builder = (new JWT\Token\Builder(
                         new \Lcobucci\JWT\Encoding\JoseEncoder(),
                         \Lcobucci\JWT\Encoding\ChainedFormatter::withUnixTimestampDates()
@@ -207,7 +207,7 @@ class BearerResponseTypeTest extends TestCase
 
         $this->assertObjectHasAttribute('id_token', $json);
 
-        if (class_exists("\Lcobucci\JWT\Token\Parser")) {
+        if (\class_exists("\Lcobucci\JWT\Token\Parser")) {
             $token = (new \Lcobucci\JWT\Token\Parser(new \Lcobucci\JWT\Encoding\JoseEncoder()))->parse($json->id_token);
         } else {
             $token = (new \Lcobucci\JWT\Parser())->parse($json->id_token);
@@ -235,7 +235,7 @@ class BearerResponseTypeTest extends TestCase
             new JWT\Validation\Constraint\RelatedTo($accessToken->getUserIdentifier())
         ));
 
-        if (class_exists("\Lcobucci\JWT\Validation\Constraint\LooseValidAt")) {
+        if (\class_exists("\Lcobucci\JWT\Validation\Constraint\LooseValidAt")) {
             $this->assertTrue($validator->validate(
                 $token,
                 new \Lcobucci\JWT\Validation\Constraint\LooseValidAt(new SystemClock($accessToken->getExpiryDateTime()->getTimezone()))
@@ -247,14 +247,14 @@ class BearerResponseTypeTest extends TestCase
             ));
         }
 
-        if (class_exists("\Lcobucci\JWT\Validation\Constraint\HasClaimWithValue")) {
+        if (\class_exists("\Lcobucci\JWT\Validation\Constraint\HasClaimWithValue")) {
             foreach ($claimExtrator->extract($accessToken->getScopes(), $claimSetRepository->getClaimSetEntry($accessToken)->getClaims()) as $claim => $value) {
                 $this->assertTrue($validator->validate($token, new \Lcobucci\JWT\Validation\Constraint\HasClaimWithValue($claim, $value)));
             }
             $this->assertTrue($validator->validate($token, new \Lcobucci\JWT\Validation\Constraint\HasClaimWithValue('nonce', 's6G31Kolwu9p')));
         } else {
             foreach ($claimExtrator->extract($accessToken->getScopes(), $claimSetRepository->getClaimSetEntry($accessToken)->getClaims()) as $claim => $value) {
-                $this->assertTrue(array_key_exists($claim, $token->getClaims()));
+                $this->assertTrue(\array_key_exists($claim, $token->getClaims()));
                 $this->assertEquals($value, $token->getClaims()[$claim]);
             }
         }
