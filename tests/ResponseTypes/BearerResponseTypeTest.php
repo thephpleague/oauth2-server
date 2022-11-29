@@ -8,9 +8,6 @@ use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT as JWT;
-use Lcobucci\JWT\Encoding\ChainedFormatter;
-use Lcobucci\JWT\Encoding\JoseEncoder;
-use Lcobucci\JWT\Token\Builder;
 use League\Event\EmitterInterface;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\ClaimExtractor;
@@ -94,10 +91,10 @@ class BearerResponseTypeTest extends TestCase
             ]
         );
 
-        $claimSetRepository = new class() implements ClaimSetRepositoryInterface {
+        $claimSetRepository = new class () implements ClaimSetRepositoryInterface {
             public function getClaimSetEntry(AccessTokenEntityInterface $accessToken): ClaimSetInterface
             {
-                $claimSet = new class() implements ClaimSetInterface {
+                $claimSet = new class () implements ClaimSetInterface {
                     public array $claims = [];
 
                     public function getClaims(): array
@@ -119,13 +116,21 @@ class BearerResponseTypeTest extends TestCase
             }
         };
 
-        $IdTokenRepository = (new class() implements IdTokenRepositoryInterface {
+        $IdTokenRepository = (new class () implements IdTokenRepositoryInterface {
             private $issuer;
 
-            public function getBuilder(AccessTokenEntityInterface $accessToken): Builder
+            public function getBuilder(AccessTokenEntityInterface $accessToken): JWT\Builder
             {
-                $builder = (new Builder(new JoseEncoder(), ChainedFormatter::withUnixTimestampDates()))
-                    ->permittedFor($accessToken->getClient()->getIdentifier())
+                if (class_exists("\Lcobucci\JWT\Encoding\JoseEncoder")) {
+                    $builder = (new JWT\Token\Builder(
+                        new \Lcobucci\JWT\Encoding\JoseEncoder(),
+                        \Lcobucci\JWT\Encoding\ChainedFormatter::withUnixTimestampDates()
+                    ));
+                } else {
+                    $builder = (new JWT\Builder(new \Lcobucci\JWT\Parsing\Encoder(), new \Lcobucci\JWT\Claim\Factory()));
+                }
+
+                $builder->permittedFor($accessToken->getClient()->getIdentifier())
                     ->issuedBy($this->issuer)
                     ->issuedAt(new \DateTimeImmutable())
                     ->expiresAt($accessToken->getExpiryDateTime())
@@ -202,7 +207,12 @@ class BearerResponseTypeTest extends TestCase
 
         $this->assertObjectHasAttribute('id_token', $json);
 
-        $token = (new JWT\Token\Parser(new JWT\Encoding\JoseEncoder()))->parse($json->id_token);
+        if (class_exists("\Lcobucci\JWT\Token\Parser")) {
+            $token = (new \Lcobucci\JWT\Token\Parser(new \Lcobucci\JWT\Encoding\JoseEncoder()))->parse($json->id_token);
+        } else {
+            $token = (new \Lcobucci\JWT\Parser())->parse($json->id_token);
+        }
+
         $validator = new JWT\Validation\Validator();
 
         $this->assertTrue($validator->validate(
@@ -225,16 +235,29 @@ class BearerResponseTypeTest extends TestCase
             new JWT\Validation\Constraint\RelatedTo($accessToken->getUserIdentifier())
         ));
 
-        $this->assertTrue($validator->validate(
-            $token,
-            new JWT\Validation\Constraint\LooseValidAt(new SystemClock($accessToken->getExpiryDateTime()->getTimezone()))
-        ));
-
-        foreach ($claimExtrator->extract($accessToken->getScopes(), $claimSetRepository->getClaimSetEntry($accessToken)->getClaims()) as $claim => $value) {
-            $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue($claim, $value)));
+        if (class_exists("\Lcobucci\JWT\Validation\Constraint\LooseValidAt")) {
+            $this->assertTrue($validator->validate(
+                $token,
+                new \Lcobucci\JWT\Validation\Constraint\LooseValidAt(new SystemClock($accessToken->getExpiryDateTime()->getTimezone()))
+            ));
+        } else {
+            $this->assertTrue($validator->validate(
+                $token,
+                new \Lcobucci\JWT\Validation\Constraint\ValidAt(new SystemClock($accessToken->getExpiryDateTime()->getTimezone()))
+            ));
         }
 
-        $this->assertTrue($validator->validate($token, new JWT\Validation\Constraint\HasClaimWithValue('nonce', 's6G31Kolwu9p')));
+        if (class_exists("\Lcobucci\JWT\Validation\Constraint\HasClaimWithValue")) {
+            foreach ($claimExtrator->extract($accessToken->getScopes(), $claimSetRepository->getClaimSetEntry($accessToken)->getClaims()) as $claim => $value) {
+                $this->assertTrue($validator->validate($token, new \Lcobucci\JWT\Validation\Constraint\HasClaimWithValue($claim, $value)));
+            }
+            $this->assertTrue($validator->validate($token, new \Lcobucci\JWT\Validation\Constraint\HasClaimWithValue('nonce', 's6G31Kolwu9p')));
+        } else {
+            foreach ($claimExtrator->extract($accessToken->getScopes(), $claimSetRepository->getClaimSetEntry($accessToken)->getClaims()) as $claim => $value) {
+                $this->assertTrue(array_key_exists($claim, $token->getClaims()));
+                $this->assertEquals($value, $token->getClaims()[$claim]);
+            }
+        }
     }
 
     public function testGenerateHttpResponseWithExtraParams()

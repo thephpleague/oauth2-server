@@ -2,7 +2,7 @@
 
 namespace League\OAuth2\Server\Repositories;
 
-use Lcobucci\JWT\Token\Builder;
+use Lcobucci\JWT\Builder;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 
 /**

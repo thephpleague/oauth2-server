@@ -2,7 +2,7 @@
 
 namespace League\OAuth2\Server;
 
-use Lcobucci\JWT\Token\Builder;
+use Lcobucci\JWT\Builder;
 
 /**
  * IdTokenClaimsCreatedEvent Event helps to extend claims of the id_token
