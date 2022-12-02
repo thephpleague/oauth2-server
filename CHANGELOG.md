@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- You can now set a leeway for time drift between servers when validating a JWT (PR #1304)
+
+### [8.3.6] - released 2022-11-14
+### Fixed
+- Use LooseValidAt instead of StrictValidAt so that users aren't forced to use claims such as NBF in their JWT tokens (PR #1312)
+
+### [8.3.5] - released 2022-05-12
 ### Fixed
 - Use InMemory::plainText('empty', 'empty') instead of InMemory::plainText('') to avoid [new empty string exception](https://github.com/lcobucci/jwt/pull/833) thrown by lcobucci/jwt (PR #1282)
 
@@ -562,7 +570,9 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.4...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.6...HEAD
+[8.3.6]: https://github.com/thephpleague/oauth2-server/compare/8.3.5...8.3.6
+[8.3.5]: https://github.com/thephpleague/oauth2-server/compare/8.3.4...8.3.5
 [8.3.4]: https://github.com/thephpleague/oauth2-server/compare/8.3.3...8.3.4
 [8.3.3]: https://github.com/thephpleague/oauth2-server/compare/8.3.2...8.3.3
 [8.3.2]: https://github.com/thephpleague/oauth2-server/compare/8.3.1...8.3.2
