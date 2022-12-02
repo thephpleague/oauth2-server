@@ -15,7 +15,7 @@ use ReflectionClass;
 
 class BearerTokenValidatorTest extends TestCase
 {
-    public function testBearerTokenValidatorAcceptsValidToken()
+    public function testBearerTokenValidatorAcceptsValidToken(): void
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
@@ -43,7 +43,7 @@ class BearerTokenValidatorTest extends TestCase
         $this->assertArrayHasKey('authorization', $validRequest->getHeaders());
     }
 
-    public function testBearerTokenValidatorRejectsExpiredToken()
+    public function testBearerTokenValidatorRejectsExpiredToken(): void
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 

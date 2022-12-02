@@ -25,7 +25,7 @@ class PasswordGrantTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
 
-    public function testGetIdentifier()
+    public function testGetIdentifier(): void
     {
         $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -34,7 +34,7 @@ class PasswordGrantTest extends TestCase
         $this->assertEquals('password', $grant->getIdentifier());
     }
 
-    public function testRespondToRequest()
+    public function testRespondToRequest(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -80,7 +80,7 @@ class PasswordGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
-    public function testRespondToRequestNullRefreshToken()
+    public function testRespondToRequestNullRefreshToken(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -125,7 +125,7 @@ class PasswordGrantTest extends TestCase
         $this->assertNull($responseType->getRefreshToken());
     }
 
-    public function testRespondToRequestMissingUsername()
+    public function testRespondToRequestMissingUsername(): void
     {
         $client = new ClientEntity();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
@@ -153,7 +153,7 @@ class PasswordGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRespondToRequestMissingPassword()
+    public function testRespondToRequestMissingPassword(): void
     {
         $client = new ClientEntity();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
@@ -182,7 +182,7 @@ class PasswordGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRespondToRequestBadCredentials()
+    public function testRespondToRequestBadCredentials(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');

@@ -26,23 +26,20 @@ class ImplicitGrantTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
 
-    /**
-     * CryptTrait stub
-     */
-    protected $cryptStub;
+    protected CryptTraitStub $cryptStub;
 
     public function setUp(): void
     {
         $this->cryptStub = new CryptTraitStub();
     }
 
-    public function testGetIdentifier()
+    public function testGetIdentifier(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $this->assertEquals('implicit', $grant->getIdentifier());
     }
 
-    public function testCanRespondToAccessTokenRequest()
+    public function testCanRespondToAccessTokenRequest(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
@@ -51,7 +48,7 @@ class ImplicitGrantTest extends TestCase
         );
     }
 
-    public function testRespondToAccessTokenRequest()
+    public function testRespondToAccessTokenRequest(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
@@ -64,7 +61,7 @@ class ImplicitGrantTest extends TestCase
         );
     }
 
-    public function testCanRespondToAuthorizationRequest()
+    public function testCanRespondToAuthorizationRequest(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
@@ -76,7 +73,7 @@ class ImplicitGrantTest extends TestCase
         $this->assertTrue($grant->canRespondToAuthorizationRequest($request));
     }
 
-    public function testValidateAuthorizationRequest()
+    public function testValidateAuthorizationRequest(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -101,7 +98,7 @@ class ImplicitGrantTest extends TestCase
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
-    public function testValidateAuthorizationRequestRedirectUriArray()
+    public function testValidateAuthorizationRequestRedirectUriArray(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri(['http://foo/bar']);
@@ -126,7 +123,7 @@ class ImplicitGrantTest extends TestCase
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
-    public function testValidateAuthorizationRequestMissingClientId()
+    public function testValidateAuthorizationRequestMissingClientId(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -141,7 +138,7 @@ class ImplicitGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestInvalidClientId()
+    public function testValidateAuthorizationRequestInvalidClientId(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn(null);
@@ -160,7 +157,7 @@ class ImplicitGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestBadRedirectUriString()
+    public function testValidateAuthorizationRequestBadRedirectUriString(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -182,7 +179,7 @@ class ImplicitGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestBadRedirectUriArray()
+    public function testValidateAuthorizationRequestBadRedirectUriArray(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri(['http://foo/bar']);
@@ -204,7 +201,7 @@ class ImplicitGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testCompleteAuthorizationRequest()
+    public function testCompleteAuthorizationRequest(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('identifier');
@@ -233,7 +230,7 @@ class ImplicitGrantTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    public function testCompleteAuthorizationRequestDenied()
+    public function testCompleteAuthorizationRequestDenied(): void
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(false);
@@ -259,7 +256,7 @@ class ImplicitGrantTest extends TestCase
         $grant->completeAuthorizationRequest($authRequest);
     }
 
-    public function testAccessTokenRepositoryUniqueConstraintCheck()
+    public function testAccessTokenRepositoryUniqueConstraintCheck(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('identifier');
@@ -299,7 +296,7 @@ class ImplicitGrantTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    public function testAccessTokenRepositoryFailToPersist()
+    public function testAccessTokenRepositoryFailToPersist(): void
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -326,7 +323,7 @@ class ImplicitGrantTest extends TestCase
         $grant->completeAuthorizationRequest($authRequest);
     }
 
-    public function testAccessTokenRepositoryFailToPersistUniqueNoInfiniteLoop()
+    public function testAccessTokenRepositoryFailToPersistUniqueNoInfiniteLoop(): void
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -353,7 +350,7 @@ class ImplicitGrantTest extends TestCase
         $grant->completeAuthorizationRequest($authRequest);
     }
 
-    public function testSetRefreshTokenTTL()
+    public function testSetRefreshTokenTTL(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
@@ -362,7 +359,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setRefreshTokenTTL(new DateInterval('PT10M'));
     }
 
-    public function testSetRefreshTokenRepository()
+    public function testSetRefreshTokenRepository(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
@@ -373,7 +370,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
     }
 
-    public function testCompleteAuthorizationRequestNoUser()
+    public function testCompleteAuthorizationRequestNoUser(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 

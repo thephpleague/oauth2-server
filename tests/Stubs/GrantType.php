@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LeagueTests\Stubs;
 
 use DateInterval;
+use Defuse\Crypto\Key;
 use League\Event\EmitterInterface;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
@@ -93,7 +94,7 @@ final class GrantType implements GrantTypeInterface
     {
     }
 
-    public function setEncryptionKey($key = null): void
+    public function setEncryptionKey(Key|string|null $key = null): void
     {
     }
 

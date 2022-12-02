@@ -22,7 +22,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
 
-    public function testValidResponse()
+    public function testValidResponse(): void
     {
         $client = new ClientEntity();
         $client->setConfidential();
@@ -68,7 +68,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testOAuthErrorResponse()
+    public function testOAuthErrorResponse(): void
     {
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('validateClient')->willReturn(false);
@@ -103,7 +103,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
         $this->assertEquals(401, $response->getStatusCode());
     }
 
-    public function testOAuthErrorResponseRedirectUri()
+    public function testOAuthErrorResponseRedirectUri(): void
     {
         $exception = OAuthServerException::invalidScope('test', 'http://foo/bar');
         $response = $exception->generateHttpResponse(new Response());
@@ -115,7 +115,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
         );
     }
 
-    public function testOAuthErrorResponseRedirectUriFragment()
+    public function testOAuthErrorResponseRedirectUriFragment(): void
     {
         $exception = OAuthServerException::invalidScope('test', 'http://foo/bar');
         $response = $exception->generateHttpResponse(new Response(), true);

@@ -20,13 +20,13 @@ class ClientCredentialsGrantTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
 
-    public function testGetIdentifier()
+    public function testGetIdentifier(): void
     {
         $grant = new ClientCredentialsGrant();
         $this->assertEquals('client_credentials', $grant->getIdentifier());
     }
 
-    public function testRespondToRequest()
+    public function testRespondToRequest(): void
     {
         $client = new ClientEntity();
         $client->setConfidential();

@@ -33,7 +33,7 @@ class RefreshTokenGrantTest extends TestCase
         $this->cryptStub = new CryptTraitStub();
     }
 
-    public function testGetIdentifier()
+    public function testGetIdentifier(): void
     {
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
@@ -41,7 +41,7 @@ class RefreshTokenGrantTest extends TestCase
         $this->assertEquals('refresh_token', $grant->getIdentifier());
     }
 
-    public function testRespondToRequest()
+    public function testRespondToRequest(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -99,7 +99,7 @@ class RefreshTokenGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
-    public function testRespondToRequestNullRefreshToken()
+    public function testRespondToRequestNullRefreshToken(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -157,7 +157,7 @@ class RefreshTokenGrantTest extends TestCase
         $this->assertNull($responseType->getRefreshToken());
     }
 
-    public function testRespondToReducedScopes()
+    public function testRespondToReducedScopes(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -215,7 +215,7 @@ class RefreshTokenGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
-    public function testRespondToUnexpectedScope()
+    public function testRespondToUnexpectedScope(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -270,7 +270,7 @@ class RefreshTokenGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRespondToRequestMissingOldToken()
+    public function testRespondToRequestMissingOldToken(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -301,7 +301,7 @@ class RefreshTokenGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRespondToRequestInvalidOldToken()
+    public function testRespondToRequestInvalidOldToken(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -335,7 +335,7 @@ class RefreshTokenGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRespondToRequestClientMismatch()
+    public function testRespondToRequestClientMismatch(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -383,7 +383,7 @@ class RefreshTokenGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRespondToRequestExpiredToken()
+    public function testRespondToRequestExpiredToken(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -428,7 +428,7 @@ class RefreshTokenGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRespondToRequestRevokedToken()
+    public function testRespondToRequestRevokedToken(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -474,7 +474,7 @@ class RefreshTokenGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRespondToRequestFinalizeScopes()
+    public function testRespondToRequestFinalizeScopes(): void
     {
         $client = new ClientEntity();
 
@@ -547,7 +547,7 @@ class RefreshTokenGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRevokedRefreshToken()
+    public function testRevokedRefreshToken(): void
     {
         $refreshTokenId = 'foo';
 
@@ -606,7 +606,7 @@ class RefreshTokenGrantTest extends TestCase
         Assert::assertTrue($refreshTokenRepositoryMock->isRefreshTokenRevoked($refreshTokenId));
     }
 
-    public function testUnrevokedRefreshToken()
+    public function testUnrevokedRefreshToken(): void
     {
         $refreshTokenId = 'foo';
 

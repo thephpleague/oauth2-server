@@ -15,16 +15,16 @@ use League\Uri\Uri;
 class RedirectUriValidator implements RedirectUriValidatorInterface
 {
     /**
-     * @var array
+     * @var string[]
      */
-    private $allowedRedirectUris;
+    private array $allowedRedirectUris;
 
     /**
      * New validator instance for the given uri
      *
-     * @param string|array $allowedRedirectUris
+     * @param string[]|string $allowedRedirectUris
      */
-    public function __construct($allowedRedirectUris)
+    public function __construct(array|string $allowedRedirectUris)
     {
         if (\is_string($allowedRedirectUris)) {
             $this->allowedRedirectUris = [$allowedRedirectUris];

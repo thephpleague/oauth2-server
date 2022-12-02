@@ -7,14 +7,14 @@ use PHPUnit\Framework\TestCase;
 
 class S256VerifierTest extends TestCase
 {
-    public function testGetMethod()
+    public function testGetMethod(): void
     {
         $verifier = new S256Verifier();
 
         $this->assertEquals('S256', $verifier->getMethod());
     }
 
-    public function testVerifyCodeChallengeSucceeds()
+    public function testVerifyCodeChallengeSucceeds(): void
     {
         $codeChallenge = $this->createCodeChallenge('foo');
         $verifier = new S256Verifier();
@@ -22,7 +22,7 @@ class S256VerifierTest extends TestCase
         $this->assertTrue($verifier->verifyCodeChallenge('foo', $codeChallenge));
     }
 
-    public function testVerifyCodeChallengeFails()
+    public function testVerifyCodeChallengeFails(): void
     {
         $codeChallenge = $this->createCodeChallenge('bar');
         $verifier = new S256Verifier();
@@ -30,7 +30,7 @@ class S256VerifierTest extends TestCase
         $this->assertFalse($verifier->verifyCodeChallenge('foo', $codeChallenge));
     }
 
-    private function createCodeChallenge($codeVerifier)
+    private function createCodeChallenge(string $codeVerifier): string
     {
         return \strtr(\rtrim(\base64_encode(\hash('sha256', $codeVerifier, true)), '='), '+/', '-_');
     }

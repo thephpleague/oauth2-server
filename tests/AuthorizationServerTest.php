@@ -60,7 +60,7 @@ class AuthorizationServerTest extends TestCase
     }
     */
 
-    public function testRespondToRequestInvalidGrantType()
+    public function testRespondToRequestInvalidGrantType(): void
     {
         $server = new AuthorizationServer(
             $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
@@ -81,7 +81,7 @@ class AuthorizationServerTest extends TestCase
         }
     }
 
-    public function testRespondToRequest()
+    public function testRespondToRequest(): void
     {
         $client = new ClientEntity();
 
@@ -118,7 +118,7 @@ class AuthorizationServerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testGetResponseType()
+    public function testGetResponseType(): void
     {
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -137,7 +137,7 @@ class AuthorizationServerTest extends TestCase
         $this->assertInstanceOf(BearerTokenResponse::class, $method->invoke($server));
     }
 
-    public function testGetResponseTypeExtended()
+    public function testGetResponseTypeExtended(): void
     {
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
@@ -170,19 +170,18 @@ class AuthorizationServerTest extends TestCase
         $this->assertSame($encryptionKey, $encryptionKeyProperty->getValue($responseType));
     }
 
-    public function testMultipleRequestsGetDifferentResponseTypeInstances()
+    public function testMultipleRequestsGetDifferentResponseTypeInstances(): void
     {
         $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
         $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
 
         $responseTypePrototype = new class extends BearerTokenResponse {
-            /* @return null|CryptKeyInterface */
-            public function getPrivateKey()
+            public function getPrivateKey(): CryptKeyInterface|null
             {
                 return $this->privateKey;
             }
 
-            public function getEncryptionKey()
+            public function getEncryptionKey(): string|null
             {
                 return $this->encryptionKey;
             }
@@ -222,7 +221,7 @@ class AuthorizationServerTest extends TestCase
         $this->assertNotSame($responseTypeA, $responseTypeB);
     }
 
-    public function testCompleteAuthorizationRequest()
+    public function testCompleteAuthorizationRequest(): void
     {
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -257,7 +256,7 @@ class AuthorizationServerTest extends TestCase
         );
     }
 
-    public function testValidateAuthorizationRequest()
+    public function testValidateAuthorizationRequest(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -304,7 +303,7 @@ class AuthorizationServerTest extends TestCase
         $this->assertInstanceOf(AuthorizationRequest::class, $server->validateAuthorizationRequest($request));
     }
 
-    public function testValidateAuthorizationRequestWithMissingRedirectUri()
+    public function testValidateAuthorizationRequestWithMissingRedirectUri(): void
     {
         $client = new ClientEntity();
         $client->setConfidential();
@@ -350,7 +349,7 @@ class AuthorizationServerTest extends TestCase
         }
     }
 
-    public function testValidateAuthorizationRequestUnregistered()
+    public function testValidateAuthorizationRequestUnregistered(): void
     {
         $server = new AuthorizationServer(
             $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),

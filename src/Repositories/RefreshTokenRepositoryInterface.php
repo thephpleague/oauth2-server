@@ -17,35 +17,14 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
  */
 interface RefreshTokenRepositoryInterface extends RepositoryInterface
 {
-    /**
-     * Creates a new refresh token
-     *
-     * @return RefreshTokenEntityInterface|null
-     */
-    public function getNewRefreshToken();
+    public function getNewRefreshToken(): ?RefreshTokenEntityInterface;
 
     /**
-     * Create a new refresh token_name.
-     *
-     * @param RefreshTokenEntityInterface $refreshTokenEntity
-     *
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
-    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity);
+    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity): void;
 
-    /**
-     * Revoke the refresh token.
-     *
-     * @param string $tokenId
-     */
-    public function revokeRefreshToken($tokenId);
+    public function revokeRefreshToken(string $tokenId): void;
 
-    /**
-     * Check if the refresh token has been revoked.
-     *
-     * @param string $tokenId
-     *
-     * @return bool Return true if this token has been revoked
-     */
-    public function isRefreshTokenRevoked($tokenId);
+    public function isRefreshTokenRevoked(string $tokenId): bool;
 }

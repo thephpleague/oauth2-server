@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 class AbstractGrantTest extends TestCase
 {
-    public function testHttpBasicWithPassword()
+    public function testHttpBasicWithPassword(): void
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -37,7 +37,7 @@ class AbstractGrantTest extends TestCase
         $this->assertSame(['Open', 'Sesame'], $basicAuthMethod->invoke($grantMock, $serverRequest));
     }
 
-    public function testHttpBasicNoPassword()
+    public function testHttpBasicNoPassword(): void
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -50,7 +50,7 @@ class AbstractGrantTest extends TestCase
         $this->assertSame(['Open', ''], $basicAuthMethod->invoke($grantMock, $serverRequest));
     }
 
-    public function testHttpBasicNotBasic()
+    public function testHttpBasicNotBasic(): void
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -63,7 +63,7 @@ class AbstractGrantTest extends TestCase
         $this->assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
     }
 
-    public function testHttpBasicNotBase64()
+    public function testHttpBasicNotBase64(): void
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -76,7 +76,7 @@ class AbstractGrantTest extends TestCase
         $this->assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
     }
 
-    public function testHttpBasicNoColon()
+    public function testHttpBasicNoColon(): void
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -89,7 +89,7 @@ class AbstractGrantTest extends TestCase
         $this->assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
     }
 
-    public function testGetClientCredentialsClientSecretNotAString()
+    public function testGetClientCredentialsClientSecretNotAString(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -121,7 +121,7 @@ class AbstractGrantTest extends TestCase
         $getClientCredentialsMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    public function testValidateClientPublic()
+    public function testValidateClientPublic(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -146,7 +146,7 @@ class AbstractGrantTest extends TestCase
         $this->assertEquals($client, $result);
     }
 
-    public function testValidateClientConfidential()
+    public function testValidateClientConfidential(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -173,7 +173,7 @@ class AbstractGrantTest extends TestCase
         $this->assertEquals($client, $result);
     }
 
-    public function testValidateClientMissingClientId()
+    public function testValidateClientMissingClientId(): void
     {
         $client = new ClientEntity();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
@@ -194,7 +194,7 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    public function testValidateClientMissingClientSecret()
+    public function testValidateClientMissingClientSecret(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('validateClient')->willReturn(false);
@@ -217,7 +217,7 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    public function testValidateClientInvalidClientSecret()
+    public function testValidateClientInvalidClientSecret(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('validateClient')->willReturn(false);
@@ -241,7 +241,7 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    public function testValidateClientInvalidRedirectUri()
+    public function testValidateClientInvalidRedirectUri(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -267,7 +267,7 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    public function testValidateClientInvalidRedirectUriArray()
+    public function testValidateClientInvalidRedirectUriArray(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri(['http://foo/bar']);
@@ -293,7 +293,7 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    public function testValidateClientMalformedRedirectUri()
+    public function testValidateClientMalformedRedirectUri(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -319,7 +319,7 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
     }
 
-    public function testValidateClientBadClient()
+    public function testValidateClientBadClient(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('validateClient')->willReturn(false);
@@ -343,7 +343,7 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod->invoke($grantMock, $serverRequest, true);
     }
 
-    public function testCanRespondToRequest()
+    public function testCanRespondToRequest(): void
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->method('getIdentifier')->willReturn('foobar');
@@ -355,7 +355,7 @@ class AbstractGrantTest extends TestCase
         $this->assertTrue($grantMock->canRespondToAccessTokenRequest($serverRequest));
     }
 
-    public function testIssueRefreshToken()
+    public function testIssueRefreshToken(): void
     {
         $refreshTokenRepoMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepoMock
@@ -379,7 +379,7 @@ class AbstractGrantTest extends TestCase
         $this->assertEquals($accessToken, $refreshToken->getAccessToken());
     }
 
-    public function testIssueNullRefreshToken()
+    public function testIssueNullRefreshToken(): void
     {
         $refreshTokenRepoMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepoMock
@@ -400,7 +400,7 @@ class AbstractGrantTest extends TestCase
         $this->assertNull($issueRefreshTokenMethod->invoke($grantMock, $accessToken));
     }
 
-    public function testIssueAccessToken()
+    public function testIssueAccessToken(): void
     {
         $accessTokenRepoMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepoMock->method('getNewToken')->willReturn(new AccessTokenEntity());
@@ -425,7 +425,7 @@ class AbstractGrantTest extends TestCase
         $this->assertInstanceOf(AccessTokenEntityInterface::class, $accessToken);
     }
 
-    public function testIssueAuthCode()
+    public function testIssueAuthCode(): void
     {
         $authCodeRepoMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepoMock->expects($this->once())->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
@@ -451,7 +451,7 @@ class AbstractGrantTest extends TestCase
         );
     }
 
-    public function testGetCookieParameter()
+    public function testGetCookieParameter(): void
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->method('getIdentifier')->willReturn('foobar');
@@ -468,7 +468,7 @@ class AbstractGrantTest extends TestCase
         $this->assertEquals('foo', $method->invoke($grantMock, 'bar', $serverRequest, 'foo'));
     }
 
-    public function testGetQueryStringParameter()
+    public function testGetQueryStringParameter(): void
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->method('getIdentifier')->willReturn('foobar');
@@ -485,7 +485,7 @@ class AbstractGrantTest extends TestCase
         $this->assertEquals('foo', $method->invoke($grantMock, 'bar', $serverRequest, 'foo'));
     }
 
-    public function testValidateScopes()
+    public function testValidateScopes(): void
     {
         $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
@@ -498,7 +498,7 @@ class AbstractGrantTest extends TestCase
         $this->assertEquals([$scope, $scope, $scope], $grantMock->validateScopes('basic  test 0    '));
     }
 
-    public function testValidateScopesBadScope()
+    public function testValidateScopesBadScope(): void
     {
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(null);
@@ -512,7 +512,7 @@ class AbstractGrantTest extends TestCase
         $grantMock->validateScopes('basic   ');
     }
 
-    public function testGenerateUniqueIdentifier()
+    public function testGenerateUniqueIdentifier(): void
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
 
@@ -523,13 +523,13 @@ class AbstractGrantTest extends TestCase
         $this->assertIsString($method->invoke($grantMock));
     }
 
-    public function testCanRespondToAuthorizationRequest()
+    public function testCanRespondToAuthorizationRequest(): void
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $this->assertFalse($grantMock->canRespondToAuthorizationRequest(new ServerRequest()));
     }
 
-    public function testValidateAuthorizationRequest()
+    public function testValidateAuthorizationRequest(): void
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
 
@@ -538,7 +538,7 @@ class AbstractGrantTest extends TestCase
         $grantMock->validateAuthorizationRequest(new ServerRequest());
     }
 
-    public function testCompleteAuthorizationRequest()
+    public function testCompleteAuthorizationRequest(): void
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
 

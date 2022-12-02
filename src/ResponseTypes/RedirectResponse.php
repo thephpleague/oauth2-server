@@ -15,25 +15,14 @@ use Psr\Http\Message\ResponseInterface;
 
 class RedirectResponse extends AbstractResponseType
 {
-    /**
-     * @var string
-     */
-    private $redirectUri;
+    private string $redirectUri;
 
-    /**
-     * @param string $redirectUri
-     */
-    public function setRedirectUri($redirectUri)
+    public function setRedirectUri(string $redirectUri): void
     {
         $this->redirectUri = $redirectUri;
     }
 
-    /**
-     * @param ResponseInterface $response
-     *
-     * @return ResponseInterface
-     */
-    public function generateHttpResponse(ResponseInterface $response)
+    public function generateHttpResponse(ResponseInterface $response): ResponseInterface
     {
         return $response->withStatus(302)->withHeader('Location', $this->redirectUri);
     }

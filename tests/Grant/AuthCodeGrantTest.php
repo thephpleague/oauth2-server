@@ -46,7 +46,7 @@ class AuthCodeGrantTest extends TestCase
         $this->cryptStub = new CryptTraitStub();
     }
 
-    public function testGetIdentifier()
+    public function testGetIdentifier(): void
     {
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -57,7 +57,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertEquals('authorization_code', $grant->getIdentifier());
     }
 
-    public function testCanRespondToAuthorizationRequest()
+    public function testCanRespondToAuthorizationRequest(): void
     {
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -82,7 +82,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertTrue($grant->canRespondToAuthorizationRequest($request));
     }
 
-    public function testValidateAuthorizationRequest()
+    public function testValidateAuthorizationRequest(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -122,7 +122,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
-    public function testValidateAuthorizationRequestRedirectUriArray()
+    public function testValidateAuthorizationRequestRedirectUriArray(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri(['http://foo/bar']);
@@ -161,7 +161,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
-    public function testValidateAuthorizationRequestWithoutRedirectUri()
+    public function testValidateAuthorizationRequestWithoutRedirectUri(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -203,7 +203,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertEmpty($authorizationRequest->getRedirectUri());
     }
 
-    public function testValidateAuthorizationRequestCodeChallenge()
+    public function testValidateAuthorizationRequestCodeChallenge(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -243,7 +243,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
-    public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooShort()
+    public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooShort(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -270,7 +270,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooLong()
+    public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooLong(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -297,7 +297,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestCodeChallengeInvalidCharacters()
+    public function testValidateAuthorizationRequestCodeChallengeInvalidCharacters(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -324,7 +324,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestMissingClientId()
+    public function testValidateAuthorizationRequestMissingClientId(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -345,7 +345,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestInvalidClientId()
+    public function testValidateAuthorizationRequestInvalidClientId(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn(null);
@@ -368,7 +368,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestBadRedirectUriString()
+    public function testValidateAuthorizationRequestBadRedirectUriString(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -394,7 +394,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestBadRedirectUriArray()
+    public function testValidateAuthorizationRequestBadRedirectUriArray(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri(['http://foo/bar']);
@@ -420,7 +420,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestInvalidCodeChallengeMethod()
+    public function testValidateAuthorizationRequestInvalidCodeChallengeMethod(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -455,7 +455,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testCompleteAuthorizationRequest()
+    public function testCompleteAuthorizationRequest(): void
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -476,7 +476,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    public function testCompleteAuthorizationRequestWithMultipleRedirectUrisOnClient()
+    public function testCompleteAuthorizationRequestWithMultipleRedirectUrisOnClient(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri(['uriOne', 'uriTwo']);
@@ -499,7 +499,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    public function testCompleteAuthorizationRequestDenied()
+    public function testCompleteAuthorizationRequestDenied(): void
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(false);
@@ -523,7 +523,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->completeAuthorizationRequest($authRequest);
     }
 
-    public function testRespondToAccessTokenRequest()
+    public function testRespondToAccessTokenRequest(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -592,7 +592,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    public function testRespondToAccessTokenRequestUsingHttpBasicAuth()
+    public function testRespondToAccessTokenRequestUsingHttpBasicAuth(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -658,7 +658,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    public function testRespondToAccessTokenRequestForPublicClient()
+    public function testRespondToAccessTokenRequestForPublicClient(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -726,7 +726,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    public function testRespondToAccessTokenRequestNullRefreshToken()
+    public function testRespondToAccessTokenRequestNullRefreshToken(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -794,7 +794,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertNull($response->getRefreshToken());
     }
 
-    public function testRespondToAccessTokenRequestCodeChallengePlain()
+    public function testRespondToAccessTokenRequestCodeChallengePlain(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -867,7 +867,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    public function testRespondToAccessTokenRequestCodeChallengeS256()
+    public function testRespondToAccessTokenRequestCodeChallengeS256(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -940,7 +940,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    public function testRespondToAccessTokenRequestMissingRedirectUri()
+    public function testRespondToAccessTokenRequestMissingRedirectUri(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -988,7 +988,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
-    public function testRespondToAccessTokenRequestRedirectUriMismatch()
+    public function testRespondToAccessTokenRequestRedirectUriMismatch(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1037,7 +1037,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
-    public function testRespondToAccessTokenRequestMissingCode()
+    public function testRespondToAccessTokenRequestMissingCode(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -1082,7 +1082,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
-    public function testRespondToAccessTokenRequestWithRefreshTokenInsteadOfAuthCode()
+    public function testRespondToAccessTokenRequestWithRefreshTokenInsteadOfAuthCode(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -1135,7 +1135,7 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testRespondToAccessTokenRequestWithAuthCodeNotAString()
+    public function testRespondToAccessTokenRequestWithAuthCodeNotAString(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -1173,7 +1173,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
-    public function testRespondToAccessTokenRequestExpiredCode()
+    public function testRespondToAccessTokenRequestExpiredCode(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -1226,7 +1226,7 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testRespondToAccessTokenRequestRevokedCode()
+    public function testRespondToAccessTokenRequestRevokedCode(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1291,7 +1291,7 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testRespondToAccessTokenRequestClientMismatch()
+    public function testRespondToAccessTokenRequestClientMismatch(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1352,7 +1352,7 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testRespondToAccessTokenRequestBadCodeEncryption()
+    public function testRespondToAccessTokenRequestBadCodeEncryption(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1402,7 +1402,7 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testRespondToAccessTokenRequestBadCodeVerifierPlain()
+    public function testRespondToAccessTokenRequestBadCodeVerifierPlain(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1475,7 +1475,7 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testRespondToAccessTokenRequestBadCodeVerifierS256()
+    public function testRespondToAccessTokenRequestBadCodeVerifierS256(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1548,7 +1548,7 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testRespondToAccessTokenRequestMalformedCodeVerifierS256WithInvalidChars()
+    public function testRespondToAccessTokenRequestMalformedCodeVerifierS256WithInvalidChars(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1621,7 +1621,7 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testRespondToAccessTokenRequestMalformedCodeVerifierS256WithInvalidLength()
+    public function testRespondToAccessTokenRequestMalformedCodeVerifierS256WithInvalidLength(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1694,7 +1694,7 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testRespondToAccessTokenRequestMissingCodeVerifier()
+    public function testRespondToAccessTokenRequestMissingCodeVerifier(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1766,7 +1766,7 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testAuthCodeRepositoryUniqueConstraintCheck()
+    public function testAuthCodeRepositoryUniqueConstraintCheck(): void
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -1799,7 +1799,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    public function testAuthCodeRepositoryFailToPersist()
+    public function testAuthCodeRepositoryFailToPersist(): void
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -1824,7 +1824,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    public function testAuthCodeRepositoryFailToPersistUniqueNoInfiniteLoop()
+    public function testAuthCodeRepositoryFailToPersistUniqueNoInfiniteLoop(): void
     {
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -1848,7 +1848,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    public function testRefreshTokenRepositoryUniqueConstraintCheck()
+    public function testRefreshTokenRepositoryUniqueConstraintCheck(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1926,7 +1926,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    public function testRefreshTokenRepositoryFailToPersist()
+    public function testRefreshTokenRepositoryFailToPersist(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -1997,7 +1997,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    public function testRefreshTokenRepositoryFailToPersistUniqueNoInfiniteLoop()
+    public function testRefreshTokenRepositoryFailToPersistUniqueNoInfiniteLoop(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -2068,7 +2068,7 @@ class AuthCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
-    public function testCompleteAuthorizationRequestNoUser()
+    public function testCompleteAuthorizationRequestNoUser(): void
     {
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -2081,7 +2081,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->completeAuthorizationRequest(new AuthorizationRequest());
     }
 
-    public function testPublicClientAuthCodeRequestRejectedWhenCodeChallengeRequiredButNotGiven()
+    public function testPublicClientAuthCodeRequestRejectedWhenCodeChallengeRequiredButNotGiven(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
@@ -2116,7 +2116,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testUseValidRedirectUriIfScopeCheckFails()
+    public function testUseValidRedirectUriIfScopeCheckFails(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri(['http://foo/bar', 'http://bar/foo']);
@@ -2162,9 +2162,11 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testThrowExceptionWhenNoClientRedirectUriRegistered()
+    public function testThrowExceptionWhenNoClientRedirectUriRegistered(): void
     {
-        $client = (new ClientEntity())->setConfidential();
+        $client = new ClientEntity();
+
+        $client->setConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);

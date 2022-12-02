@@ -18,27 +18,11 @@ use Psr\Http\Message\ResponseInterface;
 
 interface ResponseTypeInterface
 {
-    /**
-     * @param AccessTokenEntityInterface $accessToken
-     */
-    public function setAccessToken(AccessTokenEntityInterface $accessToken);
+    public function setAccessToken(AccessTokenEntityInterface $accessToken): void;
 
-    /**
-     * @param RefreshTokenEntityInterface $refreshToken
-     */
-    public function setRefreshToken(RefreshTokenEntityInterface $refreshToken);
+    public function setRefreshToken(RefreshTokenEntityInterface $refreshToken): void;
 
-    /**
-     * @param ResponseInterface $response
-     *
-     * @return ResponseInterface
-     */
-    public function generateHttpResponse(ResponseInterface $response);
+    public function generateHttpResponse(ResponseInterface $response): ResponseInterface;
 
-    /**
-     * Set the encryption key
-     *
-     * @param string|Key|null $key
-     */
-    public function setEncryptionKey($key = null);
+    public function setEncryptionKey(Key|string|null $key = null): void;
 }

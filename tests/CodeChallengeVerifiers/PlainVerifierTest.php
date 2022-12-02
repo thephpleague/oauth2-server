@@ -7,14 +7,14 @@ use PHPUnit\Framework\TestCase;
 
 class PlainVerifierTest extends TestCase
 {
-    public function testGetMethod()
+    public function testGetMethod(): void
     {
         $verifier = new PlainVerifier();
 
         $this->assertEquals('plain', $verifier->getMethod());
     }
 
-    public function testVerifyCodeChallenge()
+    public function testVerifyCodeChallenge(): void
     {
         $verifier = new PlainVerifier();
 

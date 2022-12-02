@@ -135,12 +135,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      */
     public function setPrivateKey(CryptKeyInterface $privateKey);
 
-    /**
-     * Set the encryption key
-     *
-     * @param string|Key|null $key
-     */
-    public function setEncryptionKey($key = null);
+    public function setEncryptionKey(Key|string|null $key = null): void;
 
     /**
      * Enable or prevent the revocation of refresh tokens upon usage.

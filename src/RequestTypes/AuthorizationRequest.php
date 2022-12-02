@@ -78,50 +78,32 @@ class AuthorizationRequest implements AuthorizationRequestInterface
      */
     protected $codeChallengeMethod;
 
-    /**
-     * @return string
-     */
-    public function getGrantTypeId()
+    public function getGrantTypeId(): string
     {
         return $this->grantTypeId;
     }
 
-    /**
-     * @param string $grantTypeId
-     */
-    public function setGrantTypeId($grantTypeId)
+    public function setGrantTypeId(string $grantTypeId): void
     {
         $this->grantTypeId = $grantTypeId;
     }
 
-    /**
-     * @return ClientEntityInterface
-     */
-    public function getClient()
+    public function getClient(): ClientEntityInterface
     {
         return $this->client;
     }
 
-    /**
-     * @param ClientEntityInterface $client
-     */
-    public function setClient(ClientEntityInterface $client)
+    public function setClient(ClientEntityInterface $client): void
     {
         $this->client = $client;
     }
 
-    /**
-     * @return UserEntityInterface|null
-     */
-    public function getUser()
+    public function getUser(): ?UserEntityInterface
     {
         return $this->user;
     }
 
-    /**
-     * @param UserEntityInterface $user
-     */
-    public function setUser(UserEntityInterface $user)
+    public function setUser(UserEntityInterface $user): void
     {
         $this->user = $user;
     }
@@ -129,7 +111,7 @@ class AuthorizationRequest implements AuthorizationRequestInterface
     /**
      * @return ScopeEntityInterface[]
      */
-    public function getScopes()
+    public function getScopes(): array
     {
         return $this->scopes;
     }
@@ -137,87 +119,57 @@ class AuthorizationRequest implements AuthorizationRequestInterface
     /**
      * @param ScopeEntityInterface[] $scopes
      */
-    public function setScopes(array $scopes)
+    public function setScopes(array $scopes): void
     {
         $this->scopes = $scopes;
     }
 
-    /**
-     * @return bool
-     */
-    public function isAuthorizationApproved()
+    public function isAuthorizationApproved(): bool
     {
         return $this->authorizationApproved;
     }
 
-    /**
-     * @param bool $authorizationApproved
-     */
-    public function setAuthorizationApproved($authorizationApproved)
+    public function setAuthorizationApproved(bool $authorizationApproved): void
     {
         $this->authorizationApproved = $authorizationApproved;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getRedirectUri()
+    public function getRedirectUri(): ?string
     {
         return $this->redirectUri;
     }
 
-    /**
-     * @param string|null $redirectUri
-     */
-    public function setRedirectUri($redirectUri)
+    public function setRedirectUri(?string $redirectUri): void
     {
         $this->redirectUri = $redirectUri;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getState()
+    public function getState(): ?string
     {
         return $this->state;
     }
 
-    /**
-     * @param string $state
-     */
-    public function setState($state)
+    public function setState(string $state): void
     {
         $this->state = $state;
     }
 
-    /**
-     * @return string
-     */
-    public function getCodeChallenge()
+    public function getCodeChallenge(): ?string
     {
         return $this->codeChallenge;
     }
 
-    /**
-     * @param string $codeChallenge
-     */
-    public function setCodeChallenge($codeChallenge)
+    public function setCodeChallenge(string $codeChallenge): void
     {
         $this->codeChallenge = $codeChallenge;
     }
 
-    /**
-     * @return string
-     */
-    public function getCodeChallengeMethod()
+    public function getCodeChallengeMethod(): ?string
     {
         return $this->codeChallengeMethod;
     }
 
-    /**
-     * @param string $codeChallengeMethod
-     */
-    public function setCodeChallengeMethod($codeChallengeMethod)
+    public function setCodeChallengeMethod(string $codeChallengeMethod): void
     {
         $this->codeChallengeMethod = $codeChallengeMethod;
     }

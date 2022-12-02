@@ -75,12 +75,7 @@ trait CryptTrait
         }
     }
 
-    /**
-     * Set the encryption key
-     *
-     * @param string|Key $key
-     */
-    public function setEncryptionKey($key = null)
+    public function setEncryptionKey(Key|string|null $key = null): void
     {
         $this->encryptionKey = $key;
     }
