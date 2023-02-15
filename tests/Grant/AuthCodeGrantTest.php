@@ -984,7 +984,7 @@ class AuthCodeGrantTest extends TestCase
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(3);
 
-        /** @var StubResponseType $response */
+        /* @var StubResponseType $response */
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
