@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### [8.4.0] - released 2023-02-15
 ### Added
 - You can now set a leeway for time drift between servers when validating a JWT (PR #1304)
 
@@ -574,7 +576,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.6...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.4.0...HEAD
+[8.4.0]: https://github.com/thephpleague/oauth2-server/compare/8.3.6...8.4.0
 [8.3.6]: https://github.com/thephpleague/oauth2-server/compare/8.3.5...8.3.6
 [8.3.5]: https://github.com/thephpleague/oauth2-server/compare/8.3.4...8.3.5
 [8.3.4]: https://github.com/thephpleague/oauth2-server/compare/8.3.3...8.3.4
