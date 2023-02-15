@@ -129,16 +129,16 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
 
-        if (!empty($authCodePayload->code_challenge)) {
-            $this->validateCodeChallenge($authCodePayload, $codeVerifier);
-        }
-
         // If a code challenge isn't present but a code verifier is, reject the request to block PKCE downgrade attack
         if (empty($authCodePayload->code_challenge) && $codeVerifier !== null) {
             throw OAuthServerException::invalidRequest(
                 'code_challenge',
                 'code_verifier received when no code_challenge is present'
             );
+        }
+
+        if (!empty($authCodePayload->code_challenge)) {
+            $this->validateCodeChallenge($authCodePayload, $codeVerifier);
         }
 
         // Issue and persist new access token
