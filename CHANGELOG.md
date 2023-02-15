@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-### [8.4.0] - released 2023-02-15
+## [8.4.0] - released 2023-02-15
 ### Added
 - You can now set a leeway for time drift between servers when validating a JWT (PR #1304)
 
@@ -14,11 +14,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Access token requests that contain a code_verifier but are not bound to a code_challenge will be rejected to prevent
 a PKCE downgrade attack (PR #1326)
 
-### [8.3.6] - released 2022-11-14
+## [8.3.6] - released 2022-11-14
 ### Fixed
 - Use LooseValidAt instead of StrictValidAt so that users aren't forced to use claims such as NBF in their JWT tokens (PR #1312)
 
-### [8.3.5] - released 2022-05-12
+## [8.3.5] - released 2022-05-12
 ### Fixed
 - Use InMemory::plainText('empty', 'empty') instead of InMemory::plainText('') to avoid [new empty string exception](https://github.com/lcobucci/jwt/pull/833) thrown by lcobucci/jwt (PR #1282)
 
