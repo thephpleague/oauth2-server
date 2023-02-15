@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - You can now set a leeway for time drift between servers when validating a JWT (PR #1304)
 
+### Security
+- Access token requests that contain a code_verifier but are not bound to a code_challenge will be rejected to prevent
+a PKCE downgrade attack (PR #1326)
+
 ### [8.3.6] - released 2022-11-14
 ### Fixed
 - Use LooseValidAt instead of StrictValidAt so that users aren't forced to use claims such as NBF in their JWT tokens (PR #1312)
