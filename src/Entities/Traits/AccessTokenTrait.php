@@ -10,10 +10,10 @@
 namespace League\OAuth2\Server\Entities\Traits;
 
 use DateTimeImmutable;
+use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
