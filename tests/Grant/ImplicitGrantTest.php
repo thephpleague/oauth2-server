@@ -208,6 +208,7 @@ class ImplicitGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('identifier');
+        $client->setRedirectUri('https://foo/bar');
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -235,9 +236,12 @@ class ImplicitGrantTest extends TestCase
 
     public function testCompleteAuthorizationRequestDenied()
     {
+        $client = new ClientEntity();
+        $client->setRedirectUri('https://foo/bar');
+
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(false);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
@@ -263,6 +267,7 @@ class ImplicitGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('identifier');
+        $client->setRedirectUri('https://foo/bar');
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);

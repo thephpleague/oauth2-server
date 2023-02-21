@@ -457,9 +457,12 @@ class AuthCodeGrantTest extends TestCase
 
     public function testCompleteAuthorizationRequest()
     {
+        $client = new ClientEntity();
+        $client->setRedirectUri('https://foo/bar');
+
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
@@ -478,9 +481,12 @@ class AuthCodeGrantTest extends TestCase
 
     public function testCompleteAuthorizationRequestDenied()
     {
+        $client = new ClientEntity();
+        $client->setRedirectUri('https://foo/bar');
+
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(false);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
@@ -1815,9 +1821,12 @@ class AuthCodeGrantTest extends TestCase
 
     public function testAuthCodeRepositoryUniqueConstraintCheck()
     {
+        $client = new ClientEntity();
+        $client->setRedirectUri('https://foo/bar');
+
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
