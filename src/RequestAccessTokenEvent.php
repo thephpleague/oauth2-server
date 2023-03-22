@@ -31,6 +31,7 @@ class RequestAccessTokenEvent extends RequestEvent
 
     /**
      * @return AccessTokenEntityInterface
+     *
      * @codeCoverageIgnore
      */
     public function getAccessToken()

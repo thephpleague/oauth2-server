@@ -32,6 +32,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class AuthorizationServerTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
+    const REDIRECT_URI = 'https://foo/bar';
 
     public function setUp(): void
     {
@@ -86,7 +87,7 @@ class AuthorizationServerTest extends TestCase
         $client = new ClientEntity();
 
         $client->setConfidential();
-        $client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri(self::REDIRECT_URI);
 
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn($client);
@@ -245,9 +246,12 @@ class AuthorizationServerTest extends TestCase
 
         $server->enableGrantType($grant);
 
+        $client = new ClientEntity();
+        $client->setRedirectUri(self::REDIRECT_URI);
+
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
@@ -260,7 +264,7 @@ class AuthorizationServerTest extends TestCase
     public function testValidateAuthorizationRequest()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri(self::REDIRECT_URI);
         $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
