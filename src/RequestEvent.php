@@ -40,6 +40,7 @@ class RequestEvent extends Event
 
     /**
      * @return ServerRequestInterface
+     *
      * @codeCoverageIgnore
      */
     public function getRequest()
