@@ -58,9 +58,11 @@ class BearerResponseTypeTest extends TestCase
         $response->getBody()->rewind();
         $json = \json_decode($response->getBody()->getContents());
         $this->assertEquals('Bearer', $json->token_type);
-        $this->assertObjectHasAttribute('expires_in', $json);
-        $this->assertObjectHasAttribute('access_token', $json);
-        $this->assertObjectHasAttribute('refresh_token', $json);
+
+        // TODO: Can eventually be replaced by objectHasProperty() released in PHPUnit 10.1
+        $this->assertTrue(property_exists($json, 'expires_in'));
+        $this->assertTrue(property_exists($json, 'access_token'));
+        $this->assertTrue(property_exists($json, 'refresh_token'));
     }
 
     public function testGenerateHttpResponseWithExtraParams()
@@ -101,11 +103,13 @@ class BearerResponseTypeTest extends TestCase
         $response->getBody()->rewind();
         $json = \json_decode($response->getBody()->getContents());
         $this->assertEquals('Bearer', $json->token_type);
-        $this->assertObjectHasAttribute('expires_in', $json);
-        $this->assertObjectHasAttribute('access_token', $json);
-        $this->assertObjectHasAttribute('refresh_token', $json);
 
-        $this->assertObjectHasAttribute('foo', $json);
+        // TODO: Can eventually be replaced by objectHasProperty() released in PHPUnit 10.1
+        $this->assertTrue(property_exists($json, 'expires_in'));
+        $this->assertTrue(property_exists($json, 'access_token'));
+        $this->assertTrue(property_exists($json, 'refresh_token'));
+        $this->assertTrue(property_exists($json, 'foo'));
+
         $this->assertEquals('bar', $json->foo);
     }
 

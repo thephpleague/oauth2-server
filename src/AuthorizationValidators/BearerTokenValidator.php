@@ -82,9 +82,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
 
         $clock = new SystemClock(new DateTimeZone(\date_default_timezone_get()));
         $this->jwtConfiguration->setValidationConstraints(
-            \class_exists(LooseValidAt::class)
-                ? new LooseValidAt($clock, $this->jwtValidAtDateLeeway)
-                : new ValidAt($clock, $this->jwtValidAtDateLeeway),
+            new LooseValidAt($clock, $this->jwtValidAtDateLeeway),
             new SignedWith(
                 new Sha256(),
                 InMemory::plainText($this->publicKey->getKeyContents(), $this->publicKey->getPassPhrase() ?? '')
