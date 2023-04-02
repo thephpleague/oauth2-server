@@ -289,11 +289,7 @@ class ImplicitGrantTest extends TestCase
             ->expects($matcher)
             ->method('persistNewAccessToken')
             ->willReturnCallback(function () use ($matcher) {
-                $invocationCount = \method_exists($matcher, 'getInvocationCount')
-                    ? $matcher->getInvocationCount
-                    : $matcher->numberOfInvocations();
-
-                if ($invocationCount === 1) {
+                if ($matcher->getInvocationCount() === 1) {
                     throw UniqueTokenIdentifierConstraintViolationException::create();
                 }
             });

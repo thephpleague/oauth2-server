@@ -1840,11 +1840,7 @@ class AuthCodeGrantTest extends TestCase
             ->expects($matcher)
             ->method('persistNewAuthCode')
             ->willReturnCallback(function () use ($matcher) {
-                $invocationCount = \method_exists($matcher, 'getInvocationCount')
-                    ? $matcher->getInvocationCount
-                    : $matcher->numberOfInvocations();
-
-                if ($invocationCount === 1) {
+                if ($matcher->getInvocationCount() === 1) {
                     throw UniqueTokenIdentifierConstraintViolationException::create();
                 }
             });
@@ -1935,11 +1931,7 @@ class AuthCodeGrantTest extends TestCase
             ->expects($matcher)
             ->method('persistNewRefreshToken')
             ->willReturnCallback(function () use ($matcher) {
-                $invocationCount = \method_exists($matcher, 'getInvocationCount')
-                    ? $matcher->getInvocationCount()
-                    : $matcher->numberOfInvocations();
-
-                if ($invocationCount === 1) {
+                if ($matcher->getInvocationCount() === 1) {
                     throw UniqueTokenIdentifierConstraintViolationException::create();
                 }
             });
