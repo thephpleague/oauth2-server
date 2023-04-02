@@ -62,8 +62,9 @@ class CryptKeyTest extends TestCase
             $res = \openssl_pkey_new([
                 'digest_alg' => 'sha512',
                 'private_key_bits' => 2048,
-                'private_key_type' => OPENSSL_KEYTYPE_DH,
+                'private_key_type' => OPENSSL_KEYTYPE_DSA,
             ]);
+            die(file_get_contents('/usr/lib/ssl/openssl.cnf'));
             // Get private key
             \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
             $path = self::generateKeyPath($keyContent);
