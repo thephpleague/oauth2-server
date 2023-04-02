@@ -62,7 +62,7 @@ class CryptKeyTest extends TestCase
             $res = \openssl_pkey_new([
                 'digest_alg' => 'sha512',
                 'private_key_bits' => 2048,
-                'private_key_type' => OPENSSL_KEYTYPE_DSA,
+                'private_key_type' => OPENSSL_KEYTYPE_DH,
             ]);
             die(phpinfo());
             // Get private key
