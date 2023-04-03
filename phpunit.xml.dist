@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit
-        colors="true"
-        displayDetailsOnTestsThatTriggerDeprecations="true"
-        displayDetailsOnTestsThatTriggerNotices="true"
-        displayDetailsOnTestsThatTriggerWarnings="true"
-        stopOnError="true"
-        stopOnFailure="true"
-        stopOnIncomplete="false"
-        stopOnSkipped="false"
-        bootstrap="tests/Bootstrap.php"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         colors="true"
+         stopOnError="true"
+         stopOnFailure="true"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         bootstrap="tests/Bootstrap.php"
 >
-    <testsuites>
-        <testsuite name="Tests">
-            <directory>./tests/</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
-        </whitelist>
-    </filter>
+  <coverage includeUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="Tests">
+      <directory>./tests/</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>
