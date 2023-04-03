@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
         colors="true"
-        convertDeprecationsToExceptions="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
+        displayDetailsOnTestsThatTriggerDeprecations="true"
+        displayDetailsOnTestsThatTriggerNotices="true"
+        displayDetailsOnTestsThatTriggerWarnings="true"
         stopOnError="true"
         stopOnFailure="true"
         stopOnIncomplete="false"
