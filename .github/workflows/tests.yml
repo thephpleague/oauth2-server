@@ -41,6 +41,5 @@ jobs:
 
       - name: Code coverage
         if: ${{ github.ref == 'refs/heads/master' && github.repository == 'thephpleague/oauth2-server' }}
-        run: |
-          wget https://scrutinizer-ci.com/ocular.phar
+        run:
           vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover
