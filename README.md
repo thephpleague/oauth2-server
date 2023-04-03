@@ -30,10 +30,9 @@ This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](ht
 
 The latest version of this package supports the following versions of PHP:
 
-* PHP 7.2
-* PHP 7.3
-* PHP 7.4
 * PHP 8.0
+* PHP 8.1
+* PHP 8.2
 
 The `openssl` and `json` extensions are also required.
 
