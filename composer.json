@@ -19,7 +19,8 @@
         "laminas/laminas-diactoros": "^2.24.0",
         "phpstan/phpstan": "^0.12.57",
         "phpstan/phpstan-phpunit": "^0.12.16",
-        "roave/security-advisories": "dev-master"
+        "roave/security-advisories": "dev-master",
+        "scrutinizer/ocular": "^1.9"
     },
     "repositories": [
         {

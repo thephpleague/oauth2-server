@@ -31,12 +31,13 @@ jobs:
 
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+        run: composer require --dev scrutinizer/ocular
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose --coverage-clover=coverage.clover
 
       - name: Code coverage
-        if: ${{ github.ref == 'refs/heads/master' && matrix.php != 8.0 && github.repository == 'thephpleague/oauth2-server' }}
+        if: ${{ github.ref == 'refs/heads/master' && github.repository == 'thephpleague/oauth2-server' }}
         run: |
           wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+          vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover
