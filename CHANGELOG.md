@@ -5,8 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Changed
-- Change to support PHP 8.0, 8.1, and 8.2 (PR #1333)
+
+## [8.5.0] - released 2023-04-03
+### Added
+- Support for PHP 8.1 and 8.2 (PR #1333)
+
+### Removed
+- Support PHP 7.2, 7.3, and 7.4 (PR #1333)
 
 ## [8.4.1] - released 2023-03-22
 ### Fixed
@@ -582,7 +587,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.4.1...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.5.0...HEAD
+[8.5.0]: https://github.com/thephpleague/oauth2-server/compare/8.4.1...8.5.0
 [8.4.1]: https://github.com/thephpleague/oauth2-server/compare/8.4.0...8.4.1
 [8.4.0]: https://github.com/thephpleague/oauth2-server/compare/8.3.6...8.4.0
 [8.3.6]: https://github.com/thephpleague/oauth2-server/compare/8.3.5...8.3.6
