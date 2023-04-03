@@ -3,7 +3,6 @@
 namespace LeagueTests\Utils;
 
 use League\OAuth2\Server\CryptKey;
-use LeagueTests\Grant\PasswordGrantTest;
 use PHPUnit\Framework\TestCase;
 
 class CryptKeyTest extends TestCase
