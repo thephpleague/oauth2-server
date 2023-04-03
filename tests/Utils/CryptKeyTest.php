@@ -55,7 +55,7 @@ class CryptKeyTest extends TestCase
 
     public function testUnsupportedKeyType()
     {
-        if (\str_starts_with(phpversion(), '8.0')) {
+        if (\str_starts_with(\phpversion(), '8.0')) {
             $this->markTestSkipped('Cannot generate key on PHP 8.0 runner. Investigating');
         }
         $this->expectException(\LogicException::class);
