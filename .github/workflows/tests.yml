@@ -30,8 +30,9 @@ jobs:
           coverage: pcov
 
       - name: Install dependencies
-        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
-        run: composer require --dev scrutinizer/ocular
+        run: | 
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+          composer require --dev scrutinizer/ocular
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose --coverage-clover=coverage.clover
