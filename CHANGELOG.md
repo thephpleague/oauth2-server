@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Change to support PHP 8.0, 8.1, and 8.2 (PR #1333)
 
 ## [8.4.1] - released 2023-03-22
 ### Fixed
