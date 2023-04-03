@@ -32,9 +32,12 @@ jobs:
           coverage: pcov
 
       - name: Install dependencies
-        run: | 
+        run:
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
-          composer require --dev scrutinizer/ocular
+
+      - name: Install Scrutinizer/Ocular
+        run:
+          composer global require scrutinizer/ocular
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose --coverage-clover=coverage.clover
@@ -42,4 +45,4 @@ jobs:
       - name: Code coverage
         if: ${{ github.ref == 'refs/heads/master' && github.repository == 'thephpleague/oauth2-server' }}
         run:
-          vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover
+          ~/.composer/vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover
