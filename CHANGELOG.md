@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ## [8.5.1] - released 2023-04-04
+### Fixed
 - Fixed PHP version constraints and lcobucci/clock version constraint to support PHP 8.1 (PR #1336)
 
 ## [8.5.0] - released 2023-04-03
