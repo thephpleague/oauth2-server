@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.5.1] - released 2023-04-04
+- Fixed PHP version constraints and lcobucci/clock version constraint to support PHP 8.1 (PR #1336)
+
 ## [8.5.0] - released 2023-04-03
 ### Added
 - Support for PHP 8.1 and 8.2 (PR #1333)
@@ -587,7 +590,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.5.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.5.1...HEAD
+[8.5.1]: https://github.com/thephpleague/oauth2-server/compare/8.5.0...8.5.1
 [8.5.0]: https://github.com/thephpleague/oauth2-server/compare/8.4.1...8.5.0
 [8.4.1]: https://github.com/thephpleague/oauth2-server/compare/8.4.0...8.4.1
 [8.4.0]: https://github.com/thephpleague/oauth2-server/compare/8.3.6...8.4.0
