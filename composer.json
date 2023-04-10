@@ -4,18 +4,19 @@
     "homepage": "https://oauth2.thephpleague.com/",
     "license": "MIT",
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": "^8.0",
         "ext-openssl": "*",
         "league/event": "^2.2",
-        "league/uri": "^6.4",
-        "lcobucci/jwt": "^3.4.6 || ^4.0.4",
+        "league/uri": "^6.7",
+        "lcobucci/jwt": "^4.3 || ^5.0",
         "psr/http-message": "^1.0.1",
-        "defuse/php-encryption": "^2.2.1",
-        "ext-json": "*"
+        "defuse/php-encryption": "^2.3",
+        "ext-json": "*",
+        "lcobucci/clock": "^2.2 || ^3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.5.13",
-        "laminas/laminas-diactoros": "^2.4.1",
+        "phpunit/phpunit": "^9.6.6",
+        "laminas/laminas-diactoros": "^2.24.0",
         "phpstan/phpstan": "^0.12.57",
         "phpstan/phpstan-phpunit": "^0.12.16",
         "roave/security-advisories": "dev-master"

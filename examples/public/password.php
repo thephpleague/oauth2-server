@@ -17,7 +17,6 @@ include __DIR__ . '/../vendor/autoload.php';
 $app = new App([
     // Add the authorization server to the DI container
     AuthorizationServer::class => function () {
-
         // Setup the authorization server
         $server = new AuthorizationServer(
             new ClientRepository(),                 // instance of ClientRepositoryInterface
@@ -46,20 +45,16 @@ $app = new App([
 $app->post(
     '/access_token',
     function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
-
         /* @var \League\OAuth2\Server\AuthorizationServer $server */
         $server = $app->getContainer()->get(AuthorizationServer::class);
 
         try {
-
             // Try to respond to the access token request
             return $server->respondToAccessTokenRequest($request, $response);
         } catch (OAuthServerException $exception) {
-
             // All instances of OAuthServerException can be converted to a PSR-7 response
             return $exception->generateHttpResponse($response);
         } catch (\Exception $exception) {
-
             // Catch unexpected exceptions
             $body = $response->getBody();
             $body->write($exception->getMessage());

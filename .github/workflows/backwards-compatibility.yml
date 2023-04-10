@@ -14,7 +14,8 @@ jobs:
         uses: "actions/checkout@v2"
         with:
           fetch-depth: 0
-
+      - name: Fix git safe.directory in container
+        run: mkdir -p /home/runner/work/_temp/_github_home && printf "[safe]\n\tdirectory = /github/workspace" > /home/runner/work/_temp/_github_home/.gitconfig
       - name: "Backwards Compatibility Check"
         uses: docker://nyholm/roave-bc-check-ga
         with:
