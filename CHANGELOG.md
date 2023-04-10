@@ -5,14 +5,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [8.5.1] - released 2023-04-04
+### Fixed
+- Fixed PHP version constraints and lcobucci/clock version constraint to support PHP 8.1 (PR #1336)
+
+## [8.5.0] - released 2023-04-03
+### Added
+- Support for PHP 8.1 and 8.2 (PR #1333)
+
+### Removed
+- Support PHP 7.2, 7.3, and 7.4 (PR #1333)
+
+## [8.4.1] - released 2023-03-22
+### Fixed
+- Fix deprecation notices for PHP 8.x (PR #1329)
+
+## [8.4.0] - released 2023-02-15
 ### Added
 - You can now set a leeway for time drift between servers when validating a JWT (PR #1304)
 
-### [8.3.6] - released 2022-11-14
+### Security
+- Access token requests that contain a code_verifier but are not bound to a code_challenge will be rejected to prevent
+a PKCE downgrade attack (PR #1326)
+
+## [8.3.6] - released 2022-11-14
 ### Fixed
 - Use LooseValidAt instead of StrictValidAt so that users aren't forced to use claims such as NBF in their JWT tokens (PR #1312)
 
-### [8.3.5] - released 2022-05-12
+## [8.3.5] - released 2022-05-12
 ### Fixed
 - Use InMemory::plainText('empty', 'empty') instead of InMemory::plainText('') to avoid [new empty string exception](https://github.com/lcobucci/jwt/pull/833) thrown by lcobucci/jwt (PR #1282)
 
@@ -570,7 +591,11 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.3.6...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.5.1...HEAD
+[8.5.1]: https://github.com/thephpleague/oauth2-server/compare/8.5.0...8.5.1
+[8.5.0]: https://github.com/thephpleague/oauth2-server/compare/8.4.1...8.5.0
+[8.4.1]: https://github.com/thephpleague/oauth2-server/compare/8.4.0...8.4.1
+[8.4.0]: https://github.com/thephpleague/oauth2-server/compare/8.3.6...8.4.0
 [8.3.6]: https://github.com/thephpleague/oauth2-server/compare/8.3.5...8.3.6
 [8.3.5]: https://github.com/thephpleague/oauth2-server/compare/8.3.4...8.3.5
 [8.3.4]: https://github.com/thephpleague/oauth2-server/compare/8.3.3...8.3.4
