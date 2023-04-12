@@ -37,7 +37,7 @@ class ClaimExtractor implements ClaimExtractorIntercace
             $this->addClaimSet($claimSet);
         }
     }
- 
+
     /**
      * @param ClaimSetEntryInterface $claimSetEntry
      *
@@ -164,7 +164,7 @@ class ClaimExtractor implements ClaimExtractorIntercace
                 'auth_time',
                 'acr',
                 'amr',
-                'azp'
+                'azp',
             ]),
         ];
     }
