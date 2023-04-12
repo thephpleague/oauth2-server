@@ -37,7 +37,7 @@ class ClaimExtractor implements ClaimExtractorIntercace
             $this->addClaimSet($claimSet);
         }
     }
-
+ 
     /**
      * @param ClaimSetEntryInterface $claimSetEntry
      *
@@ -158,6 +158,13 @@ class ClaimExtractor implements ClaimExtractorIntercace
             new ClaimSetEntry('phone', [
                 'phone_number',
                 'phone_number_verified',
+            ]),
+            new ClaimSetEntry('openid', [
+                'nonce',
+                'auth_time',
+                'acr',
+                'amr',
+                'azp'
             ]),
         ];
     }
