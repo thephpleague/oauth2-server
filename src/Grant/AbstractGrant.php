@@ -15,6 +15,7 @@ use DateTimeImmutable;
 use Error;
 use Exception;
 use League\Event\EmitterAwareTrait;
+use League\OAuth2\Server\AuthCodeEvent;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -507,6 +508,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         foreach ($scopes as $scope) {
             $authCode->addScope($scope);
         }
+
+        $this->getEmitter()->emit(new AuthCodeEvent($authCode));
 
         while ($maxGenerationAttempts-- > 0) {
             $authCode->setIdentifier($this->generateUniqueIdentifier());
