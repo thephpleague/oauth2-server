@@ -143,14 +143,23 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
-        $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
+
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request,
+                $accessToken));
+        }
         $responseType->setAccessToken($accessToken);
 
         // Issue and persist new refresh token if given
         $refreshToken = $this->issueRefreshToken($accessToken);
 
         if ($refreshToken !== null) {
-            $this->getEmitter()->emit(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
+            if ($this->eventDispatcher !== null) {
+                $this->eventDispatcher->dispatch(
+                    new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken),
+                );
+            }
+
             $responseType->setRefreshToken($refreshToken);
         }
 
@@ -281,7 +290,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $this->validateRedirectUri($redirectUri, $client, $request);
         } elseif (empty($client->getRedirectUri()) ||
             (\is_array($client->getRedirectUri()) && \count($client->getRedirectUri()) !== 1)) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            if ($this->eventDispatcher !== null) {
+                $this->eventDispatcher->dispatch(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED,
+                    $request));
+            }
 
             throw OAuthServerException::invalidClient($request);
         }

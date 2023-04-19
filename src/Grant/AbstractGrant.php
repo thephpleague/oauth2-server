@@ -14,7 +14,6 @@ use DateInterval;
 use DateTimeImmutable;
 use Error;
 use Exception;
-use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -34,6 +33,7 @@ use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use LogicException;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TypeError;
 
@@ -42,7 +42,7 @@ use TypeError;
  */
 abstract class AbstractGrant implements GrantTypeInterface
 {
-    use EmitterAwareTrait, CryptTrait;
+    use CryptTrait;
 
     const SCOPE_DELIMITER_STRING = ' ';
 
@@ -97,6 +97,11 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @var bool
      */
     protected $revokeRefreshTokens;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * @param ClientRepositoryInterface $clientRepository
@@ -194,7 +199,9 @@ abstract class AbstractGrant implements GrantTypeInterface
         [$clientId, $clientSecret] = $this->getClientCredentials($request);
 
         if ($this->clientRepository->validateClient($clientId, $clientSecret, $this->getIdentifier()) === false) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            if ($this->eventDispatcher !== null) {
+                $this->eventDispatcher->dispatch(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            }
 
             throw OAuthServerException::invalidClient($request);
         }
@@ -235,7 +242,10 @@ abstract class AbstractGrant implements GrantTypeInterface
         $client = $this->clientRepository->getClientEntity($clientId);
 
         if ($client instanceof ClientEntityInterface === false) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            if ($this->eventDispatcher !== null ) {
+                $this->eventDispatcher->dispatch(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            }
+
             throw OAuthServerException::invalidClient($request);
         }
 
@@ -286,7 +296,10 @@ abstract class AbstractGrant implements GrantTypeInterface
     ) {
         $validator = new RedirectUriValidator($client->getRedirectUri());
         if (!$validator->validateRedirectUri($redirectUri)) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            if ($this->eventDispatcher !== null ) {
+                $this->eventDispatcher->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+            }
+
             throw OAuthServerException::invalidClient($request);
         }
     }
@@ -617,5 +630,17 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function completeAuthorizationRequest(AuthorizationRequest $authorizationRequest)
     {
         throw new LogicException('This grant cannot complete an authorization request');
+    }
+
+    /**
+     * Set the event dispatcher
+     *
+     * @param EventDispatcherInterface $eventDispatcher
+     *
+     * @return void
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
     }
 }

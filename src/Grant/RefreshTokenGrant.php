@@ -71,7 +71,10 @@ class RefreshTokenGrant extends AbstractGrant
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $oldRefreshToken['user_id'], $scopes);
-        $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
+
+        if ($this->eventDispatcher !== null) {
+            $this->eventDispatcher->dispatch(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
+        }
         $responseType->setAccessToken($accessToken);
 
         // Issue and persist new refresh token if given
@@ -79,7 +82,10 @@ class RefreshTokenGrant extends AbstractGrant
             $refreshToken = $this->issueRefreshToken($accessToken);
 
             if ($refreshToken !== null) {
-                $this->getEmitter()->emit(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
+                if ($this->eventDispatcher !== null) {
+                    $this->eventDispatcher->dispatch(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
+                }
+
                 $responseType->setRefreshToken($refreshToken);
             }
         }
@@ -111,7 +117,9 @@ class RefreshTokenGrant extends AbstractGrant
 
         $refreshTokenData = \json_decode($refreshToken, true);
         if ($refreshTokenData['client_id'] !== $clientId) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_CLIENT_FAILED, $request));
+            if ($this->eventDispatcher !== null ) {
+                $this->eventDispatcher->dispatch(new RequestEvent(RequestEvent::REFRESH_TOKEN_CLIENT_FAILED, $request));
+            }
             throw OAuthServerException::invalidRefreshToken('Token is not linked to client');
         }
 

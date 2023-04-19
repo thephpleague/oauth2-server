@@ -60,14 +60,21 @@ class PasswordGrant extends AbstractGrant
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);
-        $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
+
+        if ($this->eventDispatcher !== null ) {
+            $this->eventDispatcher->dispatch(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
+        }
+
         $responseType->setAccessToken($accessToken);
 
         // Issue and persist new refresh token if given
         $refreshToken = $this->issueRefreshToken($accessToken);
 
         if ($refreshToken !== null) {
-            $this->getEmitter()->emit(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
+            if ($this->eventDispatcher !== null ) {
+                $this->eventDispatcher->dispatch(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
+            }
+
             $responseType->setRefreshToken($refreshToken);
         }
 
@@ -104,7 +111,9 @@ class PasswordGrant extends AbstractGrant
         );
 
         if ($user instanceof UserEntityInterface === false) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
+            if ($this->eventDispatcher !== null ) {
+                $this->eventDispatcher->dispatch(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
+            }
 
             throw OAuthServerException::invalidCredentials();
         }

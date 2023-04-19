@@ -9,10 +9,9 @@
 
 namespace League\OAuth2\Server;
 
-use League\Event\Event;
 use Psr\Http\Message\ServerRequestInterface;
 
-class RequestEvent extends Event
+class RequestEvent
 {
     const CLIENT_AUTHENTICATION_FAILED = 'client.authentication.failed';
     const USER_AUTHENTICATION_FAILED = 'user.authentication.failed';

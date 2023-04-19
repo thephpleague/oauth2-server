@@ -11,8 +11,6 @@ namespace League\OAuth2\Server;
 
 use DateInterval;
 use Defuse\Crypto\Key;
-use League\Event\EmitterAwareInterface;
-use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -22,13 +20,12 @@ use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\AbstractResponseType;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class AuthorizationServer implements EmitterAwareInterface
+class AuthorizationServer
 {
-    use EmitterAwareTrait;
-
     /**
      * @var GrantTypeInterface[]
      */
@@ -85,6 +82,11 @@ class AuthorizationServer implements EmitterAwareInterface
     private $revokeRefreshTokens = true;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * New server instance.
      *
      * @param ClientRepositoryInterface      $clientRepository
@@ -139,9 +141,12 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setScopeRepository($this->scopeRepository);
         $grantType->setDefaultScope($this->defaultScope);
         $grantType->setPrivateKey($this->privateKey);
-        $grantType->setEmitter($this->getEmitter());
         $grantType->setEncryptionKey($this->encryptionKey);
         $grantType->revokeRefreshTokens($this->revokeRefreshTokens);
+
+        if ($this->eventDispatcher !== null) {
+            $grantType->setEventDispatcher($this->eventDispatcher);
+        }
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
         $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
@@ -248,5 +253,15 @@ class AuthorizationServer implements EmitterAwareInterface
     public function revokeRefreshTokens(bool $revokeRefreshTokens): void
     {
         $this->revokeRefreshTokens = $revokeRefreshTokens;
+    }
+
+    /**
+     * Set the event dispatcher
+     *
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
     }
 }
