@@ -14,9 +14,8 @@ use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
-use Lcobucci\JWT\Validation\Constraint\ValidAt;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
@@ -44,11 +43,18 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     private $jwtConfiguration;
 
     /**
-     * @param AccessTokenRepositoryInterface $accessTokenRepository
+     * @var \DateInterval|null
      */
-    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository)
+    private $jwtValidAtDateLeeway;
+
+    /**
+     * @param AccessTokenRepositoryInterface $accessTokenRepository
+     * @param \DateInterval|null             $jwtValidAtDateLeeway
+     */
+    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository, \DateInterval $jwtValidAtDateLeeway = null)
     {
         $this->accessTokenRepository = $accessTokenRepository;
+        $this->jwtValidAtDateLeeway = $jwtValidAtDateLeeway;
     }
 
     /**
@@ -73,10 +79,9 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             InMemory::plainText('empty', 'empty')
         );
 
+        $clock = new SystemClock(new DateTimeZone(\date_default_timezone_get()));
         $this->jwtConfiguration->setValidationConstraints(
-            \class_exists(StrictValidAt::class)
-                ? new StrictValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get())))
-                : new ValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
+            new LooseValidAt($clock, $this->jwtValidAtDateLeeway),
             new SignedWith(
                 new Sha256(),
                 InMemory::plainText($this->publicKey->getKeyContents(), $this->publicKey->getPassPhrase() ?? '')
@@ -108,7 +113,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             $constraints = $this->jwtConfiguration->validationConstraints();
             $this->jwtConfiguration->validator()->assert($token, ...$constraints);
         } catch (RequiredConstraintsViolated $exception) {
-            throw OAuthServerException::accessDenied('Access token could not be verified');
+            throw OAuthServerException::accessDenied('Access token could not be verified', null, $exception);
         }
 
         $claims = $token->claims();
