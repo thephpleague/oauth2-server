@@ -17,6 +17,10 @@ jobs:
         include:
           - os: ubuntu-20.04
             php: 8.0
+            stability: prefer-lowest
+          - os: ubuntu-20.04
+            php: 8.0
+            stability: prefer-stable
 
     runs-on: ${{ matrix.os }}
 
