@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Bumped the versions for laminas/diactoros and psr/http-message to support 
+PSR-7 v2.0 (PR #1339)
 
 ## [8.5.1] - released 2023-04-04
 ### Fixed
