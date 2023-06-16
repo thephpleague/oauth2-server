@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [8.5.2] - released 2023-06-16
 ### Changed
 - Bumped the versions for laminas/diactoros and psr/http-message to support 
 PSR-7 v2.0 (PR #1339)
@@ -594,7 +596,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.5.1...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.5.2...HEAD
+[8.5.2]: https://github.com/thephpleague/oauth2-server/compare/8.5.1...8.5.2
 [8.5.1]: https://github.com/thephpleague/oauth2-server/compare/8.5.0...8.5.1
 [8.5.0]: https://github.com/thephpleague/oauth2-server/compare/8.4.1...8.5.0
 [8.4.1]: https://github.com/thephpleague/oauth2-server/compare/8.4.0...8.4.1
