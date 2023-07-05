@@ -602,7 +602,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.5.2...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.5.3...HEAD
+[8.5.3]: https://github.com/thephpleague/oauth2-server/compare/8.5.2...8.5.3
 [8.5.2]: https://github.com/thephpleague/oauth2-server/compare/8.5.1...8.5.2
 [8.5.1]: https://github.com/thephpleague/oauth2-server/compare/8.5.0...8.5.1
 [8.5.0]: https://github.com/thephpleague/oauth2-server/compare/8.4.1...8.5.0
