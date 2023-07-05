@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.5.3] - released 2023-07-06
+### Security
+- If a key string is provided to the CryptKey constructor with an invalid 
+passphrase, the LogicException message generated will contain the given key. 
+The key is no longer leaked via this exception (PR #1353)
+
 ## [8.5.2] - released 2023-06-16
 ### Changed
 - Bumped the versions for laminas/diactoros and psr/http-message to support 
