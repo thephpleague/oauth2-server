@@ -47,7 +47,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
      *
      * @throw LogicException
      */
-    public function setRefreshTokenTTL(DateInterval $refreshTokenTTL)
+    public function setRefreshTokenTTL(DateInterval $refreshTokenTTL): void
     {
         throw new LogicException('The Implicit Grant does not return refresh tokens');
     }
@@ -57,7 +57,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
      *
      * @throw LogicException
      */
-    public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository)
+    public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository): void
     {
         throw new LogicException('The Implicit Grant does not return refresh tokens');
     }

@@ -33,7 +33,7 @@ trait AccessTokenTrait
     /**
      * Set the private key used to encrypt this access token.
      */
-    public function setPrivateKey(CryptKeyInterface $privateKey)
+    public function setPrivateKey(CryptKeyInterface $privateKey): void
     {
         $this->privateKey = $privateKey;
     }
@@ -41,7 +41,7 @@ trait AccessTokenTrait
     /**
      * Initialise the JWT Configuration.
      */
-    public function initJwtConfiguration()
+    public function initJwtConfiguration(): void
     {
         $this->jwtConfiguration = Configuration::forAsymmetricSigner(
             new Sha256(),

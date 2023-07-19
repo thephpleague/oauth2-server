@@ -7,4 +7,3 @@ parameters:
         - '#Method League\\OAuth2\\Server\\Grant\\AbstractGrant::issueAccessToken\(\) should return League\\OAuth2\\Server\\Entities\\AccessTokenEntityInterface but return statement is missing\.#'
         - '#Method League\\OAuth2\\Server\\Grant\\AbstractGrant::issueAuthCode\(\) should return League\\OAuth2\\Server\\Entities\\AuthCodeEntityInterface but return statement is missing\.#'
         - '#Method League\\OAuth2\\Server\\Grant\\AbstractGrant::issueRefreshToken\(\) should return League\\OAuth2\\Server\\Entities\\RefreshTokenEntityInterface\|null but return statement is missing\.#'
-        - '#Parameter \#1 \$contents of static method Lcobucci\\JWT\\Signer\\Key\\InMemory::plainText\(\) expects non-empty-string, string given\.#'

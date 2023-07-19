@@ -22,36 +22,26 @@ interface RefreshTokenEntityInterface
 
     /**
      * Set the token's identifier.
-     *
-     * @param mixed $identifier
      */
-    public function setIdentifier($identifier);
+    public function setIdentifier(mixed $identifier): void;
 
     /**
      * Get the token's expiry date time.
-     *
-     * @return DateTimeImmutable
      */
-    public function getExpiryDateTime();
+    public function getExpiryDateTime(): DateTimeImmutable;
 
     /**
      * Set the date time when the token expires.
-     *
-     * @param DateTimeImmutable $dateTime
      */
-    public function setExpiryDateTime(DateTimeImmutable $dateTime);
+    public function setExpiryDateTime(DateTimeImmutable $dateTime): void;
 
     /**
      * Set the access token that the refresh token was associated with.
-     *
-     * @param AccessTokenEntityInterface $accessToken
      */
-    public function setAccessToken(AccessTokenEntityInterface $accessToken);
+    public function setAccessToken(AccessTokenEntityInterface $accessToken): void;
 
     /**
      * Get the access token that the refresh token was originally associated with.
-     *
-     * @return AccessTokenEntityInterface
      */
-    public function getAccessToken();
+    public function getAccessToken(): AccessTokenEntityInterface;
 }

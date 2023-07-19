@@ -24,7 +24,6 @@ use League\OAuth2\Server\RequestAccessTokenEvent;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
-use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
@@ -77,7 +76,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Disable the requirement for a code challenge for public clients.
      */
-    public function disableRequireCodeChallengeForPublicClients()
+    public function disableRequireCodeChallengeForPublicClients(): void
     {
         $this->requireCodeChallengeForPublicClients = false;
     }
@@ -194,7 +193,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $authCodePayload,
         ClientEntityInterface $client,
         ServerRequestInterface $request
-    ) {
+    ): void {
         if (!\property_exists($authCodePayload, 'auth_code_id')) {
             throw OAuthServerException::invalidRequest('code', 'Authorization code malformed');
         }

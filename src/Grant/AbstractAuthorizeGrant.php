@@ -18,7 +18,7 @@ abstract class AbstractAuthorizeGrant extends AbstractGrant
 {
     /**
      * @param string $uri
-     * @param array  $params
+     * @param mixed[]  $params
      * @param string $queryDelimiter
      *
      * @return string

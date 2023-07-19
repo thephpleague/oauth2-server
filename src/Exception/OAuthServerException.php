@@ -37,9 +37,9 @@ class OAuthServerException extends Exception
     private $redirectUri;
 
     /**
-     * @var array
+     * @var array<string, string>
      */
-    private $payload;
+    private array $payload;
 
     /**
      * @var ServerRequestInterface
@@ -76,9 +76,9 @@ class OAuthServerException extends Exception
     /**
      * Returns the current payload.
      *
-     * @return array
+     * @return array<string, string>
      */
-    public function getPayload()
+    public function getPayload(): array
     {
         $payload = $this->payload;
 
@@ -94,9 +94,9 @@ class OAuthServerException extends Exception
     /**
      * Updates the current payload.
      *
-     * @param array $payload
+     * @param array<string, string> $payload
      */
-    public function setPayload(array $payload)
+    public function setPayload(array $payload): void
     {
         $this->payload = $payload;
     }
@@ -106,7 +106,7 @@ class OAuthServerException extends Exception
      *
      * @param ServerRequestInterface $serverRequest
      */
-    public function setServerRequest(ServerRequestInterface $serverRequest)
+    public function setServerRequest(ServerRequestInterface $serverRequest): void
     {
         $this->serverRequest = $serverRequest;
     }
@@ -318,9 +318,9 @@ class OAuthServerException extends Exception
     /**
      * Get all headers that have to be send with the error response.
      *
-     * @return array Array with header values
+     * @return array<string, string> Array with header values
      */
-    public function getHttpHeaders()
+    public function getHttpHeaders(): array
     {
         $headers = [
             'Content-type' => 'application/json',

@@ -95,9 +95,9 @@ class RefreshTokenGrant extends AbstractGrant
      *
      * @throws OAuthServerException
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    protected function validateOldRefreshToken(ServerRequestInterface $request, $clientId)
+    protected function validateOldRefreshToken(ServerRequestInterface $request, $clientId): array
     {
         $encryptedRefreshToken = $this->getRequestParameter('refresh_token', $request);
         if (!\is_string($encryptedRefreshToken)) {

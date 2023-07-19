@@ -57,7 +57,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
      *
      * @param CryptKeyInterface $key
      */
-    public function setPublicKey(CryptKeyInterface $key)
+    public function setPublicKey(CryptKeyInterface $key): void
     {
         $this->publicKey = $key;
 
@@ -67,7 +67,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     /**
      * Initialise the JWT configuration.
      */
-    private function initJwtConfiguration()
+    private function initJwtConfiguration(): void
     {
         $this->jwtConfiguration = Configuration::forSymmetricSigner(
             new Sha256(),
@@ -136,9 +136,9 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
      *
      * @param mixed $aud
      *
-     * @return array|string
+     * @return array<string>|string
      */
-    private function convertSingleRecordAudToString($aud)
+    private function convertSingleRecordAudToString($aud): array|string
     {
         return \is_array($aud) && \count($aud) === 1 ? $aud[0] : $aud;
     }

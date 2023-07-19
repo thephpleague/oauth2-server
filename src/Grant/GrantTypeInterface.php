@@ -32,7 +32,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * @param DateInterval $refreshTokenTTL
      */
-    public function setRefreshTokenTTL(DateInterval $refreshTokenTTL);
+    public function setRefreshTokenTTL(DateInterval $refreshTokenTTL): void;
 
     /**
      * Return the grant identifier that can be used in matching up requests.
@@ -105,35 +105,35 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * @param ClientRepositoryInterface $clientRepository
      */
-    public function setClientRepository(ClientRepositoryInterface $clientRepository);
+    public function setClientRepository(ClientRepositoryInterface $clientRepository): void;
 
     /**
      * Set the access token repository.
      *
      * @param AccessTokenRepositoryInterface $accessTokenRepository
      */
-    public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository);
+    public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository): void;
 
     /**
      * Set the scope repository.
      *
      * @param ScopeRepositoryInterface $scopeRepository
      */
-    public function setScopeRepository(ScopeRepositoryInterface $scopeRepository);
+    public function setScopeRepository(ScopeRepositoryInterface $scopeRepository): void;
 
     /**
      * Set the default scope.
      *
      * @param string $scope
      */
-    public function setDefaultScope($scope);
+    public function setDefaultScope($scope): void;
 
     /**
      * Set the path to the private key.
      *
      * @param CryptKeyInterface $privateKey
      */
-    public function setPrivateKey(CryptKeyInterface $privateKey);
+    public function setPrivateKey(CryptKeyInterface $privateKey): void;
 
     public function setEncryptionKey(Key|string|null $key = null): void;
 

@@ -128,7 +128,7 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param GrantTypeInterface $grantType
      * @param null|DateInterval  $accessTokenTTL
      */
-    public function enableGrantType(GrantTypeInterface $grantType, DateInterval $accessTokenTTL = null)
+    public function enableGrantType(GrantTypeInterface $grantType, DateInterval $accessTokenTTL = null): void
     {
         if ($accessTokenTTL === null) {
             $accessTokenTTL = new DateInterval('PT1H');
@@ -237,7 +237,7 @@ class AuthorizationServer implements EmitterAwareInterface
      *
      * @param string $defaultScope
      */
-    public function setDefaultScope($defaultScope)
+    public function setDefaultScope($defaultScope): void
     {
         $this->defaultScope = $defaultScope;
     }

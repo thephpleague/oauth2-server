@@ -40,7 +40,7 @@ trait TokenEntityTrait
      *
      * @param ScopeEntityInterface $scope
      */
-    public function addScope(ScopeEntityInterface $scope)
+    public function addScope(ScopeEntityInterface $scope): void
     {
         $this->scopes[$scope->getIdentifier()] = $scope;
     }
@@ -50,27 +50,23 @@ trait TokenEntityTrait
      *
      * @return ScopeEntityInterface[]
      */
-    public function getScopes()
+    public function getScopes(): array
     {
         return \array_values($this->scopes);
     }
 
     /**
      * Get the token's expiry date time.
-     *
-     * @return DateTimeImmutable
      */
-    public function getExpiryDateTime()
+    public function getExpiryDateTime(): DateTimeImmutable
     {
         return $this->expiryDateTime;
     }
 
     /**
      * Set the date time when the token expires.
-     *
-     * @param DateTimeImmutable $dateTime
      */
-    public function setExpiryDateTime(DateTimeImmutable $dateTime)
+    public function setExpiryDateTime(DateTimeImmutable $dateTime): void
     {
         $this->expiryDateTime = $dateTime;
     }
@@ -80,7 +76,7 @@ trait TokenEntityTrait
      *
      * @param string|int|null $identifier The identifier of the user
      */
-    public function setUserIdentifier($identifier)
+    public function setUserIdentifier($identifier): void
     {
         $this->userIdentifier = $identifier;
     }
@@ -90,27 +86,23 @@ trait TokenEntityTrait
      *
      * @return string|int|null
      */
-    public function getUserIdentifier()
+    public function getUserIdentifier(): string|int|null
     {
         return $this->userIdentifier;
     }
 
     /**
      * Get the client that the token was issued to.
-     *
-     * @return ClientEntityInterface
      */
-    public function getClient()
+    public function getClient(): ClientEntityInterface
     {
         return $this->client;
     }
 
     /**
      * Set the client that the token was issued to.
-     *
-     * @param ClientEntityInterface $client
      */
-    public function setClient(ClientEntityInterface $client)
+    public function setClient(ClientEntityInterface $client): void
     {
         $this->client = $client;
     }

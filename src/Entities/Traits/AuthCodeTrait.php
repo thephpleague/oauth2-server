@@ -16,18 +16,12 @@ trait AuthCodeTrait
      */
     protected $redirectUri;
 
-    /**
-     * @return string|null
-     */
-    public function getRedirectUri()
+    public function getRedirectUri(): string|null
     {
         return $this->redirectUri;
     }
 
-    /**
-     * @param string $uri
-     */
-    public function setRedirectUri($uri)
+    public function setRedirectUri(string $uri): void
     {
         $this->redirectUri = $uri;
     }

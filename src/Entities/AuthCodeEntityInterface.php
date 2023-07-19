@@ -11,13 +11,7 @@ namespace League\OAuth2\Server\Entities;
 
 interface AuthCodeEntityInterface extends TokenInterface
 {
-    /**
-     * @return string|null
-     */
-    public function getRedirectUri();
+    public function getRedirectUri(): string|null;
 
-    /**
-     * @param string $uri
-     */
-    public function setRedirectUri($uri);
+    public function setRedirectUri(string $uri): void;
 }
