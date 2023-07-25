@@ -20,7 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class GrantType implements GrantTypeInterface
 {
-    private EmitterInterface $emitter;
+    private ?EmitterInterface $emitter;
 
     public function setEmitter(EmitterInterface $emitter = null): self
     {
@@ -29,7 +29,7 @@ final class GrantType implements GrantTypeInterface
         return $this;
     }
 
-    public function getEmitter(): EmitterInterface
+    public function getEmitter(): ?EmitterInterface
     {
         return $this->emitter;
     }

@@ -3,6 +3,7 @@
 namespace LeagueTests;
 
 use DateInterval;
+use Defuse\Crypto\Key;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
@@ -21,13 +22,11 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
-use LeagueTests\Stubs\GrantType;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 class AuthorizationServerTest extends TestCase
 {
@@ -181,7 +180,7 @@ class AuthorizationServerTest extends TestCase
                 return $this->privateKey;
             }
 
-            public function getEncryptionKey(): string|null
+            public function getEncryptionKey(): Key|string|null
             {
                 return $this->encryptionKey;
             }

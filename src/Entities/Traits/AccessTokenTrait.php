@@ -17,6 +17,7 @@ use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use RuntimeException;
 
 trait AccessTokenTrait
 {
@@ -43,9 +44,15 @@ trait AccessTokenTrait
      */
     public function initJwtConfiguration(): void
     {
+        $privateKeyContents = $this->privateKey->getKeyContents();
+
+        if ($privateKeyContents === '') {
+            throw new RuntimeException('Private key is empty');
+        }
+
         $this->jwtConfiguration = Configuration::forAsymmetricSigner(
             new Sha256(),
-            InMemory::plainText($this->privateKey->getKeyContents(), $this->privateKey->getPassPhrase() ?? ''),
+            InMemory::plainText($privateKeyContents, $this->privateKey->getPassPhrase() ?? ''),
             InMemory::plainText('empty', 'empty')
         );
     }

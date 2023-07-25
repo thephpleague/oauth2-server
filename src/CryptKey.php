@@ -13,6 +13,8 @@ namespace League\OAuth2\Server;
 
 use LogicException;
 
+use function file_get_contents;
+
 class CryptKey implements CryptKeyInterface
 {
     /** @deprecated left for backward compatibility check */
@@ -58,8 +60,16 @@ class CryptKey implements CryptKeyInterface
             if (!\is_readable($keyPath)) {
                 throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $keyPath));
             }
-            $this->keyContents = \file_get_contents($keyPath);
+
+            $keyContents = file_get_contents($keyPath);
+
+            if ($keyContents === false) {
+                throw new LogicException('Unable to read key from file ' . $keyPath);
+            }
+
+            $this->keyContents = $keyContents;
             $this->keyPath = $keyPath;
+
             if (!$this->isValidKey($this->keyContents, $this->passPhrase ?? '')) {
                 throw new LogicException('Unable to read key from file ' . $keyPath);
             }

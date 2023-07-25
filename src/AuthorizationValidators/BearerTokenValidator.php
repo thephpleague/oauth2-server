@@ -24,6 +24,7 @@ use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 class BearerTokenValidator implements AuthorizationValidatorInterface
 {
@@ -74,13 +75,19 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             InMemory::plainText('empty', 'empty')
         );
 
+        $publicKeyContents = $this->publicKey->getKeyContents();
+
+        if ($publicKeyContents === '') {
+            throw new RuntimeException('Public key is empty');
+        }
+
         $this->jwtConfiguration->setValidationConstraints(
             \class_exists(LooseValidAt::class)
                 ? new LooseValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get())))
                 : new ValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
             new SignedWith(
                 new Sha256(),
-                InMemory::plainText($this->publicKey->getKeyContents(), $this->publicKey->getPassPhrase() ?? '')
+                InMemory::plainText($publicKeyContents, $this->publicKey->getPassPhrase() ?? '')
             )
         );
     }

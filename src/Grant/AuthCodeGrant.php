@@ -302,6 +302,13 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         if ($codeChallenge !== null) {
             $codeChallengeMethod = $this->getQueryStringParameter('code_challenge_method', $request, 'plain');
 
+            if ($codeChallengeMethod === null) {
+                throw OAuthServerException::invalidRequest(
+                    'code_challenge_method',
+                    'Code challenge method must be provided when `code_challenge` is set.'
+                );
+            }
+
             if (\array_key_exists($codeChallengeMethod, $this->codeChallengeVerifiers) === false) {
                 throw OAuthServerException::invalidRequest(
                     'code_challenge_method',

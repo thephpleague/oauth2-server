@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth 2.0 Abstract grant.
  *
@@ -12,6 +13,7 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use DateTimeImmutable;
+use DomainException;
 use Error;
 use Exception;
 use League\Event\EmitterAwareTrait;
@@ -36,6 +38,9 @@ use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use TypeError;
+
+use function bin2hex;
+use function random_bytes;
 
 /**
  * Abstract grant class.
@@ -570,11 +575,13 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected function generateUniqueIdentifier($length = 40)
     {
         try {
-            return \bin2hex(\random_bytes($length));
+            if ($length < 1) {
+                throw new DomainException('Length must be a positive integer');
+            }
+
+            return bin2hex(random_bytes($length));
             // @codeCoverageIgnoreStart
-        } catch (TypeError $e) {
-            throw OAuthServerException::serverError('An unexpected error has occurred', $e);
-        } catch (Error $e) {
+        } catch (TypeError|Error $e) {
             throw OAuthServerException::serverError('An unexpected error has occurred', $e);
         } catch (Exception $e) {
             // If you get this message, the CSPRNG failed hard.

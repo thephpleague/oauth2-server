@@ -64,6 +64,11 @@ class CryptKeyTest extends TestCase
                 'private_key_bits' => 2048,
                 'private_key_type' => OPENSSL_KEYTYPE_DSA,
             ]);
+
+            if ($res === false) {
+                $this->fail('The keypair was not created');
+            }
+
             // Get private key
             \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
             $path = self::generateKeyPath($keyContent);
@@ -85,6 +90,11 @@ class CryptKeyTest extends TestCase
                 'curve_name' => 'prime256v1',
                 'private_key_type' => OPENSSL_KEYTYPE_EC,
             ]);
+
+            if ($res === false) {
+                $this->fail('The keypair was not created');
+            }
+
             // Get private key
             \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
 
@@ -106,6 +116,11 @@ class CryptKeyTest extends TestCase
                  'private_key_bits' => 2048,
                  'private_key_type' => OPENSSL_KEYTYPE_RSA,
             ]);
+
+            if ($res === false) {
+                $this->fail('The keypair was not created');
+            }
+
             // Get private key
             \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
 
