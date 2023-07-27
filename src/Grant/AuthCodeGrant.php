@@ -20,7 +20,9 @@ use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use League\OAuth2\Server\RequestAccessTokenEvent;
 use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -106,7 +108,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
 
-        if ($encryptedAuthCode === null) {
+        if (!\is_string($encryptedAuthCode)) {
             throw OAuthServerException::invalidRequest('code');
         }
 
@@ -125,51 +127,30 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code', $e);
         }
 
-        // Validate code challenge
+        $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
+
+        // If a code challenge isn't present but a code verifier is, reject the request to block PKCE downgrade attack
+        if (empty($authCodePayload->code_challenge) && $codeVerifier !== null) {
+            throw OAuthServerException::invalidRequest(
+                'code_challenge',
+                'code_verifier received when no code_challenge is present'
+            );
+        }
+
         if (!empty($authCodePayload->code_challenge)) {
-            $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
-
-            if ($codeVerifier === null) {
-                throw OAuthServerException::invalidRequest('code_verifier');
-            }
-
-            // Validate code_verifier according to RFC-7636
-            // @see: https://tools.ietf.org/html/rfc7636#section-4.1
-            if (\preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeVerifier) !== 1) {
-                throw OAuthServerException::invalidRequest(
-                    'code_verifier',
-                    'Code Verifier must follow the specifications of RFC-7636.'
-                );
-            }
-
-            if (\property_exists($authCodePayload, 'code_challenge_method')) {
-                if (isset($this->codeChallengeVerifiers[$authCodePayload->code_challenge_method])) {
-                    $codeChallengeVerifier = $this->codeChallengeVerifiers[$authCodePayload->code_challenge_method];
-
-                    if ($codeChallengeVerifier->verifyCodeChallenge($codeVerifier, $authCodePayload->code_challenge) === false) {
-                        throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
-                    }
-                } else {
-                    throw OAuthServerException::serverError(
-                        \sprintf(
-                            'Unsupported code challenge method `%s`',
-                            $authCodePayload->code_challenge_method
-                        )
-                    );
-                }
-            }
+            $this->validateCodeChallenge($authCodePayload, $codeVerifier);
         }
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
-        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
+        $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
         $responseType->setAccessToken($accessToken);
 
         // Issue and persist new refresh token if given
         $refreshToken = $this->issueRefreshToken($accessToken);
 
         if ($refreshToken !== null) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
+            $this->getEmitter()->emit(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
             $responseType->setRefreshToken($refreshToken);
         }
 
@@ -177,6 +158,39 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $this->authCodeRepository->revokeAuthCode($authCodePayload->auth_code_id);
 
         return $responseType;
+    }
+
+    private function validateCodeChallenge($authCodePayload, $codeVerifier)
+    {
+        if ($codeVerifier === null) {
+            throw OAuthServerException::invalidRequest('code_verifier');
+        }
+
+        // Validate code_verifier according to RFC-7636
+        // @see: https://tools.ietf.org/html/rfc7636#section-4.1
+        if (\preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeVerifier) !== 1) {
+            throw OAuthServerException::invalidRequest(
+                'code_verifier',
+                'Code Verifier must follow the specifications of RFC-7636.'
+            );
+        }
+
+        if (\property_exists($authCodePayload, 'code_challenge_method')) {
+            if (isset($this->codeChallengeVerifiers[$authCodePayload->code_challenge_method])) {
+                $codeChallengeVerifier = $this->codeChallengeVerifiers[$authCodePayload->code_challenge_method];
+
+                if ($codeChallengeVerifier->verifyCodeChallenge($codeVerifier, $authCodePayload->code_challenge) === false) {
+                    throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
+                }
+            } else {
+                throw OAuthServerException::serverError(
+                    \sprintf(
+                        'Unsupported code challenge method `%s`',
+                        $authCodePayload->code_challenge_method
+                    )
+                );
+            }
+        }
     }
 
     /**
@@ -260,20 +274,25 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
 
         if ($redirectUri !== null) {
+            if (!\is_string($redirectUri)) {
+                throw OAuthServerException::invalidRequest('redirect_uri');
+            }
+
             $this->validateRedirectUri($redirectUri, $client, $request);
         } elseif (empty($client->getRedirectUri()) ||
             (\is_array($client->getRedirectUri()) && \count($client->getRedirectUri()) !== 1)) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+
             throw OAuthServerException::invalidClient($request);
-        } else {
-            $redirectUri = \is_array($client->getRedirectUri())
-                ? $client->getRedirectUri()[0]
-                : $client->getRedirectUri();
         }
+
+        $defaultClientRedirectUri = \is_array($client->getRedirectUri())
+            ? $client->getRedirectUri()[0]
+            : $client->getRedirectUri();
 
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            $redirectUri
+            $redirectUri ?? $defaultClientRedirectUri
         );
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
@@ -310,7 +329,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             // @see: https://tools.ietf.org/html/rfc7636#section-4.2
             if (\preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeChallenge) !== 1) {
                 throw OAuthServerException::invalidRequest(
-                    'code_challenged',
+                    'code_challenge',
                     'Code challenge must follow the specifications of RFC-7636.'
                 );
             }

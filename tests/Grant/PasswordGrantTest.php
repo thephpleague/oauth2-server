@@ -3,6 +3,7 @@
 namespace LeagueTests\Grant;
 
 use DateInterval;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
@@ -19,7 +20,6 @@ use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\ServerRequest;
 
 class PasswordGrantTest extends TestCase
 {
@@ -37,6 +37,8 @@ class PasswordGrantTest extends TestCase
     public function testRespondToRequest()
     {
         $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -81,6 +83,8 @@ class PasswordGrantTest extends TestCase
     public function testRespondToRequestNullRefreshToken()
     {
         $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -181,6 +185,8 @@ class PasswordGrantTest extends TestCase
     public function testRespondToRequestBadCredentials()
     {
         $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -205,7 +211,7 @@ class PasswordGrantTest extends TestCase
         $responseType = new StubResponseType();
 
         $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
-        $this->expectExceptionCode(10);
+        $this->expectExceptionCode(6);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }

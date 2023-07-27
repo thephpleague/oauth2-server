@@ -3,12 +3,12 @@
 namespace LeagueTests\Exception;
 
 use Exception;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
 
 class OAuthServerExceptionTest extends TestCase
 {
@@ -29,12 +29,46 @@ class OAuthServerExceptionTest extends TestCase
         }
     }
 
+    public function testInvalidClientExceptionSetsBearerAuthenticateHeader()
+    {
+        $serverRequest = (new ServerRequest())
+            ->withParsedBody([
+                'client_id' => 'foo',
+            ])
+            ->withAddedHeader('Authorization', 'Bearer fakeauthdetails');
+
+        try {
+            $this->issueInvalidClientException($serverRequest);
+        } catch (OAuthServerException $e) {
+            $response = $e->generateHttpResponse(new Response());
+
+            $this->assertEquals(['Bearer realm="OAuth"'], $response->getHeader('WWW-Authenticate'));
+        }
+    }
+
     public function testInvalidClientExceptionOmitsAuthenticateHeader()
     {
         $serverRequest = (new ServerRequest())
             ->withParsedBody([
                 'client_id' => 'foo',
             ]);
+
+        try {
+            $this->issueInvalidClientException($serverRequest);
+        } catch (OAuthServerException $e) {
+            $response = $e->generateHttpResponse(new Response());
+
+            $this->assertFalse($response->hasHeader('WWW-Authenticate'));
+        }
+    }
+
+    public function testInvalidClientExceptionOmitsAuthenticateHeaderGivenEmptyAuthorizationHeader()
+    {
+        $serverRequest = (new ServerRequest())
+            ->withParsedBody([
+                'client_id' => 'foo',
+            ])
+            ->withAddedHeader('Authorization', '');
 
         try {
             $this->issueInvalidClientException($serverRequest);
@@ -95,5 +129,19 @@ class OAuthServerExceptionTest extends TestCase
         $exceptionWithoutPrevious = OAuthServerException::accessDenied();
 
         $this->assertNull($exceptionWithoutPrevious->getPrevious());
+    }
+
+    public function testCanGetRedirectionUri()
+    {
+        $exceptionWithRedirect = OAuthServerException::accessDenied('some hint', 'https://example.com/error');
+
+        $this->assertSame('https://example.com/error', $exceptionWithRedirect->getRedirectUri());
+    }
+
+    public function testInvalidCredentialsIsInvalidGrant()
+    {
+        $exception = OAuthServerException::invalidCredentials();
+
+        $this->assertSame('invalid_grant', $exception->getErrorType());
     }
 }

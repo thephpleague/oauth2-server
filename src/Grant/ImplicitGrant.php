@@ -129,6 +129,10 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
 
         if ($redirectUri !== null) {
+            if (!\is_string($redirectUri)) {
+                throw OAuthServerException::invalidRequest('redirect_uri');
+            }
+
             $this->validateRedirectUri($redirectUri, $client, $request);
         } elseif (\is_array($client->getRedirectUri()) && \count($client->getRedirectUri()) !== 1
             || empty($client->getRedirectUri())) {
@@ -146,6 +150,10 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         );
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
+
+        if ($stateParameter !== null && !\is_string($stateParameter)) {
+            throw OAuthServerException::invalidRequest('state');
+        }
 
         $authorizationRequest = new AuthorizationRequest();
         $authorizationRequest->setGrantTypeId($this->getIdentifier());

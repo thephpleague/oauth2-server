@@ -1,0 +1,22 @@
+name: "Backwards compatibility check"
+
+on:
+  pull_request:
+
+jobs:
+  bc-check:
+    name: "Backwards compatibility check"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 0
+      - name: Fix git safe.directory in container
+        run: mkdir -p /home/runner/work/_temp/_github_home && printf "[safe]\n\tdirectory = /github/workspace" > /home/runner/work/_temp/_github_home/.gitconfig
+      - name: "Backwards Compatibility Check"
+        uses: docker://nyholm/roave-bc-check-ga
+        with:
+          args: --from=${{ github.event.pull_request.base.sha }}

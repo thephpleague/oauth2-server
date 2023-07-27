@@ -7,6 +7,7 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+use Laminas\Diactoros\Stream;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
@@ -15,7 +16,6 @@ use OAuth2ServerExamples\Repositories\ScopeRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Zend\Diactoros\Stream;
 
 include __DIR__ . '/../vendor/autoload.php';
 
@@ -53,20 +53,16 @@ $app = new App([
 ]);
 
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
-
     /* @var \League\OAuth2\Server\AuthorizationServer $server */
     $server = $app->getContainer()->get(AuthorizationServer::class);
 
     try {
-
         // Try to respond to the request
         return $server->respondToAccessTokenRequest($request, $response);
     } catch (OAuthServerException $exception) {
-
         // All instances of OAuthServerException can be formatted into a HTTP response
         return $exception->generateHttpResponse($response);
     } catch (\Exception $exception) {
-
         // Unknown exception
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());

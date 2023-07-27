@@ -2,11 +2,10 @@
 
 [![Latest Version](http://img.shields.io/packagist/v/league/oauth2-server.svg?style=flat-square)](https://github.com/thephpleague/oauth2-server/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/thephpleague/oauth2-server/master.svg?style=flat-square)](https://travis-ci.org/thephpleague/oauth2-server)
+[![Build Status](https://github.com/thephpleague/oauth2-server/workflows/tests/badge.svg)](https://github.com/thephpleague/oauth2-server/actions)
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/oauth2-server.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/oauth2-server)
 [![Total Downloads](https://img.shields.io/packagist/dt/league/oauth2-server.svg?style=flat-square)](https://packagist.org/packages/league/oauth2-server)
-[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
 
 `league/oauth2-server` is a standards compliant implementation of an [OAuth 2.0](https://tools.ietf.org/html/rfc6749) authorization server written in PHP which makes working with OAuth 2.0 trivial. You can easily configure an OAuth 2.0 server to protect your API with access tokens, or allow clients to request new access tokens and refresh them.
 
@@ -31,11 +30,11 @@ This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](ht
 
 ## Requirements
 
-The following versions of PHP are supported:
+The latest version of this package supports the following versions of PHP:
 
-* PHP 7.1
-* PHP 7.2
-* PHP 7.3
+* PHP 8.0
+* PHP 8.1
+* PHP 8.2
 
 The `openssl` and `json` extensions are also required.
 
@@ -54,24 +53,24 @@ You can contribute to the documentation in the [gh-pages branch](https://github.
 
 ## Testing
 
-The library uses [PHPUnit](https://phpunit.de/) for unit tests and [PHPStan](https://github.com/phpstan/phpstan) for static analysis of the code.
+The library uses [PHPUnit](https://phpunit.de/) for unit tests.
 
 ```
 vendor/bin/phpunit
-vendor/bin/phpstan analyse -l 7 -c phpstan.neon src tests
 ```
 
-## Continous Integration
+## Continuous Integration
 
-We use [Travis CI](https://travis-ci.org/), [Scrutinizer](https://scrutinizer-ci.com/), and [StyleCI](https://styleci.io/) for continuous integration. Check out [our](https://github.com/thephpleague/oauth2-server/blob/master/.travis.yml) [configuration](https://github.com/thephpleague/oauth2-server/blob/master/.scrutinizer.yml) [files](https://github.com/thephpleague/oauth2-server/blob/master/.styleci.yml) if you'd like to know more.
+We use [Github Actions](https://github.com/features/actions), [Scrutinizer](https://scrutinizer-ci.com/), and [StyleCI](https://styleci.io/) for continuous integration. Check out [our](https://github.com/thephpleague/oauth2-server/blob/master/.github/workflows/tests.yml) [configuration](https://github.com/thephpleague/oauth2-server/blob/master/.scrutinizer.yml) [files](https://github.com/thephpleague/oauth2-server/blob/master/.styleci.yml) if you'd like to know more.
 
 ## Community Integrations
 
 * [Drupal](https://www.drupal.org/project/simple_oauth)
 * [Laravel Passport](https://github.com/laravel/passport)
 * [OAuth 2 Server for CakePHP 3](https://github.com/uafrica/oauth-server)
-* [OAuth 2 Server for Expressive](https://github.com/zendframework/zend-expressive-authentication-oauth2)
-* [Trikoder OAuth 2 Bundle (Symfony)](https://github.com/trikoder/oauth2-bundle)
+* [OAuth 2 Server for Mezzio](https://github.com/mezzio/mezzio-authentication-oauth2)
+* [OAuth 2 Server Bundle (Symfony)](https://github.com/thephpleague/oauth2-server-bundle)
+* [Heimdall for CodeIgniter 4](https://github.com/ezralazuardy/heimdall)
 
 ## Changelog
 

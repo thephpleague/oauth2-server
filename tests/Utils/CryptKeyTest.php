@@ -23,7 +23,7 @@ class CryptKeyTest extends TestCase
         $this->assertEquals('secret', $key->getPassPhrase());
     }
 
-    public function testKeyFileCreation()
+    public function testKeyString()
     {
         $keyContent = \file_get_contents(__DIR__ . '/../Stubs/public.key');
 
@@ -34,8 +34,8 @@ class CryptKeyTest extends TestCase
         $key = new CryptKey($keyContent);
 
         $this->assertEquals(
-            'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key',
-            $key->getKeyPath()
+            $keyContent,
+            $key->getKeyContents()
         );
 
         $keyContent = \file_get_contents(__DIR__ . '/../Stubs/private.key.crlf');
@@ -47,23 +47,92 @@ class CryptKeyTest extends TestCase
         $key = new CryptKey($keyContent);
 
         $this->assertEquals(
-            'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key',
-            $key->getKeyPath()
+            $keyContent,
+            $key->getKeyContents()
         );
     }
 
-    /**
-     * Test whether we get a RuntimeException if a PCRE error is encountered.
-     *
-     * @link https://www.php.net/manual/en/function.preg-last-error.php
-     */
-    public function testPcreErrorExceptions()
+    public function testUnsupportedKeyType()
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/^PCRE error/');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Invalid key supplied');
 
-        new class('foobar foobar foobar') extends CryptKey {
-            const RSA_KEY_PATTERN = '/(?:\D+|<\d+>)*[!?]/';
-        };
+        try {
+            // Create the keypair
+            $res = \openssl_pkey_new([
+                'digest_alg' => 'sha512',
+                'private_key_bits' => 2048,
+                'private_key_type' => OPENSSL_KEYTYPE_DSA,
+            ]);
+            // Get private key
+            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
+            $path = self::generateKeyPath($keyContent);
+
+            new CryptKey($keyContent, 'mystrongpassword');
+        } finally {
+            if (isset($path)) {
+                @\unlink($path);
+            }
+        }
+    }
+
+    public function testECKeyType()
+    {
+        try {
+            // Create the keypair
+            $res = \openssl_pkey_new([
+                'digest_alg' => 'sha512',
+                'curve_name' => 'prime256v1',
+                'private_key_type' => OPENSSL_KEYTYPE_EC,
+            ]);
+            // Get private key
+            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
+
+            $key = new CryptKey($keyContent, 'mystrongpassword');
+
+            $this->assertEquals('', $key->getKeyPath());
+            $this->assertEquals('mystrongpassword', $key->getPassPhrase());
+        } catch (\Throwable $e) {
+            $this->fail('The EC key was not created');
+        } finally {
+            if (isset($path)) {
+                @\unlink($path);
+            }
+        }
+    }
+
+    public function testRSAKeyType()
+    {
+        try {
+            // Create the keypair
+            $res = \openssl_pkey_new([
+                 'digest_alg' => 'sha512',
+                 'private_key_bits' => 2048,
+                 'private_key_type' => OPENSSL_KEYTYPE_RSA,
+            ]);
+            // Get private key
+            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
+
+            $key = new CryptKey($keyContent, 'mystrongpassword');
+
+            $this->assertEquals('', $key->getKeyPath());
+            $this->assertEquals('mystrongpassword', $key->getPassPhrase());
+        } catch (\Throwable $e) {
+            $this->fail('The RSA key was not created');
+        } finally {
+            if (isset($path)) {
+                @\unlink($path);
+            }
+        }
+    }
+
+    /**
+     * @param string $keyContent
+     *
+     * @return string
+     */
+    private static function generateKeyPath($keyContent)
+    {
+        return 'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key';
     }
 }

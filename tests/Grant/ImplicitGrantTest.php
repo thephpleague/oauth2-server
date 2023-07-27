@@ -3,6 +3,7 @@
 namespace LeagueTests\Grant;
 
 use DateInterval;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
@@ -20,11 +21,11 @@ use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\ServerRequest;
 
 class ImplicitGrantTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
+    const REDIRECT_URI = 'https://foo/bar';
 
     /**
      * CryptTrait stub
@@ -79,7 +80,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequest()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri(self::REDIRECT_URI);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -95,7 +96,7 @@ class ImplicitGrantTest extends TestCase
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id'     => 'foo',
-            'redirect_uri'  => 'http://foo/bar',
+            'redirect_uri'  => self::REDIRECT_URI,
         ]);
 
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
@@ -104,7 +105,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequestRedirectUriArray()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri(['http://foo/bar']);
+        $client->setRedirectUri([self::REDIRECT_URI]);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -120,7 +121,7 @@ class ImplicitGrantTest extends TestCase
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id' => 'foo',
-            'redirect_uri' => 'http://foo/bar',
+            'redirect_uri' => self::REDIRECT_URI,
         ]);
 
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
@@ -163,7 +164,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequestBadRedirectUriString()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri(self::REDIRECT_URI);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -185,7 +186,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequestBadRedirectUriArray()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri(['http://foo/bar']);
+        $client->setRedirectUri([self::REDIRECT_URI]);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -208,6 +209,7 @@ class ImplicitGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('identifier');
+        $client->setRedirectUri(self::REDIRECT_URI);
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -235,9 +237,12 @@ class ImplicitGrantTest extends TestCase
 
     public function testCompleteAuthorizationRequestDenied()
     {
+        $client = new ClientEntity();
+        $client->setRedirectUri(self::REDIRECT_URI);
+
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(false);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
@@ -263,6 +268,7 @@ class ImplicitGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('identifier');
+        $client->setRedirectUri(self::REDIRECT_URI);
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -276,8 +282,17 @@ class ImplicitGrantTest extends TestCase
         /** @var AccessTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
-        $accessTokenRepositoryMock->expects($this->at(0))->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
-        $accessTokenRepositoryMock->expects($this->at(1))->method('persistNewAccessToken')->willReturnSelf();
+
+        $matcher = $this->exactly(2);
+
+        $accessTokenRepositoryMock
+            ->expects($matcher)
+            ->method('persistNewAccessToken')
+            ->willReturnCallback(function () use ($matcher) {
+                if ($matcher->getInvocationCount() === 1) {
+                    throw UniqueTokenIdentifierConstraintViolationException::create();
+                }
+            });
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);

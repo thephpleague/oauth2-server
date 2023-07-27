@@ -3,6 +3,9 @@
 namespace LeagueTests;
 
 use DateInterval;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -18,18 +21,18 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\GrantType;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\ServerRequestFactory;
+use Psr\Http\Message\ServerRequestInterface;
 
 class AuthorizationServerTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
+    const REDIRECT_URI = 'https://foo/bar';
 
     public function setUp(): void
     {
@@ -38,6 +41,25 @@ class AuthorizationServerTest extends TestCase
         \chmod(__DIR__ . '/Stubs/public.key', 0600);
         \chmod(__DIR__ . '/Stubs/private.key.crlf', 0600);
     }
+
+    /*
+    public function testGrantTypeGetsEnabled()
+    {
+        $server = new AuthorizationServer(
+            $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
+            'file://' . __DIR__ . '/Stubs/private.key',
+            \base64_encode(\random_bytes(36)),
+            new StubResponseType()
+        );
+
+        $server->enableGrantType(new GrantType(), new DateInterval('PT1M'));
+
+        $authRequest = $server->validateAuthorizationRequest($this->createMock(ServerRequestInterface::class));
+        $this->assertSame(GrantType::class, $authRequest->getGrantTypeId());
+    }
+    */
 
     public function testRespondToRequestInvalidGrantType()
     {
@@ -63,7 +85,9 @@ class AuthorizationServerTest extends TestCase
     public function testRespondToRequest()
     {
         $client = new ClientEntity();
+
         $client->setConfidential();
+        $client->setRedirectUri(self::REDIRECT_URI);
 
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn($client);
@@ -222,9 +246,12 @@ class AuthorizationServerTest extends TestCase
 
         $server->enableGrantType($grant);
 
+        $client = new ClientEntity();
+        $client->setRedirectUri(self::REDIRECT_URI);
+
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
@@ -237,7 +264,7 @@ class AuthorizationServerTest extends TestCase
     public function testValidateAuthorizationRequest()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri(self::REDIRECT_URI);
         $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
@@ -284,6 +311,8 @@ class AuthorizationServerTest extends TestCase
     public function testValidateAuthorizationRequestWithMissingRedirectUri()
     {
         $client = new ClientEntity();
+        $client->setConfidential();
+
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 

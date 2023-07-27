@@ -4,6 +4,7 @@ namespace LeagueTests\ResponseTypes;
 
 use DateInterval;
 use DateTimeImmutable;
+use Laminas\Diactoros\Response;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use LeagueTests\Stubs\ClientEntity;
@@ -11,7 +12,6 @@ use LeagueTests\Stubs\DeviceCodeEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
 
 class DeviceCodeResponseTypeTest extends TestCase
 {

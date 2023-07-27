@@ -189,7 +189,7 @@ class OAuthServerException extends Exception
      */
     public static function invalidCredentials()
     {
-        return new static('The user credentials were incorrect.', 6, 'invalid_credentials', 401);
+        return new static('The user credentials were incorrect.', 6, 'invalid_grant', 400);
     }
 
     /**
@@ -389,13 +389,12 @@ class OAuthServerException extends Exception
         // respond with an HTTP 401 (Unauthorized) status code and
         // include the "WWW-Authenticate" response header field
         // matching the authentication scheme used by the client.
-        // @codeCoverageIgnoreStart
-        if ($this->errorType === 'invalid_client' && $this->serverRequest->hasHeader('Authorization') === true) {
+        if ($this->errorType === 'invalid_client' && $this->requestHasAuthorizationHeader()) {
             $authScheme = \strpos($this->serverRequest->getHeader('Authorization')[0], 'Bearer') === 0 ? 'Bearer' : 'Basic';
 
             $headers['WWW-Authenticate'] = $authScheme . ' realm="OAuth"';
         }
-        // @codeCoverageIgnoreEnd
+
         return $headers;
     }
 
@@ -415,6 +414,16 @@ class OAuthServerException extends Exception
     }
 
     /**
+     * Returns the Redirect URI used for redirecting.
+     *
+     * @return string|null
+     */
+    public function getRedirectUri()
+    {
+        return $this->redirectUri;
+    }
+
+    /**
      * Returns the HTTP status code to send when the exceptions is output.
      *
      * @return int
@@ -430,5 +439,33 @@ class OAuthServerException extends Exception
     public function getHint()
     {
         return $this->hint;
+    }
+
+    /**
+     * Check if the request has a non-empty 'Authorization' header value.
+     *
+     * Returns true if the header is present and not an empty string, false
+     * otherwise.
+     *
+     * @return bool
+     */
+    private function requestHasAuthorizationHeader()
+    {
+        if (!$this->serverRequest->hasHeader('Authorization')) {
+            return false;
+        }
+
+        $authorizationHeader = $this->serverRequest->getHeader('Authorization');
+
+        // Common .htaccess configurations yield an empty string for the
+        // 'Authorization' header when one is not provided by the client.
+        // For practical purposes that case should be treated as though the
+        // header isn't present.
+        // See https://github.com/thephpleague/oauth2-server/issues/1162
+        if (empty($authorizationHeader) || empty($authorizationHeader[0])) {
+            return false;
+        }
+
+        return true;
     }
 }
