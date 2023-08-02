@@ -14,6 +14,7 @@ use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Token\DataSet;
 use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
@@ -124,11 +125,23 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         }
 
         // Return the request with additional attributes
-        return $request
+        $request = $request
             ->withAttribute('oauth_access_token_id', $claims->get('jti'))
             ->withAttribute('oauth_client_id', $this->convertSingleRecordAudToString($claims->get('aud')))
             ->withAttribute('oauth_user_id', $claims->get('sub'))
             ->withAttribute('oauth_scopes', $claims->get('scopes'));
+
+        return $this->appendAttributesFromClaims($request, $claims);
+    }
+
+    /**
+     * Configure the request instance.
+     *
+     * @return ServerRequestInterface
+     */
+    protected function appendAttributesFromClaims(ServerRequestInterface $request, DataSet $claims)
+    {
+        return $request;
     }
 
     /**
