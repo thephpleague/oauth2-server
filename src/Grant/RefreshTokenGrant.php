@@ -15,7 +15,9 @@ use DateInterval;
 use Exception;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use League\OAuth2\Server\RequestAccessTokenEvent;
 use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -65,7 +67,9 @@ class RefreshTokenGrant extends AbstractGrant
 
         // Expire old tokens
         $this->accessTokenRepository->revokeAccessToken($oldRefreshToken['access_token_id']);
-        $this->refreshTokenRepository->revokeRefreshToken($oldRefreshToken['refresh_token_id']);
+        if ($this->revokeRefreshTokens) {
+            $this->refreshTokenRepository->revokeRefreshToken($oldRefreshToken['refresh_token_id']);
+        }
 
         $privateClaims = [];
 
@@ -85,15 +89,17 @@ class RefreshTokenGrant extends AbstractGrant
             $scopes,
             $privateClaims
         );
-        $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
+        $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
         $responseType->setAccessToken($accessToken);
 
         // Issue and persist new refresh token if given
-        $refreshToken = $this->issueRefreshToken($accessToken);
+        if ($this->revokeRefreshTokens) {
+            $refreshToken = $this->issueRefreshToken($accessToken);
 
-        if ($refreshToken !== null) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request));
-            $responseType->setRefreshToken($refreshToken);
+            if ($refreshToken !== null) {
+                $this->getEmitter()->emit(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
+                $responseType->setRefreshToken($refreshToken);
+            }
         }
 
         return $responseType;
@@ -110,7 +116,7 @@ class RefreshTokenGrant extends AbstractGrant
     protected function validateOldRefreshToken(ServerRequestInterface $request, $clientId)
     {
         $encryptedRefreshToken = $this->getRequestParameter('refresh_token', $request);
-        if (\is_null($encryptedRefreshToken)) {
+        if (!\is_string($encryptedRefreshToken)) {
             throw OAuthServerException::invalidRequest('refresh_token');
         }
 

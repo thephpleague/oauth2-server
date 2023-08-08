@@ -9,17 +9,20 @@
 
 namespace League\OAuth2\Server\AuthorizationValidators;
 
-use BadMethodCallException;
-use InvalidArgumentException;
-use Lcobucci\JWT\Parser;
+use DateTimeZone;
+use Lcobucci\Clock\SystemClock;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\ValidationData;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\Constraint\StrictValidAt;
+use Lcobucci\JWT\Validation\Constraint\ValidAt;
+use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
 
 class BearerTokenValidator implements AuthorizationValidatorInterface
 {
@@ -34,6 +37,11 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
      * @var CryptKeyInterface
      */
     protected $publicKey;
+
+    /**
+     * @var Configuration
+     */
+    private $jwtConfiguration;
 
     /**
      * @param AccessTokenRepositoryInterface $accessTokenRepository
@@ -51,6 +59,29 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     public function setPublicKey(CryptKeyInterface $key)
     {
         $this->publicKey = $key;
+
+        $this->initJwtConfiguration();
+    }
+
+    /**
+     * Initialise the JWT configuration.
+     */
+    private function initJwtConfiguration()
+    {
+        $this->jwtConfiguration = Configuration::forSymmetricSigner(
+            new Sha256(),
+            InMemory::plainText('')
+        );
+
+        $this->jwtConfiguration->setValidationConstraints(
+            \class_exists(StrictValidAt::class)
+                ? new StrictValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get())))
+                : new ValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
+            new SignedWith(
+                new Sha256(),
+                InMemory::plainText($this->publicKey->getKeyContents(), $this->publicKey->getPassPhrase() ?? '')
+            )
+        );
     }
 
     /**
@@ -63,44 +94,47 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         }
 
         $header = $request->getHeader('authorization');
-        $jwt = \trim((string) \preg_replace('/^(?:\s+)?Bearer\s/', '', $header[0]));
+        $jwt = \trim((string) \preg_replace('/^\s*Bearer\s/', '', $header[0]));
 
         try {
-            // Attempt to parse and validate the JWT
-            $token = (new Parser())->parse($jwt);
-            try {
-                if ($token->verify(new Sha256(), $this->publicKey->getKeyPath()) === false) {
-                    throw OAuthServerException::accessDenied('Access token could not be verified');
-                }
-            } catch (BadMethodCallException $exception) {
-                throw OAuthServerException::accessDenied('Access token is not signed', null, $exception);
-            }
-
-            // Ensure access token hasn't expired
-            $data = new ValidationData();
-            $data->setCurrentTime(\time());
-
-            if ($token->validate($data) === false) {
-                throw OAuthServerException::accessDenied('Access token is invalid');
-            }
-        } catch (InvalidArgumentException $exception) {
-            // JWT couldn't be parsed so return the request as is
+            // Attempt to parse the JWT
+            $token = $this->jwtConfiguration->parser()->parse($jwt);
+        } catch (\Lcobucci\JWT\Exception $exception) {
             throw OAuthServerException::accessDenied($exception->getMessage(), null, $exception);
-        } catch (RuntimeException $exception) {
-            // JWT couldn't be parsed so return the request as is
-            throw OAuthServerException::accessDenied('Error while decoding to JSON', null, $exception);
         }
 
+        try {
+            // Attempt to validate the JWT
+            $constraints = $this->jwtConfiguration->validationConstraints();
+            $this->jwtConfiguration->validator()->assert($token, ...$constraints);
+        } catch (RequiredConstraintsViolated $exception) {
+            throw OAuthServerException::accessDenied('Access token could not be verified');
+        }
+
+        $claims = $token->claims();
+
         // Check if token has been revoked
-        if ($this->accessTokenRepository->isAccessTokenRevoked($token->getClaim('jti'))) {
+        if ($this->accessTokenRepository->isAccessTokenRevoked($claims->get('jti'))) {
             throw OAuthServerException::accessDenied('Access token has been revoked');
         }
 
         // Return the request with additional attributes
         return $request
-            ->withAttribute('oauth_access_token_id', $token->getClaim('jti'))
-            ->withAttribute('oauth_client_id', $token->getClaim('aud'))
-            ->withAttribute('oauth_user_id', $token->getClaim('sub'))
-            ->withAttribute('oauth_scopes', $token->getClaim('scopes'));
+            ->withAttribute('oauth_access_token_id', $claims->get('jti'))
+            ->withAttribute('oauth_client_id', $this->convertSingleRecordAudToString($claims->get('aud')))
+            ->withAttribute('oauth_user_id', $claims->get('sub'))
+            ->withAttribute('oauth_scopes', $claims->get('scopes'));
+    }
+
+    /**
+     * Convert single record arrays into strings to ensure backwards compatibility between v4 and v3.x of lcobucci/jwt
+     *
+     * @param mixed $aud
+     *
+     * @return array|string
+     */
+    private function convertSingleRecordAudToString($aud)
+    {
+        return \is_array($aud) && \count($aud) === 1 ? $aud[0] : $aud;
     }
 }
