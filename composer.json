@@ -7,7 +7,7 @@
         "php": "^8.0",
         "ext-openssl": "*",
         "league/event": "^2.2",
-        "league/uri": "^6.7",
+        "league/uri": "^6.7 || ^7.0",
         "lcobucci/jwt": "^4.3 || ^5.0",
         "psr/http-message": "^1.0.1 || ^2.0",
         "defuse/php-encryption": "^2.3",
