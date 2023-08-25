@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [8.5.4] - released 2023-08-25
 ### Added
-- Support for league/uri ^7.0
+- Support for league/uri ^7.0 (PR #1367)
 
 ## [8.5.3] - released 2023-07-06
 ### Security
