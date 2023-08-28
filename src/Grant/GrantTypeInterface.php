@@ -121,7 +121,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * @return DeviceAuthorizationRequest
      */
-    public function validateDeviceAuthorizationRequest(ServerRequestInterface $request);
+    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request);
 
     /**
      * If the grant can respond to a device authorization request this method should be called to validate the parameters of
@@ -133,7 +133,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * @return ResponseTypeInterface
      */
-    public function completeDeviceAuthorizationRequest(DeviceAuthorizationRequest $deviceAuthorizationRequest);
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId);
 
     /**
      * Set the client repository.

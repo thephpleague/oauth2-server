@@ -35,10 +35,12 @@ class DeviceCodeResponse extends AbstractResponseType
         $expireDateTime = $this->deviceCode->getExpiryDateTime()->getTimestamp();
 
         $responseParams = [
-            'expires_in'   => $expireDateTime - \time(),
             'device_code' => $this->payload,
             'user_code' => $this->deviceCode->getUserCode(),
             'verification_uri' => $this->deviceCode->getVerificationUri(),
+            'expires_in'   => $expireDateTime - \time(),
+            // TODO: Add interval in here
+            // TODO: Potentially add in verification_uri_complete - it is optional
         ];
 
         $responseParams = \json_encode($responseParams);

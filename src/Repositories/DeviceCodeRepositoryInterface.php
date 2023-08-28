@@ -23,27 +23,23 @@ interface DeviceCodeRepositoryInterface extends RepositoryInterface
     public function getNewDeviceCode();
 
     /**
-     * Persists a new auth code to permanent storage.
+     * Persists a device code to permanent storage.
      *
      * @param DeviceCodeEntityInterface $deviceCodeEntity
      *
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
-    public function persistNewDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity);
+    public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity);
 
     /**
      * Get a device code entity.
      *
      * @param string                $deviceCode
-     * @param string                $grantType
-     * @param ClientEntityInterface $clientEntity
      *
      * @return DeviceCodeEntityInterface|null
      */
     public function getDeviceCodeEntityByDeviceCode(
-        $deviceCode,
-        $grantType,
-        ClientEntityInterface $clientEntity
+        $deviceCode
     );
 
     /**

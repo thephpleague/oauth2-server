@@ -38,6 +38,8 @@ use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use TypeError;
 
+use function array_key_exists;
+
 /**
  * Abstract grant class.
  */
@@ -591,7 +593,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $requestParameters = (array) $request->getParsedBody();
 
         return (
-            \array_key_exists('grant_type', $requestParameters)
+            array_key_exists('grant_type', $requestParameters)
             && $requestParameters['grant_type'] === $this->getIdentifier()
         );
     }
@@ -631,7 +633,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function validateDeviceAuthorizationRequest(ServerRequestInterface $request)
+    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request)
     {
         throw new LogicException('This grant cannot validate a device authorization request');
     }
@@ -639,7 +641,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function completeDeviceAuthorizationRequest(DeviceAuthorizationRequest $deviceAuthorizationRequest)
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId)
     {
         throw new LogicException('This grant cannot complete a device authorization request');
     }

@@ -13,73 +13,26 @@ use DateTimeImmutable;
 
 interface TokenInterface
 {
-    /**
-     * Get the token's identifier.
-     *
-     * @return string
-     */
-    public function getIdentifier();
+    public function getIdentifier(): string;
+
+    public function setIdentifier(mixed $identifier): void;
+
+    public function getExpiryDateTime(): DateTimeImmutable;
+
+    public function setExpiryDateTime(DateTimeImmutable $dateTime): void;
+
+    public function setUserIdentifier(string|int|null $identifier): void;
+
+    public function getUserIdentifier(): string|int|null;
+
+    public function getClient(): ClientEntityInterface;
+
+    public function setClient(ClientEntityInterface $client): void;
+
+    public function addScope(ScopeEntityInterface $scope): void;
 
     /**
-     * Set the token's identifier.
-     *
-     * @param mixed $identifier
-     */
-    public function setIdentifier($identifier);
-
-    /**
-     * Get the token's expiry date time.
-     *
-     * @return DateTimeImmutable
-     */
-    public function getExpiryDateTime();
-
-    /**
-     * Set the date time when the token expires.
-     *
-     * @param DateTimeImmutable $dateTime
-     */
-    public function setExpiryDateTime(DateTimeImmutable $dateTime);
-
-    /**
-     * Set the identifier of the user associated with the token.
-     *
-     * @param string|int|null $identifier The identifier of the user
-     */
-    public function setUserIdentifier($identifier);
-
-    /**
-     * Get the token user's identifier.
-     *
-     * @return string|int|null
-     */
-    public function getUserIdentifier();
-
-    /**
-     * Get the client that the token was issued to.
-     *
-     * @return ClientEntityInterface
-     */
-    public function getClient();
-
-    /**
-     * Set the client that the token was issued to.
-     *
-     * @param ClientEntityInterface $client
-     */
-    public function setClient(ClientEntityInterface $client);
-
-    /**
-     * Associate a scope with the token.
-     *
-     * @param ScopeEntityInterface $scope
-     */
-    public function addScope(ScopeEntityInterface $scope);
-
-    /**
-     * Return an array of scopes associated with the token.
-     *
      * @return ScopeEntityInterface[]
      */
-    public function getScopes();
+    public function getScopes(): array;
 }

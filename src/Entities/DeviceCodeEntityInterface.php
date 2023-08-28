@@ -9,25 +9,19 @@
 
 namespace League\OAuth2\Server\Entities;
 
+use DateTimeImmutable;
+
 interface DeviceCodeEntityInterface extends TokenInterface
 {
-    /**
-     * @return string
-     */
-    public function getUserCode();
+    public function getUserCode(): string;
 
-    /**
-     * @param string $userCode
-     */
-    public function setUserCode($userCode);
+    public function setUserCode(string $userCode);
 
-    /**
-     * @return string
-     */
-    public function getVerificationUri();
+    public function getVerificationUri(): string;
 
-    /**
-     * @param string $verificationUri
-     */
-    public function setVerificationUri($verificationUri);
+    public function setVerificationUri(string $verificationUri);
+
+    public function getLastPolledAt(): ?DateTimeImmutable;
+
+    public function setLastPolledAt(DateTimeImmutable $lastPolledAt): void;
 }

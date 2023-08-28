@@ -3,6 +3,7 @@
 namespace LeagueTests\Grant;
 
 use DateInterval;
+use ReflectionClass;
 use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -28,7 +29,7 @@ class AbstractGrantTest extends TestCase
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . \base64_encode('Open:Sesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
@@ -41,7 +42,7 @@ class AbstractGrantTest extends TestCase
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . \base64_encode('Open:'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
@@ -54,7 +55,7 @@ class AbstractGrantTest extends TestCase
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Foo ' . \base64_encode('Open:Sesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
@@ -67,7 +68,7 @@ class AbstractGrantTest extends TestCase
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ||');
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
@@ -80,7 +81,7 @@ class AbstractGrantTest extends TestCase
     {
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . \base64_encode('OpenSesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
@@ -97,7 +98,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = new ServerRequest(
             [],
@@ -133,7 +134,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id' => 'foo',
@@ -158,7 +159,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -183,7 +184,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = new ServerRequest();
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
@@ -203,7 +204,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id' => 'foo',
@@ -226,7 +227,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -252,7 +253,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'    => 'foo',
@@ -278,7 +279,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'    => 'foo',
@@ -304,7 +305,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'    => 'foo',
@@ -328,7 +329,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -347,6 +348,7 @@ class AbstractGrantTest extends TestCase
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->method('getIdentifier')->willReturn('foobar');
+        $grantMock->setDefaultScope('defaultScope');
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'grant_type' => 'foobar',
@@ -368,7 +370,7 @@ class AbstractGrantTest extends TestCase
         $grantMock->setRefreshTokenTTL(new DateInterval('PT1M'));
         $grantMock->setRefreshTokenRepository($refreshTokenRepoMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
         $issueRefreshTokenMethod = $abstractGrantReflection->getMethod('issueRefreshToken');
         $issueRefreshTokenMethod->setAccessible(true);
 
@@ -392,7 +394,7 @@ class AbstractGrantTest extends TestCase
         $grantMock->setRefreshTokenTTL(new \DateInterval('PT1M'));
         $grantMock->setRefreshTokenRepository($refreshTokenRepoMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
         $issueRefreshTokenMethod = $abstractGrantReflection->getMethod('issueRefreshToken');
         $issueRefreshTokenMethod->setAccessible(true);
 
@@ -410,7 +412,7 @@ class AbstractGrantTest extends TestCase
         $grantMock->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grantMock->setAccessTokenRepository($accessTokenRepoMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
         $issueAccessTokenMethod = $abstractGrantReflection->getMethod('issueAccessToken');
         $issueAccessTokenMethod->setAccessible(true);
 
@@ -434,9 +436,12 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setAuthCodeRepository($authCodeRepoMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
         $issueAuthCodeMethod = $abstractGrantReflection->getMethod('issueAuthCode');
         $issueAuthCodeMethod->setAccessible(true);
+
+        $scope = new ScopeEntity();
+        $scope->setIdentifier('scopeIdentifier');
 
         $this->assertInstanceOf(
             AuthCodeEntityInterface::class,
@@ -446,7 +451,7 @@ class AbstractGrantTest extends TestCase
                 new ClientEntity(),
                 123,
                 'http://foo/bar',
-                [new ScopeEntity()]
+                [$scope]
             )
         );
     }
@@ -456,7 +461,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->method('getIdentifier')->willReturn('foobar');
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
         $method = $abstractGrantReflection->getMethod('getCookieParameter');
         $method->setAccessible(true);
 
@@ -473,7 +478,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->method('getIdentifier')->willReturn('foobar');
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
         $method = $abstractGrantReflection->getMethod('getQueryStringParameter');
         $method->setAccessible(true);
 
@@ -516,7 +521,7 @@ class AbstractGrantTest extends TestCase
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
         $method = $abstractGrantReflection->getMethod('generateUniqueIdentifier');
         $method->setAccessible(true);
 

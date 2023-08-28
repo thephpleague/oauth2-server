@@ -460,6 +460,7 @@ class AuthCodeGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setIdentifier('clientIdentifier');
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -1824,6 +1825,7 @@ class AuthCodeGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setIdentifier('clientIdentifier');
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);

@@ -28,6 +28,12 @@ class DeviceAuthorizationRequest
      */
     protected $client;
 
+    private bool $authorizationApproved;
+
+    private string $userCode;
+
+    private string|int $userIdentifier;
+
     /**
      * An array of scope identifiers
      *
@@ -81,5 +87,20 @@ class DeviceAuthorizationRequest
     public function setScopes(array $scopes)
     {
         $this->scopes = $scopes;
+    }
+
+    public function getUserCode(): string
+    {
+        return $this->userCode;
+    }
+
+    public function getUserIdentifier(): string|int
+    {
+        return $this->userIdentifier;
+    }
+
+    public function authorizationApproved(): bool
+    {
+        return $this->authorizationApproved;
     }
 }

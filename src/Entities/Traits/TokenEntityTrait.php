@@ -13,104 +13,81 @@ use DateTimeImmutable;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 
+use function array_values;
+
 trait TokenEntityTrait
 {
     /**
      * @var ScopeEntityInterface[]
      */
-    protected $scopes = [];
+    protected array $scopes = [];
 
-    /**
-     * @var DateTimeImmutable
-     */
-    protected $expiryDateTime;
+    protected DateTimeImmutable $expiryDateTime;
 
-    /**
-     * @var string|int|null
-     */
-    protected $userIdentifier;
+    protected string|int|null $userIdentifier = null;
 
-    /**
-     * @var ClientEntityInterface
-     */
-    protected $client;
+    protected ClientEntityInterface $client;
 
     /**
      * Associate a scope with the token.
-     *
-     * @param ScopeEntityInterface $scope
      */
-    public function addScope(ScopeEntityInterface $scope)
+    public function addScope(ScopeEntityInterface $scope): void
     {
         $this->scopes[$scope->getIdentifier()] = $scope;
     }
 
     /**
      * Return an array of scopes associated with the token.
-     *
-     * @return ScopeEntityInterface[]
      */
-    public function getScopes()
+    public function getScopes(): array
     {
-        return \array_values($this->scopes);
+        return array_values($this->scopes);
     }
 
     /**
      * Get the token's expiry date time.
-     *
-     * @return DateTimeImmutable
      */
-    public function getExpiryDateTime()
+    public function getExpiryDateTime(): DateTimeImmutable
     {
         return $this->expiryDateTime;
     }
 
     /**
      * Set the date time when the token expires.
-     *
-     * @param DateTimeImmutable $dateTime
      */
-    public function setExpiryDateTime(DateTimeImmutable $dateTime)
+    public function setExpiryDateTime(DateTimeImmutable $dateTime): void
     {
         $this->expiryDateTime = $dateTime;
     }
 
     /**
      * Set the identifier of the user associated with the token.
-     *
-     * @param string|int|null $identifier The identifier of the user
      */
-    public function setUserIdentifier($identifier)
+    public function setUserIdentifier(string|int|null $identifier): void
     {
         $this->userIdentifier = $identifier;
     }
 
     /**
      * Get the token user's identifier.
-     *
-     * @return string|int|null
      */
-    public function getUserIdentifier()
+    public function getUserIdentifier(): string|int|null
     {
         return $this->userIdentifier;
     }
 
     /**
      * Get the client that the token was issued to.
-     *
-     * @return ClientEntityInterface
      */
-    public function getClient()
+    public function getClient(): ClientEntityInterface
     {
         return $this->client;
     }
 
     /**
      * Set the client that the token was issued to.
-     *
-     * @param ClientEntityInterface $client
      */
-    public function setClient(ClientEntityInterface $client)
+    public function setClient(ClientEntityInterface $client): void
     {
         $this->client = $client;
     }

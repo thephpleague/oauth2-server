@@ -184,7 +184,7 @@ class AuthorizationServer implements EmitterAwareInterface
     }
 
     /**
-     * Validate a device authorization request
+     * Respond to device authorization request
      *
      * @param ServerRequestInterface $request
      *
@@ -192,11 +192,13 @@ class AuthorizationServer implements EmitterAwareInterface
      *
      * @throws OAuthServerException
      */
-    public function validateDeviceAuthorizationRequest(ServerRequestInterface $request)
+    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request, ResponseInterface $response)
     {
         foreach ($this->enabledGrantTypes as $grantType) {
             if ($grantType->canRespondToDeviceAuthorizationRequest($request)) {
-                return $grantType->validateDeviceAuthorizationRequest($request);
+                return $grantType
+                    ->respondToDeviceAuthorizationRequest($request)
+                    ->generateHttpResponse($response);
             }
         }
 
@@ -213,6 +215,7 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     public function completeDeviceAuthorizationRequest(DeviceAuthorizationRequest $deviceRequest, ResponseInterface $response)
     {
+        // TODO: Check why we aren't just using completeAuthorizationRequest
         return $this->enabledGrantTypes[$deviceRequest->getGrantTypeId()]
             ->completeDeviceAuthorizationRequest($deviceRequest)
             ->generateHttpResponse($response);

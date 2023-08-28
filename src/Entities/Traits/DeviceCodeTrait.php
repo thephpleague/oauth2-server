@@ -15,67 +15,48 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
 
 trait DeviceCodeTrait
 {
-    /**
-     * @var string
-     */
-    private $userCode;
+    private string $userCode;
+    private string $verificationUri;
+    private ?DateTimeImmutable $lastPolledAt = null;
 
-    /**
-     * @var string
-     */
-    private $verificationUri;
-
-    /**
-     * @return string
-     */
-    public function getUserCode()
+    public function getUserCode(): string
     {
         return $this->userCode;
     }
 
-    /**
-     * @param string $userCode
-     *
-     * @return string
-     */
-    public function setUserCode($userCode)
+    public function setUserCode(string $userCode): void
     {
         $this->userCode = $userCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getVerificationUri()
+    public function getVerificationUri(): string
     {
         return $this->verificationUri;
     }
 
-    /**
-     * @param string $verificationUri
-     */
-    public function setVerificationUri($verificationUri)
+    public function setVerificationUri(string $verificationUri)
     {
         $this->verificationUri = $verificationUri;
     }
 
-    /**
-     * @return ClientEntityInterface
-     */
-    abstract public function getClient();
+    abstract public function getClient(): ClientEntityInterface;
 
-    /**
-     * @return DateTimeImmutable
-     */
-    abstract public function getExpiryDateTime();
+    abstract public function getExpiryDateTime(): DateTimeImmutable;
 
     /**
      * @return ScopeEntityInterface[]
      */
-    abstract public function getScopes();
+    abstract public function getScopes(): array;
 
-    /**
-     * @return string
-     */
-    abstract public function getIdentifier();
+    abstract public function getIdentifier(): string;
+
+    public function getLastPolledAt(): ?DateTimeImmutable
+    {
+        return $this->lastPolledAt;
+    }
+
+    public function setLastPolledAt(DateTimeImmutable $lastPolledAt): void
+    {
+        $this->lastPolledAt = $lastPolledAt;
+    }
 }

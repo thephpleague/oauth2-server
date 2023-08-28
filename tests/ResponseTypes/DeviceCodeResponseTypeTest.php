@@ -33,6 +33,7 @@ class DeviceCodeResponseTypeTest extends TestCase
         $deviceCode->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $deviceCode->setClient($client);
         $deviceCode->addScope($scope);
+        $deviceCode->setVerificationUri('https://example.com/device');
 
 
         $responseType->setDeviceCode($deviceCode);

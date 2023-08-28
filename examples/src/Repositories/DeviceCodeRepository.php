@@ -27,7 +27,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function persistNewDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity)
+    public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity)
     {
         // Some logic to persist a new device code to a database
     }

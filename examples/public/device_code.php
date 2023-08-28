@@ -67,8 +67,9 @@ $app->post('/device_authorization', function (ServerRequestInterface $request, R
     try {
         $deviceAuthRequest = $server->validateDeviceAuthorizationRequest($request);
 
+        // TODO: I don't think this is right as the user can't approve the request via the same client...
         // Once the user has logged in, set the user on the authorization request
-        //$deviceAuthRequest->setUser();
+        //$deviceAuthRequest->setUserIdentifier();
 
         // Once the user has approved or denied the client, update the status
         //$deviceAuthRequest->setAuthorizationApproved(true);

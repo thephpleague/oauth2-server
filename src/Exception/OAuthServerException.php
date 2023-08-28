@@ -281,27 +281,24 @@ class OAuthServerException extends Exception
      */
     public static function expiredToken($hint = null, Throwable $previous = null)
     {
-        $errorMessage = 'The `device_code` has expired and the device authorization session has concluded.';
+        $errorMessage = 'The `device_code` has expired and the device ' .
+                        'authorization session has concluded.';
 
         return new static($errorMessage, 11, 'expired_token', 400, $hint, null, $previous);
     }
 
-    /**
-     * Authorization pending.
-     *
-     * @param string $hint
-     *
-     * @return static
-     */
-    public static function authorizationPending($hint = '')
+    public static function authorizationPending($hint = '', Throwable $previous = null)
     {
-        return new static(
-            'The authorization request is still pending as the end user hasn\'t yet completed the user interaction steps. '
-                . 'The client SHOULD repeat the Access Token Request to the token endpoint',
+        return new static (
+            'The authorization request is still pending as the end user ' .
+            'hasn\'t yet completed the user interaction steps. The client ' .
+            'SHOULD repeat the Access Token Request to the token endpoint',
             12,
             'authorization_pending',
             400,
-            $hint
+            $hint,
+            null,
+            $previous
         );
     }
 
@@ -316,14 +313,16 @@ class OAuthServerException extends Exception
     public static function slowDown($hint = '', Throwable $previous = null)
     {
         return new static(
-            'example message',
-            13,
-            'slow_down',
-            400,
-            $hint,
-            null,
-            $previous
-        );
+                'The authorization request is still pending and polling should ' .
+                'continue, but the interval MUST be increased ' .
+                'by 5 seconds for this and all subsequent requests.',
+                13,
+                'slow_down',
+                400,
+                $hint,
+                null,
+                $previous
+                );
     }
 
     /**

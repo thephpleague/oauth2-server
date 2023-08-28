@@ -38,6 +38,7 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $accessToken->setUserIdentifier('userIdentifier');
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
@@ -81,6 +82,7 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $accessToken->setUserIdentifier('userIdentifier');
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
