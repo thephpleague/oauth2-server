@@ -35,9 +35,11 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getDeviceCodeEntityByDeviceCode($deviceCode, $grantType, ClientEntityInterface $clientEntity)
+    public function getDeviceCodeEntityByDeviceCode($deviceCode)
     {
         $deviceCode = new DeviceCodeEntity();
+
+        $deviceCode->setIdentifier('device_code_1234');
 
         // The user identifier should be set when the user authenticates on the OAuth server
         $deviceCode->setUserIdentifier(1);

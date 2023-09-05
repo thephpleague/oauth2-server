@@ -24,4 +24,16 @@ interface DeviceCodeEntityInterface extends TokenInterface
     public function getLastPolledAt(): ?DateTimeImmutable;
 
     public function setLastPolledAt(DateTimeImmutable $lastPolledAt): void;
+
+    public function getInterval(): int;
+
+    public function setInterval(int $interval): void;
+
+    public function getIntervalInAuthResponse(): bool;
+
+    public function setIntervalInAuthResponse(bool $intervalInAuthResponse): bool;
+
+    public function getUserApproved(): bool;
+
+    public function setUserApproved(bool $userApproved): void;
 }

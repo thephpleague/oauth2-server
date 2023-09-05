@@ -15,17 +15,12 @@ use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 
+use function time;
+
 class DeviceCodeResponse extends AbstractResponseType
 {
-    /**
-     * @var DeviceCodeEntityInterface
-     */
-    protected $deviceCode;
-
-    /**
-     * @var string
-     */
-    protected $payload;
+    protected DeviceCodeEntityInterface $deviceCode;
+    protected string $payload;
 
     /**
      * {@inheritdoc}
@@ -38,10 +33,13 @@ class DeviceCodeResponse extends AbstractResponseType
             'device_code' => $this->payload,
             'user_code' => $this->deviceCode->getUserCode(),
             'verification_uri' => $this->deviceCode->getVerificationUri(),
-            'expires_in'   => $expireDateTime - \time(),
-            // TODO: Add interval in here
+            'expires_in'   => $expireDateTime - time(),
             // TODO: Potentially add in verification_uri_complete - it is optional
         ];
+
+        if ($this->deviceCode->getIntervalInAuthResponse() === true) {
+            $responseParams['interval'] = $this->deviceCode->getInterval();
+        }
 
         $responseParams = \json_encode($responseParams);
 

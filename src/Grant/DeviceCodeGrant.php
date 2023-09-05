@@ -41,37 +41,18 @@ use function time;
  */
 class DeviceCodeGrant extends AbstractGrant
 {
-    /**
-     * @var DeviceCodeRepositoryInterface
-     */
-    protected $deviceCodeRepository;
+    protected DeviceCodeRepositoryInterface $deviceCodeRepository;
+    private DateInterval $deviceCodeTTL;
+    private bool $intervalVisibility = false;
+    private int $retryInterval;
+    private string $verificationUri;
 
-    /**
-     * @var DateInterval
-     */
-    private $deviceCodeTTL;
-
-    /**
-     * @var int
-     */
-    private $retryInterval;
-
-    /**
-     * @var string
-     */
-    private $verificationUri;
-
-    /**
-     * @param DeviceCodeRepositoryInterface        $deviceCodeRepository
-     * @param RefreshTokenRepositoryInterface      $refreshTokenRepository
-     * @param DateInterval                         $deviceCodeTTL
-     * @param int                                  $retryInterval
-     */
     public function __construct(
         DeviceCodeRepositoryInterface $deviceCodeRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         DateInterval $deviceCodeTTL,
-        $retryInterval = 5
+        string $verificationUri,
+        int $retryInterval = 5
     ) {
         $this->setDeviceCodeRepository($deviceCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
@@ -79,6 +60,7 @@ class DeviceCodeGrant extends AbstractGrant
         $this->refreshTokenTTL = new DateInterval('P1M');
 
         $this->deviceCodeTTL = $deviceCodeTTL;
+        $this->setVerificationUri($verificationUri);
         $this->retryInterval = $retryInterval;
     }
 
@@ -107,13 +89,7 @@ class DeviceCodeGrant extends AbstractGrant
 
         $client = $this->getClientEntityOrFail($clientId, $request);
 
-        // TODO: Make sure the grant type is set...
-
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
-
-        // TODO: Don't think I need the deviceauthorizationrequest any more. Might repurpose it...
-        // $deviceAuthorizationRequest = new DeviceAuthorizationRequest();
-        // $deviceAuthorizationRequest->setGrantTypeId($this->getIdentifier());
 
         $deviceCode = $this->issueDeviceCode(
             $this->deviceCodeTTL,
@@ -122,6 +98,8 @@ class DeviceCodeGrant extends AbstractGrant
             $scopes
         );
 
+        // TODO: Why do we need this? Why not just generate a random number? Is it a security concern?
+        // TODO: Do I need to set the interval in this?
         $payload = [
             'device_code_id' => $deviceCode->getIdentifier(),
             'user_code' => $deviceCode->getUserCode(),
@@ -143,11 +121,12 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId)
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $approved)
     {
         $deviceCode = $this->deviceCodeRepository->getDeviceCodeEntityByDeviceCode($deviceCode);
 
         $deviceCode->setUserIdentifier($userId);
+        $deviceCode->setUserApproved($approved);
 
         $this->deviceCodeRepository->persistDeviceCode($deviceCode);
     }
@@ -161,25 +140,20 @@ class DeviceCodeGrant extends AbstractGrant
         DateInterval $accessTokenTTL
     ) {
         // Validate request
-        // TODO: Check that the correct grant type has been sent
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $deviceCode = $this->validateDeviceCode($request, $client);
 
-        // TODO: Should the last poll and user check be done in the validateDeviceCode method?
-        $lastPoll = $deviceCode->getLastPolledAt();
-
-        if ($lastPoll !== null && $lastPoll->getTimestamp() + $this->retryInterval > time()) {
-            throw OAuthServerException::slowDown();
-        }
-
         $deviceCode->setLastPolledAt(new DateTimeImmutable());
-
         $this->deviceCodeRepository->persistDeviceCode($deviceCode);
 
-        // if device code has no user associated, respond with pending
+        // If device code has no user associated, respond with pending
         if (is_null($deviceCode->getUserIdentifier())) {
             throw OAuthServerException::authorizationPending();
+        }
+
+        if ($deviceCode->getUserApproved() === false) {
+            throw OAuthServerException::accessDenied();
         }
 
         // Finalize the requested scopes
@@ -238,10 +212,14 @@ class DeviceCodeGrant extends AbstractGrant
         }
 
         $deviceCode = $this->deviceCodeRepository->getDeviceCodeEntityByDeviceCode(
-            $deviceCodePayload->device_code_id,
-            $this->getIdentifier(),
-            $client
-        );
+                $deviceCodePayload->device_code_id,
+                $this->getIdentifier(),
+                $client
+                );
+
+        if ($this->deviceCodePolledTooSoon($deviceCode->getLastPolledAt()) === true) {
+            throw OAuthServerException::slowDown();
+        }
 
         if ($deviceCode instanceof DeviceCodeEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
@@ -250,6 +228,11 @@ class DeviceCodeGrant extends AbstractGrant
         }
 
         return $deviceCode;
+    }
+
+    private function deviceCodePolledTooSoon(?DateTimeImmutable $lastPoll): bool
+    {
+        return $lastPoll !== null && $lastPoll->getTimestamp() + $this->retryInterval > time();
     }
 
     /**
@@ -320,6 +303,10 @@ class DeviceCodeGrant extends AbstractGrant
         $deviceCode->setClient($client);
         $deviceCode->setVerificationUri($verificationUri);
 
+        if ($this->getIntervalVisibility() === true) {
+            $deviceCode->setInterval($this->retryInterval);
+        }
+
         foreach ($scopes as $scope) {
             $deviceCode->addScope($scope);
         }
@@ -369,5 +356,15 @@ class DeviceCodeGrant extends AbstractGrant
             throw OAuthServerException::serverError('Could not generate a random string', $e);
         }
         // @codeCoverageIgnoreEnd
+    }
+
+    public function setIntervalVisibility(bool $intervalVisibility): void
+    {
+        $this->intervalVisibility = $intervalVisibility;
+    }
+
+    public function getIntervalVisibility(): bool
+    {
+        return $this->intervalVisibility;
     }
 }

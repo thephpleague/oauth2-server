@@ -53,7 +53,7 @@ class DeviceCodeGrantTest extends TestCase
             $deviceCodeRepositoryMock,
             $refreshTokenRepositoryMock,
             new DateInterval('PT10M'),
-            5
+            "http://foo/bar"
         );
 
         $this->assertEquals('urn:ietf:params:oauth:grant-type:device_code', $grant->getIdentifier());
@@ -64,7 +64,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant = new DeviceCodeGrant(
             $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            "http://foo/bar"
         );
 
         $request = (new ServerRequest())->withParsedBody([
@@ -75,7 +76,7 @@ class DeviceCodeGrantTest extends TestCase
         $this->assertTrue($grant->canRespondToDeviceAuthorizationRequest($request));
     }
 
-    public function testValidateDeviceAuthorizationRequest()
+    public function testRespondToDeviceAuthorizationRequest()
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -93,15 +94,15 @@ class DeviceCodeGrantTest extends TestCase
 
         $grant = new DeviceCodeGrant(
             $deviceCodeRepository,
-            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(), // TODO: Does this have a refersh token?
-            new DateInterval('PT10M')
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M'),
+            "http://foo/bar"
         );
 
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setVerificationUri('http://foo/bar');
 
         $request = (new ServerRequest())->withParsedBody([
             'client_id' => 'foo',
@@ -126,7 +127,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant = new DeviceCodeGrant(
             $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            'http://foo/bar'
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -156,7 +158,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant = new DeviceCodeGrant(
             $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            'http://foo/bar'
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -183,7 +186,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant = new DeviceCodeGrant(
             $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            'http://foo/bar'
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -210,13 +214,13 @@ class DeviceCodeGrantTest extends TestCase
         $grant = new DeviceCodeGrant(
             $deviceCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            'http://foo/bar',
         );
 
-        $grant->setVerificationUri('http://foo/bar');
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), 'userId');
+        $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), 'userId', true);
 
         $this->assertEquals('userId', $deviceCode->getUserIdentifier());
     }
@@ -261,11 +265,11 @@ class DeviceCodeGrantTest extends TestCase
          $deviceCodeGrant = new DeviceCodeGrant(
             $deviceCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            'http://foo/bar'
         );
 
         $deviceCodeGrant->setEncryptionKey($this->cryptStub->getKey());
-        $deviceCodeGrant->setVerificationUri('http://foo/bar');
 
         $server->enableGrantType($deviceCodeGrant);
 
@@ -273,11 +277,11 @@ class DeviceCodeGrantTest extends TestCase
 
         $responseObject = json_decode($response->getBody()->__toString());
 
-        $this->assertObjectHasAttribute('device_code', $responseObject);
-        $this->assertObjectHasAttribute('user_code', $responseObject);
-        $this->assertObjectHasAttribute('verification_uri', $responseObject);
+        $this->assertObjectHasProperty('device_code', $responseObject);
+        $this->assertObjectHasProperty('user_code', $responseObject);
+        $this->assertObjectHasProperty('verification_uri', $responseObject);
         // TODO: $this->assertObjectHasAttribute('verification_uri_complete', $responseObject);
-        $this->assertObjectHasAttribute('expires_in', $responseObject);
+        $this->assertObjectHasProperty('expires_in', $responseObject);
         // TODO: $this->assertObjectHasAttribute('interval', $responseObject);
     }
 
@@ -297,10 +301,13 @@ class DeviceCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
         $deviceCodeRepositoryMock = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
-        $deviceCodeEntity = new DeviceCodeEntity();
-        $deviceCodeEntity->setUserIdentifier('baz');
-        $deviceCodeEntity->setIdentifier('deviceCodeEntityIdentifier');
-        $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCodeEntity);
+        $deviceCode = new DeviceCodeEntity();
+
+        $deviceCode->setUserIdentifier('baz');
+        $deviceCode->setIdentifier('deviceCodeEntityIdentifier');
+        $deviceCode->setUserCode('123456');
+
+        $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCode);
 
         $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
@@ -310,7 +317,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant = new DeviceCodeGrant(
             $deviceCodeRepositoryMock,
             $refreshTokenRepositoryMock,
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            'http://foo/bar'
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -319,6 +327,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), 1, true);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
@@ -356,7 +366,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant = new DeviceCodeGrant(
             $deviceCodeRepositoryMock,
             $refreshTokenRepositoryMock,
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            'http://foo/bar'
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -408,7 +419,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant = new DeviceCodeGrant(
             $deviceCodeRepositoryMock,
             $refreshTokenRepositoryMock,
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            'http://foo/bar'
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -453,7 +465,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant = new DeviceCodeGrant(
             $deviceCodeRepositoryMock,
             $refreshTokenRepositoryMock,
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            'http://foo/bar'
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -509,7 +522,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant = new DeviceCodeGrant(
             $deviceCodeRepositoryMock,
             $refreshTokenRepositoryMock,
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            'http://foo/bar'
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -565,7 +579,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant = new DeviceCodeGrant(
             $deviceCodeRepositoryMock,
             $refreshTokenRepositoryMock,
-            new DateInterval('PT10M')
+            new DateInterval('PT10M'),
+            'http://foo/bar'
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -598,6 +613,113 @@ class DeviceCodeGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    // NEED TO ADD IN TESTS FOR:
-    // access_denied - for this one, we need to add it to the completeDeviceAuthorizationRequest method
+    public function testIntervalVisibility()
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $deviceCode = new DeviceCodeEntity();
+
+        $deviceCode->setIntervalInAuthResponse(true);
+
+        $deviceCodeRepository = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
+        $deviceCodeRepository->method('getNewDeviceCode')->willReturn($deviceCode);
+
+        $scope = new ScopeEntity();
+        $scope->setIdentifier('basic');
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
+        $grant = new DeviceCodeGrant(
+            $deviceCodeRepository,
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M'),
+            "http://foo/bar"
+        );
+
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setScopeRepository($scopeRepositoryMock);
+
+        $request = (new ServerRequest())->withParsedBody([
+            'client_id' => 'foo',
+            'scope' => 'basic',
+        ]);
+
+        $deviceCodeResponse = $grant
+            ->respondToDeviceAuthorizationRequest($request)
+            ->generateHttpResponse(new Response());
+
+        $deviceCode = json_decode((string) $deviceCodeResponse->getBody());
+
+        $this->assertObjectHasProperty('interval', $deviceCode);
+        $this->assertEquals(5, $deviceCode->interval);
+    }
+
+    public function testIssueAccessDeniedError(): void
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
+
+        $deviceCodeRepositoryMock = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
+
+        $deviceCode = new DeviceCodeEntity();
+
+        $deviceCode->setUserCode('12345678');
+        $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCode);
+
+        $scope = new ScopeEntity();
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $grant = new DeviceCodeGrant(
+                $deviceCodeRepositoryMock,
+                $refreshTokenRepositoryMock,
+                new DateInterval('PT10M'),
+                'http://foo/bar'
+                );
+
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), 1, false);
+
+        $serverRequest = (new ServerRequest())->withParsedBody([
+                'client_id'     => 'foo',
+                'device_code'   => $this->cryptStub->doEncrypt(
+                    \json_encode(
+                        [
+                        'device_code_id' => uniqid(),
+                        'expire_time' => time() + 3600,
+                        'client_id' => 'foo',
+                        'user_code' => '12345678',
+                        'scopes' => ['foo'],
+                        'verification_uri' => 'http://foo/bar',
+                        ]
+                        )
+                    ),
+        ]);
+
+        $responseType = new StubResponseType();
+
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectExceptionCode(9);
+
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
+
+    }
 }

@@ -51,7 +51,7 @@ $app = new App([
                 $deviceCodeRepository,
                 $refreshTokenRepository,
                 new \DateInterval('PT10M'),
-                5
+                'http://foo/bar'
             ),
             new \DateInterval('PT1H')
         );
@@ -65,17 +65,17 @@ $app->post('/device_authorization', function (ServerRequestInterface $request, R
     $server = $app->getContainer()->get(AuthorizationServer::class);
 
     try {
-        $deviceAuthRequest = $server->validateDeviceAuthorizationRequest($request);
+        $deviceCodeResponse = $server->respondToDeviceAuthorizationRequest($request, $response);
 
-        // TODO: I don't think this is right as the user can't approve the request via the same client...
-        // Once the user has logged in, set the user on the authorization request
-        //$deviceAuthRequest->setUserIdentifier();
+        return $deviceCodeResponse;
 
-        // Once the user has approved or denied the client, update the status
-        //$deviceAuthRequest->setAuthorizationApproved(true);
+        // Extract the device code. Usually we would then assign the user ID to
+        // the device code but for the purposes of this example, we've hard 
+        // coded it in the response above.
+        // $deviceCode = json_decode((string) $deviceCodeResponse->getBody());
 
-        // Return the HTTP redirect response
-        return $server->completeDeviceAuthorizationRequest($deviceAuthRequest, $response);
+        // Once the user has logged in and approved the request, set the user on the device code
+        // $server->completeDeviceAuthorizationRequest($deviceCode->user_code, 1);
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
     } catch (\Exception $exception) {

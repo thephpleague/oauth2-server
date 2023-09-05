@@ -59,9 +59,9 @@ class BearerResponseTypeTest extends TestCase
         $response->getBody()->rewind();
         $json = \json_decode($response->getBody()->getContents());
         $this->assertEquals('Bearer', $json->token_type);
-        $this->assertObjectHasAttribute('expires_in', $json);
-        $this->assertObjectHasAttribute('access_token', $json);
-        $this->assertObjectHasAttribute('refresh_token', $json);
+        $this->assertObjectHasProperty('expires_in', $json);
+        $this->assertObjectHasProperty('access_token', $json);
+        $this->assertObjectHasProperty('refresh_token', $json);
     }
 
     public function testGenerateHttpResponseWithExtraParams()
@@ -103,11 +103,11 @@ class BearerResponseTypeTest extends TestCase
         $response->getBody()->rewind();
         $json = \json_decode($response->getBody()->getContents());
         $this->assertEquals('Bearer', $json->token_type);
-        $this->assertObjectHasAttribute('expires_in', $json);
-        $this->assertObjectHasAttribute('access_token', $json);
-        $this->assertObjectHasAttribute('refresh_token', $json);
+        $this->assertObjectHasProperty('expires_in', $json);
+        $this->assertObjectHasProperty('access_token', $json);
+        $this->assertObjectHasProperty('refresh_token', $json);
 
-        $this->assertObjectHasAttribute('foo', $json);
+        $this->assertObjectHasProperty('foo', $json);
         $this->assertEquals('bar', $json->foo);
     }
 

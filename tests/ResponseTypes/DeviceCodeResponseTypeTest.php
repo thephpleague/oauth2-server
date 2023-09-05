@@ -49,10 +49,10 @@ class DeviceCodeResponseTypeTest extends TestCase
 
         $response->getBody()->rewind();
         $json = \json_decode($response->getBody()->getContents());
-        $this->assertObjectHasAttribute('expires_in', $json);
-        $this->assertObjectHasAttribute('device_code', $json);
+        $this->assertObjectHasProperty('expires_in', $json);
+        $this->assertObjectHasProperty('device_code', $json);
         $this->assertEquals('test', $json->device_code);
-        $this->assertObjectHasAttribute('verification_uri', $json);
-        $this->assertObjectHasAttribute('user_code', $json);
+        $this->assertObjectHasProperty('verification_uri', $json);
+        $this->assertObjectHasProperty('user_code', $json);
     }
 }

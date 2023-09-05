@@ -133,7 +133,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * @return ResponseTypeInterface
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId);
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $userApproved);
 
     /**
      * Set the client repository.
