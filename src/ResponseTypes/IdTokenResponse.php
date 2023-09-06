@@ -7,7 +7,7 @@ use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\Event\EmitterAwareTrait;
 use League\Event\EmitterInterface;
 use League\OAuth2\Server\ClaimExtractor;
-use League\OAuth2\Server\ClaimExtractorIntercace;
+use League\OAuth2\Server\ClaimExtractorInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClaimSetInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
@@ -51,9 +51,9 @@ class IdTokenResponse extends BearerTokenResponse
     protected $emitter;
 
     /**
-     * ClaimExtractorIntercace
+     * ClaimExtractorInterface
      *
-     * @var ClaimExtractorIntercace
+     * @var ClaimExtractorInterface
      */
     protected $extractor;
 
@@ -61,7 +61,7 @@ class IdTokenResponse extends BearerTokenResponse
         IdTokenRepositoryInterface $builder,
         ClaimSetRepositoryInterface $claimRepository,
         EmitterInterface $emitter,
-        ?ClaimExtractorIntercace $extractor = null
+        ?ClaimExtractorInterface $extractor = null
     ) {
         if (!$extractor) {
             $this->extractor = new ClaimExtractor();

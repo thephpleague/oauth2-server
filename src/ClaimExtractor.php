@@ -14,7 +14,7 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
  * @author Steve Rhoades <sedonami@gmail.com>
  * @author Marc Riemer <mail@marcriemer.de>
  */
-class ClaimExtractor implements ClaimExtractorIntercace
+class ClaimExtractor implements ClaimExtractorInterface
 {
     /**
      * claimSets

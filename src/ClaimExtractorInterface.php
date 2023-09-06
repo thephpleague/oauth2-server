@@ -2,7 +2,7 @@
 
 namespace League\OAuth2\Server;
 
-interface ClaimExtractorIntercace
+interface ClaimExtractorInterface
 {
     /**
      * For given scopes and aggregated claims get all claims that have been configured on the extractor.
