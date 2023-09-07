@@ -34,7 +34,7 @@ class IdTokenResponse extends BearerTokenResponse
      *
      * @var IdTokenRepositoryInterface
      */
-    protected $builder;
+    protected $idTokenRepository;
 
     /**
      * ClaimSetRepositoryInterface
@@ -58,7 +58,7 @@ class IdTokenResponse extends BearerTokenResponse
     protected $extractor;
 
     public function __construct(
-        IdTokenRepositoryInterface $builder,
+        IdTokenRepositoryInterface $idTokenRepository,
         ClaimSetRepositoryInterface $claimRepository,
         EmitterInterface $emitter,
         ?ClaimExtractorInterface $extractor = null
@@ -68,7 +68,7 @@ class IdTokenResponse extends BearerTokenResponse
         } else {
             $this->extractor = $extractor;
         }
-        $this->builder = $builder;
+        $this->idTokenRepository = $idTokenRepository;
         $this->claimRepository = $claimRepository;
         $this->setEmitter($emitter);
     }
@@ -87,7 +87,7 @@ class IdTokenResponse extends BearerTokenResponse
 
         $claimSet = $this->claimRepository->getClaimSetEntry($accessToken);
 
-        $builder = $this->builder->getBuilder($accessToken);
+        $builder = $this->idTokenRepository->getBuilder($accessToken);
 
         if ($claimSet instanceof ClaimSetInterface) {
             foreach ($this->extractor->extract($accessToken->getScopes(), $claimSet->getClaims()) as $claimName => $claimValue) {
