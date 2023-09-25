@@ -98,8 +98,7 @@ class DeviceCodeGrant extends AbstractGrant
             $scopes
         );
 
-        // TODO: Why do we need this? Why not just generate a random number? Is it a security concern?
-        // TODO: Do I need to set the interval in this?
+        // TODO: Check payload generation
         $payload = [
             'device_code_id' => $deviceCode->getIdentifier(),
             'user_code' => $deviceCode->getUserCode(),
