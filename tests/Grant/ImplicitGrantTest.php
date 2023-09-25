@@ -25,6 +25,7 @@ use PHPUnit\Framework\TestCase;
 class ImplicitGrantTest extends TestCase
 {
     const DEFAULT_SCOPE = 'basic';
+    const REDIRECT_URI = 'https://foo/bar';
 
     /**
      * CryptTrait stub
@@ -79,7 +80,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequest()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri(self::REDIRECT_URI);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -95,7 +96,7 @@ class ImplicitGrantTest extends TestCase
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id'     => 'foo',
-            'redirect_uri'  => 'http://foo/bar',
+            'redirect_uri'  => self::REDIRECT_URI,
         ]);
 
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
@@ -104,7 +105,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequestRedirectUriArray()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri(['http://foo/bar']);
+        $client->setRedirectUri([self::REDIRECT_URI]);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -120,7 +121,7 @@ class ImplicitGrantTest extends TestCase
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id' => 'foo',
-            'redirect_uri' => 'http://foo/bar',
+            'redirect_uri' => self::REDIRECT_URI,
         ]);
 
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
@@ -163,7 +164,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequestBadRedirectUriString()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri(self::REDIRECT_URI);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -185,7 +186,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequestBadRedirectUriArray()
     {
         $client = new ClientEntity();
-        $client->setRedirectUri(['http://foo/bar']);
+        $client->setRedirectUri([self::REDIRECT_URI]);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -208,6 +209,7 @@ class ImplicitGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('identifier');
+        $client->setRedirectUri(self::REDIRECT_URI);
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -235,9 +237,12 @@ class ImplicitGrantTest extends TestCase
 
     public function testCompleteAuthorizationRequestDenied()
     {
+        $client = new ClientEntity();
+        $client->setRedirectUri(self::REDIRECT_URI);
+
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(false);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
@@ -263,6 +268,7 @@ class ImplicitGrantTest extends TestCase
     {
         $client = new ClientEntity();
         $client->setIdentifier('identifier');
+        $client->setRedirectUri(self::REDIRECT_URI);
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);

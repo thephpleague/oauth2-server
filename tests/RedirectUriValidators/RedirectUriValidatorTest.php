@@ -72,4 +72,34 @@ class RedirectUriValidatorTest extends TestCase
             'Loopback redirect URI can change the port number'
         );
     }
+
+    public function testCanValidateUrn()
+    {
+        $validator = new RedirectUriValidator('urn:ietf:wg:oauth:2.0:oob');
+
+        $this->assertTrue(
+            $validator->validateRedirectUri('urn:ietf:wg:oauth:2.0:oob'),
+            'An invalid pre-registered urn was provided'
+        );
+    }
+
+    public function canValidateCustomSchemeHost()
+    {
+        $validator = new RedirectUriValidator('msal://redirect');
+
+        $this->assertTrue(
+            $validator->validateRedirectUri('msal://redirect'),
+            'An invalid, pre-registered, custom scheme uri was provided'
+        );
+    }
+
+    public function canValidateCustomSchemePath()
+    {
+        $validator = new RedirectUriValidator('com.example.app:/oauth2redirect/example-provider');
+
+        $this->assertTrue(
+            $validator->validateRedirectUri('com.example.app:/oauth2redirect/example-provider'),
+            'An invalid, pre-registered, custom scheme uri was provided'
+        );
+    }
 }
