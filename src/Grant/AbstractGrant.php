@@ -19,6 +19,7 @@ use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
+use League\OAuth2\Server\Entities\ClaimEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
@@ -27,6 +28,7 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
 use League\OAuth2\Server\RedirectUriValidators\RedirectUriValidator;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClaimRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -62,6 +64,12 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @var ScopeRepositoryInterface
      */
     protected $scopeRepository;
+
+    /**
+     * @var null|ClaimRepositoryInterface
+     */
+    protected $claimRepository;
+
 
     /**
      * @var AuthCodeRepositoryInterface
@@ -120,6 +128,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setScopeRepository(ScopeRepositoryInterface $scopeRepository)
     {
         $this->scopeRepository = $scopeRepository;
+    }
+
+    /**
+     * @param ClaimRepositoryInterface $claimRepository
+     */
+    public function setClaimRepository(?ClaimRepositoryInterface $claimRepository)
+    {
+        $this->claimRepository = $claimRepository;
     }
 
     /**
@@ -440,6 +456,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param ClientEntityInterface  $client
      * @param string|null            $userIdentifier
      * @param ScopeEntityInterface[] $scopes
+     * @param ClaimEntityInterface[] $claims
      *
      * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
@@ -450,13 +467,20 @@ abstract class AbstractGrant implements GrantTypeInterface
         DateInterval $accessTokenTTL,
         ClientEntityInterface $client,
         $userIdentifier,
-        array $scopes = []
+        array $scopes = [],
+        array $claims = []
     ) {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add($accessTokenTTL));
         $accessToken->setPrivateKey($this->privateKey);
+
+        if (\method_exists($accessToken, 'addClaim')) {
+            foreach ($claims as $claim) {
+                $accessToken->addClaim($claim);
+            }
+        }
 
         while ($maxGenerationAttempts-- > 0) {
             $accessToken->setIdentifier($this->generateUniqueIdentifier());

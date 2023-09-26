@@ -12,6 +12,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
+use LeagueTests\Stubs\ClaimEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
@@ -32,11 +33,14 @@ class BearerResponseTypeTest extends TestCase
         $scope = new ScopeEntity();
         $scope->setIdentifier('basic');
 
+        $claim = new ClaimEntity('_private', [42]);
+
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
+        $accessToken->addClaim($claim);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $refreshToken = new RefreshTokenEntity();
@@ -61,6 +65,14 @@ class BearerResponseTypeTest extends TestCase
         $this->assertObjectHasAttribute('expires_in', $json);
         $this->assertObjectHasAttribute('access_token', $json);
         $this->assertObjectHasAttribute('refresh_token', $json);
+        // Extract payload from access token
+        $payloadString = \base64_decode(\explode('.', $json->access_token)[1]);
+        $this->assertTrue(\is_string($payloadString));
+        $payload = \json_decode($payloadString);
+        $this->assertObjectHasAttribute('_private', $payload);
+        $this->assertIsArray($payload->_private);
+        $this->assertCount(1, $payload->_private);
+        $this->assertEquals(42, $payload->_private[0]);
     }
 
     public function testGenerateHttpResponseWithExtraParams()

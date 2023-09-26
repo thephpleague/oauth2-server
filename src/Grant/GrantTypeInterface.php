@@ -16,6 +16,7 @@ use Defuse\Crypto\Key;
 use League\Event\EmitterAwareInterface;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClaimRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
@@ -120,6 +121,13 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * @param ScopeRepositoryInterface $scopeRepository
      */
     public function setScopeRepository(ScopeRepositoryInterface $scopeRepository);
+
+    /**
+     * Set the claim repository.
+     *
+     * @param ClaimRepositoryInterface $claimRepository
+     */
+    public function setClaimRepository(?ClaimRepositoryInterface $claimRepository);
 
     /**
      * Set the default scope.
