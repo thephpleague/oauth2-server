@@ -178,7 +178,7 @@ class BearerResponseTypeTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
         $accessToken->setUserIdentifier(123);
-        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->sub(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
@@ -196,7 +196,7 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $json->access_token . 'foo'));
+        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $json->access_token));
 
         try {
             $authorizationValidator->validateAuthorization($request);
@@ -293,7 +293,7 @@ class BearerResponseTypeTest extends TestCase
             $authorizationValidator->validateAuthorization($request);
         } catch (OAuthServerException $e) {
             $this->assertEquals(
-                'Error while decoding to JSON',
+                'Error while decoding from JSON',
                 $e->getHint()
             );
         }
