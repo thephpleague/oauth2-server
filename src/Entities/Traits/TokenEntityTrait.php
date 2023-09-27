@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,11 +8,15 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Entities\Traits;
 
 use DateTimeImmutable;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+
+use function array_values;
 
 trait TokenEntityTrait
 {
@@ -38,7 +43,6 @@ trait TokenEntityTrait
     /**
      * Associate a scope with the token.
      *
-     * @param ScopeEntityInterface $scope
      */
     public function addScope(ScopeEntityInterface $scope): void
     {
@@ -52,7 +56,7 @@ trait TokenEntityTrait
      */
     public function getScopes(): array
     {
-        return \array_values($this->scopes);
+        return array_values($this->scopes);
     }
 
     /**
@@ -76,7 +80,7 @@ trait TokenEntityTrait
      *
      * @param string|int|null $identifier The identifier of the user
      */
-    public function setUserIdentifier($identifier): void
+    public function setUserIdentifier(string|int|null $identifier): void
     {
         $this->userIdentifier = $identifier;
     }
@@ -84,7 +88,6 @@ trait TokenEntityTrait
     /**
      * Get the token user's identifier.
      *
-     * @return string|int|null
      */
     public function getUserIdentifier(): string|int|null
     {

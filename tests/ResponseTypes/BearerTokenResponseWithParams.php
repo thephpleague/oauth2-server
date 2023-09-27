@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\ResponseTypes;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -7,7 +9,6 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 
 class BearerTokenResponseWithParams extends BearerTokenResponse
 {
-
     /**
      * @return array<string, string>
      */

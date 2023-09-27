@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Middleware;
 
@@ -23,7 +26,6 @@ class ResourceServerMiddleware
     private $server;
 
     /**
-     * @param ResourceServer $server
      */
     public function __construct(ResourceServer $server)
     {
@@ -31,13 +33,9 @@ class ResourceServerMiddleware
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     * @param callable               $next
      *
-     * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         try {
             $request = $this->server->validateAuthenticatedRequest($request);

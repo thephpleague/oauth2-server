@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Entities\Traits;
 
@@ -60,9 +63,8 @@ trait AccessTokenTrait
     /**
      * Generate a JWT from the access token
      *
-     * @return Token
      */
-    private function convertToJWT()
+    private function convertToJWT(): Token
     {
         $this->initJwtConfiguration();
 
@@ -80,33 +82,29 @@ trait AccessTokenTrait
     /**
      * Generate a string representation from the access token
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->convertToJWT()->toString();
     }
 
     /**
-     * @return ClientEntityInterface
      */
-    abstract public function getClient();
+    abstract public function getClient(): ClientEntityInterface;
 
     /**
-     * @return DateTimeImmutable
      */
-    abstract public function getExpiryDateTime();
+    abstract public function getExpiryDateTime(): DateTimeImmutable;
 
     /**
-     * @return string|int
      */
-    abstract public function getUserIdentifier();
+    abstract public function getUserIdentifier(): string|int|null;
 
     /**
      * @return ScopeEntityInterface[]
      */
-    abstract public function getScopes();
+    abstract public function getScopes(): array;
 
     /**
-     * @return string
      */
-    abstract public function getIdentifier();
+    abstract public function getIdentifier(): string;
 }

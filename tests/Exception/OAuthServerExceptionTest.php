@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Exception;
 
 use Exception;
@@ -10,6 +12,7 @@ use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 
 class OAuthServerExceptionTest extends TestCase
 {
@@ -26,7 +29,7 @@ class OAuthServerExceptionTest extends TestCase
         } catch (OAuthServerException $e) {
             $response = $e->generateHttpResponse(new Response());
 
-            $this->assertTrue($response->hasHeader('WWW-Authenticate'));
+            self::assertTrue($response->hasHeader('WWW-Authenticate'));
         }
     }
 
@@ -43,7 +46,7 @@ class OAuthServerExceptionTest extends TestCase
         } catch (OAuthServerException $e) {
             $response = $e->generateHttpResponse(new Response());
 
-            $this->assertEquals(['Bearer realm="OAuth"'], $response->getHeader('WWW-Authenticate'));
+            self::assertEquals(['Bearer realm="OAuth"'], $response->getHeader('WWW-Authenticate'));
         }
     }
 
@@ -59,7 +62,7 @@ class OAuthServerExceptionTest extends TestCase
         } catch (OAuthServerException $e) {
             $response = $e->generateHttpResponse(new Response());
 
-            $this->assertFalse($response->hasHeader('WWW-Authenticate'));
+            self::assertFalse($response->hasHeader('WWW-Authenticate'));
         }
     }
 
@@ -76,7 +79,7 @@ class OAuthServerExceptionTest extends TestCase
         } catch (OAuthServerException $e) {
             $response = $e->generateHttpResponse(new Response());
 
-            $this->assertFalse($response->hasHeader('WWW-Authenticate'));
+            self::assertFalse($response->hasHeader('WWW-Authenticate'));
         }
     }
 
@@ -93,7 +96,7 @@ class OAuthServerExceptionTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->setClientRepository($clientRepositoryMock);
 
-        $abstractGrantReflection = new \ReflectionClass($grantMock);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
@@ -105,14 +108,14 @@ class OAuthServerExceptionTest extends TestCase
     {
         $exceptionWithRedirect = OAuthServerException::accessDenied('some hint', 'https://example.com/error');
 
-        $this->assertTrue($exceptionWithRedirect->hasRedirect());
+        self::assertTrue($exceptionWithRedirect->hasRedirect());
     }
 
     public function testDoesNotHaveRedirect(): void
     {
         $exceptionWithoutRedirect = OAuthServerException::accessDenied('Some hint');
 
-        $this->assertFalse($exceptionWithoutRedirect->hasRedirect());
+        self::assertFalse($exceptionWithoutRedirect->hasRedirect());
     }
 
     public function testHasPrevious(): void
@@ -122,27 +125,27 @@ class OAuthServerExceptionTest extends TestCase
 
         $previousMessage = $exceptionWithPrevious->getPrevious() !== null ? $exceptionWithPrevious->getPrevious()->getMessage() : null;
 
-        $this->assertSame('This is the previous', $previousMessage);
+        self::assertSame('This is the previous', $previousMessage);
     }
 
     public function testDoesNotHavePrevious(): void
     {
         $exceptionWithoutPrevious = OAuthServerException::accessDenied();
 
-        $this->assertNull($exceptionWithoutPrevious->getPrevious());
+        self::assertNull($exceptionWithoutPrevious->getPrevious());
     }
 
     public function testCanGetRedirectionUri(): void
     {
         $exceptionWithRedirect = OAuthServerException::accessDenied('some hint', 'https://example.com/error');
 
-        $this->assertSame('https://example.com/error', $exceptionWithRedirect->getRedirectUri());
+        self::assertSame('https://example.com/error', $exceptionWithRedirect->getRedirectUri());
     }
 
     public function testInvalidCredentialsIsInvalidGrant(): void
     {
         $exception = OAuthServerException::invalidCredentials();
 
-        $this->assertSame('invalid_grant', $exception->getErrorType());
+        self::assertSame('invalid_grant', $exception->getErrorType());
     }
 }

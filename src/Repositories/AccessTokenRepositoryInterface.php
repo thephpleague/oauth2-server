@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Repositories;
 
@@ -23,13 +26,12 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
      * Create a new access token
      *
      * @param ScopeEntityInterface[] $scopes
-     * @param mixed                  $userIdentifier
      *
-     * @return AccessTokenEntityInterface
      */
     public function getNewToken(
         ClientEntityInterface $clientEntity,
-        array $scopes, $userIdentifier = null
+        array $scopes,
+        mixed $userIdentifier = null
     ): AccessTokenEntityInterface;
 
     /**

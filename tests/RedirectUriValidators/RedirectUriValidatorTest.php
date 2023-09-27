@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\RedirectUriValidators;
 
 use League\OAuth2\Server\RedirectUriValidators\RedirectUriValidator;
@@ -16,7 +18,7 @@ class RedirectUriValidatorTest extends TestCase
 
         $invalidRedirectUri = 'https://example.com/endpoint';
 
-        $this->assertFalse(
+        self::assertFalse(
             $validator->validateRedirectUri($invalidRedirectUri),
             'Non loopback URI must match in every part'
         );
@@ -31,7 +33,7 @@ class RedirectUriValidatorTest extends TestCase
 
         $validRedirectUri = 'https://example.com:8443/endpoint';
 
-        $this->assertTrue(
+        self::assertTrue(
             $validator->validateRedirectUri($validRedirectUri),
             'Redirect URI must be valid when matching in every part'
         );
@@ -43,7 +45,7 @@ class RedirectUriValidatorTest extends TestCase
 
         $invalidRedirectUri = 'http://127.0.0.1:8443/different/endpoint';
 
-        $this->assertFalse(
+        self::assertFalse(
             $validator->validateRedirectUri($invalidRedirectUri),
             'Valid loopback redirect URI can change only the port number'
         );
@@ -55,7 +57,7 @@ class RedirectUriValidatorTest extends TestCase
 
         $validRedirectUri = 'http://127.0.0.1:8080/endpoint';
 
-        $this->assertTrue(
+        self::assertTrue(
             $validator->validateRedirectUri($validRedirectUri),
             'Loopback redirect URI can change the port number'
         );
@@ -67,7 +69,7 @@ class RedirectUriValidatorTest extends TestCase
 
         $validRedirectUri = 'http://[::1]:8080/endpoint';
 
-        $this->assertTrue(
+        self::assertTrue(
             $validator->validateRedirectUri($validRedirectUri),
             'Loopback redirect URI can change the port number'
         );
@@ -77,7 +79,7 @@ class RedirectUriValidatorTest extends TestCase
     {
         $validator = new RedirectUriValidator('urn:ietf:wg:oauth:2.0:oob');
 
-        $this->assertTrue(
+        self::assertTrue(
             $validator->validateRedirectUri('urn:ietf:wg:oauth:2.0:oob'),
             'An invalid pre-registered urn was provided'
         );
@@ -87,7 +89,7 @@ class RedirectUriValidatorTest extends TestCase
     {
         $validator = new RedirectUriValidator('msal://redirect');
 
-        $this->assertTrue(
+        self::assertTrue(
             $validator->validateRedirectUri('msal://redirect'),
             'An invalid, pre-registered, custom scheme uri was provided'
         );
@@ -97,7 +99,7 @@ class RedirectUriValidatorTest extends TestCase
     {
         $validator = new RedirectUriValidator('com.example.app:/oauth2redirect/example-provider');
 
-        $this->assertTrue(
+        self::assertTrue(
             $validator->validateRedirectUri('com.example.app:/oauth2redirect/example-provider'),
             'An invalid, pre-registered, custom scheme uri was provided'
         );

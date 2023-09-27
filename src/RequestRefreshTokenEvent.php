@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server;
 
@@ -20,20 +23,17 @@ class RequestRefreshTokenEvent extends RequestEvent
     private $refreshToken;
 
     /**
-     * @param string                 $name
-     * @param ServerRequestInterface $request
      */
-    public function __construct($name, ServerRequestInterface $request, RefreshTokenEntityInterface $refreshToken)
+    public function __construct(string $name, ServerRequestInterface $request, RefreshTokenEntityInterface $refreshToken)
     {
         parent::__construct($name, $request);
         $this->refreshToken = $refreshToken;
     }
 
     /**
-     * @return RefreshTokenEntityInterface
      * @codeCoverageIgnore
      */
-    public function getRefreshToken()
+    public function getRefreshToken(): RefreshTokenEntityInterface
     {
         return $this->refreshToken;
     }

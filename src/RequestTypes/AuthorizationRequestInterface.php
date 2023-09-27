@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Patrick Rodacker <dev@rodacker.de>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\RequestTypes;
 

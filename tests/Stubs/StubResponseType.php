@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Stubs;
 
 use Laminas\Diactoros\Response;

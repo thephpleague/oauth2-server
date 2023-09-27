@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Grant;
 
 use DateInterval;
 use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -18,12 +19,12 @@ use PHPUnit\Framework\TestCase;
 
 class ClientCredentialsGrantTest extends TestCase
 {
-    const DEFAULT_SCOPE = 'basic';
+    private const DEFAULT_SCOPE = 'basic';
 
     public function testGetIdentifier(): void
     {
         $grant = new ClientCredentialsGrant();
-        $this->assertEquals('client_credentials', $grant->getIdentifier());
+        self::assertEquals('client_credentials', $grant->getIdentifier());
     }
 
     public function testRespondToRequest(): void
@@ -57,8 +58,9 @@ class ClientCredentialsGrantTest extends TestCase
         ]);
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
+        $response = $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
-        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
+
+        self::assertNotEmpty($response->getAccessToken()->getIdentifier());
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth 2.0 Redirect Response.
  *
@@ -8,6 +9,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\ResponseTypes;
 

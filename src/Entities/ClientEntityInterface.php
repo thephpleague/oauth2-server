@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,6 +8,8 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Entities;
 
 interface ClientEntityInterface
@@ -14,16 +17,14 @@ interface ClientEntityInterface
     /**
      * Get the client's identifier.
      *
-     * @return string
      */
-    public function getIdentifier();
+    public function getIdentifier(): string;
 
     /**
      * Get the client's name.
      *
-     * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Returns the registered redirect URI (as a string).
@@ -32,12 +33,11 @@ interface ClientEntityInterface
      *
      * @return string|string[]
      */
-    public function getRedirectUri();
+    public function getRedirectUri(): string|array;
 
     /**
      * Returns true if the client is confidential.
      *
-     * @return bool
      */
-    public function isConfidential();
+    public function isConfidential(): bool;
 }

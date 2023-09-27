@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth 2.0 Bearer Token Response.
  *
@@ -9,12 +10,18 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
+
+use function array_merge;
+use function json_encode;
+use function time;
 
 class BearerTokenResponse extends AbstractResponseType
 {
@@ -24,28 +31,26 @@ class BearerTokenResponse extends AbstractResponseType
 
         $responseParams = [
             'token_type'   => 'Bearer',
-            'expires_in'   => $expireDateTime - \time(),
+            'expires_in'   => $expireDateTime - time(),
             'access_token' => (string) $this->accessToken,
         ];
 
-        if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
-            $refreshTokenPayload = \json_encode([
+        $refreshTokenPayload = json_encode([
                 'client_id'        => $this->accessToken->getClient()->getIdentifier(),
                 'refresh_token_id' => $this->refreshToken->getIdentifier(),
                 'access_token_id'  => $this->accessToken->getIdentifier(),
                 'scopes'           => $this->accessToken->getScopes(),
                 'user_id'          => $this->accessToken->getUserIdentifier(),
                 'expire_time'      => $this->refreshToken->getExpiryDateTime()->getTimestamp(),
-            ]);
+        ]);
 
-            if ($refreshTokenPayload === false) {
-                throw new LogicException('Error encountered JSON encoding the refresh token payload');
-            }
-
-            $responseParams['refresh_token'] = $this->encrypt($refreshTokenPayload);
+        if ($refreshTokenPayload === false) {
+            throw new LogicException('Error encountered JSON encoding the refresh token payload');
         }
 
-        $responseParams = \json_encode(\array_merge($this->getExtraParams($this->accessToken), $responseParams));
+        $responseParams['refresh_token'] = $this->encrypt($refreshTokenPayload);
+
+        $responseParams = json_encode(array_merge($this->getExtraParams($this->accessToken), $responseParams));
 
         if ($responseParams === false) {
             throw new LogicException('Error encountered JSON encoding response parameters');

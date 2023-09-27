@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,17 +8,19 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\AuthorizationValidators;
 
 use DateTimeZone;
 use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Exception;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\UnencryptedToken;
-use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
-use Lcobucci\JWT\Validation\Constraint\ValidAt;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\CryptTrait;
@@ -25,6 +28,12 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
+
+use function count;
+use function date_default_timezone_get;
+use function is_array;
+use function preg_replace;
+use function trim;
 
 class BearerTokenValidator implements AuthorizationValidatorInterface
 {
@@ -46,7 +55,6 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     private $jwtConfiguration;
 
     /**
-     * @param AccessTokenRepositoryInterface $accessTokenRepository
      */
     public function __construct(AccessTokenRepositoryInterface $accessTokenRepository)
     {
@@ -56,7 +64,6 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     /**
      * Set the public key
      *
-     * @param CryptKeyInterface $key
      */
     public function setPublicKey(CryptKeyInterface $key): void
     {
@@ -82,9 +89,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         }
 
         $this->jwtConfiguration->setValidationConstraints(
-            \class_exists(LooseValidAt::class)
-                ? new LooseValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get())))
-                : new ValidAt(new SystemClock(new DateTimeZone(\date_default_timezone_get()))),
+            new LooseValidAt(new SystemClock(new DateTimeZone(date_default_timezone_get()))),
             new SignedWith(
                 new Sha256(),
                 InMemory::plainText($publicKeyContents, $this->publicKey->getPassPhrase() ?? '')
@@ -95,19 +100,19 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function validateAuthorization(ServerRequestInterface $request)
+    public function validateAuthorization(ServerRequestInterface $request): ServerRequestInterface
     {
         if ($request->hasHeader('authorization') === false) {
             throw OAuthServerException::accessDenied('Missing "Authorization" header');
         }
 
         $header = $request->getHeader('authorization');
-        $jwt = \trim((string) \preg_replace('/^\s*Bearer\s/', '', $header[0]));
+        $jwt = trim((string) preg_replace('/^\s*Bearer\s/', '', $header[0]));
 
         try {
             // Attempt to parse the JWT
             $token = $this->jwtConfiguration->parser()->parse($jwt);
-        } catch (\Lcobucci\JWT\Exception $exception) {
+        } catch (Exception $exception) {
             throw OAuthServerException::accessDenied($exception->getMessage(), null, $exception);
         }
 
@@ -141,12 +146,11 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     /**
      * Convert single record arrays into strings to ensure backwards compatibility between v4 and v3.x of lcobucci/jwt
      *
-     * @param mixed $aud
      *
      * @return array<string>|string
      */
-    private function convertSingleRecordAudToString($aud): array|string
+    private function convertSingleRecordAudToString(mixed $aud): array|string
     {
-        return \is_array($aud) && \count($aud) === 1 ? $aud[0] : $aud;
+        return is_array($aud) && count($aud) === 1 ? $aud[0] : $aud;
     }
 }

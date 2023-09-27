@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\CodeChallengeVerifiers;
 
 use League\OAuth2\Server\CodeChallengeVerifiers\PlainVerifier;
@@ -11,14 +13,14 @@ class PlainVerifierTest extends TestCase
     {
         $verifier = new PlainVerifier();
 
-        $this->assertEquals('plain', $verifier->getMethod());
+        self::assertEquals('plain', $verifier->getMethod());
     }
 
     public function testVerifyCodeChallenge(): void
     {
         $verifier = new PlainVerifier();
 
-        $this->assertTrue($verifier->verifyCodeChallenge('foo', 'foo'));
-        $this->assertFalse($verifier->verifyCodeChallenge('foo', 'bar'));
+        self::assertTrue($verifier->verifyCodeChallenge('foo', 'foo'));
+        self::assertFalse($verifier->verifyCodeChallenge('foo', 'bar'));
     }
 }

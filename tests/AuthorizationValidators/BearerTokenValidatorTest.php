@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\AuthorizationValidators;
 
 use DateInterval;
@@ -9,9 +11,12 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+
+use function sprintf;
 
 class BearerTokenValidatorTest extends TestCase
 {
@@ -36,11 +41,11 @@ class BearerTokenValidatorTest extends TestCase
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $validJwt->toString()));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $validJwt->toString()));
 
         $validRequest = $bearerTokenValidator->validateAuthorization($request);
 
-        $this->assertArrayHasKey('authorization', $validRequest->getHeaders());
+        self::assertArrayHasKey('authorization', $validRequest->getHeaders());
     }
 
     public function testBearerTokenValidatorRejectsExpiredToken(): void
@@ -64,9 +69,9 @@ class BearerTokenValidatorTest extends TestCase
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $expiredJwt->toString()));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $expiredJwt->toString()));
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(9);
 
         $bearerTokenValidator->validateAuthorization($request);

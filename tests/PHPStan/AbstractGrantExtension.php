@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace LeagueTests\PHPStan;
 
@@ -13,6 +14,8 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use function in_array;
+
 final class AbstractGrantExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string
@@ -22,7 +25,7 @@ final class AbstractGrantExtension implements DynamicMethodReturnTypeExtension
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return \in_array($methodReflection->getName(), [
+        return in_array($methodReflection->getName(), [
             'getRequestParameter',
             'getQueryStringParameter',
             'getCookieParameter',

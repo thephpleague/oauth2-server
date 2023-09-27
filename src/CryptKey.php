@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cryptography key holder.
  *
@@ -9,18 +10,28 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server;
 
 use LogicException;
+use OpenSSLAsymmetricKey;
 
+use function decoct;
 use function file_get_contents;
+use function fileperms;
+use function in_array;
+use function is_file;
+use function is_readable;
+use function openssl_pkey_get_details;
+use function openssl_pkey_get_private;
+use function openssl_pkey_get_public;
+use function sprintf;
+use function strpos;
+use function trigger_error;
 
 class CryptKey implements CryptKeyInterface
 {
-    /** @deprecated left for backward compatibility check */
-    const RSA_KEY_PATTERN =
-        '/^(-----BEGIN (RSA )?(PUBLIC|PRIVATE) KEY-----)\R.*(-----END (RSA )?(PUBLIC|PRIVATE) KEY-----)\R?$/s';
-
     private const FILE_PREFIX = 'file://';
 
     /**
@@ -39,26 +50,23 @@ class CryptKey implements CryptKeyInterface
     protected $passPhrase;
 
     /**
-     * @param string      $keyPath
-     * @param null|string $passPhrase
-     * @param bool        $keyPermissionsCheck
      */
-    public function __construct($keyPath, $passPhrase = null, $keyPermissionsCheck = true)
+    public function __construct(string $keyPath, ?string $passPhrase = null, bool $keyPermissionsCheck = true)
     {
         $this->passPhrase = $passPhrase;
 
-        if (\strpos($keyPath, self::FILE_PREFIX) !== 0 && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
+        if (strpos($keyPath, self::FILE_PREFIX) !== 0 && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
             $this->keyContents = $keyPath;
             $this->keyPath = '';
             // There's no file, so no need for permission check.
             $keyPermissionsCheck = false;
-        } elseif (\is_file($keyPath)) {
-            if (\strpos($keyPath, self::FILE_PREFIX) !== 0) {
+        } elseif (is_file($keyPath)) {
+            if (strpos($keyPath, self::FILE_PREFIX) !== 0) {
                 $keyPath = self::FILE_PREFIX . $keyPath;
             }
 
-            if (!\is_readable($keyPath)) {
-                throw new LogicException(\sprintf('Key path "%s" does not exist or is not readable', $keyPath));
+            if (!is_readable($keyPath)) {
+                throw new LogicException(sprintf('Key path "%s" does not exist or is not readable', $keyPath));
             }
 
             $keyContents = file_get_contents($keyPath);
@@ -79,10 +87,10 @@ class CryptKey implements CryptKeyInterface
 
         if ($keyPermissionsCheck === true) {
             // Verify the permissions of the key
-            $keyPathPerms = \decoct(\fileperms($this->keyPath) & 0777);
-            if (\in_array($keyPathPerms, ['400', '440', '600', '640', '660'], true) === false) {
-                \trigger_error(
-                    \sprintf(
+            $keyPathPerms = decoct(fileperms($this->keyPath) & 0777);
+            if (in_array($keyPathPerms, ['400', '440', '600', '640', '660'], true) === false) {
+                trigger_error(
+                    sprintf(
                         'Key file "%s" permissions are not correct, recommend changing to 600 or 660 instead of %s',
                         $this->keyPath,
                         $keyPathPerms
@@ -104,20 +112,21 @@ class CryptKey implements CryptKeyInterface
     /**
      * Validate key contents.
      *
-     * @param string $contents
-     * @param string $passPhrase
      *
-     * @return bool
      */
-    private function isValidKey($contents, $passPhrase)
+    private function isValidKey(string $contents, string $passPhrase): bool
     {
-        $pkey = \openssl_pkey_get_private($contents, $passPhrase) ?: \openssl_pkey_get_public($contents);
-        if ($pkey === false) {
+        $privateKey = openssl_pkey_get_private($contents, $passPhrase);
+
+        $key = $privateKey instanceof OpenSSLAsymmetricKey ? $privateKey : openssl_pkey_get_public($contents);
+
+        if ($key === false) {
             return false;
         }
-        $details = \openssl_pkey_get_details($pkey);
 
-        return $details !== false && \in_array(
+        $details = openssl_pkey_get_details($key);
+
+        return $details !== false && in_array(
             $details['type'] ?? -1,
             [OPENSSL_KEYTYPE_RSA, OPENSSL_KEYTYPE_EC],
             true
@@ -127,7 +136,7 @@ class CryptKey implements CryptKeyInterface
     /**
      * {@inheritdoc}
      */
-    public function getKeyPath()
+    public function getKeyPath(): string
     {
         return $this->keyPath;
     }
@@ -135,7 +144,7 @@ class CryptKey implements CryptKeyInterface
     /**
      * {@inheritdoc}
      */
-    public function getPassPhrase()
+    public function getPassPhrase(): ?string
     {
         return $this->passPhrase;
     }

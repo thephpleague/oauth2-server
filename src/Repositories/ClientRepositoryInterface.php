@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Repositories;
 
@@ -21,9 +24,8 @@ interface ClientRepositoryInterface extends RepositoryInterface
      *
      * @param string $clientIdentifier The client's identifier
      *
-     * @return ClientEntityInterface|null
      */
-    public function getClientEntity($clientIdentifier);
+    public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface;
 
     /**
      * Validate a client's secret.
@@ -32,7 +34,6 @@ interface ClientRepositoryInterface extends RepositoryInterface
      * @param null|string $clientSecret     The client's secret (if sent)
      * @param null|string $grantType        The type of grant the client is using (if sent)
      *
-     * @return bool
      */
-    public function validateClient($clientIdentifier, $clientSecret, $grantType);
+    public function validateClient(string $clientIdentifier, ?string $clientSecret, ?string $grantType): bool;
 }

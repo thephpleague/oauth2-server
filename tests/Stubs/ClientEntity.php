@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Stubs;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
@@ -8,7 +10,8 @@ use League\OAuth2\Server\Entities\Traits\EntityTrait;
 
 class ClientEntity implements ClientEntityInterface
 {
-    use EntityTrait, ClientTrait;
+    use EntityTrait;
+    use ClientTrait;
 
     /**
      * @param string|string[] $uri

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Entities;
 
@@ -16,9 +19,8 @@ interface TokenInterface
     /**
      * Get the token's identifier.
      *
-     * @return string
      */
-    public function getIdentifier();
+    public function getIdentifier(): string;
 
     /**
      * Set the token's identifier.
@@ -28,9 +30,8 @@ interface TokenInterface
     /**
      * Get the token's expiry date time.
      *
-     * @return DateTimeImmutable
      */
-    public function getExpiryDateTime();
+    public function getExpiryDateTime(): DateTimeImmutable;
 
     /**
      * Set the date time when the token expires.
@@ -67,5 +68,5 @@ interface TokenInterface
      *
      * @return ScopeEntityInterface[]
      */
-    public function getScopes();
+    public function getScopes(): array;
 }

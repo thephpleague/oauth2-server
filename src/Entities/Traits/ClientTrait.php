@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Entities\Traits;
 
@@ -29,10 +32,9 @@ trait ClientTrait
     /**
      * Get the client's name.
      *
-     * @return string
      * @codeCoverageIgnore
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -44,7 +46,7 @@ trait ClientTrait
      *
      * @return string|string[]
      */
-    public function getRedirectUri()
+    public function getRedirectUri(): string|array
     {
         return $this->redirectUri;
     }
@@ -52,9 +54,8 @@ trait ClientTrait
     /**
      * Returns true if the client is confidential.
      *
-     * @return bool
      */
-    public function isConfidential()
+    public function isConfidential(): bool
     {
         return $this->isConfidential;
     }

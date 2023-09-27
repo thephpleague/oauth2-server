@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Grant;
 
 use DateInterval;
@@ -7,6 +9,7 @@ use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -23,7 +26,7 @@ use PHPUnit\Framework\TestCase;
 
 class PasswordGrantTest extends TestCase
 {
-    const DEFAULT_SCOPE = 'basic';
+    private const DEFAULT_SCOPE = 'basic';
 
     public function testGetIdentifier(): void
     {
@@ -31,7 +34,7 @@ class PasswordGrantTest extends TestCase
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
         $grant = new PasswordGrant($userRepositoryMock, $refreshTokenRepositoryMock);
-        $this->assertEquals('password', $grant->getIdentifier());
+        self::assertEquals('password', $grant->getIdentifier());
     }
 
     public function testRespondToRequest(): void
@@ -76,8 +79,7 @@ class PasswordGrantTest extends TestCase
         $responseType = new StubResponseType();
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
-        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
-        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
+        self::assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
     public function testRespondToRequestNullRefreshToken(): void
@@ -119,10 +121,9 @@ class PasswordGrantTest extends TestCase
         ]);
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
-        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
-        $this->assertNull($responseType->getRefreshToken());
+        self::assertNull($responseType->getRefreshToken());
     }
 
     public function testRespondToRequestMissingUsername(): void
@@ -148,7 +149,7 @@ class PasswordGrantTest extends TestCase
 
         $responseType = new StubResponseType();
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
@@ -177,7 +178,7 @@ class PasswordGrantTest extends TestCase
 
         $responseType = new StubResponseType();
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
@@ -210,7 +211,7 @@ class PasswordGrantTest extends TestCase
 
         $responseType = new StubResponseType();
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(6);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));

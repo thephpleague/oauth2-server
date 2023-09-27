@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Stubs;
 
 use Defuse\Crypto\Key;
 use League\OAuth2\Server\CryptTrait;
+
+use function base64_encode;
+use function random_bytes;
 
 class CryptTraitStub
 {
@@ -11,7 +16,7 @@ class CryptTraitStub
 
     public function __construct()
     {
-        $this->setEncryptionKey(\base64_encode(\random_bytes(36)));
+        $this->setEncryptionKey(base64_encode(random_bytes(36)));
     }
 
     public function getKey(): string|Key|null

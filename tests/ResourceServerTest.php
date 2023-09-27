@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace LeagueTests;
 
@@ -21,7 +22,7 @@ class ResourceServerTest extends TestCase
         try {
             $server->validateAuthenticatedRequest(ServerRequestFactory::fromGlobals());
         } catch (OAuthServerException $e) {
-            $this->assertEquals('Missing "Authorization" header', $e->getHint());
+            self::assertEquals('Missing "Authorization" header', $e->getHint());
         }
     }
 }

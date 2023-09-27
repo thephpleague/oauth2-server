@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Utils;
 
 use Defuse\Crypto\Key;
 use LeagueTests\Stubs\CryptTraitStub;
 use PHPUnit\Framework\TestCase;
+
+use function base64_encode;
+use function random_bytes;
 
 class CryptTraitTest extends TestCase
 {
@@ -17,7 +22,7 @@ class CryptTraitTest extends TestCase
 
     public function testEncryptDecryptWithPassword(): void
     {
-        $this->cryptStub->setEncryptionKey(\base64_encode(\random_bytes(36)));
+        $this->cryptStub->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $this->encryptDecrypt();
     }
@@ -35,7 +40,7 @@ class CryptTraitTest extends TestCase
         $encrypted = $this->cryptStub->doEncrypt($payload);
         $plainText = $this->cryptStub->doDecrypt($encrypted);
 
-        $this->assertNotEquals($payload, $encrypted);
-        $this->assertEquals($payload, $plainText);
+        self::assertNotEquals($payload, $encrypted);
+        self::assertEquals($payload, $plainText);
     }
 }

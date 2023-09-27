@@ -9,6 +9,9 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
@@ -35,23 +38,34 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use TypeError;
 
+use function array_filter;
+use function array_key_exists;
+use function base64_decode;
 use function bin2hex;
+use function explode;
+use function is_null;
+use function is_string;
 use function random_bytes;
+use function strpos;
+use function substr;
+use function trim;
 
 /**
  * Abstract grant class.
  */
 abstract class AbstractGrant implements GrantTypeInterface
 {
-    use EmitterAwareTrait, CryptTrait;
+    use EmitterAwareTrait;
+    use CryptTrait;
 
-    const SCOPE_DELIMITER_STRING = ' ';
+    protected const SCOPE_DELIMITER_STRING = ' ';
 
-    const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
+    private const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
 
     /**
      * @var ClientRepositoryInterface
@@ -104,7 +118,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $revokeRefreshTokens;
 
     /**
-     * @param ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository): void
     {
@@ -112,7 +125,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param AccessTokenRepositoryInterface $accessTokenRepository
      */
     public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository): void
     {
@@ -120,7 +132,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param ScopeRepositoryInterface $scopeRepository
      */
     public function setScopeRepository(ScopeRepositoryInterface $scopeRepository): void
     {
@@ -128,7 +139,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
      */
     public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository): void
     {
@@ -136,7 +146,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param AuthCodeRepositoryInterface $authCodeRepository
      */
     public function setAuthCodeRepository(AuthCodeRepositoryInterface $authCodeRepository): void
     {
@@ -144,7 +153,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param UserRepositoryInterface $userRepository
      */
     public function setUserRepository(UserRepositoryInterface $userRepository): void
     {
@@ -162,7 +170,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Set the private key
      *
-     * @param CryptKeyInterface $key
      */
     public function setPrivateKey(CryptKeyInterface $key): void
     {
@@ -170,17 +177,15 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param string $scope
      */
-    public function setDefaultScope($scope): void
+    public function setDefaultScope(string $scope): void
     {
         $this->defaultScope = $scope;
     }
 
     /**
-     * @param bool $revokeRefreshTokens
      */
-    public function revokeRefreshTokens(bool $revokeRefreshTokens)
+    public function revokeRefreshTokens(bool $revokeRefreshTokens): void
     {
         $this->revokeRefreshTokens = $revokeRefreshTokens;
     }
@@ -188,13 +193,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate the client.
      *
-     * @param ServerRequestInterface $request
      *
      * @throws OAuthServerException
      *
-     * @return ClientEntityInterface
      */
-    protected function validateClient(ServerRequestInterface $request)
+    protected function validateClient(ServerRequestInterface $request): ClientEntityInterface
     {
         [$clientId, $clientSecret] = $this->getClientCredentials($request);
 
@@ -210,7 +213,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
 
         if ($redirectUri !== null) {
-            if (!\is_string($redirectUri)) {
+            if (!is_string($redirectUri)) {
                 throw OAuthServerException::invalidRequest('redirect_uri');
             }
 
@@ -230,12 +233,9 @@ abstract class AbstractGrant implements GrantTypeInterface
      * getClientEntity might return null. By contrast, this method will
      * always either return a ClientEntityInterface or throw.
      *
-     * @param string                 $clientId
-     * @param ServerRequestInterface $request
      *
-     * @return ClientEntityInterface
      */
-    protected function getClientEntityOrFail($clientId, ServerRequestInterface $request)
+    protected function getClientEntityOrFail(string $clientId, ServerRequestInterface $request): ClientEntityInterface
     {
         $client = $this->clientRepository->getClientEntity($clientId);
 
@@ -251,7 +251,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Gets the client credentials from the request from the request body or
      * the Http Basic Authorization header
      *
-     * @param ServerRequestInterface $request
      *
      * @return string[]
      */
@@ -261,13 +260,13 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
 
-        if (\is_null($clientId)) {
+        if (is_null($clientId)) {
             throw OAuthServerException::invalidRequest('client_id');
         }
 
         $clientSecret = $this->getRequestParameter('client_secret', $request, $basicAuthPassword);
 
-        if ($clientSecret !== null && !\is_string($clientSecret)) {
+        if ($clientSecret !== null && !is_string($clientSecret)) {
             throw OAuthServerException::invalidRequest('client_secret');
         }
 
@@ -278,9 +277,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Validate redirectUri from the request.
      * If a redirect URI is provided ensure it matches what is pre-registered
      *
-     * @param string                 $redirectUri
-     * @param ClientEntityInterface  $client
-     * @param ServerRequestInterface $request
      *
      * @throws OAuthServerException
      */
@@ -301,22 +297,17 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Validate scopes in the request.
      *
      * @param null|string|string[] $scopes
-     * @param string            $redirectUri
      *
      * @throws OAuthServerException
      *
      * @return ScopeEntityInterface[]
      */
-    public function validateScopes($scopes, $redirectUri = null): array
+    public function validateScopes(string|array|null $scopes, string $redirectUri = null): array
     {
         if ($scopes === null) {
             $scopes = [];
-        } elseif (\is_string($scopes)) {
+        } elseif (is_string($scopes)) {
             $scopes = $this->convertScopesQueryStringToArray($scopes);
-        }
-
-        if (!\is_array($scopes)) {
-            throw OAuthServerException::invalidRequest('scope');
         }
 
         $validScopes = [];
@@ -337,13 +328,12 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Converts a scopes query string to an array to easily iterate for validation.
      *
-     * @param string $scopes
      *
      * @return string[]
      */
     private function convertScopesQueryStringToArray(string $scopes): array
     {
-        return \array_filter(\explode(self::SCOPE_DELIMITER_STRING, \trim($scopes)), function ($scope) {
+        return array_filter(explode(self::SCOPE_DELIMITER_STRING, trim($scopes)), function ($scope) {
             return $scope !== '';
         });
     }
@@ -351,13 +341,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve request parameter.
      *
-     * @param string                 $parameter
-     * @param ServerRequestInterface $request
-     * @param mixed                  $default
      *
-     * @return mixed
      */
-    protected function getRequestParameter($parameter, ServerRequestInterface $request, $default = null)
+    protected function getRequestParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): mixed
     {
         $requestParameters = (array) $request->getParsedBody();
 
@@ -371,42 +357,39 @@ abstract class AbstractGrant implements GrantTypeInterface
      * not exist, or is otherwise an invalid HTTP Basic header, return
      * [null, null].
      *
-     * @param ServerRequestInterface $request
      *
      * @return string[]|null[]
      */
-    protected function getBasicAuthCredentials(ServerRequestInterface $request)
+    protected function getBasicAuthCredentials(ServerRequestInterface $request): array
     {
         if (!$request->hasHeader('Authorization')) {
             return [null, null];
         }
 
         $header = $request->getHeader('Authorization')[0];
-        if (\strpos($header, 'Basic ') !== 0) {
+        if (strpos($header, 'Basic ') !== 0) {
             return [null, null];
         }
 
-        if (!($decoded = \base64_decode(\substr($header, 6)))) {
+        $decoded = base64_decode(substr($header, 6), true);
+
+        if ($decoded === false) {
             return [null, null];
         }
 
-        if (\strpos($decoded, ':') === false) {
+        if (strpos($decoded, ':') === false) {
             return [null, null]; // HTTP Basic header without colon isn't valid
         }
 
-        return \explode(':', $decoded, 2);
+        return explode(':', $decoded, 2);
     }
 
     /**
      * Retrieve query string parameter.
      *
-     * @param string                 $parameter
-     * @param ServerRequestInterface $request
-     * @param mixed                  $default
      *
-     * @return null|string
      */
-    protected function getQueryStringParameter($parameter, ServerRequestInterface $request, $default = null)
+    protected function getQueryStringParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
     {
         return isset($request->getQueryParams()[$parameter]) ? $request->getQueryParams()[$parameter] : $default;
     }
@@ -414,13 +397,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve cookie parameter.
      *
-     * @param string                 $parameter
-     * @param ServerRequestInterface $request
-     * @param mixed                  $default
      *
-     * @return null|string
      */
-    protected function getCookieParameter($parameter, ServerRequestInterface $request, $default = null)
+    protected function getCookieParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
     {
         return isset($request->getCookieParams()[$parameter]) ? $request->getCookieParams()[$parameter] : $default;
     }
@@ -428,13 +407,9 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve server parameter.
      *
-     * @param string                 $parameter
-     * @param ServerRequestInterface $request
-     * @param mixed                  $default
      *
-     * @return null|string
      */
-    protected function getServerParameter($parameter, ServerRequestInterface $request, $default = null)
+    protected function getServerParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
     {
         return isset($request->getServerParams()[$parameter]) ? $request->getServerParams()[$parameter] : $default;
     }
@@ -442,22 +417,18 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an access token.
      *
-     * @param DateInterval           $accessTokenTTL
-     * @param ClientEntityInterface  $client
-     * @param string|null            $userIdentifier
      * @param ScopeEntityInterface[] $scopes
      *
      * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
      *
-     * @return AccessTokenEntityInterface
      */
     protected function issueAccessToken(
         DateInterval $accessTokenTTL,
         ClientEntityInterface $client,
-        $userIdentifier,
+        string|int|null $userIdentifier,
         array $scopes = []
-    ) {
+    ): AccessTokenEntityInterface {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
@@ -481,24 +452,19 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an auth code.
      *
-     * @param DateInterval           $authCodeTTL
-     * @param ClientEntityInterface  $client
-     * @param string                 $userIdentifier
-     * @param string|null            $redirectUri
      * @param ScopeEntityInterface[] $scopes
      *
      * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
      *
-     * @return AuthCodeEntityInterface
      */
     protected function issueAuthCode(
         DateInterval $authCodeTTL,
         ClientEntityInterface $client,
-        $userIdentifier,
-        $redirectUri,
+        string $userIdentifier,
+        ?string $redirectUri,
         array $scopes = []
-    ) {
+    ): AuthCodeEntityInterface {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $authCode = $this->authCodeRepository->getNewAuthCode();
@@ -529,14 +495,12 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * @param AccessTokenEntityInterface $accessToken
      *
      * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
      *
-     * @return RefreshTokenEntityInterface|null
      */
-    protected function issueRefreshToken(AccessTokenEntityInterface $accessToken)
+    protected function issueRefreshToken(AccessTokenEntityInterface $accessToken): ?RefreshTokenEntityInterface
     {
         $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
 
@@ -566,13 +530,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Generate a new unique identifier.
      *
-     * @param int $length
      *
      * @throws OAuthServerException
      *
-     * @return string
      */
-    protected function generateUniqueIdentifier($length = 40)
+    protected function generateUniqueIdentifier(int $length = 40): string
     {
         try {
             if ($length < 1) {
@@ -581,7 +543,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
             return bin2hex(random_bytes($length));
             // @codeCoverageIgnoreStart
-        } catch (TypeError|Error $e) {
+        } catch (TypeError | Error $e) {
             throw OAuthServerException::serverError('An unexpected error has occurred', $e);
         } catch (Exception $e) {
             // If you get this message, the CSPRNG failed hard.
@@ -593,12 +555,12 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function canRespondToAccessTokenRequest(ServerRequestInterface $request)
+    public function canRespondToAccessTokenRequest(ServerRequestInterface $request): bool
     {
         $requestParameters = (array) $request->getParsedBody();
 
         return (
-            \array_key_exists('grant_type', $requestParameters)
+            array_key_exists('grant_type', $requestParameters)
             && $requestParameters['grant_type'] === $this->getIdentifier()
         );
     }
@@ -606,7 +568,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
+    public function canRespondToAuthorizationRequest(ServerRequestInterface $request): bool
     {
         return false;
     }
@@ -614,7 +576,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function validateAuthorizationRequest(ServerRequestInterface $request)
+    public function validateAuthorizationRequest(ServerRequestInterface $request): AuthorizationRequestInterface
     {
         throw new LogicException('This grant cannot validate an authorization request');
     }
@@ -622,7 +584,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest)
+    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): ResponseTypeInterface
     {
         throw new LogicException('This grant cannot complete an authorization request');
     }

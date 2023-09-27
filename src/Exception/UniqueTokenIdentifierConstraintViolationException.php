@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Ivan Kurnosov <zerkms@zerkms.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,14 +8,15 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Exception;
 
 class UniqueTokenIdentifierConstraintViolationException extends OAuthServerException
 {
     /**
-     * @return UniqueTokenIdentifierConstraintViolationException
      */
-    public static function create()
+    public static function create(): UniqueTokenIdentifierConstraintViolationException
     {
         $errorMessage = 'Could not create unique access token identifier';
 

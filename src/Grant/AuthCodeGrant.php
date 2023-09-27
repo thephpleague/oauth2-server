@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Grant;
 
@@ -30,6 +33,22 @@ use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use stdClass;
 
+use function array_key_exists;
+use function array_keys;
+use function array_map;
+use function count;
+use function hash_algos;
+use function implode;
+use function in_array;
+use function is_array;
+use function is_string;
+use function json_decode;
+use function json_encode;
+use function preg_match;
+use function property_exists;
+use function sprintf;
+use function time;
+
 class AuthCodeGrant extends AbstractAuthorizeGrant
 {
     /**
@@ -48,9 +67,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private $codeChallengeVerifiers = [];
 
     /**
-     * @param AuthCodeRepositoryInterface     $authCodeRepository
-     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
-     * @param DateInterval                    $authCodeTTL
      *
      * @throws Exception
      */
@@ -64,7 +80,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $this->authCodeTTL = $authCodeTTL;
         $this->refreshTokenTTL = new DateInterval('P1M');
 
-        if (\in_array('sha256', \hash_algos(), true)) {
+        if (in_array('sha256', hash_algos(), true)) {
             $s256Verifier = new S256Verifier();
             $this->codeChallengeVerifiers[$s256Verifier->getMethod()] = $s256Verifier;
         }
@@ -84,19 +100,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Respond to an access token request.
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseTypeInterface  $responseType
-     * @param DateInterval           $accessTokenTTL
      *
      * @throws OAuthServerException
      *
-     * @return ResponseTypeInterface
      */
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
-    ) {
+    ): ResponseTypeInterface {
         list($clientId) = $this->getClientCredentials($request);
 
         $client = $this->getClientEntityOrFail($clientId, $request);
@@ -108,12 +120,12 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
 
-        if (!\is_string($encryptedAuthCode)) {
+        if (!is_string($encryptedAuthCode)) {
             throw OAuthServerException::invalidRequest('code');
         }
 
         try {
-            $authCodePayload = \json_decode($this->decrypt($encryptedAuthCode));
+            $authCodePayload = json_decode($this->decrypt($encryptedAuthCode));
 
             $this->validateAuthorizationCode($authCodePayload, $client, $request);
 
@@ -129,7 +141,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         // Validate code challenge
-        if (!empty($authCodePayload->code_challenge)) {
+        if (isset($authCodePayload->code_challenge) && $authCodePayload->code_challenge !== '') {
             $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
 
             if ($codeVerifier === null) {
@@ -138,14 +150,14 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
             // Validate code_verifier according to RFC-7636
             // @see: https://tools.ietf.org/html/rfc7636#section-4.1
-            if (\preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeVerifier) !== 1) {
+            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeVerifier) !== 1) {
                 throw OAuthServerException::invalidRequest(
                     'code_verifier',
                     'Code Verifier must follow the specifications of RFC-7636.'
                 );
             }
 
-            if (\property_exists($authCodePayload, 'code_challenge_method')) {
+            if (property_exists($authCodePayload, 'code_challenge_method')) {
                 if (isset($this->codeChallengeVerifiers[$authCodePayload->code_challenge_method])) {
                     $codeChallengeVerifier = $this->codeChallengeVerifiers[$authCodePayload->code_challenge_method];
 
@@ -154,7 +166,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     }
                 } else {
                     throw OAuthServerException::serverError(
-                        \sprintf(
+                        sprintf(
                             'Unsupported code challenge method `%s`',
                             $authCodePayload->code_challenge_method
                         )
@@ -185,20 +197,17 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Validate the authorization code.
      *
-     * @param stdClass               $authCodePayload
-     * @param ClientEntityInterface  $client
-     * @param ServerRequestInterface $request
      */
     private function validateAuthorizationCode(
-        $authCodePayload,
+        stdClass $authCodePayload,
         ClientEntityInterface $client,
         ServerRequestInterface $request
     ): void {
-        if (!\property_exists($authCodePayload, 'auth_code_id')) {
+        if (!property_exists($authCodePayload, 'auth_code_id')) {
             throw OAuthServerException::invalidRequest('code', 'Authorization code malformed');
         }
 
-        if (\time() > $authCodePayload->expire_time) {
+        if (time() > $authCodePayload->expire_time) {
             throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
         }
 
@@ -212,7 +221,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // The redirect URI is required in this request
         $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
-        if (empty($authCodePayload->redirect_uri) === false && $redirectUri === null) {
+        if ($authCodePayload->redirect_uri !== '' && $redirectUri === null) {
             throw OAuthServerException::invalidRequest('redirect_uri');
         }
 
@@ -224,9 +233,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Return the grant identifier that can be used in matching up requests.
      *
-     * @return string
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return 'authorization_code';
     }
@@ -234,10 +242,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
+    public function canRespondToAuthorizationRequest(ServerRequestInterface $request): bool
     {
         return (
-            \array_key_exists('response_type', $request->getQueryParams())
+            array_key_exists('response_type', $request->getQueryParams())
             && $request->getQueryParams()['response_type'] === 'code'
             && isset($request->getQueryParams()['client_id'])
         );
@@ -246,7 +254,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function validateAuthorizationRequest(ServerRequestInterface $request)
+    public function validateAuthorizationRequest(ServerRequestInterface $request): AuthorizationRequestInterface
     {
         $clientId = $this->getQueryStringParameter(
             'client_id',
@@ -263,19 +271,17 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $redirectUri = $this->getQueryStringParameter('redirect_uri', $request);
 
         if ($redirectUri !== null) {
-            if (!\is_string($redirectUri)) {
-                throw OAuthServerException::invalidRequest('redirect_uri');
-            }
-
             $this->validateRedirectUri($redirectUri, $client, $request);
-        } elseif (empty($client->getRedirectUri()) ||
-            (\is_array($client->getRedirectUri()) && \count($client->getRedirectUri()) !== 1)) {
+        } elseif (
+            $client->getRedirectUri() === '' || $client->getRedirectUri() === null ||
+            (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1)
+        ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
 
             throw OAuthServerException::invalidClient($request);
         }
 
-        $defaultClientRedirectUri = \is_array($client->getRedirectUri())
+        $defaultClientRedirectUri = is_array($client->getRedirectUri())
             ? $client->getRedirectUri()[0]
             : $client->getRedirectUri();
 
@@ -309,21 +315,21 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 );
             }
 
-            if (\array_key_exists($codeChallengeMethod, $this->codeChallengeVerifiers) === false) {
+            if (array_key_exists($codeChallengeMethod, $this->codeChallengeVerifiers) === false) {
                 throw OAuthServerException::invalidRequest(
                     'code_challenge_method',
-                    'Code challenge method must be one of ' . \implode(', ', \array_map(
+                    'Code challenge method must be one of ' . implode(', ', array_map(
                         function ($method) {
                             return '`' . $method . '`';
                         },
-                        \array_keys($this->codeChallengeVerifiers)
+                        array_keys($this->codeChallengeVerifiers)
                     ))
                 );
             }
 
             // Validate code_challenge according to RFC-7636
             // @see: https://tools.ietf.org/html/rfc7636#section-4.2
-            if (\preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeChallenge) !== 1) {
+            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeChallenge) !== 1) {
                 throw OAuthServerException::invalidRequest(
                     'code_challenge',
                     'Code challenge must follow the specifications of RFC-7636.'
@@ -342,7 +348,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest)
+    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): ResponseTypeInterface
     {
         if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
             throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
@@ -372,7 +378,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
 
-            $jsonPayload = \json_encode($payload);
+            $jsonPayload = json_encode($payload);
 
             if ($jsonPayload === false) {
                 throw new LogicException('An error was encountered when JSON encoding the authorization request response');
@@ -407,13 +413,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Get the client redirect URI if not set in the request.
      *
-     * @param AuthorizationRequestInterface $authorizationRequest
      *
-     * @return string
      */
-    private function getClientRedirectUri(AuthorizationRequestInterface $authorizationRequest)
+    private function getClientRedirectUri(AuthorizationRequestInterface $authorizationRequest): string
     {
-        return \is_array($authorizationRequest->getClient()->getRedirectUri())
+        return is_array($authorizationRequest->getClient()->getRedirectUri())
                 ? $authorizationRequest->getClient()->getRedirectUri()[0]
                 : $authorizationRequest->getClient()->getRedirectUri();
     }

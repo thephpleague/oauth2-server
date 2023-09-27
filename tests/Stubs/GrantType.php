@@ -47,7 +47,7 @@ final class GrantType implements GrantTypeInterface
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
-    ) {
+    ): ResponseTypeInterface {
         return $responseType;
     }
 
@@ -86,7 +86,7 @@ final class GrantType implements GrantTypeInterface
     {
     }
 
-    public function setDefaultScope($scope): void
+    public function setDefaultScope(string $scope): void
     {
     }
 

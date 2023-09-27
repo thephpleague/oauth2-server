@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Encrypt/decrypt with encryptionKey.
  *
@@ -9,12 +10,16 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Exception;
 use LogicException;
+
+use function is_string;
 
 trait CryptTrait
 {
@@ -26,20 +31,18 @@ trait CryptTrait
     /**
      * Encrypt data with encryptionKey.
      *
-     * @param string $unencryptedData
      *
      * @throws LogicException
      *
-     * @return string
      */
-    protected function encrypt($unencryptedData)
+    protected function encrypt(string $unencryptedData): string
     {
         try {
             if ($this->encryptionKey instanceof Key) {
                 return Crypto::encrypt($unencryptedData, $this->encryptionKey);
             }
 
-            if (\is_string($this->encryptionKey)) {
+            if (is_string($this->encryptionKey)) {
                 return Crypto::encryptWithPassword($unencryptedData, $this->encryptionKey);
             }
 
@@ -52,20 +55,18 @@ trait CryptTrait
     /**
      * Decrypt data with encryptionKey.
      *
-     * @param string $encryptedData
      *
      * @throws LogicException
      *
-     * @return string
      */
-    protected function decrypt($encryptedData)
+    protected function decrypt(string $encryptedData): string
     {
         try {
             if ($this->encryptionKey instanceof Key) {
                 return Crypto::decrypt($encryptedData, $this->encryptionKey);
             }
 
-            if (\is_string($this->encryptionKey)) {
+            if (is_string($this->encryptionKey)) {
                 return Crypto::decryptWithPassword($encryptedData, $this->encryptionKey);
             }
 
