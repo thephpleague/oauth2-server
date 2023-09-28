@@ -1837,9 +1837,13 @@ class AuthCodeGrantTest extends TestCase
 
     public function testAuthCodeRepositoryFailToPersist(): void
     {
+        $client = new ClientEntity();
+
+        $client->setRedirectUri('http://foo/bar');
+
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
@@ -1862,9 +1866,13 @@ class AuthCodeGrantTest extends TestCase
 
     public function testAuthCodeRepositoryFailToPersistUniqueNoInfiniteLoop(): void
     {
+        $client = new ClientEntity();
+
+        $client->setRedirectUri('http://foo/bar');
+
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 

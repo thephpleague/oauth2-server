@@ -119,7 +119,7 @@ class PasswordGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return 'password';
     }

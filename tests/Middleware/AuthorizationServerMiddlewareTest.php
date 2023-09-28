@@ -36,6 +36,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
 
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn($client);
+        $clientRepository->method('validateClient')->willReturn(true);
 
         $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();

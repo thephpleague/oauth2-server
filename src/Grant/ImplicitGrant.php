@@ -69,7 +69,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function canRespondToAccessTokenRequest(ServerRequestInterface $request)
+    public function canRespondToAccessTokenRequest(ServerRequestInterface $request): bool
     {
         return false;
     }
@@ -99,7 +99,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function canRespondToAuthorizationRequest(ServerRequestInterface $request)
+    public function canRespondToAuthorizationRequest(ServerRequestInterface $request): bool
     {
         return (
             isset($request->getQueryParams()['response_type'])
@@ -111,7 +111,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function validateAuthorizationRequest(ServerRequestInterface $request)
+    public function validateAuthorizationRequest(ServerRequestInterface $request): AuthorizationRequestInterface
     {
         $clientId = $this->getQueryStringParameter(
             'client_id',
@@ -165,7 +165,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     /**
      * {@inheritdoc}
      */
-    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest)
+    public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): ResponseTypeInterface
     {
         if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
             throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');

@@ -137,7 +137,7 @@ class RefreshTokenGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return 'refresh_token';
     }

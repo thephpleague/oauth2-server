@@ -307,9 +307,14 @@ class ImplicitGrantTest extends TestCase
 
     public function testAccessTokenRepositoryFailToPersist(): void
     {
+        $client = new ClientEntity();
+
+        $client->setRedirectUri('https://foo/bar');
+
         $authRequest = new AuthorizationRequest();
+
         $authRequest->setAuthorizationApproved(true);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
@@ -334,9 +339,14 @@ class ImplicitGrantTest extends TestCase
 
     public function testAccessTokenRepositoryFailToPersistUniqueNoInfiniteLoop(): void
     {
+        $client = new ClientEntity();
+
+        $client->setRedirectUri('https://foo/bar');
+
         $authRequest = new AuthorizationRequest();
+
         $authRequest->setAuthorizationApproved(true);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
