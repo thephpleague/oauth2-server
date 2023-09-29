@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Added option to keep access tokens valid after they were refreshed via `revokeRefreshedAccessTokens()` (PR #1377)
+
 ## [9.4.1] - released 2026-06-25
 
 ### Removed

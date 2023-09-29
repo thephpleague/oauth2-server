@@ -17,6 +17,7 @@ use Defuse\Crypto\Key;
 use League\OAuth2\Server\EventEmitting\EmitterAwareInterface;
 use League\OAuth2\Server\EventEmitting\EmitterAwarePolyfill;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -54,6 +55,8 @@ class AuthorizationServer implements EmitterAwareInterface
     private string $defaultScope = '';
 
     private bool $revokeRefreshTokens = true;
+
+    private bool $revokeRefreshedAccessTokens = true;
 
     /**
      * New server instance
@@ -101,6 +104,10 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setEmitter($this->getEmitter());
         $grantType->setEncryptionKey($this->encryptionKey);
         $grantType->revokeRefreshTokens($this->revokeRefreshTokens);
+
+        if ($grantType instanceof AbstractGrant) {
+            $grantType->revokeRefreshedAccessTokens($this->revokeRefreshedAccessTokens);
+        }
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
         $this->grantTypeAccessTokenTTL[$grantType->getIdentifier()] = $accessTokenTTL;
@@ -219,5 +226,13 @@ class AuthorizationServer implements EmitterAwareInterface
     public function revokeRefreshTokens(bool $revokeRefreshTokens): void
     {
         $this->revokeRefreshTokens = $revokeRefreshTokens;
+    }
+
+    /**
+     * Sets whether to revoke access tokens after they were refreshed or not (for all grant types).
+     */
+    public function revokeRefreshedAccessTokens(bool $revokeRefreshedAccessTokens): void
+    {
+        $this->revokeRefreshedAccessTokens = $revokeRefreshedAccessTokens;
     }
 }
