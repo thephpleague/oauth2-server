@@ -699,5 +699,4 @@ class RefreshTokenGrantTest extends TestCase
 
         Assert::assertFalse($accessTokenRepositoryMock->isAccessTokenRevoked($accessTokenId));
     }
-
 }
