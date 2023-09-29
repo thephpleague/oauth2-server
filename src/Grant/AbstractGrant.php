@@ -99,6 +99,11 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected $revokeRefreshTokens;
 
     /**
+     * @var bool
+     */
+    protected $revokeRefreshedAccessTokens;
+
+    /**
      * @param ClientRepositoryInterface $clientRepository
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository)
@@ -178,6 +183,14 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function revokeRefreshTokens(bool $revokeRefreshTokens)
     {
         $this->revokeRefreshTokens = $revokeRefreshTokens;
+    }
+
+    /**
+     * @param bool $revokeRefreshedAccessTokens
+     */
+    public function revokeRefreshedAccessTokens(bool $revokeRefreshedAccessTokens)
+    {
+        $this->revokeRefreshedAccessTokens = $revokeRefreshedAccessTokens;
     }
 
     /**
