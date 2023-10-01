@@ -27,10 +27,7 @@ use function time;
 
 class RefreshTokenGrantTest extends TestCase
 {
-    /**
-     * @var CryptTraitStub
-     */
-    protected $cryptStub;
+    protected CryptTraitStub $cryptStub;
 
     public function setUp(): void
     {
@@ -731,6 +728,8 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->revokeRefreshTokens(false);
+
         $grant->respondToAccessTokenRequest($serverRequest, new StubResponseType(), new DateInterval('PT5M'));
 
         self::assertFalse($refreshTokenRepositoryMock->isRefreshTokenRevoked($refreshTokenId));

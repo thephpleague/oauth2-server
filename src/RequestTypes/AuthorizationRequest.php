@@ -21,65 +21,57 @@ class AuthorizationRequest implements AuthorizationRequestInterface
     /**
      * The grant type identifier
      *
-     * @var string
      */
-    protected $grantTypeId;
+    protected string $grantTypeId;
 
     /**
      * The client identifier
      *
-     * @var ClientEntityInterface
      */
-    protected $client;
+    protected ClientEntityInterface $client;
 
     /**
      * The user identifier
      *
-     * @var UserEntityInterface
      */
-    protected $user;
+    protected UserEntityInterface $user;
 
     /**
      * An array of scope identifiers
      *
      * @var ScopeEntityInterface[]
      */
-    protected $scopes = [];
+    protected array $scopes = [];
 
     /**
      * Has the user authorized the authorization request
      *
-     * @var bool
      */
-    protected $authorizationApproved = false;
+    protected bool $authorizationApproved = false;
 
     /**
      * The redirect URI used in the request
      *
-     * @var string|null
      */
-    protected $redirectUri;
+    protected ?string $redirectUri = null;
 
     /**
      * The state parameter on the authorization request
      *
-     * @var string|null
      */
-    protected $state;
+    protected ?string $state = null;
 
     /**
      * The code challenge (if provided)
      *
-     * @var string
      */
-    protected $codeChallenge;
+    protected string $codeChallenge;
 
     /**
      * The code challenge method (if provided)
      *
-     * @var string
      */
-    protected $codeChallengeMethod;
+    protected string $codeChallengeMethod;
 
     public function getGrantTypeId(): string
     {
@@ -103,7 +95,7 @@ class AuthorizationRequest implements AuthorizationRequestInterface
 
     public function getUser(): ?UserEntityInterface
     {
-        return $this->user;
+        return $this->user ?? null;
     }
 
     public function setUser(UserEntityInterface $user): void
@@ -159,7 +151,7 @@ class AuthorizationRequest implements AuthorizationRequestInterface
 
     public function getCodeChallenge(): ?string
     {
-        return $this->codeChallenge;
+        return $this->codeChallenge ?? null;
     }
 
     public function setCodeChallenge(string $codeChallenge): void
@@ -169,7 +161,7 @@ class AuthorizationRequest implements AuthorizationRequestInterface
 
     public function getCodeChallengeMethod(): ?string
     {
-        return $this->codeChallengeMethod;
+        return $this->codeChallengeMethod ?? null;
     }
 
     public function setCodeChallengeMethod(string $codeChallengeMethod): void

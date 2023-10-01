@@ -25,35 +25,20 @@ use function strstr;
 
 class OAuthServerException extends Exception
 {
-    /**
-     * @var int
-     */
-    private $httpStatusCode;
+    private int $httpStatusCode;
 
-    /**
-     * @var string
-     */
-    private $errorType;
+    private string $errorType;
 
-    /**
-     * @var null|string
-     */
-    private $hint;
+    private ?string $hint = null;
 
-    /**
-     * @var null|string
-     */
-    private $redirectUri;
+    private ?string $redirectUri = null;
 
     /**
      * @var array<string, string>
      */
     private array $payload;
 
-    /**
-     * @var ServerRequestInterface
-     */
-    private $serverRequest;
+    private ServerRequestInterface $serverRequest;
 
     /**
      * Throw a new exception.

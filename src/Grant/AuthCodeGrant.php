@@ -51,20 +51,14 @@ use function time;
 
 class AuthCodeGrant extends AbstractAuthorizeGrant
 {
-    /**
-     * @var DateInterval
-     */
-    private $authCodeTTL;
+    private DateInterval $authCodeTTL;
 
-    /**
-     * @var bool
-     */
-    private $requireCodeChallengeForPublicClients = true;
+    private bool $requireCodeChallengeForPublicClients = true;
 
     /**
      * @var CodeChallengeVerifierInterface[]
      */
-    private $codeChallengeVerifiers = [];
+    private array $codeChallengeVerifiers = [];
 
     /**
      *

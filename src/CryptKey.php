@@ -37,17 +37,11 @@ class CryptKey implements CryptKeyInterface
     /**
      * @var string Key contents
      */
-    protected $keyContents;
+    protected string $keyContents;
 
-    /**
-     * @var string
-     */
-    protected $keyPath;
+    protected string $keyPath;
 
-    /**
-     * @var null|string
-     */
-    protected $passPhrase;
+    protected ?string $passPhrase = null;
 
     /**
      */

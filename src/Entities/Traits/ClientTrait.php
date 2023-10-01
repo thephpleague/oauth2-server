@@ -14,20 +14,14 @@ namespace League\OAuth2\Server\Entities\Traits;
 
 trait ClientTrait
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string|string[]
      */
-    protected $redirectUri;
+    protected string|array $redirectUri;
 
-    /**
-     * @var bool
-     */
-    protected $isConfidential = false;
+    protected bool $isConfidential = false;
 
     /**
      * Get the client's name.

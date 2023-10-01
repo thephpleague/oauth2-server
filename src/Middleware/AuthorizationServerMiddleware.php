@@ -20,10 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class AuthorizationServerMiddleware
 {
-    /**
-     * @var AuthorizationServer
-     */
-    private $server;
+    private AuthorizationServer $server;
 
     /**
      */

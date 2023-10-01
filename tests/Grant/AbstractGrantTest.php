@@ -183,7 +183,9 @@ class AbstractGrantTest extends TestCase
         $result = $validateClientMethod->invoke($grantMock, $serverRequest, true, true);
         self::assertEquals($client, $result);
     }
-public function testValidateClientMissingClientId(): void { $client = new ClientEntity();
+    public function testValidateClientMissingClientId(): void
+    {
+        $client = new ClientEntity();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 

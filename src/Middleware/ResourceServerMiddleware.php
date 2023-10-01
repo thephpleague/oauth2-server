@@ -20,10 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ResourceServerMiddleware
 {
-    /**
-     * @var ResourceServer
-     */
-    private $server;
+    private ResourceServer $server;
 
     /**
      */

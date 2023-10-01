@@ -30,15 +30,9 @@ use function time;
 
 class ImplicitGrant extends AbstractAuthorizeGrant
 {
-    /**
-     * @var DateInterval
-     */
-    private $accessTokenTTL;
+    private DateInterval $accessTokenTTL;
 
-    /**
-     * @var string
-     */
-    private $queryDelimiter;
+    private string $queryDelimiter;
 
     /**
      */

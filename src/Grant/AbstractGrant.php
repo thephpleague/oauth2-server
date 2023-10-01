@@ -67,55 +67,25 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     private const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
 
-    /**
-     * @var ClientRepositoryInterface
-     */
-    protected $clientRepository;
+    protected ClientRepositoryInterface $clientRepository;
 
-    /**
-     * @var AccessTokenRepositoryInterface
-     */
-    protected $accessTokenRepository;
+    protected AccessTokenRepositoryInterface $accessTokenRepository;
 
-    /**
-     * @var ScopeRepositoryInterface
-     */
-    protected $scopeRepository;
+    protected ScopeRepositoryInterface $scopeRepository;
 
-    /**
-     * @var AuthCodeRepositoryInterface
-     */
-    protected $authCodeRepository;
+    protected AuthCodeRepositoryInterface $authCodeRepository;
 
-    /**
-     * @var RefreshTokenRepositoryInterface
-     */
-    protected $refreshTokenRepository;
+    protected RefreshTokenRepositoryInterface $refreshTokenRepository;
 
-    /**
-     * @var UserRepositoryInterface
-     */
-    protected $userRepository;
+    protected UserRepositoryInterface $userRepository;
 
-    /**
-     * @var DateInterval
-     */
-    protected $refreshTokenTTL;
+    protected DateInterval $refreshTokenTTL;
 
-    /**
-     * @var CryptKeyInterface
-     */
-    protected $privateKey;
+    protected CryptKeyInterface $privateKey;
 
-    /**
-     * @var string
-     */
-    protected $defaultScope;
+    protected string $defaultScope;
 
-    /**
-     * @var bool
-     */
-    protected $revokeRefreshTokens;
+    protected bool $revokeRefreshTokens = true;
 
     /**
      */

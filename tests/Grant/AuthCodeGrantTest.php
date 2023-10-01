@@ -39,10 +39,7 @@ class AuthCodeGrantTest extends TestCase
 {
     private const DEFAULT_SCOPE = 'basic';
 
-    /**
-     * @var CryptTraitStub
-     */
-    protected $cryptStub;
+    protected CryptTraitStub $cryptStub;
 
     private const CODE_VERIFIER = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
 
@@ -256,6 +253,7 @@ class AuthCodeGrantTest extends TestCase
         $client->setRedirectUri('http://foo/bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -263,7 +261,9 @@ class AuthCodeGrantTest extends TestCase
             new DateInterval('PT10M')
         );
 
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
 
         $request = (new ServerRequest())->withQueryParams([
             'response_type'  => 'code',
@@ -283,6 +283,7 @@ class AuthCodeGrantTest extends TestCase
         $client->setRedirectUri('http://foo/bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -291,6 +292,8 @@ class AuthCodeGrantTest extends TestCase
         );
 
         $grant->setClientRepository($clientRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setScopeRepository($scopeRepositoryMock);
 
         $request = (new ServerRequest())->withQueryParams([
             'response_type'  => 'code',
@@ -310,6 +313,7 @@ class AuthCodeGrantTest extends TestCase
         $client->setRedirectUri('http://foo/bar');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -318,6 +322,8 @@ class AuthCodeGrantTest extends TestCase
         );
 
         $grant->setClientRepository($clientRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setScopeRepository($scopeRepositoryMock);
 
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',

@@ -183,7 +183,10 @@ class AuthorizationServerTest extends TestCase
         $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
 
         $responseTypePrototype = new class extends BearerTokenResponse {
-            public function getPrivateKey(): CryptKeyInterface|null
+            protected CryptKeyInterface $privateKey;
+            protected Key|string|null $encryptionKey = null;
+
+            public function getPrivateKey(): CryptKeyInterface
             {
                 return $this->privateKey;
             }
@@ -211,10 +214,6 @@ class AuthorizationServerTest extends TestCase
 
         $responseTypeA = $method->invoke($server);
         $responseTypeB = $method->invoke($server);
-
-        // prototype should not get changed
-        self::assertNull($responseTypePrototype->getPrivateKey());
-        self::assertNull($responseTypePrototype->getEncryptionKey());
 
         // generated instances should have keys setup
         self::assertSame($privateKey, $responseTypeA->getPrivateKey()->getKeyPath());

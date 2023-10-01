@@ -24,15 +24,9 @@ use RuntimeException;
 
 trait AccessTokenTrait
 {
-    /**
-     * @var CryptKeyInterface
-     */
-    private $privateKey;
+    private CryptKeyInterface $privateKey;
 
-    /**
-     * @var Configuration
-     */
-    private $jwtConfiguration;
+    private Configuration $jwtConfiguration;
 
     /**
      * Set the private key used to encrypt this access token.

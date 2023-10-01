@@ -17,10 +17,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestAccessTokenEvent extends RequestEvent
 {
-    /**
-     * @var AccessTokenEntityInterface
-     */
-    private $accessToken;
+    private AccessTokenEntityInterface $accessToken;
 
     /**
      */

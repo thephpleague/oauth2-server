@@ -23,10 +23,7 @@ use function is_string;
 
 trait CryptTrait
 {
-    /**
-     * @var string|Key|null
-     */
-    protected $encryptionKey;
+    protected string|Key|null $encryptionKey = null;
 
     /**
      * Encrypt data with encryptionKey.

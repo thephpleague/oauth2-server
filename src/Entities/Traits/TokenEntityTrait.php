@@ -23,22 +23,13 @@ trait TokenEntityTrait
     /**
      * @var ScopeEntityInterface[]
      */
-    protected $scopes = [];
+    protected array $scopes = [];
 
-    /**
-     * @var DateTimeImmutable
-     */
-    protected $expiryDateTime;
+    protected DateTimeImmutable $expiryDateTime;
 
-    /**
-     * @var string|int|null
-     */
-    protected $userIdentifier;
+    protected string|int|null $userIdentifier = null;
 
-    /**
-     * @var ClientEntityInterface
-     */
-    protected $client;
+    protected ClientEntityInterface $client;
 
     /**
      * Associate a scope with the token.

@@ -39,20 +39,11 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
 {
     use CryptTrait;
 
-    /**
-     * @var AccessTokenRepositoryInterface
-     */
-    private $accessTokenRepository;
+    private AccessTokenRepositoryInterface $accessTokenRepository;
 
-    /**
-     * @var CryptKeyInterface
-     */
-    protected $publicKey;
+    protected CryptKeyInterface $publicKey;
 
-    /**
-     * @var Configuration
-     */
-    private $jwtConfiguration;
+    private Configuration $jwtConfiguration;
 
     /**
      */
