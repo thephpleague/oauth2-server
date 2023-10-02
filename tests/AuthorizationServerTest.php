@@ -29,8 +29,8 @@ use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 
 use function base64_encode;
 use function chmod;
@@ -49,14 +49,14 @@ class AuthorizationServerTest extends TestCase
         chmod(__DIR__ . '/Stubs/private.key.crlf', 0600);
     }
 
-    public function testGrantTypeGetsEnabled()
+    public function testGrantTypeGetsEnabled(): void
     {
         $server = new AuthorizationServer(
             $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/Stubs/private.key',
-            \base64_encode(\random_bytes(36)),
+            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 

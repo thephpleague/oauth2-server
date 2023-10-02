@@ -22,16 +22,11 @@ class AuthorizationServerMiddleware
 {
     private AuthorizationServer $server;
 
-    /**
-     */
     public function __construct(AuthorizationServer $server)
     {
         $this->server = $server;
     }
 
-    /**
-     *
-     */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         try {

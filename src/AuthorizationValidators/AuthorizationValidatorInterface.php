@@ -19,7 +19,6 @@ interface AuthorizationValidatorInterface
     /**
      * Determine the access token in the authorization header and append OAUth
      * properties to the request as attributes.
-     *
      */
     public function validateAuthorization(ServerRequestInterface $request): ServerRequestInterface;
 }

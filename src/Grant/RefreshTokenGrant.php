@@ -35,8 +35,6 @@ use function time;
  */
 class RefreshTokenGrant extends AbstractGrant
 {
-    /**
-     */
     public function __construct(RefreshTokenRepositoryInterface $refreshTokenRepository)
     {
         $this->setRefreshTokenRepository($refreshTokenRepository);

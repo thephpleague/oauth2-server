@@ -87,43 +87,31 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     protected bool $revokeRefreshTokens = true;
 
-    /**
-     */
     public function setClientRepository(ClientRepositoryInterface $clientRepository): void
     {
         $this->clientRepository = $clientRepository;
     }
 
-    /**
-     */
     public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository): void
     {
         $this->accessTokenRepository = $accessTokenRepository;
     }
 
-    /**
-     */
     public function setScopeRepository(ScopeRepositoryInterface $scopeRepository): void
     {
         $this->scopeRepository = $scopeRepository;
     }
 
-    /**
-     */
     public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository): void
     {
         $this->refreshTokenRepository = $refreshTokenRepository;
     }
 
-    /**
-     */
     public function setAuthCodeRepository(AuthCodeRepositoryInterface $authCodeRepository): void
     {
         $this->authCodeRepository = $authCodeRepository;
     }
 
-    /**
-     */
     public function setUserRepository(UserRepositoryInterface $userRepository): void
     {
         $this->userRepository = $userRepository;
@@ -146,15 +134,11 @@ abstract class AbstractGrant implements GrantTypeInterface
         $this->privateKey = $key;
     }
 
-    /**
-     */
     public function setDefaultScope(string $scope): void
     {
         $this->defaultScope = $scope;
     }
 
-    /**
-     */
     public function revokeRefreshTokens(bool $revokeRefreshTokens): void
     {
         $this->revokeRefreshTokens = $revokeRefreshTokens;

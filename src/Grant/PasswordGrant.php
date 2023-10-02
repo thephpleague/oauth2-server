@@ -33,8 +33,6 @@ use function is_string;
  */
 class PasswordGrant extends AbstractGrant
 {
-    /**
-     */
     public function __construct(
         UserRepositoryInterface $userRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository

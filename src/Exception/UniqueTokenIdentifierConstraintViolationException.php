@@ -14,8 +14,6 @@ namespace League\OAuth2\Server\Exception;
 
 class UniqueTokenIdentifierConstraintViolationException extends OAuthServerException
 {
-    /**
-     */
     public static function create(): UniqueTokenIdentifierConstraintViolationException
     {
         $errorMessage = 'Could not create unique access token identifier';

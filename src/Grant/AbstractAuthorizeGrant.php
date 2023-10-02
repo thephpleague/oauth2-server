@@ -33,8 +33,6 @@ abstract class AbstractAuthorizeGrant extends AbstractGrant
         return $uri . http_build_query($params);
     }
 
-    /**
-     */
     protected function createAuthorizationRequest(): AuthorizationRequestInterface
     {
         return new AuthorizationRequest();

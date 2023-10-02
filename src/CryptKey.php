@@ -43,8 +43,6 @@ class CryptKey implements CryptKeyInterface
 
     protected ?string $passPhrase = null;
 
-    /**
-     */
     public function __construct(string $keyPath, ?string $passPhrase = null, bool $keyPermissionsCheck = true)
     {
         $this->passPhrase = $passPhrase;

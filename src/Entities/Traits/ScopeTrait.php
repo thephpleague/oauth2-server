@@ -23,7 +23,5 @@ trait ScopeTrait
         return $this->getIdentifier();
     }
 
-    /**
-     */
     abstract public function getIdentifier(): string;
 }

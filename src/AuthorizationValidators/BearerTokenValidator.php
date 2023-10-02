@@ -45,8 +45,6 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
 
     private Configuration $jwtConfiguration;
 
-    /**
-     */
     public function __construct(AccessTokenRepositoryInterface $accessTokenRepository)
     {
         $this->accessTokenRepository = $accessTokenRepository;

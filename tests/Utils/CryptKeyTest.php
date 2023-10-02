@@ -145,9 +145,6 @@ class CryptKeyTest extends TestCase
         }
     }
 
-    /**
-     *
-     */
     private static function generateKeyPath(string $keyContent): string
     {
         return 'file://' . sys_get_temp_dir() . '/' . sha1($keyContent) . '.key';

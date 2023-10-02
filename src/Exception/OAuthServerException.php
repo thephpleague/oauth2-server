@@ -249,8 +249,6 @@ class OAuthServerException extends Exception
         );
     }
 
-    /**
-     */
     public function getErrorType(): string
     {
         return $this->errorType;
@@ -352,8 +350,6 @@ class OAuthServerException extends Exception
         return $this->httpStatusCode;
     }
 
-    /**
-     */
     public function getHint(): ?string
     {
         return $this->hint;

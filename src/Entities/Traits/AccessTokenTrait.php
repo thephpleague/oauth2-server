@@ -81,16 +81,10 @@ trait AccessTokenTrait
         return $this->convertToJWT()->toString();
     }
 
-    /**
-     */
     abstract public function getClient(): ClientEntityInterface;
 
-    /**
-     */
     abstract public function getExpiryDateTime(): DateTimeImmutable;
 
-    /**
-     */
     abstract public function getUserIdentifier(): string|int|null;
 
     /**
@@ -98,7 +92,5 @@ trait AccessTokenTrait
      */
     abstract public function getScopes(): array;
 
-    /**
-     */
     abstract public function getIdentifier(): string;
 }

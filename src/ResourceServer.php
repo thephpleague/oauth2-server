@@ -46,8 +46,6 @@ class ResourceServer
         $this->authorizationValidator = $authorizationValidator;
     }
 
-    /**
-     */
     protected function getAuthorizationValidator(): AuthorizationValidatorInterface
     {
         if ($this->authorizationValidator instanceof AuthorizationValidatorInterface === false) {
