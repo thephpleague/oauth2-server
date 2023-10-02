@@ -24,11 +24,13 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\GrantType;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Psr\Http\Message\ServerRequestInterface;
 
 use function base64_encode;
 use function chmod;
@@ -47,7 +49,6 @@ class AuthorizationServerTest extends TestCase
         chmod(__DIR__ . '/Stubs/private.key.crlf', 0600);
     }
 
-    /*
     public function testGrantTypeGetsEnabled()
     {
         $server = new AuthorizationServer(
@@ -64,7 +65,6 @@ class AuthorizationServerTest extends TestCase
         $authRequest = $server->validateAuthorizationRequest($this->createMock(ServerRequestInterface::class));
         self::assertSame(GrantType::class, $authRequest->getGrantTypeId());
     }
-    */
 
     public function testRespondToRequestInvalidGrantType(): void
     {
