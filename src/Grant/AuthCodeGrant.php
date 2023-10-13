@@ -51,8 +51,6 @@ use function time;
 
 class AuthCodeGrant extends AbstractAuthorizeGrant
 {
-    private DateInterval $authCodeTTL;
-
     private bool $requireCodeChallengeForPublicClients = true;
 
     /**
@@ -61,17 +59,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     private array $codeChallengeVerifiers = [];
 
     /**
-     *
      * @throws Exception
      */
     public function __construct(
         AuthCodeRepositoryInterface $authCodeRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
-        DateInterval $authCodeTTL
+        private DateInterval $authCodeTTL
     ) {
         $this->setAuthCodeRepository($authCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
-        $this->authCodeTTL = $authCodeTTL;
         $this->refreshTokenTTL = new DateInterval('P1M');
 
         if (in_array('sha256', hash_algos(), true)) {
@@ -94,9 +90,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Respond to an access token request.
      *
-     *
      * @throws OAuthServerException
-     *
      */
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
@@ -190,7 +184,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
     /**
      * Validate the authorization code.
-     *
      */
     private function validateAuthorizationCode(
         stdClass $authCodePayload,
@@ -226,7 +219,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
     /**
      * Return the grant identifier that can be used in matching up requests.
-     *
      */
     public function getIdentifier(): string
     {
@@ -267,7 +259,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         if ($redirectUri !== null) {
             $this->validateRedirectUri($redirectUri, $client, $request);
         } elseif (
-            $client->getRedirectUri() === '' || $client->getRedirectUri() === null ||
+            $client->getRedirectUri() === '' ||
             (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1)
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
@@ -406,8 +398,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
     /**
      * Get the client redirect URI if not set in the request.
-     *
-     *
      */
     private function getClientRedirectUri(AuthorizationRequestInterface $authorizationRequest): string
     {

@@ -25,14 +25,6 @@ use function strstr;
 
 class OAuthServerException extends Exception
 {
-    private int $httpStatusCode;
-
-    private string $errorType;
-
-    private ?string $hint = null;
-
-    private ?string $redirectUri = null;
-
     /**
      * @var array<string, string>
      */
@@ -42,26 +34,15 @@ class OAuthServerException extends Exception
 
     /**
      * Throw a new exception.
-     *
-     * @param string      $message        Error message
-     * @param int         $code           Error code
-     * @param string      $errorType      Error type
-     * @param int         $httpStatusCode HTTP status code to send (default = 400)
-     * @param null|string $hint           A helper hint
-     * @param null|string $redirectUri    A HTTP URI to redirect the user back to
-     * @param Throwable   $previous       Previous exception
      */
-    final public function __construct(string $message, int $code, string $errorType, int $httpStatusCode = 400, ?string $hint = null, ?string $redirectUri = null, Throwable $previous = null)
+    final public function __construct(string $message, int $code, private string $errorType, private int $httpStatusCode = 400, private ?string $hint = null, private ?string $redirectUri = null, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
-        $this->httpStatusCode = $httpStatusCode;
-        $this->errorType = $errorType;
-        $this->hint = $hint;
-        $this->redirectUri = $redirectUri;
         $this->payload = [
             'error'             => $errorType,
             'error_description' => $message,
         ];
+
         if ($hint !== null) {
             $this->payload['hint'] = $hint;
         }
@@ -74,15 +55,7 @@ class OAuthServerException extends Exception
      */
     public function getPayload(): array
     {
-        $payload = $this->payload;
-
-        // The "message" property is deprecated and replaced by "error_description"
-        // TODO: remove "message" property
-        if (isset($payload['error_description']) && !isset($payload['message'])) {
-            $payload['message'] = $payload['error_description'];
-        }
-
-        return $payload;
+        return $this->payload;
     }
 
     /**
@@ -97,7 +70,6 @@ class OAuthServerException extends Exception
 
     /**
      * Set the server request that is responsible for generating the exception
-     *
      */
     public function setServerRequest(ServerRequestInterface $serverRequest): void
     {
@@ -106,8 +78,6 @@ class OAuthServerException extends Exception
 
     /**
      * Unsupported grant type error.
-     *
-     * @return static
      */
     public static function unsupportedGrantType(): static
     {
@@ -119,11 +89,6 @@ class OAuthServerException extends Exception
 
     /**
      * Invalid request error.
-     *
-     * @param string      $parameter The invalid parameter
-     * @param Throwable   $previous  Previous exception
-     *
-     * @return static
      */
     public static function invalidRequest(string $parameter, ?string $hint = null, Throwable $previous = null): static
     {
@@ -136,9 +101,6 @@ class OAuthServerException extends Exception
 
     /**
      * Invalid client error.
-     *
-     *
-     * @return static
      */
     public static function invalidClient(ServerRequestInterface $serverRequest): static
     {
@@ -170,8 +132,6 @@ class OAuthServerException extends Exception
 
     /**
      * Invalid credentials error.
-     *
-     * @return static
      */
     public static function invalidCredentials(): static
     {
@@ -180,9 +140,6 @@ class OAuthServerException extends Exception
 
     /**
      * Server error.
-     *
-     *
-     * @return static
      *
      * @codeCoverageIgnore
      */
@@ -202,9 +159,6 @@ class OAuthServerException extends Exception
 
     /**
      * Invalid refresh token.
-     *
-     *
-     * @return static
      */
     public static function invalidRefreshToken(?string $hint = null, Throwable $previous = null): static
     {
@@ -213,9 +167,6 @@ class OAuthServerException extends Exception
 
     /**
      * Access denied.
-     *
-     *
-     * @return static
      */
     public static function accessDenied(?string $hint = null, ?string $redirectUri = null, Throwable $previous = null): static
     {
@@ -232,9 +183,6 @@ class OAuthServerException extends Exception
 
     /**
      * Invalid grant.
-     *
-     *
-     * @return static
      */
     public static function invalidGrant(string $hint = ''): static
     {
@@ -256,10 +204,6 @@ class OAuthServerException extends Exception
 
     /**
      * Generate a HTTP response.
-     *
-     * @param bool              $useFragment True if errors should be in the URI fragment instead of query string
-     * @param int               $jsonOptions options passed to json_encode
-     *
      */
     public function generateHttpResponse(ResponseInterface $response, bool $useFragment = false, int $jsonOptions = 0): ResponseInterface
     {
@@ -325,7 +269,6 @@ class OAuthServerException extends Exception
      * getHttpStatusCode() doesn't return a 302 when there's a
      * redirect enabled. This helps when you want to override local
      * error pages but want to let redirects through.
-     *
      */
     public function hasRedirect(): bool
     {
@@ -334,7 +277,6 @@ class OAuthServerException extends Exception
 
     /**
      * Returns the Redirect URI used for redirecting.
-     *
      */
     public function getRedirectUri(): ?string
     {
@@ -343,7 +285,6 @@ class OAuthServerException extends Exception
 
     /**
      * Returns the HTTP status code to send when the exceptions is output.
-     *
      */
     public function getHttpStatusCode(): int
     {

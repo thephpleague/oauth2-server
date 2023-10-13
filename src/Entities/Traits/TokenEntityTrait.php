@@ -33,7 +33,6 @@ trait TokenEntityTrait
 
     /**
      * Associate a scope with the token.
-     *
      */
     public function addScope(ScopeEntityInterface $scope): void
     {
@@ -78,7 +77,6 @@ trait TokenEntityTrait
 
     /**
      * Get the token user's identifier.
-     *
      */
     public function getUserIdentifier(): string|int|null
     {

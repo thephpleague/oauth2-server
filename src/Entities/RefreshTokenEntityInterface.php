@@ -18,7 +18,6 @@ interface RefreshTokenEntityInterface
 {
     /**
      * Get the token's identifier.
-     *
      */
     public function getIdentifier(): string;
 

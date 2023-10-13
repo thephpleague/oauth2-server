@@ -26,7 +26,6 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
      * Create a new access token
      *
      * @param ScopeEntityInterface[] $scopes
-     *
      */
     public function getNewToken(
         ClientEntityInterface $clientEntity,

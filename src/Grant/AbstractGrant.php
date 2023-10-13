@@ -127,7 +127,6 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Set the private key
-     *
      */
     public function setPrivateKey(CryptKeyInterface $key): void
     {
@@ -147,9 +146,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Validate the client.
      *
-     *
      * @throws OAuthServerException
-     *
      */
     protected function validateClient(ServerRequestInterface $request): ClientEntityInterface
     {
@@ -187,7 +184,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * getClientEntity might return null. By contrast, this method will
      * always either return a ClientEntityInterface or throw.
      *
-     *
+     * TODO: Check if we still need this
      */
     protected function getClientEntityOrFail(string $clientId, ServerRequestInterface $request): ClientEntityInterface
     {
@@ -204,7 +201,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Gets the client credentials from the request from the request body or
      * the Http Basic Authorization header
-     *
      *
      * @return string[]
      */
@@ -228,9 +224,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Validate redirectUri from the request.
-     * If a redirect URI is provided ensure it matches what is pre-registered
-     *
+     * Validate redirectUri from the request. If a redirect URI is provided
+     * ensure it matches what is pre-registered
      *
      * @throws OAuthServerException
      */
@@ -282,7 +277,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Converts a scopes query string to an array to easily iterate for validation.
      *
-     *
      * @return string[]
      */
     private function convertScopesQueryStringToArray(string $scopes): array
@@ -294,8 +288,6 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Retrieve request parameter.
-     *
-     *
      */
     protected function getRequestParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): mixed
     {
@@ -310,7 +302,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      * second is the password (so list() will work). If the header does
      * not exist, or is otherwise an invalid HTTP Basic header, return
      * [null, null].
-     *
      *
      * @return string[]|null[]
      */
@@ -340,8 +331,6 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Retrieve query string parameter.
-     *
-     *
      */
     protected function getQueryStringParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
     {
@@ -350,8 +339,6 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Retrieve cookie parameter.
-     *
-     *
      */
     protected function getCookieParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
     {
@@ -360,8 +347,6 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Retrieve server parameter.
-     *
-     *
      */
     protected function getServerParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
     {
@@ -410,7 +395,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
-     *
      */
     protected function issueAuthCode(
         DateInterval $authCodeTTL,
@@ -449,10 +433,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     *
      * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
-     *
      */
     protected function issueRefreshToken(AccessTokenEntityInterface $accessToken): ?RefreshTokenEntityInterface
     {
@@ -484,9 +466,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Generate a new unique identifier.
      *
-     *
      * @throws OAuthServerException
-     *
      */
     protected function generateUniqueIdentifier(int $length = 40): string
     {

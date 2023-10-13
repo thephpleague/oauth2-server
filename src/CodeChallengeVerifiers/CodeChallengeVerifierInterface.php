@@ -16,14 +16,11 @@ interface CodeChallengeVerifierInterface
 {
     /**
      * Return code challenge method.
-     *
      */
     public function getMethod(): string;
 
     /**
      * Verify the code challenge.
-     *
-     *
      */
     public function verifyCodeChallenge(string $codeVerifier, string $codeChallenge): bool;
 }

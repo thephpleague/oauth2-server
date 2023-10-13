@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Authorization Request objects are now created through the factory method, `createAuthorizationRequest()` (PR #1111)
 - Changed parameters for `finalizeScopes()` to allow a reference to an auth code ID (PR #1112)
 
+### Removed
+- Removed message property from OAuthException HTTP response. Now just use error_description as per the OAuth 2 spec (PR #1375)
+
 ### [8.3.6] - released 2022-11-14
 ### Fixed
 - Use LooseValidAt instead of StrictValidAt so that users aren't forced to use claims such as NBF in their JWT tokens (PR #1312)

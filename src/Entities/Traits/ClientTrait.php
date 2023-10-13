@@ -34,9 +34,8 @@ trait ClientTrait
     }
 
     /**
-     * Returns the registered redirect URI (as a string).
-     *
-     * Alternatively return an indexed array of redirect URIs.
+     * Returns the registered redirect URI (as a string). Alternatively return
+     * an indexed array of redirect URIs.
      *
      * @return string|string[]
      */
@@ -47,7 +46,6 @@ trait ClientTrait
 
     /**
      * Returns true if the client is confidential.
-     *
      */
     public function isConfidential(): bool
     {

@@ -28,9 +28,7 @@ trait CryptTrait
     /**
      * Encrypt data with encryptionKey.
      *
-     *
      * @throws LogicException
-     *
      */
     protected function encrypt(string $unencryptedData): string
     {
@@ -52,9 +50,7 @@ trait CryptTrait
     /**
      * Decrypt data with encryptionKey.
      *
-     *
      * @throws LogicException
-     *
      */
     protected function decrypt(string $encryptedData): string
     {

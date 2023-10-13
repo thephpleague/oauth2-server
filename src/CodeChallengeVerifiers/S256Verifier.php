@@ -22,7 +22,6 @@ class S256Verifier implements CodeChallengeVerifierInterface
 {
     /**
      * Return code challenge method.
-     *
      */
     public function getMethod(): string
     {
@@ -31,8 +30,6 @@ class S256Verifier implements CodeChallengeVerifierInterface
 
     /**
      * Verify the code challenge.
-     *
-     *
      */
     public function verifyCodeChallenge(string $codeVerifier, string $codeChallenge): bool
     {

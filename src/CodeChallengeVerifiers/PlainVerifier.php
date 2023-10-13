@@ -18,7 +18,6 @@ class PlainVerifier implements CodeChallengeVerifierInterface
 {
     /**
      * Return code challenge method.
-     *
      */
     public function getMethod(): string
     {
@@ -27,8 +26,6 @@ class PlainVerifier implements CodeChallengeVerifierInterface
 
     /**
      * Verify the code challenge.
-     *
-     *
      */
     public function verifyCodeChallenge(string $codeVerifier, string $codeChallenge): bool
     {

@@ -24,7 +24,6 @@ interface ScopeRepositoryInterface extends RepositoryInterface
      * Return information about a scope.
      *
      * @param string $identifier The scope identifier
-     *
      */
     public function getScopeEntityByIdentifier(string $identifier): ?ScopeEntityInterface;
 

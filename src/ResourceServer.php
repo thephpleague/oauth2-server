@@ -20,23 +20,15 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ResourceServer
 {
-    private AccessTokenRepositoryInterface $accessTokenRepository;
-
     private CryptKeyInterface $publicKey;
 
     private ?AuthorizationValidatorInterface $authorizationValidator = null;
 
-    /**
-     * New server instance.
-     *
-     * @param null|AuthorizationValidatorInterface $authorizationValidator
-     */
     public function __construct(
-        AccessTokenRepositoryInterface $accessTokenRepository,
+        private AccessTokenRepositoryInterface $accessTokenRepository,
         CryptKeyInterface|string $publicKey,
         AuthorizationValidatorInterface $authorizationValidator = null
     ) {
-        $this->accessTokenRepository = $accessTokenRepository;
 
         if ($publicKey instanceof CryptKeyInterface === false) {
             $publicKey = new CryptKey($publicKey);
@@ -62,9 +54,7 @@ class ResourceServer
     /**
      * Determine the access token validity.
      *
-     *
      * @throws OAuthServerException
-     *
      */
     public function validateAuthenticatedRequest(ServerRequestInterface $request): ServerRequestInterface
     {

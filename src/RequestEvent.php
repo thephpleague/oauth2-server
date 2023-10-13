@@ -24,16 +24,9 @@ class RequestEvent extends Event
     public const REFRESH_TOKEN_ISSUED = 'refresh_token.issued';
     public const ACCESS_TOKEN_ISSUED = 'access_token.issued';
 
-    private ServerRequestInterface $request;
-
-    /**
-     * RequestEvent constructor.
-     *
-     */
-    public function __construct(string $name, ServerRequestInterface $request)
+    public function __construct(string $name, private ServerRequestInterface $request)
     {
         parent::__construct($name);
-        $this->request = $request;
     }
 
     /**

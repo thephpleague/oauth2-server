@@ -20,56 +20,47 @@ class AuthorizationRequest implements AuthorizationRequestInterface
 {
     /**
      * The grant type identifier
-     *
      */
     protected string $grantTypeId;
 
     /**
      * The client identifier
-     *
      */
     protected ClientEntityInterface $client;
 
     /**
      * The user identifier
-     *
      */
     protected UserEntityInterface $user;
 
     /**
      * An array of scope identifiers
-     *
      * @var ScopeEntityInterface[]
      */
     protected array $scopes = [];
 
     /**
      * Has the user authorized the authorization request
-     *
      */
     protected bool $authorizationApproved = false;
 
     /**
      * The redirect URI used in the request
-     *
      */
     protected ?string $redirectUri = null;
 
     /**
      * The state parameter on the authorization request
-     *
      */
     protected ?string $state = null;
 
     /**
      * The code challenge (if provided)
-     *
      */
     protected string $codeChallenge;
 
     /**
      * The code challenge method (if provided)
-     *
      */
     protected string $codeChallengeMethod;
 

@@ -80,9 +80,7 @@ class PasswordGrant extends AbstractGrant
     }
 
     /**
-     *
      * @throws OAuthServerException
-     *
      */
     protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client): UserEntityInterface
     {

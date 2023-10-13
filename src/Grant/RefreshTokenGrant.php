@@ -96,7 +96,6 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
-     *
      * @throws OAuthServerException
      *
      * @return array<string, mixed>

@@ -18,7 +18,6 @@ interface TokenInterface
 {
     /**
      * Get the token's identifier.
-     *
      */
     public function getIdentifier(): string;
 
@@ -29,7 +28,6 @@ interface TokenInterface
 
     /**
      * Get the token's expiry date time.
-     *
      */
     public function getExpiryDateTime(): DateTimeImmutable;
 

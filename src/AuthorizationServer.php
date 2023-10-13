@@ -48,12 +48,6 @@ class AuthorizationServer implements EmitterAwareInterface
 
     protected ResponseTypeInterface $responseType;
 
-    private ClientRepositoryInterface $clientRepository;
-
-    private AccessTokenRepositoryInterface $accessTokenRepository;
-
-    private ScopeRepositoryInterface $scopeRepository;
-
     private string|Key $encryptionKey;
 
     private string $defaultScope = '';
@@ -64,16 +58,13 @@ class AuthorizationServer implements EmitterAwareInterface
      * New server instance
      */
     public function __construct(
-        ClientRepositoryInterface $clientRepository,
-        AccessTokenRepositoryInterface $accessTokenRepository,
-        ScopeRepositoryInterface $scopeRepository,
+        private ClientRepositoryInterface $clientRepository,
+        private AccessTokenRepositoryInterface $accessTokenRepository,
+        private ScopeRepositoryInterface $scopeRepository,
         CryptKeyInterface|string $privateKey,
         Key|string $encryptionKey,
         ResponseTypeInterface|null $responseType = null
     ) {
-        $this->clientRepository = $clientRepository;
-        $this->accessTokenRepository = $accessTokenRepository;
-        $this->scopeRepository = $scopeRepository;
 
         if ($privateKey instanceof CryptKeyInterface === false) {
             $privateKey = new CryptKey($privateKey);

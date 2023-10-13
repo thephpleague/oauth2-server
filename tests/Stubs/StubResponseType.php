@@ -14,10 +14,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class StubResponseType extends AbstractResponseType
 {
-    public function __construct()
-    {
-    }
-
     public function getAccessToken(): AccessTokenEntityInterface
     {
         return $this->accessToken;

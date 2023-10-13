@@ -19,9 +19,6 @@ interface UserRepositoryInterface extends RepositoryInterface
 {
     /**
      * Get a user entity.
-     *
-     * @param string                $grantType    The grant type used
-     *
      */
     public function getUserEntityByUserCredentials(
         string $username,

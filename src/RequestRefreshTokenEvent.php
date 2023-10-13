@@ -17,12 +17,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestRefreshTokenEvent extends RequestEvent
 {
-    private RefreshTokenEntityInterface $refreshToken;
-
-    public function __construct(string $name, ServerRequestInterface $request, RefreshTokenEntityInterface $refreshToken)
+    public function __construct(string $name, ServerRequestInterface $request, private RefreshTokenEntityInterface $refreshToken)
     {
         parent::__construct($name, $request);
-        $this->refreshToken = $refreshToken;
     }
 
     /**

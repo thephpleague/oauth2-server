@@ -16,20 +16,17 @@ interface ClientEntityInterface
 {
     /**
      * Get the client's identifier.
-     *
      */
     public function getIdentifier(): string;
 
     /**
      * Get the client's name.
-     *
      */
     public function getName(): string;
 
     /**
-     * Returns the registered redirect URI (as a string).
-     *
-     * Alternatively return an indexed array of redirect URIs.
+     * Returns the registered redirect URI (as a string). Alternatively return
+     * an indexed array of redirect URIs.
      *
      * @return string|string[]
      */
@@ -37,7 +34,6 @@ interface ClientEntityInterface
 
     /**
      * Returns true if the client is confidential.
-     *
      */
     public function isConfidential(): bool;
 }

@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace League\OAuth2\Server\Middleware;
 
-use Exception;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Psr\Http\Message\ResponseInterface;
@@ -20,11 +19,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ResourceServerMiddleware
 {
-    private ResourceServer $server;
-
-    public function __construct(ResourceServer $server)
+    public function __construct(private ResourceServer $server)
     {
-        $this->server = $server;
     }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface

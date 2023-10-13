@@ -16,7 +16,6 @@ trait ScopeTrait
 {
     /**
      * Serialize the object to the scopes string identifier when using json_encode().
-     *
      */
     public function jsonSerialize(): string
     {

@@ -56,7 +56,6 @@ trait AccessTokenTrait
 
     /**
      * Generate a JWT from the access token
-     *
      */
     private function convertToJWT(): Token
     {
@@ -75,6 +74,8 @@ trait AccessTokenTrait
 
     /**
      * Generate a string representation from the access token
+     *
+     * TODO: Want to remove this function.
      */
     public function __toString(): string
     {

@@ -42,7 +42,6 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     /**
      * Validates the redirect uri.
      *
-     *
      * @return bool Return true if valid, false otherwise
      */
     public function validateRedirectUri(string $redirectUri): bool
@@ -58,8 +57,6 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      * According to section 7.3 of rfc8252, loopback uris are:
      *   - "http://127.0.0.1:{port}/{path}" for IPv4
      *   - "http://[::1]:{port}/{path}" for IPv6
-     *
-     *
      */
     private function isLoopbackUri(string $redirectUri): bool
     {
@@ -75,9 +72,6 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
 
     /**
      * Find an exact match among allowed uris
-     *
-     *
-     * @return bool Return true if an exact match is found, false otherwise
      */
     private function matchExactUri(string $redirectUri): bool
     {
@@ -86,9 +80,6 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
 
     /**
      * Find a match among allowed uris, allowing for different port numbers
-     *
-     *
-     * @return bool Return true if a match is found, false otherwise
      */
     private function matchUriExcludingPort(string $redirectUri): bool
     {
@@ -105,8 +96,6 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
 
     /**
      * Parse an url like \parse_url, excluding the port
-     *
-     *
      */
     private function parseUrlAndRemovePort(string $url): string
     {

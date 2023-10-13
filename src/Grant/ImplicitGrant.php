@@ -30,19 +30,12 @@ use function time;
 
 class ImplicitGrant extends AbstractAuthorizeGrant
 {
-    private DateInterval $accessTokenTTL;
-
-    private string $queryDelimiter;
-
-    public function __construct(DateInterval $accessTokenTTL, string $queryDelimiter = '#')
+    public function __construct(private DateInterval $accessTokenTTL, private string $queryDelimiter = '#')
     {
-        $this->accessTokenTTL = $accessTokenTTL;
-        $this->queryDelimiter = $queryDelimiter;
     }
 
     /**
-     *
-     * @throw LogicException
+     * @throws LogicException
      */
     public function setRefreshTokenTTL(DateInterval $refreshTokenTTL): void
     {
@@ -50,8 +43,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
     }
 
     /**
-     *
-     * @throw LogicException
+     * @throws LogicException
      */
     public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository): void
     {
@@ -68,7 +60,6 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
     /**
      * Return the grant identifier that can be used in matching up requests.
-     *
      */
     public function getIdentifier(): string
     {
@@ -77,8 +68,6 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
     /**
      * Respond to an incoming request.
-     *
-     *
      */
     public function respondToAccessTokenRequest(
         ServerRequestInterface $request,
@@ -163,6 +152,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
         }
 
+        // TODO: Need to tidy up the nested ternary expressions
         $finalRedirectUri = ($authorizationRequest->getRedirectUri() === null)
             ? is_array($authorizationRequest->getClient()->getRedirectUri())
                 ? $authorizationRequest->getClient()->getRedirectUri()[0]

@@ -39,20 +39,16 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
 {
     use CryptTrait;
 
-    private AccessTokenRepositoryInterface $accessTokenRepository;
-
     protected CryptKeyInterface $publicKey;
 
     private Configuration $jwtConfiguration;
 
-    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository)
+    public function __construct(private AccessTokenRepositoryInterface $accessTokenRepository)
     {
-        $this->accessTokenRepository = $accessTokenRepository;
     }
 
     /**
      * Set the public key
-     *
      */
     public function setPublicKey(CryptKeyInterface $key): void
     {
@@ -113,7 +109,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             throw OAuthServerException::accessDenied('Access token could not be verified');
         }
 
-        if (! $token instanceof UnencryptedToken) {
+        if (!$token instanceof UnencryptedToken) {
             throw OAuthServerException::accessDenied('Access token is not an instance of UnencryptedToken');
         }
 
@@ -135,6 +131,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     /**
      * Convert single record arrays into strings to ensure backwards compatibility between v4 and v3.x of lcobucci/jwt
      *
+     * TODO: Investigate as I don't think we need this any more
      *
      * @return array<string>|string
      */
