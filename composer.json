@@ -14,7 +14,7 @@
         "lcobucci/clock": "^2.2 || ^3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.6.6",
+        "phpunit/phpunit": "^9.6.11",
         "laminas/laminas-diactoros": "^3.0.0",
         "phpstan/phpstan": "^1.10.26",
         "phpstan/phpstan-phpunit": "^1.3.14",
