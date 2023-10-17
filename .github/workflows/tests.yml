@@ -8,19 +8,29 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
-        php: [7.4, 8.0, 8.1]
+        php: [8.1, 8.2]
+        os: [ubuntu-22.04]
         stability: [prefer-lowest, prefer-stable]
+        include:
+          - os: ubuntu-20.04
+            php: 8.0
+            stability: prefer-lowest
+          - os: ubuntu-20.04
+            php: 8.0
+            stability: prefer-stable
+
+    runs-on: ${{ matrix.os }}
 
     name: PHP ${{ matrix.php }} - ${{ matrix.stability }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with: 
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -30,13 +40,17 @@ jobs:
           coverage: pcov
 
       - name: Install dependencies
-        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+        run:
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+
+      - name: Install Scrutinizer/Ocular
+        run:
+          composer global require scrutinizer/ocular
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose --coverage-clover=coverage.clover
 
       - name: Code coverage
-        if: ${{ github.ref == 'refs/heads/master' && matrix.php != 8.0 && github.repository == 'thephpleague/oauth2-server' }}
-        run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+        if: ${{ github.ref == 'refs/heads/master' && github.repository == 'thephpleague/oauth2-server' }}
+        run:
+          ~/.composer/vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover

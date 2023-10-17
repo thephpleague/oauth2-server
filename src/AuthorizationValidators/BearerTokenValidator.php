@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace League\OAuth2\Server\AuthorizationValidators;
 
+use DateInterval;
 use DateTimeZone;
 use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
@@ -43,7 +44,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
 
     private Configuration $jwtConfiguration;
 
-    public function __construct(private AccessTokenRepositoryInterface $accessTokenRepository)
+    public function __construct(private AccessTokenRepositoryInterface $accessTokenRepository, private ?DateInterval $jwtValidAtDateLeeway = null)
     {
     }
 
@@ -67,6 +68,8 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             InMemory::plainText('empty', 'empty')
         );
 
+        $clock = new SystemClock(new DateTimeZone(date_default_timezone_get()));
+
         $publicKeyContents = $this->publicKey->getKeyContents();
 
         if ($publicKeyContents === '') {
@@ -74,7 +77,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         }
 
         $this->jwtConfiguration->setValidationConstraints(
-            new LooseValidAt(new SystemClock(new DateTimeZone(date_default_timezone_get()))),
+            new LooseValidAt($clock, $this->jwtValidAtDateLeeway),
             new SignedWith(
                 new Sha256(),
                 InMemory::plainText($publicKeyContents, $this->publicKey->getPassPhrase() ?? '')
@@ -106,7 +109,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             $constraints = $this->jwtConfiguration->validationConstraints();
             $this->jwtConfiguration->validator()->assert($token, ...$constraints);
         } catch (RequiredConstraintsViolated $exception) {
-            throw OAuthServerException::accessDenied('Access token could not be verified');
+            throw OAuthServerException::accessDenied('Access token could not be verified', null, $exception);
         }
 
         if (!$token instanceof UnencryptedToken) {

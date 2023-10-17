@@ -386,6 +386,9 @@ abstract class AbstractGrant implements GrantTypeInterface
                 }
             }
         }
+
+        // This should never be hit. It is here to work around a PHPStan false error
+        return $accessToken;
     }
 
     /**
@@ -430,6 +433,9 @@ abstract class AbstractGrant implements GrantTypeInterface
                 }
             }
         }
+
+        // This should never be hit. It is here to work around a PHPStan false error
+        return $authCode;
     }
 
     /**
@@ -461,6 +467,9 @@ abstract class AbstractGrant implements GrantTypeInterface
                 }
             }
         }
+
+        // This should never be hit. It is here to work around a PHPStan false error
+        return $refreshToken;
     }
 
     /**

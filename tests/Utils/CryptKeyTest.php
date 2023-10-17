@@ -67,7 +67,7 @@ class CryptKeyTest extends TestCase
     public function testUnsupportedKeyType(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Unable to read key');
+        $this->expectExceptionMessage('Invalid key supplied');
 
         try {
             // Create the keypair

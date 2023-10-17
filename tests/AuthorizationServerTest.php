@@ -40,6 +40,7 @@ use function random_bytes;
 class AuthorizationServerTest extends TestCase
 {
     private const DEFAULT_SCOPE = 'basic';
+    private const REDIRECT_URI = 'https://foo/bar';
 
     public function setUp(): void
     {
@@ -92,7 +93,7 @@ class AuthorizationServerTest extends TestCase
         $client = new ClientEntity();
 
         $client->setConfidential();
-        $client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri(self::REDIRECT_URI);
 
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn($client);
@@ -272,7 +273,7 @@ class AuthorizationServerTest extends TestCase
     public function testValidateAuthorizationRequest(): void
     {
         $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri(self::REDIRECT_URI);
         $client->setConfidential();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);

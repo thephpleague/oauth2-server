@@ -71,7 +71,7 @@ class CryptKey implements CryptKeyInterface
                 throw new LogicException('Unable to read key from file ' . $keyPath);
             }
         } else {
-            throw new LogicException('Unable to read key from file ' . $keyPath);
+            throw new LogicException('Invalid key supplied');
         }
 
         if ($keyPermissionsCheck === true) {

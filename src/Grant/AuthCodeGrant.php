@@ -128,39 +128,18 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code', $e);
         }
 
-        // Validate code challenge
-        if (isset($authCodePayload->code_challenge) && $authCodePayload->code_challenge !== '') {
-            $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
+        $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
 
-            if ($codeVerifier === null) {
-                throw OAuthServerException::invalidRequest('code_verifier');
-            }
+        // If a code challenge isn't present but a code verifier is, reject the request to block PKCE downgrade attack
+        if (!isset($authCodePayload->code_challenge) && $codeVerifier !== null) {
+            throw OAuthServerException::invalidRequest(
+                'code_challenge',
+                'code_verifier received when no code_challenge is present'
+            );
+        }
 
-            // Validate code_verifier according to RFC-7636
-            // @see: https://tools.ietf.org/html/rfc7636#section-4.1
-            if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeVerifier) !== 1) {
-                throw OAuthServerException::invalidRequest(
-                    'code_verifier',
-                    'Code Verifier must follow the specifications of RFC-7636.'
-                );
-            }
-
-            if (property_exists($authCodePayload, 'code_challenge_method')) {
-                if (isset($this->codeChallengeVerifiers[$authCodePayload->code_challenge_method])) {
-                    $codeChallengeVerifier = $this->codeChallengeVerifiers[$authCodePayload->code_challenge_method];
-
-                    if ($codeChallengeVerifier->verifyCodeChallenge($codeVerifier, $authCodePayload->code_challenge) === false) {
-                        throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
-                    }
-                } else {
-                    throw OAuthServerException::serverError(
-                        sprintf(
-                            'Unsupported code challenge method `%s`',
-                            $authCodePayload->code_challenge_method
-                        )
-                    );
-                }
-            }
+        if (isset($authCodePayload->code_challenge)) {
+            $this->validateCodeChallenge($authCodePayload, $codeVerifier);
         }
 
         // Issue and persist new access token
@@ -180,6 +159,39 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $this->authCodeRepository->revokeAuthCode($authCodePayload->auth_code_id);
 
         return $responseType;
+    }
+
+    private function validateCodeChallenge(object $authCodePayload, ?string $codeVerifier): void
+    {
+        if ($codeVerifier === null) {
+            throw OAuthServerException::invalidRequest('code_verifier');
+        }
+
+        // Validate code_verifier according to RFC-7636
+        // @see: https://tools.ietf.org/html/rfc7636#section-4.1
+        if (preg_match('/^[A-Za-z0-9-._~]{43,128}$/', $codeVerifier) !== 1) {
+            throw OAuthServerException::invalidRequest(
+                'code_verifier',
+                'Code Verifier must follow the specifications of RFC-7636.'
+            );
+        }
+
+        if (property_exists($authCodePayload, 'code_challenge_method')) {
+            if (isset($this->codeChallengeVerifiers[$authCodePayload->code_challenge_method])) {
+                $codeChallengeVerifier = $this->codeChallengeVerifiers[$authCodePayload->code_challenge_method];
+
+                if (!isset($authCodePayload->code_challenge) || $codeChallengeVerifier->verifyCodeChallenge($codeVerifier, $authCodePayload->code_challenge) === false) {
+                    throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
+                }
+            } else {
+                throw OAuthServerException::serverError(
+                    sprintf(
+                        'Unsupported code challenge method `%s`',
+                        $authCodePayload->code_challenge_method
+                    )
+                );
+            }
+        }
     }
 
     /**

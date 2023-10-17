@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
 class ImplicitGrantTest extends TestCase
 {
     private const DEFAULT_SCOPE = 'basic';
+    private const REDIRECT_URI = 'https://foo/bar';
 
     protected CryptTraitStub $cryptStub;
 
@@ -79,7 +80,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequest(): void
     {
         $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri(self::REDIRECT_URI);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -95,7 +96,7 @@ class ImplicitGrantTest extends TestCase
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id'     => 'foo',
-            'redirect_uri'  => 'http://foo/bar',
+            'redirect_uri'  => self::REDIRECT_URI,
         ]);
 
         self::assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
@@ -104,7 +105,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequestRedirectUriArray(): void
     {
         $client = new ClientEntity();
-        $client->setRedirectUri(['http://foo/bar']);
+        $client->setRedirectUri([self::REDIRECT_URI]);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -120,7 +121,7 @@ class ImplicitGrantTest extends TestCase
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id' => 'foo',
-            'redirect_uri' => 'http://foo/bar',
+            'redirect_uri' => self::REDIRECT_URI,
         ]);
 
         self::assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
@@ -163,7 +164,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequestBadRedirectUriString(): void
     {
         $client = new ClientEntity();
-        $client->setRedirectUri('http://foo/bar');
+        $client->setRedirectUri(self::REDIRECT_URI);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
@@ -185,7 +186,7 @@ class ImplicitGrantTest extends TestCase
     public function testValidateAuthorizationRequestBadRedirectUriArray(): void
     {
         $client = new ClientEntity();
-        $client->setRedirectUri(['http://foo/bar']);
+        $client->setRedirectUri([self::REDIRECT_URI]);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
