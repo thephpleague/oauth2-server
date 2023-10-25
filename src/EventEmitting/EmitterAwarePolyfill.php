@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace League\OAuth2\Server\EventEmitting;
@@ -8,10 +9,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 trait EmitterAwarePolyfill
 {
-    /**
-     * @var EventEmitter
-     */
-    private $emitter;
+    private EventEmitter $emitter;
 
     public function getEmitter(): EventEmitter
     {

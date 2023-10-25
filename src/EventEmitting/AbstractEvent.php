@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace League\OAuth2\Server\EventEmitting;
@@ -8,16 +9,10 @@ use Psr\EventDispatcher\StoppableEventInterface;
 
 class AbstractEvent implements StoppableEventInterface, HasEventName
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private bool $propagationStopped = false;
 
-    private $propagationStopped = false;
-
-    public function __construct(string $name)
+    public function __construct(private string $name)
     {
-        $this->name = $name;
     }
 
     public function eventName(): string
