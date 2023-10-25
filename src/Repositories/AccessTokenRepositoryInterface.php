@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Repositories;
 
@@ -22,36 +25,20 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     /**
      * Create a new access token
      *
-     * @param ClientEntityInterface  $clientEntity
      * @param ScopeEntityInterface[] $scopes
-     * @param mixed                  $userIdentifier
-     *
-     * @return AccessTokenEntityInterface
      */
-    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null);
+    public function getNewToken(
+        ClientEntityInterface $clientEntity,
+        array $scopes,
+        mixed $userIdentifier = null
+    ): AccessTokenEntityInterface;
 
     /**
-     * Persists a new access token to permanent storage.
-     *
-     * @param AccessTokenEntityInterface $accessTokenEntity
-     *
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
-    public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity);
+    public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void;
 
-    /**
-     * Revoke an access token.
-     *
-     * @param string $tokenId
-     */
-    public function revokeAccessToken($tokenId);
+    public function revokeAccessToken(string $tokenId): void;
 
-    /**
-     * Check if the access token has been revoked.
-     *
-     * @param string $tokenId
-     *
-     * @return bool Return true if this token has been revoked
-     */
-    public function isAccessTokenRevoked($tokenId);
+    public function isAccessTokenRevoked(string $tokenId): bool;
 }

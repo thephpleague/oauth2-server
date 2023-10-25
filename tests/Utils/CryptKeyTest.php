@@ -1,138 +1,152 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Utils;
 
 use League\OAuth2\Server\CryptKey;
+use LogicException;
 use PHPUnit\Framework\TestCase;
+use Throwable;
+
+use function file_get_contents;
+use function is_string;
+use function openssl_pkey_export;
+use function openssl_pkey_new;
+use function sha1;
+use function sys_get_temp_dir;
+use function unlink;
 
 class CryptKeyTest extends TestCase
 {
-    public function testNoFile()
+    public function testNoFile(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
 
         new CryptKey('undefined file');
     }
 
-    public function testKeyCreation()
+    public function testKeyCreation(): void
     {
         $keyFile = __DIR__ . '/../Stubs/public.key';
         $key = new CryptKey($keyFile, 'secret');
 
-        $this->assertEquals('file://' . $keyFile, $key->getKeyPath());
-        $this->assertEquals('secret', $key->getPassPhrase());
+        self::assertEquals('file://' . $keyFile, $key->getKeyPath());
+        self::assertEquals('secret', $key->getPassPhrase());
     }
 
-    public function testKeyString()
+    public function testKeyString(): void
     {
-        $keyContent = \file_get_contents(__DIR__ . '/../Stubs/public.key');
+        $keyContent = file_get_contents(__DIR__ . '/../Stubs/public.key');
 
-        if (!\is_string($keyContent)) {
-            $this->fail('The public key stub is not a string');
+        if (!is_string($keyContent)) {
+            self::fail('The public key stub is not a string');
         }
 
         $key = new CryptKey($keyContent);
 
-        $this->assertEquals(
+        self::assertEquals(
             $keyContent,
             $key->getKeyContents()
         );
 
-        $keyContent = \file_get_contents(__DIR__ . '/../Stubs/private.key.crlf');
+        $keyContent = file_get_contents(__DIR__ . '/../Stubs/private.key.crlf');
 
-        if (!\is_string($keyContent)) {
-            $this->fail('The private key (crlf) stub is not a string');
+        if (!is_string($keyContent)) {
+            self::fail('The private key (crlf) stub is not a string');
         }
 
         $key = new CryptKey($keyContent);
 
-        $this->assertEquals(
+        self::assertEquals(
             $keyContent,
             $key->getKeyContents()
         );
     }
 
-    public function testUnsupportedKeyType()
+    public function testUnsupportedKeyType(): void
     {
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Unable to read key');
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Invalid key supplied');
 
         try {
             // Create the keypair
-            $res = \openssl_pkey_new([
+            $res = openssl_pkey_new([
                 'digest_alg' => 'sha512',
                 'private_key_bits' => 2048,
                 'private_key_type' => OPENSSL_KEYTYPE_DSA,
             ]);
+
+            if ($res === false) {
+                self::fail('The keypair was not created');
+            }
+
             // Get private key
-            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
+            openssl_pkey_export($res, $keyContent, 'mystrongpassword');
             $path = self::generateKeyPath($keyContent);
 
             new CryptKey($keyContent, 'mystrongpassword');
         } finally {
             if (isset($path)) {
-                @\unlink($path);
+                @unlink($path);
             }
         }
     }
 
-    public function testECKeyType()
+    public function testECKeyType(): void
     {
         try {
             // Create the keypair
-            $res = \openssl_pkey_new([
+            $res = openssl_pkey_new([
                 'digest_alg' => 'sha512',
                 'curve_name' => 'prime256v1',
                 'private_key_type' => OPENSSL_KEYTYPE_EC,
             ]);
+
+            if ($res === false) {
+                self::fail('The keypair was not created');
+            }
+
             // Get private key
-            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
+            openssl_pkey_export($res, $keyContent, 'mystrongpassword');
 
             $key = new CryptKey($keyContent, 'mystrongpassword');
 
-            $this->assertEquals('', $key->getKeyPath());
-            $this->assertEquals('mystrongpassword', $key->getPassPhrase());
-        } catch (\Throwable $e) {
-            $this->fail('The EC key was not created');
-        } finally {
-            if (isset($path)) {
-                @\unlink($path);
-            }
+            self::assertEquals('', $key->getKeyPath());
+            self::assertEquals('mystrongpassword', $key->getPassPhrase());
+        } catch (Throwable $e) {
+            self::fail('The EC key was not created');
         }
     }
 
-    public function testRSAKeyType()
+    public function testRSAKeyType(): void
     {
         try {
             // Create the keypair
-            $res = \openssl_pkey_new([
+            $res = openssl_pkey_new([
                  'digest_alg' => 'sha512',
                  'private_key_bits' => 2048,
                  'private_key_type' => OPENSSL_KEYTYPE_RSA,
             ]);
+
+            if ($res === false) {
+                self::fail('The keypair was not created');
+            }
+
             // Get private key
-            \openssl_pkey_export($res, $keyContent, 'mystrongpassword');
+            openssl_pkey_export($res, $keyContent, 'mystrongpassword');
 
             $key = new CryptKey($keyContent, 'mystrongpassword');
 
-            $this->assertEquals('', $key->getKeyPath());
-            $this->assertEquals('mystrongpassword', $key->getPassPhrase());
-        } catch (\Throwable $e) {
-            $this->fail('The RSA key was not created');
-        } finally {
-            if (isset($path)) {
-                @\unlink($path);
-            }
+            self::assertEquals('', $key->getKeyPath());
+            self::assertEquals('mystrongpassword', $key->getPassPhrase());
+        } catch (Throwable $e) {
+            self::fail('The RSA key was not created');
         }
     }
 
-    /**
-     * @param string $keyContent
-     *
-     * @return string
-     */
-    private static function generateKeyPath($keyContent)
+    private static function generateKeyPath(string $keyContent): string
     {
-        return 'file://' . \sys_get_temp_dir() . '/' . \sha1($keyContent) . '.key';
+        return 'file://' . sys_get_temp_dir() . '/' . sha1($keyContent) . '.key';
     }
 }
