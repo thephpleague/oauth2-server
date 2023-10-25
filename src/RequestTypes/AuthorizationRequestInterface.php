@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Patrick Rodacker <dev@rodacker.de>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\RequestTypes;
 
@@ -15,93 +18,45 @@ use League\OAuth2\Server\Entities\UserEntityInterface;
 
 interface AuthorizationRequestInterface
 {
-    /**
-     * @return UserEntityInterface|null
-     */
-    public function getUser();
+    public function getUser(): UserEntityInterface|null;
 
-    /**
-     * @param string $state
-     */
-    public function setState($state);
+    public function setState(string $state): void;
 
-    /**
-     * @return ClientEntityInterface
-     */
-    public function getClient();
+    public function getClient(): ClientEntityInterface;
 
-    /**
-     * @param bool $authorizationApproved
-     */
-    public function setAuthorizationApproved($authorizationApproved);
+    public function setAuthorizationApproved(bool $authorizationApproved): void;
 
     /**
      * @param ScopeEntityInterface[] $scopes
      */
-    public function setScopes(array $scopes);
+    public function setScopes(array $scopes): void;
 
-    /**
-     * @param string|null $redirectUri
-     */
-    public function setRedirectUri($redirectUri);
+    public function setRedirectUri(?string $redirectUri): void;
 
-    /**
-     * @return string|null
-     */
-    public function getRedirectUri();
+    public function getRedirectUri(): ?string;
 
-    /**
-     * @return string
-     */
-    public function getCodeChallengeMethod();
+    public function getCodeChallengeMethod(): ?string;
 
-    /**
-     * @param string $grantTypeId
-     */
-    public function setGrantTypeId($grantTypeId);
+    public function setGrantTypeId(string $grantTypeId): void;
 
-    /**
-     * @param UserEntityInterface $user
-     */
-    public function setUser(UserEntityInterface $user);
+    public function setUser(UserEntityInterface $user): void;
 
-    /**
-     * @param ClientEntityInterface $client
-     */
-    public function setClient(ClientEntityInterface $client);
+    public function setClient(ClientEntityInterface $client): void;
 
-    /**
-     * @param string $codeChallenge
-     */
-    public function setCodeChallenge($codeChallenge);
+    public function setCodeChallenge(string $codeChallenge): void;
 
-    /**
-     * @return bool
-     */
-    public function isAuthorizationApproved();
+    public function isAuthorizationApproved(): bool;
 
-    /**
-     * @return string|null
-     */
-    public function getState();
+    public function getState(): ?string;
 
-    /**
-     * @return string
-     */
-    public function getCodeChallenge();
+    public function getCodeChallenge(): ?string;
 
-    /**
-     * @param string $codeChallengeMethod
-     */
-    public function setCodeChallengeMethod($codeChallengeMethod);
+    public function setCodeChallengeMethod(string $codeChallengeMethod): void;
 
     /**
      * @return ScopeEntityInterface[]
      */
-    public function getScopes();
+    public function getScopes(): array;
 
-    /**
-     * @return string
-     */
-    public function getGrantTypeId();
+    public function getGrantTypeId(): string;
 }

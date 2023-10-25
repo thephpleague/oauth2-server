@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth 2.0 Client credentials grant.
  *
@@ -8,6 +9,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Grant;
 
@@ -30,7 +33,7 @@ class ClientCredentialsGrant extends AbstractGrant
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
-    ) {
+    ): ResponseTypeInterface {
         list($clientId) = $this->getClientCredentials($request);
 
         $client = $this->getClientEntityOrFail($clientId, $request);
@@ -64,7 +67,7 @@ class ClientCredentialsGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return 'client_credentials';
     }

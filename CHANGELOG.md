@@ -6,9 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- GrantTypeInterface has a new function, `revokeRefreshTokens()` for enabling or disabling refresh tokens after use (PR #1375)
 - A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
 - The authorization server can now finalize scopes when a client uses a refresh token (PR #1094)
 - An AuthorizationRequestInterface to make it easier to extend the AuthorizationRequest (PR #1110)
+- Added function `getKeyContents()` to the `CryptKeyInterface` (PR #1375)
 
 ### Fixed
 - If a refresh token has expired, been revoked, cannot be decrypted, or does not belong to the correct client, the server will now issue an `invalid_grant` error and a HTTP 400 response. In previous versions the server incorrectly issued an `invalid_request` and HTTP 401 response (PR #1042) (PR #1082)
@@ -16,6 +18,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Authorization Request objects are now created through the factory method, `createAuthorizationRequest()` (PR #1111)
 - Changed parameters for `finalizeScopes()` to allow a reference to an auth code ID (PR #1112)
+
+### Removed
+- Removed message property from OAuthException HTTP response. Now just use error_description as per the OAuth 2 spec (PR #1375)
 
 ## [8.5.4] - released 2023-08-25
 ### Added
