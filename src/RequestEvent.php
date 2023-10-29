@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,6 +8,8 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server;
 
 use League\Event\Event;
@@ -14,36 +17,23 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestEvent extends Event
 {
-    const CLIENT_AUTHENTICATION_FAILED = 'client.authentication.failed';
-    const USER_AUTHENTICATION_FAILED = 'user.authentication.failed';
-    const REFRESH_TOKEN_CLIENT_FAILED = 'refresh_token.client.failed';
+    public const CLIENT_AUTHENTICATION_FAILED = 'client.authentication.failed';
+    public const USER_AUTHENTICATION_FAILED = 'user.authentication.failed';
+    public const REFRESH_TOKEN_CLIENT_FAILED = 'refresh_token.client.failed';
 
-    const REFRESH_TOKEN_ISSUED = 'refresh_token.issued';
-    const ACCESS_TOKEN_ISSUED = 'access_token.issued';
+    public const REFRESH_TOKEN_ISSUED = 'refresh_token.issued';
+    public const ACCESS_TOKEN_ISSUED = 'access_token.issued';
 
-    /**
-     * @var ServerRequestInterface
-     */
-    private $request;
-
-    /**
-     * RequestEvent constructor.
-     *
-     * @param string                 $name
-     * @param ServerRequestInterface $request
-     */
-    public function __construct($name, ServerRequestInterface $request)
+    public function __construct(string $name, private ServerRequestInterface $request)
     {
         parent::__construct($name);
-        $this->request = $request;
     }
 
     /**
-     * @return ServerRequestInterface
      *
      * @codeCoverageIgnore
      */
-    public function getRequest()
+    public function getRequest(): ServerRequestInterface
     {
         return $this->request;
     }

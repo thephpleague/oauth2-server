@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,6 +8,8 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Entities\Traits;
 
 use DateTimeImmutable;
@@ -14,26 +17,21 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
-use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use RuntimeException;
 
 trait AccessTokenTrait
 {
-    /**
-     * @var CryptKey
-     */
-    private $privateKey;
+    private CryptKeyInterface $privateKey;
 
-    /**
-     * @var Configuration
-     */
-    private $jwtConfiguration;
+    private Configuration $jwtConfiguration;
 
     /**
      * Set the private key used to encrypt this access token.
      */
-    public function setPrivateKey(CryptKey $privateKey)
+    public function setPrivateKey(CryptKeyInterface $privateKey): void
     {
         $this->privateKey = $privateKey;
     }
@@ -41,21 +39,25 @@ trait AccessTokenTrait
     /**
      * Initialise the JWT Configuration.
      */
-    public function initJwtConfiguration()
+    public function initJwtConfiguration(): void
     {
+        $privateKeyContents = $this->privateKey->getKeyContents();
+
+        if ($privateKeyContents === '') {
+            throw new RuntimeException('Private key is empty');
+        }
+
         $this->jwtConfiguration = Configuration::forAsymmetricSigner(
             new Sha256(),
-            InMemory::plainText($this->privateKey->getKeyContents(), $this->privateKey->getPassPhrase() ?? ''),
+            InMemory::plainText($privateKeyContents, $this->privateKey->getPassPhrase() ?? ''),
             InMemory::plainText('empty', 'empty')
         );
     }
 
     /**
      * Generate a JWT from the access token
-     *
-     * @return Token
      */
-    private function convertToJWT()
+    private function convertToJWT(): Token
     {
         $this->initJwtConfiguration();
 
@@ -72,34 +74,24 @@ trait AccessTokenTrait
 
     /**
      * Generate a string representation from the access token
+     *
+     * TODO: Want to remove this function.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->convertToJWT()->toString();
     }
 
-    /**
-     * @return ClientEntityInterface
-     */
-    abstract public function getClient();
+    abstract public function getClient(): ClientEntityInterface;
 
-    /**
-     * @return DateTimeImmutable
-     */
-    abstract public function getExpiryDateTime();
+    abstract public function getExpiryDateTime(): DateTimeImmutable;
 
-    /**
-     * @return string|int
-     */
-    abstract public function getUserIdentifier();
+    abstract public function getUserIdentifier(): string|int|null;
 
     /**
      * @return ScopeEntityInterface[]
      */
-    abstract public function getScopes();
+    abstract public function getScopes(): array;
 
-    /**
-     * @return string
-     */
-    abstract public function getIdentifier();
+    abstract public function getIdentifier(): string;
 }

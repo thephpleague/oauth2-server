@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Grant;
 
 use DateInterval;
@@ -20,43 +22,41 @@ use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use LogicException;
 use PHPUnit\Framework\TestCase;
 
 class ImplicitGrantTest extends TestCase
 {
-    const DEFAULT_SCOPE = 'basic';
-    const REDIRECT_URI = 'https://foo/bar';
+    private const DEFAULT_SCOPE = 'basic';
+    private const REDIRECT_URI = 'https://foo/bar';
 
-    /**
-     * CryptTrait stub
-     */
-    protected $cryptStub;
+    protected CryptTraitStub $cryptStub;
 
     public function setUp(): void
     {
         $this->cryptStub = new CryptTraitStub();
     }
 
-    public function testGetIdentifier()
+    public function testGetIdentifier(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
-        $this->assertEquals('implicit', $grant->getIdentifier());
+        self::assertEquals('implicit', $grant->getIdentifier());
     }
 
-    public function testCanRespondToAccessTokenRequest()
+    public function testCanRespondToAccessTokenRequest(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
-        $this->assertFalse(
+        self::assertFalse(
             $grant->canRespondToAccessTokenRequest(new ServerRequest())
         );
     }
 
-    public function testRespondToAccessTokenRequest()
+    public function testRespondToAccessTokenRequest(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
 
         $grant->respondToAccessTokenRequest(
             new ServerRequest(),
@@ -65,7 +65,7 @@ class ImplicitGrantTest extends TestCase
         );
     }
 
-    public function testCanRespondToAuthorizationRequest()
+    public function testCanRespondToAuthorizationRequest(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
@@ -74,10 +74,10 @@ class ImplicitGrantTest extends TestCase
             'client_id'     => 'foo',
         ]);
 
-        $this->assertTrue($grant->canRespondToAuthorizationRequest($request));
+        self::assertTrue($grant->canRespondToAuthorizationRequest($request));
     }
 
-    public function testValidateAuthorizationRequest()
+    public function testValidateAuthorizationRequest(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri(self::REDIRECT_URI);
@@ -99,10 +99,10 @@ class ImplicitGrantTest extends TestCase
             'redirect_uri'  => self::REDIRECT_URI,
         ]);
 
-        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
+        self::assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
-    public function testValidateAuthorizationRequestRedirectUriArray()
+    public function testValidateAuthorizationRequestRedirectUriArray(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri([self::REDIRECT_URI]);
@@ -124,10 +124,10 @@ class ImplicitGrantTest extends TestCase
             'redirect_uri' => self::REDIRECT_URI,
         ]);
 
-        $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
+        self::assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
-    public function testValidateAuthorizationRequestMissingClientId()
+    public function testValidateAuthorizationRequestMissingClientId(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -136,13 +136,13 @@ class ImplicitGrantTest extends TestCase
 
         $request = (new ServerRequest())->withQueryParams(['response_type' => 'code']);
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(3);
 
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestInvalidClientId()
+    public function testValidateAuthorizationRequestInvalidClientId(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn(null);
@@ -155,13 +155,13 @@ class ImplicitGrantTest extends TestCase
             'client_id'     => 'foo',
         ]);
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestBadRedirectUriString()
+    public function testValidateAuthorizationRequestBadRedirectUriString(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri(self::REDIRECT_URI);
@@ -177,13 +177,13 @@ class ImplicitGrantTest extends TestCase
             'redirect_uri' => 'http://bar',
         ]);
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testValidateAuthorizationRequestBadRedirectUriArray()
+    public function testValidateAuthorizationRequestBadRedirectUriArray(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri([self::REDIRECT_URI]);
@@ -199,17 +199,17 @@ class ImplicitGrantTest extends TestCase
             'redirect_uri'  => 'http://bar',
         ]);
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testCompleteAuthorizationRequest()
+    public function testCompleteAuthorizationRequest(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('identifier');
-        $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setRedirectUri('https://foo/bar');
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -228,18 +228,19 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
+        self::assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    public function testCompleteAuthorizationRequestDenied()
+    public function testCompleteAuthorizationRequestDenied(): void
     {
         $client = new ClientEntity();
-        $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setIdentifier('clientId');
+        $client->setRedirectUri('https://foo/bar');
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(false);
@@ -254,22 +255,22 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(9);
 
         $grant->completeAuthorizationRequest($authRequest);
     }
 
-    public function testAccessTokenRepositoryUniqueConstraintCheck()
+    public function testAccessTokenRepositoryUniqueConstraintCheck(): void
     {
         $client = new ClientEntity();
-        $client->setIdentifier('identifier');
-        $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setIdentifier('clientId');
+        $client->setRedirectUri('https://foo/bar');
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);
@@ -285,12 +286,12 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
 
-        $matcher = $this->exactly(2);
+        $matcher = self::exactly(2);
 
         $accessTokenRepositoryMock
             ->expects($matcher)
             ->method('persistNewAccessToken')
-            ->willReturnCallback(function () use ($matcher) {
+            ->willReturnCallback(function () use ($matcher): void {
                 if ($matcher->getInvocationCount() === 1) {
                     throw UniqueTokenIdentifierConstraintViolationException::create();
                 }
@@ -299,19 +300,24 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
+        self::assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
-    public function testAccessTokenRepositoryFailToPersist()
+    public function testAccessTokenRepositoryFailToPersist(): void
     {
+        $client = new ClientEntity();
+
+        $client->setRedirectUri('https://foo/bar');
+
         $authRequest = new AuthorizationRequest();
+
         $authRequest->setAuthorizationApproved(true);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
@@ -323,22 +329,27 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(7);
 
         $grant->completeAuthorizationRequest($authRequest);
     }
 
-    public function testAccessTokenRepositoryFailToPersistUniqueNoInfiniteLoop()
+    public function testAccessTokenRepositoryFailToPersistUniqueNoInfiniteLoop(): void
     {
+        $client = new ClientEntity();
+
+        $client->setRedirectUri('https://foo/bar');
+
         $authRequest = new AuthorizationRequest();
+
         $authRequest->setAuthorizationApproved(true);
-        $authRequest->setClient(new ClientEntity());
+        $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
@@ -350,42 +361,42 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $grant = new ImplicitGrant(new \DateInterval('PT10M'));
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $this->expectException(\League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException::class);
+        $this->expectException(UniqueTokenIdentifierConstraintViolationException::class);
         $this->expectExceptionCode(100);
 
         $grant->completeAuthorizationRequest($authRequest);
     }
 
-    public function testSetRefreshTokenTTL()
+    public function testSetRefreshTokenTTL(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
 
         $grant->setRefreshTokenTTL(new DateInterval('PT10M'));
     }
 
-    public function testSetRefreshTokenRepository()
+    public function testSetRefreshTokenRepository(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
 
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
     }
 
-    public function testCompleteAuthorizationRequestNoUser()
+    public function testCompleteAuthorizationRequestNoUser(): void
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
 
         $grant->completeAuthorizationRequest(new AuthorizationRequest());
     }

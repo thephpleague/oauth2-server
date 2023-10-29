@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Grant;
 
 use DateInterval;
 use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -23,24 +25,25 @@ use PHPUnit\Framework\TestCase;
 
 class PasswordGrantTest extends TestCase
 {
-    const DEFAULT_SCOPE = 'basic';
+    private const DEFAULT_SCOPE = 'basic';
 
-    public function testGetIdentifier()
+    public function testGetIdentifier(): void
     {
         $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
         $grant = new PasswordGrant($userRepositoryMock, $refreshTokenRepositoryMock);
-        $this->assertEquals('password', $grant->getIdentifier());
+        self::assertEquals('password', $grant->getIdentifier());
     }
 
-    public function testRespondToRequest()
+    public function testRespondToRequest(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
@@ -76,17 +79,17 @@ class PasswordGrantTest extends TestCase
         $responseType = new StubResponseType();
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
-        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
-        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
+        self::assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
-    public function testRespondToRequestNullRefreshToken()
+    public function testRespondToRequestNullRefreshToken(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
@@ -119,13 +122,12 @@ class PasswordGrantTest extends TestCase
         ]);
 
         $responseType = new StubResponseType();
-        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new \DateInterval('PT5M'));
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
-        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
-        $this->assertNull($responseType->getRefreshToken());
+        self::assertNull($responseType->getRefreshToken());
     }
 
-    public function testRespondToRequestMissingUsername()
+    public function testRespondToRequestMissingUsername(): void
     {
         $client = new ClientEntity();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
@@ -148,12 +150,12 @@ class PasswordGrantTest extends TestCase
 
         $responseType = new StubResponseType();
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRespondToRequestMissingPassword()
+    public function testRespondToRequestMissingPassword(): void
     {
         $client = new ClientEntity();
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
@@ -177,18 +179,19 @@ class PasswordGrantTest extends TestCase
 
         $responseType = new StubResponseType();
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRespondToRequestBadCredentials()
+    public function testRespondToRequestBadCredentials(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri('http://foo/bar');
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
@@ -197,9 +200,14 @@ class PasswordGrantTest extends TestCase
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
+
         $grant = new PasswordGrant($userRepositoryMock, $refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setScopeRepository($scopeRepositoryMock);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id' => 'foo',
@@ -210,7 +218,7 @@ class PasswordGrantTest extends TestCase
 
         $responseType = new StubResponseType();
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(6);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));

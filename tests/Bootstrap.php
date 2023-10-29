@@ -1,6 +1,6 @@
 <?php
 
-\error_reporting(E_ALL);
+declare(strict_types=1);
 
 if (!@include_once __DIR__ . '/../vendor/autoload.php') {
     $message = <<<MSG

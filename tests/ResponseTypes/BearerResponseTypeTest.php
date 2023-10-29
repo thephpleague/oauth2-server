@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\ResponseTypes;
 
 use DateInterval;
@@ -16,15 +18,19 @@ use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
+
+use function base64_encode;
+use function json_decode;
+use function random_bytes;
+use function sprintf;
 
 class BearerResponseTypeTest extends TestCase
 {
-    public function testGenerateHttpResponse()
+    public function testGenerateHttpResponse(): void
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
+        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -50,25 +56,24 @@ class BearerResponseTypeTest extends TestCase
 
         $response = $responseType->generateHttpResponse(new Response());
 
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('no-cache', $response->getHeader('pragma')[0]);
-        $this->assertEquals('no-store', $response->getHeader('cache-control')[0]);
-        $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertEquals('no-cache', $response->getHeader('pragma')[0]);
+        self::assertEquals('no-store', $response->getHeader('cache-control')[0]);
+        self::assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
 
         $response->getBody()->rewind();
-        $json = \json_decode($response->getBody()->getContents());
-        $this->assertEquals('Bearer', $json->token_type);
-        $this->assertObjectHasProperty('expires_in', $json);
-        $this->assertObjectHasProperty('access_token', $json);
-        $this->assertObjectHasProperty('refresh_token', $json);
+        $json = json_decode($response->getBody()->getContents());
+        self::assertEquals('Bearer', $json->token_type);
+        self::assertObjectHasProperty('expires_in', $json);
+        self::assertObjectHasProperty('access_token', $json);
+        self::assertObjectHasProperty('refresh_token', $json);
     }
 
-    public function testGenerateHttpResponseWithExtraParams()
+    public function testGenerateHttpResponseWithExtraParams(): void
     {
         $responseType = new BearerTokenResponseWithParams();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
+        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -94,28 +99,27 @@ class BearerResponseTypeTest extends TestCase
 
         $response = $responseType->generateHttpResponse(new Response());
 
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('no-cache', $response->getHeader('pragma')[0]);
-        $this->assertEquals('no-store', $response->getHeader('cache-control')[0]);
-        $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertEquals('no-cache', $response->getHeader('pragma')[0]);
+        self::assertEquals('no-store', $response->getHeader('cache-control')[0]);
+        self::assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
 
         $response->getBody()->rewind();
-        $json = \json_decode($response->getBody()->getContents());
-        $this->assertEquals('Bearer', $json->token_type);
-        $this->assertObjectHasProperty('expires_in', $json);
-        $this->assertObjectHasProperty('access_token', $json);
-        $this->assertObjectHasProperty('refresh_token', $json);
+        $json = json_decode($response->getBody()->getContents());
+        self::assertEquals('Bearer', $json->token_type);
+        self::assertObjectHasProperty('expires_in', $json);
+        self::assertObjectHasProperty('access_token', $json);
+        self::assertObjectHasProperty('refresh_token', $json);
 
-        $this->assertObjectHasProperty('foo', $json);
-        $this->assertEquals('bar', $json->foo);
+        self::assertObjectHasProperty('foo', $json);
+        self::assertEquals('bar', $json->foo);
     }
 
-    public function testDetermineAccessTokenInHeaderValidToken()
+    public function testDetermineAccessTokenInHeaderValidToken(): void
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
+        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -136,7 +140,7 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $json = \json_decode((string) $response->getBody());
+        $json = json_decode((string) $response->getBody());
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(false);
@@ -144,23 +148,23 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $json->access_token));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
 
         $request = $authorizationValidator->validateAuthorization($request);
 
-        $this->assertEquals('abcdef', $request->getAttribute('oauth_access_token_id'));
-        $this->assertEquals('clientName', $request->getAttribute('oauth_client_id'));
-        $this->assertEquals('123', $request->getAttribute('oauth_user_id'));
-        $this->assertEquals([], $request->getAttribute('oauth_scopes'));
+        self::assertEquals('abcdef', $request->getAttribute('oauth_access_token_id'));
+        self::assertEquals('clientName', $request->getAttribute('oauth_client_id'));
+        self::assertEquals('123', $request->getAttribute('oauth_user_id'));
+        self::assertEquals([], $request->getAttribute('oauth_scopes'));
     }
 
-    public function testDetermineAccessTokenInHeaderInvalidJWT()
+    public function testDetermineAccessTokenInHeaderInvalidJWT(): void
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
+        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -181,28 +185,28 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $json = \json_decode((string) $response->getBody());
+        $json = json_decode((string) $response->getBody());
 
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $json->access_token));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
 
         try {
             $authorizationValidator->validateAuthorization($request);
         } catch (OAuthServerException $e) {
-            $this->assertEquals(
+            self::assertEquals(
                 'Access token could not be verified',
                 $e->getHint()
             );
         }
     }
 
-    public function testDetermineAccessTokenInHeaderRevokedToken()
+    public function testDetermineAccessTokenInHeaderRevokedToken(): void
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
+        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -223,7 +227,7 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setRefreshToken($refreshToken);
 
         $response = $responseType->generateHttpResponse(new Response());
-        $json = \json_decode((string) $response->getBody());
+        $json = json_decode((string) $response->getBody());
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('isAccessTokenRevoked')->willReturn(true);
@@ -231,23 +235,23 @@ class BearerResponseTypeTest extends TestCase
         $authorizationValidator = new BearerTokenValidator($accessTokenRepositoryMock);
         $authorizationValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $json->access_token));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $json->access_token));
 
         try {
             $authorizationValidator->validateAuthorization($request);
         } catch (OAuthServerException $e) {
-            $this->assertEquals(
+            self::assertEquals(
                 'Access token has been revoked',
                 $e->getHint()
             );
         }
     }
 
-    public function testDetermineAccessTokenInHeaderInvalidToken()
+    public function testDetermineAccessTokenInHeaderInvalidToken(): void
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
+        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
@@ -259,18 +263,18 @@ class BearerResponseTypeTest extends TestCase
         try {
             $authorizationValidator->validateAuthorization($request);
         } catch (OAuthServerException $e) {
-            $this->assertEquals(
+            self::assertEquals(
                 'The JWT string must have two dots',
                 $e->getHint()
             );
         }
     }
 
-    public function testDetermineMissingBearerInHeader()
+    public function testDetermineMissingBearerInHeader(): void
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
+        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
@@ -282,7 +286,7 @@ class BearerResponseTypeTest extends TestCase
         try {
             $authorizationValidator->validateAuthorization($request);
         } catch (OAuthServerException $e) {
-            $this->assertEquals(
+            self::assertEquals(
                 'Error while decoding from JSON',
                 $e->getHint()
             );

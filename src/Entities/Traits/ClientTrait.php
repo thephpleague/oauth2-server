@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,55 +8,47 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Entities\Traits;
 
 trait ClientTrait
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string|string[]
      */
-    protected $redirectUri;
+    protected string|array $redirectUri;
 
-    /**
-     * @var bool
-     */
-    protected $isConfidential = false;
+    protected bool $isConfidential = false;
 
     /**
      * Get the client's name.
      *
-     * @return string
      *
      * @codeCoverageIgnore
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * Returns the registered redirect URI (as a string).
-     *
-     * Alternatively return an indexed array of redirect URIs.
+     * Returns the registered redirect URI (as a string). Alternatively return
+     * an indexed array of redirect URIs.
      *
      * @return string|string[]
      */
-    public function getRedirectUri()
+    public function getRedirectUri(): string|array
     {
         return $this->redirectUri;
     }
 
     /**
      * Returns true if the client is confidential.
-     *
-     * @return bool
      */
-    public function isConfidential()
+    public function isConfidential(): bool
     {
         return $this->isConfidential;
     }
