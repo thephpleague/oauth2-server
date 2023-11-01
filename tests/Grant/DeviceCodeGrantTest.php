@@ -291,6 +291,7 @@ class DeviceCodeGrantTest extends TestCase
         $client->setIdentifier('foo');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
@@ -447,6 +448,7 @@ class DeviceCodeGrantTest extends TestCase
         $client->setIdentifier('foo');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
@@ -505,6 +507,7 @@ class DeviceCodeGrantTest extends TestCase
         $client->setIdentifier('foo');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
@@ -562,6 +565,7 @@ class DeviceCodeGrantTest extends TestCase
         $client->setIdentifier('foo');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
@@ -666,6 +670,7 @@ class DeviceCodeGrantTest extends TestCase
         $client->setIdentifier('foo');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();

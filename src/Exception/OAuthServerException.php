@@ -198,6 +198,11 @@ class OAuthServerException extends Exception
     }
 
     public function getErrorType(): string
+    {
+        return $this->errorType;
+    }
+
+    /**
      * Expired token error.
      *
      * @param null|string $hint

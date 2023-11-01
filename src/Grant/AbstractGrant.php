@@ -39,6 +39,7 @@ use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
+use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -66,7 +67,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     protected const SCOPE_DELIMITER_STRING = ' ';
 
-    private const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
+    protected const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
 
     protected ClientRepositoryInterface $clientRepository;
 
@@ -544,7 +545,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request)
+    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request): DeviceCodeResponse
     {
         throw new LogicException('This grant cannot validate a device authorization request');
     }

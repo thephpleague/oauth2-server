@@ -25,7 +25,7 @@ class DeviceCodeResponse extends AbstractResponseType
     /**
      * {@inheritdoc}
      */
-    public function generateHttpResponse(ResponseInterface $response)
+    public function generateHttpResponse(ResponseInterface $response): ResponseInterface 
     {
         $expireDateTime = $this->deviceCode->getExpiryDateTime()->getTimestamp();
 

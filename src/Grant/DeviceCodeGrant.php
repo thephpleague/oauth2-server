@@ -75,7 +75,7 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request)
+    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request): DeviceCodeResponse
     {
         $clientId = $this->getRequestParameter(
             'client_id',
@@ -137,7 +137,7 @@ class DeviceCodeGrant extends AbstractGrant
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
-    ) {
+    ): ResponseTypeInterface {
         // Validate request
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
@@ -263,7 +263,7 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return 'urn:ietf:params:oauth:grant-type:device_code';
     }

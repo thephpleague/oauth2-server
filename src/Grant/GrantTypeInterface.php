@@ -23,6 +23,7 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
+use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -93,12 +94,10 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * If the validation is successful a DeviceAuthorizationRequest object will be returned. This object can be safely
      * serialized in a user's session, and can be used during user authentication and authorization.
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return DeviceAuthorizationRequest
      */
-    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request);
+    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request): DeviceCodeResponse;
+
+    // TODO: Check DeviceAuthorizationRequest
 
     /**
      * If the grant can respond to a device authorization request this method should be called to validate the parameters of
