@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\RequestTypes;
 
@@ -17,16 +20,14 @@ class DeviceAuthorizationRequest
     /**
      * The grant type identifier
      *
-     * @var string
      */
-    protected $grantTypeId;
+    protected string $grantTypeId;
 
     /**
      * The client identifier
      *
-     * @var ClientEntityInterface
      */
-    protected $client;
+    protected ClientEntityInterface $client;
 
     private bool $authorizationApproved;
 
@@ -39,36 +40,24 @@ class DeviceAuthorizationRequest
      *
      * @var ScopeEntityInterface[]
      */
-    protected $scopes = [];
+    protected array $scopes = [];
 
-    /**
-     * @return string
-     */
-    public function getGrantTypeId()
+    public function getGrantTypeId(): string
     {
         return $this->grantTypeId;
     }
 
-    /**
-     * @param string $grantTypeId
-     */
-    public function setGrantTypeId($grantTypeId)
+    public function setGrantTypeId(string $grantTypeId): void
     {
         $this->grantTypeId = $grantTypeId;
     }
 
-    /**
-     * @return ClientEntityInterface
-     */
-    public function getClient()
+    public function getClient(): ClientEntityInterface
     {
         return $this->client;
     }
 
-    /**
-     * @param ClientEntityInterface $client
-     */
-    public function setClient(ClientEntityInterface $client)
+    public function setClient(ClientEntityInterface $client): void
     {
         $this->client = $client;
     }
@@ -76,7 +65,7 @@ class DeviceAuthorizationRequest
     /**
      * @return ScopeEntityInterface[]
      */
-    public function getScopes()
+    public function getScopes(): array
     {
         return $this->scopes;
     }
@@ -84,7 +73,7 @@ class DeviceAuthorizationRequest
     /**
      * @param ScopeEntityInterface[] $scopes
      */
-    public function setScopes(array $scopes)
+    public function setScopes(array $scopes): void
     {
         $this->scopes = $scopes;
     }

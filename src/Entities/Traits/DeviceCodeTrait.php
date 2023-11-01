@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Entities\Traits;
 
@@ -37,7 +40,7 @@ trait DeviceCodeTrait
         return $this->verificationUri;
     }
 
-    public function setVerificationUri(string $verificationUri)
+    public function setVerificationUri(string $verificationUri): void
     {
         $this->verificationUri = $verificationUri;
     }

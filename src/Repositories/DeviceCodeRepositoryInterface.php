@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Repositories;
 
@@ -18,43 +21,37 @@ interface DeviceCodeRepositoryInterface extends RepositoryInterface
     /**
      * Creates a new DeviceCode
      *
-     * @return DeviceCodeEntityInterface
      */
-    public function getNewDeviceCode();
+    public function getNewDeviceCode(): DeviceCodeEntityInterface;
 
     /**
      * Persists a device code to permanent storage.
      *
-     * @param DeviceCodeEntityInterface $deviceCodeEntity
      *
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
-    public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity);
+    public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity): void;
 
     /**
      * Get a device code entity.
      *
-     * @param string                $deviceCode
      *
-     * @return DeviceCodeEntityInterface|null
      */
     public function getDeviceCodeEntityByDeviceCode(
-        $deviceCode
-    );
+        string $deviceCode
+    ): ?DeviceCodeEntityInterface;
 
     /**
      * Revoke a device code.
      *
-     * @param string $codeId
      */
-    public function revokeDeviceCode($codeId);
+    public function revokeDeviceCode(string $codeId): void;
 
     /**
      * Check if the device code has been revoked.
      *
-     * @param string $codeId
      *
      * @return bool Return true if this code has been revoked
      */
-    public function isDeviceCodeRevoked($codeId);
+    public function isDeviceCodeRevoked(string $codeId): bool;
 }

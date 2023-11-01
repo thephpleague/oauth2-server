@@ -82,11 +82,9 @@ interface GrantTypeInterface extends EmitterAwareInterface
     /**
      * The grant type should return true if it is able to response to a device authorization request
      *
-     * @param ServerRequestInterface $request
      *
-     * @return bool
      */
-    public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request);
+    public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request): bool;
 
     /**
      * If the grant can respond to a device authorization request this method should be called to validate the parameters of
@@ -103,13 +101,9 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * If the grant can respond to a device authorization request this method should be called to validate the parameters of
      * the request.
      *
-     * If the validation is successful a DeviceCode object will be returned.
-     *
-     * @param DeviceAuthorizationRequest $deviceAuthorizationRequest
-     *
-     * @return ResponseTypeInterface
+     * If the validation is successful a DeviceCode object is persisted.
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $userApproved);
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $userApproved): void;
 
     /**
      * Set the client repository.

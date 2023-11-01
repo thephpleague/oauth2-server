@@ -537,7 +537,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request)
+    public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request): bool
     {
         return false;
     }
@@ -553,7 +553,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $userApproved)
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $userApproved): void
     {
         throw new LogicException('This grant cannot complete a device authorization request');
     }

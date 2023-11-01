@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\ResponseTypes;
 
 use DateInterval;
@@ -13,13 +15,17 @@ use LeagueTests\Stubs\ScopeEntity;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
+use function base64_encode;
+use function json_decode;
+use function random_bytes;
+
 class DeviceCodeResponseTypeTest extends TestCase
 {
-    public function testGenerateHttpResponse()
+    public function testGenerateHttpResponse(): void
     {
         $responseType = new DeviceCodeResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
+        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -48,7 +54,7 @@ class DeviceCodeResponseTypeTest extends TestCase
         $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
 
         $response->getBody()->rewind();
-        $json = \json_decode($response->getBody()->getContents());
+        $json = json_decode($response->getBody()->getContents());
         $this->assertObjectHasProperty('expires_in', $json);
         $this->assertObjectHasProperty('device_code', $json);
         $this->assertEquals('test', $json->device_code);

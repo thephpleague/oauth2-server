@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Grant;
 
 use DateInterval;
@@ -10,6 +12,7 @@ use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\DeviceCodeGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -27,24 +30,24 @@ use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use PHPUnit\Framework\TestCase;
 
+use function base64_encode;
+use function json_encode;
+use function random_bytes;
 use function time;
 use function uniqid;
 
 class DeviceCodeGrantTest extends TestCase
 {
-    const DEFAULT_SCOPE = 'basic';
+    private const DEFAULT_SCOPE = 'basic';
 
-    /**
-     * @var CryptTraitStub
-     */
-    protected $cryptStub;
+    protected CryptTraitStub $cryptStub;
 
     public function setUp(): void
     {
         $this->cryptStub = new CryptTraitStub();
     }
 
-    public function testGetIdentifier()
+    public function testGetIdentifier(): void
     {
         $deviceCodeRepositoryMock = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -59,7 +62,7 @@ class DeviceCodeGrantTest extends TestCase
         $this->assertEquals('urn:ietf:params:oauth:grant-type:device_code', $grant->getIdentifier());
     }
 
-    public function testCanRespondToDeviceAuthorizationRequest()
+    public function testCanRespondToDeviceAuthorizationRequest(): void
     {
         $grant = new DeviceCodeGrant(
             $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock(),
@@ -76,7 +79,7 @@ class DeviceCodeGrantTest extends TestCase
         $this->assertTrue($grant->canRespondToDeviceAuthorizationRequest($request));
     }
 
-    public function testRespondToDeviceAuthorizationRequest()
+    public function testRespondToDeviceAuthorizationRequest(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -112,7 +115,7 @@ class DeviceCodeGrantTest extends TestCase
         $this->assertInstanceOf(DeviceCodeResponse::class, $grant->respondToDeviceAuthorizationRequest($request));
     }
 
-    public function testValidateDeviceAuthorizationRequestMissingClient()
+    public function testValidateDeviceAuthorizationRequestMissingClient(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -138,12 +141,12 @@ class DeviceCodeGrantTest extends TestCase
             'scope' => 'basic',
         ]);
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
 
         $grant->respondToDeviceAuthorizationRequest($request);
     }
 
-    public function testValidateDeviceAuthorizationRequestEmptyScope()
+    public function testValidateDeviceAuthorizationRequestEmptyScope(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -169,12 +172,12 @@ class DeviceCodeGrantTest extends TestCase
             'scope' => '',
         ]);
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
 
         $grant->respondToDeviceAuthorizationRequest($request);
     }
 
-    public function testValidateDeviceAuthorizationRequestClientMismatch()
+    public function testValidateDeviceAuthorizationRequestClientMismatch(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn(null);
@@ -198,12 +201,12 @@ class DeviceCodeGrantTest extends TestCase
             'scope' => 'basic',
         ]);
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
 
         $grant->respondToDeviceAuthorizationRequest($request);
     }
 
-    public function testCompleteDeviceAuthorizationRequest()
+    public function testCompleteDeviceAuthorizationRequest(): void
     {
         $deviceCode = new DeviceCodeEntity();
         $deviceCode->setUserCode('foo');
@@ -225,7 +228,7 @@ class DeviceCodeGrantTest extends TestCase
         $this->assertEquals('userId', $deviceCode->getUserIdentifier());
     }
 
-    public function testDeviceAuthorizationResponse()
+    public function testDeviceAuthorizationResponse(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('clientId');
@@ -235,7 +238,7 @@ class DeviceCodeGrantTest extends TestCase
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn($client);
 
-        $scopeEntity = new ScopeEntity;
+        $scopeEntity = new ScopeEntity();
         $scopeEntity->setIdentifier('basic');
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
@@ -252,7 +255,7 @@ class DeviceCodeGrantTest extends TestCase
             $accessRepositoryMock,
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/../Stubs/private.key',
-            \base64_encode(\random_bytes(36)),
+            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 
@@ -263,11 +266,11 @@ class DeviceCodeGrantTest extends TestCase
         ]);
 
          $deviceCodeGrant = new DeviceCodeGrant(
-            $deviceCodeRepository,
-            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new DateInterval('PT10M'),
-            'http://foo/bar'
-        );
+             $deviceCodeRepository,
+             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+             new DateInterval('PT10M'),
+             'http://foo/bar'
+         );
 
         $deviceCodeGrant->setEncryptionKey($this->cryptStub->getKey());
 
@@ -285,7 +288,7 @@ class DeviceCodeGrantTest extends TestCase
         // TODO: $this->assertObjectHasAttribute('interval', $responseObject);
     }
 
-    public function testRespondToAccessTokenRequest()
+    public function testRespondToAccessTokenRequest(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -334,7 +337,7 @@ class DeviceCodeGrantTest extends TestCase
         $serverRequest = (new ServerRequest())->withParsedBody([
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
             'device_code'   => $this->cryptStub->doEncrypt(
-                \json_encode(
+                json_encode(
                     [
                         'device_code_id' => uniqid(),
                         'expire_time' => time() + 3600,
@@ -355,7 +358,7 @@ class DeviceCodeGrantTest extends TestCase
         $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
-    public function testRespondToRequestMissingClient()
+    public function testRespondToRequestMissingClient(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn(null);
@@ -376,7 +379,7 @@ class DeviceCodeGrantTest extends TestCase
 
         $serverRequest = (new ServerRequest())->withQueryParams([
             'device_code' => $this->cryptStub->doEncrypt(
-                \json_encode(
+                json_encode(
                     [
                         'device_code_id' => uniqid(),
                         'expire_time' => time() + 3600,
@@ -391,12 +394,12 @@ class DeviceCodeGrantTest extends TestCase
 
         $responseType = new StubResponseType();
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testRespondToRequestMissingDeviceCode()
+    public function testRespondToRequestMissingDeviceCode(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -437,12 +440,12 @@ class DeviceCodeGrantTest extends TestCase
         $responseType = new StubResponseType();
 
         // TODO: We need to be more specific with this exception
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testIssueSlowDownError()
+    public function testIssueSlowDownError(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -480,7 +483,7 @@ class DeviceCodeGrantTest extends TestCase
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'device_code'   => $this->cryptStub->doEncrypt(
-                \json_encode(
+                json_encode(
                     [
                         'device_code_id' => uniqid(),
                         'expire_time' => time() + 3600,
@@ -495,13 +498,13 @@ class DeviceCodeGrantTest extends TestCase
 
         $responseType = new StubResponseType();
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(13);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    function testIssueAuthorizationPendingError()
+    public function testIssueAuthorizationPendingError(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -538,7 +541,7 @@ class DeviceCodeGrantTest extends TestCase
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'device_code'   => $this->cryptStub->doEncrypt(
-                \json_encode(
+                json_encode(
                     [
                         'device_code_id' => uniqid(),
                         'expire_time' => time() + 3600,
@@ -553,13 +556,13 @@ class DeviceCodeGrantTest extends TestCase
 
         $responseType = new StubResponseType();
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(12);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    function testIssueExpiredTokenError()
+    public function testIssueExpiredTokenError(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -596,7 +599,7 @@ class DeviceCodeGrantTest extends TestCase
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'device_code'   => $this->cryptStub->doEncrypt(
-                \json_encode(
+                json_encode(
                     [
                         'device_code_id' => uniqid(),
                         'expire_time' => time() - 3600,
@@ -611,13 +614,13 @@ class DeviceCodeGrantTest extends TestCase
 
         $responseType = new StubResponseType();
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(11);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testIntervalVisibility()
+    public function testIntervalVisibility(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -689,11 +692,11 @@ class DeviceCodeGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new DeviceCodeGrant(
-                $deviceCodeRepositoryMock,
-                $refreshTokenRepositoryMock,
-                new DateInterval('PT10M'),
-                'http://foo/bar'
-                );
+            $deviceCodeRepositoryMock,
+            $refreshTokenRepositoryMock,
+            new DateInterval('PT10M'),
+            'http://foo/bar'
+        );
 
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
@@ -706,7 +709,7 @@ class DeviceCodeGrantTest extends TestCase
         $serverRequest = (new ServerRequest())->withParsedBody([
                 'client_id'     => 'foo',
                 'device_code'   => $this->cryptStub->doEncrypt(
-                    \json_encode(
+                    json_encode(
                         [
                         'device_code_id' => uniqid(),
                         'expire_time' => time() + 3600,
@@ -715,16 +718,15 @@ class DeviceCodeGrantTest extends TestCase
                         'scopes' => ['foo'],
                         'verification_uri' => 'http://foo/bar',
                         ]
-                        )
-                    ),
+                    )
+                ),
         ]);
 
         $responseType = new StubResponseType();
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(9);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
-
     }
 }

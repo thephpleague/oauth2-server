@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth 2.0 Bearer Token Response.
  *
@@ -9,12 +10,15 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 
+use function json_encode;
 use function time;
 
 class DeviceCodeResponse extends AbstractResponseType
@@ -25,7 +29,7 @@ class DeviceCodeResponse extends AbstractResponseType
     /**
      * {@inheritdoc}
      */
-    public function generateHttpResponse(ResponseInterface $response): ResponseInterface 
+    public function generateHttpResponse(ResponseInterface $response): ResponseInterface
     {
         $expireDateTime = $this->deviceCode->getExpiryDateTime()->getTimestamp();
 
@@ -41,7 +45,7 @@ class DeviceCodeResponse extends AbstractResponseType
             $responseParams['interval'] = $this->deviceCode->getInterval();
         }
 
-        $responseParams = \json_encode($responseParams);
+        $responseParams = json_encode($responseParams);
 
         if ($responseParams === false) {
             throw new LogicException('Error encountered JSON encoding response parameters');
@@ -58,7 +62,7 @@ class DeviceCodeResponse extends AbstractResponseType
         return $response;
     }
 
-    public function setPayload($payload)
+    public function setPayload(string $payload): void
     {
         $this->payload = $payload;
     }
@@ -76,11 +80,9 @@ class DeviceCodeResponse extends AbstractResponseType
      * AuthorizationServer::getResponseType() to pull in your version of
      * this class rather than the default.
      *
-     * @param DeviceCodeEntityInterface $deviceCode
-     *
-     * @return array
+     * @return mixed[]
      */
-    protected function getExtraParams(DeviceCodeEntityInterface $deviceCode)
+    protected function getExtraParams(DeviceCodeEntityInterface $deviceCode): array
     {
         return [];
     }

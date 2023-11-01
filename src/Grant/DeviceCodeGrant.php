@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth 2.0 Device Code grant.
  *
@@ -8,6 +9,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Grant;
 
@@ -28,12 +31,15 @@ use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
+use stdClass;
 use TypeError;
 
 use function is_null;
 use function json_decode;
 use function json_encode;
 use function property_exists;
+use function random_int;
+use function strlen;
 use function time;
 
 /**
@@ -42,32 +48,28 @@ use function time;
 class DeviceCodeGrant extends AbstractGrant
 {
     protected DeviceCodeRepositoryInterface $deviceCodeRepository;
-    private DateInterval $deviceCodeTTL;
     private bool $intervalVisibility = false;
-    private int $retryInterval;
     private string $verificationUri;
 
     public function __construct(
         DeviceCodeRepositoryInterface $deviceCodeRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository,
-        DateInterval $deviceCodeTTL,
+        private DateInterval $deviceCodeTTL,
         string $verificationUri,
-        int $retryInterval = 5
+        private int $retryInterval = 5
     ) {
         $this->setDeviceCodeRepository($deviceCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
 
         $this->refreshTokenTTL = new DateInterval('P1M');
 
-        $this->deviceCodeTTL = $deviceCodeTTL;
         $this->setVerificationUri($verificationUri);
-        $this->retryInterval = $retryInterval;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request)
+    public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request): bool
     {
         return true;
     }
@@ -120,7 +122,7 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $approved)
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $approved): void
     {
         $deviceCode = $this->deviceCodeRepository->getDeviceCodeEntityByDeviceCode($deviceCode);
 
@@ -177,14 +179,11 @@ class DeviceCodeGrant extends AbstractGrant
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ClientEntityInterface  $client
      *
      * @throws OAuthServerException
      *
-     * @return DeviceCodeEntityInterface
      */
-    protected function validateDeviceCode(ServerRequestInterface $request, ClientEntityInterface $client)
+    protected function validateDeviceCode(ServerRequestInterface $request, ClientEntityInterface $client): DeviceCodeEntityInterface
     {
         $encryptedDeviceCode = $this->getRequestParameter('device_code', $request);
 
@@ -211,10 +210,10 @@ class DeviceCodeGrant extends AbstractGrant
         }
 
         $deviceCode = $this->deviceCodeRepository->getDeviceCodeEntityByDeviceCode(
-                $deviceCodePayload->device_code_id,
-                $this->getIdentifier(),
-                $client
-                );
+            $deviceCodePayload->device_code_id,
+            $this->getIdentifier(),
+            $client
+        );
 
         if ($this->deviceCodePolledTooSoon($deviceCode->getLastPolledAt()) === true) {
             throw OAuthServerException::slowDown();
@@ -235,13 +234,11 @@ class DeviceCodeGrant extends AbstractGrant
     }
 
     /**
-     * @param string $encryptedDeviceCode
      *
      * @throws OAuthServerException
      *
-     * @return \stdClass
      */
-    protected function decodeDeviceCode($encryptedDeviceCode)
+    protected function decodeDeviceCode(string $encryptedDeviceCode): stdClass
     {
         try {
             return json_decode($this->decrypt($encryptedDeviceCode));
@@ -253,9 +250,8 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * Set the verification uri
      *
-     * @param string $verificationUri
      */
-    public function setVerificationUri($verificationUri)
+    public function setVerificationUri(string $verificationUri): void
     {
         $this->verificationUri = $verificationUri;
     }
@@ -268,10 +264,7 @@ class DeviceCodeGrant extends AbstractGrant
         return 'urn:ietf:params:oauth:grant-type:device_code';
     }
 
-    /**
-     * @param DeviceCodeRepositoryInterface $deviceCodeRepository
-     */
-    private function setDeviceCodeRepository(DeviceCodeRepositoryInterface $deviceCodeRepository)
+    private function setDeviceCodeRepository(DeviceCodeRepositoryInterface $deviceCodeRepository): void
     {
         $this->deviceCodeRepository = $deviceCodeRepository;
     }
@@ -279,12 +272,8 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * Issue a device code.
      *
-     * @param DateInterval           $deviceCodeTTL
-     * @param ClientEntityInterface  $client
-     * @param string                 $verificationUri
      * @param ScopeEntityInterface[] $scopes
      *
-     * @return DeviceCodeEntityInterface
      *
      * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
@@ -292,9 +281,9 @@ class DeviceCodeGrant extends AbstractGrant
     protected function issueDeviceCode(
         DateInterval $deviceCodeTTL,
         ClientEntityInterface $client,
-        $verificationUri,
+        string $verificationUri,
         array $scopes = []
-    ) {
+    ): DeviceCodeEntityInterface {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $deviceCode = $this->deviceCodeRepository->getNewDeviceCode();
@@ -328,20 +317,18 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * Generate a new unique user code.
      *
-     * @param int $length
      *
-     * @return string
      *
      * @throws OAuthServerException
      */
-    protected function generateUniqueUserCode($length = 8)
+    protected function generateUniqueUserCode(int $length = 8): string
     {
         try {
             $userCode = '';
             $userCodeCharacters = 'BCDFGHJKLMNPQRSTVWXZ';
 
-            while (\strlen($userCode) < $length) {
-                $userCode .= $userCodeCharacters[\random_int(0, 19)];
+            while (strlen($userCode) < $length) {
+                $userCode .= $userCodeCharacters[random_int(0, 19)];
             }
 
             return $userCode;

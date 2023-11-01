@@ -136,13 +136,9 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * Respond to device authorization request
      *
-     * @param ServerRequestInterface $request
-     *
-     * @return DeviceAuthorizationRequest
-     *
      * @throws OAuthServerException
      */
-    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         foreach ($this->enabledGrantTypes as $grantType) {
             if ($grantType->canRespondToDeviceAuthorizationRequest($request)) {
