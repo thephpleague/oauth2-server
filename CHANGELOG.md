@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- The `getJwtBuilder()` function was added to the `AccessTokenTrait` to allow customization of the access token (PR #1382)
 
 ## [8.5.4] - released 2023-08-25
 ### Added
