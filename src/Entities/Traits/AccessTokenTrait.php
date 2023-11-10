@@ -10,6 +10,7 @@
 namespace League\OAuth2\Server\Entities\Traits;
 
 use DateTimeImmutable;
+use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
@@ -51,6 +52,16 @@ trait AccessTokenTrait
     }
 
     /**
+     * Configure the JWT builder instance.
+     *
+     * @return Builder
+     */
+    protected function withBuilder(Builder $builder)
+    {
+        return $builder;
+    }
+
+    /**
      * Generate a JWT from the access token
      *
      * @return Token
@@ -59,14 +70,16 @@ trait AccessTokenTrait
     {
         $this->initJwtConfiguration();
 
-        return $this->jwtConfiguration->builder()
+        $builder = $this->jwtConfiguration->builder()
             ->permittedFor($this->getClient()->getIdentifier())
             ->identifiedBy($this->getIdentifier())
             ->issuedAt(new DateTimeImmutable())
             ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt($this->getExpiryDateTime())
             ->relatedTo((string) $this->getUserIdentifier())
-            ->withClaim('scopes', $this->getScopes())
+            ->withClaim('scopes', $this->getScopes());
+
+        return $this->withBuilder($builder)
             ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
     }
 
