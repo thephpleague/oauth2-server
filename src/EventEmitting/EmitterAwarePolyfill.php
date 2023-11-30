@@ -13,17 +13,10 @@ trait EmitterAwarePolyfill
 
     public function getEmitter(): EventEmitter
     {
-        if (!$this->emitter) {
-            $this->emitter = new EventEmitter();
-        }
-
-        return $this->emitter;
+        return $this->emitter ?? new EventEmitter();
     }
 
-    /**
-     * @return $this
-     */
-    public function setEmitter(EventEmitter $emitter)
+    public function setEmitter(EventEmitter $emitter): self
     {
         $this->emitter = $emitter;
 

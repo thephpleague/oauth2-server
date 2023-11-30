@@ -8,8 +8,5 @@ interface EmitterAwareInterface
 {
     public function getEmitter(): EventEmitter;
 
-    /**
-     * @return $this
-     */
-    public function setEmitter(EventEmitter $emitter);
+    public function setEmitter(EventEmitter $emitter): self;
 }

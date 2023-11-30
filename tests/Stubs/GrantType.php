@@ -6,7 +6,7 @@ namespace LeagueTests\Stubs;
 
 use DateInterval;
 use Defuse\Crypto\Key;
-use League\Event\EmitterInterface;
+use League\OAuth2\Server\EventEmitting\EventEmitter;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -20,16 +20,16 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class GrantType implements GrantTypeInterface
 {
-    private ?EmitterInterface $emitter;
+    private EventEmitter $emitter;
 
-    public function setEmitter(EmitterInterface $emitter = null): self
+    public function setEmitter(EventEmitter $emitter = null): self
     {
         $this->emitter = $emitter;
 
         return $this;
     }
 
-    public function getEmitter(): ?EmitterInterface
+    public function getEmitter(): EventEmitter
     {
         return $this->emitter;
     }
