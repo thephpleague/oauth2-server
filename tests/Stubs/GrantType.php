@@ -6,8 +6,8 @@ namespace LeagueTests\Stubs;
 
 use DateInterval;
 use Defuse\Crypto\Key;
-use League\OAuth2\Server\EventEmitting\EventEmitter;
 use League\OAuth2\Server\CryptKeyInterface;
+use League\OAuth2\Server\EventEmitting\EventEmitter;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
