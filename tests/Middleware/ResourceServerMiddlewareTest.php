@@ -38,7 +38,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $token = (string) $accessToken;
+        $token = $accessToken->toString();
 
         $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $token));
 
@@ -73,7 +73,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $token = (string) $accessToken;
+        $token = $accessToken->toString();
 
         $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $token));
 

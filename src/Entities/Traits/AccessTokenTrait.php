@@ -74,10 +74,8 @@ trait AccessTokenTrait
 
     /**
      * Generate a string representation from the access token
-     *
-     * TODO: Want to remove this function.
      */
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->convertToJWT()->toString();
     }
