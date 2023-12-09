@@ -183,8 +183,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      * doesn't actually enforce non-null returns/exception-on-no-client so
      * getClientEntity might return null. By contrast, this method will
      * always either return a ClientEntityInterface or throw.
-     *
-     * TODO: Check if we still need this
      */
     protected function getClientEntityOrFail(string $clientId, ServerRequestInterface $request): ClientEntityInterface
     {
