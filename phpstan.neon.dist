@@ -7,4 +7,3 @@ parameters:
         -
           message: '#Call to an undefined method League\\OAuth2\\Server\\ResponseTypes\\ResponseTypeInterface::getAccessToken\(\)\.#'
           path: tests/Grant/ClientCredentialsGrantTest.php 
-        - '#Return type \(League\\Event\\EmitterInterface\|null\) of method LeagueTests\\Stubs\\GrantType::getEmitter\(\) should be covariant with return type \(League\\Event\\EmitterInterface\) of method League\\Event\\EmitterAwareInterface::getEmitter\(\)#'

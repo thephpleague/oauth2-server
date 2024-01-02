@@ -33,7 +33,7 @@ class ResourceServerMiddlewareTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('test');
-        $accessToken->setUserIdentifier(123);
+        $accessToken->setUserIdentifier('123');
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -68,7 +68,7 @@ class ResourceServerMiddlewareTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('test');
-        $accessToken->setUserIdentifier(123);
+        $accessToken->setUserIdentifier('123');
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->sub(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));

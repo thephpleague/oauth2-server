@@ -61,7 +61,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
     private function isLoopbackUri(string $redirectUri): bool
     {
         try {
-            $uri = Uri::createFromString($redirectUri);
+            $uri = Uri::new($redirectUri);
         } catch (SyntaxError $e) {
             return false;
         }
@@ -99,7 +99,7 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      */
     private function parseUrlAndRemovePort(string $url): string
     {
-        $uri = Uri::createFromString($url);
+        $uri = Uri::new($url);
 
         return (string) $uri->withPort(null);
     }

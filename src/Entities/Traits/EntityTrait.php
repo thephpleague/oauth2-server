@@ -14,8 +14,14 @@ namespace League\OAuth2\Server\Entities\Traits;
 
 trait EntityTrait
 {
+    /**
+     * @var non-empty-string
+     */
     protected string $identifier;
 
+    /**
+     * @return non-empty-string
+     */
     public function getIdentifier(): string
     {
         return $this->identifier;

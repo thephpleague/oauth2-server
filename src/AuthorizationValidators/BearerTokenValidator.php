@@ -97,6 +97,10 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         $header = $request->getHeader('authorization');
         $jwt = trim((string) preg_replace('/^\s*Bearer\s/', '', $header[0]));
 
+        if ($jwt === '') {
+            throw OAuthServerException::accessDenied('Missing "Bearer" token');
+        }
+
         try {
             // Attempt to parse the JWT
             $token = $this->jwtConfiguration->parser()->parse($jwt);
@@ -126,20 +130,8 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         // Return the request with additional attributes
         return $request
             ->withAttribute('oauth_access_token_id', $claims->get('jti'))
-            ->withAttribute('oauth_client_id', $this->convertSingleRecordAudToString($claims->get('aud')))
+            ->withAttribute('oauth_client_id', $claims->get('aud')[0])
             ->withAttribute('oauth_user_id', $claims->get('sub'))
             ->withAttribute('oauth_scopes', $claims->get('scopes'));
-    }
-
-    /**
-     * Convert single record arrays into strings to ensure backwards compatibility between v4 and v3.x of lcobucci/jwt
-     *
-     * TODO: Investigate as I don't think we need this any more
-     *
-     * @return array<string>|string
-     */
-    private function convertSingleRecordAudToString(mixed $aud): array|string
-    {
-        return is_array($aud) && count($aud) === 1 ? $aud[0] : $aud;
     }
 }

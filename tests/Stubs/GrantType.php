@@ -22,7 +22,7 @@ final class GrantType implements GrantTypeInterface
 {
     private EventEmitter $emitter;
 
-    public function setEmitter(EventEmitter $emitter = null): self
+    public function setEmitter(EventEmitter $emitter): self
     {
         $this->emitter = $emitter;
 

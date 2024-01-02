@@ -16,6 +16,8 @@ interface ClientEntityInterface
 {
     /**
      * Get the client's identifier.
+     *
+     * @return non-empty-string
      */
     public function getIdentifier(): string;
 
