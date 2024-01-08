@@ -41,7 +41,7 @@ jobs:
           composer global require scrutinizer/ocular
 
       - name: Execute tests
-        run: vendor/bin/phpunit --verbose --coverage-clover=coverage.clover
+        run: vendor/bin/phpunit --coverage-clover=coverage.clover
 
       - name: Code coverage
         if: ${{ github.ref == 'refs/heads/master' && github.repository == 'thephpleague/oauth2-server' }}
