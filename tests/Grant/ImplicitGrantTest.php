@@ -286,13 +286,13 @@ class ImplicitGrantTest extends TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
 
-        $matcher = self::exactly(2);
-
         $accessTokenRepositoryMock
-            ->expects($matcher)
+            ->expects(self::exactly(2))
             ->method('persistNewAccessToken')
-            ->willReturnCallback(function () use ($matcher): void {
-                if ($matcher->getInvocationCount() === 1) {
+            ->willReturnCallback(function (): void {
+                static $count = 0;
+
+                if (1 === ++$count) {
                     throw UniqueTokenIdentifierConstraintViolationException::create();
                 }
             });

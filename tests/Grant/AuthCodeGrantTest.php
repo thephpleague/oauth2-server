@@ -1893,13 +1893,13 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
-        $matcher = self::exactly(2);
-
         $authCodeRepository
-            ->expects($matcher)
+            ->expects(self::exactly(2))
             ->method('persistNewAuthCode')
-            ->willReturnCallback(function () use ($matcher): void {
-                if ($matcher->getInvocationCount() === 1) {
+            ->willReturnCallback(function (): void {
+                static $counter = 0;
+
+                if (1 === ++$counter) {
                     throw UniqueTokenIdentifierConstraintViolationException::create();
                 }
             });
@@ -1992,13 +1992,13 @@ class AuthCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
-        $matcher = self::exactly(2);
-
         $refreshTokenRepositoryMock
-            ->expects($matcher)
+            ->expects(self::exactly(2))
             ->method('persistNewRefreshToken')
-            ->willReturnCallback(function () use ($matcher): void {
-                if ($matcher->getInvocationCount() === 1) {
+            ->willReturnCallback(function (): void {
+                static $count = 0;
+
+                if (1 === ++$count) {
                     throw UniqueTokenIdentifierConstraintViolationException::create();
                 }
             });
