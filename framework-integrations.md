@@ -12,6 +12,7 @@ permalink: /framework-integrations/
 * [Laravel Passport (Official)](https://laravel.com/docs/passport)
 * [Nette Framework](https://github.com/lookyman/nette-oauth2-server)
 * [Phalcon Framework](https://github.com/tegaphilip/padlock)
+* [Resonance](https://resonance.distantmagic.com/docs/features/security/oauth2)
 * Slim (or any PSR7-supporting framework) - See the examples in this repository
 * [Symfony](https://github.com/thephpleague/oauth2-server-bundle)
 
