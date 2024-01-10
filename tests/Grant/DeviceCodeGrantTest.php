@@ -332,7 +332,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), 1, true);
+        $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), "1", true);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
@@ -704,7 +704,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), 1, false);
+        $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), "1", false);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
                 'client_id'     => 'foo',
