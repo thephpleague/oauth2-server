@@ -19,7 +19,6 @@ use DateTimeImmutable;
 use DomainException;
 use Error;
 use Exception;
-use League\Event\EmitterAwareTrait;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -27,6 +26,7 @@ use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\EventEmitting\EmitterAwarePolyfill;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\RedirectUriValidators\RedirectUriValidator;
@@ -62,7 +62,7 @@ use function trim;
  */
 abstract class AbstractGrant implements GrantTypeInterface
 {
-    use EmitterAwareTrait;
+    use EmitterAwarePolyfill;
     use CryptTrait;
 
     protected const SCOPE_DELIMITER_STRING = ' ';
@@ -185,8 +185,6 @@ abstract class AbstractGrant implements GrantTypeInterface
      * doesn't actually enforce non-null returns/exception-on-no-client so
      * getClientEntity might return null. By contrast, this method will
      * always either return a ClientEntityInterface or throw.
-     *
-     * TODO: Check if we still need this
      */
     protected function getClientEntityOrFail(string $clientId, ServerRequestInterface $request): ClientEntityInterface
     {
@@ -396,6 +394,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an auth code.
      *
+     * @param non-empty-string $userIdentifier
      * @param ScopeEntityInterface[] $scopes
      *
      * @throws OAuthServerException

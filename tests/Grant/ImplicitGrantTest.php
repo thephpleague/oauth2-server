@@ -219,7 +219,7 @@ class ImplicitGrantTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setClient($client);
-        $accessToken->setUserIdentifier('userIdentifier');
+        $accessToken->setUserIdentifier('userId');
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
@@ -280,19 +280,19 @@ class ImplicitGrantTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setClient($client);
-        $accessToken->setUserIdentifier('userIdentifier');
+        $accessToken->setUserIdentifier('userId');
 
         /** @var AccessTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
 
-        $matcher = self::exactly(2);
-
         $accessTokenRepositoryMock
-            ->expects($matcher)
+            ->expects(self::exactly(2))
             ->method('persistNewAccessToken')
-            ->willReturnCallback(function () use ($matcher): void {
-                if ($matcher->getInvocationCount() === 1) {
+            ->willReturnCallback(function (): void {
+                static $count = 0;
+
+                if (1 === ++$count) {
                     throw UniqueTokenIdentifierConstraintViolationException::create();
                 }
             });

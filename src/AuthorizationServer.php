@@ -14,8 +14,8 @@ namespace League\OAuth2\Server;
 
 use DateInterval;
 use Defuse\Crypto\Key;
-use League\Event\EmitterAwareInterface;
-use League\Event\EmitterAwareTrait;
+use League\OAuth2\Server\EventEmitting\EmitterAwareInterface;
+use League\OAuth2\Server\EventEmitting\EmitterAwarePolyfill;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -31,7 +31,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class AuthorizationServer implements EmitterAwareInterface
 {
-    use EmitterAwareTrait;
+    use EmitterAwarePolyfill;
 
     /**
      * @var GrantTypeInterface[]

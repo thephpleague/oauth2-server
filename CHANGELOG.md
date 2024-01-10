@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Authorization Request objects are now created through the factory method, `createAuthorizationRequest()` (PR #1111)
 - Changed parameters for `finalizeScopes()` to allow a reference to an auth code ID (PR #1112)
+- AccessTokenEntityInterface now requires the implementation of `toString()` instead of the magic method `__toString()` (PR #XXXX)
 
 ### Removed
 - Removed message property from OAuthException HTTP response. Now just use error_description as per the OAuth 2 spec (PR #1375)

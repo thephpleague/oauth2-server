@@ -1,0 +1,36 @@
+name: Coding Standards
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  coding-standards:
+    name: Coding Standards
+
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      matrix:
+        php-version:
+          - 8.3
+        operating-system:
+          - ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          coverage: none
+          php-version: ${{ matrix.php-version }}
+          ini-values: memory_limit=-1
+          tools: composer:v2, cs2pr
+
+      - name: Install Dependencies
+        run: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+          
+      - name: Run Codesniffer
+        run: vendor/bin/phpcs

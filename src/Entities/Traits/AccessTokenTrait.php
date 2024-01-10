@@ -67,17 +67,15 @@ trait AccessTokenTrait
             ->issuedAt(new DateTimeImmutable())
             ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt($this->getExpiryDateTime())
-            ->relatedTo((string) $this->getUserIdentifier())
+            ->relatedTo($this->getUserIdentifier())
             ->withClaim('scopes', $this->getScopes())
             ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
     }
 
     /**
      * Generate a string representation from the access token
-     *
-     * TODO: Want to remove this function.
      */
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->convertToJWT()->toString();
     }
@@ -86,12 +84,18 @@ trait AccessTokenTrait
 
     abstract public function getExpiryDateTime(): DateTimeImmutable;
 
-    abstract public function getUserIdentifier(): string|int|null;
+    /**
+     * @return non-empty-string
+     */
+    abstract public function getUserIdentifier(): string;
 
     /**
      * @return ScopeEntityInterface[]
      */
     abstract public function getScopes(): array;
 
+    /**
+     * @return non-empty-string
+     */
     abstract public function getIdentifier(): string;
 }
