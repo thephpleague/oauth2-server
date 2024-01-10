@@ -24,8 +24,11 @@ interface TokenInterface
 
     public function setExpiryDateTime(DateTimeImmutable $dateTime): void;
 
+    /**
+     * Set the identifier of the user associated with the token.
      *
      * @param non-empty-string $identifier
+     */
     public function setUserIdentifier(string $identifier): void;
 
     public function getUserIdentifier(): string|int|null;
