@@ -10,7 +10,6 @@ use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\DeviceCodeGrant;
@@ -19,8 +18,6 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
-use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\CryptTraitStub;
@@ -59,7 +56,7 @@ class DeviceCodeGrantTest extends TestCase
             "http://foo/bar"
         );
 
-        $this->assertEquals('urn:ietf:params:oauth:grant-type:device_code', $grant->getIdentifier());
+        $this::assertEquals('urn:ietf:params:oauth:grant-type:device_code', $grant->getIdentifier());
     }
 
     public function testCanRespondToDeviceAuthorizationRequest(): void
@@ -76,7 +73,7 @@ class DeviceCodeGrantTest extends TestCase
             'scope' => 'basic',
         ]);
 
-        $this->assertTrue($grant->canRespondToDeviceAuthorizationRequest($request));
+        $this::assertTrue($grant->canRespondToDeviceAuthorizationRequest($request));
     }
 
     public function testRespondToDeviceAuthorizationRequest(): void
@@ -112,7 +109,14 @@ class DeviceCodeGrantTest extends TestCase
             'scope' => 'basic',
         ]);
 
-        $this->assertInstanceOf(DeviceCodeResponse::class, $grant->respondToDeviceAuthorizationRequest($request));
+        $deviceCodeResponse = $grant->respondToDeviceAuthorizationRequest($request);
+
+        $responseJson = json_decode($deviceCodeResponse->generateHttpResponse(new Response())->getBody()->__toString());
+
+        self::assertObjectHasProperty('device_code', $responseJson);
+        self::assertObjectHasProperty('user_code', $responseJson);
+        self::assertObjectHasProperty('verification_uri', $responseJson);
+        self::assertEquals('http://foo/bar', $responseJson->verification_uri);
     }
 
     public function testValidateDeviceAuthorizationRequestMissingClient(): void
@@ -225,7 +229,7 @@ class DeviceCodeGrantTest extends TestCase
 
         $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), 'userId', true);
 
-        $this->assertEquals('userId', $deviceCode->getUserIdentifier());
+        $this::assertEquals('userId', $deviceCode->getUserIdentifier());
     }
 
     public function testDeviceAuthorizationResponse(): void
@@ -280,11 +284,11 @@ class DeviceCodeGrantTest extends TestCase
 
         $responseObject = json_decode($response->getBody()->__toString());
 
-        $this->assertObjectHasProperty('device_code', $responseObject);
-        $this->assertObjectHasProperty('user_code', $responseObject);
-        $this->assertObjectHasProperty('verification_uri', $responseObject);
+        $this::assertObjectHasProperty('device_code', $responseObject);
+        $this::assertObjectHasProperty('user_code', $responseObject);
+        $this::assertObjectHasProperty('verification_uri', $responseObject);
         // TODO: $this->assertObjectHasAttribute('verification_uri_complete', $responseObject);
-        $this->assertObjectHasProperty('expires_in', $responseObject);
+        $this::assertObjectHasProperty('expires_in', $responseObject);
         // TODO: $this->assertObjectHasAttribute('interval', $responseObject);
     }
 
@@ -345,7 +349,8 @@ class DeviceCodeGrantTest extends TestCase
                         'user_code' => '12345678',
                         'scopes' => ['foo'],
                         'verification_uri' => 'http://foo/bar',
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ),
             'client_id'     => 'foo',
@@ -354,8 +359,7 @@ class DeviceCodeGrantTest extends TestCase
         $responseType = new StubResponseType();
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
-        $this->assertInstanceOf(AccessTokenEntityInterface::class, $responseType->getAccessToken());
-        $this->assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
+        $this::assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
     }
 
     public function testRespondToRequestMissingClient(): void
@@ -387,7 +391,8 @@ class DeviceCodeGrantTest extends TestCase
                         'user_code' => '12345678',
                         'scopes' => ['foo'],
                         'verification_uri' => 'http://foo/bar',
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ),
         ]);
@@ -491,7 +496,8 @@ class DeviceCodeGrantTest extends TestCase
                         'user_code' => '12345678',
                         'scopes' => ['foo'],
                         'verification_uri' => 'http://foo/bar',
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ),
         ]);
@@ -549,7 +555,8 @@ class DeviceCodeGrantTest extends TestCase
                         'user_code' => '12345678',
                         'scopes' => ['foo'],
                         'verification_uri' => 'http://foo/bar',
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ),
         ]);
@@ -607,7 +614,8 @@ class DeviceCodeGrantTest extends TestCase
                         'user_code' => '12345678',
                         'scopes' => ['foo'],
                         'verification_uri' => 'http://foo/bar',
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ),
         ]);
@@ -663,8 +671,8 @@ class DeviceCodeGrantTest extends TestCase
 
         $deviceCode = json_decode((string) $deviceCodeResponse->getBody());
 
-        $this->assertObjectHasProperty('interval', $deviceCode);
-        $this->assertEquals(5, $deviceCode->interval);
+        $this::assertObjectHasProperty('interval', $deviceCode);
+        $this::assertEquals(5, $deviceCode->interval);
     }
 
     public function testIssueAccessDeniedError(): void
@@ -717,8 +725,9 @@ class DeviceCodeGrantTest extends TestCase
                         'user_code' => '12345678',
                         'scopes' => ['foo'],
                         'verification_uri' => 'http://foo/bar',
-                        ]
-                    )
+                        ],
+                        JSON_THROW_ON_ERROR
+                    ),
                 ),
         ]);
 

@@ -38,7 +38,6 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
-use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
@@ -552,7 +551,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $userApproved): void
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void
     {
         throw new LogicException('This grant cannot complete a device authorization request');
     }

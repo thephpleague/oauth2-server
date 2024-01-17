@@ -22,7 +22,6 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
-use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -103,7 +102,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * If the validation is successful a DeviceCode object is persisted.
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $userApproved): void;
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void;
 
     /**
      * Set the client repository.

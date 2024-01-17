@@ -47,18 +47,17 @@ class DeviceCodeResponseTypeTest extends TestCase
 
         $response = $responseType->generateHttpResponse(new Response());
 
-        $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('no-cache', $response->getHeader('pragma')[0]);
-        $this->assertEquals('no-store', $response->getHeader('cache-control')[0]);
-        $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
+        $this::assertEquals(200, $response->getStatusCode());
+        $this::assertEquals('no-cache', $response->getHeader('pragma')[0]);
+        $this::assertEquals('no-store', $response->getHeader('cache-control')[0]);
+        $this::assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
 
         $response->getBody()->rewind();
         $json = json_decode($response->getBody()->getContents());
-        $this->assertObjectHasProperty('expires_in', $json);
-        $this->assertObjectHasProperty('device_code', $json);
-        $this->assertEquals('test', $json->device_code);
-        $this->assertObjectHasProperty('verification_uri', $json);
-        $this->assertObjectHasProperty('user_code', $json);
+        $this::assertObjectHasProperty('expires_in', $json);
+        $this::assertObjectHasProperty('device_code', $json);
+        $this::assertEquals('test', $json->device_code);
+        $this::assertObjectHasProperty('verification_uri', $json);
+        $this::assertObjectHasProperty('user_code', $json);
     }
 }

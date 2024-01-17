@@ -70,7 +70,7 @@ class DeviceCodeResponse extends AbstractResponseType
     /**
      * {@inheritdoc}
      */
-    public function setDeviceCode(DeviceCodeEntityInterface $deviceCode)
+    public function setDeviceCode(DeviceCodeEntityInterface $deviceCode): void
     {
         $this->deviceCode = $deviceCode;
     }

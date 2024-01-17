@@ -26,7 +26,6 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
-use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
@@ -122,9 +121,18 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $approved): void
+    // TODO: Make sure this cant be abused to try and brute force a device code
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $approved): void
     {
         $deviceCode = $this->deviceCodeRepository->getDeviceCodeEntityByDeviceCode($deviceCode);
+
+        if ($deviceCode instanceof DeviceCodeEntityInterface === false) {
+            throw OAuthServerException::invalidRequest('device_code', 'Device code does not exist');
+        }
+
+        if ($userId === '') {
+            throw OAuthServerException::invalidRequest('user_id', 'User ID is required');
+        }
 
         $deviceCode->setUserIdentifier($userId);
         $deviceCode->setUserApproved($approved);
@@ -210,19 +218,17 @@ class DeviceCodeGrant extends AbstractGrant
         }
 
         $deviceCode = $this->deviceCodeRepository->getDeviceCodeEntityByDeviceCode(
-            $deviceCodePayload->device_code_id,
-            $this->getIdentifier(),
-            $client
+            $deviceCodePayload->device_code_id
         );
-
-        if ($this->deviceCodePolledTooSoon($deviceCode->getLastPolledAt()) === true) {
-            throw OAuthServerException::slowDown();
-        }
 
         if ($deviceCode instanceof DeviceCodeEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
 
             throw OAuthServerException::invalidGrant();
+        }
+
+        if ($this->deviceCodePolledTooSoon($deviceCode->getLastPolledAt()) === true) {
+            throw OAuthServerException::slowDown();
         }
 
         return $deviceCode;
@@ -312,6 +318,10 @@ class DeviceCodeGrant extends AbstractGrant
                 }
             }
         }
+
+
+        // This should never be hit. It is here to work around a PHPStan false error
+        return $deviceCode;
     }
 
     /**

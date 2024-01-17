@@ -27,15 +27,12 @@ interface DeviceCodeRepositoryInterface extends RepositoryInterface
     /**
      * Persists a device code to permanent storage.
      *
-     *
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
     public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity): void;
 
     /**
      * Get a device code entity.
-     *
-     *
      */
     public function getDeviceCodeEntityByDeviceCode(
         string $deviceCode
