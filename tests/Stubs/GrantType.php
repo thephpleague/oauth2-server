@@ -108,7 +108,7 @@ final class GrantType implements GrantTypeInterface
         return true;
     }
 
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string|int $userId, bool $userApproved): void
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void
     {
     }
 

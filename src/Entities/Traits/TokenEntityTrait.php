@@ -27,6 +27,9 @@ trait TokenEntityTrait
 
     protected DateTimeImmutable $expiryDateTime;
 
+    /**
+     * @var non-empty-string|null
+     */
     protected string|null $userIdentifier = null;
 
     protected ClientEntityInterface $client;
@@ -78,6 +81,7 @@ trait TokenEntityTrait
     /**
      * Get the token user's identifier.
      *
+     * @return non-empty-string|null
      */
     public function getUserIdentifier(): string|null
     {

@@ -26,6 +26,7 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequestInterface;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
@@ -121,8 +122,7 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    // TODO: Make sure this cant be abused to try and brute force a device code
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $approved): void
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void
     {
         $deviceCode = $this->deviceCodeRepository->getDeviceCodeEntityByDeviceCode($deviceCode);
 
@@ -135,7 +135,7 @@ class DeviceCodeGrant extends AbstractGrant
         }
 
         $deviceCode->setUserIdentifier($userId);
-        $deviceCode->setUserApproved($approved);
+        $deviceCode->setUserApproved($userApproved);
 
         $this->deviceCodeRepository->persistDeviceCode($deviceCode);
     }

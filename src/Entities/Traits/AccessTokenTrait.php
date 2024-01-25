@@ -59,6 +59,12 @@ trait AccessTokenTrait
      */
     private function convertToJWT(): Token
     {
+        $userIdentifier = $this->getUserIdentifier();
+
+        if ($userIdentifier === null) {
+            throw new RuntimeException('JWT access tokens MUST contain a subject identifier');
+        }
+
         $this->initJwtConfiguration();
 
         return $this->jwtConfiguration->builder()
@@ -67,7 +73,7 @@ trait AccessTokenTrait
             ->issuedAt(new DateTimeImmutable())
             ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt($this->getExpiryDateTime())
-            ->relatedTo($this->getUserIdentifier())
+            ->relatedTo($userIdentifier)
             ->withClaim('scopes', $this->getScopes())
             ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
     }
@@ -84,6 +90,9 @@ trait AccessTokenTrait
 
     abstract public function getExpiryDateTime(): DateTimeImmutable;
 
+    /**
+     * @return non-empty-string|null
+     */
     abstract public function getUserIdentifier(): string|null;
 
     /**
