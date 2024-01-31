@@ -94,8 +94,6 @@ interface GrantTypeInterface extends EmitterAwareInterface
      */
     public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request): DeviceCodeResponse;
 
-    // TODO: Check DeviceAuthorizationRequest
-
     /**
      * If the grant can respond to a device authorization request this method should be called to validate the parameters of
      * the request.

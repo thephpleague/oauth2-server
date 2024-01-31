@@ -20,6 +20,7 @@ trait DeviceCodeTrait
 {
     private bool $userApproved = false;
     private bool $intervalInAuthResponse = false;
+    private bool $includeVerificationUriComplete = false;
     private int $interval = 5;
     private string $userCode;
     private string $verificationUri;
@@ -43,6 +44,11 @@ trait DeviceCodeTrait
     public function setVerificationUri(string $verificationUri): void
     {
         $this->verificationUri = $verificationUri;
+    }
+
+    public function getVerificationUriComplete(): string
+    {
+        return $this->verificationUri . '?user_code=' . $this->userCode;
     }
 
     abstract public function getClient(): ClientEntityInterface;
@@ -81,9 +87,9 @@ trait DeviceCodeTrait
         return $this->intervalInAuthResponse;
     }
 
-    public function setIntervalInAuthResponse(bool $intervalInAuthResponse): bool
+    public function setIntervalInAuthResponse(bool $intervalInAuthResponse): void
     {
-        return $this->intervalInAuthResponse = $intervalInAuthResponse;
+        $this->intervalInAuthResponse = $intervalInAuthResponse;
     }
 
     public function getUserApproved(): bool
@@ -94,5 +100,15 @@ trait DeviceCodeTrait
     public function setUserApproved(bool $userApproved): void
     {
         $this->userApproved = $userApproved;
+    }
+
+    public function getVerificationUriCompleteInAuthResponse(): bool
+    {
+        return $this->includeVerificationUriComplete;
+    }
+
+    public function setVerificationUriCompleteInAuthResponse(bool $includeVerificationUriComplete): void
+    {
+        $this->includeVerificationUriComplete = $includeVerificationUriComplete;
     }
 }

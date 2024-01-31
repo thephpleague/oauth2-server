@@ -119,6 +119,53 @@ class DeviceCodeGrantTest extends TestCase
         self::assertEquals('http://foo/bar', $responseJson->verification_uri);
     }
 
+    public function testRespondToDeviceAuthorizationRequestWithVerificationUriComplete(): void
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $deviceCodeRepository = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
+        $deviceCodeRepository->method('getNewDeviceCode')->willReturn(new DeviceCodeEntity());
+
+        $scope = new ScopeEntity();
+        $scope->setIdentifier('basic');
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
+        $grant = new DeviceCodeGrant(
+            $deviceCodeRepository,
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M'),
+            "http://foo/bar"
+        );
+
+        $grant->setIncludeVerificationUriComplete(true);
+
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setScopeRepository($scopeRepositoryMock);
+
+        $request = (new ServerRequest())->withParsedBody([
+            'client_id' => 'foo',
+            'scope' => 'basic',
+        ]);
+
+        $deviceCodeResponse = $grant->respondToDeviceAuthorizationRequest($request);
+
+        $responseJson = json_decode($deviceCodeResponse->generateHttpResponse(new Response())->getBody()->__toString());
+
+        self::assertObjectHasProperty('device_code', $responseJson);
+        self::assertObjectHasProperty('user_code', $responseJson);
+        self::assertObjectHasProperty('verification_uri', $responseJson);
+        self::assertObjectHasProperty('verification_uri_complete', $responseJson);
+        self::assertEquals('http://foo/bar', $responseJson->verification_uri);
+        self::assertEquals('http://foo/bar?user_code=' . $responseJson->user_code, $responseJson->verification_uri_complete);
+    }
+
     public function testValidateDeviceAuthorizationRequestMissingClient(): void
     {
         $client = new ClientEntity();
@@ -287,7 +334,6 @@ class DeviceCodeGrantTest extends TestCase
         $this::assertObjectHasProperty('device_code', $responseObject);
         $this::assertObjectHasProperty('user_code', $responseObject);
         $this::assertObjectHasProperty('verification_uri', $responseObject);
-        // TODO: $this->assertObjectHasAttribute('verification_uri_complete', $responseObject);
         $this::assertObjectHasProperty('expires_in', $responseObject);
         // TODO: $this->assertObjectHasAttribute('interval', $responseObject);
     }

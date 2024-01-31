@@ -25,6 +25,7 @@ class DeviceCodeResponse extends AbstractResponseType
 {
     protected DeviceCodeEntityInterface $deviceCode;
     protected string $payload;
+    private bool $includeVerificationUriComplete = false;
 
     /**
      * {@inheritdoc}
@@ -38,8 +39,11 @@ class DeviceCodeResponse extends AbstractResponseType
             'user_code' => $this->deviceCode->getUserCode(),
             'verification_uri' => $this->deviceCode->getVerificationUri(),
             'expires_in'   => $expireDateTime - time(),
-            // TODO: Potentially add in verification_uri_complete - it is optional
         ];
+        
+        if ($this->includeVerificationUriComplete === true) {
+            $responseParams['verification_uri_complete'] = $this->deviceCode->getVerificationUriComplete();
+        }
 
         if ($this->deviceCode->getIntervalInAuthResponse() === true) {
             $responseParams['interval'] = $this->deviceCode->getInterval();
@@ -73,6 +77,11 @@ class DeviceCodeResponse extends AbstractResponseType
     public function setDeviceCode(DeviceCodeEntityInterface $deviceCode): void
     {
         $this->deviceCode = $deviceCode;
+    }
+
+    public function includeVerificationUriComplete(): void
+    {
+        $this->includeVerificationUriComplete = true;
     }
 
     /**

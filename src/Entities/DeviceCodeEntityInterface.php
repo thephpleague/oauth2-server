@@ -24,6 +24,8 @@ interface DeviceCodeEntityInterface extends TokenInterface
 
     public function setVerificationUri(string $verificationUri): void;
 
+    public function getVerificationUriComplete(): string;
+
     public function getLastPolledAt(): ?DateTimeImmutable;
 
     public function setLastPolledAt(DateTimeImmutable $lastPolledAt): void;
@@ -34,7 +36,7 @@ interface DeviceCodeEntityInterface extends TokenInterface
 
     public function getIntervalInAuthResponse(): bool;
 
-    public function setIntervalInAuthResponse(bool $intervalInAuthResponse): bool;
+    public function setIntervalInAuthResponse(bool $intervalInAuthResponse): void;
 
     public function getUserApproved(): bool;
 

@@ -26,7 +26,6 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
-use League\OAuth2\Server\RequestTypes\DeviceAuthorizationRequestInterface;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
@@ -48,6 +47,7 @@ use function time;
 class DeviceCodeGrant extends AbstractGrant
 {
     protected DeviceCodeRepositoryInterface $deviceCodeRepository;
+    private bool $includeVerificationUriComplete = false;
     private bool $intervalVisibility = false;
     private string $verificationUri;
 
@@ -100,7 +100,7 @@ class DeviceCodeGrant extends AbstractGrant
             $scopes
         );
 
-        // TODO: Check payload generation
+        // TODO: Check payload generation. Is this the best way to handle things?
         $payload = [
             'device_code_id' => $deviceCode->getIdentifier(),
             'user_code' => $deviceCode->getUserCode(),
@@ -110,9 +110,15 @@ class DeviceCodeGrant extends AbstractGrant
             'scopes' => $deviceCode->getScopes(),
         ];
 
+        $response = new DeviceCodeResponse();
+
+        if ($this->includeVerificationUriComplete === true) {
+            $response->includeVerificationUriComplete();
+            $payload['verification_uri_complete'] = $deviceCode->getVerificationUriComplete();
+        }
+
         $jsonPayload = json_encode($payload, JSON_THROW_ON_ERROR);
 
-        $response = new DeviceCodeResponse();
         $response->setDeviceCode($deviceCode);
         $response->setPayload($this->encrypt($jsonPayload));
 
@@ -187,9 +193,7 @@ class DeviceCodeGrant extends AbstractGrant
     }
 
     /**
-     *
      * @throws OAuthServerException
-     *
      */
     protected function validateDeviceCode(ServerRequestInterface $request, ClientEntityInterface $client): DeviceCodeEntityInterface
     {
@@ -240,9 +244,7 @@ class DeviceCodeGrant extends AbstractGrant
     }
 
     /**
-     *
      * @throws OAuthServerException
-     *
      */
     protected function decodeDeviceCode(string $encryptedDeviceCode): stdClass
     {
@@ -255,7 +257,6 @@ class DeviceCodeGrant extends AbstractGrant
 
     /**
      * Set the verification uri
-     *
      */
     public function setVerificationUri(string $verificationUri): void
     {
@@ -288,7 +289,7 @@ class DeviceCodeGrant extends AbstractGrant
         DateInterval $deviceCodeTTL,
         ClientEntityInterface $client,
         string $verificationUri,
-        array $scopes = []
+        array $scopes = [],
     ): DeviceCodeEntityInterface {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
@@ -354,6 +355,7 @@ class DeviceCodeGrant extends AbstractGrant
         // @codeCoverageIgnoreEnd
     }
 
+    // TODO: Check interface 
     public function setIntervalVisibility(bool $intervalVisibility): void
     {
         $this->intervalVisibility = $intervalVisibility;
@@ -362,5 +364,10 @@ class DeviceCodeGrant extends AbstractGrant
     public function getIntervalVisibility(): bool
     {
         return $this->intervalVisibility;
+    }
+
+    public function setIncludeVerificationUriComplete(bool $includeVerificationUriComplete): void
+    {
+        $this->includeVerificationUriComplete = $includeVerificationUriComplete;
     }
 }
