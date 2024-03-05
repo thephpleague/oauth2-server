@@ -36,6 +36,7 @@ use function uniqid;
 class DeviceCodeGrantTest extends TestCase
 {
     private const DEFAULT_SCOPE = 'basic';
+    private const INTERVAL_RATE = 10;
 
     protected CryptTraitStub $cryptStub;
 
@@ -335,7 +336,6 @@ class DeviceCodeGrantTest extends TestCase
         $this::assertObjectHasProperty('user_code', $responseObject);
         $this::assertObjectHasProperty('verification_uri', $responseObject);
         $this::assertObjectHasProperty('expires_in', $responseObject);
-        // TODO: $this->assertObjectHasAttribute('interval', $responseObject);
     }
 
     public function testRespondToAccessTokenRequest(): void
@@ -674,7 +674,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
-    public function testIntervalVisibility(): void
+    public function testSettingDeviceCodeIntervalRate(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -683,8 +683,6 @@ class DeviceCodeGrantTest extends TestCase
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
 
         $deviceCode = new DeviceCodeEntity();
-
-        $deviceCode->setIntervalInAuthResponse(true);
 
         $deviceCodeRepository = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
         $deviceCodeRepository->method('getNewDeviceCode')->willReturn($deviceCode);
@@ -698,13 +696,15 @@ class DeviceCodeGrantTest extends TestCase
             $deviceCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M'),
-            "http://foo/bar"
+            "http://foo/bar",
+            self::INTERVAL_RATE
         );
 
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setIntervalVisibility(true);
 
         $request = (new ServerRequest())->withParsedBody([
             'client_id' => 'foo',
@@ -718,9 +718,8 @@ class DeviceCodeGrantTest extends TestCase
         $deviceCode = json_decode((string) $deviceCodeResponse->getBody());
 
         $this::assertObjectHasProperty('interval', $deviceCode);
-        $this::assertEquals(5, $deviceCode->interval);
+        $this::assertEquals(self::INTERVAL_RATE, $deviceCode->interval);
     }
-
     public function testIssueAccessDeniedError(): void
     {
         $client = new ClientEntity();

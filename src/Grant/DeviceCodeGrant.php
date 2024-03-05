@@ -108,6 +108,7 @@ class DeviceCodeGrant extends AbstractGrant
             'expire_time' => $deviceCode->getExpiryDateTime()->getTimestamp(),
             'client_id' => $deviceCode->getClient()->getIdentifier(),
             'scopes' => $deviceCode->getScopes(),
+            'interval' => $deviceCode->getInterval(),
         ];
 
         $response = new DeviceCodeResponse();
@@ -355,7 +356,7 @@ class DeviceCodeGrant extends AbstractGrant
         // @codeCoverageIgnoreEnd
     }
 
-    // TODO: Check interface 
+    // TODO: Check interface
     public function setIntervalVisibility(bool $intervalVisibility): void
     {
         $this->intervalVisibility = $intervalVisibility;

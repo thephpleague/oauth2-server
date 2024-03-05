@@ -19,7 +19,6 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
 trait DeviceCodeTrait
 {
     private bool $userApproved = false;
-    private bool $intervalInAuthResponse = false;
     private bool $includeVerificationUriComplete = false;
     private int $interval = 5;
     private string $userCode;
@@ -80,16 +79,6 @@ trait DeviceCodeTrait
     public function setInterval(int $interval): void
     {
         $this->interval = $interval;
-    }
-
-    public function getIntervalInAuthResponse(): bool
-    {
-        return $this->intervalInAuthResponse;
-    }
-
-    public function setIntervalInAuthResponse(bool $intervalInAuthResponse): void
-    {
-        $this->intervalInAuthResponse = $intervalInAuthResponse;
     }
 
     public function getUserApproved(): bool

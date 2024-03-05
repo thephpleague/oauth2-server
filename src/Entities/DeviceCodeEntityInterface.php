@@ -34,10 +34,6 @@ interface DeviceCodeEntityInterface extends TokenInterface
 
     public function setInterval(int $interval): void;
 
-    public function getIntervalInAuthResponse(): bool;
-
-    public function setIntervalInAuthResponse(bool $intervalInAuthResponse): void;
-
     public function getUserApproved(): bool;
 
     public function setUserApproved(bool $userApproved): void;
