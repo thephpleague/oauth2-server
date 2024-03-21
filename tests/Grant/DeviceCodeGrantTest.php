@@ -729,6 +729,7 @@ class DeviceCodeGrantTest extends TestCase
         $this::assertObjectHasProperty('interval', $deviceCode);
         $this::assertEquals(self::INTERVAL_RATE, $deviceCode->interval);
     }
+
     public function testIssueAccessDeniedError(): void
     {
         $client = new ClientEntity();

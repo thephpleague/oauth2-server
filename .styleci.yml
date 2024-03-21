@@ -18,7 +18,6 @@ enabled:
   - no_trailing_comma_in_singleline_array
   - no_unused_imports
   - no_whitespace_before_comma_in_array
-  - ordered_imports
   - phpdoc_align
   - phpdoc_indent
   - phpdoc_inline_tag
