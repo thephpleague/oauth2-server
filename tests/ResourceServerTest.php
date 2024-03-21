@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace LeagueTests;
 
@@ -11,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class ResourceServerTest extends TestCase
 {
-    public function testValidateAuthenticatedRequest()
+    public function testValidateAuthenticatedRequest(): void
     {
         $server = new ResourceServer(
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
@@ -21,7 +22,7 @@ class ResourceServerTest extends TestCase
         try {
             $server->validateAuthenticatedRequest(ServerRequestFactory::fromGlobals());
         } catch (OAuthServerException $e) {
-            $this->assertEquals('Missing "Authorization" header', $e->getHint());
+            self::assertEquals('Missing "Authorization" header', $e->getHint());
         }
     }
 }

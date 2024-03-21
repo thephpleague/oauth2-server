@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Middleware;
 
 use DateInterval;
@@ -14,9 +16,12 @@ use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use PHPUnit\Framework\TestCase;
 
+use function func_get_args;
+use function sprintf;
+
 class ResourceServerMiddlewareTest extends TestCase
 {
-    public function testValidResponse()
+    public function testValidResponse(): void
     {
         $server = new ResourceServer(
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
@@ -28,30 +33,30 @@ class ResourceServerMiddlewareTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('test');
-        $accessToken->setUserIdentifier(123);
+        $accessToken->setUserIdentifier('123');
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $token = (string) $accessToken;
+        $token = $accessToken->toString();
 
-        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $token));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $token));
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
             $request,
             new Response(),
             function () {
-                $this->assertEquals('test', \func_get_args()[0]->getAttribute('oauth_access_token_id'));
+                self::assertEquals('test', func_get_args()[0]->getAttribute('oauth_access_token_id'));
 
-                return \func_get_args()[1];
+                return func_get_args()[1];
             }
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
     }
 
-    public function testValidResponseExpiredToken()
+    public function testValidResponseExpiredToken(): void
     {
         $server = new ResourceServer(
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
@@ -63,30 +68,30 @@ class ResourceServerMiddlewareTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('test');
-        $accessToken->setUserIdentifier(123);
+        $accessToken->setUserIdentifier('123');
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->sub(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $token = (string) $accessToken;
+        $token = $accessToken->toString();
 
-        $request = (new ServerRequest())->withHeader('authorization', \sprintf('Bearer %s', $token));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $token));
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
             $request,
             new Response(),
             function () {
-                $this->assertEquals('test', \func_get_args()[0]->getAttribute('oauth_access_token_id'));
+                self::assertEquals('test', func_get_args()[0]->getAttribute('oauth_access_token_id'));
 
-                return \func_get_args()[1];
+                return func_get_args()[1];
             }
         );
 
-        $this->assertEquals(401, $response->getStatusCode());
+        self::assertEquals(401, $response->getStatusCode());
     }
 
-    public function testErrorResponse()
+    public function testErrorResponse(): void
     {
         $server = new ResourceServer(
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
@@ -100,10 +105,10 @@ class ResourceServerMiddlewareTest extends TestCase
             $request,
             new Response(),
             function () {
-                return \func_get_args()[1];
+                return func_get_args()[1];
             }
         );
 
-        $this->assertEquals(401, $response->getStatusCode());
+        self::assertEquals(401, $response->getStatusCode());
     }
 }

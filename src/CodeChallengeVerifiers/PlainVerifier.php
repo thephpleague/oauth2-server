@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Lukáš Unger <lookymsc@gmail.com>
  * @copyright   Copyright (c) Lukáš Unger
@@ -7,30 +8,27 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\CodeChallengeVerifiers;
+
+use function hash_equals;
 
 class PlainVerifier implements CodeChallengeVerifierInterface
 {
     /**
      * Return code challenge method.
-     *
-     * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return 'plain';
     }
 
     /**
      * Verify the code challenge.
-     *
-     * @param string $codeVerifier
-     * @param string $codeChallenge
-     *
-     * @return bool
      */
-    public function verifyCodeChallenge($codeVerifier, $codeChallenge)
+    public function verifyCodeChallenge(string $codeVerifier, string $codeChallenge): bool
     {
-        return \hash_equals($codeVerifier, $codeChallenge);
+        return hash_equals($codeVerifier, $codeChallenge);
     }
 }

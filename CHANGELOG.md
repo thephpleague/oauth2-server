@@ -5,6 +5,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Device Authorization Grant added (PR #1074)
+- GrantTypeInterface has a new function, `revokeRefreshTokens()` for enabling or disabling refresh tokens after use (PR #1375)
+- A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
+- The authorization server can now finalize scopes when a client uses a refresh token (PR #1094)
+- An AuthorizationRequestInterface to make it easier to extend the AuthorizationRequest (PR #1110)
+- Added function `getKeyContents()` to the `CryptKeyInterface` (PR #1375)
+
+### Fixed
+- If a refresh token has expired, been revoked, cannot be decrypted, or does not belong to the correct client, the server will now issue an `invalid_grant` error and a HTTP 400 response. In previous versions the server incorrectly issued an `invalid_request` and HTTP 401 response (PR #1042) (PR #1082)
+
+### Changed
+- Authorization Request objects are now created through the factory method, `createAuthorizationRequest()` (PR #1111)
+- Changed parameters for `finalizeScopes()` to allow a reference to an auth code ID (PR #1112)
+- AccessTokenEntityInterface now requires the implementation of `toString()` instead of the magic method `__toString()` (PR #XXXX)
+
+### Removed
+- Removed message property from OAuthException HTTP response. Now just use error_description as per the OAuth 2 spec (PR #1375)
 
 ## [8.5.4] - released 2023-08-25
 ### Added
@@ -118,7 +136,6 @@ a PKCE downgrade attack (PR #1326)
 ### Fixed
 - If you provide a valid redirect_uri with the auth code grant and an invalid scope, the server will use the given 
 redirect_uri instead of the default client redirect uri (PR #1126)
-
 
 ## [8.1.0] - released 2020-04-29
 

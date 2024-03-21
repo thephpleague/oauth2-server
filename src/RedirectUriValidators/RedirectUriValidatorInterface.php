@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Sebastiano Degan <sebdeg87@gmail.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,16 +8,14 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\RedirectUriValidators;
 
 interface RedirectUriValidatorInterface
 {
     /**
      * Validates the redirect uri.
-     *
-     * @param string $redirectUri
-     *
-     * @return bool Return true if valid, false otherwise
      */
-    public function validateRedirectUri($redirectUri);
+    public function validateRedirectUri(string $redirectUri): bool;
 }

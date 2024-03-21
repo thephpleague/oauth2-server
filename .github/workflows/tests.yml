@@ -14,13 +14,6 @@ jobs:
         php: [8.1, 8.2, 8.3]
         os: [ubuntu-22.04]
         stability: [prefer-lowest, prefer-stable]
-        include:
-          - os: ubuntu-20.04
-            php: 8.0
-            stability: prefer-lowest
-          - os: ubuntu-20.04
-            php: 8.0
-            stability: prefer-stable
 
     runs-on: ${{ matrix.os }}
 
@@ -48,7 +41,7 @@ jobs:
           composer global require scrutinizer/ocular
 
       - name: Execute tests
-        run: vendor/bin/phpunit --verbose --coverage-clover=coverage.clover
+        run: vendor/bin/phpunit --coverage-clover=coverage.clover
 
       - name: Code coverage
         if: ${{ github.ref == 'refs/heads/master' && github.repository == 'thephpleague/oauth2-server' }}
