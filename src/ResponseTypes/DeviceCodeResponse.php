@@ -23,8 +23,7 @@ use function time;
 
 class DeviceCodeResponse extends AbstractResponseType
 {
-    protected DeviceCodeEntityInterface $deviceCode;
-    protected string $payload;
+    protected DeviceCodeEntityInterface $deviceCodeEntity;
     private bool $includeVerificationUriComplete = false;
     private const DEFAULT_INTERVAL = 5;
 
@@ -33,21 +32,21 @@ class DeviceCodeResponse extends AbstractResponseType
      */
     public function generateHttpResponse(ResponseInterface $response): ResponseInterface
     {
-        $expireDateTime = $this->deviceCode->getExpiryDateTime()->getTimestamp();
+        $expireDateTime = $this->deviceCodeEntity->getExpiryDateTime()->getTimestamp();
 
         $responseParams = [
-            'device_code' => $this->payload,
-            'user_code' => $this->deviceCode->getUserCode(),
-            'verification_uri' => $this->deviceCode->getVerificationUri(),
+            'device_code' => $this->deviceCodeEntity->getIdentifier(),
+            'user_code' => $this->deviceCodeEntity->getUserCode(),
+            'verification_uri' => $this->deviceCodeEntity->getVerificationUri(),
             'expires_in'   => $expireDateTime - time(),
         ];
 
         if ($this->includeVerificationUriComplete === true) {
-            $responseParams['verification_uri_complete'] = $this->deviceCode->getVerificationUriComplete();
+            $responseParams['verification_uri_complete'] = $this->deviceCodeEntity->getVerificationUriComplete();
         }
 
-        if ($this->deviceCode->getInterval() !== self::DEFAULT_INTERVAL) {
-            $responseParams['interval'] = $this->deviceCode->getInterval();
+        if ($this->deviceCodeEntity->getInterval() !== self::DEFAULT_INTERVAL) {
+            $responseParams['interval'] = $this->deviceCodeEntity->getInterval();
         }
 
         $responseParams = json_encode($responseParams);
@@ -67,17 +66,12 @@ class DeviceCodeResponse extends AbstractResponseType
         return $response;
     }
 
-    public function setPayload(string $payload): void
-    {
-        $this->payload = $payload;
-    }
-
     /**
      * {@inheritdoc}
      */
-    public function setDeviceCode(DeviceCodeEntityInterface $deviceCode): void
+    public function setDeviceCodeEntity(DeviceCodeEntityInterface $deviceCodeEntity): void
     {
-        $this->deviceCode = $deviceCode;
+        $this->deviceCodeEntity = $deviceCodeEntity;
     }
 
     public function includeVerificationUriComplete(): void

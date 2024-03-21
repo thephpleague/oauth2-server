@@ -51,4 +51,14 @@ interface DeviceCodeRepositoryInterface extends RepositoryInterface
      * @return bool Return true if this code has been revoked
      */
     public function isDeviceCodeRevoked(string $codeId): bool;
+
+    /**
+     * Get the expiry time of the device code.
+     */
+    public function getDeviceCodeExpiryTime(string $codeId): int;
+
+    /**
+     * Get the client ID of the device code.
+     */
+    public function getDeviceCodeClientId(string $codeId): string;
 }

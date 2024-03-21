@@ -355,13 +355,15 @@ class DeviceCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
         $deviceCodeRepositoryMock = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
-        $deviceCode = new DeviceCodeEntity();
+        $deviceCodeEntity = new DeviceCodeEntity();
 
-        $deviceCode->setUserIdentifier('baz');
-        $deviceCode->setIdentifier('deviceCodeEntityIdentifier');
-        $deviceCode->setUserCode('123456');
+        $deviceCodeEntity->setUserIdentifier('baz');
+        $deviceCodeEntity->setIdentifier('deviceCodeEntityIdentifier');
+        $deviceCodeEntity->setUserCode('123456');
+        $deviceCodeEntity->setExpiryDateTime(new DateTimeImmutable('+1 hour'));
+        $deviceCodeEntity->setClient($client);
 
-        $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCode);
+        $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCodeEntity);
 
         $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
@@ -382,7 +384,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), "1", true);
+        $grant->completeDeviceAuthorizationRequest($deviceCodeEntity->getUserCode(), "1", true);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
@@ -511,6 +513,8 @@ class DeviceCodeGrantTest extends TestCase
         $deviceCodeRepositoryMock = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
         $deviceCodeEntity = new DeviceCodeEntity();
         $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
+        $deviceCodeEntity->setExpiryDateTime(new DateTimeImmutable('+1 hour'));
+        $deviceCodeEntity->setClient($client);
         $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCodeEntity);
 
         $scope = new ScopeEntity();
@@ -569,8 +573,10 @@ class DeviceCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
         $deviceCodeRepositoryMock = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
-        $deviceCode = new DeviceCodeEntity();
-        $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCode);
+        $deviceCodeEntity = new DeviceCodeEntity();
+        $deviceCodeEntity->setExpiryDateTime(new DateTimeImmutable('+1 hour'));
+        $deviceCodeEntity->setClient($client);
+        $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCodeEntity);
 
         $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
@@ -628,8 +634,10 @@ class DeviceCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
         $deviceCodeRepositoryMock = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
-        $deviceCode = new DeviceCodeEntity();
-        $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCode);
+        $deviceCodeEntity = new DeviceCodeEntity();
+        $deviceCodeEntity->setExpiryDateTime(new DateTimeImmutable('-1 hour'));
+        $deviceCodeEntity->setClient($client);
+        $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCodeEntity);
 
         $scope = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
@@ -736,6 +744,8 @@ class DeviceCodeGrantTest extends TestCase
 
         $deviceCode = new DeviceCodeEntity();
 
+        $deviceCode->setExpiryDateTime(new DateTimeImmutable('+1 hour'));
+        $deviceCode->setClient($client);
         $deviceCode->setUserCode('12345678');
         $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCode);
 

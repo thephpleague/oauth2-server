@@ -28,15 +28,11 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
-use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
-use stdClass;
+use Ramsey\Uuid\Uuid;
 use TypeError;
 
 use function is_null;
-use function json_decode;
-use function json_encode;
-use function property_exists;
 use function random_int;
 use function strlen;
 use function time;
@@ -93,35 +89,20 @@ class DeviceCodeGrant extends AbstractGrant
 
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
 
-        $deviceCode = $this->issueDeviceCode(
+        $deviceCodeEntity = $this->issueDeviceCode(
             $this->deviceCodeTTL,
             $client,
             $this->verificationUri,
             $scopes
         );
 
-        // TODO: Check payload generation. Is this the best way to handle things?
-        $payload = [
-            'device_code_id' => $deviceCode->getIdentifier(),
-            'user_code' => $deviceCode->getUserCode(),
-            'verification_uri' => $deviceCode->getVerificationUri(),
-            'expire_time' => $deviceCode->getExpiryDateTime()->getTimestamp(),
-            'client_id' => $deviceCode->getClient()->getIdentifier(),
-            'scopes' => $deviceCode->getScopes(),
-            'interval' => $deviceCode->getInterval(),
-        ];
-
         $response = new DeviceCodeResponse();
 
         if ($this->includeVerificationUriComplete === true) {
             $response->includeVerificationUriComplete();
-            $payload['verification_uri_complete'] = $deviceCode->getVerificationUriComplete();
         }
 
-        $jsonPayload = json_encode($payload, JSON_THROW_ON_ERROR);
-
-        $response->setDeviceCode($deviceCode);
-        $response->setPayload($this->encrypt($jsonPayload));
+        $response->setDeviceCodeEntity($deviceCodeEntity);
 
         return $response;
     }
@@ -198,62 +179,44 @@ class DeviceCodeGrant extends AbstractGrant
      */
     protected function validateDeviceCode(ServerRequestInterface $request, ClientEntityInterface $client): DeviceCodeEntityInterface
     {
-        $encryptedDeviceCode = $this->getRequestParameter('device_code', $request);
+        $deviceCode = $this->getRequestParameter('device_code', $request);
 
-        if (is_null($encryptedDeviceCode)) {
+        if (is_null($deviceCode)) {
             throw OAuthServerException::invalidRequest('device_code');
         }
 
-        $deviceCodePayload = $this->decodeDeviceCode($encryptedDeviceCode);
-
-        if (!property_exists($deviceCodePayload, 'device_code_id')) {
-            throw OAuthServerException::invalidRequest('device_code', 'Device code malformed');
-        }
-
-        if (time() > $deviceCodePayload->expire_time) {
-            throw OAuthServerException::expiredToken('device_code');
-        }
-
-        if ($this->deviceCodeRepository->isDeviceCodeRevoked($deviceCodePayload->device_code_id) === true) {
-            throw OAuthServerException::invalidRequest('device_code', 'Device code has been revoked');
-        }
-
-        if ($deviceCodePayload->client_id !== $client->getIdentifier()) {
-            throw OAuthServerException::invalidRequest('device_code', 'Device code was not issued to this client');
-        }
-
-        $deviceCode = $this->deviceCodeRepository->getDeviceCodeEntityByDeviceCode(
-            $deviceCodePayload->device_code_id
+        $deviceCodeEntity = $this->deviceCodeRepository->getDeviceCodeEntityByDeviceCode(
+            $deviceCode
         );
 
-        if ($deviceCode instanceof DeviceCodeEntityInterface === false) {
+        if ($deviceCodeEntity instanceof DeviceCodeEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::USER_AUTHENTICATION_FAILED, $request));
 
             throw OAuthServerException::invalidGrant();
         }
 
-        if ($this->deviceCodePolledTooSoon($deviceCode->getLastPolledAt()) === true) {
+        if (time() > $deviceCodeEntity->getExpiryDateTime()->getTimestamp()) {
+            throw OAuthServerException::expiredToken('device_code');
+        }
+
+        if ($this->deviceCodeRepository->isDeviceCodeRevoked($deviceCode) === true) {
+            throw OAuthServerException::invalidRequest('device_code', 'Device code has been revoked');
+        }
+
+        if ($deviceCodeEntity->getClient()->getIdentifier() !== $client->getIdentifier()) {
+            throw OAuthServerException::invalidRequest('device_code', 'Device code was not issued to this client');
+        }
+
+        if ($this->deviceCodePolledTooSoon($deviceCodeEntity->getLastPolledAt()) === true) {
             throw OAuthServerException::slowDown();
         }
 
-        return $deviceCode;
+        return $deviceCodeEntity;
     }
 
     private function deviceCodePolledTooSoon(?DateTimeImmutable $lastPoll): bool
     {
         return $lastPoll !== null && $lastPoll->getTimestamp() + $this->retryInterval > time();
-    }
-
-    /**
-     * @throws OAuthServerException
-     */
-    protected function decodeDeviceCode(string $encryptedDeviceCode): stdClass
-    {
-        try {
-            return json_decode($this->decrypt($encryptedDeviceCode));
-        } catch (LogicException $e) {
-            throw OAuthServerException::invalidRequest('device_code', 'Cannot decrypt the device code', $e);
-        }
     }
 
     /**
@@ -309,7 +272,8 @@ class DeviceCodeGrant extends AbstractGrant
 
         while ($maxGenerationAttempts-- > 0) {
             $deviceCode->setIdentifier($this->generateUniqueIdentifier());
-            $deviceCode->setUserCode($this->generateUniqueUserCode());
+            $deviceCode->setUserCode($this->generateUserCode());
+
             try {
                 $this->deviceCodeRepository->persistDeviceCode($deviceCode);
 
@@ -321,19 +285,16 @@ class DeviceCodeGrant extends AbstractGrant
             }
         }
 
-
         // This should never be hit. It is here to work around a PHPStan false error
         return $deviceCode;
     }
 
     /**
-     * Generate a new unique user code.
-     *
-     *
+     * Generate a new user code.
      *
      * @throws OAuthServerException
      */
-    protected function generateUniqueUserCode(int $length = 8): string
+    protected function generateUserCode(int $length = 8): string
     {
         try {
             $userCode = '';

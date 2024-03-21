@@ -13,7 +13,6 @@ use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\DeviceCodeEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
 
 use function base64_encode;
 use function json_decode;
@@ -41,9 +40,7 @@ class DeviceCodeResponseTypeTest extends TestCase
         $deviceCode->addScope($scope);
         $deviceCode->setVerificationUri('https://example.com/device');
 
-
-        $responseType->setDeviceCode($deviceCode);
-        $responseType->setPayload('test');
+        $responseType->setDeviceCodeEntity($deviceCode);
 
         $response = $responseType->generateHttpResponse(new Response());
 
@@ -56,7 +53,7 @@ class DeviceCodeResponseTypeTest extends TestCase
         $json = json_decode($response->getBody()->getContents());
         $this::assertObjectHasProperty('expires_in', $json);
         $this::assertObjectHasProperty('device_code', $json);
-        $this::assertEquals('test', $json->device_code);
+        $this::assertEquals('abcdef', $json->device_code);
         $this::assertObjectHasProperty('verification_uri', $json);
         $this::assertObjectHasProperty('user_code', $json);
     }
