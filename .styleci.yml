@@ -41,6 +41,5 @@ enabled:
   - standardize_not_equal
   - trailing_comma_in_multiline_array
   - trim_array_spaces
-  - unary_operator_spaces
   - whitespace_after_comma_in_array
   - whitespacy_lines
