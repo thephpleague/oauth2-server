@@ -40,7 +40,6 @@ class ScopeRepository implements ScopeRepositoryInterface
         return $scope;
     }
 
-    // TODO: Check why I have added authCodeId here
     /**
      * {@inheritdoc}
      */

@@ -45,11 +45,11 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
         $deviceCodeEntity = new DeviceCodeEntity();
 
         $deviceCodeEntity->setIdentifier($deviceCode);
-        $deviceCodeEntity->setExpiryDateTime((new DateTimeImmutable)->setTimestamp($this->getDeviceCodeExpiryTime($deviceCode)));
+        $deviceCodeEntity->setExpiryDateTime(new DateTimeImmutable('now +1 hour'));
         $deviceCodeEntity->setClient($clientEntity);
 
-        // TODO: Check if this is still true as it seems we need to set userapproved
-        // The user identifier should be set when the user authenticates on the OAuth server
+        // The user identifier should be set when the user authenticates on the
+        // OAuth server, along with whether they approved the request
         $deviceCodeEntity->setUserApproved(true);
         $deviceCodeEntity->setUserIdentifier(1);
 
@@ -70,16 +70,5 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     public function isDeviceCodeRevoked($codeId): bool
     {
         return false;
-    }
-    
-    // TODO: This should probably return a datetimeimmutable object to match the setter
-    public function getDeviceCodeExpiryTime(string $codeId): int
-    {
-        return (new DateTimeImmutable('now + 1 hour'))->getTimestamp();
-    }
-
-    public function getDeviceCodeClientId(string $codeId): string
-    {
-        // Some logic to get the client ID of the device code
     }
 }

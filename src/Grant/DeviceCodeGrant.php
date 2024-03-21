@@ -141,7 +141,6 @@ class DeviceCodeGrant extends AbstractGrant
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $deviceCodeEntity = $this->validateDeviceCode($request, $client);
 
-        // TODO: This should be set on the repository, not the entity
         $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
         $this->deviceCodeRepository->persistDeviceCode($deviceCodeEntity);
 
