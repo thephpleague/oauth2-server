@@ -15,8 +15,8 @@ use OAuth2ServerExamples\Entities\ClientEntity;
 
 class ClientRepository implements ClientRepositoryInterface
 {
-    const CLIENT_NAME = 'My Awesome App';
-    const REDIRECT_URI = 'http://foo/bar';
+    private const CLIENT_NAME = 'My Awesome App';
+    private const REDIRECT_URI = 'http://foo/bar';
 
     /**
      * {@inheritdoc}
