@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Device Code Grant added (PR #1074)
 - GrantTypeInterface has a new function, `revokeRefreshTokens()` for enabling or disabling refresh tokens after use (PR #1375)
 - A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
 - The authorization server can now finalize scopes when a client uses a refresh token (PR #1094)

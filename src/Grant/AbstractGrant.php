@@ -578,5 +578,4 @@ abstract class AbstractGrant implements GrantTypeInterface
     {
         throw new LogicException('This grant does not support the verification_uri_complete parameter');
     }
-
 }
