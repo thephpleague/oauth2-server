@@ -205,7 +205,7 @@ class OAuthServerException extends Exception
     /**
      * Expired token error.
      *
-     * @param Throwable   $previous Previous exception
+     * @param Throwable $previous Previous exception
      *
      * @return static
      */
@@ -357,7 +357,6 @@ class OAuthServerException extends Exception
      *
      * Returns true if the header is present and not an empty string, false
      * otherwise.
-     *
      */
     private function requestHasAuthorizationHeader(): bool
     {
