@@ -9,7 +9,6 @@ enabled:
   - include
   - method_separation
   - native_function_casing
-  - native_function_invocation
   - no_blank_lines_between_uses
   - no_duplicate_semicolons
   - no_multiline_whitespace_before_semicolons
