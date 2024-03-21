@@ -66,7 +66,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     protected const SCOPE_DELIMITER_STRING = ' ';
 
-    protected const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
+    private const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
 
     protected ClientRepositoryInterface $clientRepository;
 
