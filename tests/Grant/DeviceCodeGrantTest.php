@@ -54,7 +54,7 @@ class DeviceCodeGrantTest extends TestCase
             $deviceCodeRepositoryMock,
             $refreshTokenRepositoryMock,
             new DateInterval('PT10M'),
-            "http://foo/bar"
+            'http://foo/bar'
         );
 
         $this::assertEquals('urn:ietf:params:oauth:grant-type:device_code', $grant->getIdentifier());
@@ -66,7 +66,7 @@ class DeviceCodeGrantTest extends TestCase
             $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M'),
-            "http://foo/bar"
+            'http://foo/bar'
         );
 
         $request = (new ServerRequest())->withParsedBody([
@@ -97,7 +97,7 @@ class DeviceCodeGrantTest extends TestCase
             $deviceCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M'),
-            "http://foo/bar"
+            'http://foo/bar'
         );
 
         $grant->setClientRepository($clientRepositoryMock);
@@ -140,7 +140,7 @@ class DeviceCodeGrantTest extends TestCase
             $deviceCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M'),
-            "http://foo/bar"
+            'http://foo/bar'
         );
 
         $grant->setIncludeVerificationUriComplete(true);
@@ -317,12 +317,12 @@ class DeviceCodeGrantTest extends TestCase
            'client_id'     => 'foo',
         ]);
 
-         $deviceCodeGrant = new DeviceCodeGrant(
-             $deviceCodeRepository,
-             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-             new DateInterval('PT10M'),
-             'http://foo/bar'
-         );
+        $deviceCodeGrant = new DeviceCodeGrant(
+            $deviceCodeRepository,
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M'),
+            'http://foo/bar'
+        );
 
         $deviceCodeGrant->setEncryptionKey($this->cryptStub->getKey());
 
@@ -384,7 +384,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $grant->completeDeviceAuthorizationRequest($deviceCodeEntity->getUserCode(), "1", true);
+        $grant->completeDeviceAuthorizationRequest($deviceCodeEntity->getUserCode(), '1', true);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
@@ -705,7 +705,7 @@ class DeviceCodeGrantTest extends TestCase
             $deviceCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M'),
-            "http://foo/bar",
+            'http://foo/bar',
             self::INTERVAL_RATE
         );
 
@@ -768,7 +768,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), "1", false);
+        $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), '1', false);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
                 'client_id'     => 'foo',

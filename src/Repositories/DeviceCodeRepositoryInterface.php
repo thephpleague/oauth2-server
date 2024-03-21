@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace League\OAuth2\Server\Repositories;
 
-use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 
@@ -20,7 +19,6 @@ interface DeviceCodeRepositoryInterface extends RepositoryInterface
 {
     /**
      * Creates a new DeviceCode
-     *
      */
     public function getNewDeviceCode(): DeviceCodeEntityInterface;
 
@@ -40,13 +38,11 @@ interface DeviceCodeRepositoryInterface extends RepositoryInterface
 
     /**
      * Revoke a device code.
-     *
      */
     public function revokeDeviceCode(string $codeId): void;
 
     /**
      * Check if the device code has been revoked.
-     *
      *
      * @return bool Return true if this code has been revoked
      */

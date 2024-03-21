@@ -30,7 +30,6 @@ class RequestEvent extends AbstractEvent
     }
 
     /**
-     *
      * @codeCoverageIgnore
      */
     public function getRequest(): ServerRequestInterface

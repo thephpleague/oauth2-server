@@ -29,7 +29,6 @@ class ResourceServer
         CryptKeyInterface|string $publicKey,
         AuthorizationValidatorInterface $authorizationValidator = null
     ) {
-
         if ($publicKey instanceof CryptKeyInterface === false) {
             $publicKey = new CryptKey($publicKey);
         }

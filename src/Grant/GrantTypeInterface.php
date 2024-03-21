@@ -51,7 +51,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
     ): ResponseTypeInterface;
 
     /**
-     * The grant type should return true if it is able to response to an authorization request
+     * The grant type should return true if it is able to respond to an authorization request
      */
     public function canRespondToAuthorizationRequest(ServerRequestInterface $request): bool;
 
@@ -79,9 +79,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
     public function canRespondToAccessTokenRequest(ServerRequestInterface $request): bool;
 
     /**
-     * The grant type should return true if it is able to response to a device authorization request
-     *
-     *
+     * The grant type should return true if it is able to respond to a device authorization request
      */
     public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request): bool;
 
