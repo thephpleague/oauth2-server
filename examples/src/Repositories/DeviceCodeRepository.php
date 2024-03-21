@@ -9,12 +9,11 @@
 
 namespace OAuth2ServerExamples\Repositories;
 
+use DateTimeImmutable;
 use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use OAuth2ServerExamples\Entities\ClientEntity;
 use OAuth2ServerExamples\Entities\DeviceCodeEntity;
-
-use DateTimeImmutable;
 
 class DeviceCodeRepository implements DeviceCodeRepositoryInterface
 {
