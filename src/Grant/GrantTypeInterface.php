@@ -133,4 +133,23 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * Enable or prevent the revocation of refresh tokens upon usage.
      */
     public function revokeRefreshTokens(bool $willRevoke): void;
+
+    /**
+     * If set, the minimum interval between device code polling will be
+     * returned by the server.
+     */
+    public function setIntervalVisibility(bool $intervalVisibility): void;
+
+    /**
+     * Checks if the minimum interval between device code polling should be
+     * returned by the server.
+     */
+    public function getIntervalVisibility(): bool;
+
+    /**
+     * If set, the server will return a full verification URI to the client.
+     * This is useful when your device authorization endpoint might not be able
+     * to enter the user code easily.
+     */
+    public function setIncludeVerificationUriComplete(bool $includeVerificationUriComplete): void;
 }

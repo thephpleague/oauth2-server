@@ -116,4 +116,17 @@ final class GrantType implements GrantTypeInterface
     {
         return new DeviceCodeResponse();
     }
+
+    public function setIntervalVisibility(bool $intervalVisibility): void
+    {
+    }
+
+    public function getIntervalVisibility(): bool
+    {
+        return false;
+    }
+
+    public function setIncludeVerificationUriComplete(bool $includeVerificationUriComplete): void
+    {
+    }
 }

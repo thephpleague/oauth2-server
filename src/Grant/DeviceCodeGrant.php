@@ -316,7 +316,6 @@ class DeviceCodeGrant extends AbstractGrant
         // @codeCoverageIgnoreEnd
     }
 
-    // TODO: Check interface
     public function setIntervalVisibility(bool $intervalVisibility): void
     {
         $this->intervalVisibility = $intervalVisibility;
