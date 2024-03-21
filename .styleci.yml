@@ -3,7 +3,6 @@ preset: psr12
 risky: true
 
 enabled:
-  - binary_operator_spaces
   - blank_line_before_return
   - fully_qualified_strict_types
   - hash_to_slash_comment
