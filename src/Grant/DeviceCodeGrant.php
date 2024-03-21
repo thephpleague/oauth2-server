@@ -139,25 +139,26 @@ class DeviceCodeGrant extends AbstractGrant
         // Validate request
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
-        $deviceCode = $this->validateDeviceCode($request, $client);
+        $deviceCodeEntity = $this->validateDeviceCode($request, $client);
 
-        $deviceCode->setLastPolledAt(new DateTimeImmutable());
-        $this->deviceCodeRepository->persistDeviceCode($deviceCode);
+        // TODO: This should be set on the repository, not the entity
+        $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
+        $this->deviceCodeRepository->persistDeviceCode($deviceCodeEntity);
 
         // If device code has no user associated, respond with pending
-        if (is_null($deviceCode->getUserIdentifier())) {
+        if (is_null($deviceCodeEntity->getUserIdentifier())) {
             throw OAuthServerException::authorizationPending();
         }
 
-        if ($deviceCode->getUserApproved() === false) {
+        if ($deviceCodeEntity->getUserApproved() === false) {
             throw OAuthServerException::accessDenied();
         }
 
         // Finalize the requested scopes
-        $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, (string) $deviceCode->getUserIdentifier());
+        $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, (string) $deviceCodeEntity->getUserIdentifier());
 
         // Issue and persist new access token
-        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, (string) $deviceCode->getUserIdentifier(), $finalizedScopes);
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, (string) $deviceCodeEntity->getUserIdentifier(), $finalizedScopes);
         $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
         $responseType->setAccessToken($accessToken);
 
@@ -169,7 +170,7 @@ class DeviceCodeGrant extends AbstractGrant
             $responseType->setRefreshToken($refreshToken);
         }
 
-        $this->deviceCodeRepository->revokeDeviceCode($deviceCode->getIdentifier());
+        $this->deviceCodeRepository->revokeDeviceCode($deviceCodeEntity->getIdentifier());
 
         return $responseType;
     }

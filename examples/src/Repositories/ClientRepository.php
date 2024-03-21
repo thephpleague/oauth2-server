@@ -9,6 +9,7 @@
 
 namespace OAuth2ServerExamples\Repositories;
 
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use OAuth2ServerExamples\Entities\ClientEntity;
 
@@ -20,7 +21,7 @@ class ClientRepository implements ClientRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getClientEntity($clientIdentifier)
+    public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface
     {
         $client = new ClientEntity();
 
@@ -35,7 +36,7 @@ class ClientRepository implements ClientRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function validateClient($clientIdentifier, $clientSecret, $grantType)
+    public function validateClient($clientIdentifier, $clientSecret, $grantType): bool
     {
         $clients = [
             'myawesomeapp' => [

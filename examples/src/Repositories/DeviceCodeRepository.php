@@ -9,17 +9,19 @@
 
 namespace OAuth2ServerExamples\Repositories;
 
-use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
+use OAuth2ServerExamples\Entities\ClientEntity;
 use OAuth2ServerExamples\Entities\DeviceCodeEntity;
+
+use DateTimeImmutable;
 
 class DeviceCodeRepository implements DeviceCodeRepositoryInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function getNewDeviceCode()
+    public function getNewDeviceCode(): DeviceCodeEntityInterface
     {
         return new DeviceCodeEntity();
     }
@@ -27,7 +29,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity)
+    public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity): void
     {
         // Some logic to persist a new device code to a database
     }
@@ -35,22 +37,29 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getDeviceCodeEntityByDeviceCode($deviceCode)
+    public function getDeviceCodeEntityByDeviceCode($deviceCode): ?DeviceCodeEntityInterface
     {
-        $deviceCode = new DeviceCodeEntity();
+        $clientEntity = new ClientEntity();
+        $clientEntity->setIdentifier('myawesomeapp');
 
-        $deviceCode->setIdentifier('device_code_1234');
+        $deviceCodeEntity = new DeviceCodeEntity();
 
+        $deviceCodeEntity->setIdentifier($deviceCode);
+        $deviceCodeEntity->setExpiryDateTime((new DateTimeImmutable)->setTimestamp($this->getDeviceCodeExpiryTime($deviceCode)));
+        $deviceCodeEntity->setClient($clientEntity);
+
+        // TODO: Check if this is still true as it seems we need to set userapproved
         // The user identifier should be set when the user authenticates on the OAuth server
-        $deviceCode->setUserIdentifier(1);
+        $deviceCodeEntity->setUserApproved(true);
+        $deviceCodeEntity->setUserIdentifier(1);
 
-        return $deviceCode;
+        return $deviceCodeEntity;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function revokeDeviceCode($codeId)
+    public function revokeDeviceCode($codeId): void
     {
         // Some logic to revoke device code
     }
@@ -58,8 +67,19 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function isDeviceCodeRevoked($codeId)
+    public function isDeviceCodeRevoked($codeId): bool
     {
-        // Some logic to check if a device code has been revoked
+        return false;
+    }
+    
+    // TODO: This should probably return a datetimeimmutable object to match the setter
+    public function getDeviceCodeExpiryTime(string $codeId): int
+    {
+        return (new DateTimeImmutable('now + 1 hour'))->getTimestamp();
+    }
+
+    public function getDeviceCodeClientId(string $codeId): string
+    {
+        // Some logic to get the client ID of the device code
     }
 }

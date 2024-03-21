@@ -10,6 +10,7 @@
 namespace OAuth2ServerExamples\Repositories;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use OAuth2ServerExamples\Entities\ScopeEntity;
 
@@ -18,7 +19,7 @@ class ScopeRepository implements ScopeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getScopeEntityByIdentifier($scopeIdentifier)
+    public function getScopeEntityByIdentifier($scopeIdentifier): ?ScopeEntityInterface
     {
         $scopes = [
             'basic' => [
@@ -30,7 +31,7 @@ class ScopeRepository implements ScopeRepositoryInterface
         ];
 
         if (\array_key_exists($scopeIdentifier, $scopes) === false) {
-            return;
+            return null;
         }
 
         $scope = new ScopeEntity();
@@ -39,6 +40,7 @@ class ScopeRepository implements ScopeRepositoryInterface
         return $scope;
     }
 
+    // TODO: Check why I have added authCodeId here
     /**
      * {@inheritdoc}
      */
@@ -46,8 +48,9 @@ class ScopeRepository implements ScopeRepositoryInterface
         array $scopes,
         $grantType,
         ClientEntityInterface $clientEntity,
-        $userIdentifier = null
-    ) {
+        $userIdentifier = null,
+        $authCodeId = null
+    ): array {
         // Example of programatically modifying the final scope of the access token
         if ((int) $userIdentifier === 1) {
             $scope = new ScopeEntity();
