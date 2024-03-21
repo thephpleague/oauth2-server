@@ -70,7 +70,7 @@ $app->post('/device_authorization', function (ServerRequestInterface $request, R
         return $deviceCodeResponse;
 
         // Extract the device code. Usually we would then assign the user ID to
-        // the device code but for the purposes of this example, we've hard 
+        // the device code but for the purposes of this example, we've hard
         // coded it in the response above.
         // $deviceCode = json_decode((string) $deviceCodeResponse->getBody());
 
