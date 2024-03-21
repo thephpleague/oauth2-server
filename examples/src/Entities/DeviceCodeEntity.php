@@ -16,5 +16,7 @@ use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
 
 class DeviceCodeEntity implements DeviceCodeEntityInterface
 {
-    use EntityTrait, DeviceCodeTrait, TokenEntityTrait;
+    use EntityTrait;
+    use DeviceCodeTrait;
+    use TokenEntityTrait;
 }
