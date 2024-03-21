@@ -458,6 +458,7 @@ class DeviceCodeGrantTest extends TestCase
         $client->setIdentifier('foo');
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
@@ -492,9 +493,8 @@ class DeviceCodeGrantTest extends TestCase
 
         $responseType = new StubResponseType();
 
-        // TODO: We need to be more specific with this exception
-        // We should add an error that says the device code is missing perhaps?
         $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(3);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }

@@ -158,7 +158,6 @@ abstract class AbstractGrant implements GrantTypeInterface
 
             throw OAuthServerException::invalidClient($request);
         }
-
         $client = $this->getClientEntityOrFail($clientId, $request);
 
         // If a redirect URI is provided ensure it matches what is pre-registered
