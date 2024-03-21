@@ -16,5 +16,7 @@ use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
 
 class AuthCodeEntity implements AuthCodeEntityInterface
 {
-    use EntityTrait, TokenEntityTrait, AuthCodeTrait;
+    use EntityTrait;
+    use TokenEntityTrait;
+    use AuthCodeTrait;
 }
