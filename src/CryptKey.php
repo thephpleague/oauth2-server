@@ -43,7 +43,6 @@ class CryptKey implements CryptKeyInterface
 
     public function __construct(string $keyPath, protected ?string $passPhrase = null, bool $keyPermissionsCheck = true)
     {
-
         if (strpos($keyPath, self::FILE_PREFIX) !== 0 && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
             $this->keyContents = $keyPath;
             $this->keyPath = '';
