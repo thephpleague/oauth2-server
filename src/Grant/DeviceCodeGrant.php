@@ -244,7 +244,6 @@ class DeviceCodeGrant extends AbstractGrant
      *
      * @param ScopeEntityInterface[] $scopes
      *
-     *
      * @throws OAuthServerException
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
