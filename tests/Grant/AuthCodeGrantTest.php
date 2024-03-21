@@ -1883,6 +1883,7 @@ class AuthCodeGrantTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('clientId');
         $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setIdentifier('clientIdentifier');
 
         $authRequest = new AuthorizationRequest();
         $authRequest->setAuthorizationApproved(true);

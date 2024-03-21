@@ -15,6 +15,7 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -99,6 +100,33 @@ final class GrantType implements GrantTypeInterface
     }
 
     public function revokeRefreshTokens(bool $willRevoke): void
+    {
+    }
+
+    public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request): bool
+    {
+        return true;
+    }
+
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void
+    {
+    }
+
+    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request): DeviceCodeResponse
+    {
+        return new DeviceCodeResponse();
+    }
+
+    public function setIntervalVisibility(bool $intervalVisibility): void
+    {
+    }
+
+    public function getIntervalVisibility(): bool
+    {
+        return false;
+    }
+
+    public function setIncludeVerificationUriComplete(bool $includeVerificationUriComplete): void
     {
     }
 }

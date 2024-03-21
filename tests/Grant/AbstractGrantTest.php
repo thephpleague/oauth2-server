@@ -357,6 +357,7 @@ class AbstractGrantTest extends TestCase
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $grantMock->method('getIdentifier')->willReturn('foobar');
+        $grantMock->setDefaultScope('defaultScope');
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'grant_type' => 'foobar',

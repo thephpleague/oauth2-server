@@ -22,6 +22,7 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
+use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -78,6 +79,30 @@ interface GrantTypeInterface extends EmitterAwareInterface
     public function canRespondToAccessTokenRequest(ServerRequestInterface $request): bool;
 
     /**
+     * The grant type should return true if it is able to response to a device authorization request
+     *
+     *
+     */
+    public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request): bool;
+
+    /**
+     * If the grant can respond to a device authorization request this method should be called to validate the parameters of
+     * the request.
+     *
+     * If the validation is successful a DeviceAuthorizationRequest object will be returned. This object can be safely
+     * serialized in a user's session, and can be used during user authentication and authorization.
+     */
+    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request): DeviceCodeResponse;
+
+    /**
+     * If the grant can respond to a device authorization request this method should be called to validate the parameters of
+     * the request.
+     *
+     * If the validation is successful a DeviceCode object is persisted.
+     */
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void;
+
+    /**
      * Set the client repository.
      */
     public function setClientRepository(ClientRepositoryInterface $clientRepository): void;
@@ -108,4 +133,23 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * Enable or prevent the revocation of refresh tokens upon usage.
      */
     public function revokeRefreshTokens(bool $willRevoke): void;
+
+    /**
+     * If set, the minimum interval between device code polling will be
+     * returned by the server.
+     */
+    public function setIntervalVisibility(bool $intervalVisibility): void;
+
+    /**
+     * Checks if the minimum interval between device code polling should be
+     * returned by the server.
+     */
+    public function getIntervalVisibility(): bool;
+
+    /**
+     * If set, the server will return a full verification URI to the client.
+     * This is useful when your device authorization endpoint might not be able
+     * to enter the user code easily.
+     */
+    public function setIncludeVerificationUriComplete(bool $includeVerificationUriComplete): void;
 }

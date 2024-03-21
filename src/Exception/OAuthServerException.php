@@ -203,6 +203,62 @@ class OAuthServerException extends Exception
     }
 
     /**
+     * Expired token error.
+     *
+     * @param Throwable   $previous Previous exception
+     *
+     * @return static
+     */
+    public static function expiredToken(?string $hint = null, Throwable $previous = null): static
+    {
+        $errorMessage = 'The `device_code` has expired and the device ' .
+                        'authorization session has concluded.';
+
+        return new static($errorMessage, 11, 'expired_token', 400, $hint, null, $previous);
+    }
+
+    public static function authorizationPending(string $hint = '', Throwable $previous = null): static
+    {
+        return new static(
+            'The authorization request is still pending as the end user ' .
+            'hasn\'t yet completed the user interaction steps. The client ' .
+            'SHOULD repeat the Access Token Request to the token endpoint',
+            12,
+            'authorization_pending',
+            400,
+            $hint,
+            null,
+            $previous
+        );
+    }
+
+    /**
+     * Slow down error used with the Device Authorization Grant.
+     *
+     *
+     * @return static
+     */
+    public static function slowDown(string $hint = '', Throwable $previous = null): static
+    {
+        return new static(
+            'The authorization request is still pending and polling should ' .
+                'continue, but the interval MUST be increased ' .
+                'by 5 seconds for this and all subsequent requests.',
+            13,
+            'slow_down',
+            400,
+            $hint,
+            null,
+            $previous
+        );
+    }
+
+    /**
+    {
+        return $this->errorType;
+    }
+
+    /**
      * Generate a HTTP response.
      */
     public function generateHttpResponse(ResponseInterface $response, bool $useFragment = false, int $jsonOptions = 0): ResponseInterface

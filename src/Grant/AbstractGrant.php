@@ -38,6 +38,7 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
+use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -65,7 +66,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     protected const SCOPE_DELIMITER_STRING = ' ';
 
-    private const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
+    protected const MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS = 10;
 
     protected ClientRepositoryInterface $clientRepository;
 
@@ -157,7 +158,6 @@ abstract class AbstractGrant implements GrantTypeInterface
 
             throw OAuthServerException::invalidClient($request);
         }
-
         $client = $this->getClientEntityOrFail($clientId, $request);
 
         // If a redirect URI is provided ensure it matches what is pre-registered
@@ -529,5 +529,53 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): ResponseTypeInterface
     {
         throw new LogicException('This grant cannot complete an authorization request');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canRespondToDeviceAuthorizationRequest(ServerRequestInterface $request): bool
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request): DeviceCodeResponse
+    {
+        throw new LogicException('This grant cannot validate a device authorization request');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void
+    {
+        throw new LogicException('This grant cannot complete a device authorization request');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIntervalVisibility(bool $intervalVisibility): void
+    {
+        throw new LogicException('This grant does not support the interval parameter');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIntervalVisibility(): bool
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIncludeVerificationUriComplete(bool $includeVerificationUriComplete): void
+    {
+        throw new LogicException('This grant does not support the verification_uri_complete parameter');
     }
 }
