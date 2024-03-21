@@ -493,6 +493,7 @@ class DeviceCodeGrantTest extends TestCase
         $responseType = new StubResponseType();
 
         // TODO: We need to be more specific with this exception
+        // We should add an error that says the device code is missing perhaps?
         $this->expectException(OAuthServerException::class);
 
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
