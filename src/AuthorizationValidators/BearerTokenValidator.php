@@ -30,9 +30,7 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
-use function count;
 use function date_default_timezone_get;
-use function is_array;
 use function preg_replace;
 use function trim;
 
