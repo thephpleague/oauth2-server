@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,9 +8,12 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 use Laminas\Diactoros\Stream;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
@@ -44,8 +48,8 @@ $app = new App([
 
         // Enable the client credentials grant on the server
         $server->enableGrantType(
-            new \League\OAuth2\Server\Grant\ClientCredentialsGrant(),
-            new \DateInterval('PT1H') // access tokens will expire after 1 hour
+            new ClientCredentialsGrant(),
+            new DateInterval('PT1H') // access tokens will expire after 1 hour
         );
 
         return $server;
@@ -62,7 +66,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
     } catch (OAuthServerException $exception) {
         // All instances of OAuthServerException can be formatted into a HTTP response
         return $exception->generateHttpResponse($response);
-    } catch (\Exception $exception) {
+    } catch (Exception $exception) {
         // Unknown exception
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());

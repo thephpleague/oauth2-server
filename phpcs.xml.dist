@@ -12,6 +12,7 @@
 
     <file>src</file>
     <file>tests</file>
+    <file>examples</file>
 
     <rule ref="PSR12">
         <exclude name="Generic.Files.LineLength.TooLong" />

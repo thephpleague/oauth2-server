@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author    Andrew Millington <andrew@noexceptions.io>
  * @copyright Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link      https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 include __DIR__ . '/../vendor/autoload.php';
 
@@ -50,10 +53,10 @@ $app = new App([
             new DeviceCodeGrant(
                 $deviceCodeRepository,
                 $refreshTokenRepository,
-                new \DateInterval('PT10M'),
+                new DateInterval('PT10M'),
                 'http://foo/bar'
             ),
-            new \DateInterval('PT1H')
+            new DateInterval('PT1H')
         );
 
         return $server;
@@ -78,7 +81,7 @@ $app->post('/device_authorization', function (ServerRequestInterface $request, R
         // $server->completeDeviceAuthorizationRequest($deviceCode->user_code, 1);
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
-    } catch (\Exception $exception) {
+    } catch (Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
 
@@ -94,7 +97,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
         return $server->respondToAccessTokenRequest($request, $response);
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
-    } catch (\Exception $exception) {
+    } catch (Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,12 +8,16 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace OAuth2ServerExamples\Repositories;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use OAuth2ServerExamples\Entities\ScopeEntity;
+
+use function array_key_exists;
 
 class ScopeRepository implements ScopeRepositoryInterface
 {
@@ -30,7 +35,7 @@ class ScopeRepository implements ScopeRepositoryInterface
             ],
         ];
 
-        if (\array_key_exists($scopeIdentifier, $scopes) === false) {
+        if (array_key_exists($scopeIdentifier, $scopes) === false) {
             return null;
         }
 
