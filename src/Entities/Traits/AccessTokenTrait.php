@@ -59,12 +59,6 @@ trait AccessTokenTrait
      */
     private function convertToJWT(): Token
     {
-        $userIdentifier = $this->getUserIdentifier();
-
-        if ($userIdentifier === null) {
-            throw new RuntimeException('JWT access tokens MUST contain a subject identifier');
-        }
-
         $this->initJwtConfiguration();
 
         return $this->jwtConfiguration->builder()
@@ -73,7 +67,7 @@ trait AccessTokenTrait
             ->issuedAt(new DateTimeImmutable())
             ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt($this->getExpiryDateTime())
-            ->relatedTo($userIdentifier)
+            ->relatedTo($this->getSubjectIdentifier())
             ->withClaim('scopes', $this->getScopes())
             ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
     }
@@ -104,4 +98,15 @@ trait AccessTokenTrait
      * @return non-empty-string
      */
     abstract public function getIdentifier(): string;
+
+    private function getSubjectIdentifier(): string
+    {
+        $subjectId = $this->getUserIdentifier() ?? $this->getClient()->getIdentifier();
+
+        if ($subjectId === null) {
+            throw new RuntimeException('JWT access tokens MUST contain a subject identifier');
+        }
+
+        return $subjectId;
+    }
 }
