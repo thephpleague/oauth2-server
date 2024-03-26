@@ -1,7 +1,7 @@
 build:
     environment:
         php:
-            version: 8.3.4
+            version: 8.3.3
     nodes:
         analysis:
             tests:
