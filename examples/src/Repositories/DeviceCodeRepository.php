@@ -53,7 +53,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
         // The user identifier should be set when the user authenticates on the
         // OAuth server, along with whether they approved the request
         $deviceCodeEntity->setUserApproved(true);
-        $deviceCodeEntity->setUserIdentifier(1);
+        $deviceCodeEntity->setUserIdentifier('1');
 
         return $deviceCodeEntity;
     }
