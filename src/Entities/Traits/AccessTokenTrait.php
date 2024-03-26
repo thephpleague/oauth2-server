@@ -99,14 +99,11 @@ trait AccessTokenTrait
      */
     abstract public function getIdentifier(): string;
 
+    /**
+     * @return non-empty-string
+     */
     private function getSubjectIdentifier(): string
     {
-        $subjectId = $this->getUserIdentifier() ?? $this->getClient()->getIdentifier();
-
-        if ($subjectId === null) {
-            throw new RuntimeException('JWT access tokens MUST contain a subject identifier');
-        }
-
-        return $subjectId;
+        return $this->getUserIdentifier() ?? $this->getClient()->getIdentifier();
     }
 }
