@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace OAuth2ServerExamples\Repositories;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use OAuth2ServerExamples\Entities\UserEntity;
 
@@ -26,11 +27,11 @@ class UserRepository implements UserRepositoryInterface
         $password,
         $grantType,
         ClientEntityInterface $clientEntity
-    ) {
+    ) : ?UserEntityInterface {
         if ($username === 'alex' && $password === 'whisky') {
             return new UserEntity();
         }
 
-        return;
+        return null;
     }
 }

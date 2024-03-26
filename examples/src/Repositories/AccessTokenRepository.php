@@ -57,7 +57,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
         }
 
         if ($userIdentifier !== null) {
-            $accessToken->setUserIdentifier($userIdentifier);
+            $accessToken->setUserIdentifier((string) $userIdentifier);
         }
 
         return $accessToken;
