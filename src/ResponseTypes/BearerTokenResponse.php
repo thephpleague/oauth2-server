@@ -50,7 +50,7 @@ class BearerTokenResponse extends AbstractResponseType
 
             $responseParams['refresh_token'] = $this->encrypt($refreshTokenPayload);
         }
-        
+
         $responseParams = json_encode(array_merge($this->getExtraParams($this->accessToken), $responseParams));
 
         if ($responseParams === false) {

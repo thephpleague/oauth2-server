@@ -27,7 +27,7 @@ class UserRepository implements UserRepositoryInterface
         $password,
         $grantType,
         ClientEntityInterface $clientEntity
-    ) : ?UserEntityInterface {
+    ): ?UserEntityInterface {
         if ($username === 'alex' && $password === 'whisky') {
             return new UserEntity();
         }

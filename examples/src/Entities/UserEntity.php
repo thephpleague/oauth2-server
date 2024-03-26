@@ -18,7 +18,6 @@ class UserEntity implements UserEntityInterface
 {
     /**
      * Return the user's identifier.
-     *
      */
     public function getIdentifier(): mixed
     {
