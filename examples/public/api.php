@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
+include __DIR__ . '/../vendor/autoload.php';
+
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\ResourceServer;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-
-include __DIR__ . '/../vendor/autoload.php';
 
 $app = new App([
     // Add the resource server to the DI container
