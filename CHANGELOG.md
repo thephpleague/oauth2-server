@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [9.0.0-RC1] - released 2024-03-27
 ### Added
 - Device Authorization Grant added (PR #1074)
 - GrantTypeInterface has a new function, `revokeRefreshTokens()` for enabling or disabling refresh tokens after use (PR #1375)
@@ -623,7 +625,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.5.4...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/9.0.0-RC1...HEAD
+[9.0.0-RC1]: https://github.com/thephpleague/oauth2-server/compare/8.5.4...9.0.0-RC1
 [8.5.4]: https://github.com/thephpleague/oauth2-server/compare/8.5.3...8.5.4
 [8.5.3]: https://github.com/thephpleague/oauth2-server/compare/8.5.2...8.5.3
 [8.5.2]: https://github.com/thephpleague/oauth2-server/compare/8.5.1...8.5.2
