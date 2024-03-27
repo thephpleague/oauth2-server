@@ -33,7 +33,7 @@ $app->add(
 // An example endpoint secured with OAuth 2.0
 $app->get(
     '/users',
-    function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
+    function (ServerRequestInterface $request, ResponseInterface $response) {
         $users = [
             [
                 'id'    => 123,
