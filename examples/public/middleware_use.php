@@ -87,7 +87,7 @@ $app->post('/access_token', function (): void {
 
 // Secured API
 $app->group('/api', function (): void {
-    $this->get('/user', function (ServerRequestInterface $request, ResponseInterface $response) {
+    $app->get('/user', function (ServerRequestInterface $request, ResponseInterface $response) {
         $params = [];
 
         if (in_array('basic', $request->getAttribute('oauth_scopes', []))) {
