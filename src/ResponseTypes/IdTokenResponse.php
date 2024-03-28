@@ -9,7 +9,7 @@ use League\Event\EmitterInterface;
 use League\OAuth2\Server\ClaimExtractor;
 use League\OAuth2\Server\ClaimExtractorInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\ClaimSetInterface;
+use League\OAuth2\Server\Entities\ClaimSetEntryInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\IdTokenClaimsCreatedEvent;
 use League\OAuth2\Server\IdTokenEvent;
@@ -89,7 +89,7 @@ class IdTokenResponse extends BearerTokenResponse
 
         $builder = $this->idTokenRepository->getBuilder($accessToken);
 
-        if ($claimSet instanceof ClaimSetInterface) {
+        if ($claimSet instanceof ClaimSetEntryInterface) {
             foreach ($this->extractor->extract($accessToken->getScopes(), $claimSet->getClaims()) as $claimName => $claimValue) {
                 $builder->withClaim($claimName, $claimValue);
             }

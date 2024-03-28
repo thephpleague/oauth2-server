@@ -13,7 +13,7 @@ use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\ClaimExtractor;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\ClaimSetInterface;
+use League\OAuth2\Server\Entities\ClaimSetEntryInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClaimSetRepositoryInterface;
@@ -92,10 +92,18 @@ class BearerResponseTypeTest extends TestCase
         );
 
         $claimSetRepository = new class() implements ClaimSetRepositoryInterface {
-            public function getClaimSetEntry(AccessTokenEntityInterface $accessToken): ClaimSetInterface
+            public function getClaimSetEntry(AccessTokenEntityInterface $accessToken): ClaimSetEntryInterface
             {
-                $claimSet = new class() implements ClaimSetInterface {
+                $claimSet = new class() implements ClaimSetEntryInterface {
+
+                    public string $scope = "email";
+
                     public array $claims = [];
+
+                    public function getScope(): string
+                    {
+                        return $this->scope;
+                    }
 
                     public function getClaims(): array
                     {
