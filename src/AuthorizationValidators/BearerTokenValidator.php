@@ -88,7 +88,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
      * Configure the request instance.
      *
      * @param ServerRequestInterface $request
-     * @param Plain $token
+     * @param Plain                  $token
      *
      * @return ServerRequestInterface
      */
