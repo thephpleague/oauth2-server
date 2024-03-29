@@ -1,0 +1,9 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - tests
+    ignoreErrors:
+        -
+          message: '#Call to an undefined method League\\OAuth2\\Server\\ResponseTypes\\ResponseTypeInterface::getAccessToken\(\)\.#'
+          path: tests/Grant/ClientCredentialsGrantTest.php 

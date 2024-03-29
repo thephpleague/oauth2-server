@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Repositories;
 
@@ -16,18 +19,11 @@ interface UserRepositoryInterface extends RepositoryInterface
 {
     /**
      * Get a user entity.
-     *
-     * @param string                $username
-     * @param string                $password
-     * @param string                $grantType    The grant type used
-     * @param ClientEntityInterface $clientEntity
-     *
-     * @return UserEntityInterface|null
      */
     public function getUserEntityByUserCredentials(
-        $username,
-        $password,
-        $grantType,
+        string $username,
+        string $password,
+        string $grantType,
         ClientEntityInterface $clientEntity
-    );
+    ): ?UserEntityInterface;
 }
