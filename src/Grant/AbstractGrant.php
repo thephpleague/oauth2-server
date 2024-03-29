@@ -249,11 +249,8 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @return ScopeEntityInterface[]
      */
-    public function validateScopes(
-        string|array|null $scopes,
-        string $redirectUri = null,
-        string $queryDelimiter = '?'
-    ): array {
+    public function validateScopes(string|array|null $scopes, string $redirectUri = null, string $queryDelimiter = '?'): array
+    {
         if ($scopes === null) {
             $scopes = [];
         } elseif (is_string($scopes)) {

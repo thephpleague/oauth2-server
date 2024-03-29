@@ -35,7 +35,7 @@ class OAuthServerException extends Exception
     /**
      * Throw a new exception.
      */
-    final public function __construct(string $message, int $code, private string $errorType, private int $httpStatusCode = 400, private ?string $hint = null, private ?string $redirectUri = null, Throwable $previous = null, private ?string $queryDelimiter)
+    final public function __construct(string $message, int $code, private string $errorType, private int $httpStatusCode = 400, private ?string $hint = null, private ?string $redirectUri = null, Throwable $previous = null, private ?string $queryDelimiter = '?')
     {
         parent::__construct($message, $code, $previous);
         $this->payload = [
@@ -168,12 +168,8 @@ class OAuthServerException extends Exception
     /**
      * Access denied.
      */
-    public static function accessDenied(
-        ?string $hint = null,
-        ?string $redirectUri = null,
-        Throwable $previous = null,
-        string $queryDelimiter = '?'
-    ): static {
+    public static function accessDenied(?string $hint = null, ?string $redirectUri = null, Throwable $previous = null, string $queryDelimiter = '?'): static
+    {
         return new static(
             'The resource owner or authorization server denied the request.',
             9,
