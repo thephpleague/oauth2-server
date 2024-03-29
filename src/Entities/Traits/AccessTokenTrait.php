@@ -57,10 +57,8 @@ trait AccessTokenTrait
 
     /**
      * Configure the JWT builder instance.
-     *
-     * @return Builder
      */
-    protected function withBuilder(Builder $builder)
+    protected function withBuilder(Builder $builder): Builder
     {
         return $builder;
     }
