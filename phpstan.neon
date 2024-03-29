@@ -1,8 +1,0 @@
-includes:
-	- vendor/phpstan/phpstan-phpunit/extension.neon
-	- vendor/phpstan/phpstan-phpunit/rules.neon
-services:
-	-
-		class: LeagueTests\PHPStan\AbstractGrantExtension
-		tags:
-			- phpstan.broker.dynamicMethodReturnTypeExtension

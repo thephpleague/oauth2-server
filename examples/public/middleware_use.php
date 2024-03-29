@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,10 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
+
+include __DIR__ . '/../vendor/autoload.php';
 
 use Laminas\Diactoros\Stream;
 use League\OAuth2\Server\AuthorizationServer;
@@ -22,8 +27,6 @@ use OAuth2ServerExamples\Repositories\ScopeRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-
-include __DIR__ . '/../vendor/autoload.php';
 
 $app = new App([
     'settings'                 => [
@@ -53,15 +56,15 @@ $app = new App([
             new AuthCodeGrant(
                 $authCodeRepository,
                 $refreshTokenRepository,
-                new \DateInterval('PT10M')
+                new DateInterval('PT10M')
             ),
-            new \DateInterval('PT1H')
+            new DateInterval('PT1H')
         );
 
         // Enable the refresh token grant on the server with a token TTL of 1 month
         $server->enableGrantType(
             new RefreshTokenGrant($refreshTokenRepository),
-            new \DateInterval('P1M')
+            new DateInterval('P1M')
         );
 
         return $server;
@@ -79,15 +82,15 @@ $app = new App([
 ]);
 
 // Access token issuer
-$app->post('/access_token', function () {
+$app->post('/access_token', function (): void {
 })->add(new AuthorizationServerMiddleware($app->getContainer()->get(AuthorizationServer::class)));
 
 // Secured API
-$app->group('/api', function () {
-    $this->get('/user', function (ServerRequestInterface $request, ResponseInterface $response) {
+$app->group('/api', function (): void {
+    $app->get('/user', function (ServerRequestInterface $request, ResponseInterface $response) {
         $params = [];
 
-        if (\in_array('basic', $request->getAttribute('oauth_scopes', []))) {
+        if (in_array('basic', $request->getAttribute('oauth_scopes', []))) {
             $params = [
                 'id'   => 1,
                 'name' => 'Alex',
@@ -95,12 +98,12 @@ $app->group('/api', function () {
             ];
         }
 
-        if (\in_array('email', $request->getAttribute('oauth_scopes', []))) {
+        if (in_array('email', $request->getAttribute('oauth_scopes', []))) {
             $params['email'] = 'alex@example.com';
         }
 
         $body = new Stream('php://temp', 'r+');
-        $body->write(\json_encode($params));
+        $body->write(json_encode($params));
 
         return $response->withBody($body);
     });

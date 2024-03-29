@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Middleware;
 
 use DateInterval;
@@ -18,11 +20,15 @@ use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use PHPUnit\Framework\TestCase;
 
+use function base64_encode;
+use function func_get_args;
+use function random_bytes;
+
 class AuthorizationServerMiddlewareTest extends TestCase
 {
-    const DEFAULT_SCOPE = 'basic';
+    private const DEFAULT_SCOPE = 'basic';
 
-    public function testValidResponse()
+    public function testValidResponse(): void
     {
         $client = new ClientEntity();
         $client->setConfidential();
@@ -30,8 +36,9 @@ class AuthorizationServerMiddlewareTest extends TestCase
 
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn($client);
+        $clientRepository->method('validateClient')->willReturn(true);
 
-        $scopeEntity = new ScopeEntity;
+        $scopeEntity = new ScopeEntity();
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
@@ -44,7 +51,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $accessRepositoryMock,
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/../Stubs/private.key',
-            \base64_encode(\random_bytes(36)),
+            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 
@@ -62,13 +69,13 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $request,
             new Response(),
             function () {
-                return \func_get_args()[1];
+                return func_get_args()[1];
             }
         );
-        $this->assertEquals(200, $response->getStatusCode());
+        self::assertEquals(200, $response->getStatusCode());
     }
 
-    public function testOAuthErrorResponse()
+    public function testOAuthErrorResponse(): void
     {
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('validateClient')->willReturn(false);
@@ -78,7 +85,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
             'file://' . __DIR__ . '/../Stubs/private.key',
-            \base64_encode(\random_bytes(36)),
+            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 
@@ -96,33 +103,33 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $request,
             new Response(),
             function () {
-                return \func_get_args()[1];
+                return func_get_args()[1];
             }
         );
 
-        $this->assertEquals(401, $response->getStatusCode());
+        self::assertEquals(401, $response->getStatusCode());
     }
 
-    public function testOAuthErrorResponseRedirectUri()
+    public function testOAuthErrorResponseRedirectUri(): void
     {
         $exception = OAuthServerException::invalidScope('test', 'http://foo/bar');
         $response = $exception->generateHttpResponse(new Response());
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(
-            'http://foo/bar?error=invalid_scope&error_description=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed',
+        self::assertEquals(302, $response->getStatusCode());
+        self::assertEquals(
+            'http://foo/bar?error=invalid_scope&error_description=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope',
             $response->getHeader('location')[0]
         );
     }
 
-    public function testOAuthErrorResponseRedirectUriFragment()
+    public function testOAuthErrorResponseRedirectUriFragment(): void
     {
         $exception = OAuthServerException::invalidScope('test', 'http://foo/bar');
         $response = $exception->generateHttpResponse(new Response(), true);
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(
-            'http://foo/bar#error=invalid_scope&error_description=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope&message=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed',
+        self::assertEquals(302, $response->getStatusCode());
+        self::assertEquals(
+            'http://foo/bar#error=invalid_scope&error_description=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope',
             $response->getHeader('location')[0]
         );
     }

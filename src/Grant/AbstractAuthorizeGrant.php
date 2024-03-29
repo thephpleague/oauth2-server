@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract authorization grant.
  *
@@ -9,21 +10,30 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Grant;
+
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
+
+use function http_build_query;
+use function strstr;
 
 abstract class AbstractAuthorizeGrant extends AbstractGrant
 {
     /**
-     * @param string $uri
-     * @param array  $params
-     * @param string $queryDelimiter
-     *
-     * @return string
+     * @param mixed[] $params
      */
-    public function makeRedirectUri($uri, $params = [], $queryDelimiter = '?')
+    public function makeRedirectUri(string $uri, array $params = [], string $queryDelimiter = '?'): string
     {
-        $uri .= (\strstr($uri, $queryDelimiter) === false) ? $queryDelimiter : '&';
+        $uri .= (strstr($uri, $queryDelimiter) === false) ? $queryDelimiter : '&';
 
-        return $uri . \http_build_query($params);
+        return $uri . http_build_query($params);
+    }
+
+    protected function createAuthorizationRequest(): AuthorizationRequestInterface
+    {
+        return new AuthorizationRequest();
     }
 }

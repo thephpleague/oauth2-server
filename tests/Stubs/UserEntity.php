@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LeagueTests\Stubs;
 
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
@@ -11,6 +13,6 @@ class UserEntity implements UserEntityInterface
 
     public function __construct()
     {
-        $this->setIdentifier(123);
+        $this->setIdentifier('123');
     }
 }

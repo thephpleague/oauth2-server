@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 use Laminas\Diactoros\Stream;
 use League\OAuth2\Server\AuthorizationServer;
@@ -51,9 +54,9 @@ $app = new App([
             new AuthCodeGrant(
                 $authCodeRepository,
                 $refreshTokenRepository,
-                new \DateInterval('PT10M')
+                new DateInterval('PT10M')
             ),
-            new \DateInterval('PT1H')
+            new DateInterval('PT1H')
         );
 
         return $server;
@@ -80,7 +83,7 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
         return $server->completeAuthorizationRequest($authRequest, $response);
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
-    } catch (\Exception $exception) {
+    } catch (Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
 
@@ -96,7 +99,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
         return $server->respondToAccessTokenRequest($request, $response);
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
-    } catch (\Exception $exception) {
+    } catch (Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
 

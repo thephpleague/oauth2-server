@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<ruleset
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd"
+>
+    <arg name="basepath" value="." />
+    <arg name="extensions" value="php" />
+    <arg name="parallel" value="80" />
+    <arg name="colors" />
+    <arg name="cache" value=".phpcs.cache" />
+    <arg value="p" />
+
+    <file>src</file>
+    <file>tests</file>
+    <file>examples</file>
+
+    <rule ref="PSR12">
+        <exclude name="Generic.Files.LineLength.TooLong" />
+    </rule>
+
+    <config name="installed_paths" value="../../slevomat/coding-standard" />
+    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
+        <properties>
+            <property name="spacesCountAroundEqualsSign" type="int" value="0" />
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly" />
+    <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses" />
+    <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint" />
+    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint" />
+    <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint" />
+    <rule ref="SlevomatCodingStandard.Commenting.EmptyComment" />
+    <rule ref="SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion" />
+</ruleset>

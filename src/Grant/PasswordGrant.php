@@ -1,4 +1,5 @@
 <?php
+
 /**
  * OAuth 2.0 Password grant.
  *
@@ -8,6 +9,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Grant;
 
@@ -23,15 +26,13 @@ use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function is_string;
+
 /**
  * Password grant class.
  */
 class PasswordGrant extends AbstractGrant
 {
-    /**
-     * @param UserRepositoryInterface         $userRepository
-     * @param RefreshTokenRepositoryInterface $refreshTokenRepository
-     */
     public function __construct(
         UserRepositoryInterface $userRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository
@@ -49,14 +50,18 @@ class PasswordGrant extends AbstractGrant
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
-    ) {
+    ): ResponseTypeInterface {
         // Validate request
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $user = $this->validateUser($request, $client);
 
-        // Finalize the requested scopes
-        $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $user->getIdentifier());
+        $finalizedScopes = $this->scopeRepository->finalizeScopes(
+            $scopes,
+            $this->getIdentifier(),
+            $client,
+            $user->getIdentifier()
+        );
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);
@@ -75,24 +80,19 @@ class PasswordGrant extends AbstractGrant
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ClientEntityInterface  $client
-     *
      * @throws OAuthServerException
-     *
-     * @return UserEntityInterface
      */
-    protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client)
+    protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client): UserEntityInterface
     {
         $username = $this->getRequestParameter('username', $request);
 
-        if (!\is_string($username)) {
+        if (!is_string($username)) {
             throw OAuthServerException::invalidRequest('username');
         }
 
         $password = $this->getRequestParameter('password', $request);
 
-        if (!\is_string($password)) {
+        if (!is_string($password)) {
             throw OAuthServerException::invalidRequest('password');
         }
 
@@ -115,7 +115,7 @@ class PasswordGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return 'password';
     }
