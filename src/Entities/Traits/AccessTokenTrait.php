@@ -70,16 +70,14 @@ trait AccessTokenTrait
     {
         $this->initJwtConfiguration();
 
-        $builder = $this->jwtConfiguration->builder()
+        return $this->withBuilder($this->jwtConfiguration->builder()
             ->permittedFor($this->getClient()->getIdentifier())
             ->identifiedBy($this->getIdentifier())
             ->issuedAt(new DateTimeImmutable())
             ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt($this->getExpiryDateTime())
             ->relatedTo($this->getSubjectIdentifier())
-            ->withClaim('scopes', $this->getScopes());
-
-        return $this->withBuilder($builder)
+            ->withClaim('scopes', $this->getScopes()))
             ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
     }
 
