@@ -62,12 +62,12 @@ trait AccessTokenTrait
         $this->initJwtConfiguration();
 
         return $this->jwtConfiguration->builder()
-            ->permittedFor($this->getClient()->getIdentifier())
-            ->identifiedBy($this->getIdentifier())
+            ->permittedFor((string) $this->getClient()->getIdentifier())
+            ->identifiedBy((string) $this->getIdentifier())
             ->issuedAt(new DateTimeImmutable())
             ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt($this->getExpiryDateTime())
-            ->relatedTo($this->getSubjectIdentifier())
+            ->relatedTo((string) $this->getSubjectIdentifier())
             ->withClaim('scopes', $this->getScopes())
             ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
     }
@@ -95,14 +95,14 @@ trait AccessTokenTrait
     abstract public function getScopes(): array;
 
     /**
-     * @return non-empty-string
+     * @return int|non-empty-string
      */
-    abstract public function getIdentifier(): string;
+    abstract public function getIdentifier(): int|string;
 
     /**
-     * @return non-empty-string
+     * @return int|non-empty-string
      */
-    private function getSubjectIdentifier(): string
+    private function getSubjectIdentifier(): int|string
     {
         return $this->getUserIdentifier() ?? $this->getClient()->getIdentifier();
     }

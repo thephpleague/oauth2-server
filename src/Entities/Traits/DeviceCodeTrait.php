@@ -59,7 +59,10 @@ trait DeviceCodeTrait
      */
     abstract public function getScopes(): array;
 
-    abstract public function getIdentifier(): string;
+    /**
+     * @return int|non-empty-string
+     */
+    abstract public function getIdentifier(): int|string;
 
     public function getLastPolledAt(): ?DateTimeImmutable
     {

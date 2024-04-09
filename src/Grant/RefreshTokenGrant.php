@@ -53,6 +53,7 @@ class RefreshTokenGrant extends AbstractGrant
         // Validate request
         $client = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
+
         $scopes = $this->validateScopes(
             $this->getRequestParameter(
                 'scope',
@@ -100,7 +101,7 @@ class RefreshTokenGrant extends AbstractGrant
      *
      * @return array<string, mixed>
      */
-    protected function validateOldRefreshToken(ServerRequestInterface $request, string $clientId): array
+    protected function validateOldRefreshToken(ServerRequestInterface $request, int|string $clientId): array
     {
         $encryptedRefreshToken = $this->getRequestParameter('refresh_token', $request);
         if (!is_string($encryptedRefreshToken)) {

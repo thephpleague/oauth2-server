@@ -15,19 +15,22 @@ namespace League\OAuth2\Server\Entities\Traits;
 trait EntityTrait
 {
     /**
-     * @var non-empty-string
+     * @var int|non-empty-string
      */
-    protected string $identifier;
+    protected int|string $identifier;
 
     /**
      * @return non-empty-string
      */
-    public function getIdentifier(): string
+    public function getIdentifier(): int|string
     {
         return $this->identifier;
     }
 
-    public function setIdentifier(mixed $identifier): void
+    /**
+     * @param int|non-empty-string $identifier
+     */
+    public function setIdentifier(int|string $identifier): void
     {
         $this->identifier = $identifier;
     }

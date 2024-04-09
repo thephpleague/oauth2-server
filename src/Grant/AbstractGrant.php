@@ -473,6 +473,8 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Generate a new unique identifier.
      *
+     * @return non-empty-string
+     *
      * @throws OAuthServerException
      */
     protected function generateUniqueIdentifier(int $length = 40): string

@@ -18,13 +18,17 @@ interface RefreshTokenEntityInterface
 {
     /**
      * Get the token's identifier.
+     *
+     * @return int|non-empty-string
      */
-    public function getIdentifier(): string;
+    public function getIdentifier(): int|string;
 
     /**
      * Set the token's identifier.
+     *
+     * @param int|non-empty-string $identifier
      */
-    public function setIdentifier(mixed $identifier): void;
+    public function setIdentifier(int|string $identifier): void;
 
     /**
      * Get the token's expiry date time.
