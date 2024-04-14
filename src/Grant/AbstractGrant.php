@@ -310,7 +310,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         $header = $request->getHeader('Authorization')[0];
-        if (strpos($header, 'Basic ') !== 0) {
+        if (stripos($header, 'Basic ') !== 0) {
             return [null, null];
         }
 
