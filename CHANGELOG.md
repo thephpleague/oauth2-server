@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
-- Basic authorization is now case insensitive (PR #XXX)
+- Basic authorization is now case insensitive (PR #1403)
 
 ## [9.0.0-RC1] - released 2024-03-27
 ### Added
