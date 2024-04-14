@@ -85,9 +85,9 @@ trait AccessTokenTrait
     abstract public function getExpiryDateTime(): DateTimeImmutable;
 
     /**
-     * @return non-empty-string|null
+     * @return non-empty-string|int|null
      */
-    abstract public function getUserIdentifier(): string|null;
+    abstract public function getUserIdentifier(): string|int|null;
 
     /**
      * @return ScopeEntityInterface[]
