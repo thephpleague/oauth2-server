@@ -70,6 +70,19 @@ class AbstractGrantTest extends TestCase
         self::assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
     }
 
+    public function testHttpBasicCaseInsensitive(): void
+    {
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $abstractGrantReflection = new ReflectionClass($grantMock);
+
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'bAsIc ' . base64_encode('Open:Sesame'));
+        $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
+        $basicAuthMethod->setAccessible(true);
+
+        self::assertSame(['Open', 'Sesame'], $basicAuthMethod->invoke($grantMock, $serverRequest));
+    }
+
     public function testHttpBasicNotBase64(): void
     {
         /** @var AbstractGrant $grantMock */
