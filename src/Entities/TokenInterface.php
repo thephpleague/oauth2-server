@@ -43,9 +43,9 @@ interface TokenInterface
     /**
      * Set the identifier of the user associated with the token.
      *
-     * @param int|non-empty-string $identifier
+     * @param non-empty-string|int $identifier
      */
-    public function setUserIdentifier(int|string $identifier): void;
+    public function setUserIdentifier(string|int $identifier): void;
 
     /**
      * Get the token user's identifier.

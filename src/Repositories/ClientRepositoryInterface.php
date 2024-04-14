@@ -22,10 +22,10 @@ interface ClientRepositoryInterface extends RepositoryInterface
     /**
      * Get a client.
      */
-    public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface;
+    public function getClientEntity(string|int $clientIdentifier): ?ClientEntityInterface;
 
     /**
      * Validate a client's secret.
      */
-    public function validateClient(string $clientIdentifier, ?string $clientSecret, ?string $grantType): bool;
+    public function validateClient(string|int $clientIdentifier, ?string $clientSecret, ?string $grantType): bool;
 }
