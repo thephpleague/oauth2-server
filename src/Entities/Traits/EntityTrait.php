@@ -20,7 +20,7 @@ trait EntityTrait
     protected int|string $identifier;
 
     /**
-     * @return non-empty-string
+     * @return int|non-empty-string
      */
     public function getIdentifier(): int|string
     {
