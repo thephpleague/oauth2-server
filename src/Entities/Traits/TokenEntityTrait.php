@@ -28,9 +28,9 @@ trait TokenEntityTrait
     protected DateTimeImmutable $expiryDateTime;
 
     /**
-     * @var non-empty-string|int|null
+     * @var non-empty-string|null
      */
-    protected string|int|null $userIdentifier = null;
+    protected string|null $userIdentifier = null;
 
     protected ClientEntityInterface $client;
 
@@ -71,9 +71,9 @@ trait TokenEntityTrait
     /**
      * Set the identifier of the user associated with the token.
      *
-     * @param int|non-empty-string $identifier The identifier of the user
+     * @param non-empty-string $identifier The identifier of the user
      */
-    public function setUserIdentifier(int|string $identifier): void
+    public function setUserIdentifier(string $identifier): void
     {
         $this->userIdentifier = $identifier;
     }
@@ -81,9 +81,9 @@ trait TokenEntityTrait
     /**
      * Get the token user's identifier.
      *
-     * @return non-empty-string|int|null
+     * @return non-empty-string|null
      */
-    public function getUserIdentifier(): string|int|null
+    public function getUserIdentifier(): string|null
     {
         return $this->userIdentifier;
     }

@@ -62,12 +62,12 @@ trait AccessTokenTrait
         $this->initJwtConfiguration();
 
         return $this->jwtConfiguration->builder()
-            ->permittedFor((string) $this->getClient()->getIdentifier())
-            ->identifiedBy((string) $this->getIdentifier())
+            ->permittedFor($this->getClient()->getIdentifier())
+            ->identifiedBy($this->getIdentifier())
             ->issuedAt(new DateTimeImmutable())
             ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt($this->getExpiryDateTime())
-            ->relatedTo((string) $this->getSubjectIdentifier())
+            ->relatedTo($this->getSubjectIdentifier())
             ->withClaim('scopes', $this->getScopes())
             ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
     }
@@ -85,9 +85,9 @@ trait AccessTokenTrait
     abstract public function getExpiryDateTime(): DateTimeImmutable;
 
     /**
-     * @return non-empty-string|int|null
+     * @return non-empty-string|null
      */
-    abstract public function getUserIdentifier(): string|int|null;
+    abstract public function getUserIdentifier(): string|null;
 
     /**
      * @return ScopeEntityInterface[]
@@ -95,14 +95,14 @@ trait AccessTokenTrait
     abstract public function getScopes(): array;
 
     /**
-     * @return int|non-empty-string
+     * @return non-empty-string
      */
-    abstract public function getIdentifier(): int|string;
+    abstract public function getIdentifier(): string;
 
     /**
-     * @return int|non-empty-string
+     * @return non-empty-string
      */
-    private function getSubjectIdentifier(): int|string
+    private function getSubjectIdentifier(): string
     {
         return $this->getUserIdentifier() ?? $this->getClient()->getIdentifier();
     }

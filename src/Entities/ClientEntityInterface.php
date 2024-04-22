@@ -17,9 +17,9 @@ interface ClientEntityInterface
     /**
      * Get the client's identifier.
      *
-     * @return int|non-empty-string
+     * @return non-empty-string
      */
-    public function getIdentifier(): int|string;
+    public function getIdentifier(): string;
 
     /**
      * Get the client's name.

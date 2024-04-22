@@ -39,7 +39,7 @@ interface DeviceCodeRepositoryInterface extends RepositoryInterface
     /**
      * Revoke a device code.
      */
-    public function revokeDeviceCode(int|string $codeId): void;
+    public function revokeDeviceCode(string $codeId): void;
 
     /**
      * Check if the device code has been revoked.

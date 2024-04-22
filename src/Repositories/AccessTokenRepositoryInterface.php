@@ -30,7 +30,7 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     public function getNewToken(
         ClientEntityInterface $clientEntity,
         array $scopes,
-        string|int|null $userIdentifier = null
+        string|null $userIdentifier = null
     ): AccessTokenEntityInterface;
 
     /**

@@ -19,16 +19,16 @@ interface TokenInterface
     /**
      * Get the token's identifier.
      *
-     * @return int|non-empty-string
+     * @return non-empty-string
      */
-    public function getIdentifier(): int|string;
+    public function getIdentifier(): string;
 
     /**
      * Set the token's identifier.
      *
-     * @param int|non-empty-string $identifier
+     * @param non-empty-string $identifier
      */
-    public function setIdentifier(int|string $identifier): void;
+    public function setIdentifier(string $identifier): void;
 
     /**
      * Get the token's expiry date time.
@@ -43,16 +43,16 @@ interface TokenInterface
     /**
      * Set the identifier of the user associated with the token.
      *
-     * @param non-empty-string|int $identifier
+     * @param non-empty-string $identifier
      */
-    public function setUserIdentifier(string|int $identifier): void;
+    public function setUserIdentifier(string $identifier): void;
 
     /**
      * Get the token user's identifier.
      *
-     * @return non-empty-string|int|null
+     * @return non-empty-string|null
      */
-    public function getUserIdentifier(): string|int|null;
+    public function getUserIdentifier(): string|null;
 
     /**
      * Get the client that the token was issued to.

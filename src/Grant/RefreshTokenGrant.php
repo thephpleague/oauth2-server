@@ -101,7 +101,7 @@ class RefreshTokenGrant extends AbstractGrant
      *
      * @return array<string, mixed>
      */
-    protected function validateOldRefreshToken(ServerRequestInterface $request, int|string $clientId): array
+    protected function validateOldRefreshToken(ServerRequestInterface $request, string $clientId): array
     {
         $encryptedRefreshToken = $this->getRequestParameter('refresh_token', $request);
         if (!is_string($encryptedRefreshToken)) {

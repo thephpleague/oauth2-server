@@ -114,7 +114,7 @@ class OAuthServerException extends Exception
     /**
      * Invalid scope error
      */
-    public static function invalidScope(int|string $scopeId, string|null $redirectUri = null): static
+    public static function invalidScope(string $scopeId, string|null $redirectUri = null): static
     {
         $errorMessage = 'The requested scope is invalid, unknown, or malformed';
 
@@ -123,7 +123,7 @@ class OAuthServerException extends Exception
         } else {
             $hint = sprintf(
                 'Check the `%s` scope',
-                htmlspecialchars((string) $scopeId, ENT_QUOTES, 'UTF-8', false)
+                htmlspecialchars($scopeId, ENT_QUOTES, 'UTF-8', false)
             );
         }
 

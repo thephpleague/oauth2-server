@@ -602,7 +602,7 @@ class AuthCodeGrantTest extends TestCase
                         'auth_code_id' => uniqid(),
                         'expire_time'  => time() + 3600,
                         'client_id'    => 'foo',
-                        'user_id'      => 123,
+                        'user_id'      => '123',
                         'scopes'       => ['foo'],
                         'redirect_uri' => self::REDIRECT_URI,
                     ], JSON_THROW_ON_ERROR)
@@ -665,7 +665,7 @@ class AuthCodeGrantTest extends TestCase
                         'auth_code_id' => uniqid(),
                         'client_id' => 'foo',
                         'expire_time'  => time() + 3600,
-                        'user_id'      => 123,
+                        'user_id'      => '123',
                         'scopes'       => ['foo'],
                         'redirect_uri' => self::REDIRECT_URI,
                     ], JSON_THROW_ON_ERROR)
@@ -730,7 +730,7 @@ class AuthCodeGrantTest extends TestCase
                         'auth_code_id' => uniqid(),
                         'expire_time'  => time() + 3600,
                         'client_id'    => 'foo',
-                        'user_id'      => 123,
+                        'user_id'      => '123',
                         'scopes'       => ['foo'],
                         'redirect_uri' => self::REDIRECT_URI,
                     ], JSON_THROW_ON_ERROR)
@@ -795,7 +795,7 @@ class AuthCodeGrantTest extends TestCase
                         'auth_code_id' => uniqid(),
                         'expire_time'  => time() + 3600,
                         'client_id'    => 'foo',
-                        'user_id'      => 123,
+                        'user_id'      => '123',
                         'scopes'       => ['foo'],
                         'redirect_uri' => self::REDIRECT_URI,
                     ], JSON_THROW_ON_ERROR)
@@ -867,7 +867,7 @@ class AuthCodeGrantTest extends TestCase
                         'auth_code_id'          => uniqid(),
                         'expire_time'           => time() + 3600,
                         'client_id'             => 'foo',
-                        'user_id'               => 123,
+                        'user_id'               => '123',
                         'scopes'                => ['foo'],
                         'redirect_uri'          => self::REDIRECT_URI,
                         'code_challenge'        => self::CODE_VERIFIER,
@@ -941,7 +941,7 @@ class AuthCodeGrantTest extends TestCase
                         'auth_code_id'          => uniqid(),
                         'expire_time'           => time() + 3600,
                         'client_id'             => 'foo',
-                        'user_id'               => 123,
+                        'user_id'               => '123',
                         'scopes'                => ['foo'],
                         'redirect_uri'          => self::REDIRECT_URI,
                         'code_challenge'        => self::CODE_CHALLENGE,
@@ -2034,7 +2034,7 @@ class AuthCodeGrantTest extends TestCase
                         'auth_code_id' => uniqid(),
                         'expire_time'  => time() + 3600,
                         'client_id'    => 'foo',
-                        'user_id'      => 123,
+                        'user_id'      => '123',
                         'scopes'       => ['foo'],
                         'redirect_uri' => self::REDIRECT_URI,
                     ], JSON_THROW_ON_ERROR)
@@ -2099,7 +2099,7 @@ class AuthCodeGrantTest extends TestCase
                         'auth_code_id' => uniqid(),
                         'expire_time'  => time() + 3600,
                         'client_id'    => 'foo',
-                        'user_id'      => 123,
+                        'user_id'      => '123',
                         'scopes'       => ['foo'],
                         'redirect_uri' => self::REDIRECT_URI,
                     ], JSON_THROW_ON_ERROR)
@@ -2167,7 +2167,7 @@ class AuthCodeGrantTest extends TestCase
                         'auth_code_id' => uniqid(),
                         'expire_time'  => time() + 3600,
                         'client_id'    => 'foo',
-                        'user_id'      => 123,
+                        'user_id'      => '123',
                         'scopes'       => ['foo'],
                         'redirect_uri' => self::REDIRECT_URI,
                     ], JSON_THROW_ON_ERROR)

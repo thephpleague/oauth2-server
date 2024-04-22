@@ -432,7 +432,7 @@ class AbstractGrantTest extends TestCase
             $grantMock,
             new DateInterval('PT1H'),
             new ClientEntity(),
-            123,
+            '123',
             [new ScopeEntity()]
         );
 

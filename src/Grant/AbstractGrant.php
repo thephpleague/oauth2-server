@@ -184,7 +184,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * getClientEntity might return null. By contrast, this method will
      * always either return a ClientEntityInterface or throw.
      */
-    protected function getClientEntityOrFail(string|int $clientId, ServerRequestInterface $request): ClientEntityInterface
+    protected function getClientEntityOrFail(string $clientId, ServerRequestInterface $request): ClientEntityInterface
     {
         $client = $this->clientRepository->getClientEntity($clientId);
 
@@ -362,7 +362,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected function issueAccessToken(
         DateInterval $accessTokenTTL,
         ClientEntityInterface $client,
-        string|int|null $userIdentifier,
+        string|null $userIdentifier,
         array $scopes = []
     ): AccessTokenEntityInterface {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
