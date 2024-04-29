@@ -16,6 +16,8 @@ interface UserEntityInterface
 {
     /**
      * Return the user's identifier.
+     *
+     * @return non-empty-string
      */
     public function getIdentifier(): string;
 }

@@ -23,7 +23,7 @@ use function strstr;
 abstract class AbstractAuthorizeGrant extends AbstractGrant
 {
     /**
-     * @param string[] $params
+     * @param mixed[] $params
      */
     public function makeRedirectUri(string $uri, array $params = [], string $queryDelimiter = '?'): string
     {
