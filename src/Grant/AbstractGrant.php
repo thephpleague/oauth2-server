@@ -330,7 +330,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve query string parameter.
      */
-    protected function getQueryStringParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
+    protected function getQueryStringParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): mixed
     {
         return isset($request->getQueryParams()[$parameter]) ? $request->getQueryParams()[$parameter] : $default;
     }
@@ -338,7 +338,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve cookie parameter.
      */
-    protected function getCookieParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
+    protected function getCookieParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): mixed
     {
         return isset($request->getCookieParams()[$parameter]) ? $request->getCookieParams()[$parameter] : $default;
     }
@@ -346,7 +346,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve server parameter.
      */
-    protected function getServerParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
+    protected function getServerParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): mixed
     {
         return isset($request->getServerParams()[$parameter]) ? $request->getServerParams()[$parameter] : $default;
     }
