@@ -80,7 +80,7 @@ class DeviceCodeGrant extends AbstractGrant
             $this->getServerParameter('PHP_AUTH_USER', $request)
         );
 
-        if ($clientId === null || !is_string($clientId)) {
+        if ($clientId === null) {
             throw OAuthServerException::invalidRequest('client_id');
         }
 
@@ -180,7 +180,7 @@ class DeviceCodeGrant extends AbstractGrant
     {
         $deviceCode = $this->getRequestParameter('device_code', $request);
 
-        if (is_null($deviceCode) || !is_string($deviceCode)) {
+        if (is_null($deviceCode)) {
             throw OAuthServerException::invalidRequest('device_code');
         }
 

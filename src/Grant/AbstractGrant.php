@@ -200,7 +200,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Gets the client credentials from the request from the request body or
      * the Http Basic Authorization header
      *
-     * @return string[]
+     * @return mixed[]
      */
     protected function getClientCredentials(ServerRequestInterface $request): array
     {
@@ -208,7 +208,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         $clientId = $this->getRequestParameter('client_id', $request, $basicAuthUser);
 
-        if (is_null($clientId) || !is_string($clientId)) {
+        if (is_null($clientId)) {
             throw OAuthServerException::invalidRequest('client_id');
         }
 
@@ -218,7 +218,6 @@ abstract class AbstractGrant implements GrantTypeInterface
             throw OAuthServerException::invalidRequest('client_secret');
         }
 
-        /* @phpstan-ignore-next-line */
         return [$clientId, $clientSecret];
     }
 
@@ -287,10 +286,8 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Retrieve request parameter.
-     *
-     * @return string[]|string|null
      */
-    protected function getRequestParameter(string $parameter, ServerRequestInterface $request, string $default = null): array|string|null
+    protected function getRequestParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): mixed
     {
         $requestParameters = (array) $request->getParsedBody();
 
@@ -333,7 +330,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve query string parameter.
      */
-    protected function getQueryStringParameter(string $parameter, ServerRequestInterface $request, ?string $default = null): ?string
+    protected function getQueryStringParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
     {
         return isset($request->getQueryParams()[$parameter]) ? $request->getQueryParams()[$parameter] : $default;
     }
@@ -341,7 +338,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve cookie parameter.
      */
-    protected function getCookieParameter(string $parameter, ServerRequestInterface $request, ?string $default = null): ?string
+    protected function getCookieParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
     {
         return isset($request->getCookieParams()[$parameter]) ? $request->getCookieParams()[$parameter] : $default;
     }
@@ -349,7 +346,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Retrieve server parameter.
      */
-    protected function getServerParameter(string $parameter, ServerRequestInterface $request, ?string $default = null): ?string
+    protected function getServerParameter(string $parameter, ServerRequestInterface $request, mixed $default = null): ?string
     {
         return isset($request->getServerParams()[$parameter]) ? $request->getServerParams()[$parameter] : $default;
     }

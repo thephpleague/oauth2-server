@@ -1231,6 +1231,44 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
+    public function testRespondToAccessTokenRequestWithAuthCodeNotAString(): void
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri(self::REDIRECT_URI);
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M')
+        );
+
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => ['not', 'a', 'string'],
+            ]
+        );
+
+        $this->expectException(OAuthServerException::class);
+        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
+    }
+
     public function testRespondToAccessTokenRequestExpiredCode(): void
     {
         $client = new ClientEntity();

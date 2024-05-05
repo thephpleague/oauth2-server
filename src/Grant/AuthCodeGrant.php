@@ -138,10 +138,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             );
         }
 
-        if ($codeVerifier !== null && !is_string($codeVerifier)) {
-            throw OAuthServerException::invalidRequest('code_verifier');
-        }
-
         if (isset($authCodePayload->code_challenge)) {
             $this->validateCodeChallenge($authCodePayload, $codeVerifier);
         }

@@ -96,6 +96,38 @@ class AbstractGrantTest extends TestCase
         self::assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
     }
 
+        public function testGetClientCredentialsClientSecretNotAString(): void
+    {
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setClientRepository($clientRepositoryMock);
+
+        $abstractGrantReflection = new ReflectionClass($grantMock);
+
+        $serverRequest = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'client_id'     => 'client_id',
+                'client_secret' => ['not', 'a', 'string'],
+            ]
+        );
+        $getClientCredentialsMethod = $abstractGrantReflection->getMethod('getClientCredentials');
+        $getClientCredentialsMethod->setAccessible(true);
+
+        $this->expectException(OAuthServerException::class);
+
+        $getClientCredentialsMethod->invoke($grantMock, $serverRequest, true, true);
+    }
+
     public function testValidateClientPublic(): void
     {
         $client = new ClientEntity();
