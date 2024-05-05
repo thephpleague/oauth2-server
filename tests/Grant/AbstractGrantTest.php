@@ -96,7 +96,7 @@ class AbstractGrantTest extends TestCase
         self::assertSame([null, null], $basicAuthMethod->invoke($grantMock, $serverRequest));
     }
 
-        public function testGetClientCredentialsClientSecretNotAString(): void
+    public function testGetClientCredentialsClientSecretNotAString(): void
     {
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -116,8 +116,8 @@ class AbstractGrantTest extends TestCase
             [],
             [],
             [
-                'client_id'     => 'client_id',
-                'client_secret' => ['not', 'a', 'string'],
+            'client_id'     => 'client_id',
+            'client_secret' => ['not', 'a', 'string'],
             ]
         );
         $getClientCredentialsMethod = $abstractGrantReflection->getMethod('getClientCredentials');
