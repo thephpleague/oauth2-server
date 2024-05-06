@@ -73,7 +73,7 @@ class BearerTokenResponse extends AbstractResponseType
      * AuthorizationServer::getResponseType() to pull in your version of
      * this class rather than the default.
      *
-     * @return mixed[]
+     * @return array<array-key,mixed>
      */
     protected function getExtraParams(AccessTokenEntityInterface $accessToken): array
     {

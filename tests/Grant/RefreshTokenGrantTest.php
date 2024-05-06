@@ -595,7 +595,7 @@ class RefreshTokenGrantTest extends TestCase
            'client_id'     => 'foo',
            'client_secret' => 'bar',
            'refresh_token' => $encryptedOldRefreshToken,
-           'scope'         =>  ['foo', 'bar'],
+           'scope'         =>  'foo bar',
         ]);
 
         $responseType = new StubResponseType();
@@ -654,7 +654,7 @@ class RefreshTokenGrantTest extends TestCase
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'refresh_token' => $encryptedOldRefreshToken,
-            'scope'         => ['foo'],
+            'scope'         => 'foo',
         ]);
 
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
@@ -719,7 +719,7 @@ class RefreshTokenGrantTest extends TestCase
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'refresh_token' => $encryptedOldRefreshToken,
-            'scope'         => ['foo'],
+            'scope'         => 'foo',
         ]);
 
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);

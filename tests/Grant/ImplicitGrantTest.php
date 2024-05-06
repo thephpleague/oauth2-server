@@ -23,6 +23,7 @@ use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use LogicException;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ImplicitGrantTest extends TestCase
@@ -282,7 +283,7 @@ class ImplicitGrantTest extends TestCase
         $accessToken->setClient($client);
         $accessToken->setUserIdentifier('userId');
 
-        /** @var AccessTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject $accessTokenRepositoryMock */
+        /** @var AccessTokenRepositoryInterface|MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
 
@@ -321,7 +322,7 @@ class ImplicitGrantTest extends TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
-        /** @var AccessTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject $accessTokenRepositoryMock */
+        /** @var AccessTokenRepositoryInterface|MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(OAuthServerException::serverError('something bad happened'));
@@ -353,7 +354,7 @@ class ImplicitGrantTest extends TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
-        /** @var AccessTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject $accessTokenRepositoryMock */
+        /** @var AccessTokenRepositoryInterface|MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());
