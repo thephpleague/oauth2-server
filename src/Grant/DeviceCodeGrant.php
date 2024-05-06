@@ -304,7 +304,7 @@ class DeviceCodeGrant extends AbstractGrant
 
             return $userCode;
             // @codeCoverageIgnoreStart
-        } catch (TypeError|Error $e) {
+        } catch (TypeError | Error $e) {
             throw OAuthServerException::serverError('An unexpected error has occurred', $e);
         } catch (Exception $e) {
             // If you get this message, the CSPRNG failed hard.
