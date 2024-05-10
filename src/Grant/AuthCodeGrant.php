@@ -41,7 +41,6 @@ use function hash_algos;
 use function implode;
 use function in_array;
 use function is_array;
-use function is_string;
 use function json_decode;
 use function json_encode;
 use function preg_match;
@@ -106,9 +105,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $this->validateClient($request);
         }
 
-        $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
+        $encryptedAuthCode = $this->getRequestParameter('code', $request);
 
-        if (!is_string($encryptedAuthCode)) {
+        if ($encryptedAuthCode === null) {
             throw OAuthServerException::invalidRequest('code');
         }
 
@@ -128,7 +127,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code', $e);
         }
 
-        $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
+        $codeVerifier = $this->getRequestParameter('code_verifier', $request);
 
         // If a code challenge isn't present but a code verifier is, reject the request to block PKCE downgrade attack
         if (!isset($authCodePayload->code_challenge) && $codeVerifier !== null) {
@@ -219,7 +218,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         // The redirect URI is required in this request
-        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
+        $redirectUri = $this->getRequestParameter('redirect_uri', $request);
         if ($authCodePayload->redirect_uri !== '' && $redirectUri === null) {
             throw OAuthServerException::invalidRequest('redirect_uri');
         }
