@@ -269,9 +269,9 @@ class OAuthServerException extends Exception
 
         if ($this->redirectUri !== null) {
             if ($useFragment === true) {
-                $this->redirectUri .= (!str_contains($this->redirectUri, '#')) ? '#' : '&';
+                $this->redirectUri .= (str_contains($this->redirectUri, '#') === false) ? '#' : '&';
             } else {
-                $this->redirectUri .= (!str_contains($this->redirectUri, '?')) ? '?' : '&';
+                $this->redirectUri .= (str_contains($this->redirectUri, '?') === false) ? '?' : '&';
             }
 
             return $response->withStatus(302)->withHeader('Location', $this->redirectUri . http_build_query($payload));

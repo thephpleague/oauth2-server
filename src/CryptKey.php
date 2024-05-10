@@ -43,13 +43,13 @@ class CryptKey implements CryptKeyInterface
 
     public function __construct(string $keyPath, protected ?string $passPhrase = null, bool $keyPermissionsCheck = true)
     {
-        if (!str_starts_with($keyPath, self::FILE_PREFIX) && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
+        if (str_starts_with($keyPath, self::FILE_PREFIX) === false && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
             $this->keyContents = $keyPath;
             $this->keyPath = '';
             // There's no file, so no need for permission check.
             $keyPermissionsCheck = false;
         } elseif (is_file($keyPath)) {
-            if (!str_starts_with($keyPath, self::FILE_PREFIX)) {
+            if (str_starts_with($keyPath, self::FILE_PREFIX) === false) {
                 $keyPath = self::FILE_PREFIX . $keyPath;
             }
 

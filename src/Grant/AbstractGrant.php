@@ -177,6 +177,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * doesn't actually enforce non-null returns/exception-on-no-client so
      * getClientEntity might return null. By contrast, this method will
      * always either return a ClientEntityInterface or throw.
+     *
      * @throws OAuthServerException
      */
     protected function getClientEntityOrFail(string $clientId, ServerRequestInterface $request): ClientEntityInterface
@@ -276,13 +277,16 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Parse request parameter.
+     *
      * @param array<array-key, mixed> $request
+     *
      * @return non-empty-string|null
      * @throws OAuthServerException
      */
     private static function parseParam(string $parameter, array $request, ?string $default = null): ?string
     {
         $value = $request[$parameter] ?? '';
+
         if (is_scalar($value)) {
             $value = trim((string)$value);
         } else {
@@ -291,6 +295,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         if ($value === '') {
             $value = $default === null ? null : trim($default);
+
             if ($value === '') {
                 $value = null;
             }
@@ -326,7 +331,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         $header = $request->getHeader('Authorization')[0];
-        if (!str_starts_with($header, 'Basic ')) {
+        if (str_starts_with($header, 'Basic ') === false) {
             return [null, null];
         }
 
@@ -336,7 +341,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             return [null, null];
         }
 
-        if (!str_contains($decoded, ':')) {
+        if (str_contains($decoded, ':') === false) {
             return [null, null]; // HTTP Basic header without colon isn't valid
         }
 
@@ -351,6 +356,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Retrieve query string parameter.
+     *
      * @return non-empty-string|null
      * @throws OAuthServerException
      */
@@ -361,6 +367,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Retrieve cookie parameter.
+     *
      * @return non-empty-string|null
      * @throws OAuthServerException
      */
@@ -371,6 +378,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     /**
      * Retrieve server parameter.
+     *
      * @return non-empty-string|null
      * @throws OAuthServerException
      */
