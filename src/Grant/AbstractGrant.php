@@ -197,6 +197,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * the Http Basic Authorization header
      *
      * @return array{0:non-empty-string,1:string}
+     *
      * @throws OAuthServerException
      */
     protected function getClientCredentials(ServerRequestInterface $request): array
@@ -281,6 +282,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @param array<array-key, mixed> $request
      *
      * @return non-empty-string|null
+     *
      * @throws OAuthServerException
      */
     private static function parseParam(string $parameter, array $request, ?string $default = null): ?string
@@ -288,7 +290,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         $value = $request[$parameter] ?? '';
 
         if (is_scalar($value)) {
-            $value = trim((string)$value);
+            $value = trim((string) $value);
         } else {
             throw OAuthServerException::invalidRequest($parameter);
         }
@@ -308,6 +310,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Retrieve request parameter.
      *
      * @return non-empty-string|null
+     *
      * @throws OAuthServerException
      */
     protected function getRequestParameter(string $parameter, ServerRequestInterface $request, ?string $default = null): ?string
@@ -358,6 +361,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Retrieve query string parameter.
      *
      * @return non-empty-string|null
+     *
      * @throws OAuthServerException
      */
     protected function getQueryStringParameter(string $parameter, ServerRequestInterface $request, ?string $default = null): ?string
@@ -369,6 +373,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Retrieve cookie parameter.
      *
      * @return non-empty-string|null
+     *
      * @throws OAuthServerException
      */
     protected function getCookieParameter(string $parameter, ServerRequestInterface $request, ?string $default = null): ?string
@@ -380,6 +385,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      * Retrieve server parameter.
      *
      * @return non-empty-string|null
+     *
      * @throws OAuthServerException
      */
     protected function getServerParameter(string $parameter, ServerRequestInterface $request, ?string $default = null): ?string

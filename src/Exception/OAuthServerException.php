@@ -20,8 +20,6 @@ use Throwable;
 use function htmlspecialchars;
 use function http_build_query;
 use function sprintf;
-use function strpos;
-use function strstr;
 
 class OAuthServerException extends Exception
 {
