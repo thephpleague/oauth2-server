@@ -18,6 +18,8 @@ interface ScopeEntityInterface extends JsonSerializable
 {
     /**
      * Get the scope's identifier.
+     *
+     * @return non-empty-string
      */
     public function getIdentifier(): string;
 }

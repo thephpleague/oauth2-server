@@ -26,7 +26,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 use function implode;
 use function in_array;
-use function is_string;
 use function json_decode;
 use function time;
 
@@ -53,6 +52,7 @@ class RefreshTokenGrant extends AbstractGrant
         // Validate request
         $client = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
+
         $scopes = $this->validateScopes(
             $this->getRequestParameter(
                 'scope',
@@ -102,10 +102,8 @@ class RefreshTokenGrant extends AbstractGrant
      */
     protected function validateOldRefreshToken(ServerRequestInterface $request, string $clientId): array
     {
-        $encryptedRefreshToken = $this->getRequestParameter('refresh_token', $request);
-        if (!is_string($encryptedRefreshToken)) {
-            throw OAuthServerException::invalidRequest('refresh_token');
-        }
+        $encryptedRefreshToken = $this->getRequestParameter('refresh_token', $request)
+            ?? throw OAuthServerException::invalidRequest('refresh_token');
 
         // Validate refresh token
         try {

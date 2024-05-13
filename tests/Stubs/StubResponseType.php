@@ -35,7 +35,7 @@ class StubResponseType extends AbstractResponseType
     }
 
     /**
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      */
     public function validateAccessToken(ServerRequestInterface $request): ServerRequestInterface
     {

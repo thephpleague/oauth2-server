@@ -26,8 +26,6 @@ use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-use function is_string;
-
 /**
  * Password grant class.
  */
@@ -84,17 +82,11 @@ class PasswordGrant extends AbstractGrant
      */
     protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client): UserEntityInterface
     {
-        $username = $this->getRequestParameter('username', $request);
+        $username = $this->getRequestParameter('username', $request)
+            ?? throw OAuthServerException::invalidRequest('username');
 
-        if (!is_string($username)) {
-            throw OAuthServerException::invalidRequest('username');
-        }
-
-        $password = $this->getRequestParameter('password', $request);
-
-        if (!is_string($password)) {
-            throw OAuthServerException::invalidRequest('password');
-        }
+        $password = $this->getRequestParameter('password', $request)
+            ?? throw OAuthServerException::invalidRequest('password');
 
         $user = $this->userRepository->getUserEntityByUserCredentials(
             $username,

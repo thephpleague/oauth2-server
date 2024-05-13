@@ -39,7 +39,7 @@ interface ScopeRepositoryInterface extends RepositoryInterface
         array $scopes,
         string $grantType,
         ClientEntityInterface $clientEntity,
-        string|int|null $userIdentifier = null,
+        string|null $userIdentifier = null,
         ?string $authCodeId = null
     ): array;
 }
