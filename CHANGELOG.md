@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Basic authorization is now case insensitive (PR #1403)
 
 ### Changed
+- All interfaces now specify types for all params and return values. Strict typing enforced (PR #1074)
 - Request parameters are now parsed into strings to use internally in the library (PR #1402)
 
 ## [9.0.0-RC1] - released 2024-03-27
