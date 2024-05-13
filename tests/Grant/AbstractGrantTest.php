@@ -129,8 +129,8 @@ class AbstractGrantTest extends TestCase
             [],
             [],
             [
-            'client_id'     => 'client_id',
-            'client_secret' => ['not', 'a', 'string'],
+                'client_id'     => 'client_id',
+                'client_secret' => ['not', 'a', 'string'],
             ]
         );
         $getClientCredentialsMethod = $abstractGrantReflection->getMethod('getClientCredentials');
@@ -445,7 +445,7 @@ class AbstractGrantTest extends TestCase
             $grantMock,
             new DateInterval('PT1H'),
             new ClientEntity(),
-            '123',
+            123,
             [new ScopeEntity()]
         );
 
