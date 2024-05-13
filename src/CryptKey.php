@@ -27,7 +27,6 @@ use function openssl_pkey_get_details;
 use function openssl_pkey_get_private;
 use function openssl_pkey_get_public;
 use function sprintf;
-use function strpos;
 use function trigger_error;
 
 class CryptKey implements CryptKeyInterface
