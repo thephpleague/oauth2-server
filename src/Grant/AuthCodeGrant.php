@@ -347,15 +347,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      */
     public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): ResponseTypeInterface
     {
-        if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
-            throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
-        }
-
         $finalRedirectUri = $authorizationRequest->getRedirectUri()
                           ?? $this->getClientRedirectUri($authorizationRequest);
 
         // The user approved the client, redirect them back with an auth code
         if ($authorizationRequest->isAuthorizationApproved() === true) {
+            if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
+                throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
+            }
+
             $authCode = $this->issueAuthCode(
                 $this->authCodeTTL,
                 $authorizationRequest->getClient(),
@@ -393,6 +393,19 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             );
 
             return $response;
+        }
+
+        // The user is not authenticated, redirect them back with an error
+        if (is_null($authorizationRequest->getUser())) {
+            throw OAuthServerException::accessDenied(
+                'The user is not authenticated.',
+                $this->makeRedirectUri(
+                    $finalRedirectUri,
+                    [
+                        'state' => $authorizationRequest->getState(),
+                    ]
+                )
+            );
         }
 
         // The user denied the client, redirect them back with an error
