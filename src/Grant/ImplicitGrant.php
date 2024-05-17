@@ -192,8 +192,8 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         // The user denied the client, redirect them back with an error
         throw OAuthServerException::accessDenied(
             is_null($authorizationRequest->getUser())
-                ? 'The user denied the request'
-                : 'The user is not authenticated.',
+                ? 'The user is not authenticated.'
+                : 'The user denied the request',
             $this->makeRedirectUri(
                 $finalRedirectUri,
                 [
