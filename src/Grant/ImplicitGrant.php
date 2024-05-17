@@ -148,18 +148,15 @@ class ImplicitGrant extends AbstractAuthorizeGrant
      */
     public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): ResponseTypeInterface
     {
-        if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
-            throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
-        }
-
-        $clientRegisteredRedirectUri = is_array($authorizationRequest->getClient()->getRedirectUri())
-                ? $authorizationRequest->getClient()->getRedirectUri()[0]
-                : $authorizationRequest->getClient()->getRedirectUri();
-
-        $finalRedirectUri = $authorizationRequest->getRedirectUri() ?? $clientRegisteredRedirectUri;
+        $finalRedirectUri = $authorizationRequest->getRedirectUri()
+                          ?? $this->getClientRedirectUri($authorizationRequest);
 
         // The user approved the client, redirect them back with an access token
         if ($authorizationRequest->isAuthorizationApproved() === true) {
+            if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
+                throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
+            }
+
             // Finalize the requested scopes
             $finalizedScopes = $this->scopeRepository->finalizeScopes(
                 $authorizationRequest->getScopes(),
@@ -194,7 +191,9 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         // The user denied the client, redirect them back with an error
         throw OAuthServerException::accessDenied(
-            'The user denied the request',
+            is_null($authorizationRequest->getUser())
+                ? 'The user is not authenticated.'
+                : 'The user denied the request',
             $this->makeRedirectUri(
                 $finalRedirectUri,
                 [

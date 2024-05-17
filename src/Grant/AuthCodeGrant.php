@@ -347,15 +347,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      */
     public function completeAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): ResponseTypeInterface
     {
-        if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
-            throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
-        }
-
         $finalRedirectUri = $authorizationRequest->getRedirectUri()
                           ?? $this->getClientRedirectUri($authorizationRequest);
 
         // The user approved the client, redirect them back with an auth code
         if ($authorizationRequest->isAuthorizationApproved() === true) {
+            if ($authorizationRequest->getUser() instanceof UserEntityInterface === false) {
+                throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
+            }
+
             $authCode = $this->issueAuthCode(
                 $this->authCodeTTL,
                 $authorizationRequest->getClient(),
@@ -397,7 +397,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         // The user denied the client, redirect them back with an error
         throw OAuthServerException::accessDenied(
-            'The user denied the request',
+            is_null($authorizationRequest->getUser())
+                ? 'The user is not authenticated.'
+                : 'The user denied the request',
             $this->makeRedirectUri(
                 $finalRedirectUri,
                 [
@@ -405,15 +407,5 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 ]
             )
         );
-    }
-
-    /**
-     * Get the client redirect URI if not set in the request.
-     */
-    private function getClientRedirectUri(AuthorizationRequestInterface $authorizationRequest): string
-    {
-        return is_array($authorizationRequest->getClient()->getRedirectUri())
-                ? $authorizationRequest->getClient()->getRedirectUri()[0]
-                : $authorizationRequest->getClient()->getRedirectUri();
     }
 }
