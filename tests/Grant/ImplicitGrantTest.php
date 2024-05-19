@@ -71,7 +71,7 @@ class ImplicitGrantTest extends TestCase
 
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'token',
-            'client_id' => 'foo',
+            'client_id'     => 'foo',
         ]);
 
         $this->assertTrue($grant->canRespondToAuthorizationRequest($request));
@@ -95,8 +95,8 @@ class ImplicitGrantTest extends TestCase
 
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
-            'client_id' => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
+            'client_id'     => 'foo',
+            'redirect_uri'  => self::REDIRECT_URI,
         ]);
 
         $this->assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
@@ -136,7 +136,7 @@ class ImplicitGrantTest extends TestCase
 
         $request = (new ServerRequest())->withQueryParams(['response_type' => 'code']);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(3);
 
         $grant->validateAuthorizationRequest($request);
@@ -152,10 +152,10 @@ class ImplicitGrantTest extends TestCase
 
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
-            'client_id' => 'foo',
+            'client_id'     => 'foo',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
@@ -177,7 +177,7 @@ class ImplicitGrantTest extends TestCase
             'redirect_uri' => 'http://bar',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
@@ -195,11 +195,11 @@ class ImplicitGrantTest extends TestCase
 
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
-            'client_id' => 'foo',
-            'redirect_uri' => 'http://bar',
+            'client_id'     => 'foo',
+            'redirect_uri'  => 'http://bar',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
@@ -258,7 +258,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(9);
 
         $grant->completeAuthorizationRequest($authRequest);
@@ -326,7 +326,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(7);
 
         $grant->completeAuthorizationRequest($authRequest);
@@ -353,7 +353,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $this->expectException(UniqueTokenIdentifierConstraintViolationException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException::class);
         $this->expectExceptionCode(100);
 
         $grant->completeAuthorizationRequest($authRequest);

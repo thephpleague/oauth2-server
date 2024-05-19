@@ -89,7 +89,7 @@ class ClaimExtractor implements ClaimExtractorInterface
      */
     public function extract(array $scopes, array $claims): array
     {
-        $claimData = [];
+        $claimData  = [];
         $keys = \array_keys($claims);
 
         foreach ($scopes as $scope) {

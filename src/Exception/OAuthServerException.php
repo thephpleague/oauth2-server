@@ -65,7 +65,7 @@ class OAuthServerException extends Exception
         $this->hint = $hint;
         $this->redirectUri = $redirectUri;
         $this->payload = [
-            'error' => $errorType,
+            'error'             => $errorType,
             'error_description' => $message,
         ];
         if ($hint !== null) {

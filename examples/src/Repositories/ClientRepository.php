@@ -39,9 +39,9 @@ class ClientRepository implements ClientRepositoryInterface
     {
         $clients = [
             'myawesomeapp' => [
-                'secret' => \password_hash('abc123', PASSWORD_BCRYPT),
-                'name' => self::CLIENT_NAME,
-                'redirect_uri' => self::REDIRECT_URI,
+                'secret'          => \password_hash('abc123', PASSWORD_BCRYPT),
+                'name'            => self::CLIENT_NAME,
+                'redirect_uri'    => self::REDIRECT_URI,
                 'is_confidential' => true,
             ],
         ];
