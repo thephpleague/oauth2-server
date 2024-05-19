@@ -366,13 +366,13 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             );
 
             $payload = [
-                'client_id'             => $authCode->getClient()->getIdentifier(),
-                'redirect_uri'          => $authCode->getRedirectUri(),
-                'auth_code_id'          => $authCode->getIdentifier(),
-                'scopes'                => $authCode->getScopes(),
-                'user_id'               => $authCode->getUserIdentifier(),
-                'expire_time'           => (new DateTimeImmutable())->add($this->authCodeTTL)->getTimestamp(),
-                'code_challenge'        => $authorizationRequest->getCodeChallenge(),
+                'client_id' => $authCode->getClient()->getIdentifier(),
+                'redirect_uri' => $authCode->getRedirectUri(),
+                'auth_code_id' => $authCode->getIdentifier(),
+                'scopes' => $authCode->getScopes(),
+                'user_id' => $authCode->getUserIdentifier(),
+                'expire_time' => (new DateTimeImmutable())->add($this->authCodeTTL)->getTimestamp(),
+                'code_challenge' => $authorizationRequest->getCodeChallenge(),
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
 
@@ -387,7 +387,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $this->makeRedirectUri(
                     $finalRedirectUri,
                     [
-                        'code'  => $this->encrypt($jsonPayload),
+                        'code' => $this->encrypt($jsonPayload),
                         'state' => $authorizationRequest->getState(),
                     ]
                 )

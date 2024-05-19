@@ -207,9 +207,9 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                     $finalRedirectUri,
                     [
                         'access_token' => (string) $accessToken,
-                        'token_type'   => 'Bearer',
-                        'expires_in'   => $accessToken->getExpiryDateTime()->getTimestamp() - \time(),
-                        'state'        => $authorizationRequest->getState(),
+                        'token_type' => 'Bearer',
+                        'expires_in' => $accessToken->getExpiryDateTime()->getTimestamp() - \time(),
+                        'state' => $authorizationRequest->getState(),
                     ],
                     $this->queryDelimiter
                 )
