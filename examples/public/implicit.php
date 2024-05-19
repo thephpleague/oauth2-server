@@ -22,7 +22,7 @@ use Slim\App;
 include __DIR__ . '/../vendor/autoload.php';
 
 $app = new App([
-    'settings' => [
+    'settings'    => [
         'displayErrorDetails' => true,
     ],
     AuthorizationServer::class => function () {

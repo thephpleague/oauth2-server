@@ -76,7 +76,7 @@ class AuthCodeGrantTest extends TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id' => 'foo',
+                'client_id'     => 'foo',
             ]
         );
 
@@ -115,8 +115,8 @@ class AuthCodeGrantTest extends TestCase
             [],
             [
                 'response_type' => 'code',
-                'client_id' => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
             ]
         );
 
@@ -154,8 +154,8 @@ class AuthCodeGrantTest extends TestCase
             [],
             [
                 'response_type' => 'code',
-                'client_id' => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
             ]
         );
 
@@ -194,7 +194,7 @@ class AuthCodeGrantTest extends TestCase
             [],
             [
                 'response_type' => 'code',
-                'client_id' => 'foo',
+                'client_id'     => 'foo',
             ]
         );
 
@@ -234,9 +234,9 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'response_type' => 'code',
-                'client_id' => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
+                'response_type'  => 'code',
+                'client_id'      => 'foo',
+                'redirect_uri'   => self::REDIRECT_URI,
                 'code_challenge' => self::CODE_CHALLENGE,
             ]
         );
@@ -260,13 +260,13 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = (new ServerRequest())->withQueryParams([
-            'response_type' => 'code',
-            'client_id' => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
+            'response_type'  => 'code',
+            'client_id'      => 'foo',
+            'redirect_uri'   => self::REDIRECT_URI,
             'code_challenge' => \str_repeat('A', 42),
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
 
         $grant->validateAuthorizationRequest($request);
     }
@@ -287,13 +287,13 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = (new ServerRequest())->withQueryParams([
-            'response_type' => 'code',
-            'client_id' => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
+            'response_type'  => 'code',
+            'client_id'      => 'foo',
+            'redirect_uri'   => self::REDIRECT_URI,
             'code_challenge' => \str_repeat('A', 129),
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
 
         $grant->validateAuthorizationRequest($request);
     }
@@ -320,7 +320,7 @@ class AuthCodeGrantTest extends TestCase
             'code_challenge' => \str_repeat('A', 42) . '!',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
 
         $grant->validateAuthorizationRequest($request);
     }
@@ -340,7 +340,7 @@ class AuthCodeGrantTest extends TestCase
             'response_type' => 'code',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(3);
 
         $grant->validateAuthorizationRequest($request);
@@ -360,10 +360,10 @@ class AuthCodeGrantTest extends TestCase
 
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
-            'client_id' => 'foo',
+            'client_id'     => 'foo',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
@@ -385,11 +385,11 @@ class AuthCodeGrantTest extends TestCase
 
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
-            'client_id' => 'foo',
-            'redirect_uri' => 'http://bar',
+            'client_id'     => 'foo',
+            'redirect_uri'  => 'http://bar',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
@@ -411,11 +411,11 @@ class AuthCodeGrantTest extends TestCase
 
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
-            'client_id' => 'foo',
-            'redirect_uri' => 'http://bar',
+            'client_id'     => 'foo',
+            'redirect_uri'  => 'http://bar',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
@@ -450,7 +450,7 @@ class AuthCodeGrantTest extends TestCase
             'code_challenge_method' => 'foo',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(3);
 
         $grant->validateAuthorizationRequest($request);
@@ -501,7 +501,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(9);
 
         $grant->completeAuthorizationRequest($authRequest);
@@ -551,17 +551,17 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
                             'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
+                            'expire_time'  => \time() + 3600,
+                            'client_id'    => 'foo',
+                            'user_id'      => 123,
+                            'scopes'       => ['foo'],
                             'redirect_uri' => self::REDIRECT_URI,
                         ]
                     )
@@ -618,16 +618,16 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
+                'grant_type'   => 'authorization_code',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
                             'auth_code_id' => \uniqid(),
                             'client_id' => 'foo',
-                            'expire_time' => \time() + 3600,
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
+                            'expire_time'  => \time() + 3600,
+                            'user_id'      => 123,
+                            'scopes'       => ['foo'],
                             'redirect_uri' => self::REDIRECT_URI,
                         ]
                     )
@@ -685,17 +685,17 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
                             'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
+                            'expire_time'  => \time() + 3600,
+                            'client_id'    => 'foo',
+                            'user_id'      => 123,
+                            'scopes'       => ['foo'],
                             'redirect_uri' => self::REDIRECT_URI,
                         ]
                     )
@@ -753,17 +753,17 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
                             'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
+                            'expire_time'  => \time() + 3600,
+                            'client_id'    => 'foo',
+                            'user_id'      => 123,
+                            'scopes'       => ['foo'],
                             'redirect_uri' => self::REDIRECT_URI,
                         ]
                     )
@@ -823,20 +823,20 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'          => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
-                            'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
-                            'redirect_uri' => self::REDIRECT_URI,
-                            'code_challenge' => self::CODE_VERIFIER,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => self::REDIRECT_URI,
+                            'code_challenge'        => self::CODE_VERIFIER,
                             'code_challenge_method' => 'plain',
                         ]
                     )
@@ -896,20 +896,20 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'          => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
-                            'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
-                            'redirect_uri' => self::REDIRECT_URI,
-                            'code_challenge' => self::CODE_CHALLENGE,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => self::REDIRECT_URI,
+                            'code_challenge'        => self::CODE_CHALLENGE,
                             'code_challenge_method' => 'S256',
                         ]
                     )
@@ -969,26 +969,26 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'          => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
-                            'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
-                            'redirect_uri' => self::REDIRECT_URI,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => self::REDIRECT_URI,
                         ]
                     )
                 ),
             ]
         );
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(3);
 
         /* @var StubResponseType $response */
@@ -1022,22 +1022,22 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'client_id' => 'foo',
+                'client_id'  => 'foo',
                 'grant_type' => 'authorization_code',
-                'code' => $this->cryptStub->doEncrypt(
+                'code'       => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
-                            'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'redirect_uri' => self::REDIRECT_URI,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
+                            'client_id'             => 'foo',
+                            'redirect_uri'          => self::REDIRECT_URI,
                         ]
                     )
                 ),
             ]
         );
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(3);
 
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -1070,23 +1070,23 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'client_id' => 'foo',
+                'client_id'  => 'foo',
                 'grant_type' => 'authorization_code',
                 'redirect_uri' => 'http://bar/foo',
-                'code' => $this->cryptStub->doEncrypt(
+                'code'       => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
-                            'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'redirect_uri' => self::REDIRECT_URI,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
+                            'client_id'             => 'foo',
+                            'redirect_uri'          => self::REDIRECT_URI,
                         ]
                     )
                 ),
             ]
         );
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(3);
 
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -1123,14 +1123,14 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
                 'client_secret' => 'bar',
-                'redirect_uri' => self::REDIRECT_URI,
+                'redirect_uri'  => self::REDIRECT_URI,
             ]
         );
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(3);
 
         /* @var StubResponseType $response */
@@ -1164,18 +1164,18 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
-                            'client_id' => 'foo',
+                            'client_id'        => 'foo',
                             'refresh_token_id' => 'zyxwvu',
-                            'access_token_id' => 'abcdef',
-                            'scopes' => ['foo'],
-                            'user_id' => 123,
-                            'expire_time' => \time() + 3600,
+                            'access_token_id'  => 'abcdef',
+                            'scopes'           => ['foo'],
+                            'user_id'          => 123,
+                            'expire_time'      => \time() + 3600,
                         ]
                     )
                 ),
@@ -1217,14 +1217,14 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => ['not', 'a', 'string'],
+                'code'         => ['not', 'a', 'string'],
             ]
         );
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
@@ -1255,17 +1255,17 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
                             'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() - 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
+                            'expire_time'  => \time() - 3600,
+                            'client_id'    => 'foo',
+                            'user_id'      => 123,
+                            'scopes'       => ['foo'],
                             'redirect_uri' => self::REDIRECT_URI,
                         ]
                     )
@@ -1319,17 +1319,17 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
                             'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
+                            'expire_time'  => \time() + 3600,
+                            'client_id'    => 'foo',
+                            'user_id'      => 123,
+                            'scopes'       => ['foo'],
                             'redirect_uri' => self::REDIRECT_URI,
                         ]
                     )
@@ -1380,17 +1380,17 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
                             'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'bar',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
+                            'expire_time'  => \time() + 3600,
+                            'client_id'    => 'bar',
+                            'user_id'      => 123,
+                            'scopes'       => ['foo'],
                             'redirect_uri' => self::REDIRECT_URI,
                         ]
                     )
@@ -1441,10 +1441,10 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => 'sdfsfsd',
+                'code'         => 'sdfsfsd',
             ]
         );
 
@@ -1500,20 +1500,20 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'          => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
-                            'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
-                            'redirect_uri' => self::REDIRECT_URI,
-                            'code_challenge' => 'foobar',
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => self::REDIRECT_URI,
+                            'code_challenge'        => 'foobar',
                             'code_challenge_method' => 'plain',
                         ]
                     )
@@ -1573,20 +1573,20 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => 'nope',
-                'code' => $this->cryptStub->doEncrypt(
+                'code'          => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
-                            'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
-                            'redirect_uri' => self::REDIRECT_URI,
-                            'code_challenge' => 'foobar',
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => self::REDIRECT_URI,
+                            'code_challenge'        => 'foobar',
                             'code_challenge_method' => 'S256',
                         ]
                     )
@@ -1646,20 +1646,20 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => 'dqX7C-RbqjHYtytmhGTigKdZCXfxq-+xbsk9_GxUcaE', // Malformed code. Contains `+`.
-                'code' => $this->cryptStub->doEncrypt(
+                'code'          => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
-                            'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
-                            'redirect_uri' => self::REDIRECT_URI,
-                            'code_challenge' => self::CODE_CHALLENGE,
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => self::REDIRECT_URI,
+                            'code_challenge'        => self::CODE_CHALLENGE,
                             'code_challenge_method' => 'S256',
                         ]
                     )
@@ -1719,20 +1719,20 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => 'dqX7C-RbqjHY', // Malformed code. Invalid length.
-                'code' => $this->cryptStub->doEncrypt(
+                'code'          => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
-                            'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
-                            'redirect_uri' => self::REDIRECT_URI,
-                            'code_challenge' => 'R7T1y1HPNFvs1WDCrx4lfoBS6KD2c71pr8OHvULjvv8',
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => self::REDIRECT_URI,
+                            'code_challenge'        => 'R7T1y1HPNFvs1WDCrx4lfoBS6KD2c71pr8OHvULjvv8',
                             'code_challenge_method' => 'S256',
                         ]
                     )
@@ -1792,19 +1792,19 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
-                            'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
-                            'redirect_uri' => self::REDIRECT_URI,
-                            'code_challenge' => 'foobar',
+                            'auth_code_id'          => \uniqid(),
+                            'expire_time'           => \time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => 123,
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => self::REDIRECT_URI,
+                            'code_challenge'        => 'foobar',
                             'code_challenge_method' => 'plain',
                         ]
                     )
@@ -1875,7 +1875,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(7);
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
@@ -1899,7 +1899,7 @@ class AuthCodeGrantTest extends TestCase
             new DateInterval('PT10M')
         );
 
-        $this->expectException(UniqueTokenIdentifierConstraintViolationException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException::class);
         $this->expectExceptionCode(100);
 
         $this->assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
@@ -1958,17 +1958,17 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
                             'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
+                            'expire_time'  => \time() + 3600,
+                            'client_id'    => 'foo',
+                            'user_id'      => 123,
+                            'scopes'       => ['foo'],
                             'redirect_uri' => self::REDIRECT_URI,
                         ]
                     )
@@ -2026,17 +2026,17 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
                             'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
+                            'expire_time'  => \time() + 3600,
+                            'client_id'    => 'foo',
+                            'user_id'      => 123,
+                            'scopes'       => ['foo'],
                             'redirect_uri' => self::REDIRECT_URI,
                         ]
                     )
@@ -2044,7 +2044,7 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $this->expectException(OAuthServerException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
         $this->expectExceptionCode(7);
 
         /** @var StubResponseType $response */
@@ -2097,17 +2097,17 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-                'grant_type' => 'authorization_code',
-                'client_id' => 'foo',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code' => $this->cryptStub->doEncrypt(
+                'code'         => $this->cryptStub->doEncrypt(
                     \json_encode(
                         [
                             'auth_code_id' => \uniqid(),
-                            'expire_time' => \time() + 3600,
-                            'client_id' => 'foo',
-                            'user_id' => 123,
-                            'scopes' => ['foo'],
+                            'expire_time'  => \time() + 3600,
+                            'client_id'    => 'foo',
+                            'user_id'      => 123,
+                            'scopes'       => ['foo'],
                             'redirect_uri' => self::REDIRECT_URI,
                         ]
                     )
@@ -2115,7 +2115,7 @@ class AuthCodeGrantTest extends TestCase
             ]
         );
 
-        $this->expectException(UniqueTokenIdentifierConstraintViolationException::class);
+        $this->expectException(\League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException::class);
         $this->expectExceptionCode(100);
 
         /** @var StubResponseType $response */
@@ -2162,8 +2162,8 @@ class AuthCodeGrantTest extends TestCase
 
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
-            'client_id' => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
+            'client_id'     => 'foo',
+            'redirect_uri'  => self::REDIRECT_URI,
         ]);
 
         $this->expectException(OAuthServerException::class);

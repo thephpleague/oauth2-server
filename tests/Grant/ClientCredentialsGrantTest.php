@@ -52,7 +52,7 @@ class ClientCredentialsGrantTest extends TestCase
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
-            'client_id' => 'foo',
+            'client_id'     => 'foo',
             'client_secret' => 'bar',
         ]);
 

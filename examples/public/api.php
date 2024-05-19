@@ -33,18 +33,18 @@ $app->get(
     function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
         $users = [
             [
-                'id' => 123,
-                'name' => 'Alex',
+                'id'    => 123,
+                'name'  => 'Alex',
                 'email' => 'alex@thephpleague.com',
             ],
             [
-                'id' => 124,
-                'name' => 'Frank',
+                'id'    => 124,
+                'name'  => 'Frank',
                 'email' => 'frank@thephpleague.com',
             ],
             [
-                'id' => 125,
-                'name' => 'Phil',
+                'id'    => 125,
+                'name'  => 'Phil',
                 'email' => 'phil@thephpleague.com',
             ],
         ];
