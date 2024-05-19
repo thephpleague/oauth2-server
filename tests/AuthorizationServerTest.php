@@ -301,7 +301,7 @@ class AuthorizationServerTest extends TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
             ]
         );
 
@@ -342,7 +342,7 @@ class AuthorizationServerTest extends TestCase
             $cookies = [],
             $queryParams = [
                 'response_type' => 'code',
-                'client_id'     => 'foo',
+                'client_id' => 'foo',
             ]
         );
 
@@ -369,7 +369,7 @@ class AuthorizationServerTest extends TestCase
             'client_id' => 'foo',
         ]);
 
-        $this->expectException(\League\OAuth2\Server\Exception\OAuthServerException::class);
+        $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(2);
 
         $server->validateAuthorizationRequest($request);

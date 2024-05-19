@@ -67,10 +67,10 @@ class PasswordGrantTest extends TestCase
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
-            'client_id'     => 'foo',
+            'client_id' => 'foo',
             'client_secret' => 'bar',
-            'username'      => 'foo',
-            'password'      => 'bar',
+            'username' => 'foo',
+            'password' => 'bar',
         ]);
 
         $responseType = new StubResponseType();
@@ -112,10 +112,10 @@ class PasswordGrantTest extends TestCase
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
-            'client_id'     => 'foo',
+            'client_id' => 'foo',
             'client_secret' => 'bar',
-            'username'      => 'foo',
-            'password'      => 'bar',
+            'username' => 'foo',
+            'password' => 'bar',
         ]);
 
         $responseType = new StubResponseType();
@@ -142,7 +142,7 @@ class PasswordGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
         $serverRequest = (new ServerRequest())->withQueryParams([
-            'client_id'     => 'foo',
+            'client_id' => 'foo',
             'client_secret' => 'bar',
         ]);
 
@@ -170,9 +170,9 @@ class PasswordGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
-            'client_id'     => 'foo',
+            'client_id' => 'foo',
             'client_secret' => 'bar',
-            'username'      => 'alex',
+            'username' => 'alex',
         ]);
 
         $responseType = new StubResponseType();
