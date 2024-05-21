@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace OAuth2ServerExamples\Entities;
 
@@ -15,5 +18,6 @@ use League\OAuth2\Server\Entities\Traits\ScopeTrait;
 
 class ScopeEntity implements ScopeEntityInterface
 {
-    use EntityTrait, ScopeTrait;
+    use EntityTrait;
+    use ScopeTrait;
 }

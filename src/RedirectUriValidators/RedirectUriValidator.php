@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Sebastiano Degan <sebdeg87@gmail.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,42 +8,43 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\RedirectUriValidators;
 
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Uri;
 
+use function in_array;
+use function is_string;
+
 class RedirectUriValidator implements RedirectUriValidatorInterface
 {
     /**
-     * @var array
+     * @var string[]
      */
-    private $allowedRedirectUris;
+    private array $allowedRedirectUris;
 
     /**
      * New validator instance for the given uri
      *
-     * @param string|array $allowedRedirectUris
+     * @param string[]|string $allowedRedirectUris
      */
-    public function __construct($allowedRedirectUri)
+    public function __construct(array|string $allowedRedirectUris)
     {
-        if (\is_string($allowedRedirectUri)) {
-            $this->allowedRedirectUris = [$allowedRedirectUri];
-        } elseif (\is_array($allowedRedirectUri)) {
-            $this->allowedRedirectUris = $allowedRedirectUri;
+        if (is_string($allowedRedirectUris)) {
+            $this->allowedRedirectUris = [$allowedRedirectUris];
         } else {
-            $this->allowedRedirectUris = [];
+            $this->allowedRedirectUris = $allowedRedirectUris;
         }
     }
 
     /**
      * Validates the redirect uri.
      *
-     * @param string $redirectUri
-     *
      * @return bool Return true if valid, false otherwise
      */
-    public function validateRedirectUri($redirectUri)
+    public function validateRedirectUri(string $redirectUri): bool
     {
         if ($this->isLoopbackUri($redirectUri)) {
             return $this->matchUriExcludingPort($redirectUri);
@@ -55,43 +57,31 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
      * According to section 7.3 of rfc8252, loopback uris are:
      *   - "http://127.0.0.1:{port}/{path}" for IPv4
      *   - "http://[::1]:{port}/{path}" for IPv6
-     *
-     * @param string $redirectUri
-     *
-     * @return bool
      */
-    private function isLoopbackUri($redirectUri)
+    private function isLoopbackUri(string $redirectUri): bool
     {
         try {
-            $uri = Uri::createFromString($redirectUri);
+            $uri = Uri::new($redirectUri);
         } catch (SyntaxError $e) {
             return false;
         }
 
         return $uri->getScheme() === 'http'
-            && (\in_array($uri->getHost(), ['127.0.0.1', '[::1]'], true));
+            && (in_array($uri->getHost(), ['127.0.0.1', '[::1]'], true));
     }
 
     /**
      * Find an exact match among allowed uris
-     *
-     * @param string $redirectUri
-     *
-     * @return bool Return true if an exact match is found, false otherwise
      */
-    private function matchExactUri($redirectUri)
+    private function matchExactUri(string $redirectUri): bool
     {
-        return \in_array($redirectUri, $this->allowedRedirectUris, true);
+        return in_array($redirectUri, $this->allowedRedirectUris, true);
     }
 
     /**
      * Find a match among allowed uris, allowing for different port numbers
-     *
-     * @param string $redirectUri
-     *
-     * @return bool Return true if a match is found, false otherwise
      */
-    private function matchUriExcludingPort($redirectUri)
+    private function matchUriExcludingPort(string $redirectUri): bool
     {
         $parsedUrl = $this->parseUrlAndRemovePort($redirectUri);
 
@@ -106,14 +96,10 @@ class RedirectUriValidator implements RedirectUriValidatorInterface
 
     /**
      * Parse an url like \parse_url, excluding the port
-     *
-     * @param string $url
-     *
-     * @return array
      */
-    private function parseUrlAndRemovePort($url)
+    private function parseUrlAndRemovePort(string $url): string
     {
-        $uri = Uri::createFromString($url);
+        $uri = Uri::new($url);
 
         return (string) $uri->withPort(null);
     }

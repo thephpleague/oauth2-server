@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,17 +8,13 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Entities;
 
 interface AuthCodeEntityInterface extends TokenInterface
 {
-    /**
-     * @return string|null
-     */
-    public function getRedirectUri();
+    public function getRedirectUri(): string|null;
 
-    /**
-     * @param string $uri
-     */
-    public function setRedirectUri($uri);
+    public function setRedirectUri(string $uri): void;
 }

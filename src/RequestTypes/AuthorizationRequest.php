@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -7,121 +8,89 @@
  * @link        https://github.com/thephpleague/oauth2-server
  */
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\RequestTypes;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 
-class AuthorizationRequest
+class AuthorizationRequest implements AuthorizationRequestInterface
 {
     /**
      * The grant type identifier
-     *
-     * @var string
      */
-    protected $grantTypeId;
+    protected string $grantTypeId;
 
     /**
      * The client identifier
-     *
-     * @var ClientEntityInterface
      */
-    protected $client;
+    protected ClientEntityInterface $client;
 
     /**
      * The user identifier
-     *
-     * @var UserEntityInterface
      */
-    protected $user;
+    protected UserEntityInterface $user;
 
     /**
      * An array of scope identifiers
      *
      * @var ScopeEntityInterface[]
      */
-    protected $scopes = [];
+    protected array $scopes = [];
 
     /**
      * Has the user authorized the authorization request
-     *
-     * @var bool
      */
-    protected $authorizationApproved = false;
+    protected bool $authorizationApproved = false;
 
     /**
      * The redirect URI used in the request
-     *
-     * @var string|null
      */
-    protected $redirectUri;
+    protected ?string $redirectUri = null;
 
     /**
      * The state parameter on the authorization request
-     *
-     * @var string|null
      */
-    protected $state;
+    protected ?string $state = null;
 
     /**
      * The code challenge (if provided)
-     *
-     * @var string
      */
-    protected $codeChallenge;
+    protected string $codeChallenge;
 
     /**
      * The code challenge method (if provided)
-     *
-     * @var string
      */
-    protected $codeChallengeMethod;
+    protected string $codeChallengeMethod;
 
-    /**
-     * @return string
-     */
-    public function getGrantTypeId()
+    public function getGrantTypeId(): string
     {
         return $this->grantTypeId;
     }
 
-    /**
-     * @param string $grantTypeId
-     */
-    public function setGrantTypeId($grantTypeId)
+    public function setGrantTypeId(string $grantTypeId): void
     {
         $this->grantTypeId = $grantTypeId;
     }
 
-    /**
-     * @return ClientEntityInterface
-     */
-    public function getClient()
+    public function getClient(): ClientEntityInterface
     {
         return $this->client;
     }
 
-    /**
-     * @param ClientEntityInterface $client
-     */
-    public function setClient(ClientEntityInterface $client)
+    public function setClient(ClientEntityInterface $client): void
     {
         $this->client = $client;
     }
 
-    /**
-     * @return UserEntityInterface|null
-     */
-    public function getUser()
+    public function getUser(): ?UserEntityInterface
     {
-        return $this->user;
+        return $this->user ?? null;
     }
 
-    /**
-     * @param UserEntityInterface $user
-     */
-    public function setUser(UserEntityInterface $user)
+    public function setUser(UserEntityInterface $user): void
     {
         $this->user = $user;
     }
@@ -129,7 +98,7 @@ class AuthorizationRequest
     /**
      * @return ScopeEntityInterface[]
      */
-    public function getScopes()
+    public function getScopes(): array
     {
         return $this->scopes;
     }
@@ -137,87 +106,57 @@ class AuthorizationRequest
     /**
      * @param ScopeEntityInterface[] $scopes
      */
-    public function setScopes(array $scopes)
+    public function setScopes(array $scopes): void
     {
         $this->scopes = $scopes;
     }
 
-    /**
-     * @return bool
-     */
-    public function isAuthorizationApproved()
+    public function isAuthorizationApproved(): bool
     {
         return $this->authorizationApproved;
     }
 
-    /**
-     * @param bool $authorizationApproved
-     */
-    public function setAuthorizationApproved($authorizationApproved)
+    public function setAuthorizationApproved(bool $authorizationApproved): void
     {
         $this->authorizationApproved = $authorizationApproved;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getRedirectUri()
+    public function getRedirectUri(): ?string
     {
         return $this->redirectUri;
     }
 
-    /**
-     * @param string|null $redirectUri
-     */
-    public function setRedirectUri($redirectUri)
+    public function setRedirectUri(?string $redirectUri): void
     {
         $this->redirectUri = $redirectUri;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getState()
+    public function getState(): ?string
     {
         return $this->state;
     }
 
-    /**
-     * @param string $state
-     */
-    public function setState($state)
+    public function setState(string $state): void
     {
         $this->state = $state;
     }
 
-    /**
-     * @return string
-     */
-    public function getCodeChallenge()
+    public function getCodeChallenge(): ?string
     {
-        return $this->codeChallenge;
+        return $this->codeChallenge ?? null;
     }
 
-    /**
-     * @param string $codeChallenge
-     */
-    public function setCodeChallenge($codeChallenge)
+    public function setCodeChallenge(string $codeChallenge): void
     {
         $this->codeChallenge = $codeChallenge;
     }
 
-    /**
-     * @return string
-     */
-    public function getCodeChallengeMethod()
+    public function getCodeChallengeMethod(): ?string
     {
-        return $this->codeChallengeMethod;
+        return $this->codeChallengeMethod ?? null;
     }
 
-    /**
-     * @param string $codeChallengeMethod
-     */
-    public function setCodeChallengeMethod($codeChallengeMethod)
+    public function setCodeChallengeMethod(string $codeChallengeMethod): void
     {
         $this->codeChallengeMethod = $codeChallengeMethod;
     }

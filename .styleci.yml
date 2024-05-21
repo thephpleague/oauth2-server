@@ -1,30 +1,21 @@
-preset: psr2
+preset: psr12
 
 risky: true
 
 enabled:
-  - binary_operator_spaces
   - blank_line_before_return
-  - concat_with_spaces
   - fully_qualified_strict_types
-  - function_typehint_space
   - hash_to_slash_comment
   - include
-  - lowercase_cast
   - method_separation
   - native_function_casing
-  - native_function_invocation
-  - no_blank_lines_after_class_opening
   - no_blank_lines_between_uses
   - no_duplicate_semicolons
-  - no_leading_import_slash
-  - no_leading_namespace_whitespace
   - no_multiline_whitespace_before_semicolons
   - no_php4_constructor
   - no_short_bool_cast
   - no_singleline_whitespace_before_semicolons
   - no_trailing_comma_in_singleline_array
-  - no_unreachable_default_argument_value
   - no_unused_imports
   - no_whitespace_before_comma_in_array
   - ordered_imports
@@ -43,13 +34,9 @@ enabled:
   - phpdoc_var_without_name
   - print_to_echo
   - short_array_syntax
-  - short_scalar_cast
   - single_quote
   - spaces_cast
   - standardize_not_equal
-  - ternary_operator_spaces
   - trailing_comma_in_multiline_array
   - trim_array_spaces
-  - unary_operator_spaces
   - whitespace_after_comma_in_array
-  - whitespacy_lines

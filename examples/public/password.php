@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\PasswordGrant;
@@ -30,12 +32,12 @@ $app = new App([
             new UserRepository(),           // instance of UserRepositoryInterface
             new RefreshTokenRepository()    // instance of RefreshTokenRepositoryInterface
         );
-        $grant->setRefreshTokenTTL(new \DateInterval('P1M')); // refresh tokens will expire after 1 month
+        $grant->setRefreshTokenTTL(new DateInterval('P1M')); // refresh tokens will expire after 1 month
 
         // Enable the password grant on the server with a token TTL of 1 hour
         $server->enableGrantType(
             $grant,
-            new \DateInterval('PT1H') // access tokens will expire after 1 hour
+            new DateInterval('PT1H') // access tokens will expire after 1 hour
         );
 
         return $server;
@@ -54,7 +56,7 @@ $app->post(
         } catch (OAuthServerException $exception) {
             // All instances of OAuthServerException can be converted to a PSR-7 response
             return $exception->generateHttpResponse($response);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             // Catch unexpected exceptions
             $body = $response->getBody();
             $body->write($exception->getMessage());

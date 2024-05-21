@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,8 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
 
 namespace League\OAuth2\Server\Entities;
 
@@ -16,42 +19,34 @@ interface RefreshTokenEntityInterface
     /**
      * Get the token's identifier.
      *
-     * @return string
+     * @return non-empty-string
      */
-    public function getIdentifier();
+    public function getIdentifier(): string;
 
     /**
      * Set the token's identifier.
      *
-     * @param mixed $identifier
+     * @param non-empty-string $identifier
      */
-    public function setIdentifier($identifier);
+    public function setIdentifier(string $identifier): void;
 
     /**
      * Get the token's expiry date time.
-     *
-     * @return DateTimeImmutable
      */
-    public function getExpiryDateTime();
+    public function getExpiryDateTime(): DateTimeImmutable;
 
     /**
      * Set the date time when the token expires.
-     *
-     * @param DateTimeImmutable $dateTime
      */
-    public function setExpiryDateTime(DateTimeImmutable $dateTime);
+    public function setExpiryDateTime(DateTimeImmutable $dateTime): void;
 
     /**
      * Set the access token that the refresh token was associated with.
-     *
-     * @param AccessTokenEntityInterface $accessToken
      */
-    public function setAccessToken(AccessTokenEntityInterface $accessToken);
+    public function setAccessToken(AccessTokenEntityInterface $accessToken): void;
 
     /**
      * Get the access token that the refresh token was originally associated with.
-     *
-     * @return AccessTokenEntityInterface
      */
-    public function getAccessToken();
+    public function getAccessToken(): AccessTokenEntityInterface;
 }
