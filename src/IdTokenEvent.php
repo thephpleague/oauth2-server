@@ -11,8 +11,8 @@ use League\Event\Event;
  */
 class IdTokenEvent extends Event
 {
-    const ID_TOKEN_ISSUED = 'id_token.issued';
+    public const ID_TOKEN_ISSUED = 'id_token.issued';
 
     // This event can be used to extent claims of the id_token
-    const ID_TOKEN_CLAIMS_CREATED = 'id_token.claims.created';
+    public const ID_TOKEN_CLAIMS_CREATED = 'id_token.claims.created';
 }
