@@ -32,22 +32,18 @@ interface AuthCodeRepositoryInterface extends RepositoryInterface
     public function isAuthCodeRevoked(string $codeId): bool;
 
     /**
-     * Method locks an auth code in case an error occurs during the issuance of an access code. 
-     * 
+     * Method locks an auth code in case an error occurs during the issuance of an access code.
+     *
      * The storage engine should make this persistent immediately to prevent possible race conditions while issuing an access token.
-     * 
+     *
      * @param string $codeId
-     * 
-     * @return void
      */
     public function lockAuthCode(string $codeId): bool;
 
     /**
      * This method is used to make the auth code available again after an error occurred in the access code issuance process.
-     *  
+     *
      * @param string $codeId
-     * 
-     * @return void
      */
     public function unlockAuthCode(string $codeId): void;
 
