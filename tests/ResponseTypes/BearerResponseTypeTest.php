@@ -312,12 +312,11 @@ class BearerResponseTypeTest extends TestCase
             ]
         );
 
-        $claimSetRepository = new class() implements ClaimSetRepositoryInterface {
+        $claimSetRepository = new class () implements ClaimSetRepositoryInterface {
             public function getClaimSetEntry(AccessTokenEntityInterface $accessToken): ClaimSetEntryInterface
             {
-                $claimSet = new class() implements ClaimSetEntryInterface {
-
-                    public string $scope = "email";
+                $claimSet = new class () implements ClaimSetEntryInterface {
+                    public string $scope = 'email';
 
                     public array $claims = [];
 
@@ -345,7 +344,7 @@ class BearerResponseTypeTest extends TestCase
             }
         };
 
-        $IdTokenRepository = (new class() implements IdTokenRepositoryInterface {
+        $IdTokenRepository = (new class () implements IdTokenRepositoryInterface {
             private $issuer;
 
             public function getBuilder(AccessTokenEntityInterface $accessToken): JWT\Builder
