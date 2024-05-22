@@ -101,6 +101,10 @@ class DeviceCodeGrant extends AbstractGrant
             $response->includeVerificationUriComplete();
         }
 
+        if ($this->intervalVisibility === true) {
+            $response->includeInterval();
+        }
+
         $response->setDeviceCodeEntity($deviceCodeEntity);
 
         return $response;
@@ -259,10 +263,7 @@ class DeviceCodeGrant extends AbstractGrant
         $deviceCode->setExpiryDateTime((new DateTimeImmutable())->add($deviceCodeTTL));
         $deviceCode->setClient($client);
         $deviceCode->setVerificationUri($verificationUri);
-
-        if ($this->getIntervalVisibility() === true) {
-            $deviceCode->setInterval($this->retryInterval);
-        }
+        $deviceCode->setInterval($this->retryInterval);
 
         foreach ($scopes as $scope) {
             $deviceCode->addScope($scope);
