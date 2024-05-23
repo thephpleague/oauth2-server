@@ -137,8 +137,8 @@ class DeviceCodeGrant extends AbstractGrant
     ): ResponseTypeInterface {
         // Validate request
         $client = $this->validateClient($request);
-        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $deviceCodeEntity = $this->validateDeviceCode($request, $client);
+        $scopes = $deviceCodeEntity->getScopes();
 
         $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
         $this->deviceCodeRepository->persistDeviceCode($deviceCodeEntity);
