@@ -12,7 +12,7 @@ interface ClaimExtractorInterface
      * For given scopes and aggregated claims get all claims that have been configured on the extractor.
      *
      * @param array<int, ScopeEntityInterface> $scopes
-     * @param array<string, string> $claims
+     * @param array<string, string>            $claims
      *
      * @return array<string, string>
      */
