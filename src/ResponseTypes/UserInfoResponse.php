@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\Entities\ClaimSetInterface;
 use Psr\Http\Message\ResponseInterface;
+
+use function json_encode;
 
 /**
  * A simple user info response for the ResourceServer class
@@ -20,7 +24,7 @@ class UserInfoResponse extends AbstractResponseType
     /**
      * {@inheritdoc}
      */
-    public function generateHttpResponse(ResponseInterface $response)
+    public function generateHttpResponse(ResponseInterface $response): ResponseInterface
     {
         $response = $response
             ->withStatus(200)
@@ -28,7 +32,7 @@ class UserInfoResponse extends AbstractResponseType
             ->withHeader('cache-control', 'no-store')
             ->withHeader('content-type', 'application/json; charset=UTF-8');
 
-        $response->getBody()->write(\json_encode($this->claimSet->getClaims()));
+        $response->getBody()->write(json_encode($this->claimSet->getClaims()));
 
         return $response;
     }

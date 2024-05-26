@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Repositories;
 
+use DateTimeImmutable;
 use Lcobucci\JWT\Encoding\ChainedFormatter;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Token\Builder;
@@ -27,7 +30,7 @@ class IdTokenRepository implements IdTokenRepositoryInterface
         $builder = (new Builder(new JoseEncoder(), ChainedFormatter::withUnixTimestampDates()))
             ->permittedFor($accessToken->getClient()->getIdentifier())
             ->issuedBy($this->issuedBy)
-            ->issuedAt(new \DateTimeImmutable())
+            ->issuedAt(new DateTimeImmutable())
             ->expiresAt($accessToken->getExpiryDateTime())
             ->relatedTo($accessToken->getUserIdentifier());
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -14,12 +16,5 @@ use League\OAuth2\Server\Entities\ClaimSetEntryInterface;
  */
 interface ClaimSetRepositoryInterface
 {
-    /**
-     * Get ClaimSetEntries
-     *
-     * @param AccessTokenEntityInterface $authCode
-     *
-     * @return ClaimSetEntryInterface
-     */
     public function getClaimSetEntry(AccessTokenEntityInterface $authCode): ClaimSetEntryInterface;
 }

@@ -1,10 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server;
 
+use InvalidArgumentException;
 use League\OAuth2\Server\Entities\ClaimSetEntry;
 use League\OAuth2\Server\Entities\ClaimSetEntryInterface;
+use League\OAuth2\Server\Entities\ClaimSetInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+
+use function array_filter;
+use function array_intersect;
+use function array_keys;
+use function array_merge;
+use function in_array;
+use function sprintf;
 
 /**
  * ClaimExtractor
@@ -21,9 +32,14 @@ class ClaimExtractor implements ClaimExtractorInterface
      *
      * @var ClaimSetEntryInterface[]
      */
-    protected $claimSets = [];
+    protected array $claimSets = [];
 
-    protected $protectedClaims = ['profile', 'email', 'address', 'phone'];
+    /**
+     * Protected claims
+     *
+     * @var string[]
+     */
+    protected array $protectedClaims = ['profile', 'email', 'address', 'phone'];
 
     /**
      * ClaimExtractor constructor
@@ -39,7 +55,6 @@ class ClaimExtractor implements ClaimExtractorInterface
     }
 
     /**
-     * @param ClaimSetEntryInterface $claimSetEntry
      *
      * @return $this
      *
@@ -47,9 +62,9 @@ class ClaimExtractor implements ClaimExtractorInterface
      */
     public function addClaimSet(ClaimSetEntryInterface $claimSetEntry): ClaimExtractor
     {
-        if (\in_array($claimSetEntry->getScope(), $this->protectedClaims) && !$this->getClaimSet($claimSetEntry->getScope())) {
-            throw new \InvalidArgumentException(
-                \sprintf('%s is a protected scope and is pre-defined by the OpenID Connect specification.', $claimSetEntry->getScope())
+        if (in_array($claimSetEntry->getScope(), $this->protectedClaims) && !$this->getClaimSet($claimSetEntry->getScope())) {
+            throw new InvalidArgumentException(
+                sprintf('%s is a protected scope and is pre-defined by the OpenID Connect specification.', $claimSetEntry->getScope())
             );
         }
 
@@ -58,11 +73,6 @@ class ClaimExtractor implements ClaimExtractorInterface
         return $this;
     }
 
-    /**
-     * @param string $scope
-     *
-     * @return ClaimSetEntryInterface|null
-     */
     public function getClaimSet(string $scope): ?ClaimSetEntryInterface
     {
         foreach ($this->claimSets as $set) {
@@ -77,7 +87,7 @@ class ClaimExtractor implements ClaimExtractorInterface
     /**
      * Get claimSets
      *
-     * @return array
+     * @return ClaimSetInterface[]
      */
     public function getClaimSets(): array
     {
@@ -90,7 +100,7 @@ class ClaimExtractor implements ClaimExtractorInterface
     public function extract(array $scopes, array $claims): array
     {
         $claimData  = [];
-        $keys = \array_keys($claims);
+        $keys = array_keys($claims);
 
         foreach ($scopes as $scope) {
             $scopeName = ($scope instanceof ScopeEntityInterface) ? $scope->getIdentifier() : $scope;
@@ -100,21 +110,21 @@ class ClaimExtractor implements ClaimExtractorInterface
                 continue;
             }
 
-            $intersected = \array_intersect($claimSet->getClaims(), $keys);
+            $intersected = array_intersect($claimSet->getClaims(), $keys);
 
             if (empty($intersected)) {
                 continue;
             }
 
-            $data = \array_filter(
+            $data = array_filter(
                 $claims,
                 function ($key) use ($intersected) {
-                    return \in_array($key, $intersected);
+                    return in_array($key, $intersected);
                 },
                 ARRAY_FILTER_USE_KEY
             );
 
-            $claimData = \array_merge($claimData, $data);
+            $claimData = array_merge($claimData, $data);
         }
 
         return $claimData;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Entities;
 
 /**
@@ -12,27 +14,19 @@ namespace League\OAuth2\Server\Entities;
 class ClaimSetEntry implements ClaimSetEntryInterface
 {
     /**
-     * @var string
+     * Summary of __construct
+     *
+     * @param string $scope Scope of the claimset
+     * @param string[] $claims The claims
      */
-    protected $scope;
-
-    /**
-     * @var array
-     */
-    protected $claims;
-
     public function __construct(
-        string $scope,
-        array $claims
+        protected string $scope,
+        protected array $claims
     ) {
-        $this->scope = $scope;
-        $this->claims = $claims;
     }
 
     /**
      * Get scope
-     *
-     * @return string
      */
     public function getScope(): string
     {
@@ -42,7 +36,7 @@ class ClaimSetEntry implements ClaimSetEntryInterface
     /**
      * Get claims
      *
-     * @return ClaimSetInterface[]
+     * @return string[]
      */
     public function getClaims(): array
     {

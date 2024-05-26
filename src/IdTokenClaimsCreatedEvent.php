@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server;
 
 use Lcobucci\JWT\Builder;
@@ -16,11 +18,10 @@ final class IdTokenClaimsCreatedEvent extends IdTokenEvent
     /**
      * Builder
      *
-     * @var Builder
      */
-    private $builder;
+    private Builder $builder;
 
-    public function __construct($name, Builder $builder)
+    public function __construct(string $name, Builder $builder)
     {
         parent::__construct($name);
         $this->builder = $builder;

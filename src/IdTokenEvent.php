@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server;
 
-use League\Event\Event;
+use League\OAuth2\Server\EventEmitting\AbstractEvent;
 
 /**
  * IdTokenEvent
  *
  * @author Marc Riemer <mail@marcriemer.de>
  */
-class IdTokenEvent extends Event
+class IdTokenEvent extends AbstractEvent
 {
     public const ID_TOKEN_ISSUED = 'id_token.issued';
 

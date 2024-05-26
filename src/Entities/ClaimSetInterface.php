@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\Entities;
 
 /**
@@ -11,5 +13,10 @@ namespace League\OAuth2\Server\Entities;
  */
 interface ClaimSetInterface
 {
+    /**
+     * Get Claims
+     *
+     * @return string[]
+     */
     public function getClaims(): array;
 }
