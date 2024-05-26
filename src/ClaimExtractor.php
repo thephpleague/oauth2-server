@@ -55,7 +55,6 @@ class ClaimExtractor implements ClaimExtractorInterface
     }
 
     /**
-     *
      * @return $this
      *
      * @throws \InvalidArgumentException

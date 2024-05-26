@@ -33,19 +33,16 @@ class IdTokenResponse extends BearerTokenResponse
 
     /**
      * IdTokenRepositoryInterface
-     *
      */
     protected IdTokenRepositoryInterface $idTokenRepository;
 
     /**
      * ClaimSetRepositoryInterface
-     *
      */
     protected ClaimSetRepositoryInterface $claimRepository;
 
     /**
      * ClaimExtractorInterface
-     *
      */
     protected ClaimExtractorInterface $extractor;
 
@@ -111,7 +108,6 @@ class IdTokenResponse extends BearerTokenResponse
      * Return true If this is an OpenID request
      *
      * @param ScopeEntityInterface[] $scopes
-     *
      */
     private static function isOpenIDRequest(array $scopes): bool
     {

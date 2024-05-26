@@ -15,13 +15,11 @@ final class IdTokenIssuedEvent extends IdTokenEvent
 {
     /**
      * Token
-     *
      */
     private Token $token;
 
     /**
      * Get Token
-     *
      */
     public function getToken(): Token
     {

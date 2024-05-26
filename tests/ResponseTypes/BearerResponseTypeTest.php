@@ -326,9 +326,9 @@ class BearerResponseTypeTest extends TestCase
                     public string $scope = 'openid';
 
                     /**
-                     * @var array<string, string> $claims
+                     * @var array<string, string>
                      */
-                    public array $claims = ["acr" => "pop"];
+                    public array $claims = ['acr' => 'pop'];
 
                     public function getScope(): string
                     {
@@ -348,7 +348,7 @@ class BearerResponseTypeTest extends TestCase
             }
         };
 
-        $IdTokenRepository = (new class () implements IdTokenRepositoryInterface{
+        $IdTokenRepository = (new class () implements IdTokenRepositoryInterface {
             public function getBuilder(AccessTokenEntityInterface $accessToken): Builder
             {
                 $builder = (new TokenBuilder(
@@ -356,7 +356,7 @@ class BearerResponseTypeTest extends TestCase
                     ChainedFormatter::withUnixTimestampDates()
                 ))
                     ->permittedFor($accessToken->getClient()->getIdentifier())
-                    ->issuedBy("https://example.com")
+                    ->issuedBy('https://example.com')
                     ->issuedAt(new DateTimeImmutable())
                     ->expiresAt($accessToken->getExpiryDateTime())
                     ->relatedTo($accessToken->getUserIdentifier())
@@ -420,7 +420,7 @@ class BearerResponseTypeTest extends TestCase
         $json = json_decode($response->getBody()->getContents());
         $this->assertEquals('Bearer', $json->token_type);
 
-        foreach (['expires_in', "access_token", "refresh_token", "id_token"] as $claim) {
+        foreach (['expires_in', 'access_token', 'refresh_token', 'id_token'] as $claim) {
             self::assertTrue(property_exists($json, $claim));
         }
 
@@ -435,7 +435,7 @@ class BearerResponseTypeTest extends TestCase
 
         $this->assertTrue($validator->validate(
             $token,
-            new IssuedBy("https://example.com")
+            new IssuedBy('https://example.com')
         ));
 
         $this->assertTrue($validator->validate(
@@ -453,7 +453,7 @@ class BearerResponseTypeTest extends TestCase
             new LooseValidAt(new SystemClock($accessToken->getExpiryDateTime()->getTimezone()))
         ));
 
-        $this->assertTrue($validator->validate($token, new HasClaimWithValue("acr", "pop")));
+        $this->assertTrue($validator->validate($token, new HasClaimWithValue('acr', 'pop')));
         $this->assertTrue($validator->validate($token, new HasClaimWithValue('nonce', 's6G31Kolwu9p')));
     }
 }

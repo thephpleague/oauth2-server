@@ -16,7 +16,7 @@ class ClaimSetEntry implements ClaimSetEntryInterface
     /**
      * Summary of __construct
      *
-     * @param string $scope Scope of the claimset
+     * @param string   $scope  Scope of the claimset
      * @param string[] $claims The claims
      */
     public function __construct(

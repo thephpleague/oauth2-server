@@ -17,7 +17,6 @@ final class IdTokenClaimsCreatedEvent extends IdTokenEvent
 {
     /**
      * Builder
-     *
      */
     private Builder $builder;
 
