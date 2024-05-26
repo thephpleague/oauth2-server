@@ -8,21 +8,45 @@ use DateInterval;
 use DateTimeImmutable;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use Lcobucci\Clock\SystemClock;
+use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Encoding\ChainedFormatter;
+use Lcobucci\JWT\Encoding\JoseEncoder;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Token\Builder as TokenBuilder;
+use Lcobucci\JWT\Token\Parser;
+use Lcobucci\JWT\Validation\Constraint\HasClaimWithValue;
+use Lcobucci\JWT\Validation\Constraint\IssuedBy;
+use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
+use Lcobucci\JWT\Validation\Constraint\PermittedFor;
+use Lcobucci\JWT\Validation\Constraint\RelatedTo;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\Validator;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
+use League\OAuth2\Server\ClaimExtractor;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\ClaimSetEntryInterface;
+use League\OAuth2\Server\EventEmitting\EventEmitter;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use League\OAuth2\Server\Repositories\ClaimSetRepositoryInterface;
+use League\OAuth2\Server\Repositories\IdTokenRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use League\OAuth2\Server\ResponseTypes\IdTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 
 use function base64_encode;
 use function json_decode;
 use function random_bytes;
 use function sprintf;
+use function uniqid;
 
 class BearerResponseTypeTest extends TestCase
 {
@@ -293,98 +317,64 @@ class BearerResponseTypeTest extends TestCase
         }
     }
 
-    public function testGenerateHttpResponseWithIdToken()
+    public function testGenerateHttpResponseWithIdToken(): void
     {
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            'POST',
-            'php://input',
-            [],
-            [],
-            [],
-            [
-                'grant_type'   => 'authorization_code',
-                'client_id'    => 'foo',
-                'redirect_uri' => 'https://example.com/callback',
-                'code'         => 'code',
-            ]
-        );
-
         $claimSetRepository = new class () implements ClaimSetRepositoryInterface {
             public function getClaimSetEntry(AccessTokenEntityInterface $accessToken): ClaimSetEntryInterface
             {
                 $claimSet = new class () implements ClaimSetEntryInterface {
-                    public string $scope = 'email';
+                    public string $scope = 'openid';
 
-                    public array $claims = [];
+                    /**
+                     * @var array<string, string> $claims
+                     */
+                    public array $claims = ["acr" => "pop"];
 
                     public function getScope(): string
                     {
                         return $this->scope;
                     }
 
+                    /**
+                     * @return array<string, string> $claims
+                     */
                     public function getClaims(): array
                     {
                         return $this->claims;
                     }
                 };
-                foreach (ClaimExtractor::getDefaultClaimSetEnties() as $setEntry) {
-                    foreach ($accessToken->getScopes() as $scope) {
-                        if ($setEntry->getScope() === $scope->getIdentifier()) {
-                            foreach ($setEntry->getClaims() as $claim) {
-                                $claimSet->claims[$claim] = $claim;
-                            }
-                        }
-                    }
-                }
 
                 return $claimSet;
             }
         };
 
-        $IdTokenRepository = (new class () implements IdTokenRepositoryInterface {
-            private $issuer;
-
-            public function getBuilder(AccessTokenEntityInterface $accessToken): JWT\Builder
+        $IdTokenRepository = (new class () implements IdTokenRepositoryInterface{
+            public function getBuilder(AccessTokenEntityInterface $accessToken): Builder
             {
-                if (\class_exists("\Lcobucci\JWT\Encoding\JoseEncoder")) {
-                    $builder = (new JWT\Token\Builder(
-                        new \Lcobucci\JWT\Encoding\JoseEncoder(),
-                        \Lcobucci\JWT\Encoding\ChainedFormatter::withUnixTimestampDates()
-                    ));
-                } else {
-                    $builder = (new JWT\Builder(new \Lcobucci\JWT\Parsing\Encoder(), new \Lcobucci\JWT\Claim\Factory()));
-                }
-
-                $builder->permittedFor($accessToken->getClient()->getIdentifier())
-                    ->issuedBy($this->issuer)
-                    ->issuedAt(new \DateTimeImmutable())
+                $builder = (new TokenBuilder(
+                    new JoseEncoder(),
+                    ChainedFormatter::withUnixTimestampDates()
+                ))
+                    ->permittedFor($accessToken->getClient()->getIdentifier())
+                    ->issuedBy("https://example.com")
+                    ->issuedAt(new DateTimeImmutable())
                     ->expiresAt($accessToken->getExpiryDateTime())
                     ->relatedTo($accessToken->getUserIdentifier())
                     ->withClaim('nonce', 's6G31Kolwu9p');
 
                 return $builder;
             }
-
-            public function setIssuer($issuer)
-            {
-                $this->issuer = $issuer;
-
-                return $this;
-            }
-        })->setIssuer(\sprintf('%s://%s', $request->getUri()->getScheme(), $request->getUri()->getHost()));
+        });
 
         $responseType = new IdTokenResponse(
             $IdTokenRepository,
             $claimSetRepository,
-            $this->getMockBuilder(EmitterInterface::class)->getMock(),
+            new EventEmitter(),
             $claimExtrator = new ClaimExtractor()
         );
 
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(\base64_encode(\random_bytes(36)));
+        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -399,7 +389,7 @@ class BearerResponseTypeTest extends TestCase
         $profileScope->setIdentifier('profile');
 
         $accessToken = new AccessTokenEntity();
-        $accessToken->setIdentifier(\uniqid());
+        $accessToken->setIdentifier(uniqid());
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
 
@@ -408,10 +398,10 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->addScope($profileScope);
 
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $accessToken->setUserIdentifier(\uniqid());
+        $accessToken->setUserIdentifier(uniqid());
 
         $refreshToken = new RefreshTokenEntity();
-        $refreshToken->setIdentifier(\uniqid());
+        $refreshToken->setIdentifier(uniqid());
         $refreshToken->setAccessToken($accessToken);
         $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
 
@@ -427,64 +417,43 @@ class BearerResponseTypeTest extends TestCase
         $this->assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
 
         $response->getBody()->rewind();
-        $json = \json_decode($response->getBody()->getContents());
+        $json = json_decode($response->getBody()->getContents());
         $this->assertEquals('Bearer', $json->token_type);
-        $this->assertObjectHasAttribute('expires_in', $json);
-        $this->assertObjectHasAttribute('access_token', $json);
-        $this->assertObjectHasAttribute('refresh_token', $json);
 
-        $this->assertObjectHasAttribute('id_token', $json);
-
-        if (\class_exists("\Lcobucci\JWT\Token\Parser")) {
-            $token = (new \Lcobucci\JWT\Token\Parser(new \Lcobucci\JWT\Encoding\JoseEncoder()))->parse($json->id_token);
-        } else {
-            $token = (new \Lcobucci\JWT\Parser())->parse($json->id_token);
+        foreach (['expires_in', "access_token", "refresh_token", "id_token"] as $claim) {
+            self::assertTrue(property_exists($json, $claim));
         }
 
-        $validator = new JWT\Validation\Validator();
+        $token = (new Parser(new JoseEncoder()))->parse($json->id_token);
+
+        $validator = new Validator();
 
         $this->assertTrue($validator->validate(
             $token,
-            new JWT\Validation\Constraint\SignedWith(new JWT\Signer\Rsa\Sha256(), JWT\Signer\Key\InMemory::file(__DIR__ . '/../Stubs/public.key', ''))
+            new SignedWith(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/public.key', ''))
         ));
 
         $this->assertTrue($validator->validate(
             $token,
-            new JWT\Validation\Constraint\IssuedBy(\sprintf('%s://%s', $request->getUri()->getScheme(), $request->getUri()->getHost()))
+            new IssuedBy("https://example.com")
         ));
 
         $this->assertTrue($validator->validate(
             $token,
-            new JWT\Validation\Constraint\PermittedFor($client->getIdentifier())
+            new PermittedFor($client->getIdentifier())
         ));
 
         $this->assertTrue($validator->validate(
             $token,
-            new JWT\Validation\Constraint\RelatedTo($accessToken->getUserIdentifier())
+            new RelatedTo($accessToken->getUserIdentifier())
         ));
 
-        if (\class_exists("\Lcobucci\JWT\Validation\Constraint\LooseValidAt")) {
-            $this->assertTrue($validator->validate(
-                $token,
-                new \Lcobucci\JWT\Validation\Constraint\LooseValidAt(new SystemClock($accessToken->getExpiryDateTime()->getTimezone()))
-            ));
-        } else {
-            $this->assertTrue($validator->validate(
-                $token,
-                new \Lcobucci\JWT\Validation\Constraint\ValidAt(new SystemClock($accessToken->getExpiryDateTime()->getTimezone()))
-            ));
-        }
+        $this->assertTrue($validator->validate(
+            $token,
+            new LooseValidAt(new SystemClock($accessToken->getExpiryDateTime()->getTimezone()))
+        ));
 
-        if (\class_exists("\Lcobucci\JWT\Validation\Constraint\HasClaimWithValue")) {
-            foreach ($claimExtrator->extract($accessToken->getScopes(), $claimSetRepository->getClaimSetEntry($accessToken)->getClaims()) as $claim => $value) {
-                $this->assertTrue($validator->validate($token, new \Lcobucci\JWT\Validation\Constraint\HasClaimWithValue($claim, $value)));
-            }
-            $this->assertTrue($validator->validate($token, new \Lcobucci\JWT\Validation\Constraint\HasClaimWithValue('nonce', 's6G31Kolwu9p')));
-        } else {
-            foreach ($claimExtrator->extract($accessToken->getScopes(), $claimSetRepository->getClaimSetEntry($accessToken)->getClaims()) as $claim => $value) {
-                $this->assertTrue(\array_key_exists($claim, $token->getClaims()));
-                $this->assertEquals($value, $token->getClaims()[$claim]);
-            }
-        }
+        $this->assertTrue($validator->validate($token, new HasClaimWithValue("acr", "pop")));
+        $this->assertTrue($validator->validate($token, new HasClaimWithValue('nonce', 's6G31Kolwu9p')));
     }
 }
