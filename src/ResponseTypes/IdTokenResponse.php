@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\OAuth2\Server\ResponseTypes;
 
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use League\Event\EmitterAwareTrait;
-use League\Event\EmitterInterface;
 use League\OAuth2\Server\ClaimExtractor;
 use League\OAuth2\Server\ClaimExtractorInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClaimSetEntryInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\EventEmitting\EmitterAwarePolyfill;
+use League\OAuth2\Server\EventEmitting\EventEmitter;
 use League\OAuth2\Server\IdTokenClaimsCreatedEvent;
 use League\OAuth2\Server\IdTokenEvent;
 use League\OAuth2\Server\IdTokenIssuedEvent;
@@ -27,40 +29,30 @@ use League\OAuth2\Server\Repositories\IdTokenRepositoryInterface;
  */
 class IdTokenResponse extends BearerTokenResponse
 {
-    use EmitterAwareTrait;
+    use EmitterAwarePolyfill;
 
     /**
      * IdTokenRepositoryInterface
      *
-     * @var IdTokenRepositoryInterface
      */
-    protected $idTokenRepository;
+    protected IdTokenRepositoryInterface $idTokenRepository;
 
     /**
      * ClaimSetRepositoryInterface
      *
-     * @var ClaimSetRepositoryInterface
      */
-    protected $claimRepository;
-
-    /**
-     * EmitterInterface
-     *
-     * @var EmitterInterface
-     */
-    protected $emitter;
+    protected ClaimSetRepositoryInterface $claimRepository;
 
     /**
      * ClaimExtractorInterface
      *
-     * @var ClaimExtractorInterface
      */
-    protected $extractor;
+    protected ClaimExtractorInterface $extractor;
 
     public function __construct(
         IdTokenRepositoryInterface $idTokenRepository,
         ClaimSetRepositoryInterface $claimRepository,
-        EmitterInterface $emitter,
+        EventEmitter $emitter,
         ?ClaimExtractorInterface $extractor = null
     ) {
         if (!$extractor) {
@@ -74,9 +66,11 @@ class IdTokenResponse extends BearerTokenResponse
     }
 
     /**
-     * @param AccessTokenEntityInterface $accessToken
+     * Add custom fields to your Bearer Token response here, then override
+     * AuthorizationServer::getResponseType() to pull in your version of
+     * this class rather than the default.
      *
-     * @return array
+     * @return array<array-key,mixed>
      */
     protected function getExtraParams(AccessTokenEntityInterface $accessToken): array
     {
@@ -91,7 +85,7 @@ class IdTokenResponse extends BearerTokenResponse
 
         if ($claimSet instanceof ClaimSetEntryInterface) {
             foreach ($this->extractor->extract($accessToken->getScopes(), $claimSet->getClaims()) as $claimName => $claimValue) {
-                $builder->withClaim($claimName, $claimValue);
+                $builder = $builder->withClaim($claimName, $claimValue);
             }
         }
 
@@ -118,9 +112,8 @@ class IdTokenResponse extends BearerTokenResponse
      *
      * @param ScopeEntityInterface[] $scopes
      *
-     * @return bool
      */
-    private static function isOpenIDRequest($scopes): bool
+    private static function isOpenIDRequest(array $scopes): bool
     {
         foreach ($scopes as $scope) {
             if ($scope instanceof ScopeEntityInterface) {
