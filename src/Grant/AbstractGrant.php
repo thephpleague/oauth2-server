@@ -172,7 +172,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function getClientEntityOrFail(string $clientId, ServerRequestInterface $request): ClientEntityInterface
     {
-        $client = $this->clientRepository->getClientEntity($clientId);
+        $client = $this->clientRepository->getClientEntity($clientId, $this->getIdentifier());
 
         if ($client instanceof ClientEntityInterface === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));

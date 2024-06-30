@@ -28,7 +28,7 @@ class ClientRepository implements ClientRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface
+    public function getClientEntity(string $clientIdentifier, ?string $grantType): ?ClientEntityInterface
     {
         $client = new ClientEntity();
 
