@@ -124,7 +124,8 @@ class ImplicitGrant extends AbstractAuthorizeGrant
 
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            $redirectUri
+            $redirectUri,
+            $this->queryDelimiter
         );
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
@@ -199,8 +200,11 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $finalRedirectUri,
                 [
                     'state' => $authorizationRequest->getState(),
-                ]
-            )
+                ],
+                $this->queryDelimiter
+            ),
+            null,
+            $this->queryDelimiter
         );
     }
 }
