@@ -59,6 +59,8 @@ class ClientCredentialsGrantTest extends TestCase
         ]);
 
         $responseType = new StubResponseType();
+
+        /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
         self::assertNotEmpty($response->getAccessToken()->getIdentifier());

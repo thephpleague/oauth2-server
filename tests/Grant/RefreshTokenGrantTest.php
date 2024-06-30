@@ -80,7 +80,7 @@ class RefreshTokenGrantTest extends TestCase
                 'refresh_token_id' => 'zyxwvu',
                 'access_token_id'  => 'abcdef',
                 'scopes'           => ['foo'],
-                'user_id'          => 123,
+                'user_id'          => '123',
                 'expire_time'      => time() + 3600,
             ]
         );
@@ -144,7 +144,7 @@ class RefreshTokenGrantTest extends TestCase
                 'refresh_token_id' => 'zyxwvu',
                 'access_token_id'  => 'abcdef',
                 'scopes'           => ['foo'],
-                'user_id'          => 123,
+                'user_id'          => '123',
                 'expire_time'      => time() + 3600,
             ]
         );
@@ -208,7 +208,7 @@ class RefreshTokenGrantTest extends TestCase
                 'refresh_token_id' => 'zyxwvu',
                 'access_token_id'  => 'abcdef',
                 'scopes'           => ['foo', 'bar'],
-                'user_id'          => 123,
+                'user_id'          => '123',
                 'expire_time'      => time() + 3600,
             ]
         );
@@ -578,7 +578,7 @@ class RefreshTokenGrantTest extends TestCase
                 'refresh_token_id' => 'zyxwvu',
                 'access_token_id'  => 'abcdef',
                 'scopes'           => ['foo', 'bar'],
-                'user_id'          => 123,
+                'user_id'          => '123',
                 'expire_time'      => time() + 3600,
             ]
         );
@@ -595,7 +595,7 @@ class RefreshTokenGrantTest extends TestCase
            'client_id'     => 'foo',
            'client_secret' => 'bar',
            'refresh_token' => $encryptedOldRefreshToken,
-           'scope'         =>  ['foo', 'bar'],
+           'scope'         =>  'foo bar',
         ]);
 
         $responseType = new StubResponseType();
@@ -637,7 +637,7 @@ class RefreshTokenGrantTest extends TestCase
                 'refresh_token_id' => $refreshTokenId,
                 'access_token_id'  => 'abcdef',
                 'scopes'           => ['foo'],
-                'user_id'          => 123,
+                'user_id'          => '123',
                 'expire_time'      => time() + 3600,
             ]
         );
@@ -654,7 +654,7 @@ class RefreshTokenGrantTest extends TestCase
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'refresh_token' => $encryptedOldRefreshToken,
-            'scope'         => ['foo'],
+            'scope'         => 'foo',
         ]);
 
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
@@ -702,7 +702,7 @@ class RefreshTokenGrantTest extends TestCase
                 'refresh_token_id' => $refreshTokenId,
                 'access_token_id'  => 'abcdef',
                 'scopes'           => ['foo'],
-                'user_id'          => 123,
+                'user_id'          => '123',
                 'expire_time'      => time() + 3600,
             ]
         );
@@ -719,7 +719,7 @@ class RefreshTokenGrantTest extends TestCase
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'refresh_token' => $encryptedOldRefreshToken,
-            'scope'         => ['foo'],
+            'scope'         => 'foo',
         ]);
 
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
