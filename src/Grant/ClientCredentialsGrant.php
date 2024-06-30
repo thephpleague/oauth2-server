@@ -34,18 +34,13 @@ class ClientCredentialsGrant extends AbstractGrant
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
     ): ResponseTypeInterface {
-        list($clientId) = $this->getClientCredentials($request);
-
-        $client = $this->getClientEntityOrFail($clientId, $request);
+        $client = $this->validateClient($request);
 
         if (!$client->isConfidential()) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
 
             throw OAuthServerException::invalidClient($request);
         }
-
-        // Validate request
-        $this->validateClient($request);
 
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
 

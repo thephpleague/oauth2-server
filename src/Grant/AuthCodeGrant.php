@@ -96,14 +96,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         ResponseTypeInterface $responseType,
         DateInterval $accessTokenTTL
     ): ResponseTypeInterface {
-        list($clientId) = $this->getClientCredentials($request);
-
-        $client = $this->getClientEntityOrFail($clientId, $request);
-
-        // Only validate the client if it is confidential
-        if ($client->isConfidential()) {
-            $this->validateClient($request);
-        }
+        $client = $this->validateClient($request);
 
         $encryptedAuthCode = $this->getRequestParameter('code', $request);
 
