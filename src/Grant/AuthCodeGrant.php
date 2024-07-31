@@ -113,9 +113,17 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         try {
             $authCodePayload = json_decode($this->decrypt($encryptedAuthCode));
+        } catch (LogicException) {
+            throw OAuthServerException::invalidGrant('Cannot decrypt the authorization code');
+        }
 
+        try {
             $this->validateAuthorizationCode($authCodePayload, $client, $request);
+        } catch (LogicException) {
+            throw OAuthServerException::invalidGrant('Invalid authorization code');
+        }
 
+        try {
             $scopes = $this->scopeRepository->finalizeScopes(
                 $this->validateScopes($authCodePayload->scopes),
                 $this->getIdentifier(),
@@ -123,8 +131,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $authCodePayload->user_id,
                 $authCodePayload->auth_code_id
             );
-        } catch (LogicException $e) {
-            throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code', $e);
+        } catch (LogicException) {
+            throw OAuthServerException::invalidGrant('Scopes payload could not be processed');
         }
 
         $codeVerifier = $this->getRequestParameter('code_verifier', $request);
