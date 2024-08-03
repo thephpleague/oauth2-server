@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace League\OAuth2\Server;
 
 use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
+use Defuse\Crypto\Key;
 use Exception;
 use InvalidArgumentException;
 use LogicException;

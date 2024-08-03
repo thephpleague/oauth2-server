@@ -1450,7 +1450,7 @@ class AuthCodeGrantTest extends TestCase
         }
     }
 
-    public function testRespondToAccessTokenRequestBadCodeEncryption(): void
+    public function testRespondToAccessTokenRequestBadCode(): void
     {
         $client = new ClientEntity();
 
@@ -1492,7 +1492,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => 'sdfsfsd',
+                'code'         => 'badCode',
             ]
         );
 
@@ -1500,9 +1500,65 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            self::assertEquals($e->getHint(), 'Cannot decrypt the authorization code');
+            self::assertEquals($e->getErrorType(), 'invalid_grant');
+            self::assertEquals($e->getHint(), 'Cannot validate the provided authorization code');
         }
     }
+
+public function testRespondToAccessTokenRequestNoEncryptionKey(): void
+{
+    $client = new ClientEntity();
+
+    $client->setIdentifier('foo');
+    $client->setRedirectUri(self::REDIRECT_URI);
+    $client->setConfidential();
+
+    $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+
+    $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+    $clientRepositoryMock->method('validateClient')->willReturn(true);
+
+    $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+    $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+    $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+    $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+
+    $grant = new AuthCodeGrant(
+        $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+        $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+        new DateInterval('PT10M')
+    );
+    $grant->setClientRepository($clientRepositoryMock);
+    $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+    $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
+    // We deliberately don't set an encryption key here
+
+    $request = new ServerRequest(
+        [],
+        [],
+        null,
+        'POST',
+        'php://input',
+        [],
+        [],
+        [],
+        [
+            'grant_type'   => 'authorization_code',
+            'client_id'    => 'foo',
+            'redirect_uri' => self::REDIRECT_URI,
+            'code'         => 'badCode',
+        ]
+    );
+
+    try {
+        /* @var StubResponseType $response */
+        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
+    } catch (OAuthServerException $e) {
+        self::assertEquals($e->getErrorType(), 'invalid_request');
+        self::assertEquals($e->getHint(), 'Issue decrypting the authorization code');
+    }
+}
 
     public function testRespondToAccessTokenRequestBadCodeVerifierPlain(): void
     {
