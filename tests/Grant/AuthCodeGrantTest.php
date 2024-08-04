@@ -1200,7 +1200,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
-    public function testRespondToAccessTokenRequestUnecessaryRedirectUri(): void
+    public function testRejectAccessTokenRequestIfRedirectUriSpecifiedButNotInOriginalAuthCodeRequest(): void
     {
         $client = new ClientEntity();
 
