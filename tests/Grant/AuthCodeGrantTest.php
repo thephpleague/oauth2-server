@@ -616,6 +616,75 @@ class AuthCodeGrantTest extends TestCase
         self::assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
     }
 
+    public function testRespondToAccessTokenRequestWithDefaultRedirectUri(): void
+    {
+        $client = new ClientEntity();
+
+        $client->setIdentifier('foo');
+        $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setConfidential();
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeEntity = new ScopeEntity();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => '123',
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => null,
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
+
+        /** @var StubResponseType $response */
+        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
+
+        self::assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
+    }
+
     public function testRespondToAccessTokenRequestUsingHttpBasicAuth(): void
     {
         $client = new ClientEntity();
@@ -1120,6 +1189,57 @@ class AuthCodeGrantTest extends TestCase
                         'expire_time'           => time() + 3600,
                         'client_id'             => 'foo',
                         'redirect_uri'          => 'http://foo/bar',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
+
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(3);
+
+        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
+    }
+
+    public function testRejectAccessTokenRequestIfRedirectUriSpecifiedButNotInOriginalAuthCodeRequest(): void
+    {
+        $client = new ClientEntity();
+
+        $client->setIdentifier('foo');
+        $client->setConfidential();
+        $client->setRedirectUri('http://bar/foo');
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'client_id'  => 'foo',
+                'grant_type' => 'authorization_code',
+                'redirect_uri' => 'http://bar/foo',
+                'code'       => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id'          => uniqid(),
+                        'expire_time'           => time() + 3600,
+                        'client_id'             => 'foo',
+                        'redirect_uri'          => null,
                     ], JSON_THROW_ON_ERROR)
                 ),
             ]
