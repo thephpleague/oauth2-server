@@ -35,4 +35,14 @@ abstract class AbstractAuthorizeGrant extends AbstractGrant
     {
         return new AuthorizationRequest();
     }
+
+    /**
+     * Get the client redirect URI.
+     */
+    protected function getClientRedirectUri(AuthorizationRequestInterface $authorizationRequest): string
+    {
+        return is_array($authorizationRequest->getClient()->getRedirectUri())
+            ? $authorizationRequest->getClient()->getRedirectUri()[0]
+            : $authorizationRequest->getClient()->getRedirectUri();
+    }
 }
