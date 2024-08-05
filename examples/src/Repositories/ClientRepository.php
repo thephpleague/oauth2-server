@@ -28,7 +28,7 @@ class ClientRepository implements ClientRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface
+    public function getClientEntity(string $clientIdentifier, ?string $grantType): ?ClientEntityInterface
     {
         $client = new ClientEntity();
 
@@ -59,7 +59,10 @@ class ClientRepository implements ClientRepositoryInterface
             return false;
         }
 
-        if (password_verify($clientSecret, $clients[$clientIdentifier]['secret']) === false) {
+        if (
+            $clients[$clientIdentifier]['is_confidential'] === true
+            && password_verify($clientSecret, $clients[$clientIdentifier]['secret']) === false
+        ) {
             return false;
         }
 
