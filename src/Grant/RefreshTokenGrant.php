@@ -78,7 +78,7 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         // Issue and persist new access token
-        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $oldRefreshToken['user_id'], $scopes);
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, (string)$oldRefreshToken['user_id'], $scopes);
         $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
         $responseType->setAccessToken($accessToken);
 
