@@ -138,7 +138,6 @@ class DeviceCodeGrant extends AbstractGrant
         // Validate request
         $client = $this->validateClient($request);
         $deviceCodeEntity = $this->validateDeviceCode($request, $client);
-        $scopes = $deviceCodeEntity->getScopes();
 
         $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
         $this->deviceCodeRepository->persistDeviceCode($deviceCodeEntity);
@@ -153,7 +152,7 @@ class DeviceCodeGrant extends AbstractGrant
         }
 
         // Finalize the requested scopes
-        $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $deviceCodeEntity->getUserIdentifier());
+        $finalizedScopes = $this->scopeRepository->finalizeScopes($deviceCodeEntity->getScopes(), $this->getIdentifier(), $client, $deviceCodeEntity->getUserIdentifier());
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $deviceCodeEntity->getUserIdentifier(), $finalizedScopes);
