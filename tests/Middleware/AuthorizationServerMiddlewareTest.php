@@ -134,7 +134,7 @@ class AuthorizationServerMiddlewareTest extends TestCase
         );
     }
 
-    public function testOAuthErrorResponseRedirectUriWithDelimiter()
+    public function testOAuthErrorResponseRedirectUriWithDelimiter(): void
     {
         $exception = OAuthServerException::invalidScope('test', 'http://foo/bar', '#');
         $response = $exception->generateHttpResponse(new Response());
