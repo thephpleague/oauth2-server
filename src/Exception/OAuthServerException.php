@@ -33,7 +33,7 @@ class OAuthServerException extends Exception
     /**
      * Throw a new exception.
      */
-    final public function __construct(string $message, int $code, private string $errorType, private int $httpStatusCode = 400, private ?string $hint = null, private ?string $redirectUri = null, Throwable $previous = null, private ?string $queryDelimiter = '?')
+    final public function __construct(string $message, int $code, private string $errorType, private int $httpStatusCode = 400, private ?string $hint = null, private ?string $redirectUri = null, Throwable $previous = null, private string $queryDelimiter = '?')
     {
         parent::__construct($message, $code, $previous);
         $this->payload = [
@@ -267,7 +267,7 @@ class OAuthServerException extends Exception
         $payload = $this->getPayload();
 
         if ($this->redirectUri !== null) {
-            $queryDelimiter = $useFragment === true ? '#' : ($this->queryDelimiter ?? '?');
+            $queryDelimiter = $useFragment === true ? '#' : $this->queryDelimiter;
             $this->redirectUri .= (str_contains($this->redirectUri, $queryDelimiter) === false) ? $queryDelimiter : '&';
 
             return $response->withStatus(302)->withHeader('Location', $this->redirectUri . http_build_query($payload));
