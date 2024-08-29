@@ -267,7 +267,7 @@ class OAuthServerException extends Exception
         $payload = $this->getPayload();
 
         if ($this->redirectUri !== null) {
-            $queryDelimiter = $useFragment === true ? '#' : $this->queryDelimiter;
+            $queryDelimiter = $useFragment === true ? '#' : ($this->queryDelimiter ?? '?');
             $this->redirectUri .= (str_contains($this->redirectUri, $queryDelimiter) === false) ? $queryDelimiter : '&';
 
             return $response->withStatus(302)->withHeader('Location', $this->redirectUri . http_build_query($payload));

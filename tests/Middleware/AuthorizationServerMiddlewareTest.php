@@ -139,8 +139,8 @@ class AuthorizationServerMiddlewareTest extends TestCase
         $exception = OAuthServerException::invalidScope('test', 'http://foo/bar', '#');
         $response = $exception->generateHttpResponse(new Response());
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(
+        self::assertEquals(302, $response->getStatusCode());
+        self::assertEquals(
             'http://foo/bar#error=invalid_scope&error_description=The+requested+scope+is+invalid%2C+unknown%2C+or+malformed&hint=Check+the+%60test%60+scope',
             $response->getHeader('location')[0]
         );
