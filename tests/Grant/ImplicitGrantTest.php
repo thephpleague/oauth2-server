@@ -395,10 +395,36 @@ class ImplicitGrantTest extends TestCase
 
     public function testCompleteAuthorizationRequestNoUser(): void
     {
+        $client = new ClientEntity();
+        $client->setRedirectUri('https://foo/bar');
+
+        $authRequest = new AuthorizationRequest();
+        $authRequest->setAuthorizationApproved(true);
+        $authRequest->setClient($client);
+        $authRequest->setGrantTypeId('authorization_code');
+
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
         $this->expectException(LogicException::class);
 
-        $grant->completeAuthorizationRequest(new AuthorizationRequest());
+        $grant->completeAuthorizationRequest($authRequest);
+    }
+
+    public function testCompleteAuthorizationRequestDeniedNoUser(): void
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('https://foo/bar');
+
+        $authRequest = new AuthorizationRequest();
+        $authRequest->setAuthorizationApproved(false);
+        $authRequest->setClient($client);
+        $authRequest->setGrantTypeId('authorization_code');
+
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
+
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(9);
+
+        $grant->completeAuthorizationRequest($authRequest);
     }
 }

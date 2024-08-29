@@ -2186,6 +2186,14 @@ class AuthCodeGrantTest extends TestCase
 
     public function testCompleteAuthorizationRequestNoUser(): void
     {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+
+        $authRequest = new AuthorizationRequest();
+        $authRequest->setAuthorizationApproved(true);
+        $authRequest->setClient($client);
+        $authRequest->setGrantTypeId('authorization_code');
+
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -2194,7 +2202,29 @@ class AuthCodeGrantTest extends TestCase
 
         $this->expectException(LogicException::class);
 
-        $grant->completeAuthorizationRequest(new AuthorizationRequest());
+        $grant->completeAuthorizationRequest($authRequest);
+    }
+
+    public function testCompleteAuthorizationRequestDeniedNoUser(): void
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri('http://foo/bar');
+
+        $authRequest = new AuthorizationRequest();
+        $authRequest->setAuthorizationApproved(false);
+        $authRequest->setClient($client);
+        $authRequest->setGrantTypeId('authorization_code');
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M')
+        );
+
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(9);
+
+        $grant->completeAuthorizationRequest($authRequest);
     }
 
     public function testPublicClientAuthCodeRequestRejectedWhenCodeChallengeRequiredButNotGiven(): void
