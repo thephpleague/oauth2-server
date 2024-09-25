@@ -124,7 +124,7 @@ class DeviceCodeGrant extends AbstractGrant
         $deviceCode->setUserIdentifier($userId);
         $deviceCode->setUserApproved($userApproved);
 
-        $this->deviceCodeRepository->persistDeviceCode($deviceCode);
+        $this->deviceCodeRepository->persistUser($deviceCode);
     }
 
     /**
@@ -141,7 +141,7 @@ class DeviceCodeGrant extends AbstractGrant
         $deviceCodeEntity = $this->validateDeviceCode($request, $client);
 
         $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
-        $this->deviceCodeRepository->persistDeviceCode($deviceCodeEntity);
+        $this->deviceCodeRepository->persistLastPolledAt($deviceCodeEntity);
 
         // If device code has no user associated, respond with pending
         if (is_null($deviceCodeEntity->getUserIdentifier())) {

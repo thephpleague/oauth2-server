@@ -30,6 +30,16 @@ interface DeviceCodeRepositoryInterface extends RepositoryInterface
     public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity): void;
 
     /**
+     * Persists user ID and approval status of the given device code entity to permanent storage.
+     */
+    public function persistUser(DeviceCodeEntityInterface $deviceCodeEntity): void;
+
+    /**
+     * Persists "last polled at" datetime of the given device code entity to permanent storage.
+     */
+    public function persistLastPolledAt(DeviceCodeEntityInterface $deviceCodeEntity): void;
+
+    /**
      * Get a device code entity.
      */
     public function getDeviceCodeEntityByDeviceCode(

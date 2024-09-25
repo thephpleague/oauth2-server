@@ -39,6 +39,28 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     /**
      * {@inheritdoc}
      */
+    public function persistUser(DeviceCodeEntityInterface $deviceCodeEntity): void
+    {
+        $user = $deviceCodeEntity->getUserIdentifier();
+        $approved = $deviceCodeEntity->getUserApproved();
+
+        // Some logic to persist user ID and approval status of the given device code entity to a database
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function persistLastPolledAt(DeviceCodeEntityInterface $deviceCodeEntity): void
+    {
+        $lastPolledAt = $deviceCodeEntity->getLastPolledAt();
+        $approved = $deviceCodeEntity->getUserApproved();
+
+        // Some logic to persist "last polled at" datetime of the given device code entity to a database
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDeviceCodeEntityByDeviceCode($deviceCode): ?DeviceCodeEntityInterface
     {
         $clientEntity = new ClientEntity();
