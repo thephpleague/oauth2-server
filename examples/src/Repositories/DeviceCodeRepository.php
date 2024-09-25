@@ -53,7 +53,6 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     public function persistLastPolledAt(DeviceCodeEntityInterface $deviceCodeEntity): void
     {
         $lastPolledAt = $deviceCodeEntity->getLastPolledAt();
-        $approved = $deviceCodeEntity->getUserApproved();
 
         // Some logic to persist "last polled at" datetime of the given device code entity to a database
     }
