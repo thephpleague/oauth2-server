@@ -111,8 +111,8 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         if ($redirectUri !== null) {
             $this->validateRedirectUri($redirectUri, $client, $request);
         } elseif (
-            is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
-            || $client->getRedirectUri() === ''
+            $client->getRedirectUri() === '' ||
+            (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1)
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient($request);
@@ -122,13 +122,15 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 : $client->getRedirectUri();
         }
 
+        $stateParameter = $this->getQueryStringParameter('state', $request);
+
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            $redirectUri,
-            $this->queryDelimiter
+            $this->makeRedirectUri(
+                $redirectUri,
+                $stateParameter !== null ? ['state' => $stateParameter] : []
+            )
         );
-
-        $stateParameter = $this->getQueryStringParameter('state', $request);
 
         $authorizationRequest = $this->createAuthorizationRequest();
         $authorizationRequest->setGrantTypeId($this->getIdentifier());
@@ -202,9 +204,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                     'state' => $authorizationRequest->getState(),
                 ],
                 $this->queryDelimiter
-            ),
-            null,
-            $this->queryDelimiter
+            )
         );
     }
 }

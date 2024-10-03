@@ -243,7 +243,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      *
      * @return ScopeEntityInterface[]
      */
-    public function validateScopes(string|array|null $scopes, string $redirectUri = null, string $queryDelimiter = '?'): array
+    public function validateScopes(string|array|null $scopes, string $redirectUri = null): array
     {
         if ($scopes === null) {
             $scopes = [];
@@ -257,7 +257,7 @@ abstract class AbstractGrant implements GrantTypeInterface
             $scope = $this->scopeRepository->getScopeEntityByIdentifier($scopeItem);
 
             if ($scope instanceof ScopeEntityInterface === false) {
-                throw OAuthServerException::invalidScope($scopeItem, $redirectUri, $queryDelimiter);
+                throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
             }
 
             $validScopes[] = $scope;

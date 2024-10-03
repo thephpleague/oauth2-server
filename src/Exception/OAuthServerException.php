@@ -33,7 +33,7 @@ class OAuthServerException extends Exception
     /**
      * Throw a new exception.
      */
-    final public function __construct(string $message, int $code, private string $errorType, private int $httpStatusCode = 400, private ?string $hint = null, private ?string $redirectUri = null, Throwable $previous = null, private string $queryDelimiter = '?')
+    final public function __construct(string $message, int $code, private string $errorType, private int $httpStatusCode = 400, private ?string $hint = null, private ?string $redirectUri = null, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->payload = [
@@ -112,7 +112,7 @@ class OAuthServerException extends Exception
     /**
      * Invalid scope error
      */
-    public static function invalidScope(string $scope, string|null $redirectUri = null, string $queryDelimiter = '?'): static
+    public static function invalidScope(string $scope, string|null $redirectUri = null): static
     {
         $errorMessage = 'The requested scope is invalid, unknown, or malformed';
 
@@ -125,7 +125,7 @@ class OAuthServerException extends Exception
             );
         }
 
-        return new static($errorMessage, 5, 'invalid_scope', 400, $hint, $redirectUri, null, $queryDelimiter);
+        return new static($errorMessage, 5, 'invalid_scope', 400, $hint, $redirectUri);
     }
 
     /**
@@ -166,7 +166,7 @@ class OAuthServerException extends Exception
     /**
      * Access denied.
      */
-    public static function accessDenied(?string $hint = null, ?string $redirectUri = null, Throwable $previous = null, string $queryDelimiter = '?'): static
+    public static function accessDenied(?string $hint = null, ?string $redirectUri = null, Throwable $previous = null): static
     {
         return new static(
             'The resource owner or authorization server denied the request.',
@@ -175,8 +175,7 @@ class OAuthServerException extends Exception
             401,
             $hint,
             $redirectUri,
-            $previous,
-            $queryDelimiter
+            $previous
         );
     }
 
@@ -267,10 +266,11 @@ class OAuthServerException extends Exception
         $payload = $this->getPayload();
 
         if ($this->redirectUri !== null) {
-            $queryDelimiter = $useFragment === true ? '#' : $this->queryDelimiter;
-            $this->redirectUri .= (str_contains($this->redirectUri, $queryDelimiter) === false) ? $queryDelimiter : '&';
-
-            return $response->withStatus(302)->withHeader('Location', $this->redirectUri . http_build_query($payload));
+            if ($useFragment === true) {
+                $this->redirectUri .= (str_contains($this->redirectUri, '#') === false) ? '#' : '&';
+            } else {
+                $this->redirectUri .= (str_contains($this->redirectUri, '?') === false) ? '?' : '&';
+            }
         }
 
         foreach ($headers as $header => $content) {
