@@ -271,6 +271,8 @@ class OAuthServerException extends Exception
             } else {
                 $this->redirectUri .= (str_contains($this->redirectUri, '?') === false) ? '?' : '&';
             }
+
+            return $response->withStatus(302)->withHeader('Location', $this->redirectUri . http_build_query($payload));
         }
 
         foreach ($headers as $header => $content) {
