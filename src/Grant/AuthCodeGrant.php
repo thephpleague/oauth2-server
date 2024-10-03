@@ -278,10 +278,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
 
             throw OAuthServerException::invalidClient($request);
-        } else {
-            $redirectUri = is_array($client->getRedirectUri())
-                ? $client->getRedirectUri()[0]
-                : $client->getRedirectUri();
         }
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
@@ -289,7 +285,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
             $this->makeRedirectUri(
-                $redirectUri,
+                $redirectUri ?? $this->getClientRedirectUri($client),
                 $stateParameter !== null ? ['state' => $stateParameter] : []
             )
         );
@@ -357,7 +353,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         $finalRedirectUri = $authorizationRequest->getRedirectUri()
-                          ?? $this->getClientRedirectUri($authorizationRequest);
+                          ?? $this->getClientRedirectUri($authorizationRequest->getClient());
 
         // The user approved the client, redirect them back with an auth code
         if ($authorizationRequest->isAuthorizationApproved() === true) {
@@ -410,15 +406,5 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 ]
             )
         );
-    }
-
-    /**
-     * Get the client redirect URI if not set in the request.
-     */
-    private function getClientRedirectUri(AuthorizationRequestInterface $authorizationRequest): string
-    {
-        return is_array($authorizationRequest->getClient()->getRedirectUri())
-                ? $authorizationRequest->getClient()->getRedirectUri()[0]
-                : $authorizationRequest->getClient()->getRedirectUri();
     }
 }
