@@ -180,7 +180,7 @@ abstract class AbstractGrant implements GrantTypeInterface
         }
 
         if (!$client->hasGrantType($this->getIdentifier())) {
-            throw OAuthServerException::invalidGrant();
+            throw OAuthServerException::unauthorizedClient();
         }
 
         return $client;
