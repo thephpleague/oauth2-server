@@ -502,9 +502,9 @@ class AuthCodeGrantTest extends TestCase
         try {
             $grant->validateAuthorizationRequest($request);
         } catch (OAuthServerException $e) {
-            $this->assertSame(5, $e->getCode());
-            $this->assertSame('invalid_scope', $e->getErrorType());
-            $this->assertSame('https://foo/bar?state=foo', $e->getRedirectUri());
+            self::assertSame(5, $e->getCode());
+            self::assertSame('invalid_scope', $e->getErrorType());
+            self::assertSame('https://foo/bar?state=foo', $e->getRedirectUri());
 
             return;
         }
@@ -588,9 +588,9 @@ class AuthCodeGrantTest extends TestCase
         try {
             $grant->completeAuthorizationRequest($authRequest);
         } catch (OAuthServerException $e) {
-            $this->assertSame(9, $e->getCode());
-            $this->assertSame('access_denied', $e->getErrorType());
-            $this->assertSame('http://foo/bar?state=foo', $e->getRedirectUri());
+            self::assertSame(9, $e->getCode());
+            self::assertSame('access_denied', $e->getErrorType());
+            self::assertSame('http://foo/bar?state=foo', $e->getRedirectUri());
 
             return;
         }
