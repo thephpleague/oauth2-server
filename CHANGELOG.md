@@ -8,11 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Auto-generated event emitter is now persisted. Previously, a new emitter was generated every time (PR #1428)
 - Fixed bug where you could not omit a redirect uri even if one had not been specified during the auth request (PR #1428)
+- Fixed bug where disabling refresh token revocation via `revokeRefreshTokens(false)` unintentionally disables issuing new refresh token (PR #1449) 
 
 ## [9.0.0] - released 2024-05-13
 ### Added
 - Device Authorization Grant added (PR #1074)
-- GrantTypeInterface has a new function, `revokeRefreshTokens()` for enabling or disabling refresh tokens after use (PR #1375)
+- GrantTypeInterface has a new function, `revokeRefreshTokens()` for enabling or disabling refresh token revocation (PR #1375)
 - A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
 - The authorization server can now finalize scopes when a client uses a refresh token (PR #1094)
 - An AuthorizationRequestInterface to make it easier to extend the AuthorizationRequest (PR #1110)
