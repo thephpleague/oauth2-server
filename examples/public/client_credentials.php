@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 include __DIR__ . '/../vendor/autoload.php';
 
-use Laminas\Diactoros\Stream;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use Nyholm\Psr7\Stream;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use OAuth2ServerExamples\Repositories\ClientRepository;
 use OAuth2ServerExamples\Repositories\ScopeRepository;
@@ -68,8 +68,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
         return $exception->generateHttpResponse($response);
     } catch (Exception $exception) {
         // Unknown exception
-        $body = new Stream('php://temp', 'r+');
-        $body->write($exception->getMessage());
+        $body = Stream::create($exception->getMessage());
 
         return $response->withStatus(500)->withBody($body);
     }

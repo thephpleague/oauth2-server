@@ -6,13 +6,13 @@ namespace LeagueTests\AuthorizationValidators;
 
 use DateInterval;
 use DateTimeImmutable;
-use Laminas\Diactoros\ServerRequest;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -41,7 +41,7 @@ class BearerTokenValidatorTest extends TestCase
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $validJwt->toString()));
+        $request = (new ServerRequest('', ''))->withHeader('authorization', sprintf('Bearer %s', $validJwt->toString()));
 
         $validRequest = $bearerTokenValidator->validateAuthorization($request);
 
@@ -69,7 +69,7 @@ class BearerTokenValidatorTest extends TestCase
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $expiredJwt->toString()));
+        $request = (new ServerRequest('', ''))->withHeader('authorization', sprintf('Bearer %s', $expiredJwt->toString()));
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(9);
@@ -89,7 +89,6 @@ class BearerTokenValidatorTest extends TestCase
 
         $bearerTokenValidatorReflection = new ReflectionClass(BearerTokenValidator::class);
         $jwtConfiguration = $bearerTokenValidatorReflection->getProperty('jwtConfiguration');
-        $jwtConfiguration->setAccessible(true);
 
         $jwtTokenFromFutureWithinLeeway = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
             ->permittedFor('client-id')
@@ -101,7 +100,7 @@ class BearerTokenValidatorTest extends TestCase
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $jwtTokenFromFutureWithinLeeway->toString()));
+        $request = (new ServerRequest('', ''))->withHeader('authorization', sprintf('Bearer %s', $jwtTokenFromFutureWithinLeeway->toString()));
 
         $validRequest = $bearerTokenValidator->validateAuthorization($request);
 
@@ -132,7 +131,7 @@ class BearerTokenValidatorTest extends TestCase
             ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
             ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $jwtTokenFromFutureBeyondLeeway->toString()));
+        $request = (new ServerRequest('', ''))->withHeader('authorization', sprintf('Bearer %s', $jwtTokenFromFutureBeyondLeeway->toString()));
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(9);

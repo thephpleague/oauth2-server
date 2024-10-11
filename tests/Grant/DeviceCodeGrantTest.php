@@ -6,8 +6,6 @@ namespace LeagueTests\Grant;
 
 use DateInterval;
 use DateTimeImmutable;
-use Laminas\Diactoros\Response;
-use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
@@ -25,6 +23,8 @@ use LeagueTests\Stubs\DeviceCodeEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
+use Nyholm\Psr7\Response;
+use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
 use function base64_encode;
@@ -69,7 +69,7 @@ class DeviceCodeGrantTest extends TestCase
             'http://foo/bar'
         );
 
-        $request = (new ServerRequest())->withParsedBody([
+        $request = (new ServerRequest('', ''))->withParsedBody([
             'client_id' => 'foo',
             'scope' => 'basic',
         ]);
@@ -105,7 +105,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $request = (new ServerRequest())->withParsedBody([
+        $request = (new ServerRequest('', ''))->withParsedBody([
             'client_id' => 'foo',
             'scope' => 'basic',
         ]);
@@ -150,7 +150,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $request = (new ServerRequest())->withParsedBody([
+        $request = (new ServerRequest('', ''))->withParsedBody([
             'client_id' => 'foo',
             'scope' => 'basic',
         ]);
@@ -189,7 +189,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest())->withParsedBody([
+        $request = (new ServerRequest('', ''))->withParsedBody([
             'scope' => 'basic',
         ]);
 
@@ -220,7 +220,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $request = (new ServerRequest())->withParsedBody([
+        $request = (new ServerRequest('', ''))->withParsedBody([
             'scope' => '',
         ]);
 
@@ -248,7 +248,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest())->withParsedBody([
+        $request = (new ServerRequest('', ''))->withParsedBody([
             'client_id' => 'bar',
             'scope' => 'basic',
         ]);
@@ -313,7 +313,7 @@ class DeviceCodeGrantTest extends TestCase
 
         $server->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $serverRequest = (new ServerRequest())->withParsedBody([
+        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
            'client_id'     => 'foo',
         ]);
 
@@ -386,7 +386,7 @@ class DeviceCodeGrantTest extends TestCase
 
         $grant->completeDeviceAuthorizationRequest($deviceCodeEntity->getUserCode(), '1', true);
 
-        $serverRequest = (new ServerRequest())->withParsedBody([
+        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
             'device_code'   => $this->cryptStub->doEncrypt(
                 json_encode(
@@ -429,7 +429,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $serverRequest = (new ServerRequest())->withQueryParams([
+        $serverRequest = (new ServerRequest('', ''))->withQueryParams([
             'device_code' => $this->cryptStub->doEncrypt(
                 json_encode(
                     [
@@ -487,7 +487,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $serverRequest = (new ServerRequest())->withParsedBody([
+        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
             'client_id' => 'foo',
         ]);
 
@@ -536,7 +536,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $serverRequest = (new ServerRequest())->withParsedBody([
+        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
             'client_id'     => 'foo',
             'device_code'   => $this->cryptStub->doEncrypt(
                 json_encode(
@@ -597,7 +597,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $serverRequest = (new ServerRequest())->withParsedBody([
+        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
             'client_id'     => 'foo',
             'device_code'   => $this->cryptStub->doEncrypt(
                 json_encode(
@@ -658,7 +658,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $serverRequest = (new ServerRequest())->withParsedBody([
+        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
             'client_id'     => 'foo',
             'device_code'   => $this->cryptStub->doEncrypt(
                 json_encode(
@@ -715,7 +715,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setIntervalVisibility(true);
 
-        $request = (new ServerRequest())->withParsedBody([
+        $request = (new ServerRequest('', ''))->withParsedBody([
             'client_id' => 'foo',
             'scope' => 'basic',
         ]);
@@ -771,7 +771,7 @@ class DeviceCodeGrantTest extends TestCase
 
         $grant->completeDeviceAuthorizationRequest($deviceCode->getUserCode(), '1', false);
 
-        $serverRequest = (new ServerRequest())->withParsedBody([
+        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
                 'client_id'     => 'foo',
                 'device_code'   => $this->cryptStub->doEncrypt(
                     json_encode(

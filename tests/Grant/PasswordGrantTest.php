@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace LeagueTests\Grant;
 
 use DateInterval;
-use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -21,6 +20,7 @@ use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
+use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
 class PasswordGrantTest extends TestCase
@@ -69,7 +69,7 @@ class PasswordGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $serverRequest = (new ServerRequest())->withParsedBody([
+        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'username'      => 'foo',
@@ -114,7 +114,7 @@ class PasswordGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $serverRequest = (new ServerRequest())->withParsedBody([
+        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'username'      => 'foo',
@@ -143,7 +143,7 @@ class PasswordGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $serverRequest = (new ServerRequest())->withQueryParams([
+        $serverRequest = (new ServerRequest('', ''))->withQueryParams([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
         ]);
@@ -171,7 +171,7 @@ class PasswordGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
 
-        $serverRequest = (new ServerRequest())->withParsedBody([
+        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'username'      => 'alex',
@@ -209,7 +209,7 @@ class PasswordGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $serverRequest = (new ServerRequest())->withParsedBody([
+        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
             'client_id' => 'foo',
             'client_secret' => 'bar',
             'username' => 'alex',
