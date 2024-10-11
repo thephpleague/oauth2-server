@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Auto-generated event emitter is now persisted. Previously, a new emitter was generated every time (PR #1428)
 - Fixed bug where you could not omit a redirect uri even if one had not been specified during the auth request (PR #1428)
+- Fixed bug on setting interval visibility of device authorization grant (PR #1410)
 
 ## [9.0.0] - released 2024-05-13
 ### Added
