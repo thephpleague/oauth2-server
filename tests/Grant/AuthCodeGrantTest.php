@@ -509,7 +509,7 @@ class AuthCodeGrantTest extends TestCase
             return;
         }
 
-        $this->fail('The expected exception was not thrown');
+        self::fail('The expected exception was not thrown');
     }
 
     public function testCompleteAuthorizationRequest(): void
@@ -594,7 +594,7 @@ class AuthCodeGrantTest extends TestCase
             return;
         }
 
-        $this->fail('The expected exception was not thrown');
+        self::fail('The expected exception was not thrown');
     }
 
     public function testRespondToAccessTokenRequest(): void

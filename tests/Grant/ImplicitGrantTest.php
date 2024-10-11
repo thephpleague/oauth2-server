@@ -241,7 +241,7 @@ class ImplicitGrantTest extends TestCase
             return;
         }
 
-        $this->fail('Did not throw expected exception');
+        self::fail('Did not throw expected exception');
     }
 
     public function testCompleteAuthorizationRequest(): void
@@ -310,7 +310,7 @@ class ImplicitGrantTest extends TestCase
             return;
         }
 
-        $this->fail('Did not throw expected exception');
+        self::fail('Did not throw expected exception');
     }
 
     public function testAccessTokenRepositoryUniqueConstraintCheck(): void
