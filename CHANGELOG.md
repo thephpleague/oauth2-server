@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Fixed
+- Auto-generated event emitter is now persisted. Previously, a new emitter was generated every time (PR #1428)
+- Fixed bug where you could not omit a redirect uri even if one had not been specified during the auth request (PR #1428)
+
 ## [9.0.0] - released 2024-05-13
 ### Added
 - Device Authorization Grant added (PR #1074)
