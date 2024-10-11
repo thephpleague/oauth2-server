@@ -217,13 +217,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('code', 'Authorization code was not issued to this client');
         }
 
-        // The redirect URI is required in this request
+        // The redirect URI is required in this request if it was specified
+        // in the authorization request
         $redirectUri = $this->getRequestParameter('redirect_uri', $request);
-        if ($authCodePayload->redirect_uri !== '' && $redirectUri === null) {
+        if ($authCodePayload->redirect_uri !== null && $redirectUri === null) {
             throw OAuthServerException::invalidRequest('redirect_uri');
         }
 
-        if ($authCodePayload->redirect_uri !== $redirectUri) {
+        // If a redirect URI has been provided ensure it matches the stored redirect URI
+        if ($redirectUri !== null && $authCodePayload->redirect_uri !== $redirectUri) {
             throw OAuthServerException::invalidRequest('redirect_uri', 'Invalid redirect URI');
         }
     }
