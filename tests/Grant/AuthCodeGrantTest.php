@@ -509,8 +509,7 @@ class AuthCodeGrantTest extends TestCase
             return;
         }
 
-        $this->expectException(OAuthServerException::class);
-        $this->expectExceptionCode(5);
+        $this->fail('The expected exception was not thrown');
     }
 
     public function testCompleteAuthorizationRequest(): void
@@ -595,8 +594,7 @@ class AuthCodeGrantTest extends TestCase
             return;
         }
 
-        $this->expectException(OAuthServerException::class);
-        $this->expectExceptionCode(9);
+        $this->fail('The expected exception was not thrown');
     }
 
     public function testRespondToAccessTokenRequest(): void

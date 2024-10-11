@@ -241,8 +241,7 @@ class ImplicitGrantTest extends TestCase
             return;
         }
 
-        $this->expectException(OAuthServerException::class);
-        $this->expectExceptionCode(5);
+        $this->fail('Did not throw expected exception');
     }
 
     public function testCompleteAuthorizationRequest(): void
@@ -311,8 +310,7 @@ class ImplicitGrantTest extends TestCase
             return;
         }
 
-        $this->expectException(OAuthServerException::class);
-        $this->expectExceptionCode(9);
+        $this->fail('Did not throw expected exception');
     }
 
     public function testAccessTokenRepositoryUniqueConstraintCheck(): void
