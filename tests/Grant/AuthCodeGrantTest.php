@@ -469,6 +469,49 @@ class AuthCodeGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
+    public function testValidateAuthorizationRequestInvalidScopes(): void
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setConfidential();
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(null);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M')
+        );
+
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type' => 'code',
+            'client_id' => 'foo',
+            'redirect_uri' => self::REDIRECT_URI,
+            'scope' => 'foo',
+            'state' => 'foo',
+        ]);
+
+        try {
+            $grant->validateAuthorizationRequest($request);
+        } catch (OAuthServerException $e) {
+            self::assertSame(5, $e->getCode());
+            self::assertSame('invalid_scope', $e->getErrorType());
+            self::assertSame('https://foo/bar?state=foo', $e->getRedirectUri());
+
+            return;
+        }
+
+        self::fail('The expected exception was not thrown');
+    }
+
     public function testCompleteAuthorizationRequest(): void
     {
         $client = new ClientEntity();
@@ -529,6 +572,7 @@ class AuthCodeGrantTest extends TestCase
         $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
+        $authRequest->setState('foo');
 
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
@@ -540,10 +584,17 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $this->expectException(OAuthServerException::class);
-        $this->expectExceptionCode(9);
+        try {
+            $grant->completeAuthorizationRequest($authRequest);
+        } catch (OAuthServerException $e) {
+            self::assertSame(9, $e->getCode());
+            self::assertSame('access_denied', $e->getErrorType());
+            self::assertSame('http://foo/bar?state=foo', $e->getRedirectUri());
 
-        $grant->completeAuthorizationRequest($authRequest);
+            return;
+        }
+
+        self::fail('The expected exception was not thrown');
     }
 
     public function testRespondToAccessTokenRequest(): void
