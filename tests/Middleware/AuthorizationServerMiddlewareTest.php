@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace LeagueTests\Middleware;
 
 use DateInterval;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
@@ -16,8 +18,6 @@ use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
-use Nyholm\Psr7\Response;
-use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
 use function base64_encode;
@@ -58,11 +58,11 @@ class AuthorizationServerMiddlewareTest extends TestCase
         $server->setDefaultScope(self::DEFAULT_SCOPE);
         $server->enableGrantType(new ClientCredentialsGrant());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type' => 'client_credentials',
-            'client_id'     => 'foo',
-            'client_secret' => 'bar',
-        ]);
+        $_POST['grant_type'] = 'client_credentials';
+        $_POST['client_id'] = 'foo';
+        $_POST['client_secret'] = 'bar';
+
+        $request = ServerRequestFactory::fromGlobals();
 
         $middleware = new AuthorizationServerMiddleware($server);
         $response = $middleware->__invoke(
@@ -91,11 +91,11 @@ class AuthorizationServerMiddlewareTest extends TestCase
 
         $server->enableGrantType(new ClientCredentialsGrant(), new DateInterval('PT1M'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type' => 'client_credentials',
-            'client_id'     => 'foo',
-            'client_secret' => 'bar',
-        ]);
+        $_POST['grant_type'] = 'client_credentials';
+        $_POST['client_id'] = 'foo';
+        $_POST['client_secret'] = 'bar';
+
+        $request = ServerRequestFactory::fromGlobals();
 
         $middleware = new AuthorizationServerMiddleware($server);
 

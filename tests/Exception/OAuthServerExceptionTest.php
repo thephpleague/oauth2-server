@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace LeagueTests\Exception;
 
 use Exception;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use Nyholm\Psr7\Response;
-use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
@@ -18,7 +18,7 @@ class OAuthServerExceptionTest extends TestCase
 {
     public function testInvalidClientExceptionSetsAuthenticateHeader(): void
     {
-        $serverRequest = (new ServerRequest('', ''))
+        $serverRequest = (new ServerRequest())
             ->withParsedBody([
                 'client_id' => 'foo',
             ])
@@ -35,7 +35,7 @@ class OAuthServerExceptionTest extends TestCase
 
     public function testInvalidClientExceptionSetsBearerAuthenticateHeader(): void
     {
-        $serverRequest = (new ServerRequest('', ''))
+        $serverRequest = (new ServerRequest())
             ->withParsedBody([
                 'client_id' => 'foo',
             ])
@@ -52,7 +52,7 @@ class OAuthServerExceptionTest extends TestCase
 
     public function testInvalidClientExceptionOmitsAuthenticateHeader(): void
     {
-        $serverRequest = (new ServerRequest('', ''))
+        $serverRequest = (new ServerRequest())
             ->withParsedBody([
                 'client_id' => 'foo',
             ]);
@@ -68,7 +68,7 @@ class OAuthServerExceptionTest extends TestCase
 
     public function testInvalidClientExceptionOmitsAuthenticateHeaderGivenEmptyAuthorizationHeader(): void
     {
-        $serverRequest = (new ServerRequest('', ''))
+        $serverRequest = (new ServerRequest())
             ->withParsedBody([
                 'client_id' => 'foo',
             ])

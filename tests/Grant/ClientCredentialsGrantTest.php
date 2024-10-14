@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LeagueTests\Grant;
 
 use DateInterval;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -14,7 +15,6 @@ use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
-use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
 class ClientCredentialsGrantTest extends TestCase
@@ -53,7 +53,7 @@ class ClientCredentialsGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
         ]);

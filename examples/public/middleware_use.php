@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 include __DIR__ . '/../vendor/autoload.php';
 
+use Laminas\Diactoros\Stream;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
@@ -101,7 +102,8 @@ $app->group('/api', function (): void {
             $params['email'] = 'alex@example.com';
         }
 
-        $body = Stream::create(json_encode($params));
+        $body = new Stream('php://temp', 'r+');
+        $body->write(json_encode($params));
 
         return $response->withBody($body);
     });

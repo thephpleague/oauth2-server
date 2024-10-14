@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace LeagueTests\Grant;
 
 use DateInterval;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -26,8 +28,6 @@ use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use LogicException;
-use Nyholm\Psr7\Response;
-use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
 use function json_encode;
@@ -70,10 +70,19 @@ class AuthCodeGrantTest extends TestCase
             new DateInterval('PT10M')
         );
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
-            'response_type' => 'code',
-            'client_id'     => 'foo',
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
+                'response_type' => 'code',
+                'client_id'     => 'foo',
+            ]
+        );
 
         self::assertTrue($grant->canRespondToAuthorizationRequest($request));
     }
@@ -100,11 +109,20 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
-            'response_type' => 'code',
-            'client_id'     => 'foo',
-            'redirect_uri'  => self::REDIRECT_URI,
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type' => 'code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
+            ]
+        );
 
         self::assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
@@ -130,11 +148,20 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
-            'response_type' => 'code',
-            'client_id'     => 'foo',
-            'redirect_uri'  => self::REDIRECT_URI,
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type' => 'code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
+            ]
+        );
 
         self::assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
@@ -161,10 +188,19 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
-            'response_type' => 'code',
-            'client_id'     => 'foo',
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type' => 'code',
+                'client_id'     => 'foo',
+            ]
+        );
 
         $authorizationRequest = $grant->validateAuthorizationRequest($request);
         self::assertInstanceOf(AuthorizationRequest::class, $authorizationRequest);
@@ -193,12 +229,21 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
-            'response_type'  => 'code',
-            'client_id'      => 'foo',
-            'redirect_uri'   => self::REDIRECT_URI,
-            'code_challenge' => self::CODE_CHALLENGE,
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type'  => 'code',
+                'client_id'      => 'foo',
+                'redirect_uri'   => self::REDIRECT_URI,
+                'code_challenge' => self::CODE_CHALLENGE,
+            ]
+        );
 
         self::assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
@@ -221,7 +266,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type'  => 'code',
             'client_id'      => 'foo',
             'redirect_uri'   => self::REDIRECT_URI,
@@ -251,7 +296,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type'  => 'code',
             'client_id'      => 'foo',
             'redirect_uri'   => self::REDIRECT_URI,
@@ -281,7 +326,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id' => 'foo',
             'redirect_uri' => self::REDIRECT_URI,
@@ -304,7 +349,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
         ]);
 
@@ -326,7 +371,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id'     => 'foo',
         ]);
@@ -351,7 +396,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id'     => 'foo',
             'redirect_uri'  => 'http://bar',
@@ -377,7 +422,7 @@ class AuthCodeGrantTest extends TestCase
         );
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id'     => 'foo',
             'redirect_uri'  => 'http://bar',
@@ -410,7 +455,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id' => 'foo',
             'redirect_uri' => self::REDIRECT_URI,
@@ -590,21 +635,31 @@ class AuthCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id' => uniqid(),
-                    'expire_time'  => time() + 3600,
-                    'client_id'    => 'foo',
-                    'user_id'      => '123',
-                    'scopes'       => ['foo'],
-                    'redirect_uri' => self::REDIRECT_URI,
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => '123',
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => self::REDIRECT_URI,
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -650,20 +705,30 @@ class AuthCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id' => uniqid(),
-                    'expire_time'  => time() + 3600,
-                    'client_id'    => 'foo',
-                    'user_id'      => '123',
-                    'scopes'       => ['foo'],
-                    'redirect_uri' => null,
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => '123',
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => null,
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -701,9 +766,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeGrant->setEncryptionKey($this->cryptStub->getKey());
         $authCodeGrant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest('', ''))
-            ->withHeader('Authorization', 'Basic Zm9vOmJhcg==')
-            ->withParsedBody([
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [
+                'Authorization' => 'Basic Zm9vOmJhcg==',
+            ],
+            [],
+            [],
+            [
                 'grant_type'   => 'authorization_code',
                 'redirect_uri' => self::REDIRECT_URI,
                 'code'         => $this->cryptStub->doEncrypt(
@@ -716,7 +790,8 @@ class AuthCodeGrantTest extends TestCase
                         'redirect_uri' => self::REDIRECT_URI,
                     ], JSON_THROW_ON_ERROR)
                 ),
-            ]);
+            ]
+        );
 
         /** @var StubResponseType $response */
         $response = $authCodeGrant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -757,21 +832,31 @@ class AuthCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id' => uniqid(),
-                    'expire_time'  => time() + 3600,
-                    'client_id'    => 'foo',
-                    'user_id'      => '123',
-                    'scopes'       => ['foo'],
-                    'redirect_uri' => self::REDIRECT_URI,
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => '123',
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => self::REDIRECT_URI,
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -812,21 +897,31 @@ class AuthCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id' => uniqid(),
-                    'expire_time'  => time() + 3600,
-                    'client_id'    => 'foo',
-                    'user_id'      => '123',
-                    'scopes'       => ['foo'],
-                    'redirect_uri' => self::REDIRECT_URI,
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => '123',
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => self::REDIRECT_URI,
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -873,24 +968,34 @@ class AuthCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'    => 'authorization_code',
-            'client_id'     => 'foo',
-            'redirect_uri'  => self::REDIRECT_URI,
-            'code_verifier' => self::CODE_VERIFIER,
-            'code'          => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id'          => uniqid(),
-                    'expire_time'           => time() + 3600,
-                    'client_id'             => 'foo',
-                    'user_id'               => '123',
-                    'scopes'                => ['foo'],
-                    'redirect_uri'          => self::REDIRECT_URI,
-                    'code_challenge'        => self::CODE_VERIFIER,
-                    'code_challenge_method' => 'plain',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
+                'code_verifier' => self::CODE_VERIFIER,
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id'          => uniqid(),
+                        'expire_time'           => time() + 3600,
+                        'client_id'             => 'foo',
+                        'user_id'               => '123',
+                        'scopes'                => ['foo'],
+                        'redirect_uri'          => self::REDIRECT_URI,
+                        'code_challenge'        => self::CODE_VERIFIER,
+                        'code_challenge_method' => 'plain',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -937,24 +1042,34 @@ class AuthCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'    => 'authorization_code',
-            'client_id'     => 'foo',
-            'redirect_uri'  => self::REDIRECT_URI,
-            'code_verifier' => self::CODE_VERIFIER,
-            'code'          => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id'          => uniqid(),
-                    'expire_time'           => time() + 3600,
-                    'client_id'             => 'foo',
-                    'user_id'               => '123',
-                    'scopes'                => ['foo'],
-                    'redirect_uri'          => self::REDIRECT_URI,
-                    'code_challenge'        => self::CODE_CHALLENGE,
-                    'code_challenge_method' => 'S256',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
+                'code_verifier' => self::CODE_VERIFIER,
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id'          => uniqid(),
+                        'expire_time'           => time() + 3600,
+                        'client_id'             => 'foo',
+                        'user_id'               => '123',
+                        'scopes'                => ['foo'],
+                        'redirect_uri'          => self::REDIRECT_URI,
+                        'code_challenge'        => self::CODE_CHALLENGE,
+                        'code_challenge_method' => 'S256',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -998,25 +1113,35 @@ class AuthCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'    => 'authorization_code',
-            'client_id'     => 'foo',
-            'redirect_uri'  => self::REDIRECT_URI,
-            'code_verifier' => self::CODE_VERIFIER,
-            'code'          => $this->cryptStub->doEncrypt(
-                json_encode(
-                    [
-                        'auth_code_id'          => uniqid(),
-                        'expire_time'           => time() + 3600,
-                        'client_id'             => 'foo',
-                        'user_id'               => '123',
-                        'scopes'                => ['foo'],
-                        'redirect_uri'          => self::REDIRECT_URI,
-                    ],
-                    JSON_THROW_ON_ERROR
-                )
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
+                'code_verifier' => self::CODE_VERIFIER,
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode(
+                        [
+                            'auth_code_id'          => uniqid(),
+                            'expire_time'           => time() + 3600,
+                            'client_id'             => 'foo',
+                            'user_id'               => '123',
+                            'scopes'                => ['foo'],
+                            'redirect_uri'          => self::REDIRECT_URI,
+                        ],
+                        JSON_THROW_ON_ERROR
+                    )
+                ),
+            ]
+        );
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(3);
@@ -1046,18 +1171,28 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'client_id'  => 'foo',
-            'grant_type' => 'authorization_code',
-            'code'       => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id'          => uniqid(),
-                    'expire_time'           => time() + 3600,
-                    'client_id'             => 'foo',
-                    'redirect_uri'          => 'http://foo/bar',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'client_id'  => 'foo',
+                'grant_type' => 'authorization_code',
+                'code'       => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id'          => uniqid(),
+                        'expire_time'           => time() + 3600,
+                        'client_id'             => 'foo',
+                        'redirect_uri'          => 'http://foo/bar',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(3);
@@ -1086,19 +1221,29 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'client_id'  => 'foo',
-            'grant_type' => 'authorization_code',
-            'redirect_uri' => 'http://bar/foo',
-            'code'       => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id'          => uniqid(),
-                    'expire_time'           => time() + 3600,
-                    'client_id'             => 'foo',
-                    'redirect_uri'          => 'http://foo/bar',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'client_id'  => 'foo',
+                'grant_type' => 'authorization_code',
+                'redirect_uri' => 'http://bar/foo',
+                'code'       => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id'          => uniqid(),
+                        'expire_time'           => time() + 3600,
+                        'client_id'             => 'foo',
+                        'redirect_uri'          => 'http://foo/bar',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(3);
@@ -1127,19 +1272,29 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'client_id'  => 'foo',
-            'grant_type' => 'authorization_code',
-            'redirect_uri' => 'http://bar/foo',
-            'code'       => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id'          => uniqid(),
-                    'expire_time'           => time() + 3600,
-                    'client_id'             => 'foo',
-                    'redirect_uri'          => null,
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'client_id'  => 'foo',
+                'grant_type' => 'authorization_code',
+                'redirect_uri' => 'http://bar/foo',
+                'code'       => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id'          => uniqid(),
+                        'expire_time'           => time() + 3600,
+                        'client_id'             => 'foo',
+                        'redirect_uri'          => null,
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(3);
@@ -1172,12 +1327,22 @@ class AuthCodeGrantTest extends TestCase
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'    => 'authorization_code',
-            'client_id'     => 'foo',
-            'client_secret' => 'bar',
-            'redirect_uri'  => self::REDIRECT_URI,
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'client_secret' => 'bar',
+                'redirect_uri'  => self::REDIRECT_URI,
+            ]
+        );
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(3);
@@ -1203,21 +1368,31 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'client_id'        => 'foo',
-                    'refresh_token_id' => 'zyxwvu',
-                    'access_token_id'  => 'abcdef',
-                    'scopes'           => ['foo'],
-                    'user_id'          => 123,
-                    'expire_time'      => time() + 3600,
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'client_id'        => 'foo',
+                        'refresh_token_id' => 'zyxwvu',
+                        'access_token_id'  => 'abcdef',
+                        'scopes'           => ['foo'],
+                        'user_id'          => 123,
+                        'expire_time'      => time() + 3600,
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         try {
             /* @var StubResponseType $response */
@@ -1244,12 +1419,22 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => ['not', 'a', 'string'],
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => ['not', 'a', 'string'],
+            ]
+        );
 
         $this->expectException(OAuthServerException::class);
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -1272,21 +1457,31 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id' => uniqid(),
-                    'expire_time'  => time() - 3600,
-                    'client_id'    => 'foo',
-                    'user_id'      => 123,
-                    'scopes'       => ['foo'],
-                    'redirect_uri' => 'http://foo/bar',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() - 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => 123,
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => 'http://foo/bar',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         try {
             /* @var StubResponseType $response */
@@ -1328,21 +1523,31 @@ class AuthCodeGrantTest extends TestCase
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id' => uniqid(),
-                    'expire_time'  => time() + 3600,
-                    'client_id'    => 'foo',
-                    'user_id'      => 123,
-                    'scopes'       => ['foo'],
-                    'redirect_uri' => 'http://foo/bar',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => 123,
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => 'http://foo/bar',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         try {
             /* @var StubResponseType $response */
@@ -1382,21 +1587,31 @@ class AuthCodeGrantTest extends TestCase
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id' => uniqid(),
-                    'expire_time'  => time() + 3600,
-                    'client_id'    => 'bar',
-                    'user_id'      => 123,
-                    'scopes'       => ['foo'],
-                    'redirect_uri' => 'http://foo/bar',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'bar',
+                        'user_id'      => 123,
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => 'http://foo/bar',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         try {
             /* @var StubResponseType $response */
@@ -1435,12 +1650,22 @@ class AuthCodeGrantTest extends TestCase
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => 'sdfsfsd',
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => 'sdfsfsd',
+            ]
+        );
 
         try {
             /* @var StubResponseType $response */
@@ -1488,24 +1713,34 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'    => 'authorization_code',
-            'client_id'     => 'foo',
-            'redirect_uri'  => self::REDIRECT_URI,
-            'code_verifier' => self::CODE_VERIFIER,
-            'code'          => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id'          => uniqid(),
-                    'expire_time'           => time() + 3600,
-                    'client_id'             => 'foo',
-                    'user_id'               => '123',
-                    'scopes'                => ['foo'],
-                    'redirect_uri'          => self::REDIRECT_URI,
-                    'code_challenge'        => 'foobar',
-                    'code_challenge_method' => 'plain',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
+                'code_verifier' => self::CODE_VERIFIER,
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id'          => uniqid(),
+                        'expire_time'           => time() + 3600,
+                        'client_id'             => 'foo',
+                        'user_id'               => '123',
+                        'scopes'                => ['foo'],
+                        'redirect_uri'          => self::REDIRECT_URI,
+                        'code_challenge'        => 'foobar',
+                        'code_challenge_method' => 'plain',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         try {
             /* @var StubResponseType $response */
@@ -1553,24 +1788,34 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'    => 'authorization_code',
-            'client_id'     => 'foo',
-            'redirect_uri'  => self::REDIRECT_URI,
-            'code_verifier' => 'nope',
-            'code'          => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id'          => uniqid(),
-                    'expire_time'           => time() + 3600,
-                    'client_id'             => 'foo',
-                    'user_id'               => '123',
-                    'scopes'                => ['foo'],
-                    'redirect_uri'          => self::REDIRECT_URI,
-                    'code_challenge'        => 'foobar',
-                    'code_challenge_method' => 'S256',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
+                'code_verifier' => 'nope',
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id'          => uniqid(),
+                        'expire_time'           => time() + 3600,
+                        'client_id'             => 'foo',
+                        'user_id'               => '123',
+                        'scopes'                => ['foo'],
+                        'redirect_uri'          => self::REDIRECT_URI,
+                        'code_challenge'        => 'foobar',
+                        'code_challenge_method' => 'S256',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         try {
             /* @var StubResponseType $response */
@@ -1618,24 +1863,34 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'    => 'authorization_code',
-            'client_id'     => 'foo',
-            'redirect_uri'  => self::REDIRECT_URI,
-            'code_verifier' => 'dqX7C-RbqjHYtytmhGTigKdZCXfxq-+xbsk9_GxUcaE', // Malformed code. Contains `+`.
-            'code'          => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id'          => uniqid(),
-                    'expire_time'           => time() + 3600,
-                    'client_id'             => 'foo',
-                    'user_id'               => '123',
-                    'scopes'                => ['foo'],
-                    'redirect_uri'          => self::REDIRECT_URI,
-                    'code_challenge'        => self::CODE_CHALLENGE,
-                    'code_challenge_method' => 'S256',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
+                'code_verifier' => 'dqX7C-RbqjHYtytmhGTigKdZCXfxq-+xbsk9_GxUcaE', // Malformed code. Contains `+`.
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id'          => uniqid(),
+                        'expire_time'           => time() + 3600,
+                        'client_id'             => 'foo',
+                        'user_id'               => '123',
+                        'scopes'                => ['foo'],
+                        'redirect_uri'          => self::REDIRECT_URI,
+                        'code_challenge'        => self::CODE_CHALLENGE,
+                        'code_challenge_method' => 'S256',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         try {
             /* @var StubResponseType $response */
@@ -1683,24 +1938,34 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'    => 'authorization_code',
-            'client_id'     => 'foo',
-            'redirect_uri'  => self::REDIRECT_URI,
-            'code_verifier' => 'dqX7C-RbqjHY', // Malformed code. Invalid length.
-            'code'          => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id'          => uniqid(),
-                    'expire_time'           => time() + 3600,
-                    'client_id'             => 'foo',
-                    'user_id'               => '123',
-                    'scopes'                => ['foo'],
-                    'redirect_uri'          => self::REDIRECT_URI,
-                    'code_challenge'        => 'R7T1y1HPNFvs1WDCrx4lfoBS6KD2c71pr8OHvULjvv8',
-                    'code_challenge_method' => 'S256',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'redirect_uri'  => self::REDIRECT_URI,
+                'code_verifier' => 'dqX7C-RbqjHY', // Malformed code. Invalid length.
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id'          => uniqid(),
+                        'expire_time'           => time() + 3600,
+                        'client_id'             => 'foo',
+                        'user_id'               => '123',
+                        'scopes'                => ['foo'],
+                        'redirect_uri'          => self::REDIRECT_URI,
+                        'code_challenge'        => 'R7T1y1HPNFvs1WDCrx4lfoBS6KD2c71pr8OHvULjvv8',
+                        'code_challenge_method' => 'S256',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         try {
             /* @var StubResponseType $response */
@@ -1748,23 +2013,33 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id'          => uniqid(),
-                    'expire_time'           => time() + 3600,
-                    'client_id'             => 'foo',
-                    'user_id'               => '123',
-                    'scopes'                => ['foo'],
-                    'redirect_uri'          => self::REDIRECT_URI,
-                    'code_challenge'        => 'foobar',
-                    'code_challenge_method' => 'plain',
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id'          => uniqid(),
+                        'expire_time'           => time() + 3600,
+                        'client_id'             => 'foo',
+                        'user_id'               => '123',
+                        'scopes'                => ['foo'],
+                        'redirect_uri'          => self::REDIRECT_URI,
+                        'code_challenge'        => 'foobar',
+                        'code_challenge_method' => 'plain',
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         try {
             /* @var StubResponseType $response */
@@ -1912,21 +2187,31 @@ class AuthCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id' => uniqid(),
-                    'expire_time'  => time() + 3600,
-                    'client_id'    => 'foo',
-                    'user_id'      => '123',
-                    'scopes'       => ['foo'],
-                    'redirect_uri' => self::REDIRECT_URI,
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => '123',
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => self::REDIRECT_URI,
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         /** @var StubResponseType $response */
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
@@ -1967,21 +2252,31 @@ class AuthCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id' => uniqid(),
-                    'expire_time'  => time() + 3600,
-                    'client_id'    => 'foo',
-                    'user_id'      => '123',
-                    'scopes'       => ['foo'],
-                    'redirect_uri' => self::REDIRECT_URI,
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => '123',
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => self::REDIRECT_URI,
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(7);
@@ -2025,21 +2320,31 @@ class AuthCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => $this->cryptStub->doEncrypt(
-                json_encode([
-                    'auth_code_id' => uniqid(),
-                    'expire_time'  => time() + 3600,
-                    'client_id'    => 'foo',
-                    'user_id'      => '123',
-                    'scopes'       => ['foo'],
-                    'redirect_uri' => self::REDIRECT_URI,
-                ], JSON_THROW_ON_ERROR)
-            ),
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => '123',
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => self::REDIRECT_URI,
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
 
         $this->expectException(UniqueTokenIdentifierConstraintViolationException::class);
         $this->expectExceptionCode(100);
@@ -2085,7 +2390,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id'     => 'foo',
             'redirect_uri'  => self::REDIRECT_URI,
@@ -2119,11 +2424,20 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
-            'response_type' => 'code',
-            'client_id' => 'foo',
-            'redirect_uri' => 'http://bar/foo',
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            [],
+            [],
+            [
+                'response_type' => 'code',
+                'client_id' => 'foo',
+                'redirect_uri' => 'http://bar/foo',
+            ]
+        );
 
         // At this point I need to validate the auth request
         try {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LeagueTests\Grant;
 
 use DateInterval;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
@@ -22,7 +23,6 @@ use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use LogicException;
-use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -49,7 +49,7 @@ class ImplicitGrantTest extends TestCase
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
         self::assertFalse(
-            $grant->canRespondToAccessTokenRequest(new ServerRequest('', ''))
+            $grant->canRespondToAccessTokenRequest(new ServerRequest())
         );
     }
 
@@ -60,7 +60,7 @@ class ImplicitGrantTest extends TestCase
         $this->expectException(LogicException::class);
 
         $grant->respondToAccessTokenRequest(
-            new ServerRequest('', ''),
+            new ServerRequest(),
             new StubResponseType(),
             new DateInterval('PT10M')
         );
@@ -70,7 +70,7 @@ class ImplicitGrantTest extends TestCase
     {
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'token',
             'client_id'     => 'foo',
         ]);
@@ -94,7 +94,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'token',
             'client_id'     => 'foo',
             'redirect_uri'  => self::REDIRECT_URI,
@@ -119,7 +119,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'token',
             'client_id' => 'foo',
             'redirect_uri' => self::REDIRECT_URI,
@@ -135,7 +135,7 @@ class ImplicitGrantTest extends TestCase
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = (new ServerRequest('', ''))->withQueryParams(['response_type' => 'token']);
+        $request = (new ServerRequest())->withQueryParams(['response_type' => 'token']);
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(3);
@@ -151,7 +151,7 @@ class ImplicitGrantTest extends TestCase
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'token',
             'client_id'     => 'foo',
         ]);
@@ -172,7 +172,7 @@ class ImplicitGrantTest extends TestCase
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'token',
             'client_id' => 'foo',
             'redirect_uri' => 'http://bar',
@@ -194,7 +194,7 @@ class ImplicitGrantTest extends TestCase
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'token',
             'client_id'     => 'foo',
             'redirect_uri'  => 'http://bar',
@@ -223,7 +223,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'token',
             'client_id' => 'foo',
             'redirect_uri' => self::REDIRECT_URI,

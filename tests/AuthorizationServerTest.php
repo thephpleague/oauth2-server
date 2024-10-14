@@ -6,6 +6,9 @@ namespace LeagueTests;
 
 use DateInterval;
 use Defuse\Crypto\Key;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -25,8 +28,6 @@ use LeagueTests\Stubs\GrantType;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
-use Nyholm\Psr7\Response;
-use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
@@ -80,7 +81,7 @@ class AuthorizationServerTest extends TestCase
         $server->enableGrantType(new ClientCredentialsGrant(), new DateInterval('PT1M'));
 
         try {
-            $server->respondToAccessTokenRequest(new ServerRequest('', ''), new Response());
+            $server->respondToAccessTokenRequest(ServerRequestFactory::fromGlobals(), new Response());
         } catch (OAuthServerException $e) {
             self::assertEquals('unsupported_grant_type', $e->getErrorType());
             self::assertEquals(400, $e->getHttpStatusCode());
@@ -118,13 +119,10 @@ class AuthorizationServerTest extends TestCase
         $server->setDefaultScope(self::DEFAULT_SCOPE);
         $server->enableGrantType(new ClientCredentialsGrant(), new DateInterval('PT1M'));
 
-        $request = (new ServerRequest('', ''))->withParsedBody([
-            'grant_type' => 'client_credentials',
-            'client_id' => 'foo',
-            'client_secret' => 'bar',
-        ]);
-
-        $response = $server->respondToAccessTokenRequest($request, new Response());
+        $_POST['grant_type'] = 'client_credentials';
+        $_POST['client_id'] = 'foo';
+        $_POST['client_secret'] = 'bar';
+        $response = $server->respondToAccessTokenRequest(ServerRequestFactory::fromGlobals(), new Response());
         self::assertEquals(200, $response->getStatusCode());
     }
 
@@ -302,10 +300,19 @@ class AuthorizationServerTest extends TestCase
         $server->setDefaultScope(self::DEFAULT_SCOPE);
         $server->enableGrantType($grant);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
-            'response_type' => 'code',
-            'client_id'     => 'foo',
-        ]);
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            null,
+            'php://input',
+            $headers = [],
+            $cookies = [],
+            $queryParams = [
+                'response_type' => 'code',
+                'client_id'     => 'foo',
+            ]
+        );
 
         self::assertInstanceOf(AuthorizationRequest::class, $server->validateAuthorizationRequest($request));
     }
@@ -320,7 +327,7 @@ class AuthorizationServerTest extends TestCase
             'file://' . __DIR__ . '/Stubs/public.key'
         );
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id' => 'foo',
         ]);

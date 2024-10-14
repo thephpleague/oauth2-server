@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LeagueTests\Grant;
 
 use DateInterval;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
@@ -23,7 +24,6 @@ use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LogicException;
-use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -37,7 +37,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withHeader('Authorization', 'Basic ' . base64_encode('Open:Sesame'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . base64_encode('Open:Sesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -50,7 +50,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withHeader('Authorization', 'Basic ' . base64_encode('Open:'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . base64_encode('Open:'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -63,7 +63,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withHeader('Authorization', 'Foo ' . base64_encode('Open:Sesame'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Foo ' . base64_encode('Open:Sesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -76,7 +76,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withHeader('Authorization', 'bAsIc ' . base64_encode('Open:Sesame'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'bAsIc ' . base64_encode('Open:Sesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -89,7 +89,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withHeader('Authorization', 'Basic ||');
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ||');
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -102,7 +102,7 @@ class AbstractGrantTest extends TestCase
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withHeader('Authorization', 'Basic ' . base64_encode('OpenSesame'));
+        $serverRequest = (new ServerRequest())->withHeader('Authorization', 'Basic ' . base64_encode('OpenSesame'));
         $basicAuthMethod = $abstractGrantReflection->getMethod('getBasicAuthCredentials');
         $basicAuthMethod->setAccessible(true);
 
@@ -119,10 +119,20 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withQueryParams([
-            'client_id'     => 'client_id',
-            'client_secret' => ['not', 'a', 'string'],
-        ]);
+        $serverRequest = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'client_id'     => 'client_id',
+                'client_secret' => ['not', 'a', 'string'],
+            ]
+        );
         $getClientCredentialsMethod = $abstractGrantReflection->getMethod('getClientCredentials');
         $getClientCredentialsMethod->setAccessible(true);
 
@@ -147,7 +157,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id' => 'foo',
         ]);
 
@@ -174,7 +184,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
             'redirect_uri'  => 'http://foo/bar',
@@ -199,7 +209,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = new ServerRequest('', '');
+        $serverRequest = new ServerRequest();
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
         $validateClientMethod->setAccessible(true);
 
@@ -219,7 +229,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id' => 'foo',
         ]);
 
@@ -242,7 +252,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'foo',
         ]);
@@ -268,7 +278,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'    => 'foo',
             'redirect_uri' => 'http://bar/foo',
         ]);
@@ -294,7 +304,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'    => 'foo',
             'redirect_uri' => 'http://bar/foo',
         ]);
@@ -320,7 +330,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'    => 'foo',
             'redirect_uri' => ['not', 'a', 'string'],
         ]);
@@ -344,7 +354,7 @@ class AbstractGrantTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
-        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
         ]);
@@ -363,7 +373,7 @@ class AbstractGrantTest extends TestCase
         $grantMock->method('getIdentifier')->willReturn('foobar');
         $grantMock->setDefaultScope('defaultScope');
 
-        $serverRequest = (new ServerRequest('', ''))->withParsedBody([
+        $serverRequest = (new ServerRequest())->withParsedBody([
             'grant_type' => 'foobar',
         ]);
 
@@ -480,7 +490,7 @@ class AbstractGrantTest extends TestCase
         $method = $abstractGrantReflection->getMethod('getCookieParameter');
         $method->setAccessible(true);
 
-        $serverRequest = (new ServerRequest('', ''))->withCookieParams([
+        $serverRequest = (new ServerRequest())->withCookieParams([
             'foo' => 'bar',
         ]);
 
@@ -497,7 +507,7 @@ class AbstractGrantTest extends TestCase
         $method = $abstractGrantReflection->getMethod('getQueryStringParameter');
         $method->setAccessible(true);
 
-        $serverRequest = (new ServerRequest('', ''))->withQueryParams([
+        $serverRequest = (new ServerRequest())->withQueryParams([
             'foo' => 'bar',
         ]);
 
@@ -546,7 +556,7 @@ class AbstractGrantTest extends TestCase
     public function testCanRespondToAuthorizationRequest(): void
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        self::assertFalse($grantMock->canRespondToAuthorizationRequest(new ServerRequest('', '')));
+        self::assertFalse($grantMock->canRespondToAuthorizationRequest(new ServerRequest()));
     }
 
     public function testValidateAuthorizationRequest(): void
@@ -555,7 +565,7 @@ class AbstractGrantTest extends TestCase
 
         $this->expectException(LogicException::class);
 
-        $grantMock->validateAuthorizationRequest(new ServerRequest('', ''));
+        $grantMock->validateAuthorizationRequest(new ServerRequest());
     }
 
     public function testCompleteAuthorizationRequest(): void

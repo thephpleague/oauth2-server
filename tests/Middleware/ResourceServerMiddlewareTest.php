@@ -6,14 +6,14 @@ namespace LeagueTests\Middleware;
 
 use DateInterval;
 use DateTimeImmutable;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
-use Nyholm\Psr7\Response;
-use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
 use function func_get_args;
@@ -40,7 +40,7 @@ class ResourceServerMiddlewareTest extends TestCase
 
         $token = $accessToken->toString();
 
-        $request = (new ServerRequest('', ''))->withHeader('authorization', sprintf('Bearer %s', $token));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $token));
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
@@ -75,7 +75,7 @@ class ResourceServerMiddlewareTest extends TestCase
 
         $token = $accessToken->toString();
 
-        $request = (new ServerRequest('', ''))->withHeader('authorization', sprintf('Bearer %s', $token));
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $token));
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(
@@ -98,7 +98,7 @@ class ResourceServerMiddlewareTest extends TestCase
             'file://' . __DIR__ . '/../Stubs/public.key'
         );
 
-        $request = (new ServerRequest('', ''))->withHeader('authorization', '');
+        $request = (new ServerRequest())->withHeader('authorization', '');
 
         $middleware = new ResourceServerMiddleware($server);
         $response = $middleware->__invoke(

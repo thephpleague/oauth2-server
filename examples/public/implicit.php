@@ -10,6 +10,7 @@
 
 declare(strict_types=1);
 
+use Laminas\Diactoros\Stream;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ImplicitGrant;
@@ -72,7 +73,8 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
     } catch (Exception $exception) {
-        $body = Stream::create($exception->getMessage());
+        $body = new Stream('php://temp', 'r+');
+        $body->write($exception->getMessage());
 
         return $response->withStatus(500)->withBody($body);
     }

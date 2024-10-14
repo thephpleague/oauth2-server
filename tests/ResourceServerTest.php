@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace LeagueTests;
 
+use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
-use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
 class ResourceServerTest extends TestCase
@@ -20,7 +20,7 @@ class ResourceServerTest extends TestCase
         );
 
         try {
-            $server->validateAuthenticatedRequest(new ServerRequest('', ''));
+            $server->validateAuthenticatedRequest(ServerRequestFactory::fromGlobals());
         } catch (OAuthServerException $e) {
             self::assertEquals('Missing "Authorization" header', $e->getHint());
         }
