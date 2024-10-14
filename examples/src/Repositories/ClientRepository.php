@@ -59,7 +59,10 @@ class ClientRepository implements ClientRepositoryInterface
             return false;
         }
 
-        if (password_verify($clientSecret, $clients[$clientIdentifier]['secret']) === false) {
+        if (
+            $clients[$clientIdentifier]['is_confidential'] === true
+            && password_verify($clientSecret, $clients[$clientIdentifier]['secret']) === false
+        ) {
             return false;
         }
 

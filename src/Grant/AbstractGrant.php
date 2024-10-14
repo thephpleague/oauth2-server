@@ -189,6 +189,10 @@ abstract class AbstractGrant implements GrantTypeInterface
             throw OAuthServerException::invalidClient($request);
         }
 
+        if (!$client->hasGrantType($this->getIdentifier())) {
+            throw OAuthServerException::unauthorizedClient();
+        }
+
         return $client;
     }
 
@@ -486,7 +490,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     {
         $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
 
-        if ($refreshToken === null) {
+        if ($refreshToken === null || !$accessToken->getClient()->hasGrantType('refresh_token')) {
             return null;
         }
 

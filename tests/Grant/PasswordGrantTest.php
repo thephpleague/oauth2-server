@@ -46,7 +46,9 @@ class PasswordGrantTest extends TestCase
         $clientRepositoryMock->method('validateClient')->willReturn(true);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessToken = new AccessTokenEntity();
+        $accessToken->setClient($client);
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $userRepositoryMock = $this->getMockBuilder(UserRepositoryInterface::class)->getMock();
