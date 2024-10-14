@@ -594,10 +594,10 @@ class RefreshTokenGrantTest extends TestCase
         );
 
         $serverRequest = (new ServerRequest())->withParsedBody([
-           'client_id'     => 'foo',
-           'client_secret' => 'bar',
-           'refresh_token' => $encryptedOldRefreshToken,
-           'scope'         =>  'foo bar',
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $encryptedOldRefreshToken,
+            'scope'         =>  'foo bar',
         ]);
 
         $responseType = new StubResponseType();
@@ -694,7 +694,7 @@ class RefreshTokenGrantTest extends TestCase
         $accessTokenEntity->setClient($client);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessTokenEntity);
         $accessTokenRepositoryMock->expects(self::once())->method('persistNewAccessToken')->willReturnSelf();
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
