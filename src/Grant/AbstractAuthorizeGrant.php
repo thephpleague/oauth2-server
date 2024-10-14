@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace League\OAuth2\Server\Grant;
 
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 
@@ -34,5 +35,15 @@ abstract class AbstractAuthorizeGrant extends AbstractGrant
     protected function createAuthorizationRequest(): AuthorizationRequestInterface
     {
         return new AuthorizationRequest();
+    }
+
+    /**
+     * Get the client redirect URI.
+     */
+    protected function getClientRedirectUri(ClientEntityInterface $client): string
+    {
+        return is_array($client->getRedirectUri())
+            ? $client->getRedirectUri()[0]
+            : $client->getRedirectUri();
     }
 }
