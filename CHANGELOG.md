@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Auto-generated event emitter is now persisted. Previously, a new emitter was generated every time (PR #1428)
 - Fixed bug where you could not omit a redirect uri even if one had not been specified during the auth request (PR #1428)
 - Fixed bug where "state" parameter wasn't present on `invalid_scope` error response and wasn't on fragment part of `access_denied` redirect URI on Implicit grant (PR #1298) 
-
+- Fixed bug where disabling refresh token revocation via `revokeRefreshTokens(false)` unintentionally disables issuing new refresh token (PR #1449)
+- 
 ## [9.0.0] - released 2024-05-13
 ### Added
 - Device Authorization Grant added (PR #1074)
