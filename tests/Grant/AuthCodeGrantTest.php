@@ -446,7 +446,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
-        $request = (new ServerRequest('', ''))->withQueryParams([
+        $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'code',
             'client_id' => 'foo',
             'redirect_uri' => self::REDIRECT_URI,
