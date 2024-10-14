@@ -13,12 +13,14 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
+use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
@@ -592,10 +594,10 @@ class RefreshTokenGrantTest extends TestCase
         );
 
         $serverRequest = (new ServerRequest('', ''))->withParsedBody([
-           'client_id'     => 'foo',
-           'client_secret' => 'bar',
-           'refresh_token' => $encryptedOldRefreshToken,
-           'scope'         =>  'foo bar',
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $encryptedOldRefreshToken,
+            'scope'         => 'foo bar',
         ]);
 
         $responseType = new StubResponseType();
@@ -628,7 +630,7 @@ class RefreshTokenGrantTest extends TestCase
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('isRefreshTokenRevoked')
-             ->will(self::onConsecutiveCalls(false, true));
+            ->will(self::onConsecutiveCalls(false, true));
         $refreshTokenRepositoryMock->expects(self::once())->method('revokeRefreshToken')->with(self::equalTo($refreshTokenId));
 
         $oldRefreshToken = json_encode(
@@ -688,11 +690,15 @@ class RefreshTokenGrantTest extends TestCase
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
         $scopeRepositoryMock->method('finalizeScopes')->willReturn([$scopeEntity]);
 
+        $accessTokenEntity = new AccessTokenEntity();
+        $accessTokenEntity->setClient($client);
+
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessTokenEntity);
         $accessTokenRepositoryMock->expects(self::once())->method('persistNewAccessToken')->willReturnSelf();
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
         $refreshTokenRepositoryMock->method('isRefreshTokenRevoked')->willReturn(false);
         $refreshTokenRepositoryMock->expects(self::never())->method('revokeRefreshToken');
 
@@ -722,16 +728,30 @@ class RefreshTokenGrantTest extends TestCase
             'scope'         => 'foo',
         ]);
 
+        $privateKey = new CryptKey('file://' . __DIR__ . '/../Stubs/private.key');
+
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPrivateKey($privateKey);
         $grant->revokeRefreshTokens(false);
 
-        $grant->respondToAccessTokenRequest($serverRequest, new StubResponseType(), new DateInterval('PT5M'));
+        $responseType = new BearerTokenResponse();
+        $responseType->setPrivateKey($privateKey);
+        $responseType->setEncryptionKey($this->cryptStub->getKey());
+
+        $response = $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'))
+            ->generateHttpResponse(new Response());
+
+        $json = json_decode((string) $response->getBody());
 
         self::assertFalse($refreshTokenRepositoryMock->isRefreshTokenRevoked($refreshTokenId));
+        self::assertEquals('Bearer', $json->token_type);
+        self::assertObjectHasProperty('expires_in', $json);
+        self::assertObjectHasProperty('access_token', $json);
+        self::assertObjectHasProperty('refresh_token', $json);
+        self::assertNotSame($json->refresh_token, $encryptedOldRefreshToken);
     }
 }
