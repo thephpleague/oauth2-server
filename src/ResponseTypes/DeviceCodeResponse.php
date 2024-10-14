@@ -25,7 +25,7 @@ class DeviceCodeResponse extends AbstractResponseType
 {
     protected DeviceCodeEntityInterface $deviceCodeEntity;
     private bool $includeVerificationUriComplete = false;
-    private const DEFAULT_INTERVAL = 5;
+    private bool $includeInterval = false;
 
     /**
      * {@inheritdoc}
@@ -45,7 +45,7 @@ class DeviceCodeResponse extends AbstractResponseType
             $responseParams['verification_uri_complete'] = $this->deviceCodeEntity->getVerificationUriComplete();
         }
 
-        if ($this->deviceCodeEntity->getInterval() !== self::DEFAULT_INTERVAL) {
+        if ($this->includeInterval === true) {
             $responseParams['interval'] = $this->deviceCodeEntity->getInterval();
         }
 
@@ -77,6 +77,11 @@ class DeviceCodeResponse extends AbstractResponseType
     public function includeVerificationUriComplete(): void
     {
         $this->includeVerificationUriComplete = true;
+    }
+
+    public function includeInterval(): void
+    {
+        $this->includeInterval = true;
     }
 
     /**

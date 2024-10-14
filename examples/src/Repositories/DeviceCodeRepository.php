@@ -39,7 +39,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getDeviceCodeEntityByDeviceCode($deviceCode): ?DeviceCodeEntityInterface
+    public function getDeviceCodeEntityByDeviceCode(string $deviceCode): ?DeviceCodeEntityInterface
     {
         $clientEntity = new ClientEntity();
         $clientEntity->setIdentifier('myawesomeapp');
