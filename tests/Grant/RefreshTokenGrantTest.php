@@ -594,10 +594,10 @@ class RefreshTokenGrantTest extends TestCase
         );
 
         $serverRequest = (new ServerRequest())->withParsedBody([
-           'client_id'     => 'foo',
-           'client_secret' => 'bar',
-           'refresh_token' => $encryptedOldRefreshToken,
-           'scope'         =>  'foo bar',
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $encryptedOldRefreshToken,
+            'scope'         =>  'foo bar',
         ]);
 
         $responseType = new StubResponseType();
@@ -630,7 +630,7 @@ class RefreshTokenGrantTest extends TestCase
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('isRefreshTokenRevoked')
-             ->will(self::onConsecutiveCalls(false, true));
+            ->will(self::onConsecutiveCalls(false, true));
         $refreshTokenRepositoryMock->expects(self::once())->method('revokeRefreshToken')->with(self::equalTo($refreshTokenId));
 
         $oldRefreshToken = json_encode(
@@ -728,12 +728,14 @@ class RefreshTokenGrantTest extends TestCase
             'scope'         => 'foo',
         ]);
 
+        $privateKey = new CryptKey('file://' . __DIR__ . '/../Stubs/private.key');
+
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
-        $grant->setPrivateKey($privateKey = new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $grant->setPrivateKey($privateKey);
         $grant->revokeRefreshTokens(false);
 
         $responseType = new BearerTokenResponse();
@@ -750,5 +752,6 @@ class RefreshTokenGrantTest extends TestCase
         self::assertObjectHasProperty('expires_in', $json);
         self::assertObjectHasProperty('access_token', $json);
         self::assertObjectHasProperty('refresh_token', $json);
+        self::assertNotSame($json->refresh_token, $encryptedOldRefreshToken);
     }
 }
