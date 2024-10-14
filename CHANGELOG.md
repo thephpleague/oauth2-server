@@ -5,10 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Fixed bug on setting interval visibility of device authorization grant (PR #1410)
+
+## [9.0.1] - released 2024-10-14
 ### Fixed
 - Auto-generated event emitter is now persisted. Previously, a new emitter was generated every time (PR #1428)
 - Fixed bug where you could not omit a redirect uri even if one had not been specified during the auth request (PR #1428)
-- Fixed bug on setting interval visibility of device authorization grant (PR #1410)
+- Fixed bug where "state" parameter wasn't present on `invalid_scope` error response and wasn't on fragment part of `access_denied` redirect URI on Implicit grant (PR #1298) 
+- Fixed bug where disabling refresh token revocation via `revokeRefreshTokens(false)` unintentionally disables issuing new refresh token (PR #1449)
 
 ## [9.0.0] - released 2024-05-13
 ### Added
@@ -652,7 +656,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/9.0.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/9.0.1...HEAD
+[9.0.1]: https://github.com/thephpleague/oauth2-server/compare/9.0.0...9.0.1
 [9.0.0]: https://github.com/thephpleague/oauth2-server/compare/9.0.0-RC1...9.0.0
 [9.0.0-RC1]: https://github.com/thephpleague/oauth2-server/compare/8.5.4...9.0.0-RC1
 [8.5.4]: https://github.com/thephpleague/oauth2-server/compare/8.5.3...8.5.4
