@@ -347,7 +347,9 @@ class DeviceCodeGrantTest extends TestCase
         $clientRepositoryMock->method('validateClient')->willReturn(true);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
+        $accessToken = new AccessTokenEntity();
+        $accessToken->setClient($client);
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();

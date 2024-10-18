@@ -398,6 +398,7 @@ class AbstractGrantTest extends TestCase
         $issueRefreshTokenMethod->setAccessible(true);
 
         $accessToken = new AccessTokenEntity();
+        $accessToken->setClient(new ClientEntity());
 
         /** @var RefreshTokenEntityInterface $refreshToken */
         $refreshToken = $issueRefreshTokenMethod->invoke($grantMock, $accessToken);
@@ -423,6 +424,7 @@ class AbstractGrantTest extends TestCase
         $issueRefreshTokenMethod->setAccessible(true);
 
         $accessToken = new AccessTokenEntity();
+        $accessToken->setClient(new ClientEntity());
         self::assertNull($issueRefreshTokenMethod->invoke($grantMock, $accessToken));
     }
 
