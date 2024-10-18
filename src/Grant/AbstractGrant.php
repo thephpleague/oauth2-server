@@ -151,12 +151,13 @@ abstract class AbstractGrant implements GrantTypeInterface
     {
         [$clientId, $clientSecret] = $this->getClientCredentials($request);
 
-        if ($this->clientRepository->validateClient($clientId, $clientSecret, $this->getIdentifier()) === false) {
+        $client = $this->getClientEntityOrFail($clientId, $request);
+
+        if ($client->isConfidential() && $this->clientRepository->validateClient($clientId, $clientSecret, $this->getIdentifier()) === false) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
 
             throw OAuthServerException::invalidClient($request);
         }
-        $client = $this->getClientEntityOrFail($clientId, $request);
 
         // If a redirect URI is provided ensure it matches what is pre-registered
         $redirectUri = $this->getRequestParameter('redirect_uri', $request);
@@ -488,9 +489,13 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function issueRefreshToken(AccessTokenEntityInterface $accessToken): ?RefreshTokenEntityInterface
     {
+        if (!$accessToken->getClient()->hasGrantType('refresh_token')) {
+            return null;
+        }
+
         $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
 
-        if ($refreshToken === null || !$accessToken->getClient()->hasGrantType('refresh_token')) {
+        if ($refreshToken === null) {
             return null;
         }
 
