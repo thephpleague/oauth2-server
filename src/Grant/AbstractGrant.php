@@ -496,7 +496,7 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         $refreshToken = $this->refreshTokenRepository->getNewRefreshToken();
 
-        if ($refreshToken === null || !$accessToken->getClient()->hasGrantType('refresh_token')) {
+        if ($refreshToken === null) {
             return null;
         }
 
