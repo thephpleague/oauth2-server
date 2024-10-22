@@ -143,10 +143,16 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         $client = $this->getClientEntityOrFail($clientId, $request);
 
-        if ($client->isConfidential() && $this->clientRepository->validateClient($clientId, $clientSecret, $this->getIdentifier()) === false) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+        if ($client->isConfidential()) {
+            if ($clientSecret === '') {
+                throw OAuthServerException::invalidRequest('client_secret');
+            }
 
-            throw OAuthServerException::invalidClient($request);
+            if ($this->clientRepository->validateClient($clientId, $clientSecret, $this->getIdentifier()) === false) {
+                $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
+
+                throw OAuthServerException::invalidClient($request);
+            }
         }
 
         // If a redirect URI is provided ensure it matches what is pre-registered

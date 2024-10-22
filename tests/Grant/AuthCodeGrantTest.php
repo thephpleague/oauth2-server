@@ -657,6 +657,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri' => self::REDIRECT_URI,
                 'code'         => $ace->getIdentifier()
             ]
@@ -1027,6 +1028,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $ace->getIdentifier()
@@ -1107,6 +1109,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $ace->getIdentifier()
@@ -1623,6 +1626,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri' => self::REDIRECT_URI,
                 'code'         => $ace->getIdentifier()
             ]
@@ -1708,6 +1712,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri' => self::REDIRECT_URI,
                 'code'         => $ace->getIdentifier()
             ]
@@ -1765,6 +1770,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri' => self::REDIRECT_URI,
                 'code'         => 'badCode',
             ]
@@ -1785,7 +1791,6 @@ class AuthCodeGrantTest extends TestCase
 
         $client->setIdentifier('foo');
         $client->setRedirectUri(self::REDIRECT_URI);
-        $client->setConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -1865,7 +1870,6 @@ class AuthCodeGrantTest extends TestCase
 
         $client->setIdentifier('foo');
         $client->setRedirectUri(self::REDIRECT_URI);
-        $client->setConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -1945,7 +1949,6 @@ class AuthCodeGrantTest extends TestCase
 
         $client->setIdentifier('foo');
         $client->setRedirectUri(self::REDIRECT_URI);
-        $client->setConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -2025,7 +2028,6 @@ class AuthCodeGrantTest extends TestCase
 
         $client->setIdentifier('foo');
         $client->setRedirectUri(self::REDIRECT_URI);
-        $client->setConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -2105,7 +2107,6 @@ class AuthCodeGrantTest extends TestCase
 
         $client->setIdentifier('foo');
         $client->setRedirectUri(self::REDIRECT_URI);
-        $client->setConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
