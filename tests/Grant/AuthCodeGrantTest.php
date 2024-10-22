@@ -649,6 +649,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri' => self::REDIRECT_URI,
                 'code'         => $this->cryptStub->doEncrypt(
                     json_encode([
@@ -722,6 +723,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
+                'client_secret' => 'bar',
                 'code'         => $this->cryptStub->doEncrypt(
                     json_encode([
                         'auth_code_id' => uniqid(),
@@ -997,6 +999,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
@@ -1073,6 +1076,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'    => 'authorization_code',
                 'client_id'     => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
                 'code'          => $this->cryptStub->doEncrypt(
@@ -1556,6 +1560,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri' => self::REDIRECT_URI,
                 'code'         => $this->cryptStub->doEncrypt(
                     json_encode([
@@ -1620,6 +1625,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri' => self::REDIRECT_URI,
                 'code'         => $this->cryptStub->doEncrypt(
                     json_encode([
@@ -1683,6 +1689,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
+                'client_secret' => 'bar',
                 'redirect_uri' => self::REDIRECT_URI,
                 'code'         => 'sdfsfsd',
             ]
@@ -1702,7 +1709,6 @@ class AuthCodeGrantTest extends TestCase
 
         $client->setIdentifier('foo');
         $client->setRedirectUri(self::REDIRECT_URI);
-        $client->setConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -1777,7 +1783,6 @@ class AuthCodeGrantTest extends TestCase
 
         $client->setIdentifier('foo');
         $client->setRedirectUri(self::REDIRECT_URI);
-        $client->setConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -1852,7 +1857,6 @@ class AuthCodeGrantTest extends TestCase
 
         $client->setIdentifier('foo');
         $client->setRedirectUri(self::REDIRECT_URI);
-        $client->setConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -1927,7 +1931,6 @@ class AuthCodeGrantTest extends TestCase
 
         $client->setIdentifier('foo');
         $client->setRedirectUri(self::REDIRECT_URI);
-        $client->setConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
@@ -2002,7 +2005,6 @@ class AuthCodeGrantTest extends TestCase
 
         $client->setIdentifier('foo');
         $client->setRedirectUri(self::REDIRECT_URI);
-        $client->setConfidential();
 
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
 
