@@ -27,7 +27,7 @@ use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\ClaimExtractor;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\ClaimSetEntryInterface;
+use League\OAuth2\Server\Entities\ClaimSetInterface;
 use League\OAuth2\Server\EventEmitting\EventEmitter;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -320,9 +320,9 @@ class BearerResponseTypeTest extends TestCase
     public function testGenerateHttpResponseWithIdToken(): void
     {
         $claimSetRepository = new class () implements ClaimSetRepositoryInterface {
-            public function getClaimSetEntry(AccessTokenEntityInterface $accessToken): ClaimSetEntryInterface
+            public function getClaimSet(AccessTokenEntityInterface $accessToken): ClaimSetInterface
             {
-                $claimSet = new class () implements ClaimSetEntryInterface {
+                $claimSet = new class() implements ClaimSetInterface {
                     public string $scope = 'openid';
 
                     /**

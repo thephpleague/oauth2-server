@@ -9,7 +9,7 @@ use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\ClaimExtractor;
 use League\OAuth2\Server\ClaimExtractorInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\ClaimSetEntryInterface;
+use League\OAuth2\Server\Entities\ClaimSetInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\EventEmitting\EmitterAwarePolyfill;
 use League\OAuth2\Server\EventEmitting\EventEmitter;
@@ -76,11 +76,11 @@ class IdTokenResponse extends BearerTokenResponse
             return [];
         }
 
-        $claimSet = $this->claimRepository->getClaimSetEntry($accessToken);
+        $claimSet = $this->claimRepository->getClaimSet($accessToken);
 
         $builder = $this->idTokenRepository->getBuilder($accessToken);
 
-        if ($claimSet instanceof ClaimSetEntryInterface) {
+        if ($claimSet instanceof ClaimSetInterface) {
             foreach ($this->extractor->extract($accessToken->getScopes(), $claimSet->getClaims()) as $claimName => $claimValue) {
                 $builder = $builder->withClaim($claimName, $claimValue);
             }
