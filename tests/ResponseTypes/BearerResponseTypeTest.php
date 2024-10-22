@@ -319,7 +319,7 @@ class BearerResponseTypeTest extends TestCase
 
     public function testGenerateHttpResponseWithIdToken(): void
     {
-        $claimSetRepository = new class () implements ClaimSetRepositoryInterface {
+        $claimSetRepository = new class() implements ClaimSetRepositoryInterface {
             public function getClaimSet(AccessTokenEntityInterface $accessToken): ClaimSetInterface
             {
                 $claimSet = new class () implements ClaimSetInterface {

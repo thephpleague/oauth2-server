@@ -28,11 +28,11 @@ use function sprintf;
 class ClaimExtractor implements ClaimExtractorInterface
 {
     /**
-     * claimSets
+     * claimSetEntries
      *
      * @var ClaimSetEntryInterface[]
      */
-    protected array $claimSets = [];
+    protected array $claimSetEntries = [];
 
     /**
      * Protected claims
@@ -44,13 +44,13 @@ class ClaimExtractor implements ClaimExtractorInterface
     /**
      * ClaimExtractor constructor
      *
-     * @param ClaimSetEntryInterface[] $claimSets
+     * @param array<int, ClaimSetEntryInterface> $claimSetEntries
      */
-    public function __construct(array $claimSets = [])
+    public function __construct(array $claimSetEntries = [])
     {
-        $this->claimSets = self::getDefaultClaimSetEnties();
-        foreach ($claimSets as $claimSet) {
-            $this->addClaimSet($claimSet);
+        $this->claimSetEntries = self::getDefaultClaimSetEnties();
+        foreach ($claimSetEntries as $claimSetEntry) {
+            $this->addClaimSetEntry($claimSetEntry);
         }
     }
 
@@ -59,24 +59,24 @@ class ClaimExtractor implements ClaimExtractorInterface
      *
      * @throws \InvalidArgumentException
      */
-    public function addClaimSet(ClaimSetEntryInterface $claimSetEntry): ClaimExtractor
+    public function addClaimSetEntry(ClaimSetEntryInterface $claimSetEntry): ClaimExtractor
     {
-        if (in_array($claimSetEntry->getScope(), $this->protectedClaims) && !$this->getClaimSet($claimSetEntry->getScope())) {
+        if (in_array($claimSetEntry->getScope(), $this->protectedClaims) && !$this->getClaimSetEntry($claimSetEntry->getScope())) {
             throw new InvalidArgumentException(
                 sprintf('%s is a protected scope and is pre-defined by the OpenID Connect specification.', $claimSetEntry->getScope())
             );
         }
 
-        $this->claimSets[] = $claimSetEntry;
+        $this->claimSetEntries[] = $claimSetEntry;
 
         return $this;
     }
 
-    public function getClaimSet(string $scope): ?ClaimSetEntryInterface
+    public function getClaimSetEntry(string $scope): ?ClaimSetEntryInterface
     {
-        foreach ($this->claimSets as $set) {
-            if ($set->getScope() === $scope) {
-                return $set;
+        foreach ($this->claimSetEntries as $entry) {
+            if ($entry->getScope() === $scope) {
+                return $entry;
             }
         }
 
@@ -84,13 +84,13 @@ class ClaimExtractor implements ClaimExtractorInterface
     }
 
     /**
-     * Get claimSets
+     * Get claimSetEntries
      *
-     * @return ClaimSetInterface[]
+     * @return array<ClaimSetInterface>
      */
-    public function getClaimSets(): array
+    public function getClaimSetEntries(): array
     {
-        return $this->claimSets;
+        return $this->claimSetEntries;
     }
 
     /**
@@ -104,7 +104,7 @@ class ClaimExtractor implements ClaimExtractorInterface
         foreach ($scopes as $scope) {
             $scopeName = ($scope instanceof ScopeEntityInterface) ? $scope->getIdentifier() : $scope;
 
-            $claimSet = $this->getClaimSet($scopeName);
+            $claimSet = $this->getClaimSetEntry($scopeName);
             if (null === $claimSet) {
                 continue;
             }
