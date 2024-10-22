@@ -322,7 +322,7 @@ class BearerResponseTypeTest extends TestCase
         $claimSetRepository = new class () implements ClaimSetRepositoryInterface {
             public function getClaimSet(AccessTokenEntityInterface $accessToken): ClaimSetInterface
             {
-                $claimSet = new class() implements ClaimSetInterface {
+                $claimSet = new class () implements ClaimSetInterface {
                     public string $scope = 'openid';
 
                     /**
