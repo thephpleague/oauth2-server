@@ -16,7 +16,7 @@ interface ClaimSetInterface
     /**
      * Get Claims
      *
-     * @return string[]
+     * @return array<string, string>
      */
     public function getClaims(): array;
 }

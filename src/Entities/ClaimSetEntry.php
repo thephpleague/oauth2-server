@@ -36,7 +36,7 @@ class ClaimSetEntry implements ClaimSetEntryInterface
     /**
      * Get claims
      *
-     * @return string[]
+     * @return array<string, string>
      */
     public function getClaims(): array
     {
