@@ -58,7 +58,7 @@ trait AccessTokenTrait
     /**
      * Configure the JWT builder instance.
      */
-    protected function withBuilder(Builder $builder): Builder
+    protected function withJwtBuilder(Builder $builder): Builder
     {
         return $builder;
     }
@@ -70,7 +70,7 @@ trait AccessTokenTrait
     {
         $this->initJwtConfiguration();
 
-        return $this->withBuilder($this->jwtConfiguration->builder()
+        return $this->withJwtBuilder($this->jwtConfiguration->builder()
             ->permittedFor($this->getClient()->getIdentifier())
             ->identifiedBy($this->getIdentifier())
             ->issuedAt(new DateTimeImmutable())

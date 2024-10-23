@@ -19,7 +19,6 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Exception;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
@@ -85,9 +84,9 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     }
 
     /**
-     * Configure the request instance.
+     * Configure the validated authorization request instance.
      */
-    protected function withRequest(ServerRequestInterface $request, Plain $token): ServerRequestInterface
+    protected function withValidatedRequest(ServerRequestInterface $request, UnencryptedToken $token): ServerRequestInterface
     {
         return $request;
     }
@@ -135,7 +134,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         }
 
         // Return the request with additional attributes
-        return $this->withRequest($request
+        return $this->withValidatedRequest($request
             ->withAttribute('oauth_access_token_id', $claims->get('jti'))
             ->withAttribute('oauth_client_id', $claims->get('aud')[0])
             ->withAttribute('oauth_user_id', $claims->get('sub'))
