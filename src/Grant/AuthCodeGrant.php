@@ -41,7 +41,6 @@ use function hash_algos;
 use function implode;
 use function in_array;
 use function is_array;
-use function is_string;
 use function json_decode;
 use function json_encode;
 use function preg_match;
@@ -106,9 +105,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $this->validateClient($request);
         }
 
-        $encryptedAuthCode = $this->getRequestParameter('code', $request, null);
+        $encryptedAuthCode = $this->getRequestParameter('code', $request);
 
-        if (!is_string($encryptedAuthCode)) {
+        if ($encryptedAuthCode === null) {
             throw OAuthServerException::invalidRequest('code');
         }
 
@@ -128,7 +127,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code', $e);
         }
 
-        $codeVerifier = $this->getRequestParameter('code_verifier', $request, null);
+        $codeVerifier = $this->getRequestParameter('code_verifier', $request);
 
         // If a code challenge isn't present but a code verifier is, reject the request to block PKCE downgrade attack
         if (!isset($authCodePayload->code_challenge) && $codeVerifier !== null) {
@@ -218,13 +217,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('code', 'Authorization code was not issued to this client');
         }
 
-        // The redirect URI is required in this request
-        $redirectUri = $this->getRequestParameter('redirect_uri', $request, null);
-        if ($authCodePayload->redirect_uri !== '' && $redirectUri === null) {
+        // The redirect URI is required in this request if it was specified
+        // in the authorization request
+        $redirectUri = $this->getRequestParameter('redirect_uri', $request);
+        if ($authCodePayload->redirect_uri !== null && $redirectUri === null) {
             throw OAuthServerException::invalidRequest('redirect_uri');
         }
 
-        if ($authCodePayload->redirect_uri !== $redirectUri) {
+        // If a redirect URI has been provided ensure it matches the stored redirect URI
+        if ($redirectUri !== null && $authCodePayload->redirect_uri !== $redirectUri) {
             throw OAuthServerException::invalidRequest('redirect_uri', 'Invalid redirect URI');
         }
     }
@@ -279,16 +280,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidClient($request);
         }
 
-        $defaultClientRedirectUri = is_array($client->getRedirectUri())
-            ? $client->getRedirectUri()[0]
-            : $client->getRedirectUri();
+        $stateParameter = $this->getQueryStringParameter('state', $request);
 
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            $redirectUri ?? $defaultClientRedirectUri
+            $this->makeRedirectUri(
+                $redirectUri ?? $this->getClientRedirectUri($client),
+                $stateParameter !== null ? ['state' => $stateParameter] : []
+            )
         );
-
-        $stateParameter = $this->getQueryStringParameter('state', $request);
 
         $authorizationRequest = $this->createAuthorizationRequest();
         $authorizationRequest->setGrantTypeId($this->getIdentifier());
@@ -353,7 +353,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         $finalRedirectUri = $authorizationRequest->getRedirectUri()
-                          ?? $this->getClientRedirectUri($authorizationRequest);
+                          ?? $this->getClientRedirectUri($authorizationRequest->getClient());
 
         // The user approved the client, redirect them back with an auth code
         if ($authorizationRequest->isAuthorizationApproved() === true) {
@@ -406,15 +406,5 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 ]
             )
         );
-    }
-
-    /**
-     * Get the client redirect URI if not set in the request.
-     */
-    private function getClientRedirectUri(AuthorizationRequestInterface $authorizationRequest): string
-    {
-        return is_array($authorizationRequest->getClient()->getRedirectUri())
-                ? $authorizationRequest->getClient()->getRedirectUri()[0]
-                : $authorizationRequest->getClient()->getRedirectUri();
     }
 }

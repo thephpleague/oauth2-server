@@ -27,7 +27,6 @@ use function openssl_pkey_get_details;
 use function openssl_pkey_get_private;
 use function openssl_pkey_get_public;
 use function sprintf;
-use function strpos;
 use function trigger_error;
 
 class CryptKey implements CryptKeyInterface
@@ -43,13 +42,13 @@ class CryptKey implements CryptKeyInterface
 
     public function __construct(string $keyPath, protected ?string $passPhrase = null, bool $keyPermissionsCheck = true)
     {
-        if (strpos($keyPath, self::FILE_PREFIX) !== 0 && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
+        if (str_starts_with($keyPath, self::FILE_PREFIX) === false && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
             $this->keyContents = $keyPath;
             $this->keyPath = '';
             // There's no file, so no need for permission check.
             $keyPermissionsCheck = false;
         } elseif (is_file($keyPath)) {
-            if (strpos($keyPath, self::FILE_PREFIX) !== 0) {
+            if (str_starts_with($keyPath, self::FILE_PREFIX) === false) {
                 $keyPath = self::FILE_PREFIX . $keyPath;
             }
 

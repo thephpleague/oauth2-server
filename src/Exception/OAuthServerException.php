@@ -20,8 +20,6 @@ use Throwable;
 use function htmlspecialchars;
 use function http_build_query;
 use function sprintf;
-use function strpos;
-use function strstr;
 
 class OAuthServerException extends Exception
 {
@@ -269,9 +267,9 @@ class OAuthServerException extends Exception
 
         if ($this->redirectUri !== null) {
             if ($useFragment === true) {
-                $this->redirectUri .= (strstr($this->redirectUri, '#') === false) ? '#' : '&';
+                $this->redirectUri .= (str_contains($this->redirectUri, '#') === false) ? '#' : '&';
             } else {
-                $this->redirectUri .= (strstr($this->redirectUri, '?') === false) ? '?' : '&';
+                $this->redirectUri .= (str_contains($this->redirectUri, '?') === false) ? '?' : '&';
             }
 
             return $response->withStatus(302)->withHeader('Location', $this->redirectUri . http_build_query($payload));
@@ -310,7 +308,7 @@ class OAuthServerException extends Exception
         // include the "WWW-Authenticate" response header field
         // matching the authentication scheme used by the client.
         if ($this->errorType === 'invalid_client' && $this->requestHasAuthorizationHeader()) {
-            $authScheme = strpos($this->serverRequest->getHeader('Authorization')[0], 'Bearer') === 0 ? 'Bearer' : 'Basic';
+            $authScheme = str_starts_with($this->serverRequest->getHeader('Authorization')[0], 'Bearer') ? 'Bearer' : 'Basic';
 
             $headers['WWW-Authenticate'] = $authScheme . ' realm="OAuth"';
         }
