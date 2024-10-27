@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Fixed bug where scopes where not set on access token when using device authorization grant (PR #1412)
+- Fixed bug where scopes were not set on access token when using device authorization grant (PR #1412)
 
 ## [9.0.1] - released 2024-10-14
 ### Fixed
