@@ -158,10 +158,14 @@ class DeviceCodeGrant extends AbstractGrant
             $this->deviceCodeRepository->persistDeviceCode($deviceCodeEntity);
 
             if ($shouldSlowDown) {
-                throw OAuthServerException::slowDown($deviceCodeEntity->getInterval());
+                throw OAuthServerException::slowDown(
+                    $this->intervalVisibility ? $deviceCodeEntity->getInterval() : null
+                );
             }
 
-            throw OAuthServerException::authorizationPending($deviceCodeEntity->getInterval());
+            throw OAuthServerException::authorizationPending(
+                $this->intervalVisibility ? $deviceCodeEntity->getInterval() : null
+            );
         }
 
         if ($deviceCodeEntity->getUserApproved() === false) {
