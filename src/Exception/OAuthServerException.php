@@ -24,7 +24,7 @@ use function sprintf;
 class OAuthServerException extends Exception
 {
     /**
-     * @var array<string, string>
+     * @var array<string, string|int>
      */
     private array $payload;
 
@@ -49,7 +49,7 @@ class OAuthServerException extends Exception
     /**
      * Returns the current payload.
      *
-     * @return array<string, string>
+     * @return array<string, string|int>
      */
     public function getPayload(): array
     {
@@ -59,7 +59,7 @@ class OAuthServerException extends Exception
     /**
      * Updates the current payload.
      *
-     * @param array<string, string> $payload
+     * @param array<string, string|int> $payload
      */
     public function setPayload(array $payload): void
     {
