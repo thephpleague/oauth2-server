@@ -49,6 +49,8 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
         $deviceCodeEntity->setIdentifier($deviceCode);
         $deviceCodeEntity->setExpiryDateTime(new DateTimeImmutable('now +1 hour'));
         $deviceCodeEntity->setClient($clientEntity);
+        $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
+        $deviceCodeEntity->setInterval(5);
 
         // The user identifier should be set when the user authenticates on the
         // OAuth server, along with whether they approved the request
