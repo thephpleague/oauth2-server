@@ -215,9 +215,9 @@ class OAuthServerException extends Exception
         return new static($errorMessage, 11, 'expired_token', 400, $hint, null, $previous);
     }
 
-    public static function authorizationPending(string $hint = '', ?Throwable $previous = null): static
+    public static function authorizationPending(?int $interval = null, string $hint = '', ?Throwable $previous = null): static
     {
-        return new static(
+        $exception = new static(
             'The authorization request is still pending as the end user ' .
             'hasn\'t yet completed the user interaction steps. The client ' .
             'SHOULD repeat the Access Token Request to the token endpoint',
@@ -228,6 +228,15 @@ class OAuthServerException extends Exception
             null,
             $previous
         );
+
+        if (!is_null($interval)) {
+            $exception->setPayload([
+                ...$exception->getPayload(),
+                'interval' => $interval,
+            ]);
+        }
+
+        return $exception;
     }
 
     /**
@@ -236,9 +245,9 @@ class OAuthServerException extends Exception
      *
      * @return static
      */
-    public static function slowDown(string $hint = '', ?Throwable $previous = null): static
+    public static function slowDown(?int $interval = null, string $hint = '', ?Throwable $previous = null): static
     {
-        return new static(
+        $exception = new static(
             'The authorization request is still pending and polling should ' .
                 'continue, but the interval MUST be increased ' .
                 'by 5 seconds for this and all subsequent requests.',
@@ -249,6 +258,15 @@ class OAuthServerException extends Exception
             null,
             $previous
         );
+
+        if (!is_null($interval)) {
+            $exception->setPayload([
+                ...$exception->getPayload(),
+                'interval' => $interval,
+            ]);
+        }
+
+        return $exception;
     }
 
     /**
