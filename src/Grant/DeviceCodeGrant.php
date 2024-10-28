@@ -143,24 +143,25 @@ class DeviceCodeGrant extends AbstractGrant
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $deviceCodeEntity = $this->validateDeviceCode($request, $client);
-        $shouldSlowDown = false;
 
-        if ($this->deviceCodePolledTooSoon($deviceCodeEntity) === true) {
-            $deviceCodeEntity->setInterval($deviceCodeEntity->getInterval() + 5);
-
-            $shouldSlowDown = true;
-        }
-
-        $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
-        $this->deviceCodeRepository->persistDeviceCode($deviceCodeEntity);
-
-        if ($shouldSlowDown) {
-            throw OAuthServerException::slowDown();
-        }
-
-        // If device code has no user associated, respond with pending
+        // If device code has no user associated, respond with pending or slow down
         if (is_null($deviceCodeEntity->getUserIdentifier())) {
-            throw OAuthServerException::authorizationPending();
+            $shouldSlowDown = false;
+
+            if ($this->deviceCodePolledTooSoon($deviceCodeEntity) === true) {
+                $deviceCodeEntity->setInterval($deviceCodeEntity->getInterval() + 5);
+
+                $shouldSlowDown = true;
+            }
+
+            $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
+            $this->deviceCodeRepository->persistDeviceCode($deviceCodeEntity);
+
+            if ($shouldSlowDown) {
+                throw OAuthServerException::slowDown($deviceCodeEntity->getInterval());
+            }
+
+            throw OAuthServerException::authorizationPending($deviceCodeEntity->getInterval());
         }
 
         if ($deviceCodeEntity->getUserApproved() === false) {
