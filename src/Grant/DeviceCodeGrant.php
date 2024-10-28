@@ -51,7 +51,7 @@ class DeviceCodeGrant extends AbstractGrant
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         private DateInterval $deviceCodeTTL,
         string $verificationUri,
-        private int $retryInterval = 5
+        private readonly int $defaultInterval = 5
     ) {
         $this->setDeviceCodeRepository($deviceCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
@@ -143,9 +143,20 @@ class DeviceCodeGrant extends AbstractGrant
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $deviceCodeEntity = $this->validateDeviceCode($request, $client);
+        $shouldSlowDown = false;
+
+        if ($this->deviceCodePolledTooSoon($deviceCodeEntity) === true) {
+            $deviceCodeEntity->setInterval($deviceCodeEntity->getInterval() + 5);
+
+            $shouldSlowDown = true;
+        }
 
         $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
         $this->deviceCodeRepository->persistDeviceCode($deviceCodeEntity);
+
+        if ($shouldSlowDown) {
+            throw OAuthServerException::slowDown();
+        }
 
         // If device code has no user associated, respond with pending
         if (is_null($deviceCodeEntity->getUserIdentifier())) {
@@ -210,16 +221,14 @@ class DeviceCodeGrant extends AbstractGrant
             throw OAuthServerException::invalidRequest('device_code', 'Device code was not issued to this client');
         }
 
-        if ($this->deviceCodePolledTooSoon($deviceCodeEntity->getLastPolledAt()) === true) {
-            throw OAuthServerException::slowDown();
-        }
-
         return $deviceCodeEntity;
     }
 
-    private function deviceCodePolledTooSoon(?DateTimeImmutable $lastPoll): bool
+    private function deviceCodePolledTooSoon(DeviceCodeEntityInterface $deviceCodeEntity): bool
     {
-        return $lastPoll !== null && $lastPoll->getTimestamp() + $this->retryInterval > time();
+        $lastPoll = $deviceCodeEntity->getLastPolledAt();
+
+        return $lastPoll !== null && $lastPoll->getTimestamp() + $deviceCodeEntity->getInterval() > time();
     }
 
     /**
@@ -263,7 +272,7 @@ class DeviceCodeGrant extends AbstractGrant
         $deviceCode->setExpiryDateTime((new DateTimeImmutable())->add($deviceCodeTTL));
         $deviceCode->setClient($client);
         $deviceCode->setVerificationUri($verificationUri);
-        $deviceCode->setInterval($this->retryInterval);
+        $deviceCode->setInterval($this->defaultInterval);
 
         foreach ($scopes as $scope) {
             $deviceCode->addScope($scope);
