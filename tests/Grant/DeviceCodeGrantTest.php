@@ -757,7 +757,6 @@ class DeviceCodeGrantTest extends TestCase
 
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setIntervalVisibility(true);
 
