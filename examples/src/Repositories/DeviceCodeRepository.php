@@ -17,7 +17,6 @@ use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use OAuth2ServerExamples\Entities\ClientEntity;
 use OAuth2ServerExamples\Entities\DeviceCodeEntity;
-use OAuth2ServerExamples\Entities\ScopeEntity;
 
 class DeviceCodeRepository implements DeviceCodeRepositoryInterface
 {
@@ -50,14 +49,6 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
         $deviceCodeEntity->setIdentifier($deviceCode);
         $deviceCodeEntity->setExpiryDateTime(new DateTimeImmutable('now +1 hour'));
         $deviceCodeEntity->setClient($clientEntity);
-        $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
-
-        $scopes = [];
-        foreach ($scopes as $scope) {
-            $scopeEntity = new ScopeEntity();
-            $scopeEntity->setIdentifier($scope);
-            $deviceCodeEntity->addScope($scopeEntity);
-        }
 
         // The user identifier should be set when the user authenticates on the
         // OAuth server, along with whether they approved the request

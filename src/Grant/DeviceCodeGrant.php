@@ -28,6 +28,7 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use TypeError;
 
@@ -96,6 +97,7 @@ class DeviceCodeGrant extends AbstractGrant
         );
 
         $response = new DeviceCodeResponse();
+        $response->setEncryptionKey($this->encryptionKey);
 
         if ($this->includeVerificationUriComplete === true) {
             $response->includeVerificationUriComplete();
@@ -177,14 +179,36 @@ class DeviceCodeGrant extends AbstractGrant
      */
     protected function validateDeviceCode(ServerRequestInterface $request, ClientEntityInterface $client): DeviceCodeEntityInterface
     {
-        $deviceCode = $this->getRequestParameter('device_code', $request);
+        $encryptedDeviceCode = $this->getRequestParameter('device_code', $request);
 
-        if (is_null($deviceCode)) {
+        if (is_null($encryptedDeviceCode)) {
             throw OAuthServerException::invalidRequest('device_code');
         }
 
+        try {
+            $deviceCodePayload = json_decode($this->decrypt($encryptedDeviceCode));
+        } catch (LogicException $e) {
+            throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the device code', $e);
+        }
+
+        if (!property_exists($deviceCodePayload, 'device_code_id')) {
+            throw OAuthServerException::invalidRequest('device_code', 'Device code malformed');
+        }
+
+        if (time() > $deviceCodePayload->expire_time) {
+            throw OAuthServerException::expiredToken('device_code');
+        }
+
+        if ($this->deviceCodeRepository->isDeviceCodeRevoked($deviceCodePayload->device_code_id) === true) {
+            throw OAuthServerException::invalidRequest('device_code', 'Device code has been revoked');
+        }
+
+        if ($deviceCodePayload->client_id !== $client->getIdentifier()) {
+            throw OAuthServerException::invalidRequest('device_code', 'Device code was not issued to this client');
+        }
+
         $deviceCodeEntity = $this->deviceCodeRepository->getDeviceCodeEntityByDeviceCode(
-            $deviceCode
+            $deviceCodePayload->device_code_id
         );
 
         if ($deviceCodeEntity instanceof DeviceCodeEntityInterface === false) {
@@ -193,20 +217,18 @@ class DeviceCodeGrant extends AbstractGrant
             throw OAuthServerException::invalidGrant();
         }
 
-        if (time() > $deviceCodeEntity->getExpiryDateTime()->getTimestamp()) {
-            throw OAuthServerException::expiredToken('device_code');
-        }
-
-        if ($this->deviceCodeRepository->isDeviceCodeRevoked($deviceCode) === true) {
-            throw OAuthServerException::invalidRequest('device_code', 'Device code has been revoked');
-        }
-
-        if ($deviceCodeEntity->getClient()->getIdentifier() !== $client->getIdentifier()) {
-            throw OAuthServerException::invalidRequest('device_code', 'Device code was not issued to this client');
-        }
-
         if ($this->deviceCodePolledTooSoon($deviceCodeEntity->getLastPolledAt()) === true) {
             throw OAuthServerException::slowDown();
+        }
+
+        $deviceCodeEntity->setIdentifier($deviceCodePayload->device_code_id);
+        $deviceCodeEntity->setClient($client);
+        $deviceCodeEntity->setExpiryDateTime((new DateTimeImmutable())->setTimestamp($deviceCodePayload->expire_time));
+
+        $scopes = $this->validateScopes($deviceCodePayload->scopes);
+
+        foreach ($scopes as $scope) {
+            $deviceCodeEntity->addScope($scope);
         }
 
         return $deviceCodeEntity;

@@ -10,21 +10,28 @@ use Laminas\Diactoros\Response;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\DeviceCodeEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use PHPUnit\Framework\TestCase;
 
-use function base64_encode;
 use function json_decode;
-use function random_bytes;
+use function json_encode;
 
 class DeviceCodeResponseTypeTest extends TestCase
 {
+    protected CryptTraitStub $cryptStub;
+
+    public function setUp(): void
+    {
+        $this->cryptStub = new CryptTraitStub();
+    }
+
     public function testGenerateHttpResponse(): void
     {
         $responseType = new DeviceCodeResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+        $responseType->setEncryptionKey($this->cryptStub->getKey());
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -53,7 +60,12 @@ class DeviceCodeResponseTypeTest extends TestCase
         $json = json_decode($response->getBody()->getContents());
         $this::assertObjectHasProperty('expires_in', $json);
         $this::assertObjectHasProperty('device_code', $json);
-        $this::assertEquals('abcdef', $json->device_code);
+        $this::assertSame(json_encode([
+            'client_id'             => 'clientName',
+            'device_code_id'        => 'abcdef',
+            'scopes'                => ['basic'],
+            'expire_time'           => $deviceCode->getExpiryDateTime()->getTimestamp(),
+        ]), $this->cryptStub->doDecrypt($json->device_code));
         $this::assertObjectHasProperty('verification_uri', $json);
         $this::assertObjectHasProperty('user_code', $json);
     }
