@@ -165,13 +165,6 @@ abstract class AbstractGrant implements GrantTypeInterface
             }
         }
 
-        // If a redirect URI is provided ensure it matches what is pre-registered
-        $redirectUri = $this->getRequestParameter('redirect_uri', $request);
-
-        if ($redirectUri !== null) {
-            $this->validateRedirectUri($redirectUri, $client, $request);
-        }
-
         return $client;
     }
 
@@ -233,13 +226,13 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @throws OAuthServerException
      */
     protected function validateRedirectUri(
-        string $redirectUri,
+        ?string $redirectUri,
         ClientEntityInterface $client,
         ServerRequestInterface $request
     ): void {
         $validator = new RedirectUriValidator($client->getRedirectUri());
 
-        if (!$validator->validateRedirectUri($redirectUri)) {
+        if (is_null($redirectUri) || !$validator->validateRedirectUri($redirectUri)) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient($request);
         }

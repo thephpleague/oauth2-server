@@ -98,6 +98,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     ): ResponseTypeInterface {
         $client = $this->validateClient($request);
 
+        $this->validateRedirectUri($this->getRequestParameter('redirect_uri', $request), $client, $request);
+
         $encryptedAuthCode = $this->getRequestParameter('code', $request);
 
         if ($encryptedAuthCode === null) {
