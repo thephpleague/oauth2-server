@@ -216,13 +216,13 @@ abstract class AbstractGrant implements GrantTypeInterface
      * @throws OAuthServerException
      */
     protected function validateRedirectUri(
-        ?string $redirectUri,
+        string $redirectUri,
         ClientEntityInterface $client,
         ServerRequestInterface $request
     ): void {
         $validator = new RedirectUriValidator($client->getRedirectUri());
 
-        if (is_null($redirectUri) || !$validator->validateRedirectUri($redirectUri)) {
+        if (!$validator->validateRedirectUri($redirectUri)) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient($request);
         }
