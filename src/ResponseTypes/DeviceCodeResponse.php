@@ -34,21 +34,8 @@ class DeviceCodeResponse extends AbstractResponseType
     {
         $expireDateTime = $this->deviceCodeEntity->getExpiryDateTime()->getTimestamp();
 
-        $payload = [
-            'client_id'             => $this->deviceCodeEntity->getClient()->getIdentifier(),
-            'device_code_id'        => $this->deviceCodeEntity->getIdentifier(),
-            'scopes'                => $this->deviceCodeEntity->getScopes(),
-            'expire_time'           => $expireDateTime,
-        ];
-
-        $jsonPayload = json_encode($payload);
-
-        if ($jsonPayload === false) {
-            throw new LogicException('An error was encountered when JSON encoding the device code request response');
-        }
-
         $responseParams = [
-            'device_code' => $this->encrypt($jsonPayload),
+            'device_code' => $this->deviceCodeEntity->getIdentifier(),
             'user_code' => $this->deviceCodeEntity->getUserCode(),
             'verification_uri' => $this->deviceCodeEntity->getVerificationUri(),
             'expires_in'   => $expireDateTime - time(),
