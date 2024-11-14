@@ -215,9 +215,9 @@ class OAuthServerException extends Exception
         return new static($errorMessage, 11, 'expired_token', 400, $hint, null, $previous);
     }
 
-    public static function authorizationPending(string $hint = '', ?Throwable $previous = null, ?int $interval = null): static
+    public static function authorizationPending(string $hint = '', ?Throwable $previous = null): static
     {
-        $exception = new static(
+        return new static(
             'The authorization request is still pending as the end user ' .
             'hasn\'t yet completed the user interaction steps. The client ' .
             'SHOULD repeat the Access Token Request to the token endpoint',
@@ -228,15 +228,6 @@ class OAuthServerException extends Exception
             null,
             $previous
         );
-
-        if (!is_null($interval)) {
-            $exception->setPayload([
-                ...$exception->getPayload(),
-                'interval' => $interval,
-            ]);
-        }
-
-        return $exception;
     }
 
     /**
