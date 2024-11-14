@@ -215,7 +215,7 @@ class OAuthServerException extends Exception
         return new static($errorMessage, 11, 'expired_token', 400, $hint, null, $previous);
     }
 
-    public static function authorizationPending(?int $interval = null, string $hint = '', ?Throwable $previous = null): static
+    public static function authorizationPending(string $hint = '', ?Throwable $previous = null, ?int $interval = null): static
     {
         $exception = new static(
             'The authorization request is still pending as the end user ' .
@@ -245,7 +245,7 @@ class OAuthServerException extends Exception
      *
      * @return static
      */
-    public static function slowDown(?int $interval = null, string $hint = '', ?Throwable $previous = null): static
+    public static function slowDown(string $hint = '', ?Throwable $previous = null, ?int $interval = null): static
     {
         $exception = new static(
             'The authorization request is still pending and polling should ' .
