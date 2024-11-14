@@ -145,21 +145,11 @@ class DeviceCodeGrant extends AbstractGrant
 
         // If device code has no user associated, respond with pending or slow down
         if (is_null($deviceCodeEntity->getUserIdentifier())) {
-            $shouldSlowDown = false;
-
-            if ($this->deviceCodePolledTooSoon($deviceCodeEntity) === true) {
-                $deviceCodeEntity->setInterval($deviceCodeEntity->getInterval() + 5);
-
-                $shouldSlowDown = true;
-            }
-
             $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
             $this->deviceCodeRepository->persistDeviceCode($deviceCodeEntity);
 
-            if ($shouldSlowDown) {
-                throw OAuthServerException::slowDown(
-                    interval: $this->intervalVisibility ? $deviceCodeEntity->getInterval() : null
-                );
+            if ($this->deviceCodePolledTooSoon($deviceCodeEntity) === true) {
+                throw OAuthServerException::slowDown();
             }
 
             throw OAuthServerException::authorizationPending();

@@ -24,7 +24,7 @@ use function sprintf;
 class OAuthServerException extends Exception
 {
     /**
-     * @var array<string, string|int>
+     * @var array<string, string>
      */
     private array $payload;
 
@@ -49,7 +49,7 @@ class OAuthServerException extends Exception
     /**
      * Returns the current payload.
      *
-     * @return array<string, string|int>
+     * @return array<string, string>
      */
     public function getPayload(): array
     {
@@ -59,7 +59,7 @@ class OAuthServerException extends Exception
     /**
      * Updates the current payload.
      *
-     * @param array<string, string|int> $payload
+     * @param array<string, string> $payload
      */
     public function setPayload(array $payload): void
     {
@@ -236,9 +236,9 @@ class OAuthServerException extends Exception
      *
      * @return static
      */
-    public static function slowDown(string $hint = '', ?Throwable $previous = null, ?int $interval = null): static
+    public static function slowDown(string $hint = '', ?Throwable $previous = null): static
     {
-        $exception = new static(
+        return new static(
             'The authorization request is still pending and polling should ' .
                 'continue, but the interval MUST be increased ' .
                 'by 5 seconds for this and all subsequent requests.',
@@ -249,15 +249,6 @@ class OAuthServerException extends Exception
             null,
             $previous
         );
-
-        if (!is_null($interval)) {
-            $exception->setPayload([
-                ...$exception->getPayload(),
-                'interval' => $interval,
-            ]);
-        }
-
-        return $exception;
     }
 
     /**
