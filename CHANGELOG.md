@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Support for PHP 8.4 (PR #1454)
 
 ### Fixed
+- In the Auth Code grant, when requesting an access token with an invalid auth code, we now respond with an invalid_grant error instead of invalid_request (PR #1433)
 - Fixed spec compliance issue  where device access token request was mistakenly expecting to receive scopes in the request (PR #1412)
 - Refresh tokens pre version 9 might have had user IDs set as ints which meant they were incorrectly rejected. We now cast these values to strings to allow old refresh tokens (PR #1436)
 
