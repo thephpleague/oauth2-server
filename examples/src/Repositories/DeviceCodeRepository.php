@@ -50,8 +50,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
         $deviceCodeEntity->setIdentifier($deviceCode);
         $deviceCodeEntity->setExpiryDateTime(new DateTimeImmutable('now +1 hour'));
         $deviceCodeEntity->setClient($clientEntity);
-        $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable('now -5 second'));
-        $deviceCodeEntity->setInterval(5);
+        $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
 
         $scopes = [];
         foreach ($scopes as $scope) {
