@@ -301,7 +301,7 @@ class DeviceCodeGrantTest extends TestCase
         $server->setDefaultScope(self::DEFAULT_SCOPE);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
-            'client_id'     => 'foo',
+           'client_id'     => 'foo',
         ]);
 
         $deviceCodeGrant = new DeviceCodeGrant(
@@ -698,8 +698,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant->completeDeviceAuthorizationRequest($deviceCode->getIdentifier(), '1', false);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
-            'client_id'     => 'foo',
-            'device_code'   => $deviceCode->getIdentifier(),
+                'client_id'     => 'foo',
+                'device_code'   => $deviceCode->getIdentifier(),
         ]);
 
         $responseType = new StubResponseType();
