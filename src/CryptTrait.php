@@ -15,8 +15,11 @@ declare(strict_types=1);
 namespace League\OAuth2\Server;
 
 use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Defuse\Crypto\Key;
 use Exception;
+use InvalidArgumentException;
 use LogicException;
 
 use function is_string;
@@ -64,6 +67,17 @@ trait CryptTrait
             }
 
             throw new LogicException('Encryption key not set when attempting to decrypt');
+        } catch (WrongKeyOrModifiedCiphertextException $e) {
+            $exceptionMessage = 'The authcode or decryption key/password used '
+                . 'is not correct';
+
+            throw new InvalidArgumentException($exceptionMessage, 0, $e);
+        } catch (EnvironmentIsBrokenException $e) {
+            $exceptionMessage = 'Auth code decryption failed. This is likely '
+                . 'due to an environment issue or runtime bug in the '
+                . 'decryption library';
+
+            throw new LogicException($exceptionMessage, 0, $e);
         } catch (Exception $e) {
             throw new LogicException($e->getMessage(), 0, $e);
         }

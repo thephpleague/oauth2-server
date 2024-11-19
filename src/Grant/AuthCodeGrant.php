@@ -15,6 +15,7 @@ namespace League\OAuth2\Server\Grant;
 use DateInterval;
 use DateTimeImmutable;
 use Exception;
+use InvalidArgumentException;
 use League\OAuth2\Server\CodeChallengeVerifiers\CodeChallengeVerifierInterface;
 use League\OAuth2\Server\CodeChallengeVerifiers\PlainVerifier;
 use League\OAuth2\Server\CodeChallengeVerifiers\S256Verifier;
@@ -116,8 +117,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 $authCodePayload->user_id,
                 $authCodePayload->auth_code_id
             );
+        } catch (InvalidArgumentException $e) {
+            throw OAuthServerException::invalidGrant('Cannot validate the provided authorization code');
         } catch (LogicException $e) {
-            throw OAuthServerException::invalidRequest('code', 'Cannot decrypt the authorization code', $e);
+            throw OAuthServerException::invalidRequest('code', 'Issue decrypting the authorization code', $e);
         }
 
         $codeVerifier = $this->getRequestParameter('code_verifier', $request);
@@ -199,7 +202,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         if (time() > $authCodePayload->expire_time) {
-            throw OAuthServerException::invalidRequest('code', 'Authorization code has expired');
+            throw OAuthServerException::invalidGrant('Authorization code has expired');
         }
 
         if ($this->authCodeRepository->isAuthCodeRevoked($authCodePayload->auth_code_id) === true) {

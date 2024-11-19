@@ -137,7 +137,6 @@ class DeviceCodeGrant extends AbstractGrant
     ): ResponseTypeInterface {
         // Validate request
         $client = $this->validateClient($request);
-        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $deviceCodeEntity = $this->validateDeviceCode($request, $client);
 
         $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
@@ -153,7 +152,7 @@ class DeviceCodeGrant extends AbstractGrant
         }
 
         // Finalize the requested scopes
-        $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $deviceCodeEntity->getUserIdentifier());
+        $finalizedScopes = $this->scopeRepository->finalizeScopes($deviceCodeEntity->getScopes(), $this->getIdentifier(), $client, $deviceCodeEntity->getUserIdentifier());
 
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $deviceCodeEntity->getUserIdentifier(), $finalizedScopes);
