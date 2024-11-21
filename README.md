@@ -35,6 +35,7 @@ The latest version of this package supports the following versions of PHP:
 * PHP 8.1
 * PHP 8.2
 * PHP 8.3
+* PHP 8.4
 
 The `openssl` and `json` extensions are also required.
 
