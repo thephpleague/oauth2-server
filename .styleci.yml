@@ -27,6 +27,7 @@ enabled:
   - no_unreachable_default_argument_value
   - no_unused_imports
   - no_whitespace_before_comma_in_array
+  - nullable_type_declarations
   - ordered_imports
   - phpdoc_align
   - phpdoc_indent
