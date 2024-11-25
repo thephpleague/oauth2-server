@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+include __DIR__ . '/../vendor/autoload.php';
+
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\PasswordGrant;
@@ -13,8 +15,6 @@ use OAuth2ServerExamples\Repositories\UserRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-
-include __DIR__ . '/../vendor/autoload.php';
 
 $app = new App([
     // Add the authorization server to the DI container
