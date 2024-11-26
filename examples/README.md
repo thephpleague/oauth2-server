@@ -1,12 +1,11 @@
-# Example implementations
+# Example implementations (via [`Slim 3`](https://github.com/slimphp/Slim/tree/3.x))
 
 ## Installation
 
 0. Run `composer install` in this directory to install dependencies
 0. Create a private key `openssl genrsa -out private.key 2048`
-0. Create a public key `openssl rsa -in private.key -pubout > public.key`
-0. `cd` into the public directory
-0. Start a PHP server `php -S localhost:4444`
+0. Export the public key `openssl rsa -in private.key -pubout > public.key`
+0. Start local PHP server `php -S 127.0.0.1:4444 -t public/`
 
 ## Testing the client credentials grant example
 
