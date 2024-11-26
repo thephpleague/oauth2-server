@@ -63,12 +63,12 @@ curl -X "POST" "http://localhost:4444/device_code.php/device_authorization" \
 	--data-urlencode "client_id=myawesomeapp" \
 	--data-urlencode "client_secret=abc123" \
 	--data-urlencode "scope=basic email"
-```	
+```
 
 We have set up the example so that a user ID is already associated with the device code. In a production application you
 would implement an authorization view to allow a user to authorize the device.
 
-Issue the following cURL request to exchange your device code for an access token. Replace `{{DEVICE_CODE}}` with the 
+Issue the following cURL request to exchange your device code for an access token. Replace `{{DEVICE_CODE}}` with the
 device code returned from your first cURL post:
 
 ```

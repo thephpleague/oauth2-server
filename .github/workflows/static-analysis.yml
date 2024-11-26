@@ -34,4 +34,4 @@ jobs:
 
       - name: Run Static Analysis
         run: vendor/bin/phpstan analyse
-            
+

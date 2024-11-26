@@ -35,10 +35,10 @@ class DeviceCodeResponse extends AbstractResponseType
         $expireDateTime = $this->deviceCodeEntity->getExpiryDateTime()->getTimestamp();
 
         $responseParams = [
-            'device_code' => $this->deviceCodeEntity->getIdentifier(),
-            'user_code' => $this->deviceCodeEntity->getUserCode(),
+            'device_code'      => $this->deviceCodeEntity->getIdentifier(),
+            'user_code'        => $this->deviceCodeEntity->getUserCode(),
             'verification_uri' => $this->deviceCodeEntity->getVerificationUri(),
-            'expires_in'   => $expireDateTime - time(),
+            'expires_in'       => $expireDateTime - time(),
         ];
 
         if ($this->includeVerificationUriComplete === true) {

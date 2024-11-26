@@ -25,7 +25,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 
 $app = new App([
-    'settings'    => [
+    'settings' => [
         'displayErrorDetails' => true,
     ],
     AuthorizationServer::class => function () {
