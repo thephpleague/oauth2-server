@@ -32,10 +32,7 @@ This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](ht
 
 The latest version of this package supports the following versions of PHP:
 
-* PHP 8.1
-* PHP 8.2
-* PHP 8.3
-* PHP 8.4
+https://github.com/thephpleague/oauth2-server/blob/7b9ec37d5077c0382aa3748c6e125c5408d5adb9/composer.json#L7
 
 The `openssl` and `json` extensions are also required.
 
