@@ -33,7 +33,7 @@ interface DeviceCodeRepositoryInterface extends RepositoryInterface
      * Get a device code entity.
      */
     public function getDeviceCodeEntityByDeviceCode(
-        string $deviceCode
+        string $deviceCodeEntity
     ): ?DeviceCodeEntityInterface;
 
     /**
