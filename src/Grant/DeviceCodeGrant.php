@@ -51,7 +51,7 @@ class DeviceCodeGrant extends AbstractGrant
         RefreshTokenRepositoryInterface $refreshTokenRepository,
         private DateInterval $deviceCodeTTL,
         string $verificationUri,
-        private readonly int $defaultInterval = 5
+        private readonly int $retryInterval = 5
     ) {
         $this->setDeviceCodeRepository($deviceCodeRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
@@ -220,7 +220,7 @@ class DeviceCodeGrant extends AbstractGrant
 
     private function deviceCodePolledTooSoon(?DateTimeImmutable $lastPoll): bool
     {
-        return $lastPoll !== null && $lastPoll->getTimestamp() + $this->defaultInterval > time();
+        return $lastPoll !== null && $lastPoll->getTimestamp() + $this->retryInterval > time();
     }
 
     /**
@@ -264,7 +264,7 @@ class DeviceCodeGrant extends AbstractGrant
         $deviceCode->setExpiryDateTime((new DateTimeImmutable())->add($deviceCodeTTL));
         $deviceCode->setClient($client);
         $deviceCode->setVerificationUri($verificationUri);
-        $deviceCode->setInterval($this->defaultInterval);
+        $deviceCode->setInterval($this->retryInterval);
 
         foreach ($scopes as $scope) {
             $deviceCode->addScope($scope);
