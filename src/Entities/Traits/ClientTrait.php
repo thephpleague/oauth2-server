@@ -54,9 +54,9 @@ trait ClientTrait
     }
 
     /**
-     * Returns true if the client handles the given grant type.
+     * Returns true if the client supports the given grant type.
      */
-    public function hasGrantType(string $grantType): bool
+    public function supportsGrantType(string $grantType): bool
     {
         return true;
     }

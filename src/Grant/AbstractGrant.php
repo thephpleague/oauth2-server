@@ -189,11 +189,20 @@ abstract class AbstractGrant implements GrantTypeInterface
             throw OAuthServerException::invalidClient($request);
         }
 
-        if (!$client->hasGrantType($this->getIdentifier())) {
+        if ($this->supportsGrantType($client, $this->getIdentifier()) === false) {
             throw OAuthServerException::unauthorizedClient();
         }
 
         return $client;
+    }
+
+    /**
+     * Returns true if the given client is authorized to use the given grant type.
+     */
+    protected function supportsGrantType(ClientEntityInterface $client, string $grantType): bool
+    {
+        return method_exists($client, 'supportsGrantType') === false
+            || $client->supportsGrantType($grantType) === true;
     }
 
     /**
@@ -488,7 +497,7 @@ abstract class AbstractGrant implements GrantTypeInterface
      */
     protected function issueRefreshToken(AccessTokenEntityInterface $accessToken): ?RefreshTokenEntityInterface
     {
-        if (!$accessToken->getClient()->hasGrantType('refresh_token')) {
+        if ($this->supportsGrantType($accessToken->getClient(), 'refresh_token') === false) {
             return null;
         }
 

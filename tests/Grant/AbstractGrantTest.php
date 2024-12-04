@@ -289,6 +289,32 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod->invoke($grantMock, $serverRequest, true);
     }
 
+    public function testUnauthorizedClient(): void
+    {
+        $client = $this->getMockBuilder(ClientEntity::class)->getMock();
+        $client->method('supportsGrantType')->willReturn(false);
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock
+            ->expects(self::once())
+            ->method('getClientEntity')
+            ->with('foo')
+            ->willReturn($client);
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setClientRepository($clientRepositoryMock);
+
+        $abstractGrantReflection = new ReflectionClass($grantMock);
+
+        $getClientEntityOrFailMethod = $abstractGrantReflection->getMethod('getClientEntityOrFail');
+        $getClientEntityOrFailMethod->setAccessible(true);
+
+        $this->expectException(OAuthServerException::class);
+
+        $getClientEntityOrFailMethod->invoke($grantMock, 'foo', new ServerRequest());
+    }
+
     public function testCanRespondToRequest(): void
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -347,6 +373,33 @@ class AbstractGrantTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setClient(new ClientEntity());
+        self::assertNull($issueRefreshTokenMethod->invoke($grantMock, $accessToken));
+    }
+
+    public function testIssueNullRefreshTokenUnauthorizedClient(): void
+    {
+        $client = $this->getMockBuilder(ClientEntity::class)->getMock();
+        $client
+            ->expects(self::once())
+            ->method('supportsGrantType')
+            ->with('refresh_token')
+            ->willReturn(false);
+
+        $refreshTokenRepoMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepoMock->expects(self::never())->method('getNewRefreshToken');
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setRefreshTokenTTL(new DateInterval('PT1M'));
+        $grantMock->setRefreshTokenRepository($refreshTokenRepoMock);
+
+        $abstractGrantReflection = new ReflectionClass($grantMock);
+        $issueRefreshTokenMethod = $abstractGrantReflection->getMethod('issueRefreshToken');
+        $issueRefreshTokenMethod->setAccessible(true);
+
+        $accessToken = new AccessTokenEntity();
+        $accessToken->setClient($client);
+
         self::assertNull($issueRefreshTokenMethod->invoke($grantMock, $accessToken));
     }
 
