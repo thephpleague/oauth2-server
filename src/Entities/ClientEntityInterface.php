@@ -39,7 +39,7 @@ interface ClientEntityInterface
      */
     public function isConfidential(): bool;
 
-    /**
+    /*
      * Returns true if the client supports the given grant type.
      *
      * To be added in a future major release.
