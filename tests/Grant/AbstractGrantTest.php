@@ -290,32 +290,6 @@ class AbstractGrantTest extends TestCase
         $validateClientMethod->invoke($grantMock, $serverRequest, true);
     }
 
-    public function testUnauthorizedClient(): void
-    {
-        $client = $this->getMockBuilder(ClientEntity::class)->getMock();
-        $client->method('supportsGrantType')->willReturn(false);
-
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock
-            ->expects(self::once())
-            ->method('getClientEntity')
-            ->with('foo')
-            ->willReturn($client);
-
-        /** @var AbstractGrant $grantMock */
-        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setClientRepository($clientRepositoryMock);
-
-        $abstractGrantReflection = new ReflectionClass($grantMock);
-
-        $getClientEntityOrFailMethod = $abstractGrantReflection->getMethod('getClientEntityOrFail');
-        $getClientEntityOrFailMethod->setAccessible(true);
-
-        $this->expectException(OAuthServerException::class);
-
-        $getClientEntityOrFailMethod->invoke($grantMock, 'foo', new ServerRequest());
-    }
-
     public function testCanRespondToRequest(): void
     {
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
@@ -558,5 +532,31 @@ class AbstractGrantTest extends TestCase
         $this->expectException(LogicException::class);
 
         $grantMock->completeAuthorizationRequest(new AuthorizationRequest());
+    }
+
+    public function testUnauthorizedClient(): void
+    {
+        $client = $this->getMockBuilder(ClientEntity::class)->getMock();
+        $client->method('supportsGrantType')->willReturn(false);
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock
+            ->expects(self::once())
+            ->method('getClientEntity')
+            ->with('foo')
+            ->willReturn($client);
+
+        /** @var AbstractGrant $grantMock */
+        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock->setClientRepository($clientRepositoryMock);
+
+        $abstractGrantReflection = new ReflectionClass($grantMock);
+
+        $getClientEntityOrFailMethod = $abstractGrantReflection->getMethod('getClientEntityOrFail');
+        $getClientEntityOrFailMethod->setAccessible(true);
+
+        $this->expectException(OAuthServerException::class);
+
+        $getClientEntityOrFailMethod->invoke($grantMock, 'foo', new ServerRequest());
     }
 }
