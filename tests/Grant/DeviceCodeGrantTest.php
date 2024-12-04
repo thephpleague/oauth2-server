@@ -349,6 +349,7 @@ class DeviceCodeGrantTest extends TestCase
             ->willReturn($deviceCodeEntity);
 
         $accessTokenEntity = new AccessTokenEntity();
+        $accessTokenEntity->setClient($client);
         $accessTokenEntity->addScope($scope);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();

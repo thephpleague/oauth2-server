@@ -252,8 +252,17 @@ class OAuthServerException extends Exception
     }
 
     /**
+     * Unauthorized client error.
+     */
+    public static function unauthorizedClient(?string $hint = null): static
     {
-        return $this->errorType;
+        return new static(
+            'The authenticated client is not authorized to use this authorization grant type.',
+            14,
+            'unauthorized_client',
+            400,
+            $hint
+        );
     }
 
     /**
