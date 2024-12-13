@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.4.3] - released 2024-12-13
+### Fixed
+- PHP 8.4 deprecation notices fixed (PR #1466)
+
 ## [8.4.2] - released 2023-08-01
 ### Security
 - If a key string is provided to the CryptKey constructor with an invalid
@@ -586,7 +590,9 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.4.1...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.4.3...HEAD
+[8.4.3]: https://github.com/thephpleague/oauth2-server/compare/8.4.2...8.4.3
+[8.4.2]: https://github.com/thephpleague/oauth2-server/compare/8.4.1...8.4.2
 [8.4.1]: https://github.com/thephpleague/oauth2-server/compare/8.4.0...8.4.1
 [8.4.0]: https://github.com/thephpleague/oauth2-server/compare/8.3.6...8.4.0
 [8.3.6]: https://github.com/thephpleague/oauth2-server/compare/8.3.5...8.3.6
