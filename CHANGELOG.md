@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [8.4.3] - released 2024-12-13
+## [8.4.3] - released 2024-12-18
 ### Fixed
 - PHP 8.4 deprecation notices fixed (PR #1466)
 
