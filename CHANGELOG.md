@@ -12,14 +12,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - In the Auth Code grant, when requesting an access token with an invalid auth code, we now respond with an invalid_grant error instead of invalid_request (PR #1433)
-- Fixed spec compliance issue  where device access token request was mistakenly expecting to receive scopes in the request (PR #1412)
+- Fixed spec compliance issue where device access token request was mistakenly expecting to receive scopes in the request (PR #1412)
 - Refresh tokens pre version 9 might have had user IDs set as ints which meant they were incorrectly rejected. We now cast these values to strings to allow old refresh tokens (PR #1436)
 
 ## [9.0.1] - released 2024-10-14
 ### Fixed
 - Auto-generated event emitter is now persisted. Previously, a new emitter was generated every time (PR #1428)
 - Fixed bug where you could not omit a redirect uri even if one had not been specified during the auth request (PR #1428)
-- Fixed bug where "state" parameter wasn't present on `invalid_scope` error response and wasn't on fragment part of `access_denied` redirect URI on Implicit grant (PR #1298) 
+- Fixed bug where "state" parameter wasn't present on `invalid_scope` error response and wasn't on fragment part of `access_denied` redirect URI on Implicit grant (PR #1298)
 - Fixed bug where disabling refresh token revocation via `revokeRefreshTokens(false)` unintentionally disables issuing new refresh token (PR #1449)
 
 ## [9.0.0] - released 2024-05-13
@@ -71,13 +71,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [8.5.3] - released 2023-07-06
 ### Security
-- If a key string is provided to the CryptKey constructor with an invalid 
-passphrase, the LogicException message generated will expose the given key. 
+- If a key string is provided to the CryptKey constructor with an invalid
+passphrase, the LogicException message generated will expose the given key.
 The key is no longer leaked via this exception (PR #1353)
 
 ## [8.5.2] - released 2023-06-16
 ### Changed
-- Bumped the versions for laminas/diactoros and psr/http-message to support 
+- Bumped the versions for laminas/diactoros and psr/http-message to support
 PSR-7 v2.0 (PR #1339)
 
 ## [8.5.1] - released 2023-04-04
@@ -169,13 +169,13 @@ a PKCE downgrade attack (PR #1326)
 - Removed support for PHP 7.2 (PR #1146)
 
 ### Fixed
-- Fix typo in parameter hint. `code_challenged` changed to `code_challenge`. Thrown by Auth Code Grant when the code challenge does not match the regex. (PR #1130) 
+- Fix typo in parameter hint. `code_challenged` changed to `code_challenge`. Thrown by Auth Code Grant when the code challenge does not match the regex. (PR #1130)
 - Undefined offset was returned when no client redirect URI was set. Now throw an invalidClient exception if no redirect URI is set against a client (PR #1140)
 
 ## [8.1.1] - released 2020-07-01
 
 ### Fixed
-- If you provide a valid redirect_uri with the auth code grant and an invalid scope, the server will use the given 
+- If you provide a valid redirect_uri with the auth code grant and an invalid scope, the server will use the given
 redirect_uri instead of the default client redirect uri (PR #1126)
 
 ## [8.1.0] - released 2020-04-29
@@ -195,9 +195,9 @@ redirect_uri instead of the default client redirect uri (PR #1126)
 ### Fixed
 - Clients are now explicitly prevented from using the Client Credentials grant unless they are confidential to conform
  with the OAuth2 spec (PR #1035)
-- Abstract method `getIdentifier()` added to AccessTokenTrait. The trait cannot be used without the `getIdentifier()` 
+- Abstract method `getIdentifier()` added to AccessTokenTrait. The trait cannot be used without the `getIdentifier()`
 method being defined (PR #1051)
-- An exception is now thrown if a refresh token is accidentally sent in place of an authorization code when using the 
+- An exception is now thrown if a refresh token is accidentally sent in place of an authorization code when using the
 Auth Code Grant (PR #1057)
 - Can now send access token request without being forced to specify a redirect URI (PR #1096)
 - In the BearerTokenValidator, if an implementation is using PDO, there is a possibility that a RuntimeException will be thrown when checking if an access token is revoked. This scenario no longer incorrectly issues an exception with a hint mentioning an issue with JSON decoding. (PR #1107)
@@ -251,7 +251,7 @@ Auth Code Grant (PR #1057)
 ## [7.3.0] - released 2018-11-13
 
 ### Changed
-- Moved  the `finalizeScopes()` call from `validateAuthorizationRequest` method to the `completeAuthorizationRequest` method so it is called just before the access token is issued (PR #923)
+- Moved the `finalizeScopes()` call from `validateAuthorizationRequest` method to the `completeAuthorizationRequest` method so it is called just before the access token is issued (PR #923)
 
 ### Added
 - Added a ScopeTrait to provide an implementation for jsonSerialize (PR #952)
@@ -353,7 +353,7 @@ To address feedback from the security release the following change has been made
 ## [5.1.4] - 2017-07-01
 
 - Fixed multiple security vulnerabilities as a result of a security audit paid for by the [Mozilla Secure Open Source Fund](https://wiki.mozilla.org/MOSS/Secure_Open_Source). All users of this library are encouraged to update as soon as possible to this version or version 6.0 or greater.
-	- It is recommended on each `AuthorizationServer` instance you set the `setEncryptionKey()`. This will result in stronger encryption being used. If this method is not set messages will be sent to the defined error handling routines (using `error_log`). Please see the examples and documentation for examples.
+- It is recommended on each `AuthorizationServer` instance you set the `setEncryptionKey()`. This will result in stronger encryption being used. If this method is not set messages will be sent to the defined error handling routines (using `error_log`). Please see the examples and documentation for examples.
 - TravisCI now tests PHP 7.1 (Issue #671)
 - Fix middleware example fatal error (Issue #682)
 - Fix typo in the first README sentence (Issue #690)
