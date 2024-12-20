@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with: 
           fetch-depth: 0
 
@@ -38,6 +38,10 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip
           coverage: pcov
+ 
+      - name: Remove Security Advisories on obsolete PHP versions
+        run: composer remove "roave/security-advisories" --dev --no-update
+        if: matrix.php <= 7.4
 
       - name: Install dependencies
         run:

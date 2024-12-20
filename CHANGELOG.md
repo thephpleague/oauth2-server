@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.5.5] - released 2024-12-20
+### Fixed
+- PHP 8.4 deprecation notices fixed (PR #1466)
+
 ## [8.5.4] - released 2023-08-25
 ### Added
 - Support for league/uri ^7.0 (PR #1367)
@@ -606,7 +610,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.5.4...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/8.5.5...HEAD
+[8.5.4]: https://github.com/thephpleague/oauth2-server/compare/8.5.4...8.5.5
 [8.5.4]: https://github.com/thephpleague/oauth2-server/compare/8.5.3...8.5.4
 [8.5.3]: https://github.com/thephpleague/oauth2-server/compare/8.5.2...8.5.3
 [8.5.2]: https://github.com/thephpleague/oauth2-server/compare/8.5.1...8.5.2

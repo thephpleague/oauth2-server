@@ -42,7 +42,7 @@ class ResourceServer
     public function __construct(
         AccessTokenRepositoryInterface $accessTokenRepository,
         $publicKey,
-        AuthorizationValidatorInterface $authorizationValidator = null
+        ?AuthorizationValidatorInterface $authorizationValidator = null
     ) {
         $this->accessTokenRepository = $accessTokenRepository;
 
