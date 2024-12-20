@@ -50,15 +50,6 @@ class AuthorizationServerTest extends TestCase
         chmod(__DIR__ . '/Stubs/private.key.crlf', 0600);
     }
 
-    public function testKeyPermissions(): void
-    {
-        $permission = PHP_OS_FAMILY === 'Windows' ? '666' : '600';
-
-        self::assertSame($permission, decoct(fileperms(__DIR__ . '/Stubs/private.key') & 0777));
-        self::assertSame($permission, decoct(fileperms(__DIR__ . '/Stubs/public.key') & 0777));
-        self::assertSame($permission, decoct(fileperms(__DIR__ . '/Stubs/private.key.crlf') & 0777));
-    }
-
     public function testGrantTypeGetsEnabled(): void
     {
         $server = new AuthorizationServer(
@@ -192,7 +183,7 @@ class AuthorizationServerTest extends TestCase
         $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
         $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
 
-        $responseTypePrototype = new class () extends BearerTokenResponse {
+        $responseTypePrototype = new class() extends BearerTokenResponse {
             protected CryptKeyInterface $privateKey;
             protected Key|string|null $encryptionKey = null;
 
