@@ -72,7 +72,7 @@ class CryptKey implements CryptKeyInterface
             throw new LogicException('Invalid key supplied');
         }
 
-        if ($keyPermissionsCheck === true) {
+        if ($keyPermissionsCheck === true && PHP_OS_FAMILY !== 'Windows') {
             // Verify the permissions of the key
             $keyPathPerms = decoct(fileperms($this->keyPath) & 0777);
             if (in_array($keyPathPerms, ['400', '440', '600', '640', '660'], true) === false) {
