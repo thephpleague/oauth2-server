@@ -15,6 +15,9 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
@@ -76,6 +79,27 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->revokeRefreshTokens(true);
 
+        $accessTokenEventEmitted = false;
+        $refreshTokenEventEmitted = false;
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::ACCESS_TOKEN_ISSUED,
+            function ($event) use (&$accessTokenEventEmitted): void {
+                self::assertInstanceOf(RequestAccessTokenEvent::class, $event);
+
+                $accessTokenEventEmitted = true;
+            }
+        );
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::REFRESH_TOKEN_ISSUED,
+            function ($event) use (&$refreshTokenEventEmitted): void {
+                self::assertInstanceOf(RequestRefreshTokenEvent::class, $event);
+
+                $refreshTokenEventEmitted = true;
+            }
+        );
+
         $oldRefreshToken = json_encode(
             [
                 'client_id'        => 'foo',
@@ -106,6 +130,14 @@ class RefreshTokenGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
         self::assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
+
+        if (!$accessTokenEventEmitted) {
+            self::fail('Access token issued event is not emitted.');
+        }
+
+        if (!$refreshTokenEventEmitted) {
+            self::fail('Refresh token issued event is not emitted.');
+        }
     }
 
     public function testRespondToRequestNullRefreshToken(): void
