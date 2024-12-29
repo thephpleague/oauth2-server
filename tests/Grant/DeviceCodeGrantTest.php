@@ -18,6 +18,9 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\RequestRefreshTokenEvent;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\DeviceCodeEntity;
@@ -386,6 +389,27 @@ class DeviceCodeGrantTest extends TestCase
 
         $grant->completeDeviceAuthorizationRequest($deviceCodeEntity->getIdentifier(), $user, true);
 
+        $accessTokenEventEmitted = false;
+        $refreshTokenEventEmitted = false;
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::ACCESS_TOKEN_ISSUED,
+            function ($event) use (&$accessTokenEventEmitted): void {
+                self::assertInstanceOf(RequestAccessTokenEvent::class, $event);
+
+                $accessTokenEventEmitted = true;
+            }
+        );
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::REFRESH_TOKEN_ISSUED,
+            function ($event) use (&$refreshTokenEventEmitted): void {
+                self::assertInstanceOf(RequestRefreshTokenEvent::class, $event);
+
+                $refreshTokenEventEmitted = true;
+            }
+        );
+
         $serverRequest = (new ServerRequest())->withParsedBody([
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
             'device_code'   => $deviceCodeEntity->getIdentifier(),
@@ -397,6 +421,14 @@ class DeviceCodeGrantTest extends TestCase
 
         $this::assertInstanceOf(RefreshTokenEntityInterface::class, $responseType->getRefreshToken());
         $this::assertSame([$scope], $responseType->getAccessToken()->getScopes());
+
+        if (!$accessTokenEventEmitted) {
+            self::fail('Access token issued event is not emitted.');
+        }
+
+        if (!$refreshTokenEventEmitted) {
+            self::fail('Refresh token issued event is not emitted.');
+        }
     }
 
     public function testRespondToRequestMissingClient(): void
