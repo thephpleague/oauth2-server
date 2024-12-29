@@ -31,6 +31,6 @@ jobs:
 
       - name: Install Dependencies
         run: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
-          
+
       - name: Run Codesniffer
         run: vendor/bin/phpcs

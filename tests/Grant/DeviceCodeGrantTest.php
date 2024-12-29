@@ -656,6 +656,51 @@ class DeviceCodeGrantTest extends TestCase
         $this::assertEquals(self::INTERVAL_RATE, $deviceCode->interval);
     }
 
+    public function testSettingInternalVisibility(): void
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $deviceCode = new DeviceCodeEntity();
+
+        $deviceCodeRepository = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
+        $deviceCodeRepository->method('getNewDeviceCode')->willReturn($deviceCode);
+
+        $scope = new ScopeEntity();
+        $scope->setIdentifier('basic');
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
+        $grant = new DeviceCodeGrant(
+            $deviceCodeRepository,
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M'),
+            'http://foo/bar',
+        );
+
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setIntervalVisibility(true);
+
+        $request = (new ServerRequest())->withParsedBody([
+            'client_id' => 'foo',
+            'scope' => 'basic',
+        ]);
+
+        $deviceCodeResponse = $grant
+            ->respondToDeviceAuthorizationRequest($request)
+            ->generateHttpResponse(new Response());
+
+        $deviceCode = json_decode((string) $deviceCodeResponse->getBody());
+
+        $this::assertObjectHasProperty('interval', $deviceCode);
+        $this::assertEquals(5, $deviceCode->interval);
+    }
+
     public function testIssueAccessDeniedError(): void
     {
         $client = new ClientEntity();
