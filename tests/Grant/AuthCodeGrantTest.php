@@ -1425,13 +1425,20 @@ class AuthCodeGrantTest extends TestCase
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
         $clientRepositoryMock->method('validateClient')->willReturn(true);
 
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
+
+        $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
+        $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
+
         $grant = new AuthCodeGrant(
-            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
 
         $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
