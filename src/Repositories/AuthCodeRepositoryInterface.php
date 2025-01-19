@@ -30,4 +30,10 @@ interface AuthCodeRepositoryInterface extends RepositoryInterface
     public function revokeAuthCode(string $codeId): void;
 
     public function isAuthCodeRevoked(string $codeId): bool;
+
+    /**
+     * Get Auth code entity from repository
+     * @return ?AuthCodeEntityInterface
+     */
+    public function getAuthCodeEntity(string $codeId): ?AuthCodeEntityInterface;
 }

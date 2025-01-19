@@ -45,14 +45,14 @@ interface TokenInterface
      *
      * @param non-empty-string $identifier
      */
-    public function setUserIdentifier(string $identifier): void;
+    public function setUserIdentifier(?string $identifier): void;
 
     /**
      * Get the token user's identifier.
      *
      * @return non-empty-string|null
      */
-    public function getUserIdentifier(): string|null;
+    public function getUserIdentifier(): ?string;
 
     /**
      * Get the client that the token was issued to.
@@ -75,4 +75,10 @@ interface TokenInterface
      * @return ScopeEntityInterface[]
      */
     public function getScopes(): array;
+
+    /**
+     * Set the scopes array (doesn't check for duplicates)
+     * @param array scopes
+     */
+    public function setScopes(array $scopes): void;
 }

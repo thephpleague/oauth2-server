@@ -48,7 +48,7 @@ class AuthorizationServer implements EmitterAwareInterface
 
     protected ResponseTypeInterface $responseType;
 
-    private string|Key $encryptionKey;
+    private Key|string|null $encryptionKey;
 
     private string $defaultScope = '';
 
@@ -62,7 +62,7 @@ class AuthorizationServer implements EmitterAwareInterface
         private AccessTokenRepositoryInterface $accessTokenRepository,
         private ScopeRepositoryInterface $scopeRepository,
         CryptKeyInterface|string $privateKey,
-        Key|string $encryptionKey,
+        Key|string|null $encryptionKey,
         ResponseTypeInterface|null $responseType = null
     ) {
         if ($privateKey instanceof CryptKeyInterface === false) {

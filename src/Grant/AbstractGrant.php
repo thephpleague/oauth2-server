@@ -260,10 +260,10 @@ abstract class AbstractGrant implements GrantTypeInterface
                 throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
             }
 
-            $validScopes[] = $scope;
+            $validScopes[$scopeItem] = $scope;
         }
 
-        return $validScopes;
+        return array_values($validScopes);
     }
 
     /**
@@ -444,7 +444,9 @@ abstract class AbstractGrant implements GrantTypeInterface
         ClientEntityInterface $client,
         string $userIdentifier,
         ?string $redirectUri,
-        array $scopes = []
+        array $scopes = [],
+        ?string $codeChallenge = null,
+        ?string $codeChallengeMethod = null
     ): AuthCodeEntityInterface {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
@@ -452,6 +454,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         $authCode->setExpiryDateTime((new DateTimeImmutable())->add($authCodeTTL));
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
+        $authCode->setCodeChallenge($codeChallenge);
+        $authCode->setCodeChallengeMethod($codeChallengeMethod);
 
         if ($redirectUri !== null) {
             $authCode->setRedirectUri($redirectUri);

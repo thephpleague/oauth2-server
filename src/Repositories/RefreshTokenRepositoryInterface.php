@@ -30,4 +30,10 @@ interface RefreshTokenRepositoryInterface extends RepositoryInterface
     public function revokeRefreshToken(string $tokenId): void;
 
     public function isRefreshTokenRevoked(string $tokenId): bool;
+
+    /**
+     * Get Refresh Token entity from repository
+     * @return ?RefreshTokenRepositoryInterface
+     */
+    public function getRefreshTokenEntity(string $tokenId): ?RefreshTokenRepositoryInterface;
 }

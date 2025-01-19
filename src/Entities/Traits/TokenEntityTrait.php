@@ -53,6 +53,15 @@ trait TokenEntityTrait
     }
 
     /**
+     * Set the scopes array (doesn't check for duplicates)
+     * @param array scopes
+     */
+    public function setScopes(array $scopes): void
+    {
+        $this->scopes = $scopes;
+    }
+
+    /**
      * Get the token's expiry date time.
      */
     public function getExpiryDateTime(): DateTimeImmutable
@@ -73,7 +82,7 @@ trait TokenEntityTrait
      *
      * @param non-empty-string $identifier The identifier of the user
      */
-    public function setUserIdentifier(string $identifier): void
+    public function setUserIdentifier(?string $identifier): void
     {
         $this->userIdentifier = $identifier;
     }
@@ -83,7 +92,7 @@ trait TokenEntityTrait
      *
      * @return non-empty-string|null
      */
-    public function getUserIdentifier(): string|null
+    public function getUserIdentifier(): ?string
     {
         return $this->userIdentifier;
     }

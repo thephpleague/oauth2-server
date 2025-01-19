@@ -87,4 +87,13 @@ trait CryptTrait
     {
         $this->encryptionKey = $key;
     }
+
+    /**
+     * Has Encryption key been set
+     * @return bool True if encryption key has been set
+     */
+    public function canUseCrypt() : bool
+    {
+        return !empty($this->encryptionKey);
+    }
 }

@@ -15,14 +15,44 @@ namespace League\OAuth2\Server\Entities\Traits;
 trait AuthCodeTrait
 {
     protected ?string $redirectUri = null;
+    
+    /**
+     * The code challenge (if provided)
+     */
+    protected ?string $codeChallenge;
 
-    public function getRedirectUri(): string|null
+    /**
+     * The code challenge method (if provided)
+     */
+    protected ?string $codeChallengeMethod;
+
+    public function getRedirectUri(): ?string
     {
         return $this->redirectUri;
     }
 
-    public function setRedirectUri(string $uri): void
+    public function setRedirectUri(?string $uri): void
     {
         $this->redirectUri = $uri;
+    }
+
+    public function getCodeChallenge(): ?string
+    {
+        return $this->codeChallenge ?? null;
+    }
+
+    public function setCodeChallenge(?string $codeChallenge): void
+    {
+        $this->codeChallenge = $codeChallenge;
+    }
+
+    public function getCodeChallengeMethod(): ?string
+    {
+        return $this->codeChallengeMethod ?? null;
+    }
+
+    public function setCodeChallengeMethod(?string $codeChallengeMethod): void
+    {
+        $this->codeChallengeMethod = $codeChallengeMethod;
     }
 }
