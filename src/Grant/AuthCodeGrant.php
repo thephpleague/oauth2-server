@@ -110,6 +110,14 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         if (empty($ace)) {
             throw OAuthServerException::invalidRequest('code', 'Cannot validate the provided authorization code');
         }
+        else {
+            // Get the Auth Code Payload from Repository
+            $ace = $this->authCodeRepository->getAuthCodeEntity($code);
+
+            if (empty($ace)) {
+                throw OAuthServerException::invalidRequest('code', 'Cannot find authorization code');
+            }
+        }
 
         $this->validateAuthorizationCode($ace, $client, $request);
 

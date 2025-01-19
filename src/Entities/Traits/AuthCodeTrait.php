@@ -15,8 +15,7 @@ namespace League\OAuth2\Server\Entities\Traits;
 trait AuthCodeTrait
 {
     protected ?string $redirectUri = null;
-
-
+    
     /**
      * The code challenge (if provided)
      */
