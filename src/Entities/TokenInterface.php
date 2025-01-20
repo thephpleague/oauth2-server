@@ -78,6 +78,7 @@ interface TokenInterface
 
     /**
      * Set the scopes array (doesn't check for duplicates)
+     * 
      * @param array scopes
      */
     public function setScopes(array $scopes): void;

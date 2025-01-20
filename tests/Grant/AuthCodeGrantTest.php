@@ -2247,7 +2247,7 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
         $authCodeRepository->method('persistNewAuthCode')->willThrowException(OAuthServerException::serverError('something bad happened'));
-        $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());        
+        $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
         $grant = new AuthCodeGrant(
             $authCodeRepository,

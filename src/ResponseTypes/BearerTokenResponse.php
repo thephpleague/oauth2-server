@@ -50,8 +50,7 @@ class BearerTokenResponse extends AbstractResponseType
                 }
 
                 $responseParams['refresh_token'] = $this->encrypt($refreshTokenPayload);
-            }
-            else {
+            } else {
                 $responseParams['refresh_token'] = $this->refreshToken->getIdentifier();
             }
         }

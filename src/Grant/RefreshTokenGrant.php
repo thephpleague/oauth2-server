@@ -55,8 +55,7 @@ class RefreshTokenGrant extends AbstractGrant
         $client = $this->validateClient($request);
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
 
-        if ($oldRefreshToken == null)
-        {
+        if ($oldRefreshToken == null) {
             // Probably should throw an exception here instead
             return $responseType;
         }
@@ -130,13 +129,13 @@ class RefreshTokenGrant extends AbstractGrant
 
                 $refreshTokenEntity = $this->refreshTokenRepository->getNewRefreshToken();
 
-                if ($refreshTokenEntity == null)
-                {
+                if ($refreshTokenEntity == null) {
                     return null;
                 }
 
-                if (isset($refreshTokenData['refresh_token_id']))
+                if (isset($refreshTokenData['refresh_token_id'])) {
                     $refreshTokenEntity->setIdentifier($refreshTokenData['refresh_token_id']);
+                }
 
                 if (isset($refreshTokenData['expire_time'])) {
                     $expire = new DateTimeImmutable();
@@ -155,19 +154,18 @@ class RefreshTokenGrant extends AbstractGrant
                     $refreshTokenEntity->setScopes($scopes);
                 }
 
-                if (isset($refreshTokenData['user_id']))
+                if (isset($refreshTokenData['user_id'])) {
                     $refreshTokenEntity->setUserIdentifier((string)$refreshTokenData['user_id']);
+                }
 
                 if (isset($refreshTokenData['access_token_id'])) {
                     $accessToken = $this->accessTokenRepository->getAccessTokenEntity($refreshTokenData['access_token_id']);
                     $refreshTokenEntity->setAccessToken($accessToken);
                 }
-
             } catch (Exception $e) {
                 throw OAuthServerException::invalidRefreshToken('Cannot decrypt the refresh token', $e);
             }
-        }
-        else {
+        } else {
             $refreshTokenEntity = $this->refreshTokenRepository->getRefreshTokenEntity($refreshTokenParam);
         }
 

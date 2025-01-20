@@ -33,6 +33,7 @@ interface RefreshTokenRepositoryInterface extends RepositoryInterface
 
     /**
      * Get Refresh Token entity from repository
+     * 
      * @return ?RefreshTokenRepositoryInterface
      */
     public function getRefreshTokenEntity(string $tokenId): ?RefreshTokenRepositoryInterface;

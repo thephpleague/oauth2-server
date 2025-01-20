@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace League\OAuth2\Server\Entities\Traits;
 
-use DateTimeImmutable;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 
 trait RefreshTokenTrait

@@ -63,7 +63,7 @@ class RefreshTokenGrantTest extends TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier("abcdef");
+        $ace->setIdentifier('abcdef');
         $accessTokenRepositoryMock->method('getAccessTokenEntity')->willReturn($ace);
         $accessTokenRepositoryMock->expects(self::once())->method('persistNewAccessToken')->willReturnSelf();
 
@@ -189,7 +189,7 @@ class RefreshTokenGrantTest extends TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier("abcdef");
+        $ace->setIdentifier('abcdef');
         $accessTokenRepositoryMock->method('getAccessTokenEntity')->willReturn($ace);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -255,7 +255,7 @@ class RefreshTokenGrantTest extends TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier("abcdef");
+        $ace->setIdentifier('abcdef');
         $accessTokenRepositoryMock->method('getAccessTokenEntity')->willReturn($ace);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -399,7 +399,7 @@ class RefreshTokenGrantTest extends TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier("abcdef");
+        $ace->setIdentifier('abcdef');
         $accessTokenRepositoryMock->method('getAccessTokenEntity')->willReturn($ace);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -464,7 +464,7 @@ class RefreshTokenGrantTest extends TestCase
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier("abcdef");
+        $ace->setIdentifier('abcdef');
         $accessTokenRepositoryMock->method('getAccessTokenEntity')->willReturn($ace);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -528,7 +528,7 @@ class RefreshTokenGrantTest extends TestCase
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier("abcdef");
+        $ace->setIdentifier('abcdef');
         $accessTokenRepositoryMock->method('getAccessTokenEntity')->willReturn($ace);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -604,7 +604,7 @@ class RefreshTokenGrantTest extends TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier("abcdef");
+        $ace->setIdentifier('abcdef');
         $accessTokenRepositoryMock->method('getAccessTokenEntity')->willReturn($ace);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -687,7 +687,7 @@ class RefreshTokenGrantTest extends TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->expects(self::once())->method('persistNewAccessToken')->willReturnSelf();
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier("abcdef");
+        $ace->setIdentifier('abcdef');
         $accessTokenRepositoryMock->method('getAccessTokenEntity')->willReturn($ace);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -760,7 +760,7 @@ class RefreshTokenGrantTest extends TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessTokenEntity);
         $accessTokenRepositoryMock->expects(self::once())->method('persistNewAccessToken')->willReturnSelf();
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier("abcdef");
+        $ace->setIdentifier('abcdef');
         $accessTokenRepositoryMock->method('getAccessTokenEntity')->willReturn($ace);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -841,7 +841,7 @@ class RefreshTokenGrantTest extends TestCase
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->expects(self::once())->method('persistNewAccessToken')->willReturnSelf();
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier("abcdef");
+        $ace->setIdentifier('abcdef');
         $accessTokenRepositoryMock->method('getAccessTokenEntity')->willReturn($ace);
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();

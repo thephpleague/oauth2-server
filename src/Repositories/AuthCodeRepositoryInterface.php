@@ -33,6 +33,7 @@ interface AuthCodeRepositoryInterface extends RepositoryInterface
 
     /**
      * Get Auth code entity from repository
+     * 
      * @return ?AuthCodeEntityInterface
      */
     public function getAuthCodeEntity(string $codeId): ?AuthCodeEntityInterface;

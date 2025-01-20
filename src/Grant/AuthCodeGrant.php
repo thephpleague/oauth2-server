@@ -33,7 +33,6 @@ use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
-use stdClass;
 
 use function array_key_exists;
 use function array_keys;
@@ -46,7 +45,6 @@ use function is_array;
 use function json_decode;
 use function json_encode;
 use function preg_match;
-use function property_exists;
 use function sprintf;
 use function time;
 
@@ -124,23 +122,29 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     return $responseType;
                 }
 
-                if (isset($authCodePayload->auth_code_id))
+                if (isset($authCodePayload->auth_code_id)) {
                     $ace->setIdentifier($authCodePayload->auth_code_id);
+                }
 
-                if (isset($authCodePayload->client_id))
+                if (isset($authCodePayload->client_id)) {
                     $ace->setClient($this->getClientEntityOrFail($authCodePayload->client_id, $request));
+                }
 
-                if (isset($authCodePayload->user_id))
+                if (isset($authCodePayload->user_id)) {
                     $ace->setUserIdentifier((string)$authCodePayload->user_id);
+                }
 
-                if (isset($authCodePayload->code_challenge))
+                if (isset($authCodePayload->code_challenge)) {
                     $ace->setCodeChallenge($authCodePayload->code_challenge);
+                }
 
-                if (isset($authCodePayload->code_challenge_method))
+                if (isset($authCodePayload->code_challenge_method)) {
                     $ace->setCodeChallengeMethod($authCodePayload->code_challenge_method);
+                }
 
-                if (isset($authCodePayload->redirect_uri))
+                if (isset($authCodePayload->redirect_uri)) {
                     $ace->setRedirectUri($authCodePayload->redirect_uri);
+                }
 
                 if (isset($authCodePayload->expire_time)) {
                     $expire = new DateTimeImmutable();
@@ -155,15 +159,12 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     $ace->setScopes($scopes);
                 }
 
-                
-                
             } catch (InvalidArgumentException $e) {
                 throw OAuthServerException::invalidGrant('Cannot validate the provided authorization code');
             } catch (LogicException $e) {
                 throw OAuthServerException::invalidRequest('code', 'Issue decrypting the authorization code', $e);
             }
-        }
-        else {
+        } else {
             // Get the Auth Code Payload from Repository
             $ace = $this->authCodeRepository->getAuthCodeEntity($code);
 
@@ -255,7 +256,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         ClientEntityInterface $client,
         ServerRequestInterface $request
     ): void {
-
         try {
             if (empty($authCodeEntity->getIdentifier())) {
                 // Make sure its not empty
@@ -441,16 +441,15 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                     'code_challenge'        => $authorizationRequest->getCodeChallenge(),
                     'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
                 ];
-    
+
                 $jsonPayload = json_encode($payload);
-    
+
                 if ($jsonPayload === false) {
                     throw new LogicException('An error was encountered when JSON encoding the authorization request response');
                 }
 
                 $code = $this->encrypt($jsonPayload);
             }
-            
 
             $response = new RedirectResponse();
             $response->setRedirectUri(
