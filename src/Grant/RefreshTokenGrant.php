@@ -169,6 +169,10 @@ class RefreshTokenGrant extends AbstractGrant
             $refreshTokenEntity = $this->refreshTokenRepository->getRefreshTokenEntity($refreshTokenParam);
         }
 
+        if ($refreshTokenEntity === null) {
+            throw OAuthServerException::invalidRefreshToken('Cannot find refresh token');
+        }
+
         if ($refreshTokenEntity->getClient()->getIdentifier() !== $clientId) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_CLIENT_FAILED, $request));
             throw OAuthServerException::invalidRefreshToken('Token is not linked to client');
