@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace League\OAuth2\Server\Repositories;
 
+use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
@@ -44,4 +45,6 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     public function isAccessTokenRevoked(string $tokenId): bool;
 
     public function getAccessTokenEntity(string $tokenId): ?AccessTokenEntityInterface;
+
+    public function setPrivateKey(CryptKeyInterface $privateKey): void;
 }
