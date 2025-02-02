@@ -37,6 +37,13 @@ interface DeviceCodeRepositoryInterface extends RepositoryInterface
     ): ?DeviceCodeEntityInterface;
 
     /**
+     * Get a device code entity.
+     */
+    public function getDeviceCodeEntityByUserCode(
+        string $userCode
+    ): ?DeviceCodeEntityInterface;
+
+    /**
      * Revoke a device code.
      */
     public function revokeDeviceCode(string $codeId): void;
