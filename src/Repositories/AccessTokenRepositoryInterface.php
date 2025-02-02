@@ -31,7 +31,7 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     public function getNewToken(
         ClientEntityInterface $clientEntity,
         array $scopes,
-        ?UserEntityInterface $user = null
+        ?UserEntityInterface $user
     ): AccessTokenEntityInterface;
 
     /**
