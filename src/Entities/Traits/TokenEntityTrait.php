@@ -15,6 +15,7 @@ namespace League\OAuth2\Server\Entities\Traits;
 use DateTimeImmutable;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 
 use function array_values;
 
@@ -28,9 +29,9 @@ trait TokenEntityTrait
     protected DateTimeImmutable $expiryDateTime;
 
     /**
-     * @var non-empty-string|null
+     * @var ?UserEntityInterface
      */
-    protected string|null $userIdentifier = null;
+    protected ?UserEntityInterface $user = null;
 
     protected ClientEntityInterface $client;
 
@@ -79,23 +80,23 @@ trait TokenEntityTrait
     }
 
     /**
-     * Set the identifier of the user associated with the token.
+     * Set the user associated with the token.
      *
-     * @param non-empty-string $identifier The identifier of the user
+     * @param ?UserEntityInterface $identifier The identifier of the user
      */
-    public function setUserIdentifier(?string $identifier): void
+    public function setUser(?UserEntityInterface $user): void
     {
-        $this->userIdentifier = $identifier;
+        $this->user = $user;
     }
 
     /**
-     * Get the token user's identifier.
+     * Get the token user.
      *
-     * @return non-empty-string|null
+     * @return ?UserEntityInterface
      */
-    public function getUserIdentifier(): ?string
+    public function getUser(): ?UserEntityInterface
     {
-        return $this->userIdentifier;
+        return $this->user;
     }
 
     /**

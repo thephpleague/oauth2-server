@@ -35,24 +35,7 @@ class BearerTokenResponse extends AbstractResponseType
         ];
 
         if (isset($this->refreshToken)) {
-            if ($this->canUseCrypt()) {
-                $refreshTokenPayload = json_encode([
-                        'client_id'        => $this->accessToken->getClient()->getIdentifier(),
-                        'refresh_token_id' => $this->refreshToken->getIdentifier(),
-                        'access_token_id'  => $this->accessToken->getIdentifier(),
-                        'scopes'           => $this->accessToken->getScopes(),
-                        'user_id'          => $this->accessToken->getUserIdentifier(),
-                        'expire_time'      => $this->refreshToken->getExpiryDateTime()->getTimestamp(),
-                ]);
-
-                if ($refreshTokenPayload === false) {
-                    throw new LogicException('Error encountered JSON encoding the refresh token payload');
-                }
-
-                $responseParams['refresh_token'] = $this->encrypt($refreshTokenPayload);
-            } else {
-                $responseParams['refresh_token'] = $this->refreshToken->getIdentifier();
-            }
+            $responseParams['refresh_token'] = $this->refreshToken->getIdentifier();
         }
 
         $responseParams = json_encode(array_merge($this->getExtraParams($this->accessToken), $responseParams));

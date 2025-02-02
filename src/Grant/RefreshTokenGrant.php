@@ -60,25 +60,18 @@ class RefreshTokenGrant extends AbstractGrant
             return $responseType;
         }
 
-        $originalScopes = $oldRefreshToken->getScopes();
-        $originalScopeArray = [];
-        foreach ($originalScopes as $scopeEntity) {
-            $originalScopeArray[$scopeEntity->getIdentifier()] = $scopeEntity->getIdentifier();
-        }
-        $originalScopeArray = array_values($originalScopeArray);
-
         $scopes = $this->validateScopes(
             $this->getRequestParameter(
                 'scope',
                 $request,
-                implode(self::SCOPE_DELIMITER_STRING, $originalScopeArray)
+                implode(self::SCOPE_DELIMITER_STRING, $oldRefreshToken->getScopes())
             )
         );
 
         // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
         // the request doesn't include any new scopes
         foreach ($scopes as $scope) {
-            if (in_array($scope->getIdentifier(), $originalScopeArray, true) === false) {
+            if (in_array($scope->getIdentifier(), $oldRefreshToken->getScopes(), true) === false) {
                 throw OAuthServerException::invalidScope($scope->getIdentifier());
             }
         }
@@ -92,11 +85,7 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         // Issue and persist new access token
-        $userId = $oldRefreshToken->getUserIdentifier();
-        if (is_int($userId)) {
-            $userId = (string) $userId;
-        }
-        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $userId, $scopes);
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $oldRefreshToken->getUser(), $scopes);
         $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
         $responseType->setAccessToken($accessToken);
 
@@ -122,52 +111,7 @@ class RefreshTokenGrant extends AbstractGrant
             ?? throw OAuthServerException::invalidRequest('refresh_token');
 
         // Validate refresh token
-        if ($this->canUseCrypt()) {
-            try {
-                $refreshTokenJson = $this->decrypt($refreshTokenParam);
-                $refreshTokenData = json_decode($refreshTokenJson, true);
-
-                $refreshTokenEntity = $this->refreshTokenRepository->getNewRefreshToken();
-
-                if ($refreshTokenEntity == null) {
-                    return null;
-                }
-
-                if (isset($refreshTokenData['refresh_token_id'])) {
-                    $refreshTokenEntity->setIdentifier($refreshTokenData['refresh_token_id']);
-                }
-
-                if (isset($refreshTokenData['expire_time'])) {
-                    $expire = new DateTimeImmutable();
-                    $expire = $expire->setTimestamp($refreshTokenData['expire_time']);
-                    $refreshTokenEntity->setExpiryDateTime($expire);
-                }
-
-                if (isset($refreshTokenData['client_id'])) {
-                    $client = $this->getClientEntityOrFail($refreshTokenData['client_id'], $request);
-                    $refreshTokenEntity->setClient($client);
-                }
-
-                if (isset($refreshTokenData['scopes'])) {
-                    $scopes = $this->validateScopes($refreshTokenData['scopes']);
-
-                    $refreshTokenEntity->setScopes($scopes);
-                }
-
-                if (isset($refreshTokenData['user_id'])) {
-                    $refreshTokenEntity->setUserIdentifier((string)$refreshTokenData['user_id']);
-                }
-
-                if (isset($refreshTokenData['access_token_id'])) {
-                    $accessToken = $this->accessTokenRepository->getAccessTokenEntity($refreshTokenData['access_token_id']);
-                    $refreshTokenEntity->setAccessToken($accessToken);
-                }
-            } catch (Exception $e) {
-                throw OAuthServerException::invalidRefreshToken('Cannot decrypt the refresh token', $e);
-            }
-        } else {
-            $refreshTokenEntity = $this->refreshTokenRepository->getRefreshTokenEntity($refreshTokenParam);
-        }
+        $refreshTokenEntity = $this->refreshTokenRepository->getRefreshTokenEntity($refreshTokenParam);
 
         if ($refreshTokenEntity === null) {
             throw OAuthServerException::invalidRefreshToken('Cannot find refresh token');

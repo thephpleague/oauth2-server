@@ -14,6 +14,7 @@ namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 
 /**
  * Scope interface.
@@ -39,7 +40,7 @@ interface ScopeRepositoryInterface extends RepositoryInterface
         array $scopes,
         string $grantType,
         ClientEntityInterface $clientEntity,
-        string|null $userIdentifier = null,
+        ?UserEntityInterface $user = null,
         ?string $authCodeId = null
     ): array;
 }

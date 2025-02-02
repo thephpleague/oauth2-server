@@ -21,6 +21,7 @@ use Exception;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
@@ -113,7 +114,7 @@ class DeviceCodeGrant extends AbstractGrant
     /**
      * {@inheritdoc}
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void
+    public function completeDeviceAuthorizationRequest(string $deviceCode, UserEntityInterface $user, bool $userApproved): void
     {
         $deviceCode = $this->deviceCodeRepository->getDeviceCodeEntityByDeviceCode($deviceCode);
 
@@ -121,11 +122,11 @@ class DeviceCodeGrant extends AbstractGrant
             throw OAuthServerException::invalidRequest('device_code', 'Device code does not exist');
         }
 
-        if ($userId === '') {
+        if ($user === null) {
             throw OAuthServerException::invalidRequest('user_id', 'User ID is required');
         }
 
-        $deviceCode->setUserIdentifier($userId);
+        $deviceCode->setUser($user);
         $deviceCode->setUserApproved($userApproved);
 
         $this->deviceCodeRepository->persistDeviceCode($deviceCode);
@@ -144,7 +145,7 @@ class DeviceCodeGrant extends AbstractGrant
         $deviceCodeEntity = $this->validateDeviceCode($request, $client);
 
         // If device code has no user associated, respond with pending or slow down
-        if (is_null($deviceCodeEntity->getUserIdentifier())) {
+        if (is_null($deviceCodeEntity->getUser())) {
             $shouldSlowDown = $this->deviceCodePolledTooSoon($deviceCodeEntity->getLastPolledAt());
 
             $deviceCodeEntity->setLastPolledAt(new DateTimeImmutable());
@@ -162,10 +163,10 @@ class DeviceCodeGrant extends AbstractGrant
         }
 
         // Finalize the requested scopes
-        $finalizedScopes = $this->scopeRepository->finalizeScopes($deviceCodeEntity->getScopes(), $this->getIdentifier(), $client, $deviceCodeEntity->getUserIdentifier());
+        $finalizedScopes = $this->scopeRepository->finalizeScopes($deviceCodeEntity->getScopes(), $this->getIdentifier(), $client, $deviceCodeEntity->getUser());
 
         // Issue and persist new access token
-        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $deviceCodeEntity->getUserIdentifier(), $finalizedScopes);
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $deviceCodeEntity->getUser(), $finalizedScopes);
         $this->getEmitter()->emit(new RequestEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request));
         $responseType->setAccessToken($accessToken);
 

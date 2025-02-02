@@ -15,14 +15,11 @@ declare(strict_types=1);
 namespace League\OAuth2\Server\ResponseTypes;
 
 use League\OAuth2\Server\CryptKeyInterface;
-use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 
 abstract class AbstractResponseType implements ResponseTypeInterface
 {
-    use CryptTrait;
-
     protected AccessTokenEntityInterface $accessToken;
 
     protected RefreshTokenEntityInterface $refreshToken;

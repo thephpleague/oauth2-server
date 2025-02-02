@@ -14,6 +14,7 @@ namespace League\OAuth2\Server;
 
 use DateInterval;
 use Defuse\Crypto\Key;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\EventEmitting\EmitterAwareInterface;
 use League\OAuth2\Server\EventEmitting\EmitterAwarePolyfill;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -48,8 +49,6 @@ class AuthorizationServer implements EmitterAwareInterface
 
     protected ResponseTypeInterface $responseType;
 
-    private Key|string|null $encryptionKey;
-
     private string $defaultScope = '';
 
     private bool $revokeRefreshTokens = true;
@@ -62,7 +61,6 @@ class AuthorizationServer implements EmitterAwareInterface
         private AccessTokenRepositoryInterface $accessTokenRepository,
         private ScopeRepositoryInterface $scopeRepository,
         CryptKeyInterface|string $privateKey,
-        Key|string|null $encryptionKey,
         ResponseTypeInterface|null $responseType = null
     ) {
         if ($privateKey instanceof CryptKeyInterface === false) {
@@ -70,7 +68,6 @@ class AuthorizationServer implements EmitterAwareInterface
         }
 
         $this->privateKey = $privateKey;
-        $this->encryptionKey = $encryptionKey;
 
         if ($responseType === null) {
             $responseType = new BearerTokenResponse();
@@ -96,7 +93,6 @@ class AuthorizationServer implements EmitterAwareInterface
         $grantType->setDefaultScope($this->defaultScope);
         $grantType->setPrivateKey($this->privateKey);
         $grantType->setEmitter($this->getEmitter());
-        $grantType->setEncryptionKey($this->encryptionKey);
         $grantType->revokeRefreshTokens($this->revokeRefreshTokens);
 
         $this->enabledGrantTypes[$grantType->getIdentifier()] = $grantType;
@@ -152,10 +148,10 @@ class AuthorizationServer implements EmitterAwareInterface
     /**
      * Complete a device authorization request
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void
+    public function completeDeviceAuthorizationRequest(string $deviceCode, UserEntityInterface $user, bool $userApproved): void
     {
         $this->enabledGrantTypes['urn:ietf:params:oauth:grant-type:device_code']
-          ->completeDeviceAuthorizationRequest($deviceCode, $userId, $userApproved);
+          ->completeDeviceAuthorizationRequest($deviceCode, $user, $userApproved);
     }
 
     /**
@@ -192,8 +188,6 @@ class AuthorizationServer implements EmitterAwareInterface
         if ($responseType instanceof AbstractResponseType) {
             $responseType->setPrivateKey($this->privateKey);
         }
-
-        $responseType->setEncryptionKey($this->encryptionKey);
 
         return $responseType;
     }

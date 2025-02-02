@@ -36,8 +36,6 @@ use function trim;
 
 class BearerTokenValidator implements AuthorizationValidatorInterface
 {
-    use CryptTrait;
-
     protected CryptKeyInterface $publicKey;
 
     private Configuration $jwtConfiguration;

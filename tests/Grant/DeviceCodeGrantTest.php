@@ -24,6 +24,7 @@ use LeagueTests\Stubs\DeviceCodeEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
+use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
 
 use function base64_encode;
@@ -262,9 +263,12 @@ class DeviceCodeGrantTest extends TestCase
             'http://foo/bar',
         );
 
-        $grant->completeDeviceAuthorizationRequest($deviceCode->getIdentifier(), 'userId', true);
+        $user = new UserEntity();
+        $user->setIdentifier('userId');
 
-        $this::assertEquals('userId', $deviceCode->getUserIdentifier());
+        $grant->completeDeviceAuthorizationRequest($deviceCode->getIdentifier(), $user, true);
+
+        $this::assertEquals('userId', $deviceCode->getUser()->getIdentifier());
     }
 
     public function testDeviceAuthorizationResponse(): void
@@ -294,7 +298,6 @@ class DeviceCodeGrantTest extends TestCase
             $accessRepositoryMock,
             $scopeRepositoryMock,
             'file://' . __DIR__ . '/../Stubs/private.key',
-            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 
@@ -337,7 +340,10 @@ class DeviceCodeGrantTest extends TestCase
         $deviceCodeRepositoryMock = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
         $deviceCodeEntity = new DeviceCodeEntity();
 
-        $deviceCodeEntity->setUserIdentifier('baz');
+        $user = new UserEntity();
+        $user->setIdentifier('baz');
+
+        $deviceCodeEntity->setUser($user);
         $deviceCodeEntity->setIdentifier('deviceCodeEntityIdentifier');
         $deviceCodeEntity->setUserCode('123456');
         $deviceCodeEntity->setExpiryDateTime(new DateTimeImmutable('+1 hour'));
@@ -353,7 +359,7 @@ class DeviceCodeGrantTest extends TestCase
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')
-            ->with($client, $deviceCodeEntity->getScopes(), $deviceCodeEntity->getUserIdentifier())
+            ->with($client, $deviceCodeEntity->getScopes(), $deviceCodeEntity->getUser())
             ->willReturn($accessTokenEntity);
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
@@ -378,7 +384,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $grant->completeDeviceAuthorizationRequest($deviceCodeEntity->getIdentifier(), 'baz', true);
+        $grant->completeDeviceAuthorizationRequest($deviceCodeEntity->getIdentifier(), $user, true);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
@@ -436,8 +442,10 @@ class DeviceCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
         $deviceCodeRepositoryMock = $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock();
+        $user = new UserEntity();
+        $user->setIdentifier('baz');
         $deviceCodeEntity = new DeviceCodeEntity();
-        $deviceCodeEntity->setUserIdentifier('baz');
+        $deviceCodeEntity->setUser($user);
         $deviceCodeRepositoryMock->method('getDeviceCodeEntityByDeviceCode')->willReturn($deviceCodeEntity);
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
@@ -739,7 +747,7 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
-        $grant->completeDeviceAuthorizationRequest($deviceCode->getIdentifier(), '1', false);
+        $grant->completeDeviceAuthorizationRequest($deviceCode->getIdentifier(), new UserEntity(), false);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
                 'client_id'     => 'foo',

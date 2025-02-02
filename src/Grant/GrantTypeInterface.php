@@ -17,6 +17,7 @@ namespace League\OAuth2\Server\Grant;
 use DateInterval;
 use Defuse\Crypto\Key;
 use League\OAuth2\Server\CryptKeyInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\EventEmitting\EmitterAwareInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -98,7 +99,7 @@ interface GrantTypeInterface extends EmitterAwareInterface
      *
      * If the validation is successful a DeviceCode object is persisted.
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void;
+    public function completeDeviceAuthorizationRequest(string $deviceCode, UserEntityInterface $user, bool $userApproved): void;
 
     /**
      * Set the client repository.
@@ -124,8 +125,6 @@ interface GrantTypeInterface extends EmitterAwareInterface
      * Set the path to the private key.
      */
     public function setPrivateKey(CryptKeyInterface $privateKey): void;
-
-    public function setEncryptionKey(Key|string|null $key = null): void;
 
     /**
      * Enable or prevent the revocation of refresh tokens upon usage.

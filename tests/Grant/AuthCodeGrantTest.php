@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LeagueTests\Grant;
 
+use DateTimeImmutable;
 use DateInterval;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
@@ -22,7 +23,6 @@ use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
-use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
@@ -40,15 +40,13 @@ class AuthCodeGrantTest extends TestCase
     private const DEFAULT_SCOPE = 'basic';
     private const REDIRECT_URI = 'https://foo/bar';
 
-    protected CryptTraitStub $cryptStub;
-
     private const CODE_VERIFIER = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
 
     private const CODE_CHALLENGE = 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM';
 
     public function setUp(): void
     {
-        $this->cryptStub = new CryptTraitStub();
+
     }
 
     public function testGetIdentifier(): void
@@ -532,7 +530,6 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         self::assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
@@ -557,7 +554,6 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         self::assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
@@ -582,7 +578,6 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         try {
             $grant->completeAuthorizationRequest($authRequest);
@@ -626,6 +621,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -635,7 +642,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
@@ -651,16 +657,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id' => uniqid(),
-                        'expire_time'  => time() + 3600,
-                        'client_id'    => 'foo',
-                        'user_id'      => '123',
-                        'scopes'       => ['foo'],
-                        'redirect_uri' => self::REDIRECT_URI,
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 
@@ -699,6 +696,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(null);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -708,7 +717,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
@@ -723,16 +731,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id' => uniqid(),
-                        'expire_time'  => time() + 3600,
-                        'client_id'    => 'foo',
-                        'user_id'      => '123',
-                        'scopes'       => ['foo'],
-                        'redirect_uri' => null,
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 
@@ -763,6 +762,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $authCodeGrant = new AuthCodeGrant(
             $authCodeRepository,
             $refreshTokenRepositoryMock,
@@ -772,7 +783,6 @@ class AuthCodeGrantTest extends TestCase
         $authCodeGrant->setClientRepository($clientRepositoryMock);
         $authCodeGrant->setScopeRepository($scopeRepositoryMock);
         $authCodeGrant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $authCodeGrant->setEncryptionKey($this->cryptStub->getKey());
         $authCodeGrant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
@@ -789,16 +799,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id' => uniqid(),
-                        'client_id' => 'foo',
-                        'expire_time'  => time() + 3600,
-                        'user_id'      => '123',
-                        'scopes'       => ['foo'],
-                        'redirect_uri' => self::REDIRECT_URI,
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 
@@ -832,6 +833,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -841,7 +854,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
@@ -857,16 +869,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id' => uniqid(),
-                        'expire_time'  => time() + 3600,
-                        'client_id'    => 'foo',
-                        'user_id'      => '123',
-                        'scopes'       => ['foo'],
-                        'redirect_uri' => self::REDIRECT_URI,
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 
@@ -900,6 +903,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $refreshTokenRepositoryMock,
@@ -909,7 +924,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
@@ -925,16 +939,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id' => uniqid(),
-                        'expire_time'  => time() + 3600,
-                        'client_id'    => 'foo',
-                        'user_id'      => '123',
-                        'scopes'       => ['foo'],
-                        'redirect_uri' => self::REDIRECT_URI,
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 
@@ -973,6 +978,20 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+        $ace->setCodeChallenge(self::CODE_VERIFIER);
+        $ace->setCodeChallengeMethod('plain');
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $refreshTokenRepositoryMock,
@@ -983,7 +1002,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
@@ -1000,18 +1018,7 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'     => 'foo',
                 'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
-                'code'          => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id'          => uniqid(),
-                        'expire_time'           => time() + 3600,
-                        'client_id'             => 'foo',
-                        'user_id'               => '123',
-                        'scopes'                => ['foo'],
-                        'redirect_uri'          => self::REDIRECT_URI,
-                        'code_challenge'        => self::CODE_VERIFIER,
-                        'code_challenge_method' => 'plain',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'          => $ace->getIdentifier()
             ]
         );
 
@@ -1050,6 +1057,20 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+        $ace->setCodeChallenge(self::CODE_CHALLENGE);
+        $ace->setCodeChallengeMethod('S256');
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -1060,7 +1081,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
@@ -1077,18 +1097,7 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'     => 'foo',
                 'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
-                'code'          => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id'          => uniqid(),
-                        'expire_time'           => time() + 3600,
-                        'client_id'             => 'foo',
-                        'user_id'               => '123',
-                        'scopes'                => ['foo'],
-                        'redirect_uri'          => self::REDIRECT_URI,
-                        'code_challenge'        => self::CODE_CHALLENGE,
-                        'code_challenge_method' => 'S256',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'          => $ace->getIdentifier()
             ]
         );
 
@@ -1124,6 +1133,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(null);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -1134,7 +1155,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
@@ -1151,19 +1171,7 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'     => 'foo',
                 'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
-                'code'          => $this->cryptStub->doEncrypt(
-                    json_encode(
-                        [
-                            'auth_code_id'          => uniqid(),
-                            'expire_time'           => time() + 3600,
-                            'client_id'             => 'foo',
-                            'user_id'               => '123',
-                            'scopes'                => ['foo'],
-                            'redirect_uri'          => self::REDIRECT_URI,
-                        ],
-                        JSON_THROW_ON_ERROR
-                    )
-                ),
+                'code'          => $ace->getIdentifier()
             ]
         );
 
@@ -1190,13 +1198,24 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri('http://foo/bar');
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1210,14 +1229,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'client_id'  => 'foo',
                 'grant_type' => 'authorization_code',
-                'code'       => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id'          => uniqid(),
-                        'expire_time'           => time() + 3600,
-                        'client_id'             => 'foo',
-                        'redirect_uri'          => 'http://foo/bar',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'       => $ace->getIdentifier()
             ]
         );
 
@@ -1243,13 +1255,23 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri('http://foo/bar');
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1264,14 +1286,7 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'  => 'foo',
                 'grant_type' => 'authorization_code',
                 'redirect_uri' => 'http://bar/foo',
-                'code'       => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id'          => uniqid(),
-                        'expire_time'           => time() + 3600,
-                        'client_id'             => 'foo',
-                        'redirect_uri'          => 'http://foo/bar',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'       => $ace->getIdentifier()
             ]
         );
 
@@ -1297,13 +1312,24 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(null);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1318,14 +1344,7 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'  => 'foo',
                 'grant_type' => 'authorization_code',
                 'redirect_uri' => 'http://bar/foo',
-                'code'       => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id'          => uniqid(),
-                        'expire_time'           => time() + 3600,
-                        'client_id'             => 'foo',
-                        'redirect_uri'          => null,
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'       => $ace->getIdentifier()
             ]
         );
 
@@ -1358,7 +1377,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1384,64 +1402,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
-    public function testRespondToAccessTokenRequestWithRefreshTokenInsteadOfAuthCode(): void
-    {
-        $client = new ClientEntity();
-        $client->setRedirectUri(self::REDIRECT_URI);
-
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-
-        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
-
-        $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
-        $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
-
-        $grant = new AuthCodeGrant(
-            $authCodeRepository,
-            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new DateInterval('PT10M')
-        );
-
-        $grant->setClientRepository($clientRepositoryMock);
-        $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
-
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            'POST',
-            'php://input',
-            [],
-            [],
-            [],
-            [
-                'grant_type'   => 'authorization_code',
-                'client_id'    => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'client_id'        => 'foo',
-                        'refresh_token_id' => 'zyxwvu',
-                        'access_token_id'  => 'abcdef',
-                        'scopes'           => ['foo'],
-                        'user_id'          => 123,
-                        'expire_time'      => time() + 3600,
-                    ], JSON_THROW_ON_ERROR)
-                ),
-            ]
-        );
-
-        try {
-            /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
-        } catch (OAuthServerException $e) {
-            self::assertEquals('Authorization code malformed', $e->getHint());
-        }
-    }
-
     public function testRespondToAccessTokenRequestWithAuthCodeNotAString(): void
     {
         $client = new ClientEntity();
@@ -1457,7 +1417,6 @@ class AuthCodeGrantTest extends TestCase
         );
 
         $grant->setClientRepository($clientRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1494,6 +1453,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->sub(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -1502,7 +1473,6 @@ class AuthCodeGrantTest extends TestCase
 
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1517,16 +1487,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id' => uniqid(),
-                        'expire_time'  => time() - 3600,
-                        'client_id'    => 'foo',
-                        'user_id'      => 123,
-                        'scopes'       => ['foo'],
-                        'redirect_uri' => 'http://foo/bar',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 
@@ -1563,6 +1524,18 @@ class AuthCodeGrantTest extends TestCase
 
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
+
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepositoryMock->method('getAuthCodeEntity')->willReturn($ace);
         
         $grant = new AuthCodeGrant(
             $authCodeRepositoryMock,
@@ -1573,7 +1546,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1588,16 +1560,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id' => uniqid(),
-                        'expire_time'  => time() + 3600,
-                        'client_id'    => 'foo',
-                        'user_id'      => 123,
-                        'scopes'       => ['foo'],
-                        'redirect_uri' => 'http://foo/bar',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 
@@ -1647,6 +1610,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client3);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -1656,7 +1631,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1671,16 +1645,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id' => uniqid(),
-                        'expire_time'  => time() + 3600,
-                        'client_id'    => 'bar',
-                        'user_id'      => 123,
-                        'scopes'       => ['foo'],
-                        'redirect_uri' => 'http://foo/bar',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 
@@ -1711,15 +1676,18 @@ class AuthCodeGrantTest extends TestCase
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
 
+
+        $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn(null);
+
         $grant = new AuthCodeGrant(
-            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $authCodeRepository,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1742,66 +1710,8 @@ class AuthCodeGrantTest extends TestCase
             /* @var StubResponseType $response */
             $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
         } catch (OAuthServerException $e) {
-            self::assertEquals($e->getErrorType(), 'invalid_grant');
-            self::assertEquals($e->getHint(), 'Cannot validate the provided authorization code');
-        }
-    }
-
-    public function testRespondToAccessTokenRequestNoEncryptionKey(): void
-    {
-        $client = new ClientEntity();
-
-        $client->setIdentifier('foo');
-        $client->setRedirectUri(self::REDIRECT_URI);
-        $client->setConfidential();
-
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('validateClient')->willReturn(true);
-
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
-
-        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
-        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
-
-        $authCodeRepositoryMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
-        $authCodeRepositoryMock->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
-
-        $grant = new AuthCodeGrant(
-            $authCodeRepositoryMock,
-            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new DateInterval('PT10M')
-        );
-        $grant->setClientRepository($clientRepositoryMock);
-        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        // We deliberately don't set an encryption key here
-
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            'POST',
-            'php://input',
-            [],
-            [],
-            [],
-            [
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => 'badCode',
-            ]
-        );
-
-        try {
-            /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
-        } catch (OAuthServerException $e) {
             self::assertEquals($e->getErrorType(), 'invalid_request');
-            self::assertEquals($e->getHint(), 'Cannot find authorization code');
+            self::assertEquals($e->getHint(), 'Cannot validate the provided authorization code');
         }
     }
 
@@ -1834,6 +1744,20 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepositoryMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepositoryMock->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+        $ace->setCodeChallenge('foobar');
+        $ace->setCodeChallengeMethod('plain');
+
+        $authCodeRepositoryMock->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepositoryMock,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -1844,7 +1768,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1860,18 +1783,7 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'     => 'foo',
                 'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => self::CODE_VERIFIER,
-                'code'          => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id'          => uniqid(),
-                        'expire_time'           => time() + 3600,
-                        'client_id'             => 'foo',
-                        'user_id'               => '123',
-                        'scopes'                => ['foo'],
-                        'redirect_uri'          => self::REDIRECT_URI,
-                        'code_challenge'        => 'foobar',
-                        'code_challenge_method' => 'plain',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'          => $ace->getIdentifier()
             ]
         );
 
@@ -1912,6 +1824,20 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepositoryMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepositoryMock->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+        $ace->setCodeChallenge('foobar');
+        $ace->setCodeChallengeMethod('S256');
+
+        $authCodeRepositoryMock->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepositoryMock,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -1922,7 +1848,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -1938,18 +1863,7 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'     => 'foo',
                 'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => 'nope',
-                'code'          => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id'          => uniqid(),
-                        'expire_time'           => time() + 3600,
-                        'client_id'             => 'foo',
-                        'user_id'               => '123',
-                        'scopes'                => ['foo'],
-                        'redirect_uri'          => self::REDIRECT_URI,
-                        'code_challenge'        => 'foobar',
-                        'code_challenge_method' => 'S256',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'          => $ace->getIdentifier()
             ]
         );
 
@@ -1990,6 +1904,20 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepositoryMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepositoryMock->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+        $ace->setCodeChallenge(self::CODE_CHALLENGE);
+        $ace->setCodeChallengeMethod('S256');
+
+        $authCodeRepositoryMock->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepositoryMock,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -2000,7 +1928,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -2016,18 +1943,7 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'     => 'foo',
                 'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => 'dqX7C-RbqjHYtytmhGTigKdZCXfxq-+xbsk9_GxUcaE', // Malformed code. Contains `+`.
-                'code'          => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id'          => uniqid(),
-                        'expire_time'           => time() + 3600,
-                        'client_id'             => 'foo',
-                        'user_id'               => '123',
-                        'scopes'                => ['foo'],
-                        'redirect_uri'          => self::REDIRECT_URI,
-                        'code_challenge'        => self::CODE_CHALLENGE,
-                        'code_challenge_method' => 'S256',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'          => $ace->getIdentifier()
             ]
         );
 
@@ -2068,6 +1984,20 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepositoryMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepositoryMock->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+        $ace->setCodeChallenge(self::CODE_CHALLENGE);
+        $ace->setCodeChallengeMethod('S256');
+
+        $authCodeRepositoryMock->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepositoryMock,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -2078,7 +2008,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -2094,18 +2023,7 @@ class AuthCodeGrantTest extends TestCase
                 'client_id'     => 'foo',
                 'redirect_uri'  => self::REDIRECT_URI,
                 'code_verifier' => 'dqX7C-RbqjHY', // Malformed code. Invalid length.
-                'code'          => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id'          => uniqid(),
-                        'expire_time'           => time() + 3600,
-                        'client_id'             => 'foo',
-                        'user_id'               => '123',
-                        'scopes'                => ['foo'],
-                        'redirect_uri'          => self::REDIRECT_URI,
-                        'code_challenge'        => 'R7T1y1HPNFvs1WDCrx4lfoBS6KD2c71pr8OHvULjvv8',
-                        'code_challenge_method' => 'S256',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'          => $ace->getIdentifier()
             ]
         );
 
@@ -2146,6 +2064,20 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepositoryMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepositoryMock->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+        $ace->setCodeChallenge('foobar');
+        $ace->setCodeChallengeMethod('plain');
+
+        $authCodeRepositoryMock->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepositoryMock,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -2156,7 +2088,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $request = new ServerRequest(
             [],
@@ -2171,18 +2102,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id'          => uniqid(),
-                        'expire_time'           => time() + 3600,
-                        'client_id'             => 'foo',
-                        'user_id'               => '123',
-                        'scopes'                => ['foo'],
-                        'redirect_uri'          => self::REDIRECT_URI,
-                        'code_challenge'        => 'foobar',
-                        'code_challenge_method' => 'plain',
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 
@@ -2226,7 +2146,7 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
-        $grant->setEncryptionKey($this->cryptStub->getKey());
+
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         self::assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
@@ -2254,7 +2174,6 @@ class AuthCodeGrantTest extends TestCase
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
             new DateInterval('PT10M')
         );
-        $grant->setEncryptionKey($this->cryptStub->getKey());
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(7);
@@ -2313,6 +2232,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepository->method('getAuthCodeEntity')->willReturn($ace);
+
         $refreshTokenRepositoryMock
             ->expects(self::exactly(2))
             ->method('persistNewRefreshToken')
@@ -2333,7 +2264,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
@@ -2349,16 +2279,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id' => uniqid(),
-                        'expire_time'  => time() + 3600,
-                        'client_id'    => 'foo',
-                        'user_id'      => '123',
-                        'scopes'       => ['foo'],
-                        'redirect_uri' => self::REDIRECT_URI,
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 
@@ -2392,6 +2313,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepositoryMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepositoryMock->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepositoryMock->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepositoryMock,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -2401,7 +2334,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
@@ -2417,16 +2349,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id' => uniqid(),
-                        'expire_time'  => time() + 3600,
-                        'client_id'    => 'foo',
-                        'user_id'      => '123',
-                        'scopes'       => ['foo'],
-                        'redirect_uri' => self::REDIRECT_URI,
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 
@@ -2463,6 +2386,18 @@ class AuthCodeGrantTest extends TestCase
         $authCodeRepositoryMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
         $authCodeRepositoryMock->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
 
+        $ace = new AuthCodeEntity();
+        $ace->setIdentifier(uniqid());
+        $ace->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $ace->setClient($client);
+        $ace->setRedirectUri(self::REDIRECT_URI);
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $ace->setUser($user);
+        $ace->setScopes(['foo']);
+
+        $authCodeRepositoryMock->method('getAuthCodeEntity')->willReturn($ace);
+
         $grant = new AuthCodeGrant(
             $authCodeRepositoryMock,
             $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
@@ -2472,7 +2407,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
@@ -2488,16 +2422,7 @@ class AuthCodeGrantTest extends TestCase
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
                 'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'auth_code_id' => uniqid(),
-                        'expire_time'  => time() + 3600,
-                        'client_id'    => 'foo',
-                        'user_id'      => '123',
-                        'scopes'       => ['foo'],
-                        'redirect_uri' => self::REDIRECT_URI,
-                    ], JSON_THROW_ON_ERROR)
-                ),
+                'code'         => $ace->getIdentifier()
             ]
         );
 

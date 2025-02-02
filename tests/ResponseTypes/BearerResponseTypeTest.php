@@ -17,6 +17,7 @@ use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
+use LeagueTests\Stubs\UserEntity;
 use PHPUnit\Framework\TestCase;
 
 use function base64_encode;
@@ -30,7 +31,6 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -44,7 +44,9 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $accessToken->setUserIdentifier('userId');
+        $user = new UserEntity();
+        $user->setIdentifier('userId');
+        $accessToken->setUser($user);
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
@@ -73,7 +75,6 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponseWithParams();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -87,7 +88,9 @@ class BearerResponseTypeTest extends TestCase
         $accessToken->setClient($client);
         $accessToken->addScope($scope);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $accessToken->setUserIdentifier('userId');
+        $user = new UserEntity();
+        $user->setIdentifier('userId');
+        $accessToken->setUser($user);
 
         $refreshToken = new RefreshTokenEntity();
         $refreshToken->setIdentifier('abcdef');
@@ -119,14 +122,15 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
-        $accessToken->setUserIdentifier('123');
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $accessToken->setUser($user);
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -164,14 +168,15 @@ class BearerResponseTypeTest extends TestCase
 
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
-        $accessToken->setUserIdentifier('123');
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+        $accessToken->setUser($user);
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->sub(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -206,14 +211,15 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setIdentifier('abcdef');
-        $accessToken->setUserIdentifier('123');
+        $user = new UserEntity();
+        $user->setIdentifier('userId');
+        $accessToken->setUser($user);
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
         $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
@@ -251,7 +257,6 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
@@ -274,7 +279,6 @@ class BearerResponseTypeTest extends TestCase
     {
         $responseType = new BearerTokenResponse();
         $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 

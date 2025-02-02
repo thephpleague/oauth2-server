@@ -41,18 +41,18 @@ interface TokenInterface
     public function setExpiryDateTime(DateTimeImmutable $dateTime): void;
 
     /**
-     * Set the identifier of the user associated with the token.
+     * Set the user associated with the token.
      *
-     * @param non-empty-string $identifier
+     * @param ?UserEntityInterface $identifier The identifier of the user
      */
-    public function setUserIdentifier(?string $identifier): void;
+    public function setUser(?UserEntityInterface $user): void;
 
     /**
-     * Get the token user's identifier.
+     * Get the token user.
      *
-     * @return non-empty-string|null
+     * @return ?UserEntityInterface
      */
-    public function getUserIdentifier(): ?string;
+    public function getUser(): ?UserEntityInterface;
 
     /**
      * Get the client that the token was issued to.

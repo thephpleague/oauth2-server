@@ -111,66 +111,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             throw OAuthServerException::invalidRequest('code');
         }
 
-        if ($this->canUseCrypt()) {
-            try {
-                $authCodePayload = json_decode($this->decrypt($code));
+        // Get the Auth Code Payload from Repository
+        $ace = $this->authCodeRepository->getAuthCodeEntity($code);
 
-                $ace = $this->authCodeRepository->getNewAuthCode();
-
-                if ($ace == null) {
-                    // Probably should throw an exception here instead
-                    return $responseType;
-                }
-
-                if (isset($authCodePayload->auth_code_id)) {
-                    $ace->setIdentifier($authCodePayload->auth_code_id);
-                }
-
-                if (isset($authCodePayload->client_id)) {
-                    $ace->setClient($this->getClientEntityOrFail($authCodePayload->client_id, $request));
-                }
-
-                if (isset($authCodePayload->user_id)) {
-                    $ace->setUserIdentifier((string)$authCodePayload->user_id);
-                }
-
-                if (isset($authCodePayload->code_challenge)) {
-                    $ace->setCodeChallenge($authCodePayload->code_challenge);
-                }
-
-                if (isset($authCodePayload->code_challenge_method)) {
-                    $ace->setCodeChallengeMethod($authCodePayload->code_challenge_method);
-                }
-
-                if (isset($authCodePayload->redirect_uri)) {
-                    $ace->setRedirectUri($authCodePayload->redirect_uri);
-                }
-
-                if (isset($authCodePayload->expire_time)) {
-                    $expire = new DateTimeImmutable();
-                    $expire = $expire->setTimestamp($authCodePayload->expire_time);
-
-                    $ace->setExpiryDateTime($expire);
-                }
-
-                if (isset($authCodePayload->scopes)) {
-                    $scopes = $this->validateScopes($authCodePayload->scopes);
-
-                    $ace->setScopes($scopes);
-                }
-
-            } catch (InvalidArgumentException $e) {
-                throw OAuthServerException::invalidGrant('Cannot validate the provided authorization code');
-            } catch (LogicException $e) {
-                throw OAuthServerException::invalidRequest('code', 'Issue decrypting the authorization code', $e);
-            }
-        } else {
-            // Get the Auth Code Payload from Repository
-            $ace = $this->authCodeRepository->getAuthCodeEntity($code);
-
-            if (empty($ace)) {
-                throw OAuthServerException::invalidRequest('code', 'Cannot find authorization code');
-            }
+        if (empty($ace)) {
+            throw OAuthServerException::invalidRequest('code', 'Cannot validate the provided authorization code');
         }
 
         $this->validateAuthorizationCode($ace, $client, $request);
@@ -179,7 +124,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $ace->getScopes(),
             $this->getIdentifier(),
             $client,
-            $ace->getUserIdentifier(),
+            $ace->getUser(),
             $ace->getIdentifier()
         );
 
@@ -198,7 +143,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         }
 
         // Issue and persist new access token
-        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $ace->getUserIdentifier(), $scopes);
+        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $ace->getUser(), $scopes);
         $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
         $responseType->setAccessToken($accessToken);
 
@@ -421,7 +366,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $authCode = $this->issueAuthCode(
                 $this->authCodeTTL,
                 $authorizationRequest->getClient(),
-                $authorizationRequest->getUser()->getIdentifier(),
+                $authorizationRequest->getUser(),
                 $authorizationRequest->getRedirectUri(),
                 $authorizationRequest->getScopes(),
                 $authorizationRequest->getCodeChallenge(),
@@ -429,27 +374,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             );
 
             $code = $authCode->getIdentifier();
-
-            if ($this->canUseCrypt()) {
-                $payload = [
-                    'client_id'             => $authCode->getClient()->getIdentifier(),
-                    'redirect_uri'          => $authCode->getRedirectUri(),
-                    'auth_code_id'          => $authCode->getIdentifier(),
-                    'scopes'                => $authCode->getScopes(),
-                    'user_id'               => $authCode->getUserIdentifier(),
-                    'expire_time'           => (new DateTimeImmutable())->add($this->authCodeTTL)->getTimestamp(),
-                    'code_challenge'        => $authorizationRequest->getCodeChallenge(),
-                    'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
-                ];
-
-                $jsonPayload = json_encode($payload);
-
-                if ($jsonPayload === false) {
-                    throw new LogicException('An error was encountered when JSON encoding the authorization request response');
-                }
-
-                $code = $this->encrypt($jsonPayload);
-            }
 
             $response = new RedirectResponse();
             $response->setRedirectUri(

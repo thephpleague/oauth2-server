@@ -20,6 +20,7 @@ use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use RuntimeException;
 
 trait AccessTokenTrait
@@ -85,9 +86,11 @@ trait AccessTokenTrait
     abstract public function getExpiryDateTime(): DateTimeImmutable;
 
     /**
-     * @return non-empty-string|null
+     * Get the token user.
+     *
+     * @return ?UserEntityInterface
      */
-    abstract public function getUserIdentifier(): string|null;
+    abstract public function getUser(): ?UserEntityInterface;
 
     /**
      * @return ScopeEntityInterface[]
@@ -104,6 +107,6 @@ trait AccessTokenTrait
      */
     private function getSubjectIdentifier(): string
     {
-        return $this->getUserIdentifier() ?? $this->getClient()->getIdentifier();
+        return $this->getUser()?->getIdentifier() ?? $this->getClient()->getIdentifier();
     }
 }

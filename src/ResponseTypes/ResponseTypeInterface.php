@@ -26,6 +26,4 @@ interface ResponseTypeInterface
     public function setRefreshToken(RefreshTokenEntityInterface $refreshToken): void;
 
     public function generateHttpResponse(ResponseInterface $response): ResponseInterface;
-
-    public function setEncryptionKey(Key|string|null $key = null): void;
 }
