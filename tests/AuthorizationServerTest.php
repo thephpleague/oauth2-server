@@ -56,10 +56,6 @@ class AuthorizationServerTest extends TestCase
             $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-<<<<<<< HEAD
-=======
-            'file://' . __DIR__ . '/Stubs/private.key',
->>>>>>> d733e07f (Removing Encryption from RefreshToken and AuthCode)
             new StubResponseType()
         );
 
@@ -75,10 +71,6 @@ class AuthorizationServerTest extends TestCase
             $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-<<<<<<< HEAD
-=======
-            'file://' . __DIR__ . '/Stubs/private.key',
->>>>>>> d733e07f (Removing Encryption from RefreshToken and AuthCode)
             new StubResponseType()
         );
 
@@ -115,10 +107,6 @@ class AuthorizationServerTest extends TestCase
             $clientRepository,
             $accessTokenRepositoryMock,
             $scopeRepositoryMock,
-<<<<<<< HEAD
-=======
-            'file://' . __DIR__ . '/Stubs/private.key',
->>>>>>> d733e07f (Removing Encryption from RefreshToken and AuthCode)
             new StubResponseType()
         );
 
@@ -161,10 +149,6 @@ class AuthorizationServerTest extends TestCase
             $clientRepository,
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-<<<<<<< HEAD
-=======
-            $privateKey,
->>>>>>> d733e07f (Removing Encryption from RefreshToken and AuthCode)
             $responseTypePrototype
         );
 
