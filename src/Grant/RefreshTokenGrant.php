@@ -60,25 +60,18 @@ class RefreshTokenGrant extends AbstractGrant
             return $responseType;
         }
 
-        $originalScopes = $oldRefreshToken->getScopes();
-        $originalScopeArray = [];
-        foreach ($originalScopes as $scopeEntity) {
-            $originalScopeArray[$scopeEntity->getIdentifier()] = $scopeEntity->getIdentifier();
-        }
-        $originalScopeArray = array_values($originalScopeArray);
-
         $scopes = $this->validateScopes(
             $this->getRequestParameter(
                 'scope',
                 $request,
-                implode(self::SCOPE_DELIMITER_STRING, $originalScopeArray)
+                implode(self::SCOPE_DELIMITER_STRING, $oldRefreshToken->getScopes())
             )
         );
 
         // The OAuth spec says that a refreshed access token can have the original scopes or fewer so ensure
         // the request doesn't include any new scopes
         foreach ($scopes as $scope) {
-            if (in_array($scope->getIdentifier(), $originalScopeArray, true) === false) {
+            if (in_array($scope->getIdentifier(), $oldRefreshToken->getScopes(), true) === false) {
                 throw OAuthServerException::invalidScope($scope->getIdentifier());
             }
         }

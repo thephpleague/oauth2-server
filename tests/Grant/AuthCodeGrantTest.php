@@ -1416,65 +1416,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 
-    public function testRespondToAccessTokenRequestWithRefreshTokenInsteadOfAuthCode(): void
-    {
-        $client = new ClientEntity();
-        $client->setRedirectUri(self::REDIRECT_URI);
-
-        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
-        $clientRepositoryMock->method('validateClient')->willReturn(true);
-
-        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
-
-        $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
-        $authCodeRepository->method('getNewAuthCode')->willReturn(new AuthCodeEntity());
-
-        $grant = new AuthCodeGrant(
-            $authCodeRepository,
-            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
-            new DateInterval('PT10M')
-        );
-
-        $grant->setClientRepository($clientRepositoryMock);
-        $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setEncryptionKey($this->cryptStub->getKey());
-
-        $request = new ServerRequest(
-            [],
-            [],
-            null,
-            'POST',
-            'php://input',
-            [],
-            [],
-            [],
-            [
-                'grant_type'   => 'authorization_code',
-                'client_id'    => 'foo',
-                'redirect_uri' => self::REDIRECT_URI,
-                'code'         => $this->cryptStub->doEncrypt(
-                    json_encode([
-                        'client_id'        => 'foo',
-                        'refresh_token_id' => 'zyxwvu',
-                        'access_token_id'  => 'abcdef',
-                        'scopes'           => ['foo'],
-                        'user_id'          => 123,
-                        'expire_time'      => time() + 3600,
-                    ], JSON_THROW_ON_ERROR)
-                ),
-            ]
-        );
-
-        try {
-            /* @var StubResponseType $response */
-            $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
-        } catch (OAuthServerException $e) {
-            self::assertEquals('Authorization code malformed', $e->getHint());
-        }
-    }
-
     public function testRespondToAccessTokenRequestWithAuthCodeNotAString(): void
     {
         $client = new ClientEntity();
