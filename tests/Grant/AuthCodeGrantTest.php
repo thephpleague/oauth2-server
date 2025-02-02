@@ -642,7 +642,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -717,7 +716,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -783,7 +781,6 @@ class AuthCodeGrantTest extends TestCase
         $authCodeGrant->setClientRepository($clientRepositoryMock);
         $authCodeGrant->setScopeRepository($scopeRepositoryMock);
         $authCodeGrant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $authCodeGrant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -854,7 +851,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -924,7 +920,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -1002,7 +997,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -1081,7 +1075,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -1155,7 +1148,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -2147,8 +2139,6 @@ class AuthCodeGrantTest extends TestCase
             new DateInterval('PT10M')
         );
 
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
-
         self::assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
     }
 
@@ -2264,7 +2254,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -2334,7 +2323,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],
@@ -2407,7 +2395,6 @@ class AuthCodeGrantTest extends TestCase
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $request = new ServerRequest(
             [],

@@ -122,11 +122,6 @@ interface GrantTypeInterface extends EmitterAwareInterface
     public function setDefaultScope(string $scope): void;
 
     /**
-     * Set the path to the private key.
-     */
-    public function setPrivateKey(CryptKeyInterface $privateKey): void;
-
-    /**
      * Enable or prevent the revocation of refresh tokens upon usage.
      */
     public function revokeRefreshTokens(bool $willRevoke): void;

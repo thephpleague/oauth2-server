@@ -25,7 +25,7 @@ use RuntimeException;
 
 trait AccessTokenTrait
 {
-    private CryptKeyInterface $privateKey;
+    private ?CryptKeyInterface $privateKey = null;
 
     private Configuration $jwtConfiguration;
 
@@ -78,6 +78,10 @@ trait AccessTokenTrait
      */
     public function toString(): string
     {
+        if ($this->privateKey === null) {
+            return $this->getIdentifier();
+        }
+        
         return $this->convertToJWT()->toString();
     }
 

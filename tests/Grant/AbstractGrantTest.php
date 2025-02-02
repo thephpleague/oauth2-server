@@ -434,7 +434,6 @@ class AbstractGrantTest extends TestCase
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grantMock->setAccessTokenRepository($accessTokenRepoMock);
 
         $abstractGrantReflection = new ReflectionClass($grantMock);

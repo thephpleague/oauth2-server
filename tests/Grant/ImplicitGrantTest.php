@@ -267,7 +267,6 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
@@ -295,7 +294,6 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
@@ -349,7 +347,6 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
@@ -378,7 +375,6 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
@@ -410,7 +406,6 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 

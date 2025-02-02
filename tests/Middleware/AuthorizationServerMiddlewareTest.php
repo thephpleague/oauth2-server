@@ -50,7 +50,6 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $clientRepository,
             $accessRepositoryMock,
             $scopeRepositoryMock,
-            'file://' . __DIR__ . '/../Stubs/private.key',
             new StubResponseType()
         );
 
@@ -83,7 +82,6 @@ class AuthorizationServerMiddlewareTest extends TestCase
             $clientRepository,
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-            'file://' . __DIR__ . '/../Stubs/private.key',
             new StubResponseType()
         );
 

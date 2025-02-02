@@ -30,7 +30,6 @@ class BearerResponseTypeTest extends TestCase
     public function testGenerateHttpResponse(): void
     {
         $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -74,7 +73,6 @@ class BearerResponseTypeTest extends TestCase
     public function testGenerateHttpResponseWithExtraParams(): void
     {
         $responseType = new BearerTokenResponseWithParams();
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -121,7 +119,6 @@ class BearerResponseTypeTest extends TestCase
     public function testDetermineAccessTokenInHeaderValidToken(): void
     {
         $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -167,7 +164,6 @@ class BearerResponseTypeTest extends TestCase
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
         $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -210,7 +206,6 @@ class BearerResponseTypeTest extends TestCase
     public function testDetermineAccessTokenInHeaderRevokedToken(): void
     {
         $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');
@@ -256,7 +251,6 @@ class BearerResponseTypeTest extends TestCase
     public function testDetermineAccessTokenInHeaderInvalidToken(): void
     {
         $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
@@ -278,7 +272,6 @@ class BearerResponseTypeTest extends TestCase
     public function testDetermineMissingBearerInHeader(): void
     {
         $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 

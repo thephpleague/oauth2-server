@@ -297,7 +297,6 @@ class DeviceCodeGrantTest extends TestCase
             $clientRepository,
             $accessRepositoryMock,
             $scopeRepositoryMock,
-            'file://' . __DIR__ . '/../Stubs/private.key',
             new StubResponseType()
         );
 
@@ -382,7 +381,6 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $grant->completeDeviceAuthorizationRequest($deviceCodeEntity->getIdentifier(), $user, true);
 
@@ -462,7 +460,6 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id' => 'foo',
@@ -509,7 +506,6 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -556,7 +552,6 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -603,7 +598,6 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -745,7 +739,6 @@ class DeviceCodeGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $grant->completeDeviceAuthorizationRequest($deviceCode->getIdentifier(), new UserEntity(), false);
 

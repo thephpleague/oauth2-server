@@ -23,7 +23,6 @@ class DeviceCodeResponseTypeTest extends TestCase
     public function testGenerateHttpResponse(): void
     {
         $responseType = new DeviceCodeResponse();
-        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $client = new ClientEntity();
         $client->setIdentifier('clientName');

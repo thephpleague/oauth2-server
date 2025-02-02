@@ -82,7 +82,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->revokeRefreshTokens(true);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
@@ -140,7 +139,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -200,7 +198,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->revokeRefreshTokens(true);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
@@ -260,7 +257,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -293,7 +289,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -324,7 +319,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = 'foobar';
 
@@ -358,7 +352,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $oldRefreshToken = 'foobar';
 
@@ -410,7 +403,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -454,7 +446,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -499,7 +490,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
@@ -563,7 +553,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
 
         $scopes = [$fooScopeEntity, $barScopeEntity];
@@ -649,7 +638,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->revokeRefreshTokens(true);
         $grant->respondToAccessTokenRequest($serverRequest, new StubResponseType(), new DateInterval('PT5M'));
 
@@ -711,17 +699,13 @@ class RefreshTokenGrantTest extends TestCase
             'scope'         => 'foo',
         ]);
 
-        $privateKey = new CryptKey('file://' . __DIR__ . '/../Stubs/private.key');
-
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPrivateKey($privateKey);
         $grant->revokeRefreshTokens(false);
 
         $responseType = new BearerTokenResponse();
-        $responseType->setPrivateKey($privateKey);
 
         $response = $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'))
             ->generateHttpResponse(new Response());
@@ -781,7 +765,6 @@ class RefreshTokenGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->revokeRefreshTokens(true);
 
         $serverRequest = (new ServerRequest())->withParsedBody([

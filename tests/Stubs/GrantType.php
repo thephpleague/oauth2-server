@@ -92,10 +92,6 @@ final class GrantType implements GrantTypeInterface
     {
     }
 
-    public function setPrivateKey(CryptKeyInterface $privateKey): void
-    {
-    }
-
     public function setEncryptionKey(Key|string|null $key = null): void
     {
     }

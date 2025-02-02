@@ -80,8 +80,6 @@ abstract class AbstractGrant implements GrantTypeInterface
 
     protected DateInterval $refreshTokenTTL;
 
-    protected CryptKeyInterface $privateKey;
-
     protected string $defaultScope;
 
     protected bool $revokeRefreshTokens = true;
@@ -122,14 +120,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setRefreshTokenTTL(DateInterval $refreshTokenTTL): void
     {
         $this->refreshTokenTTL = $refreshTokenTTL;
-    }
-
-    /**
-     * Set the private key
-     */
-    public function setPrivateKey(CryptKeyInterface $privateKey): void
-    {
-        $this->privateKey = $privateKey;
     }
 
     public function setDefaultScope(string $scope): void
@@ -411,7 +401,6 @@ abstract class AbstractGrant implements GrantTypeInterface
 
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $user);
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add($accessTokenTTL));
-        $accessToken->setPrivateKey($this->privateKey);
 
         while ($maxGenerationAttempts-- > 0) {
             $accessToken->setIdentifier($this->generateUniqueIdentifier());
