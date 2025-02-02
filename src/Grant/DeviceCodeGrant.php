@@ -126,6 +126,14 @@ class DeviceCodeGrant extends AbstractGrant
             throw OAuthServerException::invalidRequest('user_id', 'User ID is required');
         }
 
+        if (time() > $deviceCode->getExpiryDateTime()->getTimestamp()) {
+            throw OAuthServerException::expiredToken('device_code');
+        }
+
+        if ($this->deviceCodeRepository->isDeviceCodeRevoked($deviceCode->getIdentifier()) === true) {
+            throw OAuthServerException::invalidRequest('device_code', 'Device code has been revoked');
+        }
+
         $deviceCode->setUser($user);
         $deviceCode->setUserApproved($userApproved);
 
