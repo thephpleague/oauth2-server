@@ -253,8 +253,10 @@ class RefreshTokenGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('getRefreshTokenEntity')->willReturn($rte);
 
 
+        $scope = new ScopeEntity();
+        $scope->setIdentifier('foobar');
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
-        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope1, $scope2, $scope3);
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
 
         $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
         $grant->setClientRepository($clientRepositoryMock);
