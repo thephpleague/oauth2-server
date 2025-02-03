@@ -250,6 +250,7 @@ class DeviceCodeGrantTest extends TestCase
     public function testCompleteDeviceAuthorizationRequest(): void
     {
         $deviceCode = new DeviceCodeEntity();
+        $deviceCode->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $deviceCode->setIdentifier('deviceCodeEntityIdentifier');
         $deviceCode->setUserCode('foo');
 
