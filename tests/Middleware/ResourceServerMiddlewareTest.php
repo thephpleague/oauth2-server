@@ -39,7 +39,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken->setUser($user);
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
         $accessToken->setClient($client);
-        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $accessToken->setSigner('RS256', new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $token = $accessToken->toString();
 
@@ -76,7 +76,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken->setUser($user);
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->sub(new DateInterval('PT1H')));
         $accessToken->setClient($client);
-        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $accessToken->setSigner('RS256', new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $token = $accessToken->toString();
 

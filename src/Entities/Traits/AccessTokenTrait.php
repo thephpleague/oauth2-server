@@ -15,44 +15,80 @@ namespace League\OAuth2\Server\Entities\Traits;
 use DateTimeImmutable;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Signer\Hmac\Sha256 as HS256;
+use Lcobucci\JWT\Signer\Hmac\Sha384 as HS384;
+use Lcobucci\JWT\Signer\Hmac\Sha512 as HS512;
+use Lcobucci\JWT\Signer\Blake2b as BLAKE2B;
+use Lcobucci\JWT\Signer\Rsa\Sha256 as RS256;
+use Lcobucci\JWT\Signer\Rsa\Sha384 as RS384;
+use Lcobucci\JWT\Signer\Rsa\Sha512 as RS512;
+use Lcobucci\JWT\Signer\Ecdsa\Sha256 as ES256;
+use Lcobucci\JWT\Signer\Ecdsa\Sha384 as ES384;
+use Lcobucci\JWT\Signer\Ecdsa\Sha512 as ES512;
+use Lcobucci\JWT\Signer\Eddsa as EDDSA;
+use Lcobucci\JWT\Encoding\ChainedFormatter;
+use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Token\Builder;
+use Lcobucci\JWT\Signer;
+use Lcobucci\JWT\Signer\Key;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
-use RuntimeException;
 
 trait AccessTokenTrait
 {
-    private ?CryptKeyInterface $privateKey = null;
+    private ?Key $privateKey = null;
+
+    private Signer $signer;
 
     private Configuration $jwtConfiguration;
 
-    /**
-     * Set the private key used to encrypt this access token.
-     */
-    public function setPrivateKey(CryptKeyInterface $privateKey): void
+    public function __construct()
     {
-        $this->privateKey = $privateKey;
+        $this->signer = new RS256();
     }
 
-    /**
-     * Initialise the JWT Configuration.
-     */
-    public function initJwtConfiguration(): void
+    public function setSigner(string $signerAlgorithm, CryptKeyInterface $privateKey): void
     {
-        $privateKeyContents = $this->privateKey->getKeyContents();
+        $this->privateKey = InMemory::plainText($privateKey->getKeyContents(), $privateKey->getPassPhrase() ?? '');
 
-        if ($privateKeyContents === '') {
-            throw new RuntimeException('Private key is empty');
+        switch (strtoupper($signerAlgorithm)) {
+            case 'HS256': 
+                $this->signer = new HS256();
+                break;
+            case 'HS384': 
+                $this->signer = new HS384();
+                break;
+            case 'HS512': 
+                $this->signer = new HS512();
+                break;
+            case 'BLAKE2B': 
+                $this->signer = new BLAKE2B();
+                break;
+            case 'ES256': 
+                $this->signer = new ES256();
+                break;
+            case 'ES384': 
+                $this->signer = new ES384();
+                break;
+            case 'ES512': 
+                $this->signer = new ES512();
+                break;
+            case 'RS256': 
+                $this->signer = new RS256();
+                break;
+            case 'RS384': 
+                $this->signer = new RS384();
+                break;
+            case 'RS512': 
+                $this->signer = new RS512();
+                break;
+            case 'EDDSA': 
+                $this->signer = new EDDSA();
+                break;
         }
-
-        $this->jwtConfiguration = Configuration::forAsymmetricSigner(
-            new Sha256(),
-            InMemory::plainText($privateKeyContents, $this->privateKey->getPassPhrase() ?? ''),
-            InMemory::plainText('empty', 'empty')
-        );
     }
 
     /**
@@ -60,9 +96,9 @@ trait AccessTokenTrait
      */
     private function convertToJWT(): Token
     {
-        $this->initJwtConfiguration();
+        $tokenBuilder = (new Builder(new JoseEncoder(), ChainedFormatter::default()));
 
-        return $this->jwtConfiguration->builder()
+        return $tokenBuilder
             ->permittedFor($this->getClient()->getIdentifier())
             ->identifiedBy($this->getIdentifier())
             ->issuedAt(new DateTimeImmutable())
@@ -70,7 +106,7 @@ trait AccessTokenTrait
             ->expiresAt($this->getExpiryDateTime())
             ->relatedTo($this->getSubjectIdentifier())
             ->withClaim('scopes', $this->getScopes())
-            ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
+            ->getToken($this->signer, $this->privateKey);
     }
 
     /**

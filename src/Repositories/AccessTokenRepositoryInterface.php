@@ -45,6 +45,4 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     public function isAccessTokenRevoked(string $tokenId): bool;
 
     public function getAccessTokenEntity(string $tokenId): ?AccessTokenEntityInterface;
-
-    public function setPrivateKey(CryptKeyInterface $privateKey): void;
 }
