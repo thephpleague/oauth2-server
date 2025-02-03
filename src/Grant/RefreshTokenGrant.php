@@ -60,11 +60,18 @@ class RefreshTokenGrant extends AbstractGrant
             return $responseType;
         }
 
+        $originalScopes = $oldRefreshToken->getScopes();
+        $originalScopeArray = [];
+        foreach ($originalScopes as $scopeEntity) {
+            $originalScopeArray[$scopeEntity->getIdentifier()] = $scopeEntity->getIdentifier();
+        }
+        $originalScopeArray = array_values($originalScopeArray);
+
         $scopes = $this->validateScopes(
             $this->getRequestParameter(
                 'scope',
                 $request,
-                implode(self::SCOPE_DELIMITER_STRING, $oldRefreshToken->getScopes())
+                implode(self::SCOPE_DELIMITER_STRING, $originalScopeArray)
             )
         );
 
