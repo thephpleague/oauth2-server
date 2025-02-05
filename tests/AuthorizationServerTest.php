@@ -56,8 +56,6 @@ class AuthorizationServerTest extends TestCase
             $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 
@@ -73,8 +71,6 @@ class AuthorizationServerTest extends TestCase
             $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 
@@ -111,8 +107,6 @@ class AuthorizationServerTest extends TestCase
             $clientRepository,
             $accessTokenRepositoryMock,
             $scopeRepositoryMock,
-            'file://' . __DIR__ . '/Stubs/private.key',
-            base64_encode(random_bytes(36)),
             new StubResponseType()
         );
 
@@ -134,8 +128,6 @@ class AuthorizationServerTest extends TestCase
             $clientRepository,
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key'
         );
 
         $abstractGrantReflection = new ReflectionClass($server);
@@ -145,57 +137,10 @@ class AuthorizationServerTest extends TestCase
         self::assertInstanceOf(BearerTokenResponse::class, $method->invoke($server));
     }
 
-    public function testGetResponseTypeExtended(): void
-    {
-        $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
-        $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
-        $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
-
-        $server = new AuthorizationServer(
-            $clientRepository,
-            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
-            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key'
-        );
-
-        $abstractGrantReflection = new ReflectionClass($server);
-        $method = $abstractGrantReflection->getMethod('getResponseType');
-        $method->setAccessible(true);
-
-        $responseType = $method->invoke($server);
-
-        $responseTypeReflection = new ReflectionClass($responseType);
-
-        $privateKeyProperty = $responseTypeReflection->getProperty('privateKey');
-        $privateKeyProperty->setAccessible(true);
-
-        $encryptionKeyProperty = $responseTypeReflection->getProperty('encryptionKey');
-        $encryptionKeyProperty->setAccessible(true);
-
-        // generated instances should have keys setup
-        self::assertSame($privateKey, $privateKeyProperty->getValue($responseType)->getKeyPath());
-        self::assertSame($encryptionKey, $encryptionKeyProperty->getValue($responseType));
-    }
-
     public function testMultipleRequestsGetDifferentResponseTypeInstances(): void
     {
-        $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
-        $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
-
         $responseTypePrototype = new class() extends BearerTokenResponse {
-            protected CryptKeyInterface $privateKey;
-            protected Key|string|null $encryptionKey = null;
 
-            public function getPrivateKey(): CryptKeyInterface
-            {
-                return $this->privateKey;
-            }
-
-            public function getEncryptionKey(): Key|string|null
-            {
-                return $this->encryptionKey;
-            }
         };
 
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
@@ -204,8 +149,6 @@ class AuthorizationServerTest extends TestCase
             $clientRepository,
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-            $privateKey,
-            $encryptionKey,
             $responseTypePrototype
         );
 
@@ -215,10 +158,6 @@ class AuthorizationServerTest extends TestCase
 
         $responseTypeA = $method->invoke($server);
         $responseTypeB = $method->invoke($server);
-
-        // generated instances should have keys setup
-        self::assertSame($privateKey, $responseTypeA->getPrivateKey()->getKeyPath());
-        self::assertSame($encryptionKey, $responseTypeA->getEncryptionKey());
 
         // all instances should be different but based on the same prototype
         self::assertSame(get_class($responseTypePrototype), get_class($responseTypeA));
@@ -235,9 +174,7 @@ class AuthorizationServerTest extends TestCase
         $server = new AuthorizationServer(
             $clientRepository,
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
-            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key'
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock()
         );
 
         $authCodeRepository = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
@@ -292,9 +229,7 @@ class AuthorizationServerTest extends TestCase
         $server = new AuthorizationServer(
             $clientRepositoryMock,
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
-            $scopeRepositoryMock,
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key'
+            $scopeRepositoryMock
         );
 
         $server->setDefaultScope(self::DEFAULT_SCOPE);
@@ -322,9 +257,7 @@ class AuthorizationServerTest extends TestCase
         $server = new AuthorizationServer(
             $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
             $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
-            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
-            'file://' . __DIR__ . '/Stubs/private.key',
-            'file://' . __DIR__ . '/Stubs/public.key'
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock()
         );
 
         $request = (new ServerRequest())->withQueryParams([

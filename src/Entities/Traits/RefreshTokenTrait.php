@@ -12,14 +12,11 @@ declare(strict_types=1);
 
 namespace League\OAuth2\Server\Entities\Traits;
 
-use DateTimeImmutable;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 
 trait RefreshTokenTrait
 {
     protected AccessTokenEntityInterface $accessToken;
-
-    protected DateTimeImmutable $expiryDateTime;
 
     /**
      * {@inheritdoc}
@@ -35,21 +32,5 @@ trait RefreshTokenTrait
     public function getAccessToken(): AccessTokenEntityInterface
     {
         return $this->accessToken;
-    }
-
-    /**
-     * Get the token's expiry date time.
-     */
-    public function getExpiryDateTime(): DateTimeImmutable
-    {
-        return $this->expiryDateTime;
-    }
-
-    /**
-     * Set the date time when the token expires.
-     */
-    public function setExpiryDateTime(DateTimeImmutable $dateTime): void
-    {
-        $this->expiryDateTime = $dateTime;
     }
 }

@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace League\OAuth2\Server\Repositories;
 
+use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 
 /**
@@ -30,7 +32,7 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     public function getNewToken(
         ClientEntityInterface $clientEntity,
         array $scopes,
-        string|null $userIdentifier = null
+        ?UserEntityInterface $user
     ): AccessTokenEntityInterface;
 
     /**
@@ -41,4 +43,6 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     public function revokeAccessToken(string $tokenId): void;
 
     public function isAccessTokenRevoked(string $tokenId): bool;
+
+    public function getAccessTokenEntity(string $tokenId): ?AccessTokenEntityInterface;
 }

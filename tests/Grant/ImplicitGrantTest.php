@@ -18,7 +18,6 @@ use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
-use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
@@ -31,11 +30,9 @@ class ImplicitGrantTest extends TestCase
     private const DEFAULT_SCOPE = 'basic';
     private const REDIRECT_URI = 'https://foo/bar';
 
-    protected CryptTraitStub $cryptStub;
-
     public function setUp(): void
     {
-        $this->cryptStub = new CryptTraitStub();
+
     }
 
     public function testGetIdentifier(): void
@@ -258,7 +255,9 @@ class ImplicitGrantTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setClient($client);
-        $accessToken->setUserIdentifier('userId');
+        $user = new UserEntity();
+        $user->setIdentifier('userId');
+        $accessToken->setUser($user);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
@@ -268,7 +267,6 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
@@ -296,7 +294,6 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
@@ -327,7 +324,9 @@ class ImplicitGrantTest extends TestCase
 
         $accessToken = new AccessTokenEntity();
         $accessToken->setClient($client);
-        $accessToken->setUserIdentifier('userId');
+        $user = new UserEntity();
+        $user->setIdentifier('userId');
+        $accessToken->setUser($user);
 
         /** @var AccessTokenRepositoryInterface|MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
@@ -348,7 +347,6 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
@@ -377,7 +375,6 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
@@ -409,7 +406,6 @@ class ImplicitGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
-        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 

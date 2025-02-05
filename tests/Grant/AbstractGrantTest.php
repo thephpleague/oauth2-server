@@ -23,6 +23,7 @@ use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\RefreshTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
+use LeagueTests\Stubs\UserEntity;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -433,19 +434,21 @@ class AbstractGrantTest extends TestCase
 
         /** @var AbstractGrant $grantMock */
         $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
-        $grantMock->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
         $grantMock->setAccessTokenRepository($accessTokenRepoMock);
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
         $issueAccessTokenMethod = $abstractGrantReflection->getMethod('issueAccessToken');
         $issueAccessTokenMethod->setAccessible(true);
 
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+
         /** @var AccessTokenEntityInterface $accessToken */
         $accessToken = $issueAccessTokenMethod->invoke(
             $grantMock,
             new DateInterval('PT1H'),
             new ClientEntity(),
-            123,
+            $user,
             [new ScopeEntity()]
         );
 
@@ -468,13 +471,16 @@ class AbstractGrantTest extends TestCase
         $scope = new ScopeEntity();
         $scope->setIdentifier('scopeId');
 
+        $user = new UserEntity();
+        $user->setIdentifier('123');
+
         self::assertInstanceOf(
             AuthCodeEntityInterface::class,
             $issueAuthCodeMethod->invoke(
                 $grantMock,
                 new DateInterval('PT1H'),
                 new ClientEntity(),
-                123,
+                $user,
                 'http://foo/bar',
                 [$scope]
             )

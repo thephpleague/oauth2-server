@@ -162,13 +162,13 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $authorizationRequest->getScopes(),
                 $this->getIdentifier(),
                 $authorizationRequest->getClient(),
-                $authorizationRequest->getUser()->getIdentifier()
+                $authorizationRequest->getUser()
             );
 
             $accessToken = $this->issueAccessToken(
                 $this->accessTokenTTL,
                 $authorizationRequest->getClient(),
-                $authorizationRequest->getUser()->getIdentifier(),
+                $authorizationRequest->getUser(),
                 $finalizedScopes
             );
 

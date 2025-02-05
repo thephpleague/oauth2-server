@@ -14,6 +14,7 @@ namespace OAuth2ServerExamples\Repositories;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use OAuth2ServerExamples\Entities\AccessTokenEntity;
 
@@ -46,18 +47,15 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null): AccessTokenEntityInterface
+    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, ?UserEntityInterface $user = null): AccessTokenEntityInterface
     {
         $accessToken = new AccessTokenEntity();
 
         $accessToken->setClient($clientEntity);
+        $accessToken->setUser($user);
 
         foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
-        }
-
-        if ($userIdentifier !== null) {
-            $accessToken->setUserIdentifier((string) $userIdentifier);
         }
 
         return $accessToken;

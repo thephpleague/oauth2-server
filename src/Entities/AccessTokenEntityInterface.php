@@ -17,12 +17,17 @@ use League\OAuth2\Server\CryptKeyInterface;
 interface AccessTokenEntityInterface extends TokenInterface
 {
     /**
-     * Set a private key used to encrypt the access token.
-     */
-    public function setPrivateKey(CryptKeyInterface $privateKey): void;
-
-    /**
      * Generate a string representation of the access token.
      */
     public function toString(): string;
+
+    /**
+     * Set the algorithm for signing the access token with the given private key
+     * 
+     * @see https://lcobucci-jwt.readthedocs.io/en/latest/supported-algorithms/
+     * 
+     * Symmetric - HS256, HS384, HS512, BLAKE2B
+     * Asymmetric - ES256, ES384, ES512, RS256, RS384, RS512, EdDSA
+     */
+    public function setSigner(string $signerAlgorithm, CryptKeyInterface $privateKey): void;
 }

@@ -26,6 +26,7 @@ use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\EventEmitting\EmitterAwarePolyfill;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
@@ -60,7 +61,6 @@ use function trim;
 abstract class AbstractGrant implements GrantTypeInterface
 {
     use EmitterAwarePolyfill;
-    use CryptTrait;
 
     protected const SCOPE_DELIMITER_STRING = ' ';
 
@@ -79,8 +79,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected UserRepositoryInterface $userRepository;
 
     protected DateInterval $refreshTokenTTL;
-
-    protected CryptKeyInterface $privateKey;
 
     protected string $defaultScope;
 
@@ -122,14 +120,6 @@ abstract class AbstractGrant implements GrantTypeInterface
     public function setRefreshTokenTTL(DateInterval $refreshTokenTTL): void
     {
         $this->refreshTokenTTL = $refreshTokenTTL;
-    }
-
-    /**
-     * Set the private key
-     */
-    public function setPrivateKey(CryptKeyInterface $privateKey): void
-    {
-        $this->privateKey = $privateKey;
     }
 
     public function setDefaultScope(string $scope): void
@@ -260,10 +250,10 @@ abstract class AbstractGrant implements GrantTypeInterface
                 throw OAuthServerException::invalidScope($scopeItem, $redirectUri);
             }
 
-            $validScopes[] = $scope;
+            $validScopes[$scopeItem] = $scope;
         }
 
-        return $validScopes;
+        return array_values($validScopes);
     }
 
     /**
@@ -404,14 +394,13 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected function issueAccessToken(
         DateInterval $accessTokenTTL,
         ClientEntityInterface $client,
-        string|null $userIdentifier,
+        ?UserEntityInterface $user,
         array $scopes = []
     ): AccessTokenEntityInterface {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
-        $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
+        $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $user);
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add($accessTokenTTL));
-        $accessToken->setPrivateKey($this->privateKey);
 
         while ($maxGenerationAttempts-- > 0) {
             $accessToken->setIdentifier($this->generateUniqueIdentifier());
@@ -433,7 +422,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * Issue an auth code.
      *
-     * @param non-empty-string       $userIdentifier
+     * @param ?UserEntityInterface   $user
      * @param ScopeEntityInterface[] $scopes
      *
      * @throws OAuthServerException
@@ -442,16 +431,20 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected function issueAuthCode(
         DateInterval $authCodeTTL,
         ClientEntityInterface $client,
-        string $userIdentifier,
+        ?UserEntityInterface $user,
         ?string $redirectUri,
-        array $scopes = []
+        array $scopes = [],
+        ?string $codeChallenge = null,
+        ?string $codeChallengeMethod = null
     ): AuthCodeEntityInterface {
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         $authCode = $this->authCodeRepository->getNewAuthCode();
         $authCode->setExpiryDateTime((new DateTimeImmutable())->add($authCodeTTL));
         $authCode->setClient($client);
-        $authCode->setUserIdentifier($userIdentifier);
+        $authCode->setUser($user);
+        $authCode->setCodeChallenge($codeChallenge);
+        $authCode->setCodeChallengeMethod($codeChallengeMethod);
 
         if ($redirectUri !== null) {
             $authCode->setRedirectUri($redirectUri);
@@ -593,7 +586,7 @@ abstract class AbstractGrant implements GrantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void
+    public function completeDeviceAuthorizationRequest(string $deviceCode, UserEntityInterface $user, bool $userApproved): void
     {
         throw new LogicException('This grant cannot complete a device authorization request');
     }

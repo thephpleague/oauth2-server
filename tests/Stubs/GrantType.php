@@ -7,6 +7,7 @@ namespace LeagueTests\Stubs;
 use DateInterval;
 use Defuse\Crypto\Key;
 use League\OAuth2\Server\CryptKeyInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\EventEmitting\EventEmitter;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -91,10 +92,6 @@ final class GrantType implements GrantTypeInterface
     {
     }
 
-    public function setPrivateKey(CryptKeyInterface $privateKey): void
-    {
-    }
-
     public function setEncryptionKey(Key|string|null $key = null): void
     {
     }
@@ -108,7 +105,7 @@ final class GrantType implements GrantTypeInterface
         return true;
     }
 
-    public function completeDeviceAuthorizationRequest(string $deviceCode, string $userId, bool $userApproved): void
+    public function completeDeviceAuthorizationRequest(string $deviceCode, UserEntityInterface $user, bool $userApproved): void
     {
     }
 
