@@ -52,4 +52,12 @@ trait ClientTrait
     {
         return $this->isConfidential;
     }
+
+    /**
+     * Returns true if the client supports the given grant type.
+     */
+    public function supportsGrantType(string $grantType): bool
+    {
+        return true;
+    }
 }
