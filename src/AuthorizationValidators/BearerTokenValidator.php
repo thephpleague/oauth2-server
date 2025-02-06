@@ -72,13 +72,20 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             throw new RuntimeException('Public key is empty');
         }
 
-        $this->jwtConfiguration->setValidationConstraints(
+        $validationConstraints = [
             new LooseValidAt($clock, $this->jwtValidAtDateLeeway),
             new SignedWith(
                 new Sha256(),
                 InMemory::plainText($publicKeyContents, $this->publicKey->getPassPhrase() ?? '')
-            )
-        );
+            ),
+        ];
+
+        // TODO: next major release: bump lcobucci/jwt to ^5.5 and remove the following check
+        if (method_exists($this->jwtConfiguration, 'withValidationConstraints') === true) {
+            $this->jwtConfiguration = $this->jwtConfiguration->withValidationConstraints(...$validationConstraints);
+        } else {
+            $this->jwtConfiguration->setValidationConstraints(...$validationConstraints);
+        }
     }
 
     /**
