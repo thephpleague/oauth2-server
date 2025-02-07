@@ -248,13 +248,61 @@ class AuthCodeGrantTest extends TestCase
         self::assertInstanceOf(AuthorizationRequest::class, $grant->validateAuthorizationRequest($request));
     }
 
+    public function testValidateAuthorizationRequestCodeChallengeRequired(): void
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri(self::REDIRECT_URI);
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scope = new ScopeEntity();
+        $scope->setIdentifier(self::DEFAULT_SCOPE);
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M')
+        );
+
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type'  => 'code',
+            'client_id'      => 'foo',
+            'redirect_uri'   => self::REDIRECT_URI,
+            'code_challenge' => null,
+            'state' => 'foo',
+        ]);
+
+        try {
+            $grant->validateAuthorizationRequest($request);
+        } catch (OAuthServerException $e) {
+            self::assertSame(3, $e->getCode());
+            self::assertSame('Code challenge must be provided for public clients', $e->getHint());
+            self::assertSame('invalid_request', $e->getErrorType());
+            self::assertSame('https://foo/bar?state=foo', $e->getRedirectUri());
+
+            return;
+        }
+
+        self::fail('The expected exception was not thrown');
+    }
+
     public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooShort(): void
     {
         $client = new ClientEntity();
         $client->setRedirectUri(self::REDIRECT_URI);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scope = new ScopeEntity();
+        $scope->setIdentifier(self::DEFAULT_SCOPE);
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -271,11 +319,21 @@ class AuthCodeGrantTest extends TestCase
             'client_id'      => 'foo',
             'redirect_uri'   => self::REDIRECT_URI,
             'code_challenge' => str_repeat('A', 42),
+            'state' => 'foo',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        try {
+            $grant->validateAuthorizationRequest($request);
+        } catch (OAuthServerException $e) {
+            self::assertSame(3, $e->getCode());
+            self::assertSame('Code challenge must follow the specifications of RFC-7636.', $e->getHint());
+            self::assertSame('invalid_request', $e->getErrorType());
+            self::assertSame('https://foo/bar?state=foo', $e->getRedirectUri());
 
-        $grant->validateAuthorizationRequest($request);
+            return;
+        }
+
+        self::fail('The expected exception was not thrown');
     }
 
     public function testValidateAuthorizationRequestCodeChallengeInvalidLengthTooLong(): void
@@ -284,7 +342,11 @@ class AuthCodeGrantTest extends TestCase
         $client->setRedirectUri(self::REDIRECT_URI);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scope = new ScopeEntity();
+        $scope->setIdentifier(self::DEFAULT_SCOPE);
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -301,11 +363,21 @@ class AuthCodeGrantTest extends TestCase
             'client_id'      => 'foo',
             'redirect_uri'   => self::REDIRECT_URI,
             'code_challenge' => str_repeat('A', 129),
+            'state' => 'foo',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        try {
+            $grant->validateAuthorizationRequest($request);
+        } catch (OAuthServerException $e) {
+            self::assertSame(3, $e->getCode());
+            self::assertSame('Code challenge must follow the specifications of RFC-7636.', $e->getHint());
+            self::assertSame('invalid_request', $e->getErrorType());
+            self::assertSame('https://foo/bar?state=foo', $e->getRedirectUri());
 
-        $grant->validateAuthorizationRequest($request);
+            return;
+        }
+
+        self::fail('The expected exception was not thrown');
     }
 
     public function testValidateAuthorizationRequestCodeChallengeInvalidCharacters(): void
@@ -314,7 +386,11 @@ class AuthCodeGrantTest extends TestCase
         $client->setRedirectUri(self::REDIRECT_URI);
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scope = new ScopeEntity();
+        $scope->setIdentifier(self::DEFAULT_SCOPE);
         $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scope);
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -331,11 +407,21 @@ class AuthCodeGrantTest extends TestCase
             'client_id' => 'foo',
             'redirect_uri' => self::REDIRECT_URI,
             'code_challenge' => str_repeat('A', 42) . '!',
+            'state' => 'foo',
         ]);
 
-        $this->expectException(OAuthServerException::class);
+        try {
+            $grant->validateAuthorizationRequest($request);
+        } catch (OAuthServerException $e) {
+            self::assertSame(3, $e->getCode());
+            self::assertSame('Code challenge must follow the specifications of RFC-7636.', $e->getHint());
+            self::assertSame('invalid_request', $e->getErrorType());
+            self::assertSame('https://foo/bar?state=foo', $e->getRedirectUri());
 
-        $grant->validateAuthorizationRequest($request);
+            return;
+        }
+
+        self::fail('The expected exception was not thrown');
     }
 
     public function testValidateAuthorizationRequestMissingClientId(): void
@@ -461,12 +547,21 @@ class AuthCodeGrantTest extends TestCase
             'redirect_uri' => self::REDIRECT_URI,
             'code_challenge' => 'foobar',
             'code_challenge_method' => 'foo',
+            'state' => 'bar',
         ]);
 
-        $this->expectException(OAuthServerException::class);
-        $this->expectExceptionCode(3);
+        try {
+            $grant->validateAuthorizationRequest($request);
+        } catch (OAuthServerException $e) {
+            self::assertSame(3, $e->getCode());
+            self::assertSame('Code challenge method must be one of `S256`, `plain`', $e->getHint());
+            self::assertSame('invalid_request', $e->getErrorType());
+            self::assertSame('https://foo/bar?state=bar', $e->getRedirectUri());
 
-        $grant->validateAuthorizationRequest($request);
+            return;
+        }
+
+        self::fail('The expected exception was not thrown');
     }
 
     public function testValidateAuthorizationRequestInvalidScopes(): void
