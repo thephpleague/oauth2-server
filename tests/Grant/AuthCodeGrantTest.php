@@ -735,6 +735,7 @@ class AuthCodeGrantTest extends TestCase
             [
                 'grant_type'   => 'authorization_code',
                 'client_id'    => 'foo',
+                'client_secret' => 'bar',
                 'code'         => $ace->getIdentifier()
             ]
         );

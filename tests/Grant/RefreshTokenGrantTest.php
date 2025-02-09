@@ -54,10 +54,15 @@ class RefreshTokenGrantTest extends TestCase
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn($scopeEntity);
         $scopeRepositoryMock->method('finalizeScopes')->willReturn([$scopeEntity]);
 
-        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier('abcdef');
+        $ace->setIdentifier('abcdef1');
+        $ace->setClient($client);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn($ace);
+        $ace = new AccessTokenEntity();
+        $ace->setIdentifier('abcdef1');
+        $ace->setClient($client);
         $accessTokenRepositoryMock->method('getAccessTokenEntity')->willReturn($ace);
         $accessTokenRepositoryMock->expects(self::once())->method('persistNewAccessToken')->willReturnSelf();
 
@@ -66,7 +71,8 @@ class RefreshTokenGrantTest extends TestCase
         $rte->setClient($client);
         $rte->setIdentifier('zyxwvu');
         $ace = new AccessTokenEntity();
-        $ace->setIdentifier('abcdef');
+        $ace->setIdentifier('abcdef2');
+        $ace->setClient($client);
         $rte->setAccessToken($ace);
         $rte->setScopes(['foo']);
         $user = new UserEntity();
