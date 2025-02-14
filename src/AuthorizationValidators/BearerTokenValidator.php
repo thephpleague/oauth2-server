@@ -34,7 +34,7 @@ use function date_default_timezone_get;
 use function preg_replace;
 use function trim;
 
-class BearerTokenValidator implements AuthorizationValidatorInterface
+class BearerTokenValidator implements AuthorizationValidatorInterface, JwtValidatorInterface
 {
     use CryptTrait;
 
@@ -99,6 +99,21 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             throw OAuthServerException::accessDenied('Missing "Bearer" token');
         }
 
+        $claims = $this->validateJwt($request, $jwt);
+
+        // Return the request with additional attributes
+        return $request
+            ->withAttribute('oauth_access_token_id', $claims['jti'] ?? null)
+            ->withAttribute('oauth_client_id', $claims['aud'][0] ?? null)
+            ->withAttribute('oauth_user_id', $claims['sub'] ?? null)
+            ->withAttribute('oauth_scopes', $claims['scopes'] ?? null);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateJwt(ServerRequestInterface $request, string $jwt, ?string $clientId = null): array
+    {
         try {
             // Attempt to parse the JWT
             $token = $this->jwtConfiguration->parser()->parse($jwt);
@@ -120,16 +135,20 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
 
         $claims = $token->claims();
 
+        // Check if token is linked to the client
+        if (
+            $clientId !== null &&
+            $claims->get('client_id') !== $clientId &&
+            !$token->isPermittedFor($clientId)
+        ) {
+            throw OAuthServerException::accessDenied('Access token is not linked to client');
+        }
+
         // Check if token has been revoked
         if ($this->accessTokenRepository->isAccessTokenRevoked($claims->get('jti'))) {
             throw OAuthServerException::accessDenied('Access token has been revoked');
         }
 
-        // Return the request with additional attributes
-        return $request
-            ->withAttribute('oauth_access_token_id', $claims->get('jti'))
-            ->withAttribute('oauth_client_id', $claims->get('aud')[0])
-            ->withAttribute('oauth_user_id', $claims->get('sub'))
-            ->withAttribute('oauth_scopes', $claims->get('scopes'));
+        return $claims->all();
     }
 }

@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace League\OAuth2\Server\AuthorizationValidators;
+
+use Psr\Http\Message\ServerRequestInterface;
+
+interface JwtValidatorInterface
+{
+    /**
+     * Parse and validate the given JWT.
+     *
+     * @return array<non-empty-string, mixed>
+     */
+    public function validateJwt(ServerRequestInterface $request, string $jwt, ?string $clientId = null): array;
+}
