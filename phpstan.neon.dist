@@ -4,4 +4,6 @@ parameters:
         - src
         - tests
     ignoreErrors:
-        - '#Deprecated since v5.5, please use {@see self::withValidationConstraints\(\)} instead#'
+        - 
+	    message: '#Deprecated since v5.5, please use {@see self::withValidationConstraints\(\)} instead#'
+	    reportUnmatched: false
