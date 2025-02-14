@@ -10,6 +10,9 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
 {
     private bool $active = false;
 
+    /**
+     * @var non-empty-string|null
+     */
     private ?string $tokenType = null;
 
     /**
@@ -22,6 +25,9 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
         $this->active = $active;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setTokenType(string $tokenType): void
     {
         $this->tokenType = $tokenType;
@@ -44,25 +50,25 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
         if ($this->active === true && $this->tokenType !== null && $this->token !== null) {
             if ($this->tokenType === 'access_token') {
                 $params = array_merge($params, array_filter([
-                    'scope' => $token['scope'] ?? implode(' ', $token['scopes'] ?? []),
-                    'client_id' => $token['client_id'] ?? $token['aud'][0] ?? null,
-                    'username' => $token['username'] ?? null,
+                    'scope' => $this->token['scope'] ?? implode(' ', $this->token['scopes'] ?? []),
+                    'client_id' => $this->token['client_id'] ?? $this->token['aud'][0] ?? null,
+                    'username' => $this->token['username'] ?? null,
                     'token_type' => 'Bearer',
-                    'exp' => $token['exp'] ?? null,
-                    'iat' => $token['iat'] ?? null,
-                    'nbf' => $token['nbf'] ?? null,
-                    'sub' => $token['sub'] ?? null,
-                    'aud' => $token['aud'] ?? null,
-                    'iss' => $token['iss'] ?? null,
-                    'jti' => $token['jti'] ?? null,
+                    'exp' => $this->token['exp'] ?? null,
+                    'iat' => $this->token['iat'] ?? null,
+                    'nbf' => $this->token['nbf'] ?? null,
+                    'sub' => $this->token['sub'] ?? null,
+                    'aud' => $this->token['aud'] ?? null,
+                    'iss' => $this->token['iss'] ?? null,
+                    'jti' => $this->token['jti'] ?? null,
                 ]));
             } elseif ($this->tokenType === 'refresh_token') {
                 $params = array_merge($params, array_filter([
-                    'scope' => implode(' ', $token['scopes'] ?? []),
-                    'client_id' => $token['client_id'] ?? null,
-                    'exp' => $token['expire_time'] ?? null,
-                    'sub' => $token['user_id'] ?? null,
-                    'jti' => $token['refresh_token_id'] ?? null,
+                    'scope' => implode(' ', $this->token['scopes'] ?? []),
+                    'client_id' => $this->token['client_id'] ?? null,
+                    'exp' => $this->token['expire_time'] ?? null,
+                    'sub' => $this->token['user_id'] ?? null,
+                    'jti' => $this->token['refresh_token_id'] ?? null,
                 ]));
             }
 
@@ -83,8 +89,9 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
     }
 
     /**
-     * @param non-empty-string $tokenType
+     * @param non-empty-string               $tokenType
      * @param array<non-empty-string, mixed> $token
+     *
      * @return array<non-empty-string, mixed>
      */
     protected function getExtraParams(string $tokenType, array $token): array

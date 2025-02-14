@@ -85,6 +85,8 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
     }
 
     /**
+     * @param non-empty-string $accessToken
+     *
      * @return array{0:non-empty-string, 1:array<non-empty-string, mixed>}|null
      */
     protected function validateAccessToken(
@@ -95,7 +97,7 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
         try {
             return [
                 'access_token',
-                $this->getJwtValidator()->validateJwt($request, $accessToken, $client->getIdentifier())
+                $this->getJwtValidator()->validateJwt($request, $accessToken, $client->getIdentifier()),
             ];
         } catch (OAuthServerException) {
             return null;

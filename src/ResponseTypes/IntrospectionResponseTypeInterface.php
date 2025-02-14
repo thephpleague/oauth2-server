@@ -10,6 +10,9 @@ interface IntrospectionResponseTypeInterface
 {
     public function setActive(bool $active): void;
 
+    /**
+     * @param non-empty-string $tokenType
+     */
     public function setTokenType(string $tokenType): void;
 
     /**

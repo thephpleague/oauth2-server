@@ -126,6 +126,7 @@ abstract class AbstractHandler implements EmitterAwareInterface
 
         return [$clientId, $clientSecret ?? ''];
     }
+
     /**
      * Parse request parameter.
      *
@@ -248,7 +249,7 @@ abstract class AbstractHandler implements EmitterAwareInterface
      *
      * @throws OAuthServerException
      *
-     * @return array<string, mixed>
+     * @return array<non-empty-string, mixed>
      */
     protected function validateEncryptedRefreshToken(
         ServerRequestInterface $request,
