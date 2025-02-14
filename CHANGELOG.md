@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added a new function to the provided ClientTrait, `supportsGrantType` to allow the auth server to issue the response `unauthorized_client` when applicable (PR #1420)
 
 ### Fixed
+- Fix a bug on setting interval visibility of device authorization grant (PR #1410)
+- Fix a bug where the new poll date were not persisted when `slow_down` error happens, because the exception is thrown before calling `persistDeviceCode`. (PR #1410)
+- Fix a bug where `slow_down` error response may have been returned even after the user has completed the auth flow (already approved / denied the request). (PR #1410)
 - Clients only validated for Refresh, Device Code, and Password grants if the client is confidential (PR #1420)
+- Emit `RequestAccessTokenEvent` and `RequestRefreshTokenEvent` events instead of the general `RequestEvent` event when an access / refresh token is issued using device authorization grant. (PR #1467)
 
 ### Changed
 - Key permission checks ignored on Windows regardless of userland choice as cannot be run successfully on this OS (PR #1447)
@@ -22,9 +26,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - In the Auth Code grant, when requesting an access token with an invalid auth code, we now respond with an invalid_grant error instead of invalid_request (PR #1433)
 - Fixed spec compliance issue where device access token request was mistakenly expecting to receive scopes in the request (PR #1412)
 - Refresh tokens pre version 9 might have had user IDs set as ints which meant they were incorrectly rejected. We now cast these values to strings to allow old refresh tokens (PR #1436)
-- Fixed bug on setting interval visibility of device authorization grant (PR #1410)
-- Fix a bug where the new poll date were not persisted when `slow_down` error happens, because the exception is thrown before calling `persistDeviceCode`. (PR #1410)
-- Fix a bug where `slow_down` error response may have been returned even after the user has completed the auth flow (already approved / denied the request). (PR #1410)
 
 ## [9.0.1] - released 2024-10-14
 ### Fixed
