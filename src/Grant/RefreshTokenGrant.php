@@ -56,8 +56,7 @@ class RefreshTokenGrant extends AbstractGrant
         $oldRefreshToken = $this->validateOldRefreshToken($request, $client->getIdentifier());
 
         if ($oldRefreshToken == null) {
-            // Probably should throw an exception here instead
-            return $responseType;
+            throw OAuthServerException::invalidRefreshToken('Refresh token cannot be found');
         }
 
         $scopes = $this->validateScopes(
