@@ -17,6 +17,9 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
@@ -732,6 +735,27 @@ class AuthCodeGrantTest extends TestCase
         $grant->setEncryptionKey($this->cryptStub->getKey());
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
+        $accessTokenEventEmitted = false;
+        $refreshTokenEventEmitted = false;
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::ACCESS_TOKEN_ISSUED,
+            function ($event) use (&$accessTokenEventEmitted): void {
+                self::assertInstanceOf(RequestAccessTokenEvent::class, $event);
+
+                $accessTokenEventEmitted = true;
+            }
+        );
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::REFRESH_TOKEN_ISSUED,
+            function ($event) use (&$refreshTokenEventEmitted): void {
+                self::assertInstanceOf(RequestRefreshTokenEvent::class, $event);
+
+                $refreshTokenEventEmitted = true;
+            }
+        );
+
         $request = new ServerRequest(
             [],
             [],
@@ -763,6 +787,14 @@ class AuthCodeGrantTest extends TestCase
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
         self::assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
+
+        if (!$accessTokenEventEmitted) {
+            self::fail('Access token issued event is not emitted.');
+        }
+
+        if (!$refreshTokenEventEmitted) {
+            self::fail('Refresh token issued event is not emitted.');
+        }
     }
 
     public function testRespondToAccessTokenRequestWithDefaultRedirectUri(): void

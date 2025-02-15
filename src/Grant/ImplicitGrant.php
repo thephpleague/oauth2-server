@@ -172,6 +172,9 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $finalizedScopes
             );
 
+            // TODO: next major release: this method needs `ServerRequestInterface` as an argument
+            // $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
+
             $response = new RedirectResponse();
             $response->setRedirectUri(
                 $this->makeRedirectUri(

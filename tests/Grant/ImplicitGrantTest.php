@@ -14,6 +14,8 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
@@ -272,7 +274,22 @@ class ImplicitGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
+        $accessTokenEventEmitted = false;
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::ACCESS_TOKEN_ISSUED,
+            function ($event) use (&$accessTokenEventEmitted): void {
+                self::assertInstanceOf(RequestAccessTokenEvent::class, $event);
+
+                $accessTokenEventEmitted = true;
+            }
+        );
+
         self::assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
+
+        if (!$accessTokenEventEmitted) {
+            // self::fail('Access token issued event is not emitted.'); // TODO: next major release
+        }
     }
 
     public function testCompleteAuthorizationRequestDenied(): void
