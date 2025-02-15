@@ -77,7 +77,7 @@ class RefreshTokenGrantTest extends TestCase
         $ace->setIdentifier('abcdef2');
         $ace->setClient($client);
         $rte->setAccessToken($ace);
-        $rte->setScopes(['foo']);
+        $rte->setScopes([$scopeEntity]);
         $user = new UserEntity();
         $user->setIdentifier('123');
         $rte->setUser($user);
@@ -166,7 +166,7 @@ class RefreshTokenGrantTest extends TestCase
         $ace = new AccessTokenEntity();
         $ace->setIdentifier('abcdef');
         $rte->setAccessToken($ace);
-        $rte->setScopes(['foo']);
+        $rte->setScopes([$scopeEntity]);
         $user = new UserEntity();
         $user->setIdentifier('123');
         $rte->setUser($user);
@@ -217,13 +217,16 @@ class RefreshTokenGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
+        $scopeEntity = new ScopeEntity();
+        $scopeEntity->setIdentifier('foo');
+
         $rte = new RefreshTokenEntity();
         $rte->setClient($client);
         $rte->setIdentifier('zyxwvu');
         $ace = new AccessTokenEntity();
         $ace->setIdentifier('abcdef');
         $rte->setAccessToken($ace);
-        $rte->setScopes(['foo']);
+        $rte->setScopes([$scopeEntity]);
         $user = new UserEntity();
         $user->setIdentifier('123');
         $rte->setUser($user);
@@ -276,13 +279,19 @@ class RefreshTokenGrantTest extends TestCase
         $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
         $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
 
+        $scopeEntity1 = new ScopeEntity();
+        $scopeEntity1->setIdentifier('foo');
+
+        $scopeEntity2 = new ScopeEntity();
+        $scopeEntity2->setIdentifier('bar');
+
         $rte = new RefreshTokenEntity();
         $rte->setClient($client);
         $rte->setIdentifier('zyxwvu');
         $ace = new AccessTokenEntity();
         $ace->setIdentifier('abcdef');
         $rte->setAccessToken($ace);
-        $rte->setScopes(['foo', 'bar']);
+        $rte->setScopes([$scopeEntity1, $scopeEntity2]);
         $user = new UserEntity();
         $user->setIdentifier('123');
         $rte->setUser($user);
@@ -583,7 +592,7 @@ class RefreshTokenGrantTest extends TestCase
         $ace = new AccessTokenEntity();
         $ace->setIdentifier('abcdef');
         $rte->setAccessToken($ace);
-        $rte->setScopes(['foo', 'bar']);
+        $rte->setScopes([$fooScopeEntity, $barScopeEntity]);
         $user = new UserEntity();
         $user->setIdentifier('123');
         $rte->setUser($user);
@@ -666,7 +675,7 @@ class RefreshTokenGrantTest extends TestCase
         $ace = new AccessTokenEntity();
         $ace->setIdentifier('abcdef');
         $rte->setAccessToken($ace);
-        $rte->setScopes(['foo']);
+        $rte->setScopes([$scopeEntity]);
         $user = new UserEntity();
         $user->setIdentifier('123');
         $rte->setUser($user);
@@ -731,7 +740,7 @@ class RefreshTokenGrantTest extends TestCase
         $ace = new AccessTokenEntity();
         $ace->setIdentifier('abcdef');
         $rte->setAccessToken($ace);
-        $rte->setScopes(['foo']);
+        $rte->setScopes([$scopeEntity]);
         $user = new UserEntity();
         $user->setIdentifier('123');
         $rte->setUser($user);
@@ -802,7 +811,7 @@ class RefreshTokenGrantTest extends TestCase
         $ace = new AccessTokenEntity();
         $ace->setIdentifier('abcdef');
         $rte->setAccessToken($ace);
-        $rte->setScopes(['foo']);
+        $rte->setScopes([$scopeEntity]);
         $user = new UserEntity();
         $user->setIdentifier('123');
         $rte->setUser($user);
