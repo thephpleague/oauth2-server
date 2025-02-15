@@ -42,7 +42,7 @@ interface ClientEntityInterface
     /*
      * Returns true if the client supports the given grant type.
      *
-     * To be added in a future major release.
+     * TODO: To be added in a future major release.
      */
     // public function supportsGrantType(string $grantType): bool;
 }

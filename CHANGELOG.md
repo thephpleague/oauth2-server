@@ -5,11 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [9.2.0] - released 2025-02-15
 ### Added
 - Added a new function to the provided ClientTrait, `supportsGrantType` to allow the auth server to issue the response `unauthorized_client` when applicable (PR #1420)
 
 ### Fixed
+- Fix a bug on setting interval visibility of device authorization grant (PR #1410)
+- Fix a bug where the new poll date were not persisted when `slow_down` error happens, because the exception is thrown before calling `persistDeviceCode`. (PR #1410)
+- Fix a bug where `slow_down` error response may have been returned even after the user has completed the auth flow (already approved / denied the request). (PR #1410)
 - Clients only validated for Refresh, Device Code, and Password grants if the client is confidential (PR #1420)
+- Emit `RequestAccessTokenEvent` and `RequestRefreshTokenEvent` events instead of the general `RequestEvent` event when an access / refresh token is issued using device authorization grant. (PR #1467)
 
 ### Changed
 - Key permission checks ignored on Windows regardless of userland choice as cannot be run successfully on this OS (PR #1447)
@@ -22,9 +27,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - In the Auth Code grant, when requesting an access token with an invalid auth code, we now respond with an invalid_grant error instead of invalid_request (PR #1433)
 - Fixed spec compliance issue where device access token request was mistakenly expecting to receive scopes in the request (PR #1412)
 - Refresh tokens pre version 9 might have had user IDs set as ints which meant they were incorrectly rejected. We now cast these values to strings to allow old refresh tokens (PR #1436)
-- Fixed bug on setting interval visibility of device authorization grant (PR #1410)
-- Fix a bug where the new poll date were not persisted when `slow_down` error happens, because the exception is thrown before calling `persistDeviceCode`. (PR #1410)
-- Fix a bug where `slow_down` error response may have been returned even after the user has completed the auth flow (already approved / denied the request). (PR #1410)
 
 ## [9.0.1] - released 2024-10-14
 ### Fixed
@@ -675,7 +677,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/9.1.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/9.2.0...HEAD
+[9.2.0]: https://github.com/thephpleague/oauth2-server/compare/9.1.0...9.2.0
 [9.1.0]: https://github.com/thephpleague/oauth2-server/compare/9.0.1...9.1.0
 [9.0.1]: https://github.com/thephpleague/oauth2-server/compare/9.0.0...9.0.1
 [9.0.0]: https://github.com/thephpleague/oauth2-server/compare/9.0.0-RC1...9.0.0

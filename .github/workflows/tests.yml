@@ -44,6 +44,6 @@ jobs:
         run: vendor/bin/phpunit --coverage-clover=coverage.clover
 
       - name: Code coverage
-        if: ${{ github.ref == 'refs/heads/master' && github.repository == 'thephpleague/oauth2-server' }}
+        if: ${{ github.ref == 'refs/heads/master' && github.repository == 'thephpleague/oauth2-server' && startsWith(matrix.os, 'ubuntu') }}
         run:
           ~/.composer/vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover
