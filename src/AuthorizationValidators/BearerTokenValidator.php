@@ -74,6 +74,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             throw new RuntimeException('Public key is empty');
         }
 
+        // TODO: next major release: replace deprecated method
         $this->jwtConfiguration->setValidationConstraints(
             new LooseValidAt($clock, $this->jwtValidAtDateLeeway),
             new SignedWith(
