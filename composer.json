@@ -16,7 +16,7 @@
         "psr/http-server-middleware": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.5",
+        "phpunit/phpunit": "^10.5|^11.5",
         "laminas/laminas-diactoros": "^3.5",
         "phpstan/phpstan": "^1.12",
         "phpstan/phpstan-phpunit": "^1.3.15",
