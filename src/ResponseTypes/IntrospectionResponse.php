@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace League\OAuth2\Server\ResponseTypes;
 
+use DateTimeInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class IntrospectionResponse implements IntrospectionResponseTypeInterface
 {
-    private bool $active = false;
+    protected bool $active = false;
 
     /**
      * @var non-empty-string|null
      */
-    private ?string $tokenType = null;
+    protected ?string $tokenType = null;
 
     /**
      * @var array<non-empty-string, mixed>
      */
-    private ?array $token = null;
+    protected ?array $token = null;
 
     public function setActive(bool $active): void
     {
@@ -48,31 +49,11 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
         ];
 
         if ($this->active === true && $this->tokenType !== null && $this->token !== null) {
-            if ($this->tokenType === 'access_token') {
-                $params = array_merge($params, array_filter([
-                    'scope' => $this->token['scope'] ?? implode(' ', $this->token['scopes'] ?? []),
-                    'client_id' => $this->token['client_id'] ?? $this->token['aud'][0] ?? null,
-                    'username' => $this->token['username'] ?? null,
-                    'token_type' => 'Bearer',
-                    'exp' => $this->token['exp'] ?? null,
-                    'iat' => $this->token['iat'] ?? null,
-                    'nbf' => $this->token['nbf'] ?? null,
-                    'sub' => $this->token['sub'] ?? null,
-                    'aud' => $this->token['aud'] ?? null,
-                    'iss' => $this->token['iss'] ?? null,
-                    'jti' => $this->token['jti'] ?? null,
-                ]));
-            } elseif ($this->tokenType === 'refresh_token') {
-                $params = array_merge($params, array_filter([
-                    'scope' => implode(' ', $this->token['scopes'] ?? []),
-                    'client_id' => $this->token['client_id'] ?? null,
-                    'exp' => $this->token['expire_time'] ?? null,
-                    'sub' => $this->token['user_id'] ?? null,
-                    'jti' => $this->token['refresh_token_id'] ?? null,
-                ]));
-            }
-
-            $params = array_merge($params, $this->getExtraParams($this->tokenType, $this->token));
+            $params = array_merge(
+                $params,
+                $this->parseParams($this->tokenType, $this->token),
+                $this->getExtraParams($this->tokenType, $this->token)
+            );
         }
 
         $params = json_encode($params, flags: JSON_THROW_ON_ERROR);
@@ -86,6 +67,49 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
         $response->getBody()->write($params);
 
         return $response;
+    }
+
+    /**
+     * @param non-empty-string               $tokenType
+     * @param array<non-empty-string, mixed> $token
+     *
+     * @return array<non-empty-string, mixed>
+     */
+    protected function parseParams(string $tokenType, array $token): array
+    {
+        if ($tokenType === 'access_token') {
+            return array_filter([
+                'scope' => $token['scope'] ?? implode(' ', $token['scopes'] ?? []),
+                'client_id' => $token['client_id'] ?? $token['aud'][0] ?? null,
+                'username' => $token['username'] ?? null,
+                'token_type' => 'Bearer',
+                'exp' => isset($token['exp']) ? $this->convertTimestamp($token['exp']) : null,
+                'iat' => isset($token['iat']) ? $this->convertTimestamp($token['iat']) : null,
+                'nbf' => isset($token['nbf']) ? $this->convertTimestamp($token['nbf']) : null,
+                'sub' => $token['sub'] ?? null,
+                'aud' => $token['aud'] ?? null,
+                'iss' => $token['iss'] ?? null,
+                'jti' => $token['jti'] ?? null,
+            ]);
+        } elseif ($tokenType === 'refresh_token') {
+            return array_filter([
+                'scope' => implode(' ', $token['scopes'] ?? []),
+                'client_id' => $token['client_id'] ?? null,
+                'exp' => isset($token['expire_time']) ? $this->convertTimestamp($token['expire_time']) : null,
+                'sub' => $token['user_id'] ?? null,
+                'jti' => $token['refresh_token_id'] ?? null,
+            ]);
+        } else {
+            return [];
+        }
+    }
+
+    protected function convertTimestamp(int|float|string|DateTimeInterface $value): int
+    {
+        return match (true) {
+            $value instanceof DateTimeInterface => $value->getTimestamp(),
+            default => intval($value),
+        };
     }
 
     /**
