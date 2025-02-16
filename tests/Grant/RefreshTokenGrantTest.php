@@ -674,7 +674,7 @@ class RefreshTokenGrantTest extends TestCase
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
         $refreshTokenRepositoryMock->method('isRefreshTokenRevoked')
-            ->will(self::onConsecutiveCalls(false, true));
+            ->willReturn(false, true);
         $refreshTokenRepositoryMock->expects(self::once())->method('revokeRefreshToken')->with(self::equalTo($refreshTokenId));
 
         $oldRefreshToken = json_encode(
