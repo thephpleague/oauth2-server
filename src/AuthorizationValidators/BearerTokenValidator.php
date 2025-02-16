@@ -61,6 +61,11 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
      */
     private function initJwtConfiguration(): void
     {
+        $this->jwtConfiguration = Configuration::forSymmetricSigner(
+            new Sha256(),
+            InMemory::plainText('empty', 'empty')
+        );
+
         $clock = new SystemClock(new DateTimeZone(date_default_timezone_get()));
 
         $publicKeyContents = $this->publicKey->getKeyContents();
@@ -69,10 +74,8 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             throw new RuntimeException('Public key is empty');
         }
 
-        $this->jwtConfiguration = Configuration::forSymmetricSigner(
-            new Sha256(),
-            InMemory::plainText('empty', 'empty')
-        )->withValidationConstraints(
+        // TODO: next major release: replace deprecated method
+        $this->jwtConfiguration->setValidationConstraints(
             new LooseValidAt($clock, $this->jwtValidAtDateLeeway),
             new SignedWith(
                 new Sha256(),
