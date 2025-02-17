@@ -64,7 +64,7 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         // Expire old tokens
-        if ($this->revokeRefreshedAccessTokens) {
+        if ($this->revokeRefreshTokens || $this->revokeRefreshedAccessTokens) {
             $this->accessTokenRepository->revokeAccessToken($oldRefreshToken['access_token_id']);
         }
         if ($this->revokeRefreshTokens) {
