@@ -11,6 +11,7 @@ use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 abstract class AbstractTokenHandler extends AbstractHandler implements TokenHandlerInterface
 {
@@ -79,7 +80,7 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
                 'refresh_token',
                 $this->validateEncryptedRefreshToken($request, $refreshToken, $client->getIdentifier()),
             ];
-        } catch (OAuthServerException) {
+        } catch (Throwable) {
             return null;
         }
     }
@@ -99,7 +100,7 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
                 'access_token',
                 $this->getJwtValidator()->validateJwt($request, $accessToken, $client->getIdentifier()),
             ];
-        } catch (OAuthServerException) {
+        } catch (Throwable) {
             return null;
         }
     }

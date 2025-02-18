@@ -40,12 +40,12 @@ class TokenServer implements EmitterAwareInterface
         $this->publicKey = $publicKey;
     }
 
-    public function setTokenRevocationHandler(TokenRevocationHandler $handler): void
+    public function setTokenRevocationHandler(TokenHandlerInterface $handler): void
     {
         $this->tokenRevocationHandler = $handler;
     }
 
-    public function setTokenIntrospectionHandler(TokenIntrospectionHandler $handler): void
+    public function setTokenIntrospectionHandler(TokenHandlerInterface $handler): void
     {
         $this->tokenIntrospectionHandler = $handler;
     }
