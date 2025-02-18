@@ -27,7 +27,7 @@ class TokenServerTest extends TestCase
         $client->setIdentifier('foo');
 
         $clientRepository = $this->createMock(ClientRepositoryInterface::class);
-        $clientRepository->expects($this->once())->method('getClientEntity')
+        $clientRepository->expects(self::once())->method('getClientEntity')
             ->with('foo')
             ->willReturn($client);
 
@@ -50,7 +50,7 @@ class TokenServerTest extends TestCase
         $client->setIdentifier('foo');
 
         $clientRepository = $this->createMock(ClientRepositoryInterface::class);
-        $clientRepository->expects($this->once())->method('getClientEntity')
+        $clientRepository->expects(self::once())->method('getClientEntity')
             ->with('foo')
             ->willReturn($client);
 
@@ -78,7 +78,7 @@ class TokenServerTest extends TestCase
         $response = $this->createMock(ResponseInterface::class);
 
         $revocationHandler = $this->getMockBuilder(TokenHandlerInterface::class)->getMock();
-        $revocationHandler->expects($this->once())->method('respondToRequest')
+        $revocationHandler->expects(self::once())->method('respondToRequest')
             ->with($request, $response)
             ->willReturn($response);
 
@@ -97,7 +97,7 @@ class TokenServerTest extends TestCase
         $response = $this->createMock(ResponseInterface::class);
 
         $introspectionHandler = $this->getMockBuilder(TokenHandlerInterface::class)->getMock();
-        $introspectionHandler->expects($this->once())->method('respondToRequest')
+        $introspectionHandler->expects(self::once())->method('respondToRequest')
             ->with($request, $response)
             ->willReturn($response);
 

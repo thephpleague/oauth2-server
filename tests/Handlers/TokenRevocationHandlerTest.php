@@ -22,18 +22,18 @@ class TokenRevocationHandlerTest extends TestCase
         $client->setIdentifier('client1');
 
         $clientRepository = $this->createMock(ClientRepositoryInterface::class);
-        $clientRepository->expects($this->once())
+        $clientRepository->expects(self::once())
             ->method('getClientEntity')
             ->with('client1')
             ->willReturn($client);
         $clientRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('validateClient')
             ->with('client1', 'secret1', null)
             ->willReturn(true);
 
         $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
-        $accessTokenRepository->expects($this->once())->method('revokeAccessToken')->with('access1');
+        $accessTokenRepository->expects(self::once())->method('revokeAccessToken')->with('access1');
 
         $request = (new ServerRequest())->withParsedBody([
             'client_id' => 'client1',
@@ -44,7 +44,7 @@ class TokenRevocationHandlerTest extends TestCase
         $handler = $this->getMockBuilder(TokenRevocationHandler::class)->onlyMethods(['validateAccessToken'])->getMock();
         $handler->setClientRepository($clientRepository);
         $handler->setAccessTokenRepository($accessTokenRepository);
-        $handler->expects($this->once())
+        $handler->expects(self::once())
             ->method('validateAccessToken')
             ->with($request, 'token1', $client)
             ->willReturn(['access_token', ['jti' => 'access1']]);
@@ -62,21 +62,21 @@ class TokenRevocationHandlerTest extends TestCase
         $client->setIdentifier('client1');
 
         $clientRepository = $this->createMock(ClientRepositoryInterface::class);
-        $clientRepository->expects($this->once())
+        $clientRepository->expects(self::once())
             ->method('getClientEntity')
             ->with('client1')
             ->willReturn($client);
         $clientRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('validateClient')
             ->with('client1', 'secret1', null)
             ->willReturn(true);
 
         $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
-        $accessTokenRepository->expects($this->once())->method('revokeAccessToken')->with('access1');
+        $accessTokenRepository->expects(self::once())->method('revokeAccessToken')->with('access1');
 
         $refreshTokenRepository = $this->createMock(RefreshTokenRepositoryInterface::class);
-        $refreshTokenRepository->expects($this->once())->method('revokeRefreshToken')->with('refresh1');
+        $refreshTokenRepository->expects(self::once())->method('revokeRefreshToken')->with('refresh1');
 
         $request = (new ServerRequest())->withParsedBody([
             'client_id' => 'client1',
@@ -88,7 +88,7 @@ class TokenRevocationHandlerTest extends TestCase
         $handler->setClientRepository($clientRepository);
         $handler->setAccessTokenRepository($accessTokenRepository);
         $handler->setRefreshTokenRepository($refreshTokenRepository);
-        $handler->expects($this->once())
+        $handler->expects(self::once())
             ->method('validateRefreshToken')
             ->with($request, 'token1', $client)
             ->willReturn(['refresh_token', ['refresh_token_id' => 'refresh1', 'access_token_id' => 'access1']]);
@@ -106,21 +106,21 @@ class TokenRevocationHandlerTest extends TestCase
         $client->setIdentifier('client1');
 
         $clientRepository = $this->createMock(ClientRepositoryInterface::class);
-        $clientRepository->expects($this->once())
+        $clientRepository->expects(self::once())
             ->method('getClientEntity')
             ->with('client1')
             ->willReturn($client);
         $clientRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('validateClient')
             ->with('client1', 'secret1', null)
             ->willReturn(true);
 
         $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
-        $accessTokenRepository->expects($this->never())->method('revokeAccessToken');
+        $accessTokenRepository->expects(self::never())->method('revokeAccessToken');
 
         $refreshTokenRepository = $this->createMock(RefreshTokenRepositoryInterface::class);
-        $refreshTokenRepository->expects($this->never())->method('revokeRefreshToken');
+        $refreshTokenRepository->expects(self::never())->method('revokeRefreshToken');
 
         $request = (new ServerRequest())->withParsedBody([
             'client_id' => 'client1',
@@ -133,11 +133,11 @@ class TokenRevocationHandlerTest extends TestCase
         $handler->setClientRepository($clientRepository);
         $handler->setAccessTokenRepository($accessTokenRepository);
         $handler->setRefreshTokenRepository($refreshTokenRepository);
-        $handler->expects($this->once())
+        $handler->expects(self::once())
             ->method('validateAccessToken')
             ->with($request, 'token1', $client)
             ->willReturn(null);
-        $handler->expects($this->once())
+        $handler->expects(self::once())
             ->method('validateRefreshToken')
             ->with($request, 'token1', $client)
             ->willReturn(null);

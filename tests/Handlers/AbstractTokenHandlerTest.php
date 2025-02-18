@@ -46,7 +46,7 @@ class AbstractTokenHandlerTest extends TestCase
 
         $jwtValidator = $this->createMock(JwtValidatorInterface::class);
         $jwtValidator
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('validateJwt')
             ->with($request, 'abcdef', 'client1')
             ->willReturn(['foo' => 'bar']);
@@ -141,7 +141,7 @@ class AbstractTokenHandlerTest extends TestCase
     {
         $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
         $accessTokenRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('isAccessTokenRevoked')
             ->with('access1')
             ->willReturn(false);
@@ -177,7 +177,7 @@ class AbstractTokenHandlerTest extends TestCase
     {
         $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
         $accessTokenRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('isAccessTokenRevoked')
             ->with('access1')
             ->willReturn(true);
@@ -203,7 +203,7 @@ class AbstractTokenHandlerTest extends TestCase
     public function testValidateAccessTokenIsExpired(): void
     {
         $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
-        $accessTokenRepository->expects($this->never())->method('isAccessTokenRevoked');
+        $accessTokenRepository->expects(self::never())->method('isAccessTokenRevoked');
 
         $handler = $this->getAbstractTokenHandler();
         $handler->setAccessTokenRepository($accessTokenRepository);
@@ -226,7 +226,7 @@ class AbstractTokenHandlerTest extends TestCase
     public function testValidateAccessTokenWithMismatchClient(): void
     {
         $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
-        $accessTokenRepository->expects($this->never())->method('isAccessTokenRevoked');
+        $accessTokenRepository->expects(self::never())->method('isAccessTokenRevoked');
 
         $handler = $this->getAbstractTokenHandler();
         $handler->setAccessTokenRepository($accessTokenRepository);
@@ -249,7 +249,7 @@ class AbstractTokenHandlerTest extends TestCase
     public function testValidateAccessTokenWithInvalidToken(): void
     {
         $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
-        $accessTokenRepository->expects($this->never())->method('isAccessTokenRevoked');
+        $accessTokenRepository->expects(self::never())->method('isAccessTokenRevoked');
 
         $handler = $this->getAbstractTokenHandler();
         $handler->setAccessTokenRepository($accessTokenRepository);
@@ -268,7 +268,7 @@ class AbstractTokenHandlerTest extends TestCase
     {
         $refreshTokenRepository = $this->createMock(RefreshTokenRepositoryInterface::class);
         $refreshTokenRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('isRefreshTokenRevoked')
             ->with('refresh1')
             ->willReturn(false);
@@ -300,7 +300,7 @@ class AbstractTokenHandlerTest extends TestCase
     {
         $refreshTokenRepository = $this->createMock(RefreshTokenRepositoryInterface::class);
         $refreshTokenRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('isRefreshTokenRevoked')
             ->with('refresh1')
             ->willReturn(true);
@@ -325,7 +325,7 @@ class AbstractTokenHandlerTest extends TestCase
     public function testValidateRefreshTokenIsExpired(): void
     {
         $refreshTokenRepository = $this->createMock(RefreshTokenRepositoryInterface::class);
-        $refreshTokenRepository->expects($this->never())->method('isRefreshTokenRevoked');
+        $refreshTokenRepository->expects(self::never())->method('isRefreshTokenRevoked');
 
         $handler = $this->getAbstractTokenHandler();
         $handler->setRefreshTokenRepository($refreshTokenRepository);
@@ -347,7 +347,7 @@ class AbstractTokenHandlerTest extends TestCase
     public function testValidateRefreshTokenWithMismatchClient(): void
     {
         $refreshTokenRepository = $this->createMock(RefreshTokenRepositoryInterface::class);
-        $refreshTokenRepository->expects($this->never())->method('isRefreshTokenRevoked');
+        $refreshTokenRepository->expects(self::never())->method('isRefreshTokenRevoked');
 
         $handler = $this->getAbstractTokenHandler();
         $handler->setRefreshTokenRepository($refreshTokenRepository);
@@ -369,7 +369,7 @@ class AbstractTokenHandlerTest extends TestCase
     public function testValidateRefreshTokenWithInvalidToken(): void
     {
         $refreshTokenRepository = $this->createMock(RefreshTokenRepositoryInterface::class);
-        $refreshTokenRepository->expects($this->never())->method('isRefreshTokenRevoked');
+        $refreshTokenRepository->expects(self::never())->method('isRefreshTokenRevoked');
 
         $handler = $this->getAbstractTokenHandler();
         $handler->setRefreshTokenRepository($refreshTokenRepository);

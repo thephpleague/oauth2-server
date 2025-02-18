@@ -114,7 +114,7 @@ class IntrospectionResponseTest extends TestCase
             'scopes' => ['scope1', 'scope2'],
             'client_id' => 'client1',
             'jti' => null,
-            'extension' => 'extension1'
+            'extension' => 'extension1',
         ]);
 
         $response = $responseType->generateHttpResponse(new Response());
@@ -130,7 +130,7 @@ class IntrospectionResponseTest extends TestCase
             'client_id' => 'client1',
             'token_type' => 'Bearer',
             'foo' => 'bar',
-            'extended' => 'extension1'
+            'extended' => 'extension1',
         ], json_decode($response->getBody()->getContents(), true));
     }
 }

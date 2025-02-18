@@ -21,12 +21,12 @@ class TokenIntrospectionHandlerTest extends TestCase
         $client->setIdentifier('client1');
 
         $clientRepository = $this->createMock(ClientRepositoryInterface::class);
-        $clientRepository->expects($this->once())
+        $clientRepository->expects(self::once())
             ->method('getClientEntity')
             ->with('client1')
             ->willReturn($client);
         $clientRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('validateClient')
             ->with('client1', 'secret1', null)
             ->willReturn(true);
@@ -39,7 +39,7 @@ class TokenIntrospectionHandlerTest extends TestCase
 
         $handler = $this->getMockBuilder(TokenIntrospectionHandler::class)->onlyMethods(['validateAccessToken'])->getMock();
         $handler->setClientRepository($clientRepository);
-        $handler->expects($this->once())
+        $handler->expects(self::once())
             ->method('validateAccessToken')
             ->with($request, 'token1', $client)
             ->willReturn(['access_token', ['jti' => 'access1']]);
@@ -52,7 +52,7 @@ class TokenIntrospectionHandlerTest extends TestCase
         self::assertSame([
             'active' => true,
             'token_type' => 'Bearer',
-            'jti' => 'access1'
+            'jti' => 'access1',
         ], json_decode($response->getBody()->getContents(), true));
     }
 
@@ -63,12 +63,12 @@ class TokenIntrospectionHandlerTest extends TestCase
         $client->setIdentifier('client1');
 
         $clientRepository = $this->createMock(ClientRepositoryInterface::class);
-        $clientRepository->expects($this->once())
+        $clientRepository->expects(self::once())
             ->method('getClientEntity')
             ->with('client1')
             ->willReturn($client);
         $clientRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('validateClient')
             ->with('client1', 'secret1', null)
             ->willReturn(true);
@@ -81,7 +81,7 @@ class TokenIntrospectionHandlerTest extends TestCase
 
         $handler = $this->getMockBuilder(TokenIntrospectionHandler::class)->onlyMethods(['validateRefreshToken'])->getMock();
         $handler->setClientRepository($clientRepository);
-        $handler->expects($this->once())
+        $handler->expects(self::once())
             ->method('validateRefreshToken')
             ->with($request, 'token1', $client)
             ->willReturn(['refresh_token', ['refresh_token_id' => 'refresh1']]);
@@ -104,12 +104,12 @@ class TokenIntrospectionHandlerTest extends TestCase
         $client->setIdentifier('client1');
 
         $clientRepository = $this->createMock(ClientRepositoryInterface::class);
-        $clientRepository->expects($this->once())
+        $clientRepository->expects(self::once())
             ->method('getClientEntity')
             ->with('client1')
             ->willReturn($client);
         $clientRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('validateClient')
             ->with('client1', 'secret1', null)
             ->willReturn(true);
@@ -123,11 +123,11 @@ class TokenIntrospectionHandlerTest extends TestCase
         $handler = $this->getMockBuilder(TokenIntrospectionHandler::class)
             ->onlyMethods(['validateAccessToken', 'validateRefreshToken'])->getMock();
         $handler->setClientRepository($clientRepository);
-        $handler->expects($this->once())
+        $handler->expects(self::once())
             ->method('validateAccessToken')
             ->with($request, 'token1', $client)
             ->willReturn(null);
-        $handler->expects($this->once())
+        $handler->expects(self::once())
             ->method('validateRefreshToken')
             ->with($request, 'token1', $client)
             ->willReturn(null);
@@ -147,12 +147,12 @@ class TokenIntrospectionHandlerTest extends TestCase
         $client->setIdentifier('client1');
 
         $clientRepository = $this->createMock(ClientRepositoryInterface::class);
-        $clientRepository->expects($this->once())
+        $clientRepository->expects(self::once())
             ->method('getClientEntity')
             ->with('client1')
             ->willReturn($client);
         $clientRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('validateClient')
             ->with('client1', 'secret1', null)
             ->willReturn(true);
@@ -166,15 +166,15 @@ class TokenIntrospectionHandlerTest extends TestCase
         $response = new Response();
 
         $responseType = $this->createMock(IntrospectionResponseTypeInterface::class);
-        $responseType->expects($this->once())->method('setActive')->with(true);
-        $responseType->expects($this->once())->method('setTokenType')->with('foo');
-        $responseType->expects($this->once())->method('setToken')->with(['bar' => 'baz']);
-        $responseType->expects($this->once())->method('generateHttpResponse')->with($response)->willReturnArgument(0);
+        $responseType->expects(self::once())->method('setActive')->with(true);
+        $responseType->expects(self::once())->method('setTokenType')->with('foo');
+        $responseType->expects(self::once())->method('setToken')->with(['bar' => 'baz']);
+        $responseType->expects(self::once())->method('generateHttpResponse')->with($response)->willReturnArgument(0);
 
         $handler = $this->getMockBuilder(TokenIntrospectionHandler::class)->onlyMethods(['validateToken'])->getMock();
         $handler->setClientRepository($clientRepository);
         $handler->setResponseType($responseType);
-        $handler->expects($this->once())
+        $handler->expects(self::once())
             ->method('validateToken')
             ->with($request, $client)
             ->willReturn(['foo', ['bar' => 'baz']]);
