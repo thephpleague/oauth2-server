@@ -2,12 +2,13 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
+         colors="true"
          failOnRisky="true"
          failOnWarning="true"
          stopOnError="true"
          stopOnFailure="true"
 >
-  <source restrictNotices="true" restrictWarnings="true">
+  <source>
     <include>
       <directory>src</directory>
     </include>
