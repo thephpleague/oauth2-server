@@ -611,6 +611,7 @@ class RefreshTokenGrantTest extends TestCase
         $accessToken = new AccessTokenEntity();
         $accessToken->setClient($client);
         $accessTokenRepositoryMock
+            ->expects(self::once())
             ->method('getNewToken')
             ->with($client, $finalizedScopes)
             ->willReturn($accessToken);
