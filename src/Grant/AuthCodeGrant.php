@@ -175,7 +175,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             if (isset($this->codeChallengeVerifiers[$authCodePayload->code_challenge_method])) {
                 $codeChallengeVerifier = $this->codeChallengeVerifiers[$authCodePayload->code_challenge_method];
 
-                if (!isset($authCodePayload->code_challenge) || $codeChallengeVerifier->verifyCodeChallenge($codeVerifier, $authCodePayload->code_challenge) === false) {
+                if (
+                    !property_exists($authCodePayload, 'code_challenge') ||
+                    !isset($authCodePayload->code_challenge) ||
+                    $codeChallengeVerifier->verifyCodeChallenge($codeVerifier, $authCodePayload->code_challenge) === false
+                ) {
                     throw OAuthServerException::invalidGrant('Failed to verify `code_verifier`.');
                 }
             } else {
