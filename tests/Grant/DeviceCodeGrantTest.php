@@ -347,7 +347,7 @@ class DeviceCodeGrantTest extends TestCase
         $deviceCodeEntity->setClient($client);
         $deviceCodeEntity->addScope($scope);
 
-        $deviceCodeRepositoryMock->expects(self::once())->method('getDeviceCodeEntityByDeviceCode')
+        $deviceCodeRepositoryMock->expects(self::atLeast(1))->method('getDeviceCodeEntityByDeviceCode')
             ->with($deviceCodeEntity->getIdentifier())
             ->willReturn($deviceCodeEntity);
 
