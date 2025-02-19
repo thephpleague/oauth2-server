@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace LeagueTests\Exception;
 
-use DateInterval;
 use Exception;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
@@ -95,17 +93,9 @@ class OAuthServerExceptionTest extends TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('validateClient')->willReturn(false);
 
-        $grantMock = new class () extends AbstractGrant {
-            public function getIdentifier(): string
-            {
-                return 'foo';
-            }
-
-            public function respondToAccessTokenRequest(ServerRequestInterface $request, ResponseTypeInterface $responseType, DateInterval $accessTokenTTL): ResponseTypeInterface
-            {
-                return $responseType;
-            }
-        };
+        $grantMock = $this->getMockBuilder(AbstractGrant::class)
+            ->onlyMethods(['getIdentifier', 'respondToAccessTokenRequest'])
+            ->getMock();
         $grantMock->setClientRepository($clientRepositoryMock);
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
