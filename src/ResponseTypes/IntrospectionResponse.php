@@ -90,7 +90,7 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
                 'aud' => $token['aud'] ?? null,
                 'iss' => $token['iss'] ?? null,
                 'jti' => $token['jti'] ?? null,
-            ]);
+            ], fn ($value) => !is_null($value));
         } elseif ($tokenType === 'refresh_token') {
             return array_filter([
                 'scope' => implode(' ', $token['scopes'] ?? []),
@@ -98,7 +98,7 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
                 'exp' => isset($token['expire_time']) ? $this->convertTimestamp($token['expire_time']) : null,
                 'sub' => $token['user_id'] ?? null,
                 'jti' => $token['refresh_token_id'] ?? null,
-            ]);
+            ], fn ($value) => !is_null($value));
         } else {
             return [];
         }

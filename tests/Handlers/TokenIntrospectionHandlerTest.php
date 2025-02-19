@@ -51,6 +51,7 @@ class TokenIntrospectionHandlerTest extends TestCase
         self::assertSame('application/json; charset=UTF-8', $response->getHeaderLine('Content-Type'));
         self::assertSame([
             'active' => true,
+            'scope' => '',
             'token_type' => 'Bearer',
             'jti' => 'access1',
         ], json_decode($response->getBody()->getContents(), true));
@@ -93,6 +94,7 @@ class TokenIntrospectionHandlerTest extends TestCase
         self::assertSame('application/json; charset=UTF-8', $response->getHeaderLine('Content-Type'));
         self::assertSame([
             'active' => true,
+            'scope' => '',
             'jti' => 'refresh1',
         ], json_decode($response->getBody()->getContents(), true));
     }
