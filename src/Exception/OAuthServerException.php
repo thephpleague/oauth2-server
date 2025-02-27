@@ -266,6 +266,20 @@ class OAuthServerException extends Exception
     }
 
     /**
+     * Unsupported Token Type error.
+     */
+    public static function unsupportedTokenType(?string $hint = null): static
+    {
+        return new static(
+            'The authorization server does not support the revocation of the presented token type.',
+            15,
+            'unsupported_token_type',
+            400,
+            $hint
+        );
+    }
+
+    /**
      * Generate a HTTP response.
      */
     public function generateHttpResponse(ResponseInterface $response, bool $useFragment = false, int $jsonOptions = 0): ResponseInterface
