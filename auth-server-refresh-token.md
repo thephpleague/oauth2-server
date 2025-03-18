@@ -29,7 +29,7 @@ The authorization server will respond with a JSON object containing the followin
 
 Wherever you initialize your objects, initialize a new instance of the authorization server and bind the storage interfaces and authorization code grant:
 
-{% highlight php %}
+~~~ php
 // Init our repositories
 $clientRepository = new ClientRepository();
 $accessTokenRepository = new AccessTokenRepository();
@@ -58,13 +58,13 @@ $server->enableGrantType(
     $grant,
     new \DateInterval('PT1H') // new access tokens will expire after an hour
 );
-{% endhighlight %}
+~~~
 
 ## Implementation
 
 The client will request an access token so create an `/access_token` endpoint.
 
-{% highlight php %}
+~~~ php
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
 
     /* @var \League\OAuth2\Server\AuthorizationServer $server */
@@ -83,4 +83,4 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
         return $response->withStatus(500)->withBody($body);
     }
 });
-{% endhighlight %}
+~~~

@@ -21,7 +21,7 @@ When a new auth code is created this method will be called. You don't have to do
 The auth code entity passed in has a number of methods you can call which contain data worth saving to a database:
 
 * `getIdentifier() : string` this is randomly generated unique identifier (of 80+ characters in length) for the auth code.
-* `getExpiryDateTime() :  \DateTime` the expiry date and time of the auth code.
+* `getExpiryDateTime() :  \DateTimeImmutable` the expiry date and time of the auth code.
 * `getUserIdentifier() : string|null` the user identifier represented by the auth code. 
 * `getScopes() : ScopeEntityInterface[]` an array of scope entities
 * `getClient()->getIdentifier() : string` the identifier of the client who requested the auth code.

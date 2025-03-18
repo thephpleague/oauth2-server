@@ -6,6 +6,8 @@ permalink: /authorization-server/implicit-grant/
 
 # Implicit grant
 
+__It is no longer best practice to use the Implicit Grant__. This grant is documented here for legacy purposes only. Industry best practice recommends using the Authorization Code Grant without a client secret for native and browser-based apps.
+
 The implicit grant is similar to the authorization code grant with two distinct differences.
 
 It is intended to be used for user-agent-based clients (e.g. single page web apps) that can't keep a client secret because all of the application code and storage is easily accessible.
@@ -39,7 +41,7 @@ If the user approves the client they will be redirected back to the authorizatio
 
 Wherever you initialize your objects, initialize a new instance of the authorization server and bind the storage interfaces and authorization code grant:
 
-{% highlight php %}
+~~~ php
 // Init our repositories
 $clientRepository = new ClientRepository(); // instance of ClientRepositoryInterface
 $scopeRepository = new ScopeRepository(); // instance of ScopeRepositoryInterface
@@ -64,7 +66,7 @@ $server->enableGrantType(
     new ImplicitGrant(new \DateInterval('PT1H')),
     new \DateInterval('PT1H') // access tokens will expire after 1 hour
 );
-{% endhighlight %}
+~~~
 
 ## Implementation
 
@@ -72,7 +74,7 @@ _Please note: These examples here demonstrate usage with the Slim Framework; Sli
 
 The client will redirect the user to an authorization endpoint.
 
-{% highlight php %}
+~~~ php
 $app->get('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
 
     /* @var \League\OAuth2\Server\AuthorizationServer $server */
@@ -113,4 +115,4 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
         
     }
 });
-{% endhighlight %}
+~~~

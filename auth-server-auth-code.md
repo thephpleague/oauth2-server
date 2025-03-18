@@ -52,7 +52,7 @@ The authorization server will respond with a JSON object containing the followin
 
 Wherever you initialize your objects, initialize a new instance of the authorization server and bind the storage interfaces and authorization code grant:
 
-{% highlight php %}
+~~~ php
 // Init our repositories
 $clientRepository = new ClientRepository(); // instance of ClientRepositoryInterface
 $scopeRepository = new ScopeRepository(); // instance of ScopeRepositoryInterface
@@ -86,7 +86,7 @@ $server->enableGrantType(
     $grant,
     new \DateInterval('PT1H') // access tokens will expire after 1 hour
 );
-{% endhighlight %}
+~~~
 
 ## Implementation
 
@@ -94,7 +94,7 @@ _Please note: These examples here demonstrate usage with the Slim Framework; Sli
 
 The client will redirect the user to an authorization endpoint.
 
-{% highlight php %}
+~~~ php
 $app->get('/authorize', function (ServerRequestInterface $request, ResponseInterface $response) use ($server) {
    
     try {
@@ -126,17 +126,17 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
     } catch (\Exception $exception) {
     
         // Unknown exception
-        $body = new Stream('php://temp', 'r+');
+        $body = new Stream(fopen('php://temp', 'r+'));
         $body->write($exception->getMessage());
         return $response->withStatus(500)->withBody($body);
         
     }
 });
-{% endhighlight %}
+~~~
 
 The client will request an access token using an authorization code so create an `/access_token` endpoint.
 
-{% highlight php %}
+~~~ php
 $app->post('/access_token', function (ServerRequestInterface $request, ResponseInterface $response) use ($server) {
 
     try {
@@ -152,10 +152,10 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
     } catch (\Exception $exception) {
     
         // Unknown exception
-        $body = new Stream('php://temp', 'r+');
+        $body = new Stream(fopen('php://temp', 'r+'));
         $body->write($exception->getMessage());
         return $response->withStatus(500)->withBody($body);
     }
 });
-{% endhighlight %}
+~~~
 

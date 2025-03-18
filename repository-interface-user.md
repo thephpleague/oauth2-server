@@ -14,4 +14,4 @@ You can use the grant type to determine if the user is permitted to use the gran
 
 You can use the client entity to determine to if the user is permitted to use the client.
 
-If the client's credentials are validated you should return an instance of `\League\OAuth2\Server\Entities\Interfaces\UserEntityInterface`
+If the client's credentials are validated you should return an instance of `\League\OAuth2\Server\Entities\UserEntityInterface`

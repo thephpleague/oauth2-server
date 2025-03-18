@@ -12,7 +12,7 @@ The findings of this library have been fixed in the following releases - `5.1.4`
 
 ### 5.1.4
 
-Version `5.1.4` is a backwards compatbile with other `5.1.x` releases.
+Version `5.1.4` is a backwards compatible with other `5.1.x` releases.
 
 You will notice in your server logs a message like this:
 
@@ -20,7 +20,7 @@ You will notice in your server logs a message like this:
 
 To supress this notice once you have instantiated an instance of `\League\OAuth2\Server\AuthorizationServer` you should call the `setEncryptionKey()` method passing in at least 32 bytes of random data.
 
-You can generate this using `base64_encode(random_bytes(32))`. Alternatively if you're using a framework such as Laravel which has a encryption key already generated you can pass in that (in the case of Laravel use `env('APP_KEY')`).
+You can generate this using `base64_encode(random_bytes(32))`. Alternatively if you're using a framework such as Laravel which has a encryption key already generated you can pass in that (in the case of Laravel use `config('app.key')`).
 
 For example:
 
@@ -55,6 +55,6 @@ All you need to do is replace the public key that was being passed into the cons
 
 To generate an encryption key for the `AuthorizationServer` run the following command in the terminal:
 
-{% highlight shell %}
+~~~ shell
 php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
-{% endhighlight %}
+~~~

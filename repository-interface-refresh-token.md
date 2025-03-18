@@ -20,7 +20,7 @@ When a new refresh token is created this method will be called. You don't have t
 The refresh token entity passed in has a number of methods you can call which contain data worth saving to a database:
 
 * `getIdentifier() : string` this is randomly generated unique identifier (of 80+ characters in length) for the refresh token.
-* `getExpiryDateTime() :  \DateTime` the expiry date and time of the access token.
+* `getExpiryDateTime() :  \DateTimeImmutable` the expiry date and time of the refresh token.
 * `getAccessToken()->getIdentifier() : string` the linked access token's identifier.
 
 JWT access tokens contain an expiry date and so will be rejected automatically when used. You can safely clean up expired access tokens from your database.

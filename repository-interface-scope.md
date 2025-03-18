@@ -10,7 +10,7 @@ permalink: /scope-repository-interface/
 
 This method is called to validate a scope.
 
-If the scope is valid validated you should return an instance of `\League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface`
+If the scope is valid you should return an instance of `\League\OAuth2\Server\Entities\Interfaces\ScopeEntityInterface`
 
 ## finalizeScopes() : ScopeEntityInterface[]
 
