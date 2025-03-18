@@ -6,7 +6,10 @@ permalink: /authorization-server/resource-owner-password-credentials-grant/
 
 # Resource owner password credentials grant
 
-This grant is a great user experience for <u>trusted</u> first party clients both on the web and in native applications.
+The password grant is no longer recommended for use because it forces a user to share their password with a client 
+application. You should use the authorization grant in place of this grant. 
+
+Details of this grant are left here for legacy implementation purposes. 
 
 ## Flow
 

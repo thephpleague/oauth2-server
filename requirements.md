@@ -12,10 +12,10 @@ This library uses key cryptography in order to encrypt and decrypt, as well as v
 
 The following versions of PHP are supported:
 
-* PHP 7.2
-* PHP 7.3
-* PHP 7.4
-* PHP 8.0
+* PHP 8.1
+* PHP 8.2
+* PHP 8.3
+* PHP 8.4
 
 The `openssl` and `json` extensions are also required.
 

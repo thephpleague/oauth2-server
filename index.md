@@ -20,6 +20,7 @@ Out of the box it supports the following grants:
 * Client credentials grant
 * Resource owner password credentials grant
 * Refresh grant
+* Device authorization grant
 
 The following RFCs are implemented:
 
@@ -27,12 +28,13 @@ The following RFCs are implemented:
 * [RFC6750 " The OAuth 2.0 Authorization Framework: Bearer Token Usage"](https://tools.ietf.org/html/rfc6750)
 * [RFC7519 "JSON Web Token (JWT)"](https://tools.ietf.org/html/rfc7519)
 * [RFC7636 "Proof Key for Code Exchange by OAuth Public Clients"](https://tools.ietf.org/html/rfc7636)
+* [RFC8628 "OAuth 2.0 Device Authorization Grant](https://tools.ietf.org/html/rfc8628)
 
 <!--
 You can also easily make your own [custom grants]().
 -->
 
-This library was created by Alex Bilbie. Find him on Twitter at [@alexbilbie](https://twitter.com/alexbilbie).
+This library was created by Alex Bilbie. Find him on X at [@alexbilbie](https://x.com/alexbilbie).
 
 ## Changelog
 
@@ -43,5 +45,3 @@ The latest release is [![GitHub tag](https://img.shields.io/github/tag/thephplea
 ## Support
 
 Please ask questions on the [Github issues page](https://github.com/thephpleague/oauth2-server/issues).
-
-For commercial support and custom implementations please visit [Glynde Labs](https://glyndelabs.com).
