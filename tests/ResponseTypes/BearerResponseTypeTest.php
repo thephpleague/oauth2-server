@@ -154,7 +154,7 @@ class BearerResponseTypeTest extends TestCase
 
         self::assertEquals('abcdef', $request->getAttribute('oauth_access_token_id'));
         self::assertEquals('clientName', $request->getAttribute('oauth_client_id'));
-        self::assertEquals('123', $request->getAttribute('oauth_user_id'));
+        self::assertEquals('123', $request->getAttribute('oauth_owner_id'));
         self::assertEquals([], $request->getAttribute('oauth_scopes'));
     }
 
