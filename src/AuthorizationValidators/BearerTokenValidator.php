@@ -42,7 +42,9 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
 
     private Configuration $jwtConfiguration;
 
-    public function __construct(private AccessTokenRepositoryInterface $accessTokenRepository, private ?DateInterval $jwtValidAtDateLeeway = null) {}
+    public function __construct(private AccessTokenRepositoryInterface $accessTokenRepository, private ?DateInterval $jwtValidAtDateLeeway = null)
+    {
+    }
 
     /**
      * Set the public key
