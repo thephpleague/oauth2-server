@@ -130,7 +130,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         return $request
             ->withAttribute('oauth_access_token_id', $claims->get('jti'))
             ->withAttribute('oauth_client_id', $claims->get('aud')[0])
-            ->withAttribute('oauth_user_id', $claims->get('sub'))
+            ->withAttribute('oauth_owner_id', $claims->get('sub'))
             ->withAttribute('oauth_scopes', $claims->get('scopes'));
     }
 }
