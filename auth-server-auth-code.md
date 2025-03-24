@@ -36,7 +36,7 @@ The client will now send a POST request to the authorization server with the fol
 * `grant_type` with the value of `authorization_code`
 * `client_id` with the client identifier
 * `client_secret` with the client secret
-* `redirect_uri` must be identical to the `redirect_uri` parameter included in Part One. If no `redirect_uri` paramater was included in Part One, this parameter should be omitted.
+* `redirect_uri` must be identical to the `redirect_uri` parameter included in Part One. If no `redirect_uri` parameter was included in Part One, this parameter should be omitted.
 * `code` with the authorization code from the query string
  
 Note that you need to decode the `code` query string first. You can do that with `urldecode($code)`.
