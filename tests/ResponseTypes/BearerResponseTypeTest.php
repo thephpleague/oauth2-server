@@ -292,4 +292,46 @@ class BearerResponseTypeTest extends TestCase
             );
         }
     }
+
+    public function testAccessTokenShouldIssueSameTokenIfRequestedTwice(): void
+    {
+        $responseType = new BearerTokenResponse();
+        $responseType->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $responseType->setEncryptionKey(base64_encode(random_bytes(36)));
+
+        $client = new ClientEntity();
+        $client->setIdentifier('clientName');
+
+        $scope = new ScopeEntity();
+        $scope->setIdentifier('basic');
+
+        $accessToken = new AccessTokenEntity();
+        $accessToken->setIdentifier('abcdef');
+        $accessToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+        $accessToken->setClient($client);
+        $accessToken->addScope($scope);
+        $accessToken->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+        $accessToken->setUserIdentifier('userId');
+
+        $refreshToken = new RefreshTokenEntity();
+        $refreshToken->setIdentifier('abcdef');
+        $refreshToken->setAccessToken($accessToken);
+        $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add(new DateInterval('PT1H')));
+
+        $responseType->setAccessToken($accessToken);
+        $responseType->setRefreshToken($refreshToken);
+
+        $firstResponse = $responseType->generateHttpResponse(new Response());
+
+        $firstResponse->getBody()->rewind();
+        $firstJson = json_decode($firstResponse->getBody()->getContents());
+
+
+        $secondResponse = $responseType->generateHttpResponse(new Response());
+
+        $secondResponse->getBody()->rewind();
+        $secondJson = json_decode($secondResponse->getBody()->getContents());
+
+        self::assertEquals($firstJson->access_token, $secondJson->access_token);
+    }
 }

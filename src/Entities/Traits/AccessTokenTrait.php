@@ -24,9 +24,9 @@ use RuntimeException;
 
 trait AccessTokenTrait
 {
-    private CryptKeyInterface $privateKey;
-
     private Configuration $jwtConfiguration;
+    private CryptKeyInterface $privateKey;
+    private ?DateTimeImmutable $issuedAt = null;
 
     /**
      * Set the private key used to encrypt this access token.
@@ -34,6 +34,22 @@ trait AccessTokenTrait
     public function setPrivateKey(CryptKeyInterface $privateKey): void
     {
         $this->privateKey = $privateKey;
+    }
+
+    /**
+     * Set the datetime value the access token was issued at.
+     */
+    public function setIssuedAt(DateTimeImmutable $issuedAt): void
+    {
+        $this->issuedAt = $issuedAt;
+    }
+
+    /**
+     * Get the datetime value the access token was issued at.
+     */
+    public function getIssuedAt(): ?DateTimeImmutable
+    {
+        return $this->issuedAt;
     }
 
     /**
@@ -61,11 +77,15 @@ trait AccessTokenTrait
     {
         $this->initJwtConfiguration();
 
+        if ($this->getIssuedAt() === null) {
+            $this->setIssuedAt(new DateTimeImmutable());
+        }
+
         return $this->jwtConfiguration->builder()
             ->permittedFor($this->getClient()->getIdentifier())
             ->identifiedBy($this->getIdentifier())
-            ->issuedAt(new DateTimeImmutable())
-            ->canOnlyBeUsedAfter(new DateTimeImmutable())
+            ->issuedAt($this->getIssuedAt())
+            ->canOnlyBeUsedAfter($this->getIssuedAt())
             ->expiresAt($this->getExpiryDateTime())
             ->relatedTo($this->getSubjectIdentifier())
             ->withClaim('scopes', $this->getScopes())
