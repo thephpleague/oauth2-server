@@ -28,7 +28,7 @@ interface AccessTokenEntityInterface extends TokenInterface
     public function setIssuedAt(DateTimeImmutable $issuedAt): void;
 
     /**
-     * Get the issued at datetime value. 
+     * Get the issued at datetime value.
      */
     public function getIssuedAt(): ?DateTimeImmutable;
 
