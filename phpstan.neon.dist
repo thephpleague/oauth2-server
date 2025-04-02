@@ -7,9 +7,9 @@ parameters:
         - 
             message: '#Deprecated since v5.5, please use {@see self::withValidationConstraints\(\)} instead#'
             reportUnmatched: false
-	-
-	    message: '#Parameter #1 $issuedAt of method Lcobucci\JWT\Builder::issuedAt\(\) expects DateTimeImmutable, DateTimeImmutable|null given.#'
-	    reportUnmatched: false
-	-
-	    message: '#Parameter #1 $notBefore of method Lcobucci\JWT\Builder::canOnlyBeUsedAfter\(\) expects DateTimeImmutable, DateTimeImmutable|null given.#'
-	    reportUnmatched: false
+        -
+            message: '#Parameter #1 $issuedAt of method Lcobucci\JWT\Builder::issuedAt\(\) expects DateTimeImmutable, DateTimeImmutable|null given.#'
+            reportUnmatched: false
+        -
+            message: '#Parameter #1 $notBefore of method Lcobucci\JWT\Builder::canOnlyBeUsedAfter\(\) expects DateTimeImmutable, DateTimeImmutable|null given.#'
+            reportUnmatched: false
