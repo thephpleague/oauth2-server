@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Changed additional attribute added from `oauth_user_id` to the more appropriately named `oauth_owner_id` which can encompass either the user ID or client ID (PR #XXX) 
 
+### Fixed
+- If the same access token is requested twice, the issued at time will now be identical (PR #XXX)
+
 ## [9.2.0] - released 2025-02-15
 ### Added
 - Added a new function to the provided ClientTrait, `supportsGrantType` to allow the auth server to issue the response `unauthorized_client` when applicable (PR #1420)
