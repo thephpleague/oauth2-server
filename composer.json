@@ -46,7 +46,6 @@
         "authentication",
         "resource",
         "api",
-        "auth",
         "protect",
         "secure"
     ],
