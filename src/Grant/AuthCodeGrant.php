@@ -284,7 +284,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            $this->makeRedirectUri(
+            $finalRedirectUri = $this->makeRedirectUri(
                 $redirectUri ?? $this->getClientRedirectUri($client),
                 $stateParameter !== null ? ['state' => $stateParameter] : []
             )
@@ -310,7 +310,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest(
                     'code_challenge_method',
                     'Code challenge method must be provided when `code_challenge` is set.'
-                );
+                )->withRedirectUri($finalRedirectUri);
             }
 
             if (array_key_exists($codeChallengeMethod, $this->codeChallengeVerifiers) === false) {
@@ -322,7 +322,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                         },
                         array_keys($this->codeChallengeVerifiers)
                     ))
-                );
+                )->withRedirectUri($finalRedirectUri);
             }
 
             // Validate code_challenge according to RFC-7636
@@ -331,13 +331,16 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 throw OAuthServerException::invalidRequest(
                     'code_challenge',
                     'Code challenge must follow the specifications of RFC-7636.'
-                );
+                )->withRedirectUri($finalRedirectUri);
             }
 
             $authorizationRequest->setCodeChallenge($codeChallenge);
             $authorizationRequest->setCodeChallengeMethod($codeChallengeMethod);
         } elseif ($this->requireCodeChallengeForPublicClients && !$client->isConfidential()) {
-            throw OAuthServerException::invalidRequest('code_challenge', 'Code challenge must be provided for public clients');
+            throw OAuthServerException::invalidRequest(
+                'code_challenge',
+                'Code challenge must be provided for public clients'
+            )->withRedirectUri($finalRedirectUri);
         }
 
         return $authorizationRequest;
