@@ -17,6 +17,7 @@ namespace League\OAuth2\Server\ResponseTypes;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 use function array_merge;
 use function json_encode;
@@ -76,9 +77,9 @@ class BearerTokenResponse extends AbstractResponseType
      * @return array<array-key,mixed>
      */
     protected function getExtraParams(
-        #[\SensitiveParameter]
-        AccessTokenEntityInterface $accessToken): array
-    {
+        #[SensitiveParameter]
+        AccessTokenEntityInterface $accessToken
+    ): array {
         return [];
     }
 }

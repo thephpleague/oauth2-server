@@ -21,6 +21,7 @@ use Defuse\Crypto\Key;
 use Exception;
 use InvalidArgumentException;
 use LogicException;
+use SensitiveParameter;
 
 use function is_string;
 
@@ -84,9 +85,9 @@ trait CryptTrait
     }
 
     public function setEncryptionKey(
-        #[\SensitiveParameter]
-        Key|string|null $key = null): void
-    {
+        #[SensitiveParameter]
+        Key|string|null $key = null
+    ): void {
         $this->encryptionKey = $key;
     }
 }

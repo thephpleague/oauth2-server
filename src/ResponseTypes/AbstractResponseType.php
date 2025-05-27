@@ -18,6 +18,7 @@ use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+use SensitiveParameter;
 
 abstract class AbstractResponseType implements ResponseTypeInterface
 {
@@ -30,23 +31,23 @@ abstract class AbstractResponseType implements ResponseTypeInterface
     protected CryptKeyInterface $privateKey;
 
     public function setAccessToken(
-        #[\SensitiveParameter]
-        AccessTokenEntityInterface $accessToken): void
-    {
+        #[SensitiveParameter]
+        AccessTokenEntityInterface $accessToken
+    ): void {
         $this->accessToken = $accessToken;
     }
 
     public function setRefreshToken(
-        #[\SensitiveParameter]
-        RefreshTokenEntityInterface $refreshToken): void
-    {
+        #[SensitiveParameter]
+        RefreshTokenEntityInterface $refreshToken
+    ): void {
         $this->refreshToken = $refreshToken;
     }
 
     public function setPrivateKey(
-        #[\SensitiveParameter]
-        CryptKeyInterface $key): void
-    {
+        #[SensitiveParameter]
+        CryptKeyInterface $key
+    ): void {
         $this->privateKey = $key;
     }
 }

@@ -14,6 +14,7 @@ namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
+use SensitiveParameter;
 
 interface UserRepositoryInterface extends RepositoryInterface
 {
@@ -22,7 +23,7 @@ interface UserRepositoryInterface extends RepositoryInterface
      */
     public function getUserEntityByUserCredentials(
         string $username,
-        #[\SensitiveParameter]
+        #[SensitiveParameter]
         string $password,
         string $grantType,
         ClientEntityInterface $clientEntity
