@@ -83,7 +83,9 @@ trait CryptTrait
         }
     }
 
-    public function setEncryptionKey(Key|string|null $key = null): void
+    public function setEncryptionKey(
+        #[\SensitiveParameter]
+        Key|string|null $key = null): void
     {
         $this->encryptionKey = $key;
     }

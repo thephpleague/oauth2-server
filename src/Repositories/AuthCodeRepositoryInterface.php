@@ -25,7 +25,9 @@ interface AuthCodeRepositoryInterface extends RepositoryInterface
     /**
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
-    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity): void;
+    public function persistNewAuthCode(
+        #[\SensitiveParameter]
+        AuthCodeEntityInterface $authCodeEntity): void;
 
     public function revokeAuthCode(string $codeId): void;
 

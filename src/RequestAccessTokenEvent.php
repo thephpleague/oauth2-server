@@ -17,7 +17,11 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestAccessTokenEvent extends RequestEvent
 {
-    public function __construct(string $name, ServerRequestInterface $request, private AccessTokenEntityInterface $accessToken)
+    public function __construct(
+        string $name,
+        ServerRequestInterface $request,
+        #[\SensitiveParameter]
+        private AccessTokenEntityInterface $accessToken)
     {
         parent::__construct($name, $request);
     }

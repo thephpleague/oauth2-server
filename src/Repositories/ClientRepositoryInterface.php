@@ -27,5 +27,9 @@ interface ClientRepositoryInterface extends RepositoryInterface
     /**
      * Validate a client's secret.
      */
-    public function validateClient(string $clientIdentifier, ?string $clientSecret, ?string $grantType): bool;
+    public function validateClient(
+        string $clientIdentifier, 
+        #[\SensitiveParameter]
+        ?string $clientSecret, 
+        ?string $grantType): bool;
 }

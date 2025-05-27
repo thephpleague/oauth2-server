@@ -22,6 +22,7 @@ interface UserRepositoryInterface extends RepositoryInterface
      */
     public function getUserEntityByUserCredentials(
         string $username,
+        #[\SensitiveParameter]
         string $password,
         string $grantType,
         ClientEntityInterface $clientEntity

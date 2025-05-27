@@ -19,7 +19,9 @@ interface AccessTokenEntityInterface extends TokenInterface
     /**
      * Set a private key used to encrypt the access token.
      */
-    public function setPrivateKey(CryptKeyInterface $privateKey): void;
+    public function setPrivateKey(
+        #[\SensitiveParameter]
+        CryptKeyInterface $privateKey): void;
 
     /**
      * Generate a string representation of the access token.

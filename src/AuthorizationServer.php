@@ -61,7 +61,9 @@ class AuthorizationServer implements EmitterAwareInterface
         private ClientRepositoryInterface $clientRepository,
         private AccessTokenRepositoryInterface $accessTokenRepository,
         private ScopeRepositoryInterface $scopeRepository,
+        #[\SensitiveParameter]
         CryptKeyInterface|string $privateKey,
+        #[\SensitiveParameter]
         Key|string $encryptionKey,
         ResponseTypeInterface|null $responseType = null
     ) {

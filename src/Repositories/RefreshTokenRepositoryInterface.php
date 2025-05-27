@@ -25,7 +25,9 @@ interface RefreshTokenRepositoryInterface extends RepositoryInterface
     /**
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
-    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity): void;
+    public function persistNewRefreshToken(
+        #[\SensitiveParameter]
+        RefreshTokenEntityInterface $refreshTokenEntity): void;
 
     public function revokeRefreshToken(string $tokenId): void;
 

@@ -75,7 +75,9 @@ class BearerTokenResponse extends AbstractResponseType
      *
      * @return array<array-key,mixed>
      */
-    protected function getExtraParams(AccessTokenEntityInterface $accessToken): array
+    protected function getExtraParams(
+        #[\SensitiveParameter]
+        AccessTokenEntityInterface $accessToken): array
     {
         return [];
     }
