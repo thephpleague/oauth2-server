@@ -14,11 +14,16 @@ namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SensitiveParameter;
 
 class RequestAccessTokenEvent extends RequestEvent
 {
-    public function __construct(string $name, ServerRequestInterface $request, private AccessTokenEntityInterface $accessToken)
-    {
+    public function __construct(
+        string $name,
+        ServerRequestInterface $request,
+        #[SensitiveParameter]
+        private AccessTokenEntityInterface $accessToken
+    ) {
         parent::__construct($name, $request);
     }
 

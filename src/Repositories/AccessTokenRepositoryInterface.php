@@ -16,6 +16,7 @@ use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
+use SensitiveParameter;
 
 /**
  * Access token interface.
@@ -36,7 +37,10 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     /**
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
-    public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void;
+    public function persistNewAccessToken(
+        #[SensitiveParameter]
+        AccessTokenEntityInterface $accessTokenEntity
+    ): void;
 
     public function revokeAccessToken(string $tokenId): void;
 

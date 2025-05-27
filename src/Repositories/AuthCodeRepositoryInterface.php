@@ -14,6 +14,7 @@ namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
+use SensitiveParameter;
 
 /**
  * Auth code storage interface.
@@ -25,7 +26,10 @@ interface AuthCodeRepositoryInterface extends RepositoryInterface
     /**
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
-    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity): void;
+    public function persistNewAuthCode(
+        #[SensitiveParameter]
+        AuthCodeEntityInterface $authCodeEntity
+    ): void;
 
     public function revokeAuthCode(string $codeId): void;
 
