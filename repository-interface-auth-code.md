@@ -34,4 +34,4 @@ This method is called when an authorization code is exchanged for an access toke
 
 ## isAuthCodeRevoked() : boolean
 
-This method is called before an authorization code is exchanged for an access token by the authorization server. Return `true` if the auth code has been manually revoked before it expired. If the auth code is still valid return `false`.
+This method is called before an authorization code is exchanged for an access token by the authorization server. Return `true` if the auth code is invalid and `false` if the auth code is still valid.
