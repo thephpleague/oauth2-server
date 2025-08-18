@@ -101,7 +101,6 @@ class OAuthServerExceptionTest extends TestCase
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
-        $validateClientMethod->setAccessible(true);
 
         $validateClientMethod->invoke($grantMock, $serverRequest);
     }
