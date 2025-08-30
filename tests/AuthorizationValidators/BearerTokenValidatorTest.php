@@ -29,7 +29,6 @@ class BearerTokenValidatorTest extends TestCase
 
         $bearerTokenValidatorReflection = new ReflectionClass(BearerTokenValidator::class);
         $jwtConfiguration = $bearerTokenValidatorReflection->getProperty('jwtConfiguration');
-        $jwtConfiguration->setAccessible(true);
 
         $validJwt = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
             ->permittedFor('client-id')
@@ -57,7 +56,6 @@ class BearerTokenValidatorTest extends TestCase
 
         $bearerTokenValidatorReflection = new ReflectionClass(BearerTokenValidator::class);
         $jwtConfiguration = $bearerTokenValidatorReflection->getProperty('jwtConfiguration');
-        $jwtConfiguration->setAccessible(true);
 
         $expiredJwt = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
             ->permittedFor('client-id')
@@ -89,7 +87,6 @@ class BearerTokenValidatorTest extends TestCase
 
         $bearerTokenValidatorReflection = new ReflectionClass(BearerTokenValidator::class);
         $jwtConfiguration = $bearerTokenValidatorReflection->getProperty('jwtConfiguration');
-        $jwtConfiguration->setAccessible(true);
 
         $jwtTokenFromFutureWithinLeeway = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
             ->permittedFor('client-id')
@@ -120,7 +117,6 @@ class BearerTokenValidatorTest extends TestCase
 
         $bearerTokenValidatorReflection = new ReflectionClass(BearerTokenValidator::class);
         $jwtConfiguration = $bearerTokenValidatorReflection->getProperty('jwtConfiguration');
-        $jwtConfiguration->setAccessible(true);
 
         $jwtTokenFromFutureBeyondLeeway = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
             ->permittedFor('client-id')
