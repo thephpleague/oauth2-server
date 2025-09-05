@@ -14,7 +14,6 @@ namespace League\OAuth2\Server\Repositories;
 
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
-use SensitiveParameter;
 
 /**
  * Refresh token interface.
@@ -27,7 +26,6 @@ interface RefreshTokenRepositoryInterface extends RepositoryInterface
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
     public function persistNewRefreshToken(
-        #[SensitiveParameter]
         RefreshTokenEntityInterface $refreshTokenEntity
     ): void;
 

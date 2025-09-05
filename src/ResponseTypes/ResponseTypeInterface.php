@@ -18,24 +18,20 @@ use Defuse\Crypto\Key;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use Psr\Http\Message\ResponseInterface;
-use SensitiveParameter;
 
 interface ResponseTypeInterface
 {
     public function setAccessToken(
-        #[SensitiveParameter]
         AccessTokenEntityInterface $accessToken
     ): void;
 
     public function setRefreshToken(
-        #[SensitiveParameter]
         RefreshTokenEntityInterface $refreshToken
     ): void;
 
     public function generateHttpResponse(ResponseInterface $response): ResponseInterface;
 
     public function setEncryptionKey(
-        #[SensitiveParameter]
         Key|string|null $key = null
     ): void;
 }
