@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added sensitive parameter to avoid sensitive data being included in stack traces (PR #1483)
+
 ## [9.2.0] - released 2025-02-15
 ### Added
 - Added a new function to the provided ClientTrait, `supportsGrantType` to allow the auth server to issue the response `unauthorized_client` when applicable (PR #1420)
