@@ -137,23 +137,33 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $this->validateCodeChallenge($authCodePayload, $codeVerifier);
         }
 
-        // Issue and persist new access token
-        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
-        $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
-        $responseType->setAccessToken($accessToken);
+        if ($this->authCodeRepository->lockAuthCode($authCodePayload->auth_code_id)) {
+            try {
+                // Issue and persist new access token
+                $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
+                $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
+                $responseType->setAccessToken($accessToken);
 
-        // Issue and persist new refresh token if given
-        $refreshToken = $this->issueRefreshToken($accessToken);
+                // Issue and persist new refresh token if given
+                $refreshToken = $this->issueRefreshToken($accessToken);
 
-        if ($refreshToken !== null) {
-            $this->getEmitter()->emit(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
-            $responseType->setRefreshToken($refreshToken);
+                if ($refreshToken !== null) {
+                    $this->getEmitter()->emit(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
+                    $responseType->setRefreshToken($refreshToken);
+                }
+
+                return $responseType;
+            } catch (Exception $e) {
+                $this->authCodeRepository->unlockAuthCode($authCodePayload->auth_code_id);
+                throw OAuthServerException::serverError(
+                    'access_token',
+                    $e
+                );
+            } finally {
+                // Revoke used auth code
+                $this->authCodeRepository->revokeAuthCode($authCodePayload->auth_code_id);
+            }
         }
-
-        // Revoke used auth code
-        $this->authCodeRepository->revokeAuthCode($authCodePayload->auth_code_id);
-
-        return $responseType;
     }
 
     private function validateCodeChallenge(object $authCodePayload, ?string $codeVerifier): void
@@ -211,6 +221,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         if ($this->authCodeRepository->isAuthCodeRevoked($authCodePayload->auth_code_id) === true) {
             throw OAuthServerException::invalidGrant('Authorization code has been revoked');
+        }
+
+        if ($this->authCodeRepository->isAuthCodeLocked($authCodePayload->auth_code_id) === true) {
+            throw OAuthServerException::invalidGrant('Authorization code has been locked while an access code beeing issued');
         }
 
         if ($authCodePayload->client_id !== $client->getIdentifier()) {
