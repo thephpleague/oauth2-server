@@ -36,9 +36,7 @@ interface AccessTokenRepositoryInterface extends RepositoryInterface
     /**
      * @throws UniqueTokenIdentifierConstraintViolationException
      */
-    public function persistNewAccessToken(
-        AccessTokenEntityInterface $accessTokenEntity
-    ): void;
+    public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void;
 
     public function revokeAccessToken(string $tokenId): void;
 
