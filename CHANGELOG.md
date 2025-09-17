@@ -1,18 +1,28 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
 ### Added
+
 - Added sensitive parameter to avoid sensitive data being included in stack traces (PR #1483)
 
+### Fixed
+
+- Made the Bearer header case insensitive to match the specs correctly (PR #1491)
+
 ## [9.2.0] - released 2025-02-15
+
 ### Added
+
 - Added a new function to the provided ClientTrait, `supportsGrantType` to allow the auth server to issue the response `unauthorized_client` when applicable (PR #1420)
 
 ### Fixed
+
 - Fix a bug on setting interval visibility of device authorization grant (PR #1410)
 - Fix a bug where the new poll date were not persisted when `slow_down` error happens, because the exception is thrown before calling `persistDeviceCode`. (PR #1410)
 - Fix a bug where `slow_down` error response may have been returned even after the user has completed the auth flow (already approved / denied the request). (PR #1410)
@@ -20,26 +30,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Emit `RequestAccessTokenEvent` and `RequestRefreshTokenEvent` events instead of the general `RequestEvent` event when an access / refresh token is issued using device authorization grant. (PR #1467)
 
 ### Changed
+
 - Key permission checks ignored on Windows regardless of userland choice as cannot be run successfully on this OS (PR #1447)
 
 ## [9.1.0] - released 2024-11-21
+
 ### Added
+
 - Support for PHP 8.4 (PR #1454)
 
 ### Fixed
+
 - In the Auth Code grant, when requesting an access token with an invalid auth code, we now respond with an invalid_grant error instead of invalid_request (PR #1433)
 - Fixed spec compliance issue where device access token request was mistakenly expecting to receive scopes in the request (PR #1412)
 - Refresh tokens pre version 9 might have had user IDs set as ints which meant they were incorrectly rejected. We now cast these values to strings to allow old refresh tokens (PR #1436)
 
 ## [9.0.1] - released 2024-10-14
+
 ### Fixed
+
 - Auto-generated event emitter is now persisted. Previously, a new emitter was generated every time (PR #1428)
 - Fixed bug where you could not omit a redirect uri even if one had not been specified during the auth request (PR #1428)
 - Fixed bug where "state" parameter wasn't present on `invalid_scope` error response and wasn't on fragment part of `access_denied` redirect URI on Implicit grant (PR #1298)
 - Fixed bug where disabling refresh token revocation via `revokeRefreshTokens(false)` unintentionally disables issuing new refresh token (PR #1449)
 
 ## [9.0.0] - released 2024-05-13
+
 ### Added
+
 - Device Authorization Grant added (PR #1074)
 - GrantTypeInterface has a new function, `revokeRefreshTokens()` for enabling or disabling refresh tokens after use (PR #1375)
 - A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
@@ -48,10 +66,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added function `getKeyContents()` to the `CryptKeyInterface` (PR #1375)
 
 ### Fixed
+
 - Basic authorization is now case insensitive (PR #1403)
 - If a refresh token has expired, been revoked, cannot be decrypted, or does not belong to the correct client, the server will now issue an `invalid_grant` error and a HTTP 400 response. In previous versions the server incorrectly issued an `invalid_request` and HTTP 401 response (PR #1042) (PR #1082)
 
 ### Changed
+
 - All interfaces now specify types for all params and return values. Strict typing enforced (PR #1074)
 - Request parameters are now parsed into strings to use internally in the library (PR #1402)
 - Authorization Request objects are now created through the factory method, `createAuthorizationRequest()` (PR #1111)
@@ -59,10 +79,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - AccessTokenEntityInterface now requires the implementation of `toString()` instead of the magic method `__toString()` (PR #1395)
 
 ### Removed
+
 - Removed message property from OAuthException HTTP response. Now just use error_description as per the OAuth 2 spec (PR #1375)
 
 ## [9.0.0-RC1] - released 2024-03-27
+
 ### Added
+
 - Device Authorization Grant added (PR #1074)
 - GrantTypeInterface has a new function, `revokeRefreshTokens()` for enabling or disabling refresh tokens after use (PR #1375)
 - A CryptKeyInterface to allow developers to change the CryptKey implementation with greater ease (PR #1044)
@@ -71,156 +94,209 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added function `getKeyContents()` to the `CryptKeyInterface` (PR #1375)
 
 ### Fixed
+
 - If a refresh token has expired, been revoked, cannot be decrypted, or does not belong to the correct client, the server will now issue an `invalid_grant` error and a HTTP 400 response. In previous versions the server incorrectly issued an `invalid_request` and HTTP 401 response (PR #1042) (PR #1082)
 
 ### Changed
+
 - Authorization Request objects are now created through the factory method, `createAuthorizationRequest()` (PR #1111)
 - Changed parameters for `finalizeScopes()` to allow a reference to an auth code ID (PR #1112)
 - AccessTokenEntityInterface now requires the implementation of `toString()` instead of the magic method `__toString()` (PR #1395)
 
 ### Removed
+
 - Removed message property from OAuthException HTTP response. Now just use error_description as per the OAuth 2 spec (PR #1375)
 
 ## [8.5.4] - released 2023-08-25
+
 ### Added
+
 - Support for league/uri ^7.0 (PR #1367)
 
 ## [8.5.3] - released 2023-07-06
+
 ### Security
+
 - If a key string is provided to the CryptKey constructor with an invalid
-passphrase, the LogicException message generated will expose the given key.
-The key is no longer leaked via this exception (PR #1353)
+  passphrase, the LogicException message generated will expose the given key.
+  The key is no longer leaked via this exception (PR #1353)
 
 ## [8.5.2] - released 2023-06-16
+
 ### Changed
+
 - Bumped the versions for laminas/diactoros and psr/http-message to support
-PSR-7 v2.0 (PR #1339)
+  PSR-7 v2.0 (PR #1339)
 
 ## [8.5.1] - released 2023-04-04
+
 ### Fixed
+
 - Fixed PHP version constraints and lcobucci/clock version constraint to support PHP 8.1 (PR #1336)
 
 ## [8.5.0] - released 2023-04-03
+
 ### Added
+
 - Support for PHP 8.1 and 8.2 (PR #1333)
 
 ### Removed
+
 - Support PHP 7.2, 7.3, and 7.4 (PR #1333)
 
 ## [8.4.1] - released 2023-03-22
+
 ### Fixed
+
 - Fix deprecation notices for PHP 8.x (PR #1329)
 
 ## [8.4.0] - released 2023-02-15
+
 ### Added
+
 - You can now set a leeway for time drift between servers when validating a JWT (PR #1304)
 
 ### Security
+
 - Access token requests that contain a code_verifier but are not bound to a code_challenge will be rejected to prevent
-a PKCE downgrade attack (PR #1326)
+  a PKCE downgrade attack (PR #1326)
 
 ## [8.3.6] - released 2022-11-14
+
 ### Fixed
+
 - Use LooseValidAt instead of StrictValidAt so that users aren't forced to use claims such as NBF in their JWT tokens (PR #1312)
 
 ## [8.3.5] - released 2022-05-12
+
 ### Fixed
+
 - Use InMemory::plainText('empty', 'empty') instead of InMemory::plainText('') to avoid [new empty string exception](https://github.com/lcobucci/jwt/pull/833) thrown by lcobucci/jwt (PR #1282)
 
 ## [8.3.4] - released 2022-04-07
+
 ### Fixed
+
 - Server previously rejected valid uris with custom schemes. Now use league/uri for parsing to accept all valid uris (PR #1274)
 
 ## [8.3.3] - released 2021-10-11
+
 ### Security
+
 - Removed the use of `LocalFileReference()` in lcobucci/jwt. Function deprecated as per [GHSA-7322-jrq4-x5hf](https://github.com/lcobucci/jwt/security/advisories/GHSA-7322-jrq4-x5hf) (PR #1249)
 
 ## [8.3.2] - released 2021-07-27
+
 ### Changed
+
 - Conditionally support the `StrictValidAt()` method in lcobucci/jwt so we can use version 4.1.x or greater of the library (PR #1236)
 - When providing invalid credentials, the library now responds with the error message _The user credentials were incorrect_ (PR #1230)
 - Keys are always stored in memory now and are not written to a file in the /tmp directory (PR #1180)
 - The regex for matching the bearer token has been simplified (PR #1238)
 
 ## [8.3.1] - released 2021-06-04
+
 ### Fixed
+
 - Revert check on clientID. We will no longer require this to be a string (PR #1233)
 
 ## [8.3.0] - released 2021-06-03
+
 ### Added
+
 - The server will now validate redirect uris according to rfc8252 (PR #1203)
 - Events emitted now include the refresh token and access token payloads (PR #1211)
 - Use the `revokeRefreshTokens()` function to decide whether refresh tokens are revoked or not upon use (PR #1189)
 
 ### Changed
+
 - Keys are now validated using `openssl_pkey_get_private()` and `openssl_pkey_get_public()` instead of regex matching (PR #1215)
 
 ### Fixed
+
 - The server will now only recognise and handle an authorization header if the value of the header is non-empty. This is to circumvent issues where some common frameworks set this header even if no value is present (PR #1170)
 - Added type validation for redirect uri, client ID, client secret, scopes, auth code, state, username, and password inputs (PR #1210)
 - Allow scope "0" to be used. Previously this was removed from a request because it failed an `empty()` check (PR #1181)
 
 ## [8.2.4] - released 2020-12-10
+
 ### Fixed
+
 - Reverted the enforcement of at least one redirect_uri for a client. This change has instead been moved to version 9 (PR #1169)
 
 ## [8.2.3] - released 2020-12-02
+
 ### Added
+
 - Re-added support for PHP 7.2 (PR #1165, #1167)
 
 ## [8.2.2] - released 2020-11-30
+
 ### Fixed
+
 - Fix issue where the private key passphrase isn't correctly passed to JWT library (PR #1164)
 
 ## [8.2.1] - released 2020-11-26
+
 ### Fixed
+
 - If you have a password on your private key, it is now passed correctly to the JWT configuration object. (PR #1159)
 
 ## [8.2.0] - released 2020-11-25
+
 ### Added
+
 - Add a `getRedirectUri` function to the `OAuthServerException` class (PR #1123)
 - Support for PHP 8.0 (PR #1146)
 
 ### Removed
+
 - Removed support for PHP 7.2 (PR #1146)
 
 ### Fixed
+
 - Fix typo in parameter hint. `code_challenged` changed to `code_challenge`. Thrown by Auth Code Grant when the code challenge does not match the regex. (PR #1130)
 - Undefined offset was returned when no client redirect URI was set. Now throw an invalidClient exception if no redirect URI is set against a client (PR #1140)
 
 ## [8.1.1] - released 2020-07-01
 
 ### Fixed
+
 - If you provide a valid redirect_uri with the auth code grant and an invalid scope, the server will use the given
-redirect_uri instead of the default client redirect uri (PR #1126)
+  redirect_uri instead of the default client redirect uri (PR #1126)
 
 ## [8.1.0] - released 2020-04-29
 
 ### Added
+
 - Added support for PHP 7.4 (PR #1075)
 
 ### Changed
+
 - If an error is encountered when running `preg_match()` to validate an RSA key, the server will now throw a RuntimeException (PR #1047)
 - Replaced deprecated methods with recommended ones when using `Lcobucci\JWT\Builder` to build a JWT token. (PR #1060)
 - When storing a key, we no longer touch the file before writing it as this is an unnecessary step (PR #1064)
 - Prefix native PHP functions in namespaces with backslashes for micro-optimisations (PR #1071)
 
 ### Removed
+
 - Support for PHP 7.1 (PR #1075)
 
 ### Fixed
+
 - Clients are now explicitly prevented from using the Client Credentials grant unless they are confidential to conform
- with the OAuth2 spec (PR #1035)
+  with the OAuth2 spec (PR #1035)
 - Abstract method `getIdentifier()` added to AccessTokenTrait. The trait cannot be used without the `getIdentifier()`
-method being defined (PR #1051)
+  method being defined (PR #1051)
 - An exception is now thrown if a refresh token is accidentally sent in place of an authorization code when using the
-Auth Code Grant (PR #1057)
+  Auth Code Grant (PR #1057)
 - Can now send access token request without being forced to specify a redirect URI (PR #1096)
 - In the BearerTokenValidator, if an implementation is using PDO, there is a possibility that a RuntimeException will be thrown when checking if an access token is revoked. This scenario no longer incorrectly issues an exception with a hint mentioning an issue with JSON decoding. (PR #1107)
 
 ## [8.0.0] - released 2019-07-13
 
 ### Added
+
 - Flag, `requireCodeChallengeForPublicClients`, used to reject public clients that do not provide a code challenge for the Auth Code Grant; use AuthCodeGrant::disableRequireCodeCallengeForPublicClients() to turn off this requirement (PR #938)
 - Public clients can now use the Auth Code Grant (PR #938)
 - `isConfidential` getter added to `ClientEntity` to identify type of client (PR #938)
@@ -228,6 +304,7 @@ Auth Code Grant (PR #1057)
 - Add a new function to the AbstractGrant class called `getClientEntityOrFail()`. This is a wrapper around the `getClientEntity()` function that ensures we emit and throw an exception if the repo doesn't return a client entity. (PR #1010)
 
 ### Changed
+
 - Replace `convertToJWT()` interface with a more generic `__toString()` to improve extensibility; AccessTokenEntityInterface now requires `setPrivateKey(CryptKey $privateKey)` so `__toString()` has everything it needs to work (PR #874)
 - The `invalidClient()` function accepts a PSR-7 compliant `$serverRequest` argument to avoid accessing the `$_SERVER` global variable and improve testing (PR #899)
 - `issueAccessToken()` in the Abstract Grant no longer sets access token client, user ID or scopes. These values should already have been set when calling `getNewToken()` (PR #919)
@@ -237,6 +314,7 @@ Auth Code Grant (PR #1057)
 - Use `DateTimeImmutable()` instead of `DateTime()`, `time()` instead of `(new DateTime())->getTimeStamp()`, and `DateTime::getTimeStamp()` instead of `DateTime::format('U')` (PR #963)
 
 ### Removed
+
 - `enableCodeExchangeProof` flag (PR #938)
 - Support for PHP 7.0 (PR #1014)
 - Remove JTI claim from JWT header (PR #1031)
@@ -244,92 +322,112 @@ Auth Code Grant (PR #1057)
 ## [7.4.0] - released 2019-05-05
 
 ### Changed
+
 - RefreshTokenRepository can now return null, allowing refresh tokens to be optional. (PR #649)
 
 ## [7.3.3] - released 2019-03-29
 
 ### Added
+
 - Added `error_description` to the error payload to improve standards compliance. The contents of this are copied from the existing `message` value. (PR #1006)
 
 ### Deprecated
+
 - Error payload will not issue `message` value in the next major release (PR #1006)
 
 ## [7.3.2] - released 2018-11-21
 
 ### Fixed
+
 - Revert setting keys on response type to be inside `getResponseType()` function instead of AuthorizationServer constructor (PR #969)
 
 ## [7.3.1] - released 2018-11-15
 
 ### Fixed
+
 - Fix issue with previous release where interface had changed for the AuthorizationServer. Reverted to the previous interface while maintaining functionality changes (PR #970)
 
 ## [7.3.0] - released 2018-11-13
 
 ### Changed
+
 - Moved the `finalizeScopes()` call from `validateAuthorizationRequest` method to the `completeAuthorizationRequest` method so it is called just before the access token is issued (PR #923)
 
 ### Added
+
 - Added a ScopeTrait to provide an implementation for jsonSerialize (PR #952)
 - Ability to nest exceptions (PR #965)
 
 ### Fixed
+
 - Fix issue where AuthorizationServer is not stateless as ResponseType could store state of a previous request (PR #960)
 
 ## [7.2.0] - released 2018-06-23
 
 ### Changed
+
 - Added new`validateRedirectUri` method AbstractGrant to remove three instances of code duplication (PR #912)
 - Allow 640 as a crypt key file permission (PR #917)
 
 ### Added
+
 - Function `hasRedirect()` added to `OAuthServerException` (PR #703)
 
 ### Fixed
+
 - Catch and handle `BadMethodCallException` from the `verify()` method of the JWT token in the `validateAuthorization` method (PR #904)
 
 ## [4.1.7] - released 2018-06-23
 
 ### Fixed
+
 - Ensure `empty()` function call only contains variable to be compatible with PHP 5.4 (PR #918)
 
 ## [7.1.1] - released 2018-05-21
 
 ### Fixed
+
 - No longer set a WWW-Authenticate header for invalid clients if the client did not send an Authorization header in the original request (PR #902)
 
 ## [7.1.0] - released 2018-04-22
 
 ### Changed
+
 - Changed hint for unsupportedGrantType exception so it no longer references the grant type parameter which isn't always expected (PR #893)
 - Upgrade PHPStan checks to level 7 (PR #856)
 
 ### Added
+
 - Added event emitters for issued access and refresh tokens (PR #860)
 - Can now use Defuse\Crypto\Key for encryption/decryption of keys which is faster than the Cryto class (PR #812)
 
 ### Removed
+
 - Remove paragone/random_compat from dependencies
 
 ## [7.0.0] - released 2018-02-18
 
 ### Added
+
 - Use PHPStan for static analysis of code (PR #848)
 - Enforce stricter static analysis checks and upgrade library dependencies (PR #852)
 - Provide PHPStan coverage for tests and update PHPUnit (PR #849)
 - Get and set methods for OAuth Server Exception payloads. Allow implementer to specify the JSON encode options (PR #719)
 
 ### Changed
+
 - ClientRepository interface will now accept null for the Grant type to improve extensibility options (PR #607)
 - Do not issue an error if key file permissions are 400 or 440 (PR #839)
 - Skip key file creation if the file already exists (PR #845)
 - Change changelog format and update readme
 
 ### Removed
+
 - Support for PHP 5.6
 - Support for version 5.x and 6.x of the library
 
 ### Fixed
+
 - PKCE implementation (PR #744)
 - Set correct redirect URI when validating scopes (PR #840)
 - S256 code challenege method (PR #842)
@@ -619,6 +717,7 @@ Version 5 is a complete code rewrite.
 - Adding missing column to oauth_session_authcodes
 
 ### Security
+
 - A refresh token should be bound to a client ID
 
 ## [2.0.3] - 2013-05-08

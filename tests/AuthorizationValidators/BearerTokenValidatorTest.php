@@ -135,4 +135,31 @@ class BearerTokenValidatorTest extends TestCase
 
         $bearerTokenValidator->validateAuthorization($request);
     }
+
+    public function testBearerTokenValidatorCaseInsensitiveWithBearerHeader(): void
+    {
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+
+        $bearerTokenValidator = new BearerTokenValidator($accessTokenRepositoryMock);
+        $bearerTokenValidator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $bearerTokenValidatorReflection = new ReflectionClass(BearerTokenValidator::class);
+        $jwtConfiguration = $bearerTokenValidatorReflection->getProperty('jwtConfiguration');
+
+        $validJwt = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
+            ->permittedFor('client-id')
+            ->identifiedBy('token-id')
+            ->issuedAt(new DateTimeImmutable())
+            ->canOnlyBeUsedAfter(new DateTimeImmutable())
+            ->expiresAt((new DateTimeImmutable())->add(new DateInterval('PT1H')))
+            ->relatedTo('user-id')
+            ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
+            ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
+
+        $request = (new ServerRequest())->withHeader('authorization', sprintf('bEaReR %s', $validJwt->toString()));
+
+        $validRequest = $bearerTokenValidator->validateAuthorization($request);
+
+        self::assertArrayHasKey('authorization', $validRequest->getHeaders());
+    }
 }
