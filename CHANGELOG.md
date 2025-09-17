@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Added sensitive parameter to avoid sensitive data being included in stack traces (PR #1483)
 
+### Fixed
+- Made the Bearer header case insensitive to match the specs correctly (PR #XXX)
+
 ## [9.2.0] - released 2025-02-15
 ### Added
 - Added a new function to the provided ClientTrait, `supportsGrantType` to allow the auth server to issue the response `unauthorized_client` when applicable (PR #1420)
