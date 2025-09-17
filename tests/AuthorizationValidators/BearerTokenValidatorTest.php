@@ -105,7 +105,7 @@ class BearerTokenValidatorTest extends TestCase
         self::assertArrayHasKey('authorization', $validRequest->getHeaders());
     }
 
-    public function testBearerTokenValidatorIsNotCaseSensitive(): void
+    public function testBearerTokenValidatorRejectsExpiredTokenBeyondLeeway(): void
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
