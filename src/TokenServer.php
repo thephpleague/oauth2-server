@@ -15,6 +15,7 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SensitiveParameter;
 
 class TokenServer implements EmitterAwareInterface
 {
@@ -31,6 +32,7 @@ class TokenServer implements EmitterAwareInterface
         private AccessTokenRepositoryInterface $accessTokenRepository,
         private RefreshTokenRepositoryInterface $refreshTokenRepository,
         CryptKeyInterface|string $publicKey,
+        #[SensitiveParameter]
         private Key|string $encryptionKey
     ) {
         if ($publicKey instanceof CryptKeyInterface === false) {

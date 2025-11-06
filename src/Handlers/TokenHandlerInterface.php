@@ -12,6 +12,7 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SensitiveParameter;
 
 interface TokenHandlerInterface extends EmitterAwareInterface
 {
@@ -25,5 +26,5 @@ interface TokenHandlerInterface extends EmitterAwareInterface
 
     public function setPublicKey(CryptKeyInterface $publicKey): void;
 
-    public function setEncryptionKey(Key|string|null $key = null): void;
+    public function setEncryptionKey(#[SensitiveParameter] Key|string|null $key = null): void;
 }
