@@ -14,11 +14,16 @@ namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SensitiveParameter;
 
 class RequestRefreshTokenEvent extends RequestEvent
 {
-    public function __construct(string $name, ServerRequestInterface $request, private RefreshTokenEntityInterface $refreshToken)
-    {
+    public function __construct(
+        string $name,
+        ServerRequestInterface $request,
+        #[SensitiveParameter]
+        private RefreshTokenEntityInterface $refreshToken
+    ) {
         parent::__construct($name, $request);
     }
 

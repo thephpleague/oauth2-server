@@ -93,13 +93,14 @@ class OAuthServerExceptionTest extends TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('validateClient')->willReturn(false);
 
-        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock = $this->getMockBuilder(AbstractGrant::class)
+            ->onlyMethods(['getIdentifier', 'respondToAccessTokenRequest'])
+            ->getMock();
         $grantMock->setClientRepository($clientRepositoryMock);
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
-        $validateClientMethod->setAccessible(true);
 
         $validateClientMethod->invoke($grantMock, $serverRequest);
     }

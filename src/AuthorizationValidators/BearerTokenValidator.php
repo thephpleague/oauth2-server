@@ -74,6 +74,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface, JwtValida
             throw new RuntimeException('Public key is empty');
         }
 
+        // TODO: next major release: replace deprecated method and remove phpstan ignored error
         $this->jwtConfiguration->setValidationConstraints(
             new LooseValidAt($clock, $this->jwtValidAtDateLeeway),
             new SignedWith(
@@ -93,7 +94,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface, JwtValida
         }
 
         $header = $request->getHeader('authorization');
-        $jwt = trim((string) preg_replace('/^\s*Bearer\s/', '', $header[0]));
+        $jwt = trim((string) preg_replace('/^\s*Bearer\s/i', '', $header[0]));
 
         if ($jwt === '') {
             throw OAuthServerException::accessDenied('Missing "Bearer" token');
