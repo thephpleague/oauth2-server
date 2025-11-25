@@ -11,6 +11,8 @@ use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestEvent;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\ScopeEntity;
@@ -53,6 +55,17 @@ class ClientCredentialsGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
+        $accessTokenEventEmitted = false;
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::ACCESS_TOKEN_ISSUED,
+            function ($event) use (&$accessTokenEventEmitted): void {
+                self::assertInstanceOf(RequestAccessTokenEvent::class, $event);
+
+                $accessTokenEventEmitted = true;
+            }
+        );
+
         $serverRequest = (new ServerRequest())->withParsedBody([
             'client_id'     => 'foo',
             'client_secret' => 'bar',
@@ -64,5 +77,9 @@ class ClientCredentialsGrantTest extends TestCase
         $response = $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
 
         self::assertNotEmpty($response->getAccessToken()->getIdentifier());
+
+        if (!$accessTokenEventEmitted) {
+            self::fail('Access token issued event is not emitted.');
+        }
     }
 }

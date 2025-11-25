@@ -36,7 +36,7 @@ final class AbstractGrantExtension implements DynamicMethodReturnTypeExtension
     {
         return TypeCombinator::union(...[
             new StringType(),
-            isset($methodCall->getArgs[2]) ? $scope->getType($methodCall->getArgs[2]->value) : new NullType(),
+            property_exists($methodCall, 'getArgs') && isset($methodCall->getArgs[2]) ? $scope->getType($methodCall->getArgs[2]->value) : new NullType(),
         ]);
     }
 }
