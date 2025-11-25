@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Added sensitive parameter to avoid sensitive data being included in stack traces (PR #1483)
+- Support for PHP 8.5 (PR #1492)
 
 ### Fixed
 
