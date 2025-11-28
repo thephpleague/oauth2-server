@@ -140,7 +140,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface, JwtValida
         if (
             $clientId !== null &&
             $claims->get('client_id') !== $clientId &&
-            !$token->isPermittedFor($clientId)
+            $token->isPermittedFor($clientId) === false
         ) {
             throw OAuthServerException::accessDenied('Access token is not linked to client');
         }
