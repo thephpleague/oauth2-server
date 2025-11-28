@@ -12,14 +12,14 @@ class TokenRevocationHandler extends AbstractTokenHandler
     public function respondToRequest(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $client = $this->validateClient($request);
-        [$tokenType, $token] = $this->validateToken($request, $client);
+        [$tokenType, $tokenData] = $this->validateToken($request, $client);
 
-        if ($tokenType !== null && $token !== null) {
+        if ($tokenType !== null && $tokenData !== null) {
             if ($tokenType === 'refresh_token') {
-                $this->refreshTokenRepository->revokeRefreshToken($token['refresh_token_id']);
-                $this->accessTokenRepository->revokeAccessToken($token['access_token_id']);
+                $this->refreshTokenRepository->revokeRefreshToken($tokenData['refresh_token_id']);
+                $this->accessTokenRepository->revokeAccessToken($tokenData['access_token_id']);
             } elseif ($tokenType === 'access_token') {
-                $this->accessTokenRepository->revokeAccessToken($token['jti']);
+                $this->accessTokenRepository->revokeAccessToken($tokenData['jti']);
             }
         }
 
