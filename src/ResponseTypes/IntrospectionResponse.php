@@ -9,17 +9,17 @@ use Psr\Http\Message\ResponseInterface;
 
 class IntrospectionResponse implements IntrospectionResponseTypeInterface
 {
-    protected bool $active = false;
+    private bool $active = false;
 
     /**
      * @var non-empty-string|null
      */
-    protected ?string $tokenType = null;
+    private ?string $tokenType = null;
 
     /**
      * @var array<non-empty-string, mixed>
      */
-    protected ?array $token = null;
+    private ?array $token = null;
 
     public function setActive(bool $active): void
     {
@@ -74,7 +74,7 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
      *
      * @return array<non-empty-string, mixed>
      */
-    protected function parseParams(string $tokenType, array $token): array
+    private function parseParams(string $tokenType, array $token): array
     {
         return match ($tokenType) {
             'access_token' => $this->parseAccessTokenParams($token),
@@ -121,7 +121,7 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
         ], fn ($value) => !is_null($value));
     }
 
-    protected function getTimestamp(int|float|string|DateTimeInterface $value): int
+    private function getTimestamp(int|float|string|DateTimeInterface $value): int
     {
         return match (true) {
             $value instanceof DateTimeInterface => $value->getTimestamp(),

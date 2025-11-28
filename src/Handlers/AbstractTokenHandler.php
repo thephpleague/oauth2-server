@@ -70,7 +70,7 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
     /**
      * @return array{0:non-empty-string, 1:array<non-empty-string, mixed>}|null
      */
-    protected function validateRefreshToken(
+    private function validateRefreshToken(
         ServerRequestInterface $request,
         string $refreshToken,
         ClientEntityInterface $client
@@ -90,7 +90,7 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
      *
      * @return array{0:non-empty-string, 1:array<non-empty-string, mixed>}|null
      */
-    protected function validateAccessToken(
+    private function validateAccessToken(
         ServerRequestInterface $request,
         string $accessToken,
         ClientEntityInterface $client

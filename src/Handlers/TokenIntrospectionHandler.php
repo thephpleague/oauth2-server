@@ -11,7 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class TokenIntrospectionHandler extends AbstractTokenHandler
 {
-    protected ?IntrospectionResponseTypeInterface $responseType = null;
+    private ?IntrospectionResponseTypeInterface $responseType = null;
 
     protected function getResponseType(): IntrospectionResponseTypeInterface
     {

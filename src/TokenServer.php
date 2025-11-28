@@ -23,9 +23,9 @@ class TokenServer implements EmitterAwareInterface
 
     private CryptKeyInterface $publicKey;
 
-    protected ?TokenHandlerInterface $tokenRevocationHandler = null;
+    private ?TokenHandlerInterface $tokenRevocationHandler = null;
 
-    protected ?TokenHandlerInterface $tokenIntrospectionHandler = null;
+    private ?TokenHandlerInterface $tokenIntrospectionHandler = null;
 
     public function __construct(
         private ClientRepositoryInterface $clientRepository,
