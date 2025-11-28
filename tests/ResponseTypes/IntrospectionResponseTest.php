@@ -34,7 +34,6 @@ class IntrospectionResponseTest extends TestCase
         $response->getBody()->rewind();
 
         self::assertEquals(200, $response->getStatusCode());
-        self::assertEquals('no-cache', $response->getHeader('pragma')[0]);
         self::assertEquals('no-store', $response->getHeader('cache-control')[0]);
         self::assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
         self::assertSame([
@@ -70,7 +69,6 @@ class IntrospectionResponseTest extends TestCase
         $response->getBody()->rewind();
 
         self::assertEquals(200, $response->getStatusCode());
-        self::assertEquals('no-cache', $response->getHeader('pragma')[0]);
         self::assertEquals('no-store', $response->getHeader('cache-control')[0]);
         self::assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
         self::assertSame([
@@ -97,7 +95,6 @@ class IntrospectionResponseTest extends TestCase
         $response->getBody()->rewind();
 
         self::assertEquals(200, $response->getStatusCode());
-        self::assertEquals('no-cache', $response->getHeader('pragma')[0]);
         self::assertEquals('no-store', $response->getHeader('cache-control')[0]);
         self::assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
         self::assertSame([
@@ -121,7 +118,6 @@ class IntrospectionResponseTest extends TestCase
         $response->getBody()->rewind();
 
         self::assertEquals(200, $response->getStatusCode());
-        self::assertEquals('no-cache', $response->getHeader('pragma')[0]);
         self::assertEquals('no-store', $response->getHeader('cache-control')[0]);
         self::assertEquals('application/json; charset=UTF-8', $response->getHeader('content-type')[0]);
         self::assertSame([

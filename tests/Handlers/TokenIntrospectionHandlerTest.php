@@ -6,6 +6,7 @@ namespace LeagueTests\Handlers;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Handlers\TokenIntrospectionHandler;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\ResponseTypes\IntrospectionResponseTypeInterface;
@@ -37,11 +38,11 @@ class TokenIntrospectionHandlerTest extends TestCase
             'token' => 'token1',
         ]);
 
-        $handler = $this->getMockBuilder(TokenIntrospectionHandler::class)->onlyMethods(['validateAccessToken'])->getMock();
+        $handler = $this->getMockBuilder(TokenIntrospectionHandler::class)->onlyMethods(['validateToken'])->getMock();
         $handler->setClientRepository($clientRepository);
         $handler->expects(self::once())
-            ->method('validateAccessToken')
-            ->with($request, 'token1', $client)
+            ->method('validateToken')
+            ->with($request, $client)
             ->willReturn(['access_token', ['jti' => 'access1']]);
 
         $response = $handler->respondToRequest($request, new Response());
@@ -80,11 +81,11 @@ class TokenIntrospectionHandlerTest extends TestCase
             'token' => 'token1',
         ]);
 
-        $handler = $this->getMockBuilder(TokenIntrospectionHandler::class)->onlyMethods(['validateRefreshToken'])->getMock();
+        $handler = $this->getMockBuilder(TokenIntrospectionHandler::class)->onlyMethods(['validateToken'])->getMock();
         $handler->setClientRepository($clientRepository);
         $handler->expects(self::once())
-            ->method('validateRefreshToken')
-            ->with($request, 'token1', $client)
+            ->method('validateToken')
+            ->with($request, $client)
             ->willReturn(['refresh_token', ['refresh_token_id' => 'refresh1']]);
 
         $response = $handler->respondToRequest($request, new Response());
@@ -123,16 +124,12 @@ class TokenIntrospectionHandlerTest extends TestCase
         ]);
 
         $handler = $this->getMockBuilder(TokenIntrospectionHandler::class)
-            ->onlyMethods(['validateAccessToken', 'validateRefreshToken'])->getMock();
+            ->onlyMethods(['validateToken'])->getMock();
         $handler->setClientRepository($clientRepository);
         $handler->expects(self::once())
-            ->method('validateAccessToken')
-            ->with($request, 'token1', $client)
-            ->willReturn(null);
-        $handler->expects(self::once())
-            ->method('validateRefreshToken')
-            ->with($request, 'token1', $client)
-            ->willReturn(null);
+            ->method('validateToken')
+            ->with($request, $client)
+            ->willReturn([null, null]);
 
         $response = $handler->respondToRequest($request, new Response());
         $response->getBody()->rewind();
@@ -184,5 +181,80 @@ class TokenIntrospectionHandlerTest extends TestCase
         $result = $handler->respondToRequest($request, $response);
 
         self::assertSame($response, $result);
+    }
+
+    public function testRespondToRequestInvalidClientCredentials(): void
+    {
+        $client = new ClientEntity();
+        $client->setConfidential();
+        $client->setIdentifier('client1');
+
+        $clientRepository = $this->createMock(ClientRepositoryInterface::class);
+        $clientRepository->expects(self::once())
+            ->method('getClientEntity')
+            ->with('client1')
+            ->willReturn($client);
+        $clientRepository
+            ->expects(self::once())
+            ->method('validateClient')
+            ->with('client1', 'secret1', null)
+            ->willReturn(false);
+
+        $request = (new ServerRequest())->withParsedBody([
+            'client_id' => 'client1',
+            'client_secret' => 'secret1',
+            'token' => 'token1',
+        ]);
+
+        $handler = new TokenIntrospectionHandler();
+        $handler->setClientRepository($clientRepository);
+
+        try {
+            $handler->respondToRequest($request, new Response());
+        } catch (OAuthServerException $e) {
+            self::assertSame(4, $e->getCode());
+            self::assertSame('invalid_client', $e->getErrorType());
+
+            return;
+        }
+
+        self::fail('The expected exception was not thrown');
+    }
+
+    public function testRespondToRequestMissingToken(): void
+    {
+        $client = new ClientEntity();
+        $client->setConfidential();
+        $client->setIdentifier('client1');
+
+        $clientRepository = $this->createMock(ClientRepositoryInterface::class);
+        $clientRepository->expects(self::once())
+            ->method('getClientEntity')
+            ->with('client1')
+            ->willReturn($client);
+        $clientRepository
+            ->expects(self::once())
+            ->method('validateClient')
+            ->with('client1', 'secret1', null)
+            ->willReturn(true);
+
+        $request = (new ServerRequest())->withParsedBody([
+            'client_id' => 'client1',
+            'client_secret' => 'secret1',
+        ]);
+
+        $handler = new TokenIntrospectionHandler();
+        $handler->setClientRepository($clientRepository);
+
+        try {
+            $handler->respondToRequest($request, new Response());
+        } catch (OAuthServerException $e) {
+            self::assertSame(3, $e->getCode());
+            self::assertSame('invalid_request', $e->getErrorType());
+
+            return;
+        }
+
+        self::fail('The expected exception was not thrown');
     }
 }

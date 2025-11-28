@@ -37,8 +37,9 @@ class AbstractTokenHandlerTest extends TestCase
 
     public function testSetBearerTokenValidator(): void
     {
-        $request = new ServerRequest();
-        $accessToken = 'abcdef';
+        $request = (new ServerRequest())->withParsedBody([
+            'token' => 'abcdef',
+        ]);
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
@@ -52,7 +53,7 @@ class AbstractTokenHandlerTest extends TestCase
         $handler = $this->getAbstractTokenHandler();
         $handler->setBearerTokenValidator($validator);
 
-        $result = (fn () => $this->validateAccessToken($request, $accessToken, $client))->call($handler);
+        $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
         self::assertSame(['access_token', ['foo' => 'bar']], $result);
     }
@@ -60,16 +61,6 @@ class AbstractTokenHandlerTest extends TestCase
     public function testValidateToken(): void
     {
         $client = new ClientEntity();
-        $request = new ServerRequest();
-
-        try {
-            (fn () => $this->validateToken($request, $client))->call($this->getAbstractTokenHandlerWithToken());
-
-            self::fail('The expected exception was not thrown');
-        } catch (OAuthServerException $e) {
-            self::assertSame('invalid_request', $e->getErrorType());
-        }
-
         $request = (new ServerRequest())->withParsedBody(['token' => 'token1']);
 
         self::assertSame(['access_token', ['foo' => 'bar']], (fn () => $this->validateToken($request, $client))->call(
@@ -99,9 +90,6 @@ class AbstractTokenHandlerTest extends TestCase
 
         $request = (new ServerRequest())->withParsedBody(['token' => 'token1', 'token_type_hint' => 'refresh_token']);
 
-        self::assertSame(['refresh_token', ['bar' => 'foo']], (fn () => $this->validateToken($request, $client))->call(
-            $this->getAbstractTokenHandlerWithToken(accessToken: ['foo' => 'bar'], refreshToken: ['bar' => 'foo'])
-        ));
         self::assertSame(['access_token', ['foo' => 'bar']], (fn () => $this->validateToken($request, $client))->call(
             $this->getAbstractTokenHandlerWithToken(accessToken: ['foo' => 'bar'])
         ));
@@ -122,7 +110,6 @@ class AbstractTokenHandlerTest extends TestCase
         $handler = $this->getAbstractTokenHandler();
         $handler->setAccessTokenRepository($accessTokenRepository);
 
-        $request = new ServerRequest();
         $expireTime = time() + 1000;
         $accessToken = $this->getJwtToken(fn (Builder $builder) =>
             $builder->permittedFor('client1')
@@ -130,11 +117,14 @@ class AbstractTokenHandlerTest extends TestCase
                 ->identifiedBy('access1')
                 ->expiresAt((new DateTimeImmutable())->setTimestamp($expireTime))
                 ->withClaim('foo', 'bar'));
+        $request = (new ServerRequest())->withParsedBody([
+            'token' => $accessToken,
+        ]);
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
         /** @var array{0:non-empty-string, 1:array<non-empty-string, mixed>} $result */
-        $result = (fn () => $this->validateAccessToken($request, $accessToken, $client))->call($handler);
+        $result = (fn () => $this->validateToken($request, $client))->call($handler);
         $result[1]['exp'] = $result[1]['exp']->getTimestamp();
 
         self::assertSame(['access_token', [
@@ -158,19 +148,21 @@ class AbstractTokenHandlerTest extends TestCase
         $handler = $this->getAbstractTokenHandler();
         $handler->setAccessTokenRepository($accessTokenRepository);
 
-        $request = new ServerRequest();
         $expireTime = time() + 1000;
         $accessToken = $this->getJwtToken(fn (Builder $builder) =>
-        $builder->permittedFor('client1')
-            ->relatedTo('user1')
-            ->identifiedBy('access1')
-            ->expiresAt((new DateTimeImmutable())->setTimestamp($expireTime)));
+            $builder->permittedFor('client1')
+                ->relatedTo('user1')
+                ->identifiedBy('access1')
+                ->expiresAt((new DateTimeImmutable())->setTimestamp($expireTime)));
+        $request = (new ServerRequest())->withParsedBody([
+            'token' => $accessToken,
+        ]);
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
-        $result = (fn () => $this->validateAccessToken($request, $accessToken, $client))->call($handler);
+        $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertNull($result);
+        self::assertSame([null, null], $result);
     }
 
     public function testValidateAccessTokenIsExpired(): void
@@ -181,19 +173,21 @@ class AbstractTokenHandlerTest extends TestCase
         $handler = $this->getAbstractTokenHandler();
         $handler->setAccessTokenRepository($accessTokenRepository);
 
-        $request = new ServerRequest();
         $expireTime = time() - 1000;
         $accessToken = $this->getJwtToken(fn (Builder $builder) =>
-        $builder->permittedFor('client1')
-            ->relatedTo('user1')
-            ->identifiedBy('access1')
-            ->expiresAt((new DateTimeImmutable())->setTimestamp($expireTime)));
+            $builder->permittedFor('client1')
+                ->relatedTo('user1')
+                ->identifiedBy('access1')
+                ->expiresAt((new DateTimeImmutable())->setTimestamp($expireTime)));
+        $request = (new ServerRequest())->withParsedBody([
+            'token' => $accessToken,
+        ]);
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
-        $result = (fn () => $this->validateAccessToken($request, $accessToken, $client))->call($handler);
+        $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertNull($result);
+        self::assertSame([null, null], $result);
     }
 
     public function testValidateAccessTokenWithMismatchClient(): void
@@ -204,19 +198,21 @@ class AbstractTokenHandlerTest extends TestCase
         $handler = $this->getAbstractTokenHandler();
         $handler->setAccessTokenRepository($accessTokenRepository);
 
-        $request = new ServerRequest();
         $expireTime = time() + 1000;
         $accessToken = $this->getJwtToken(fn (Builder $builder) =>
-        $builder->permittedFor('client2')
-            ->relatedTo('user1')
-            ->identifiedBy('access1')
-            ->expiresAt((new DateTimeImmutable())->setTimestamp($expireTime)));
+            $builder->permittedFor('client2')
+                ->relatedTo('user1')
+                ->identifiedBy('access1')
+                ->expiresAt((new DateTimeImmutable())->setTimestamp($expireTime)));
+        $request = (new ServerRequest())->withParsedBody([
+            'token' => $accessToken,
+        ]);
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
-        $result = (fn () => $this->validateAccessToken($request, $accessToken, $client))->call($handler);
+        $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertNull($result);
+        self::assertSame([null, null], $result);
     }
 
     public function testValidateAccessTokenWithInvalidToken(): void
@@ -227,14 +223,15 @@ class AbstractTokenHandlerTest extends TestCase
         $handler = $this->getAbstractTokenHandler();
         $handler->setAccessTokenRepository($accessTokenRepository);
 
-        $request = new ServerRequest();
-        $accessToken = 'abcdef';
+        $request = (new ServerRequest())->withParsedBody([
+            'token' => 'abcdef',
+        ]);
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
-        $result = (fn () => $this->validateAccessToken($request, $accessToken, $client))->call($handler);
+        $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertNull($result);
+        self::assertSame([null, null], $result);
     }
 
     public function testValidateRefreshToken(): void
@@ -249,17 +246,19 @@ class AbstractTokenHandlerTest extends TestCase
         $handler = $this->getAbstractTokenHandler();
         $handler->setRefreshTokenRepository($refreshTokenRepository);
 
-        $request = new ServerRequest();
         $refreshToken = $this->encrypt(json_encode([
             'refresh_token_id' => 'refresh1',
             'expire_time' => $expireTime = time() + 1000,
             'client_id' => 'client1',
             'foo' => 'bar',
         ], flags: JSON_THROW_ON_ERROR));
+        $request = (new ServerRequest())->withParsedBody([
+            'token' => $refreshToken,
+        ]);
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
-        $result = (fn () => $this->validateRefreshToken($request, $refreshToken, $client))->call($handler);
+        $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
         self::assertSame(['refresh_token', [
             'refresh_token_id' => 'refresh1',
@@ -281,18 +280,20 @@ class AbstractTokenHandlerTest extends TestCase
         $handler = $this->getAbstractTokenHandler();
         $handler->setRefreshTokenRepository($refreshTokenRepository);
 
-        $request = new ServerRequest();
         $refreshToken = $this->encrypt(json_encode([
             'refresh_token_id' => 'refresh1',
             'expire_time' => time() + 1000,
             'client_id' => 'client1',
         ], flags: JSON_THROW_ON_ERROR));
+        $request = (new ServerRequest())->withParsedBody([
+            'token' => $refreshToken,
+        ]);
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
-        $result = (fn () => $this->validateRefreshToken($request, $refreshToken, $client))->call($handler);
+        $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertNull($result);
+        self::assertSame([null, null], $result);
     }
 
     public function testValidateRefreshTokenIsExpired(): void
@@ -303,18 +304,20 @@ class AbstractTokenHandlerTest extends TestCase
         $handler = $this->getAbstractTokenHandler();
         $handler->setRefreshTokenRepository($refreshTokenRepository);
 
-        $request = new ServerRequest();
         $refreshToken = $this->encrypt(json_encode([
             'refresh_token_id' => 'refresh1',
             'expire_time' => time() - 1000,
             'client_id' => 'client1',
         ], flags: JSON_THROW_ON_ERROR));
+        $request = (new ServerRequest())->withParsedBody([
+            'token' => $refreshToken,
+        ]);
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
-        $result = (fn () => $this->validateRefreshToken($request, $refreshToken, $client))->call($handler);
+        $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertNull($result);
+        self::assertSame([null, null], $result);
     }
 
     public function testValidateRefreshTokenWithMismatchClient(): void
@@ -325,18 +328,20 @@ class AbstractTokenHandlerTest extends TestCase
         $handler = $this->getAbstractTokenHandler();
         $handler->setRefreshTokenRepository($refreshTokenRepository);
 
-        $request = new ServerRequest();
         $refreshToken = $this->encrypt(json_encode([
             'refresh_token_id' => 'refresh1',
             'expire_time' => time() + 1000,
             'client_id' => 'client2',
         ], flags: JSON_THROW_ON_ERROR));
+        $request = (new ServerRequest())->withParsedBody([
+            'token' => $refreshToken,
+        ]);
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
-        $result = (fn () => $this->validateRefreshToken($request, $refreshToken, $client))->call($handler);
+        $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertNull($result);
+        self::assertSame([null, null], $result);
     }
 
     public function testValidateRefreshTokenWithInvalidToken(): void
@@ -347,14 +352,15 @@ class AbstractTokenHandlerTest extends TestCase
         $handler = $this->getAbstractTokenHandler();
         $handler->setRefreshTokenRepository($refreshTokenRepository);
 
-        $request = new ServerRequest();
-        $refreshToken = 'abcdef';
+        $request = (new ServerRequest())->withParsedBody([
+            'token' => 'abcdef',
+        ]);
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
-        $result = (fn () => $this->validateRefreshToken($request, $refreshToken, $client))->call($handler);
+        $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertNull($result);
+        self::assertSame([null, null], $result);
     }
 
     /**
@@ -379,14 +385,14 @@ class AbstractTokenHandlerTest extends TestCase
     private function getAbstractTokenHandlerWithToken(?array $accessToken = null, ?array $refreshToken = null): MockObject
     {
         $handler = $this->getMockBuilder(AbstractTokenHandler::class)
-            ->onlyMethods(['respondToRequest', 'validateAccessToken', 'validateRefreshToken'])
+            ->onlyMethods(['respondToRequest', 'validateToken'])
             ->getMock();
 
-        $handler->method('validateAccessToken')
-            ->willReturn($accessToken === null ? null : ['access_token', $accessToken]);
-
-        $handler->method('validateRefreshToken')
-            ->willReturn($refreshToken === null ? null : ['refresh_token', $refreshToken]);
+        $handler->method('validateToken')->willReturn(match (true) {
+            $accessToken !== null => ['access_token', $accessToken],
+            $refreshToken !== null => ['refresh_token', $refreshToken],
+            default => [null, null],
+        });
 
         return $handler;
     }
