@@ -60,7 +60,6 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
 
         $response = $response
             ->withStatus(200)
-            ->withHeader('pragma', 'no-cache')
             ->withHeader('cache-control', 'no-store')
             ->withHeader('content-type', 'application/json; charset=UTF-8');
 

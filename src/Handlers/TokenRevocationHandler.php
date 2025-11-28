@@ -25,7 +25,6 @@ class TokenRevocationHandler extends AbstractTokenHandler
 
         return $response
             ->withStatus(200)
-            ->withHeader('pragma', 'no-cache')
             ->withHeader('cache-control', 'no-store');
     }
 }
