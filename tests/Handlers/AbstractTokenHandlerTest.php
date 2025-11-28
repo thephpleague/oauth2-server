@@ -11,7 +11,7 @@ use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use League\OAuth2\Server\AuthorizationValidators\JwtValidatorInterface;
+use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidatorInterface;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -35,22 +35,22 @@ class AbstractTokenHandlerTest extends TestCase
         $this->setEncryptionKey(base64_encode(random_bytes(36)));
     }
 
-    public function testSetJwtValidator(): void
+    public function testSetBearerTokenValidator(): void
     {
         $request = new ServerRequest();
         $accessToken = 'abcdef';
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
-        $jwtValidator = $this->createMock(JwtValidatorInterface::class);
-        $jwtValidator
+        $validator = $this->createMock(BearerTokenValidatorInterface::class);
+        $validator
             ->expects(self::once())
-            ->method('validateJwt')
+            ->method('validateBearerToken')
             ->with($request, 'abcdef', 'client1')
             ->willReturn(['foo' => 'bar']);
 
         $handler = $this->getAbstractTokenHandler();
-        $handler->setJwtValidator($jwtValidator);
+        $handler->setBearerTokenValidator($validator);
 
         $result = (fn () => $this->validateAccessToken($request, $accessToken, $client))->call($handler);
 

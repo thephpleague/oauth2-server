@@ -34,7 +34,7 @@ use function date_default_timezone_get;
 use function preg_replace;
 use function trim;
 
-class BearerTokenValidator implements AuthorizationValidatorInterface, JwtValidatorInterface
+class BearerTokenValidator implements AuthorizationValidatorInterface, BearerTokenValidatorInterface
 {
     use CryptTrait;
 
@@ -100,7 +100,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface, JwtValida
             throw OAuthServerException::accessDenied('Missing "Bearer" token');
         }
 
-        $claims = $this->validateJwt($request, $jwt);
+        $claims = $this->validateBearerToken($request, $jwt);
 
         // Return the request with additional attributes
         return $request
@@ -113,11 +113,11 @@ class BearerTokenValidator implements AuthorizationValidatorInterface, JwtValida
     /**
      * {@inheritdoc}
      */
-    public function validateJwt(ServerRequestInterface $request, string $jwt, ?string $clientId = null): array
+    public function validateBearerToken(ServerRequestInterface $request, string $token, ?string $clientId = null): array
     {
         try {
             // Attempt to parse the JWT
-            $token = $this->jwtConfiguration->parser()->parse($jwt);
+            $token = $this->jwtConfiguration->parser()->parse($token);
         } catch (Exception $exception) {
             throw OAuthServerException::accessDenied($exception->getMessage(), null, $exception);
         }

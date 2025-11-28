@@ -6,7 +6,7 @@ namespace League\OAuth2\Server\Handlers;
 
 use League\OAuth2\Server\AbstractHandler;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
-use League\OAuth2\Server\AuthorizationValidators\JwtValidatorInterface;
+use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidatorInterface;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -17,29 +17,29 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
 {
     private CryptKeyInterface $publicKey;
 
-    private ?JwtValidatorInterface $jwtValidator = null;
+    private ?BearerTokenValidatorInterface $bearerTokenValidator = null;
 
     public function setPublicKey(CryptKeyInterface $publicKey): void
     {
         $this->publicKey = $publicKey;
     }
 
-    public function setJwtValidator(JwtValidatorInterface $jwtValidator): void
+    public function setBearerTokenValidator(BearerTokenValidatorInterface $bearerTokenValidator): void
     {
-        $this->jwtValidator = $jwtValidator;
+        $this->bearerTokenValidator = $bearerTokenValidator;
     }
 
-    protected function getJwtValidator(): JwtValidatorInterface
+    protected function getBearerTokenValidator(): BearerTokenValidatorInterface
     {
-        if ($this->jwtValidator instanceof JwtValidatorInterface === false) {
-            $this->jwtValidator = new BearerTokenValidator($this->accessTokenRepository);
+        if ($this->bearerTokenValidator instanceof BearerTokenValidatorInterface === false) {
+            $this->bearerTokenValidator = new BearerTokenValidator($this->accessTokenRepository);
         }
 
-        if ($this->jwtValidator instanceof BearerTokenValidator === true) {
-            $this->jwtValidator->setPublicKey($this->publicKey);
+        if ($this->bearerTokenValidator instanceof BearerTokenValidator === true) {
+            $this->bearerTokenValidator->setPublicKey($this->publicKey);
         }
 
-        return $this->jwtValidator;
+        return $this->bearerTokenValidator;
     }
 
     /**
@@ -100,7 +100,7 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
         try {
             return [
                 'access_token',
-                $this->getJwtValidator()->validateJwt($request, $accessToken, $client->getIdentifier()),
+                $this->getBearerTokenValidator()->validateBearerToken($request, $accessToken, $client->getIdentifier()),
             ];
         } catch (Throwable) {
             return null;

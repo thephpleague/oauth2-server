@@ -6,15 +6,15 @@ namespace League\OAuth2\Server\AuthorizationValidators;
 
 use Psr\Http\Message\ServerRequestInterface;
 
-interface JwtValidatorInterface
+interface BearerTokenValidatorInterface
 {
     /**
-     * Parse and validate the given JWT.
+     * Parse and validate the given bearer token.
      *
-     * @param non-empty-string      $jwt
+     * @param non-empty-string      $token
      * @param non-empty-string|null $clientId
      *
      * @return array<non-empty-string, mixed>
      */
-    public function validateJwt(ServerRequestInterface $request, string $jwt, ?string $clientId = null): array;
+    public function validateBearerToken(ServerRequestInterface $request, string $token, ?string $clientId = null): array;
 }
