@@ -56,6 +56,8 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
 
         $tokenTypeHint = $this->getRequestParameter('token_type_hint', $request, 'access_token');
 
+        // If the token cannot be located using the provided token type hint, we extend
+        // the search across all supported token types according to the RFC spec.
         if ($tokenTypeHint === 'refresh_token') {
             return $this->validateRefreshToken($request, $token, $client)
                 ?? $this->validateAccessToken($request, $token, $client)
