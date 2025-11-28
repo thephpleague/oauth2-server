@@ -95,9 +95,9 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
             'client_id' => $token['client_id'] ?? $token['aud'][0] ?? null,
             'username' => $token['username'] ?? null,
             'token_type' => 'Bearer',
-            'exp' => isset($token['exp']) ? $this->convertTimestamp($token['exp']) : null,
-            'iat' => isset($token['iat']) ? $this->convertTimestamp($token['iat']) : null,
-            'nbf' => isset($token['nbf']) ? $this->convertTimestamp($token['nbf']) : null,
+            'exp' => isset($token['exp']) ? $this->getTimestamp($token['exp']) : null,
+            'iat' => isset($token['iat']) ? $this->getTimestamp($token['iat']) : null,
+            'nbf' => isset($token['nbf']) ? $this->getTimestamp($token['nbf']) : null,
             'sub' => $token['sub'] ?? null,
             'aud' => $token['aud'] ?? null,
             'iss' => $token['iss'] ?? null,
@@ -115,13 +115,13 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
         return array_filter([
             'scope' => implode(' ', $token['scopes'] ?? []),
             'client_id' => $token['client_id'] ?? null,
-            'exp' => isset($token['expire_time']) ? $this->convertTimestamp($token['expire_time']) : null,
+            'exp' => isset($token['expire_time']) ? $this->getTimestamp($token['expire_time']) : null,
             'sub' => $token['user_id'] ?? null,
             'jti' => $token['refresh_token_id'] ?? null,
         ], fn ($value) => !is_null($value));
     }
 
-    protected function convertTimestamp(int|float|string|DateTimeInterface $value): int
+    protected function getTimestamp(int|float|string|DateTimeInterface $value): int
     {
         return match (true) {
             $value instanceof DateTimeInterface => $value->getTimestamp(),
