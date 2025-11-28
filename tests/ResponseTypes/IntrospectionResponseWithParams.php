@@ -11,8 +11,8 @@ class IntrospectionResponseWithParams extends IntrospectionResponse
     /**
      * {@inheritdoc}
      */
-    protected function getExtraParams(string $tokenType, array $token): array
+    protected function getExtraParams(string $tokenType, array $tokenData): array
     {
-        return ['foo' => 'bar', 'extended' => $token['extension']];
+        return ['foo' => 'bar', 'extended' => $tokenData['extension']];
     }
 }

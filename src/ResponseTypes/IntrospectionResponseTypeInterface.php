@@ -16,9 +16,9 @@ interface IntrospectionResponseTypeInterface
     public function setTokenType(string $tokenType): void;
 
     /**
-     * @param array<non-empty-string, mixed> $token
+     * @param array<non-empty-string, mixed> $tokenData
      */
-    public function setToken(array $token): void;
+    public function setTokenData(array $tokenData): void;
 
     public function generateHttpResponse(ResponseInterface $response): ResponseInterface;
 }

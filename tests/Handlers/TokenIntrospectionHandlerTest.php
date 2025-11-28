@@ -170,7 +170,7 @@ class TokenIntrospectionHandlerTest extends TestCase
         $responseType = $this->createMock(IntrospectionResponseTypeInterface::class);
         $responseType->expects(self::once())->method('setActive')->with(true);
         $responseType->expects(self::once())->method('setTokenType')->with('foo');
-        $responseType->expects(self::once())->method('setToken')->with(['bar' => 'baz']);
+        $responseType->expects(self::once())->method('setTokenData')->with(['bar' => 'baz']);
         $responseType->expects(self::once())->method('generateHttpResponse')->with($response)->willReturnArgument(0);
 
         $handler = $this->getMockBuilder(TokenIntrospectionHandler::class)->onlyMethods(['validateToken'])->getMock();

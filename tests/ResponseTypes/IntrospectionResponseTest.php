@@ -18,7 +18,7 @@ class IntrospectionResponseTest extends TestCase
         $responseType = new IntrospectionResponse();
         $responseType->setActive(true);
         $responseType->setTokenType('access_token');
-        $responseType->setToken([
+        $responseType->setTokenData([
             'scopes' => ['scope1', 'scope2'],
             'aud' => ['client1'],
             'username' => 'username1',
@@ -58,7 +58,7 @@ class IntrospectionResponseTest extends TestCase
         $responseType = new IntrospectionResponse();
         $responseType->setActive(true);
         $responseType->setTokenType('refresh_token');
-        $responseType->setToken([
+        $responseType->setTokenData([
             'scopes' => ['scope1', 'scope2'],
             'client_id' => 'client1',
             'expire_time' => (new DateTimeImmutable())->setTimestamp(123456),
@@ -88,7 +88,7 @@ class IntrospectionResponseTest extends TestCase
         $responseType = new IntrospectionResponse();
         $responseType->setActive(false);
         $responseType->setTokenType('access_token');
-        $responseType->setToken([
+        $responseType->setTokenData([
             'scopes' => ['scope1', 'scope2'],
             'client_id' => 'client1',
         ]);
@@ -110,7 +110,7 @@ class IntrospectionResponseTest extends TestCase
         $responseType = new IntrospectionResponseWithParams();
         $responseType->setActive(true);
         $responseType->setTokenType('access_token');
-        $responseType->setToken([
+        $responseType->setTokenData([
             'scopes' => ['scope1', 'scope2'],
             'client_id' => 'client1',
             'jti' => null,

@@ -33,7 +33,7 @@ class TokenIntrospectionHandler extends AbstractTokenHandler
         if ($tokenType !== null && $token !== null) {
             $responseType->setActive(true);
             $responseType->setTokenType($tokenType);
-            $responseType->setToken($token);
+            $responseType->setTokenData($token);
         } else {
             $responseType->setActive(false);
         }

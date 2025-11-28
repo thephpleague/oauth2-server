@@ -19,7 +19,7 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
     /**
      * @var array<non-empty-string, mixed>
      */
-    private ?array $token = null;
+    private ?array $tokenData = null;
 
     public function setActive(bool $active): void
     {
@@ -37,9 +37,9 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function setToken(array $token): void
+    public function setTokenData(array $tokenData): void
     {
-        $this->token = $token;
+        $this->tokenData = $tokenData;
     }
 
     public function generateHttpResponse(ResponseInterface $response): ResponseInterface
@@ -48,11 +48,11 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
             'active' => $this->active,
         ];
 
-        if ($this->active === true && $this->tokenType !== null && $this->token !== null) {
+        if ($this->active === true && $this->tokenType !== null && $this->tokenData !== null) {
             $params = array_merge(
                 $params,
-                $this->parseParams($this->tokenType, $this->token),
-                $this->getExtraParams($this->tokenType, $this->token)
+                $this->parseParams($this->tokenType, $this->tokenData),
+                $this->getExtraParams($this->tokenType, $this->tokenData)
             );
         }
 
@@ -70,54 +70,54 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
 
     /**
      * @param non-empty-string               $tokenType
-     * @param array<non-empty-string, mixed> $token
+     * @param array<non-empty-string, mixed> $tokenData
      *
      * @return array<non-empty-string, mixed>
      */
-    private function parseParams(string $tokenType, array $token): array
+    private function parseParams(string $tokenType, array $tokenData): array
     {
         return match ($tokenType) {
-            'access_token' => $this->parseAccessTokenParams($token),
-            'refresh_token' => $this->parseRefreshTokenParams($token),
+            'access_token' => $this->parseAccessTokenParams($tokenData),
+            'refresh_token' => $this->parseRefreshTokenParams($tokenData),
             default => [],
         };
     }
 
     /**
-     * @param array<non-empty-string, mixed> $token
+     * @param array<non-empty-string, mixed> $tokenData
      *
      * @return array<non-empty-string, mixed>
      */
-    private function parseAccessTokenParams(array $token): array
+    private function parseAccessTokenParams(array $tokenData): array
     {
         return array_filter([
-            'scope' => $token['scope'] ?? implode(' ', $token['scopes'] ?? []),
-            'client_id' => $token['client_id'] ?? $token['aud'][0] ?? null,
-            'username' => $token['username'] ?? null,
+            'scope' => $tokenData['scope'] ?? implode(' ', $tokenData['scopes'] ?? []),
+            'client_id' => $tokenData['client_id'] ?? $tokenData['aud'][0] ?? null,
+            'username' => $tokenData['username'] ?? null,
             'token_type' => 'Bearer',
-            'exp' => isset($token['exp']) ? $this->getTimestamp($token['exp']) : null,
-            'iat' => isset($token['iat']) ? $this->getTimestamp($token['iat']) : null,
-            'nbf' => isset($token['nbf']) ? $this->getTimestamp($token['nbf']) : null,
-            'sub' => $token['sub'] ?? null,
-            'aud' => $token['aud'] ?? null,
-            'iss' => $token['iss'] ?? null,
-            'jti' => $token['jti'] ?? null,
+            'exp' => isset($tokenData['exp']) ? $this->getTimestamp($tokenData['exp']) : null,
+            'iat' => isset($tokenData['iat']) ? $this->getTimestamp($tokenData['iat']) : null,
+            'nbf' => isset($tokenData['nbf']) ? $this->getTimestamp($tokenData['nbf']) : null,
+            'sub' => $tokenData['sub'] ?? null,
+            'aud' => $tokenData['aud'] ?? null,
+            'iss' => $tokenData['iss'] ?? null,
+            'jti' => $tokenData['jti'] ?? null,
         ], fn ($value) => !is_null($value));
     }
 
     /**
-     * @param array<non-empty-string, mixed> $token
+     * @param array<non-empty-string, mixed> $tokenData
      *
      * @return array<non-empty-string, mixed>
      */
-    private function parseRefreshTokenParams(array $token): array
+    private function parseRefreshTokenParams(array $tokenData): array
     {
         return array_filter([
-            'scope' => implode(' ', $token['scopes'] ?? []),
-            'client_id' => $token['client_id'] ?? null,
-            'exp' => isset($token['expire_time']) ? $this->getTimestamp($token['expire_time']) : null,
-            'sub' => $token['user_id'] ?? null,
-            'jti' => $token['refresh_token_id'] ?? null,
+            'scope' => implode(' ', $tokenData['scopes'] ?? []),
+            'client_id' => $tokenData['client_id'] ?? null,
+            'exp' => isset($tokenData['expire_time']) ? $this->getTimestamp($tokenData['expire_time']) : null,
+            'sub' => $tokenData['user_id'] ?? null,
+            'jti' => $tokenData['refresh_token_id'] ?? null,
         ], fn ($value) => !is_null($value));
     }
 
@@ -131,11 +131,11 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
 
     /**
      * @param non-empty-string               $tokenType
-     * @param array<non-empty-string, mixed> $token
+     * @param array<non-empty-string, mixed> $tokenData
      *
      * @return array<non-empty-string, mixed>
      */
-    protected function getExtraParams(string $tokenType, array $token): array
+    protected function getExtraParams(string $tokenType, array $tokenData): array
     {
         return [];
     }
