@@ -26,16 +26,16 @@ class TokenIntrospectionHandler extends AbstractTokenHandler
     public function respondToRequest(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $client = $this->validateClient($request);
-        [$tokenType, $token] = $this->validateToken($request, $client);
+        [$tokenType, $tokenData] = $this->validateToken($request, $client);
 
         $responseType = $this->getResponseType();
 
-        if ($tokenType !== null && $token !== null) {
+        if ($tokenType === null || $tokenData === null) {
+            $responseType->setActive(false);
+        } else {
             $responseType->setActive(true);
             $responseType->setTokenType($tokenType);
-            $responseType->setTokenData($token);
-        } else {
-            $responseType->setActive(false);
+            $responseType->setTokenData($tokenData);
         }
 
         return $responseType->generateHttpResponse($response);
