@@ -14,7 +14,6 @@ use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidatorInterface;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
-use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Handlers\AbstractTokenHandler;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
