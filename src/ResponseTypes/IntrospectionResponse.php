@@ -76,31 +76,49 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
      */
     protected function parseParams(string $tokenType, array $token): array
     {
-        if ($tokenType === 'access_token') {
-            return array_filter([
-                'scope' => $token['scope'] ?? implode(' ', $token['scopes'] ?? []),
-                'client_id' => $token['client_id'] ?? $token['aud'][0] ?? null,
-                'username' => $token['username'] ?? null,
-                'token_type' => 'Bearer',
-                'exp' => isset($token['exp']) ? $this->convertTimestamp($token['exp']) : null,
-                'iat' => isset($token['iat']) ? $this->convertTimestamp($token['iat']) : null,
-                'nbf' => isset($token['nbf']) ? $this->convertTimestamp($token['nbf']) : null,
-                'sub' => $token['sub'] ?? null,
-                'aud' => $token['aud'] ?? null,
-                'iss' => $token['iss'] ?? null,
-                'jti' => $token['jti'] ?? null,
-            ], fn ($value) => !is_null($value));
-        } elseif ($tokenType === 'refresh_token') {
-            return array_filter([
-                'scope' => implode(' ', $token['scopes'] ?? []),
-                'client_id' => $token['client_id'] ?? null,
-                'exp' => isset($token['expire_time']) ? $this->convertTimestamp($token['expire_time']) : null,
-                'sub' => $token['user_id'] ?? null,
-                'jti' => $token['refresh_token_id'] ?? null,
-            ], fn ($value) => !is_null($value));
-        } else {
-            return [];
-        }
+        return match ($tokenType) {
+            'access_token' => $this->parseAccessTokenParams($token),
+            'refresh_token' => $this->parseRefreshTokenParams($token),
+            default => [],
+        };
+    }
+
+    /**
+     * @param array<non-empty-string, mixed> $token
+     *
+     * @return array<non-empty-string, mixed>
+     */
+    private function parseAccessTokenParams(array $token): array
+    {
+        return array_filter([
+            'scope' => $token['scope'] ?? implode(' ', $token['scopes'] ?? []),
+            'client_id' => $token['client_id'] ?? $token['aud'][0] ?? null,
+            'username' => $token['username'] ?? null,
+            'token_type' => 'Bearer',
+            'exp' => isset($token['exp']) ? $this->convertTimestamp($token['exp']) : null,
+            'iat' => isset($token['iat']) ? $this->convertTimestamp($token['iat']) : null,
+            'nbf' => isset($token['nbf']) ? $this->convertTimestamp($token['nbf']) : null,
+            'sub' => $token['sub'] ?? null,
+            'aud' => $token['aud'] ?? null,
+            'iss' => $token['iss'] ?? null,
+            'jti' => $token['jti'] ?? null,
+        ], fn ($value) => !is_null($value));
+    }
+
+    /**
+     * @param array<non-empty-string, mixed> $token
+     *
+     * @return array<non-empty-string, mixed>
+     */
+    private function parseRefreshTokenParams(array $token): array
+    {
+        return array_filter([
+            'scope' => implode(' ', $token['scopes'] ?? []),
+            'client_id' => $token['client_id'] ?? null,
+            'exp' => isset($token['expire_time']) ? $this->convertTimestamp($token['expire_time']) : null,
+            'sub' => $token['user_id'] ?? null,
+            'jti' => $token['refresh_token_id'] ?? null,
+        ], fn ($value) => !is_null($value));
     }
 
     protected function convertTimestamp(int|float|string|DateTimeInterface $value): int
