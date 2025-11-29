@@ -57,46 +57,6 @@ class AbstractTokenHandlerTest extends TestCase
         self::assertSame(['type' => 'access_token', 'data' => ['foo' => 'bar']], $result);
     }
 
-    public function testValidateToken(): void
-    {
-        $client = new ClientEntity();
-        $request = (new ServerRequest())->withParsedBody(['token' => 'token1']);
-
-        self::assertSame(['access_token', ['foo' => 'bar']], (fn () => $this->validateToken($request, $client))->call(
-            $this->getAbstractTokenHandlerWithToken(accessToken: ['foo' => 'bar'], refreshToken: ['bar' => 'foo'])
-        ));
-        self::assertSame(['access_token', ['foo' => 'bar']], (fn () => $this->validateToken($request, $client))->call(
-            $this->getAbstractTokenHandlerWithToken(accessToken: ['foo' => 'bar'])
-        ));
-        self::assertSame(['refresh_token', ['bar' => 'foo']], (fn () => $this->validateToken($request, $client))->call(
-            $this->getAbstractTokenHandlerWithToken(refreshToken: ['bar' => 'foo'])
-        ));
-        self::assertSame([null, null], (fn () => $this->validateToken($request, $client))->call(
-            $this->getAbstractTokenHandlerWithToken()
-        ));
-
-        $request = (new ServerRequest())->withParsedBody(['token' => 'token1', 'token_type_hint' => 'access_token']);
-
-        self::assertSame(['access_token', ['foo' => 'bar']], (fn () => $this->validateToken($request, $client))->call(
-            $this->getAbstractTokenHandlerWithToken(accessToken: ['foo' => 'bar'], refreshToken: ['bar' => 'foo'])
-        ));
-        self::assertSame(['refresh_token', ['bar' => 'foo']], (fn () => $this->validateToken($request, $client))->call(
-            $this->getAbstractTokenHandlerWithToken(refreshToken: ['bar' => 'foo'])
-        ));
-        self::assertSame([null, null], (fn () => $this->validateToken($request, $client))->call(
-            $this->getAbstractTokenHandlerWithToken()
-        ));
-
-        $request = (new ServerRequest())->withParsedBody(['token' => 'token1', 'token_type_hint' => 'refresh_token']);
-
-        self::assertSame(['access_token', ['foo' => 'bar']], (fn () => $this->validateToken($request, $client))->call(
-            $this->getAbstractTokenHandlerWithToken(accessToken: ['foo' => 'bar'])
-        ));
-        self::assertSame([null, null], (fn () => $this->validateToken($request, $client))->call(
-            $this->getAbstractTokenHandlerWithToken()
-        ));
-    }
-
     public function testValidateAccessToken(): void
     {
         $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
@@ -371,27 +331,6 @@ class AbstractTokenHandlerTest extends TestCase
 
         $handler->setEncryptionKey($this->encryptionKey);
         $handler->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
-
-        return $handler;
-    }
-
-    /**
-     * @param array<non-empty-string, mixed>|null $accessToken
-     * @param array<non-empty-string, mixed>|null $refreshToken
-     *
-     * @return AbstractTokenHandler&MockObject
-     */
-    private function getAbstractTokenHandlerWithToken(?array $accessToken = null, ?array $refreshToken = null): MockObject
-    {
-        $handler = $this->getMockBuilder(AbstractTokenHandler::class)
-            ->onlyMethods(['respondToRequest', 'validateToken'])
-            ->getMock();
-
-        $handler->method('validateToken')->willReturn(match (true) {
-            $accessToken !== null => ['access_token', $accessToken],
-            $refreshToken !== null => ['refresh_token', $refreshToken],
-            default => [null, null],
-        });
 
         return $handler;
     }
