@@ -22,7 +22,7 @@ class TokenRevocationHandler extends AbstractTokenHandler
             } elseif ($token['type'] === 'access_token') {
                 $this->accessTokenRepository->revokeAccessToken($token['data']['jti']);
             } else {
-                throw OauthServerException::unsupportedTokenType();
+                throw OAuthServerException::unsupportedTokenType();
             }
         }
 

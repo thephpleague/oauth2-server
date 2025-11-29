@@ -122,6 +122,7 @@ class AbstractTokenHandlerTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
+        /** @var array{type: non-empty-string, data: array<non-empty-string, mixed>} $result */
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
         $result['data']['exp'] = $result['data']['exp']->getTimestamp();
 
