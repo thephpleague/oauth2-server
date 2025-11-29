@@ -43,7 +43,7 @@ class TokenIntrospectionHandlerTest extends TestCase
         $handler->expects(self::once())
             ->method('validateToken')
             ->with($request, $client)
-            ->willReturn(['access_token', ['jti' => 'access1']]);
+            ->willReturn(['type' => 'access_token', 'data' => ['jti' => 'access1']]);
 
         $response = $handler->respondToRequest($request, new Response());
         $response->getBody()->rewind();
@@ -86,7 +86,7 @@ class TokenIntrospectionHandlerTest extends TestCase
         $handler->expects(self::once())
             ->method('validateToken')
             ->with($request, $client)
-            ->willReturn(['refresh_token', ['refresh_token_id' => 'refresh1']]);
+            ->willReturn(['type' => 'refresh_token', 'data' => ['refresh_token_id' => 'refresh1']]);
 
         $response = $handler->respondToRequest($request, new Response());
         $response->getBody()->rewind();
@@ -129,7 +129,7 @@ class TokenIntrospectionHandlerTest extends TestCase
         $handler->expects(self::once())
             ->method('validateToken')
             ->with($request, $client)
-            ->willReturn([null, null]);
+            ->willReturn(null);
 
         $response = $handler->respondToRequest($request, new Response());
         $response->getBody()->rewind();
@@ -176,7 +176,7 @@ class TokenIntrospectionHandlerTest extends TestCase
         $handler->expects(self::once())
             ->method('validateToken')
             ->with($request, $client)
-            ->willReturn(['foo', ['bar' => 'baz']]);
+            ->willReturn(['type' => 'foo', 'data' => ['bar' => 'baz']]);
 
         $result = $handler->respondToRequest($request, $response);
 

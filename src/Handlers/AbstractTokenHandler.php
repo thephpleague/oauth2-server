@@ -43,14 +43,14 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
     }
 
     /**
-     * @return array{0:non-empty-string, 1:array<non-empty-string, mixed>}|array{0:null, 1:null}
+     * @return array{type: non-empty-string, data: array<non-empty-string, mixed>}|null
      *
      * @throws OAuthServerException
      */
     protected function validateToken(
         ServerRequestInterface $request,
         ClientEntityInterface $client
-    ): array {
+    ): ?array {
         $token = $this->getRequestParameter('token', $request)
             ?? throw OAuthServerException::invalidRequest('token');
 
@@ -60,17 +60,15 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
         // the search across all supported token types according to the RFC spec.
         if ($tokenTypeHint === 'refresh_token') {
             return $this->validateRefreshToken($request, $token, $client)
-                ?? $this->validateAccessToken($request, $token, $client)
-                ?? [null, null];
+                ?? $this->validateAccessToken($request, $token, $client);
         }
 
         return $this->validateAccessToken($request, $token, $client)
-            ?? $this->validateRefreshToken($request, $token, $client)
-            ?? [null, null];
+            ?? $this->validateRefreshToken($request, $token, $client);
     }
 
     /**
-     * @return array{0:non-empty-string, 1:array<non-empty-string, mixed>}|null
+     * @return array{type: non-empty-string, data: array<non-empty-string, mixed>}|null
      */
     private function validateRefreshToken(
         ServerRequestInterface $request,
@@ -79,8 +77,8 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
     ): ?array {
         try {
             return [
-                'refresh_token',
-                $this->validateEncryptedRefreshToken($request, $refreshToken, $client->getIdentifier()),
+                'type' => 'refresh_token',
+                'data' => $this->validateEncryptedRefreshToken($request, $refreshToken, $client->getIdentifier()),
             ];
         } catch (Throwable) {
             return null;
@@ -90,7 +88,7 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
     /**
      * @param non-empty-string $accessToken
      *
-     * @return array{0:non-empty-string, 1:array<non-empty-string, mixed>}|null
+     * @return array{type: non-empty-string, data: array<non-empty-string, mixed>}|null
      */
     private function validateAccessToken(
         ServerRequestInterface $request,
@@ -99,8 +97,12 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
     ): ?array {
         try {
             return [
-                'access_token',
-                $this->getBearerTokenValidator()->validateBearerToken($request, $accessToken, $client->getIdentifier()),
+                'type' => 'access_token',
+                'data' => $this->getBearerTokenValidator()->validateBearerToken(
+                    $request,
+                    $accessToken,
+                    $client->getIdentifier()
+                ),
             ];
         } catch (Throwable) {
             return null;

@@ -54,7 +54,7 @@ class AbstractTokenHandlerTest extends TestCase
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertSame(['access_token', ['foo' => 'bar']], $result);
+        self::assertSame(['type' => 'access_token', 'data' => ['foo' => 'bar']], $result);
     }
 
     public function testValidateToken(): void
@@ -122,11 +122,10 @@ class AbstractTokenHandlerTest extends TestCase
         $client = new ClientEntity();
         $client->setIdentifier('client1');
 
-        /** @var array{0:non-empty-string, 1:array<non-empty-string, mixed>} $result */
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
-        $result[1]['exp'] = $result[1]['exp']->getTimestamp();
+        $result['data']['exp'] = $result['data']['exp']->getTimestamp();
 
-        self::assertSame(['access_token', [
+        self::assertSame(['type' => 'access_token', 'data' => [
             'aud' => ['client1'],
             'sub' => 'user1',
             'jti' => 'access1',
@@ -161,7 +160,7 @@ class AbstractTokenHandlerTest extends TestCase
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertSame([null, null], $result);
+        self::assertNull($result);
     }
 
     public function testValidateAccessTokenIsExpired(): void
@@ -186,7 +185,7 @@ class AbstractTokenHandlerTest extends TestCase
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertSame([null, null], $result);
+        self::assertNull($result);
     }
 
     public function testValidateAccessTokenWithMismatchClient(): void
@@ -211,7 +210,7 @@ class AbstractTokenHandlerTest extends TestCase
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertSame([null, null], $result);
+        self::assertNull($result);
     }
 
     public function testValidateAccessTokenWithInvalidToken(): void
@@ -230,7 +229,7 @@ class AbstractTokenHandlerTest extends TestCase
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertSame([null, null], $result);
+        self::assertNull($result);
     }
 
     public function testValidateRefreshToken(): void
@@ -259,7 +258,7 @@ class AbstractTokenHandlerTest extends TestCase
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertSame(['refresh_token', [
+        self::assertSame(['type' => 'refresh_token', 'data' => [
             'refresh_token_id' => 'refresh1',
             'expire_time' => $expireTime,
             'client_id' => 'client1',
@@ -292,7 +291,7 @@ class AbstractTokenHandlerTest extends TestCase
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertSame([null, null], $result);
+        self::assertNull($result);
     }
 
     public function testValidateRefreshTokenIsExpired(): void
@@ -316,7 +315,7 @@ class AbstractTokenHandlerTest extends TestCase
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertSame([null, null], $result);
+        self::assertNull($result);
     }
 
     public function testValidateRefreshTokenWithMismatchClient(): void
@@ -340,7 +339,7 @@ class AbstractTokenHandlerTest extends TestCase
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertSame([null, null], $result);
+        self::assertNull($result);
     }
 
     public function testValidateRefreshTokenWithInvalidToken(): void
@@ -359,7 +358,7 @@ class AbstractTokenHandlerTest extends TestCase
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
 
-        self::assertSame([null, null], $result);
+        self::assertNull($result);
     }
 
     /**
