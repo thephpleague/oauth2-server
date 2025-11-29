@@ -79,3 +79,31 @@ curl -X "POST" "http://localhost:4444/device_code.php/access_token" \
 	--data-urlencode "client_id=myawesomeapp" \
 	--data-urlencode "client_secret=abc123"
 ```
+
+## Testing the token revocation example
+
+Send the following cURL request. Replace `{{TOKEN}}` with an access token or a refresh token from another grant above:
+
+```
+curl -X "POST" "http://localhost:4444/token_revocation.php/revoke_token" \
+	-H "Content-Type: application/x-www-form-urlencoded" \
+	-H "Accept: 1.0" \
+	--data-urlencode "client_id=myawesomeapp" \
+	--data-urlencode "client_secret=abc123" \
+	--data-urlencode "token_type_hint=access_token" \
+	--data-urlencode "token={{TOKEN}}"
+```
+
+## Testing the token introspection example
+
+Send the following cURL request. Replace `{{TOKEN}}` with an access token or a refresh token from another grant above:
+
+```
+curl -X "POST" "http://localhost:4444/token_introspection.php/introspect_token" \
+	-H "Content-Type: application/x-www-form-urlencoded" \
+	-H "Accept: 1.0" \
+	--data-urlencode "client_id=myawesomeapp" \
+	--data-urlencode "client_secret=abc123" \
+	--data-urlencode "token_type_hint=access_token" \
+	--data-urlencode "refresh_token={{TOKEN}}"
+```
