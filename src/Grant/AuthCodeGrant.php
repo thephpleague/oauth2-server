@@ -19,6 +19,7 @@ use InvalidArgumentException;
 use League\OAuth2\Server\CodeChallengeVerifiers\CodeChallengeVerifierInterface;
 use League\OAuth2\Server\CodeChallengeVerifiers\PlainVerifier;
 use League\OAuth2\Server\CodeChallengeVerifiers\S256Verifier;
+use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -109,6 +110,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $authCodePayload = json_decode($this->decrypt($encryptedAuthCode));
 
             $this->validateAuthorizationCode($authCodePayload, $client, $request);
+
+            $this->setUpGrantAfterAuthCodeVerifikationHook($authCodePayload, $client, $request);
 
             $scopes = $this->scopeRepository->finalizeScopes(
                 $this->validateScopes($authCodePayload->scopes),
@@ -376,6 +379,8 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
 
+            $payload = array_merge($payload, $this->addDataToAuthcodePayloadHook($authCode));
+
             $jsonPayload = json_encode($payload);
 
             if ($jsonPayload === false) {
@@ -406,5 +411,24 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 ]
             )
         );
+    }
+
+    /**
+     * hook called after auth code has been validated
+     */
+    protected function setUpGrantAfterAuthCodeVerifikationHook(
+        object $authCodePayload,
+        ClientEntityInterface $client,
+        ServerRequestInterface $request
+    ): void {
+    }
+
+    /**
+     * hook called after auth code data has initially been set up
+     * @return array<string, scalar>
+     */
+    protected function addDataToAuthcodePayloadHook(AuthCodeEntityInterface $authCodeEntity): array
+    {
+        return [];
     }
 }

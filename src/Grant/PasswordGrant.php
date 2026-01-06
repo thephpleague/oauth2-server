@@ -61,6 +61,8 @@ class PasswordGrant extends AbstractGrant
             $user->getIdentifier()
         );
 
+        $this->afterUserHasBeenAuthenticatedHook($user);
+
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);
         $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
@@ -110,5 +112,12 @@ class PasswordGrant extends AbstractGrant
     public function getIdentifier(): string
     {
         return 'password';
+    }
+
+    /**
+     * hook called after the user has been authenticated
+     */
+    protected function afterUserHasBeenAuthenticatedHook(UserEntityInterface $user): void
+    {
     }
 }
