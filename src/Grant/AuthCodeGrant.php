@@ -425,6 +425,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
     /**
      * hook called after auth code data has initially been set up
+     *
      * @return array<string, scalar>
      */
     protected function addDataToAuthcodePayloadHook(AuthCodeEntityInterface $authCodeEntity): array

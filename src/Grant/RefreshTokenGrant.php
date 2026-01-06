@@ -145,7 +145,8 @@ class RefreshTokenGrant extends AbstractGrant
 
     /**
      * hook called after the refresh token has been successfully validated
-     * @param array<string, mixed> $oldRefreshToken
+     *
+     * @param array<string, mixed>   $oldRefreshToken
      * @param ScopeEntityInterface[] $scopes
      */
     protected function setUpGrantAfterRefreshTokenValidation(array $oldRefreshToken, array $scopes): void
