@@ -111,7 +111,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
             $this->validateAuthorizationCode($authCodePayload, $client, $request);
 
-            $this->setUpGrantAfterAuthCodeVerifikationHook($authCodePayload, $client, $request);
+            $this->setUpGrantAfterAuthCodeVerificationHook($authCodePayload, $client, $request);
 
             $scopes = $this->scopeRepository->finalizeScopes(
                 $this->validateScopes($authCodePayload->scopes),
@@ -379,7 +379,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
             ];
 
-            $payload = array_merge($payload, $this->addDataToAuthcodePayloadHook($authCode));
+            $payload = array_merge($payload, $this->addDataToAuthCodePayloadHook($authCode));
 
             $jsonPayload = json_encode($payload);
 
@@ -416,7 +416,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * hook called after auth code has been validated
      */
-    protected function setUpGrantAfterAuthCodeVerifikationHook(
+    protected function setUpGrantAfterAuthCodeVerificationHook(
         object $authCodePayload,
         ClientEntityInterface $client,
         ServerRequestInterface $request
@@ -428,7 +428,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      *
      * @return array<string, scalar>
      */
-    protected function addDataToAuthcodePayloadHook(AuthCodeEntityInterface $authCodeEntity): array
+    protected function addDataToAuthCodePayloadHook(AuthCodeEntityInterface $authCodeEntity): array
     {
         return [];
     }
