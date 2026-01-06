@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- extensibility hooks to grant types added (PR #1497)
+
 ### Changed
 
 - User ID is now passed to the finalizeScopes method for the Refresh Grant (PR #1414)

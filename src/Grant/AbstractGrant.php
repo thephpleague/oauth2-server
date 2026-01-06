@@ -426,6 +426,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add($accessTokenTTL));
         $accessToken->setPrivateKey($this->privateKey);
 
+        $accessToken = $this->completeAccessTokenHook($accessToken);
+
         while ($maxGenerationAttempts-- > 0) {
             $accessToken->setIdentifier($this->generateUniqueIdentifier());
             try {
@@ -465,6 +467,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         $authCode->setExpiryDateTime((new DateTimeImmutable())->add($authCodeTTL));
         $authCode->setClient($client);
         $authCode->setUserIdentifier($userIdentifier);
+
+        $authCode = $this->completeAuthCodeHook($authCode);
 
         if ($redirectUri !== null) {
             $authCode->setRedirectUri($redirectUri);
@@ -510,6 +514,8 @@ abstract class AbstractGrant implements GrantTypeInterface
         $refreshToken->setExpiryDateTime((new DateTimeImmutable())->add($this->refreshTokenTTL));
         $refreshToken->setAccessToken($accessToken);
 
+        $refreshToken = $this->completeRefreshTokenHook($refreshToken);
+
         $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         while ($maxGenerationAttempts-- > 0) {
@@ -552,6 +558,21 @@ abstract class AbstractGrant implements GrantTypeInterface
             throw OAuthServerException::serverError('Could not generate a random string', $e);
         }
         // @codeCoverageIgnoreEnd
+    }
+
+    protected function completeRefreshTokenHook(RefreshTokenEntityInterface $refreshToken): RefreshTokenEntityInterface
+    {
+        return $refreshToken;
+    }
+
+    protected function completeAccessTokenHook(AccessTokenEntityInterface $accessToken): AccessTokenEntityInterface
+    {
+        return $accessToken;
+    }
+
+    protected function completeAuthCodeHook(AuthCodeEntityInterface $authCode): AuthCodeEntityInterface
+    {
+        return $authCode;
     }
 
     /**
