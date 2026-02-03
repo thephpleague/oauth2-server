@@ -11,6 +11,7 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
 
     strategy:
+      fail-fast: false
       matrix:
         php-version: [8.2, 8.3, 8.4, 8.5]
         composer-stability: [prefer-lowest, prefer-stable]
