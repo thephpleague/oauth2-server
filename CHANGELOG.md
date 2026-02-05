@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - User ID is now passed to the finalizeScopes method for the Refresh Grant (PR #1414)
 
+### Removed
+
+- Removed support for PHP 8.1 (PR #1500)
+
 ## [9.3.0] - released 2025-11-25
 
 ### Added
