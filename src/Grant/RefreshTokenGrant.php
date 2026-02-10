@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
-use Exception;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestAccessTokenEvent;
@@ -26,8 +25,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 use function implode;
 use function in_array;
-use function json_decode;
-use function time;
 
 /**
  * Refresh token grant.
@@ -108,28 +105,7 @@ class RefreshTokenGrant extends AbstractGrant
         $encryptedRefreshToken = $this->getRequestParameter('refresh_token', $request)
             ?? throw OAuthServerException::invalidRequest('refresh_token');
 
-        // Validate refresh token
-        try {
-            $refreshToken = $this->decrypt($encryptedRefreshToken);
-        } catch (Exception $e) {
-            throw OAuthServerException::invalidRefreshToken('Cannot decrypt the refresh token', $e);
-        }
-
-        $refreshTokenData = json_decode($refreshToken, true);
-        if ($refreshTokenData['client_id'] !== $clientId) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_CLIENT_FAILED, $request));
-            throw OAuthServerException::invalidRefreshToken('Token is not linked to client');
-        }
-
-        if ($refreshTokenData['expire_time'] < time()) {
-            throw OAuthServerException::invalidRefreshToken('Token has expired');
-        }
-
-        if ($this->refreshTokenRepository->isRefreshTokenRevoked($refreshTokenData['refresh_token_id']) === true) {
-            throw OAuthServerException::invalidRefreshToken('Token has been revoked');
-        }
-
-        return $refreshTokenData;
+        return $this->validateEncryptedRefreshToken($request, $encryptedRefreshToken, $clientId);
     }
 
     /**
