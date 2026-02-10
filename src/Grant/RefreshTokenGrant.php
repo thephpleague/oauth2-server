@@ -16,6 +16,7 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use Exception;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestAccessTokenEvent;
@@ -75,6 +76,8 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         $scopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $userId);
+
+        $this->setUpGrantAfterRefreshTokenValidation($oldRefreshToken, $scopes);
 
         // Expire old tokens
         $this->accessTokenRepository->revokeAccessToken($oldRefreshToken['access_token_id']);
@@ -138,5 +141,15 @@ class RefreshTokenGrant extends AbstractGrant
     public function getIdentifier(): string
     {
         return 'refresh_token';
+    }
+
+    /**
+     * hook called after the refresh token has been successfully validated
+     *
+     * @param array<string, mixed>   $oldRefreshToken
+     * @param ScopeEntityInterface[] $scopes
+     */
+    protected function setUpGrantAfterRefreshTokenValidation(array $oldRefreshToken, array $scopes): void
+    {
     }
 }
