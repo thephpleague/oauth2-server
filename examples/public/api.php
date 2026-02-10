@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
+include __DIR__ . '/../vendor/autoload.php';
+
+use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use League\OAuth2\Server\ResourceServer;
 use OAuth2ServerExamples\Repositories\AccessTokenRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-
-include __DIR__ . '/../vendor/autoload.php';
 
 $app = new App([
     // Add the resource server to the DI container
@@ -22,7 +25,7 @@ $app = new App([
 
 // Add the resource server middleware which will intercept and validate requests
 $app->add(
-    new \League\OAuth2\Server\Middleware\ResourceServerMiddleware(
+    new ResourceServerMiddleware(
         $app->getContainer()->get(ResourceServer::class)
     )
 );
@@ -30,7 +33,7 @@ $app->add(
 // An example endpoint secured with OAuth 2.0
 $app->get(
     '/users',
-    function (ServerRequestInterface $request, ResponseInterface $response) use ($app) {
+    function (ServerRequestInterface $request, ResponseInterface $response) {
         $users = [
             [
                 'id'    => 123,
@@ -49,23 +52,23 @@ $app->get(
             ],
         ];
 
-        $totalUsers = \count($users);
+        $totalUsers = count($users);
 
         // If the access token doesn't have the `basic` scope hide users' names
-        if (\in_array('basic', $request->getAttribute('oauth_scopes')) === false) {
+        if (in_array('basic', $request->getAttribute('oauth_scopes')) === false) {
             for ($i = 0; $i < $totalUsers; $i++) {
                 unset($users[$i]['name']);
             }
         }
 
         // If the access token doesn't have the `email` scope hide users' email addresses
-        if (\in_array('email', $request->getAttribute('oauth_scopes')) === false) {
+        if (in_array('email', $request->getAttribute('oauth_scopes')) === false) {
             for ($i = 0; $i < $totalUsers; $i++) {
                 unset($users[$i]['email']);
             }
         }
 
-        $response->getBody()->write(\json_encode($users));
+        $response->getBody()->write(json_encode($users));
 
         return $response->withStatus(200);
     }

@@ -30,9 +30,7 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
-use function count;
 use function date_default_timezone_get;
-use function is_array;
 use function preg_replace;
 use function trim;
 
@@ -76,6 +74,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             throw new RuntimeException('Public key is empty');
         }
 
+        // TODO: next major release: replace deprecated method and remove phpstan ignored error
         $this->jwtConfiguration->setValidationConstraints(
             new LooseValidAt($clock, $this->jwtValidAtDateLeeway),
             new SignedWith(
@@ -95,7 +94,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         }
 
         $header = $request->getHeader('authorization');
-        $jwt = trim((string) preg_replace('/^\s*Bearer\s/', '', $header[0]));
+        $jwt = trim((string) preg_replace('/^\s*Bearer\s/i', '', $header[0]));
 
         if ($jwt === '') {
             throw OAuthServerException::accessDenied('Missing "Bearer" token');

@@ -12,6 +12,9 @@
 
     <file>src</file>
     <file>tests</file>
+    <file>examples</file>
+
+    <exclude-pattern>examples/vendor/*</exclude-pattern>
 
     <rule ref="PSR12">
         <exclude name="Generic.Files.LineLength.TooLong" />
@@ -30,4 +33,5 @@
     <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint" />
     <rule ref="SlevomatCodingStandard.Commenting.EmptyComment" />
     <rule ref="SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion" />
+    <rule ref="SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue" />
 </ruleset>

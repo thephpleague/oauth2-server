@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,10 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
+
+include __DIR__ . '/../vendor/autoload.php';
 
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -18,10 +23,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 
-include __DIR__ . '/../vendor/autoload.php';
-
 $app = new App([
-    'settings'    => [
+    'settings' => [
         'displayErrorDetails' => true,
     ],
     AuthorizationServer::class => function () {
@@ -44,11 +47,11 @@ $app = new App([
 
         // Enable the refresh token grant on the server
         $grant = new RefreshTokenGrant($refreshTokenRepository);
-        $grant->setRefreshTokenTTL(new \DateInterval('P1M')); // The refresh token will expire in 1 month
+        $grant->setRefreshTokenTTL(new DateInterval('P1M')); // The refresh token will expire in 1 month
 
         $server->enableGrantType(
             $grant,
-            new \DateInterval('PT1H') // The new access token will expire after 1 hour
+            new DateInterval('PT1H') // The new access token will expire after 1 hour
         );
 
         return $server;
@@ -63,7 +66,7 @@ $app->post('/access_token', function (ServerRequestInterface $request, ResponseI
         return $server->respondToAccessTokenRequest($request, $response);
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
-    } catch (\Exception $exception) {
+    } catch (Exception $exception) {
         $response->getBody()->write($exception->getMessage());
 
         return $response->withStatus(500);

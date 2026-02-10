@@ -140,7 +140,6 @@ class AuthorizationServerTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($server);
         $method = $abstractGrantReflection->getMethod('getResponseType');
-        $method->setAccessible(true);
 
         self::assertInstanceOf(BearerTokenResponse::class, $method->invoke($server));
     }
@@ -161,17 +160,14 @@ class AuthorizationServerTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($server);
         $method = $abstractGrantReflection->getMethod('getResponseType');
-        $method->setAccessible(true);
 
         $responseType = $method->invoke($server);
 
         $responseTypeReflection = new ReflectionClass($responseType);
 
         $privateKeyProperty = $responseTypeReflection->getProperty('privateKey');
-        $privateKeyProperty->setAccessible(true);
 
         $encryptionKeyProperty = $responseTypeReflection->getProperty('encryptionKey');
-        $encryptionKeyProperty->setAccessible(true);
 
         // generated instances should have keys setup
         self::assertSame($privateKey, $privateKeyProperty->getValue($responseType)->getKeyPath());
@@ -183,7 +179,7 @@ class AuthorizationServerTest extends TestCase
         $privateKey = 'file://' . __DIR__ . '/Stubs/private.key';
         $encryptionKey = 'file://' . __DIR__ . '/Stubs/public.key';
 
-        $responseTypePrototype = new class extends BearerTokenResponse {
+        $responseTypePrototype = new class () extends BearerTokenResponse {
             protected CryptKeyInterface $privateKey;
             protected Key|string|null $encryptionKey = null;
 
@@ -211,7 +207,6 @@ class AuthorizationServerTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($server);
         $method = $abstractGrantReflection->getMethod('getResponseType');
-        $method->setAccessible(true);
 
         $responseTypeA = $method->invoke($server);
         $responseTypeB = $method->invoke($server);

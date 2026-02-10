@@ -111,23 +111,23 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         if ($redirectUri !== null) {
             $this->validateRedirectUri($redirectUri, $client, $request);
         } elseif (
-            is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1
-            || $client->getRedirectUri() === ''
+            $client->getRedirectUri() === '' ||
+            (is_array($client->getRedirectUri()) && count($client->getRedirectUri()) !== 1)
         ) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
             throw OAuthServerException::invalidClient($request);
-        } else {
-            $redirectUri = is_array($client->getRedirectUri())
-                ? $client->getRedirectUri()[0]
-                : $client->getRedirectUri();
         }
+
+        $stateParameter = $this->getQueryStringParameter('state', $request);
 
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            $redirectUri
+            $this->makeRedirectUri(
+                $redirectUri ?? $this->getClientRedirectUri($client),
+                $stateParameter !== null ? ['state' => $stateParameter] : [],
+                $this->queryDelimiter
+            )
         );
-
-        $stateParameter = $this->getQueryStringParameter('state', $request);
 
         $authorizationRequest = $this->createAuthorizationRequest();
         $authorizationRequest->setGrantTypeId($this->getIdentifier());
@@ -152,11 +152,8 @@ class ImplicitGrant extends AbstractAuthorizeGrant
             throw new LogicException('An instance of UserEntityInterface should be set on the AuthorizationRequest');
         }
 
-        $clientRegisteredRedirectUri = is_array($authorizationRequest->getClient()->getRedirectUri())
-                ? $authorizationRequest->getClient()->getRedirectUri()[0]
-                : $authorizationRequest->getClient()->getRedirectUri();
-
-        $finalRedirectUri = $authorizationRequest->getRedirectUri() ?? $clientRegisteredRedirectUri;
+        $finalRedirectUri = $authorizationRequest->getRedirectUri()
+                          ?? $this->getClientRedirectUri($authorizationRequest->getClient());
 
         // The user approved the client, redirect them back with an access token
         if ($authorizationRequest->isAuthorizationApproved() === true) {
@@ -174,6 +171,9 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $authorizationRequest->getUser()->getIdentifier(),
                 $finalizedScopes
             );
+
+            // TODO: next major release: this method needs `ServerRequestInterface` as an argument
+            // $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
 
             $response = new RedirectResponse();
             $response->setRedirectUri(
@@ -199,7 +199,8 @@ class ImplicitGrant extends AbstractAuthorizeGrant
                 $finalRedirectUri,
                 [
                     'state' => $authorizationRequest->getState(),
-                ]
+                ],
+                $this->queryDelimiter
             )
         );
     }

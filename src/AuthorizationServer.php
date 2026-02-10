@@ -27,6 +27,7 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SensitiveParameter;
 
 class AuthorizationServer implements EmitterAwareInterface
 {
@@ -61,11 +62,12 @@ class AuthorizationServer implements EmitterAwareInterface
         private ClientRepositoryInterface $clientRepository,
         private AccessTokenRepositoryInterface $accessTokenRepository,
         private ScopeRepositoryInterface $scopeRepository,
+        #[SensitiveParameter]
         CryptKeyInterface|string $privateKey,
+        #[SensitiveParameter]
         Key|string $encryptionKey,
         ResponseTypeInterface|null $responseType = null
     ) {
-
         if ($privateKey instanceof CryptKeyInterface === false) {
             $privateKey = new CryptKey($privateKey);
         }

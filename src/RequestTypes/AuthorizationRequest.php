@@ -35,6 +35,7 @@ class AuthorizationRequest implements AuthorizationRequestInterface
 
     /**
      * An array of scope identifiers
+     *
      * @var ScopeEntityInterface[]
      */
     protected array $scopes = [];

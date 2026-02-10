@@ -22,20 +22,15 @@ class ResourceServer
 {
     private CryptKeyInterface $publicKey;
 
-    private ?AuthorizationValidatorInterface $authorizationValidator = null;
-
     public function __construct(
         private AccessTokenRepositoryInterface $accessTokenRepository,
         CryptKeyInterface|string $publicKey,
-        AuthorizationValidatorInterface $authorizationValidator = null
+        private ?AuthorizationValidatorInterface $authorizationValidator = null
     ) {
-
         if ($publicKey instanceof CryptKeyInterface === false) {
             $publicKey = new CryptKey($publicKey);
         }
         $this->publicKey = $publicKey;
-
-        $this->authorizationValidator = $authorizationValidator;
     }
 
     protected function getAuthorizationValidator(): AuthorizationValidatorInterface

@@ -14,20 +14,20 @@ declare(strict_types=1);
 
 namespace League\OAuth2\Server\Grant;
 
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 
 use function http_build_query;
-use function strstr;
 
 abstract class AbstractAuthorizeGrant extends AbstractGrant
 {
     /**
-     * @param mixed[]  $params
+     * @param array<array-key,mixed> $params
      */
     public function makeRedirectUri(string $uri, array $params = [], string $queryDelimiter = '?'): string
     {
-        $uri .= (strstr($uri, $queryDelimiter) === false) ? $queryDelimiter : '&';
+        $uri .= str_contains($uri, $queryDelimiter) ? '&' : $queryDelimiter;
 
         return $uri . http_build_query($params);
     }
@@ -35,5 +35,15 @@ abstract class AbstractAuthorizeGrant extends AbstractGrant
     protected function createAuthorizationRequest(): AuthorizationRequestInterface
     {
         return new AuthorizationRequest();
+    }
+
+    /**
+     * Get the client redirect URI.
+     */
+    protected function getClientRedirectUri(ClientEntityInterface $client): string
+    {
+        return is_array($client->getRedirectUri())
+            ? $client->getRedirectUri()[0]
+            : $client->getRedirectUri();
     }
 }

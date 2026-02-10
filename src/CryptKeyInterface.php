@@ -8,7 +8,6 @@ interface CryptKeyInterface
 {
     /**
      * Retrieve key path.
-     *
      */
     public function getKeyPath(): string;
 

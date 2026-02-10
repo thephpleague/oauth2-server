@@ -93,13 +93,14 @@ class OAuthServerExceptionTest extends TestCase
         $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepositoryMock->method('validateClient')->willReturn(false);
 
-        $grantMock = $this->getMockForAbstractClass(AbstractGrant::class);
+        $grantMock = $this->getMockBuilder(AbstractGrant::class)
+            ->onlyMethods(['getIdentifier', 'respondToAccessTokenRequest'])
+            ->getMock();
         $grantMock->setClientRepository($clientRepositoryMock);
 
         $abstractGrantReflection = new ReflectionClass($grantMock);
 
         $validateClientMethod = $abstractGrantReflection->getMethod('validateClient');
-        $validateClientMethod->setAccessible(true);
 
         $validateClientMethod->invoke($grantMock, $serverRequest);
     }
@@ -123,7 +124,7 @@ class OAuthServerExceptionTest extends TestCase
         $previous = new Exception('This is the previous');
         $exceptionWithPrevious = OAuthServerException::accessDenied(null, null, $previous);
 
-        $previousMessage = $exceptionWithPrevious->getPrevious() !== null ? $exceptionWithPrevious->getPrevious()->getMessage() : null;
+        $previousMessage = $exceptionWithPrevious->getPrevious()?->getMessage();
 
         self::assertSame('This is the previous', $previousMessage);
     }

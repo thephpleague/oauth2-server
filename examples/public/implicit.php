@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Alex Bilbie <hello@alexbilbie.com>
  * @copyright   Copyright (c) Alex Bilbie
@@ -6,6 +7,10 @@
  *
  * @link        https://github.com/thephpleague/oauth2-server
  */
+
+declare(strict_types=1);
+
+include __DIR__ . '/../vendor/autoload.php';
 
 use Laminas\Diactoros\Stream;
 use League\OAuth2\Server\AuthorizationServer;
@@ -19,10 +24,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 
-include __DIR__ . '/../vendor/autoload.php';
-
 $app = new App([
-    'settings'    => [
+    'settings' => [
         'displayErrorDetails' => true,
     ],
     AuthorizationServer::class => function () {
@@ -43,7 +46,7 @@ $app = new App([
         );
 
         // Enable the implicit grant on the server with a token TTL of 1 hour
-        $server->enableGrantType(new ImplicitGrant(new \DateInterval('PT1H')));
+        $server->enableGrantType(new ImplicitGrant(new DateInterval('PT1H')));
 
         return $server;
     },
@@ -69,7 +72,7 @@ $app->get('/authorize', function (ServerRequestInterface $request, ResponseInter
         return $server->completeAuthorizationRequest($authRequest, $response);
     } catch (OAuthServerException $exception) {
         return $exception->generateHttpResponse($response);
-    } catch (\Exception $exception) {
+    } catch (Exception $exception) {
         $body = new Stream('php://temp', 'r+');
         $body->write($exception->getMessage());
 

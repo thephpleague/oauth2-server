@@ -14,6 +14,8 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
@@ -23,6 +25,7 @@ use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use LogicException;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ImplicitGrantTest extends TestCase
@@ -94,7 +97,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = (new ServerRequest())->withQueryParams([
-            'response_type' => 'code',
+            'response_type' => 'token',
             'client_id'     => 'foo',
             'redirect_uri'  => self::REDIRECT_URI,
         ]);
@@ -119,7 +122,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setDefaultScope(self::DEFAULT_SCOPE);
 
         $request = (new ServerRequest())->withQueryParams([
-            'response_type' => 'code',
+            'response_type' => 'token',
             'client_id' => 'foo',
             'redirect_uri' => self::REDIRECT_URI,
         ]);
@@ -134,7 +137,7 @@ class ImplicitGrantTest extends TestCase
         $grant = new ImplicitGrant(new DateInterval('PT10M'));
         $grant->setClientRepository($clientRepositoryMock);
 
-        $request = (new ServerRequest())->withQueryParams(['response_type' => 'code']);
+        $request = (new ServerRequest())->withQueryParams(['response_type' => 'token']);
 
         $this->expectException(OAuthServerException::class);
         $this->expectExceptionCode(3);
@@ -151,7 +154,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = (new ServerRequest())->withQueryParams([
-            'response_type' => 'code',
+            'response_type' => 'token',
             'client_id'     => 'foo',
         ]);
 
@@ -172,7 +175,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = (new ServerRequest())->withQueryParams([
-            'response_type' => 'code',
+            'response_type' => 'token',
             'client_id' => 'foo',
             'redirect_uri' => 'http://bar',
         ]);
@@ -194,7 +197,7 @@ class ImplicitGrantTest extends TestCase
         $grant->setClientRepository($clientRepositoryMock);
 
         $request = (new ServerRequest())->withQueryParams([
-            'response_type' => 'code',
+            'response_type' => 'token',
             'client_id'     => 'foo',
             'redirect_uri'  => 'http://bar',
         ]);
@@ -203,6 +206,44 @@ class ImplicitGrantTest extends TestCase
         $this->expectExceptionCode(4);
 
         $grant->validateAuthorizationRequest($request);
+    }
+
+    public function testValidateAuthorizationRequestInvalidScopes(): void
+    {
+        $client = new ClientEntity();
+        $client->setRedirectUri(self::REDIRECT_URI);
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(null);
+
+        $grant = new ImplicitGrant(new DateInterval('PT10M'));
+
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type' => 'token',
+            'client_id' => 'foo',
+            'redirect_uri' => self::REDIRECT_URI,
+            'scope' => 'foo',
+            'state' => 'foo',
+        ]);
+
+        try {
+            $grant->validateAuthorizationRequest($request);
+        } catch (OAuthServerException $e) {
+            self::assertSame(5, $e->getCode());
+            self::assertSame('invalid_scope', $e->getErrorType());
+            self::assertSame('https://foo/bar#state=foo', $e->getRedirectUri());
+
+            return;
+        }
+
+        self::fail('Did not throw expected exception');
     }
 
     public function testCompleteAuthorizationRequest(): void
@@ -233,7 +274,22 @@ class ImplicitGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
+        $accessTokenEventEmitted = false;
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::ACCESS_TOKEN_ISSUED,
+            function ($event) use (&$accessTokenEventEmitted): void {
+                self::assertInstanceOf(RequestAccessTokenEvent::class, $event);
+
+                $accessTokenEventEmitted = true;
+            }
+        );
+
         self::assertInstanceOf(RedirectResponse::class, $grant->completeAuthorizationRequest($authRequest));
+
+        if (!$accessTokenEventEmitted) {
+            // self::fail('Access token issued event is not emitted.'); // TODO: next major release
+        }
     }
 
     public function testCompleteAuthorizationRequestDenied(): void
@@ -247,6 +303,7 @@ class ImplicitGrantTest extends TestCase
         $authRequest->setClient($client);
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
+        $authRequest->setState('foo');
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
@@ -260,10 +317,17 @@ class ImplicitGrantTest extends TestCase
         $grant->setAccessTokenRepository($accessTokenRepositoryMock);
         $grant->setScopeRepository($scopeRepositoryMock);
 
-        $this->expectException(OAuthServerException::class);
-        $this->expectExceptionCode(9);
+        try {
+            $grant->completeAuthorizationRequest($authRequest);
+        } catch (OAuthServerException $e) {
+            self::assertSame(9, $e->getCode());
+            self::assertSame('access_denied', $e->getErrorType());
+            self::assertSame('https://foo/bar#state=foo', $e->getRedirectUri());
 
-        $grant->completeAuthorizationRequest($authRequest);
+            return;
+        }
+
+        self::fail('Did not throw expected exception');
     }
 
     public function testAccessTokenRepositoryUniqueConstraintCheck(): void
@@ -282,7 +346,7 @@ class ImplicitGrantTest extends TestCase
         $accessToken->setClient($client);
         $accessToken->setUserIdentifier('userId');
 
-        /** @var AccessTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject $accessTokenRepositoryMock */
+        /** @var AccessTokenRepositoryInterface|MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
 
@@ -321,7 +385,7 @@ class ImplicitGrantTest extends TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
-        /** @var AccessTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject $accessTokenRepositoryMock */
+        /** @var AccessTokenRepositoryInterface|MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(OAuthServerException::serverError('something bad happened'));
@@ -353,7 +417,7 @@ class ImplicitGrantTest extends TestCase
         $authRequest->setGrantTypeId('authorization_code');
         $authRequest->setUser(new UserEntity());
 
-        /** @var AccessTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject $accessTokenRepositoryMock */
+        /** @var AccessTokenRepositoryInterface|MockObject $accessTokenRepositoryMock */
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willThrowException(UniqueTokenIdentifierConstraintViolationException::create());

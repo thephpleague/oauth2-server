@@ -21,6 +21,7 @@ use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use RuntimeException;
+use SensitiveParameter;
 
 trait AccessTokenTrait
 {
@@ -31,8 +32,10 @@ trait AccessTokenTrait
     /**
      * Set the private key used to encrypt this access token.
      */
-    public function setPrivateKey(CryptKeyInterface $privateKey): void
-    {
+    public function setPrivateKey(
+        #[SensitiveParameter]
+        CryptKeyInterface $privateKey
+    ): void {
         $this->privateKey = $privateKey;
     }
 
@@ -59,12 +62,6 @@ trait AccessTokenTrait
      */
     private function convertToJWT(): Token
     {
-        $userIdentifier = $this->getUserIdentifier();
-
-        if ($userIdentifier === null) {
-            throw new RuntimeException('JWT access tokens MUST contain a subject identifier');
-        }
-
         $this->initJwtConfiguration();
 
         return $this->jwtConfiguration->builder()
@@ -73,7 +70,7 @@ trait AccessTokenTrait
             ->issuedAt(new DateTimeImmutable())
             ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt($this->getExpiryDateTime())
-            ->relatedTo($userIdentifier)
+            ->relatedTo($this->getSubjectIdentifier())
             ->withClaim('scopes', $this->getScopes())
             ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
     }
@@ -104,4 +101,12 @@ trait AccessTokenTrait
      * @return non-empty-string
      */
     abstract public function getIdentifier(): string;
+
+    /**
+     * @return non-empty-string
+     */
+    private function getSubjectIdentifier(): string
+    {
+        return $this->getUserIdentifier() ?? $this->getClient()->getIdentifier();
+    }
 }

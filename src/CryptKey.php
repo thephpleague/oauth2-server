@@ -16,6 +16,7 @@ namespace League\OAuth2\Server;
 
 use LogicException;
 use OpenSSLAsymmetricKey;
+use SensitiveParameter;
 
 use function decoct;
 use function file_get_contents;
@@ -27,7 +28,6 @@ use function openssl_pkey_get_details;
 use function openssl_pkey_get_private;
 use function openssl_pkey_get_public;
 use function sprintf;
-use function strpos;
 use function trigger_error;
 
 class CryptKey implements CryptKeyInterface
@@ -41,16 +41,19 @@ class CryptKey implements CryptKeyInterface
 
     protected string $keyPath;
 
-    public function __construct(string $keyPath, protected ?string $passPhrase = null, bool $keyPermissionsCheck = true)
-    {
-
-        if (strpos($keyPath, self::FILE_PREFIX) !== 0 && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
+    public function __construct(
+        string $keyPath,
+        #[SensitiveParameter]
+        protected ?string $passPhrase = null,
+        bool $keyPermissionsCheck = true
+    ) {
+        if (str_starts_with($keyPath, self::FILE_PREFIX) === false && $this->isValidKey($keyPath, $this->passPhrase ?? '')) {
             $this->keyContents = $keyPath;
             $this->keyPath = '';
             // There's no file, so no need for permission check.
             $keyPermissionsCheck = false;
         } elseif (is_file($keyPath)) {
-            if (strpos($keyPath, self::FILE_PREFIX) !== 0) {
+            if (str_starts_with($keyPath, self::FILE_PREFIX) === false) {
                 $keyPath = self::FILE_PREFIX . $keyPath;
             }
 
@@ -74,7 +77,7 @@ class CryptKey implements CryptKeyInterface
             throw new LogicException('Invalid key supplied');
         }
 
-        if ($keyPermissionsCheck === true) {
+        if ($keyPermissionsCheck === true && PHP_OS_FAMILY !== 'Windows') {
             // Verify the permissions of the key
             $keyPathPerms = decoct(fileperms($this->keyPath) & 0777);
             if (in_array($keyPathPerms, ['400', '440', '600', '640', '660'], true) === false) {
@@ -101,8 +104,12 @@ class CryptKey implements CryptKeyInterface
     /**
      * Validate key contents.
      */
-    private function isValidKey(string $contents, string $passPhrase): bool
-    {
+    private function isValidKey(
+        #[SensitiveParameter]
+        string $contents,
+        #[SensitiveParameter]
+        string $passPhrase
+    ): bool {
         $privateKey = openssl_pkey_get_private($contents, $passPhrase);
 
         $key = $privateKey instanceof OpenSSLAsymmetricKey ? $privateKey : openssl_pkey_get_public($contents);

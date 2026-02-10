@@ -4,6 +4,6 @@ parameters:
         - src
         - tests
     ignoreErrors:
-        -
-          message: '#Call to an undefined method League\\OAuth2\\Server\\ResponseTypes\\ResponseTypeInterface::getAccessToken\(\)\.#'
-          path: tests/Grant/ClientCredentialsGrantTest.php 
+        - 
+            message: '#Deprecated since v5.5, please use {@see self::withValidationConstraints\(\)} instead#'
+            reportUnmatched: false

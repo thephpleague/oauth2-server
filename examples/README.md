@@ -1,12 +1,11 @@
-# Example implementations
+# Example implementations (via [`Slim 3`](https://github.com/slimphp/Slim/tree/3.x))
 
 ## Installation
 
 0. Run `composer install` in this directory to install dependencies
 0. Create a private key `openssl genrsa -out private.key 2048`
-0. Create a public key `openssl rsa -in private.key -pubout > public.key`
-0. `cd` into the public directory
-0. Start a PHP server `php -S localhost:4444`
+0. Export the public key `openssl rsa -in private.key -pubout > public.key`
+0. Start local PHP server `php -S 127.0.0.1:4444 -t public/`
 
 ## Testing the client credentials grant example
 
@@ -63,12 +62,12 @@ curl -X "POST" "http://localhost:4444/device_code.php/device_authorization" \
 	--data-urlencode "client_id=myawesomeapp" \
 	--data-urlencode "client_secret=abc123" \
 	--data-urlencode "scope=basic email"
-```	
+```
 
 We have set up the example so that a user ID is already associated with the device code. In a production application you
 would implement an authorization view to allow a user to authorize the device.
 
-Issue the following cURL request to exchange your device code for an access token. Replace `{{DEVICE_CODE}}` with the 
+Issue the following cURL request to exchange your device code for an access token. Replace `{{DEVICE_CODE}}` with the
 device code returned from your first cURL post:
 
 ```

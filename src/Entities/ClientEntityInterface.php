@@ -38,4 +38,11 @@ interface ClientEntityInterface
      * Returns true if the client is confidential.
      */
     public function isConfidential(): bool;
+
+    /*
+     * Returns true if the client supports the given grant type.
+     *
+     * TODO: To be added in a future major release.
+     */
+    // public function supportsGrantType(string $grantType): bool;
 }

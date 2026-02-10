@@ -17,6 +17,7 @@ namespace League\OAuth2\Server\ResponseTypes;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 use function array_merge;
 use function json_encode;
@@ -34,20 +35,22 @@ class BearerTokenResponse extends AbstractResponseType
             'access_token' => $this->accessToken->toString(),
         ];
 
-        $refreshTokenPayload = json_encode([
-                'client_id'        => $this->accessToken->getClient()->getIdentifier(),
-                'refresh_token_id' => $this->refreshToken->getIdentifier(),
-                'access_token_id'  => $this->accessToken->getIdentifier(),
-                'scopes'           => $this->accessToken->getScopes(),
-                'user_id'          => $this->accessToken->getUserIdentifier(),
-                'expire_time'      => $this->refreshToken->getExpiryDateTime()->getTimestamp(),
-        ]);
+        if (isset($this->refreshToken)) {
+            $refreshTokenPayload = json_encode([
+                    'client_id'        => $this->accessToken->getClient()->getIdentifier(),
+                    'refresh_token_id' => $this->refreshToken->getIdentifier(),
+                    'access_token_id'  => $this->accessToken->getIdentifier(),
+                    'scopes'           => $this->accessToken->getScopes(),
+                    'user_id'          => $this->accessToken->getUserIdentifier(),
+                    'expire_time'      => $this->refreshToken->getExpiryDateTime()->getTimestamp(),
+            ]);
 
-        if ($refreshTokenPayload === false) {
-            throw new LogicException('Error encountered JSON encoding the refresh token payload');
+            if ($refreshTokenPayload === false) {
+                throw new LogicException('Error encountered JSON encoding the refresh token payload');
+            }
+
+            $responseParams['refresh_token'] = $this->encrypt($refreshTokenPayload);
         }
-
-        $responseParams['refresh_token'] = $this->encrypt($refreshTokenPayload);
 
         $responseParams = json_encode(array_merge($this->getExtraParams($this->accessToken), $responseParams));
 
@@ -71,10 +74,12 @@ class BearerTokenResponse extends AbstractResponseType
      * AuthorizationServer::getResponseType() to pull in your version of
      * this class rather than the default.
      *
-     * @return mixed[]
+     * @return array<array-key,mixed>
      */
-    protected function getExtraParams(AccessTokenEntityInterface $accessToken): array
-    {
+    protected function getExtraParams(
+        #[SensitiveParameter]
+        AccessTokenEntityInterface $accessToken
+    ): array {
         return [];
     }
 }
