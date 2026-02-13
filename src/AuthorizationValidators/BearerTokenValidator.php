@@ -85,6 +85,14 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
     }
 
     /**
+     * Configure the validated authorization request instance.
+     */
+    protected function withValidatedRequest(ServerRequestInterface $request, UnencryptedToken $token): ServerRequestInterface
+    {
+        return $request;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function validateAuthorization(ServerRequestInterface $request): ServerRequestInterface
@@ -127,10 +135,10 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         }
 
         // Return the request with additional attributes
-        return $request
+        return $this->withValidatedRequest($request
             ->withAttribute('oauth_access_token_id', $claims->get('jti'))
             ->withAttribute('oauth_client_id', $claims->get('aud')[0])
             ->withAttribute('oauth_user_id', $claims->get('sub'))
-            ->withAttribute('oauth_scopes', $claims->get('scopes'));
+            ->withAttribute('oauth_scopes', $claims->get('scopes')), $token);
     }
 }
