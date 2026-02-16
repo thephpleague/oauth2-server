@@ -347,6 +347,16 @@ class OAuthServerException extends Exception
     }
 
     /**
+     * Set the Redirect URI used for redirecting.
+     */
+    public function withRedirectUri(string $redirectUri): static
+    {
+        $this->redirectUri = $redirectUri;
+
+        return $this;
+    }
+
+    /**
      * Returns the HTTP status code to send when the exceptions is output.
      */
     public function getHttpStatusCode(): int
