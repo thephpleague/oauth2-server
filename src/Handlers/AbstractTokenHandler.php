@@ -100,8 +100,7 @@ abstract class AbstractTokenHandler extends AbstractHandler implements TokenHand
                 'type' => 'access_token',
                 'data' => $this->getBearerTokenValidator()->validateBearerToken(
                     $request,
-                    $accessToken,
-                    $client->getIdentifier()
+                    $accessToken
                 ),
             ];
         } catch (Throwable) {

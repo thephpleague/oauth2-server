@@ -46,7 +46,7 @@ class AbstractTokenHandlerTest extends TestCase
         $validator
             ->expects(self::once())
             ->method('validateBearerToken')
-            ->with($request, 'abcdef', 'client1')
+            ->with($request, 'abcdef')
             ->willReturn(['foo' => 'bar']);
 
         $handler = $this->getAbstractTokenHandler();
@@ -152,14 +152,18 @@ class AbstractTokenHandlerTest extends TestCase
     public function testValidateAccessTokenWithMismatchClient(): void
     {
         $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
-        $accessTokenRepository->expects(self::never())->method('isAccessTokenRevoked');
+        $accessTokenRepository
+            ->expects(self::once())
+            ->method('isAccessTokenRevoked')
+            ->with('access1')
+            ->willReturn(false);
 
         $handler = $this->getAbstractTokenHandler();
         $handler->setAccessTokenRepository($accessTokenRepository);
 
         $expireTime = time() + 1000;
         $accessToken = $this->getJwtToken(fn (Builder $builder) =>
-            $builder->permittedFor('client2')
+            $builder->permittedFor('client1')
                 ->relatedTo('user1')
                 ->identifiedBy('access1')
                 ->expiresAt((new DateTimeImmutable())->setTimestamp($expireTime)));
@@ -167,11 +171,17 @@ class AbstractTokenHandlerTest extends TestCase
             'token' => $accessToken,
         ]);
         $client = new ClientEntity();
-        $client->setIdentifier('client1');
+        $client->setIdentifier('client2');
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
+        $result['data']['exp'] = $result['data']['exp']->getTimestamp();
 
-        self::assertNull($result);
+        self::assertSame(['type' => 'access_token', 'data' => [
+            'aud' => ['client1'],
+            'sub' => 'user1',
+            'jti' => 'access1',
+            'exp' => $expireTime,
+        ]], $result);
     }
 
     public function testValidateAccessTokenWithInvalidToken(): void

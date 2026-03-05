@@ -20,7 +20,13 @@ class TokenRevocationHandler extends AbstractTokenHandler
                 $this->refreshTokenRepository->revokeRefreshToken($token['data']['refresh_token_id']);
                 $this->accessTokenRepository->revokeAccessToken($token['data']['access_token_id']);
             } elseif ($token['type'] === 'access_token') {
-                $this->accessTokenRepository->revokeAccessToken($token['data']['jti']);
+                // Check if token is linked to the client
+                if (
+                    (isset($token['data']['client_id']) && $token['data']['client_id'] === $client->getIdentifier()) ||
+                    in_array($client->getIdentifier(), $token['data']['aud'] ?? [], true)
+                ) {
+                    $this->accessTokenRepository->revokeAccessToken($token['data']['jti']);
+                }
             } else {
                 throw OAuthServerException::unsupportedTokenType();
             }

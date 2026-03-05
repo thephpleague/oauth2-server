@@ -48,7 +48,7 @@ class TokenRevocationHandlerTest extends TestCase
         $handler->expects(self::once())
             ->method('validateToken')
             ->with($request, $client)
-            ->willReturn(['type' => 'access_token', 'data' => ['jti' => 'access1']]);
+            ->willReturn(['type' => 'access_token', 'data' => ['jti' => 'access1', 'aud' => ['client1']]]);
 
         $response = $handler->respondToRequest($request, new Response());
         $response->getBody()->rewind();
@@ -221,5 +221,45 @@ class TokenRevocationHandlerTest extends TestCase
         }
 
         self::fail('The expected exception was not thrown');
+    }
+
+    public function testRespondToRequestForAccessTokenWithMismatchClient(): void
+    {
+        $client = new ClientEntity();
+        $client->setConfidential();
+        $client->setIdentifier('client1');
+
+        $clientRepository = $this->createMock(ClientRepositoryInterface::class);
+        $clientRepository->expects(self::once())
+            ->method('getClientEntity')
+            ->with('client1')
+            ->willReturn($client);
+        $clientRepository
+            ->expects(self::once())
+            ->method('validateClient')
+            ->with('client1', 'secret1', null)
+            ->willReturn(true);
+
+        $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
+        $accessTokenRepository->expects(self::never())->method('revokeAccessToken');
+
+        $request = (new ServerRequest())->withParsedBody([
+            'client_id' => 'client1',
+            'client_secret' => 'secret1',
+            'token' => 'token1',
+        ]);
+
+        $handler = $this->getMockBuilder(TokenRevocationHandler::class)->onlyMethods(['validateToken'])->getMock();
+        $handler->setClientRepository($clientRepository);
+        $handler->setAccessTokenRepository($accessTokenRepository);
+        $handler->expects(self::once())
+            ->method('validateToken')
+            ->with($request, $client)
+            ->willReturn(['type' => 'access_token', 'data' => ['jti' => 'access1', 'aud' => ['client2']]]);
+
+        $response = $handler->respondToRequest($request, new Response());
+        $response->getBody()->rewind();
+
+        self::assertSame(200, $response->getStatusCode());
     }
 }

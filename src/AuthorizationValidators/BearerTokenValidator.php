@@ -113,7 +113,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface, BearerTok
     /**
      * {@inheritdoc}
      */
-    public function validateBearerToken(ServerRequestInterface $request, string $token, ?string $clientId = null): array
+    public function validateBearerToken(ServerRequestInterface $request, string $token): array
     {
         try {
             // Attempt to parse the JWT
@@ -135,15 +135,6 @@ class BearerTokenValidator implements AuthorizationValidatorInterface, BearerTok
         }
 
         $claims = $token->claims();
-
-        // Check if token is linked to the client
-        if (
-            $clientId !== null &&
-            $claims->get('client_id') !== $clientId &&
-            $token->isPermittedFor($clientId) === false
-        ) {
-            throw OAuthServerException::accessDenied('Access token is not linked to client');
-        }
 
         // Check if token has been revoked
         if ($this->accessTokenRepository->isAccessTokenRevoked($claims->get('jti'))) {
