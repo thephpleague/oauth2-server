@@ -11,7 +11,7 @@ interface BearerTokenValidatorInterface
     /**
      * Parse and validate the given bearer token.
      *
-     * @param non-empty-string      $token
+     * @param non-empty-string $token
      *
      * @return array<non-empty-string, mixed>
      */
