@@ -266,6 +266,25 @@ class OAuthServerException extends Exception
     }
 
     /**
+     * Invalid target error.
+     *
+     * The requested resource is invalid, missing, unknown, or malformed.
+     *
+     * @see https://datatracker.ietf.org/doc/html/rfc8707#section-2
+     */
+    public static function invalidTarget(?string $hint = null, ?string $redirectUri = null): static
+    {
+        return new static(
+            'The requested resource is invalid, missing, unknown, or malformed.',
+            15,
+            'invalid_target',
+            400,
+            $hint,
+            $redirectUri
+        );
+    }
+
+    /**
      * Generate a HTTP response.
      */
     public function generateHttpResponse(ResponseInterface $response, bool $useFragment = false, int $jsonOptions = 0): ResponseInterface
