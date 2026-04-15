@@ -12,8 +12,8 @@
     "psr/http-message": "^2.0",
     "defuse/php-encryption": "^2.4",
     "ext-json": "*",
-    "lcobucci/clock": "^3.3",
-    "psr/http-server-middleware": "^1.0"
+    "psr/http-server-middleware": "^1.0",
+    "psr/clock": "^1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^11.5.50",

@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace League\OAuth2\Server\AuthorizationValidators;
 
 use DateInterval;
+use DateTimeImmutable;
 use DateTimeZone;
-use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Exception;
 use Lcobucci\JWT\Signer\Key\InMemory;
@@ -27,6 +27,7 @@ use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use Psr\Clock\ClockInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
@@ -66,7 +67,12 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             InMemory::plainText('empty', 'empty')
         );
 
-        $clock = new SystemClock(new DateTimeZone(date_default_timezone_get()));
+        $clock = new class () implements ClockInterface {
+            public function now(): DateTimeImmutable
+            {
+                return new DateTimeImmutable('now', new DateTimeZone(date_default_timezone_get()));
+            }
+        };
 
         $publicKeyContents = $this->publicKey->getKeyContents();
 
