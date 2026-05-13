@@ -113,6 +113,10 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     public function validateAuthorizationRequest(ServerRequestInterface $request): AuthorizationRequestInterface
     {
+        if (!isset($request->getQueryParams()['response_type'])) {
+            throw OAuthServerException::invalidRequest('response_type');
+        }
+
         foreach ($this->enabledGrantTypes as $grantType) {
             if ($grantType->canRespondToAuthorizationRequest($request)) {
                 return $grantType->validateAuthorizationRequest($request);
