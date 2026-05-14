@@ -63,7 +63,10 @@ class AuthorizationServerTest extends TestCase
 
         $server->enableGrantType(new GrantType(), new DateInterval('PT1M'));
 
-        $authRequest = $server->validateAuthorizationRequest($this->createMock(ServerRequestInterface::class));
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type' => 'foo',
+        ]);
+        $authRequest = $server->validateAuthorizationRequest($request);
         self::assertSame(GrantType::class, $authRequest->getGrantTypeId());
     }
 
@@ -331,5 +334,23 @@ class AuthorizationServerTest extends TestCase
         $this->expectExceptionCode(2);
 
         $server->validateAuthorizationRequest($request);
+    }
+
+    public function testValidateAuthorizationRequestWithoutResponseType(): void
+    {
+        $server = new AuthorizationServer(
+            $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
+            'file://' . __DIR__ . '/Stubs/private.key',
+            'file://' . __DIR__ . '/Stubs/public.key'
+        );
+
+        $server->enableGrantType(new GrantType(), new DateInterval('PT1M'));
+
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(3);
+
+        $server->validateAuthorizationRequest($this->createMock(ServerRequestInterface::class));
     }
 }
