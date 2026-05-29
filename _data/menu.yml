@@ -1,28 +1,30 @@
 Getting Started:
-    Introduction: '/'
-    Terminology: '/terminology/'
-    Requirements: '/requirements/'
-    Installation: '/installation/'
-    Upgrade Guide: '/upgrade-guide/'
-    Database Setup: '/database-setup/'
-    Framework Integrations: '/framework-integrations/'
-    V5 Security Improvements: '/v5-security-improvements/'
-    V4 Docs: '/V4-docs/'
+  Introduction: "/"
+  Terminology: "/terminology/"
+  Requirements: "/requirements/"
+  Installation: "/installation/"
+  Upgrade Guide: "/upgrade-guide/"
+  Database Setup: "/database-setup/"
+  Framework Integrations: "/framework-integrations/"
+  V5 Security Improvements: "/v5-security-improvements/"
+  V4 Docs: "/V4-docs/"
 Authorization Server:
-    'Which Grant?': '/authorization-server/which-grant/'
-    'Client Credentials Grant': '/authorization-server/client-credentials-grant/'
-    'Password Grant': '/authorization-server/resource-owner-password-credentials-grant/'
-    'Authorization Code Grant': '/authorization-server/auth-code-grant/'
-    'Implicit Grant': '/authorization-server/implicit-grant/'
-    'Refresh Token Grant': '/authorization-server/refresh-token-grant/'
-#    'Creating custom grants': '/authorization-server/custom-grants/'
-    'Domain Events': '/authorization-server/events/'
+  "Which Grant?": "/authorization-server/which-grant/"
+  "Client Credentials Grant": "/authorization-server/client-credentials-grant/"
+  "Password Grant": "/authorization-server/resource-owner-password-credentials-grant/"
+  "Authorization Code Grant": "/authorization-server/auth-code-grant/"
+  "Implicit Grant": "/authorization-server/implicit-grant/"
+  "Refresh Token Grant": "/authorization-server/refresh-token-grant/"
+  #    'Creating custom grants': '/authorization-server/custom-grants/'
+  "Domain Events": "/authorization-server/events/"
 Resource Server:
-    'Securing your API': '/resource-server/securing-your-api/'
+  "Securing your API": "/resource-server/securing-your-api/"
 Repository Interfaces:
-    'Access Token Repository Interface': '/access-token-repository-interface/'
-    'Client Repository Interface': '/client-repository-interface/'
-    'Refresh Token Repository Interface': '/refresh-token-repository-interface/'
-    'Scope Repository Interface': '/scope-repository-interface/'
-    'Auth Code Repository Interface': '/auth-code-repository-interface/'
-    'User Repository Interface': '/user-repository-interface/'
+  "Access Token Repository Interface": "/access-token-repository-interface/"
+  "Client Repository Interface": "/client-repository-interface/"
+  "Refresh Token Repository Interface": "/refresh-token-repository-interface/"
+  "Scope Repository Interface": "/scope-repository-interface/"
+  "Auth Code Repository Interface": "/auth-code-repository-interface/"
+  "User Repository Interface": "/user-repository-interface/"
+Entity Interfaces:
+  "Client Entity Interface": "/entity-interface-client/"
