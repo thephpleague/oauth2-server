@@ -1,7 +1,7 @@
 ---
 layout: default
 title: ClientEntityInterface documentation
-permalink: /client-entity-interface/
+permalink: /entity-interface-client/
 ---
 
 # Client Entity Interface
