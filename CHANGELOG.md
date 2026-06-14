@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [9.4.0] - released 2026-06-14
+
 ### Changed
 
 - Authorization requests are now checked for the required `response_type` parameter before we determine which grant type is being used (PR #1507)
@@ -791,7 +793,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/9.3.0...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/9.4.0...HEAD
+[9.4.0]: https://github.com/thephpleague/oauth2-server/compare/9.3.0...9.4.0
 [9.3.0]: https://github.com/thephpleague/oauth2-server/compare/9.2.0...9.3.0
 [9.2.0]: https://github.com/thephpleague/oauth2-server/compare/9.1.0...9.2.0
 [9.1.0]: https://github.com/thephpleague/oauth2-server/compare/9.0.1...9.1.0
