@@ -66,7 +66,9 @@ class AuthorizationServerTest extends TestCase
         $request = (new ServerRequest())->withQueryParams([
             'response_type' => 'foo',
         ]);
+
         $authRequest = $server->validateAuthorizationRequest($request);
+
         self::assertSame(GrantType::class, $authRequest->getGrantTypeId());
     }
 

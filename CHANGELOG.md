@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- Authorization requests are now checked for the required `response_type` parameter before we determine which grant type is being used (PR #1507)
 - User ID is now passed to the finalizeScopes method for the Refresh Grant (PR #1414)
 
 ### Removed
