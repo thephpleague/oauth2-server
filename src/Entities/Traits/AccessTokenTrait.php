@@ -18,11 +18,21 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKeyInterface;
+use League\OAuth2\Server\Entities\AudienceRestrictedTokenInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use RuntimeException;
 use SensitiveParameter;
 
+/**
+ * Default implementation of the access-token entity contract.
+ *
+ * This trait is aware of {@see AudienceRestrictedTokenInterface} and
+ * degrades gracefully if the composing class does not implement it: when
+ * the class opts in and provides a non-empty audience list, those values
+ * drive the JWT `aud` claim; otherwise the trait falls back to the client
+ * identifier, preserving the historical single-audience behaviour.
+ */
 trait AccessTokenTrait
 {
     private CryptKeyInterface $privateKey;
@@ -64,8 +74,10 @@ trait AccessTokenTrait
     {
         $this->initJwtConfiguration();
 
+        $audiences = $this->resolveAudiences();
+
         return $this->jwtConfiguration->builder()
-            ->permittedFor($this->getClient()->getIdentifier())
+            ->permittedFor(...$audiences)
             ->identifiedBy($this->getIdentifier())
             ->issuedAt(new DateTimeImmutable())
             ->canOnlyBeUsedAfter(new DateTimeImmutable())
@@ -73,6 +85,30 @@ trait AccessTokenTrait
             ->relatedTo($this->getSubjectIdentifier())
             ->withClaim('scopes', $this->getScopes())
             ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
+    }
+
+    /**
+     * Resolve the JWT `aud` claim values. RFC 8707 resource indicators take
+     * precedence when the entity opts in via
+     * {@see \League\OAuth2\Server\Entities\AudienceRestrictedTokenInterface}
+     * and supplies a non-empty audience list; an empty audience list is
+     * treated as "no restriction asserted" and falls back to the client id,
+     * preserving the historical single-audience behaviour for tokens issued
+     * without a `resource` parameter.
+     *
+     * @return non-empty-list<non-empty-string>
+     */
+    private function resolveAudiences(): array
+    {
+        if ($this instanceof AudienceRestrictedTokenInterface) {
+            $audiences = $this->getAudiences();
+
+            if ($audiences !== []) {
+                return $audiences;
+            }
+        }
+
+        return [$this->getClient()->getIdentifier()];
     }
 
     /**
