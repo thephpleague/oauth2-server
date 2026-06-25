@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Removed
+
+- Removed the dependency on Lcobbuci's Clock to avoid conflicts with other clock implemenations in user land (PR #1505)
+
 ## [9.4.0] - released 2026-06-14
 
 ### Changed
