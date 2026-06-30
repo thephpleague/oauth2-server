@@ -22,10 +22,10 @@ use Exception;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\CryptTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\AudienceRestrictedTokenInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Entities\ResourceRestrictedTokenInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\EventEmitting\EmitterAwarePolyfill;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -294,22 +294,22 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
-     * Apply RFC 8707 resource indicators as audience restrictions on an
+     * Apply RFC 8707 resource indicators as resource restrictions on an
      * access token that has been built by {@see buildAccessToken()} but not
      * yet persisted. Call this before {@see persistAccessToken()} so the
      * misconfiguration branch below fails fast and never leaves an orphaned
      * row behind in the token repository.
      *
-     * @param list<non-empty-string> $audiences
+     * @param list<non-empty-string> $resources
      *
-     * @throws LogicException When audiences are supplied but the entity does
-     *                        not implement {@see AudienceRestrictedTokenInterface}.
+     * @throws LogicException When resources are supplied but the entity does
+     *                        not implement {@see ResourceRestrictedTokenInterface}.
      *                        This is a library-level misconfiguration, not a
      *                        protocol error, hence a programmer exception.
      */
-    protected function applyResourceIndicators(AccessTokenEntityInterface $accessToken, array $audiences): void
+    protected function applyResourceIndicators(AccessTokenEntityInterface $accessToken, array $resources): void
     {
-        if ($audiences === []) {
+        if ($resources === []) {
             // Intentional no-op: grants that do not process resource
             // indicators, or whose client omitted the `resource` parameter,
             // still call this method unconditionally. Short-circuiting here
@@ -317,15 +317,15 @@ abstract class AbstractGrant implements GrantTypeInterface
             return;
         }
 
-        if (!$accessToken instanceof AudienceRestrictedTokenInterface) {
+        if (!$accessToken instanceof ResourceRestrictedTokenInterface) {
             throw new LogicException(
                 'The access token entity must implement '
-                . AudienceRestrictedTokenInterface::class
+                . ResourceRestrictedTokenInterface::class
                 . ' to support RFC 8707 resource indicators.'
             );
         }
 
-        $accessToken->setAudiences($audiences);
+        $accessToken->setResources($resources);
     }
 
     /**

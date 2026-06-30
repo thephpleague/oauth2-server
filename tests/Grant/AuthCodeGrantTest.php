@@ -20,25 +20,24 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\RequestAccessTokenAudiencesEvent;
 use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestAccessTokenResourcesEvent;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use LeagueTests\Stubs\AccessTokenEntity;
-use LeagueTests\Stubs\AudienceRestrictedAccessTokenEntity;
 use LeagueTests\Stubs\AuthCodeEntity;
 use LeagueTests\Stubs\ClientEntity;
 use LeagueTests\Stubs\CryptTraitStub;
 use LeagueTests\Stubs\RefreshTokenEntity;
+use LeagueTests\Stubs\ResourceRestrictedAccessTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use LogicException;
 use PHPUnit\Framework\TestCase;
-
 use function json_decode;
 use function json_encode;
 use function parse_str;
@@ -46,7 +45,6 @@ use function parse_url;
 use function str_repeat;
 use function time;
 use function uniqid;
-
 use const PHP_URL_QUERY;
 
 class AuthCodeGrantTest extends TestCase
@@ -2867,7 +2865,7 @@ class AuthCodeGrantTest extends TestCase
         $grant->validateAuthorizationRequest($request);
     }
 
-    public function testRespondToAccessTokenRequestNarrowsResourcesIntoAudiences(): void
+    public function testRespondToAccessTokenRequestNarrowsResources(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -2882,7 +2880,7 @@ class AuthCodeGrantTest extends TestCase
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $accessToken = new AudienceRestrictedAccessTokenEntity();
+        $accessToken = new ResourceRestrictedAccessTokenEntity();
         $accessToken->setClient($client);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
@@ -2936,7 +2934,7 @@ class AuthCodeGrantTest extends TestCase
 
         $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
-        self::assertSame(['https://api.example.com/'], $accessToken->getAudiences());
+        self::assertSame(['https://api.example.com/'], $accessToken->getResources());
     }
 
     public function testRespondToAccessTokenRequestUsesExactStringComparisonForResources(): void
@@ -2955,7 +2953,7 @@ class AuthCodeGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AudienceRestrictedAccessTokenEntity());
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new ResourceRestrictedAccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -3027,7 +3025,7 @@ class AuthCodeGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AudienceRestrictedAccessTokenEntity());
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new ResourceRestrictedAccessTokenEntity());
         $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
@@ -3135,7 +3133,7 @@ class AuthCodeGrantTest extends TestCase
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $accessToken = new AudienceRestrictedAccessTokenEntity();
+        $accessToken = new ResourceRestrictedAccessTokenEntity();
         $accessToken->setClient($client);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
@@ -3204,7 +3202,7 @@ class AuthCodeGrantTest extends TestCase
         );
     }
 
-    public function testRespondToAccessTokenRequestThrowsLogicExceptionWhenEntityDoesNotSupportAudiences(): void
+    public function testRespondToAccessTokenRequestThrowsLogicExceptionWhenEntityDoesNotSupportResources(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -3219,7 +3217,7 @@ class AuthCodeGrantTest extends TestCase
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        // Vanilla AccessTokenEntity does NOT implement AudienceRestrictedTokenInterface.
+        // Vanilla AccessTokenEntity does NOT implement ResourceRestrictedTokenInterface.
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
         $accessTokenRepositoryMock->expects($this->never())->method('persistNewAccessToken');
@@ -3401,9 +3399,9 @@ class AuthCodeGrantTest extends TestCase
 
         self::assertInstanceOf(RefreshTokenEntityInterface::class, $response->getRefreshToken());
 
-        // The historical single-audience behaviour must survive the RFC 8707
+        // The historical single-recipient behaviour must survive the RFC 8707
         // changes: when no `resource` was supplied at any step and the entity
-        // does not opt into AudienceRestrictedTokenInterface, the JWT `aud`
+        // does not opt into ResourceRestrictedTokenInterface, the JWT `aud`
         // claim falls back to the client id.
         $jwt = $accessToken->toString();
         self::assertNotSame('', $jwt);
@@ -3416,7 +3414,7 @@ class AuthCodeGrantTest extends TestCase
         self::assertFalse($token->claims()->has('resource'));
     }
 
-    public function testRespondToAccessTokenRequestCanCustomizeAudiencesThroughEvent(): void
+    public function testRespondToAccessTokenRequestCanCustomizeResourcesThroughEvent(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -3431,7 +3429,7 @@ class AuthCodeGrantTest extends TestCase
         $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
-        $accessToken = new AudienceRestrictedAccessTokenEntity();
+        $accessToken = new ResourceRestrictedAccessTokenEntity();
         $accessToken->setClient($client);
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
@@ -3454,9 +3452,9 @@ class AuthCodeGrantTest extends TestCase
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $grant->getListenerRegistry()->subscribeTo(
-            RequestEvent::ACCESS_TOKEN_AUDIENCES_RESOLVING,
-            static function (RequestAccessTokenAudiencesEvent $event): void {
-                $event->setAudiences(['https://events.example.com/']);
+            RequestEvent::ACCESS_TOKEN_RESOURCES_RESOLVING,
+            static function (RequestAccessTokenResourcesEvent $event): void {
+                $event->setResources(['https://events.example.com/']);
             }
         );
 
@@ -3500,7 +3498,7 @@ class AuthCodeGrantTest extends TestCase
         self::assertSame(['https://events.example.com/'], $token->claims()->get('resource'));
     }
 
-    public function testRespondToAccessTokenRequestCanBeDeniedThroughAudienceEvent(): void
+    public function testRespondToAccessTokenRequestCanBeDeniedThroughResourceEvent(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -3516,7 +3514,7 @@ class AuthCodeGrantTest extends TestCase
         $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
 
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
-        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AudienceRestrictedAccessTokenEntity());
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new ResourceRestrictedAccessTokenEntity());
         $accessTokenRepositoryMock->expects($this->never())->method('persistNewAccessToken');
 
         $authCodeRepositoryMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
@@ -3538,9 +3536,9 @@ class AuthCodeGrantTest extends TestCase
         $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
 
         $grant->getListenerRegistry()->subscribeTo(
-            RequestEvent::ACCESS_TOKEN_AUDIENCES_RESOLVING,
-            static function (RequestAccessTokenAudiencesEvent $event): void {
-                $event->denyRequest('Denied by audience policy');
+            RequestEvent::ACCESS_TOKEN_RESOURCES_RESOLVING,
+            static function (RequestAccessTokenResourcesEvent $event): void {
+                $event->denyRequest('Denied by resource policy');
             }
         );
 

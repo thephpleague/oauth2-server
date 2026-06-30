@@ -18,8 +18,8 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKeyInterface;
-use League\OAuth2\Server\Entities\AudienceRestrictedTokenInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ResourceRestrictedTokenInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use RuntimeException;
 use SensitiveParameter;
@@ -27,11 +27,8 @@ use SensitiveParameter;
 /**
  * Default implementation of the access-token entity contract.
  *
- * This trait is aware of {@see AudienceRestrictedTokenInterface} and
- * degrades gracefully if the composing class does not implement it: when
- * the class opts in and provides a non-empty audience list, those values
- * drive the JWT `aud` claim; otherwise the trait falls back to the client
- * identifier, preserving the historical single-audience behaviour.
+ * This trait is aware of {@see ResourceRestrictedTokenInterface} and
+ * degrades gracefully if the composing class does not implement it.
  */
 trait AccessTokenTrait
 {
@@ -98,16 +95,16 @@ trait AccessTokenTrait
     /**
      * Resolve RFC 8707 resource indicators for the JWT `resource` custom claim.
      * When the entity opts in via
-     * {@see \League\OAuth2\Server\Entities\AudienceRestrictedTokenInterface}
-     * and supplies a non-empty audience list, those values are included;
+     * {@see \League\OAuth2\Server\Entities\ResourceRestrictedTokenInterface}
+     * and supplies a non-empty resource list, those values are included;
      * otherwise an empty list is returned (no resources restriction).
      *
      * @return list<non-empty-string>
      */
     private function resolveResourceIndicators(): array
     {
-        if ($this instanceof AudienceRestrictedTokenInterface) {
-            return $this->getAudiences();
+        if ($this instanceof ResourceRestrictedTokenInterface) {
+            return $this->getResources();
         }
 
         return [];

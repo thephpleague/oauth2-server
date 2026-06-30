@@ -16,8 +16,8 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\RequestAccessTokenAudiencesEvent;
 use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestAccessTokenResourcesEvent;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -49,28 +49,28 @@ class ClientCredentialsGrant extends AbstractGrant
         $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client);
 
         //RFC 8707: parse resource indicators
-        $audiences = $this->parseResourceIndicators($this->getRawRequestParameter('resource', $request));
+        $resources = $this->parseResourceIndicators($this->getRawRequestParameter('resource', $request));
 
-        // Build → apply audiences → persist, in that order. applyResourceIndicators()
+        // Build → apply resources → persist, in that order. applyResourceIndicators()
         // throws LogicException when the access token entity does not implement
-        // AudienceRestrictedTokenInterface; running it before persistAccessToken()
+        // ResourceRestrictedTokenInterface; running it before persistAccessToken()
         // ensures a misconfigured consumer fails fast without leaving an orphaned
         // row in the token repository.
         $accessToken = $this->buildAccessToken($accessTokenTTL, $client, null, $finalizedScopes);
-        $audiencesEvent = new RequestAccessTokenAudiencesEvent(
-            RequestEvent::ACCESS_TOKEN_AUDIENCES_RESOLVING,
+        $resourcesEvent = new RequestAccessTokenResourcesEvent(
+            RequestEvent::ACCESS_TOKEN_RESOURCES_RESOLVING,
             $request,
             $accessToken,
-            $audiences
+            $resources
         );
-        $this->getEmitter()->emit($audiencesEvent);
+        $this->getEmitter()->emit($resourcesEvent);
 
-        if ($audiencesEvent->isRequestDenied()) {
-            throw OAuthServerException::accessDenied($audiencesEvent->getDenyReason());
+        if ($resourcesEvent->isRequestDenied()) {
+            throw OAuthServerException::accessDenied($resourcesEvent->getDenyReason());
         }
 
-        $audiences = $audiencesEvent->getAudiences();
-        $this->applyResourceIndicators($accessToken, $audiences);
+        $resources = $resourcesEvent->getResources();
+        $this->applyResourceIndicators($accessToken, $resources);
         $accessToken = $this->persistAccessToken($accessToken);
 
         // Send event to emitter

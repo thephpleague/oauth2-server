@@ -13,23 +13,23 @@ declare(strict_types=1);
 namespace League\OAuth2\Server\Entities;
 
 /**
- * Opt-in extension for token entities that carry RFC 8707 audience
- * restrictions (the `aud` claim derived from the `resource` request parameter).
+ * Opt-in extension for token entities that carry RFC 8707 resource
+ * restrictions.
  *
  * Implementing this interface is optional: {@see TokenInterface} remains the
  * canonical contract and existing consumer implementations continue to work
  * without modification. Grants check for this interface via `instanceof` when
  * propagating resource indicators through the token flow.
  */
-interface AudienceRestrictedTokenInterface
+interface ResourceRestrictedTokenInterface
 {
     /**
-     * @return list<non-empty-string> The absolute URIs of the audiences this token is bound to.
+     * @return list<non-empty-string> The absolute URIs of the resources this token is bound to.
      */
-    public function getAudiences(): array;
+    public function getResources(): array;
 
     /**
-     * @param list<non-empty-string> $audiences
+     * @param list<non-empty-string> $resources
      */
-    public function setAudiences(array $audiences): void;
+    public function setResources(array $resources): void;
 }

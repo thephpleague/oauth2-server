@@ -24,8 +24,8 @@ use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use League\OAuth2\Server\RequestAccessTokenAudiencesEvent;
 use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestAccessTokenResourcesEvent;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
@@ -146,28 +146,28 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $requestedResources = $this->parseResourceIndicators(
             $this->getRawRequestParameter('resource', $request)
         );
-        $audiences = $this->resolveTokenEndpointResources($authorizedResources, $requestedResources);
+        $resources = $this->resolveTokenEndpointResources($authorizedResources, $requestedResources);
 
-        // Build → apply audiences → persist, in that order. applyResourceIndicators()
+        // Build → apply resources → persist, in that order. applyResourceIndicators()
         // throws LogicException when the access token entity does not implement
-        // AudienceRestrictedTokenInterface; running it before persistAccessToken()
+        // ResourceRestrictedTokenInterface; running it before persistAccessToken()
         // ensures a misconfigured consumer fails fast without leaving an orphaned
         // row in the token repository.
         $accessToken = $this->buildAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
-        $audiencesEvent = new RequestAccessTokenAudiencesEvent(
-            RequestEvent::ACCESS_TOKEN_AUDIENCES_RESOLVING,
+        $resourcesEvent = new RequestAccessTokenResourcesEvent(
+            RequestEvent::ACCESS_TOKEN_RESOURCES_RESOLVING,
             $request,
             $accessToken,
-            $audiences
+            $resources
         );
-        $this->getEmitter()->emit($audiencesEvent);
+        $this->getEmitter()->emit($resourcesEvent);
 
-        if ($audiencesEvent->isRequestDenied()) {
-            throw OAuthServerException::accessDenied($audiencesEvent->getDenyReason());
+        if ($resourcesEvent->isRequestDenied()) {
+            throw OAuthServerException::accessDenied($resourcesEvent->getDenyReason());
         }
 
-        $audiences = $audiencesEvent->getAudiences();
-        $this->applyResourceIndicators($accessToken, $audiences);
+        $resources = $resourcesEvent->getResources();
+        $this->applyResourceIndicators($accessToken, $resources);
         $accessToken = $this->persistAccessToken($accessToken);
 
         $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
@@ -190,11 +190,11 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
     /**
      * Extract the RFC 8707 resource indicators persisted in the auth code
      * payload. Older payloads that predate the RFC 8707 implementation will
-     * not carry this field, so a missing property is treated as "no audience
+     * not carry this field, so a missing property is treated as "no resource
      * restriction was asserted during authorization". Anything else (non-list
      * data, non-string entries, empty entries) is a tampered or corrupted
      * payload and must abort the exchange — silently dropping malformed
-     * entries would strip an audience restriction that the authorization
+     * entries would strip a resource restriction that the authorization
      * step explicitly asserted.
      *
      * @throws OAuthServerException
@@ -240,7 +240,7 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
      * to access", which could be interpreted as allowing first-time resource
      * indication at the token endpoint. This library takes the conservative
      * stance of requiring the resource set to be established at `/authorize`,
-     * so audience restrictions cannot be tightened *or* introduced under a
+     * so resource restrictions cannot be tightened *or* introduced under a
      * previously unrestricted authorization code.
      *
      * URI comparison follows RFC 3986 §6.2.1 "Simple String Comparison" — the

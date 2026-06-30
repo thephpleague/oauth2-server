@@ -13,28 +13,28 @@ declare(strict_types=1);
 namespace League\OAuth2\Server\Entities\Traits;
 
 /**
- * Default in-memory implementation of {@see \League\OAuth2\Server\Entities\AudienceRestrictedTokenInterface}.
+ * Default in-memory implementation of {@see \League\OAuth2\Server\Entities\ResourceRestrictedTokenInterface}.
  */
-trait AudienceRestrictedTokenTrait
+trait ResourceRestrictedTokenTrait
 {
     /**
      * @var list<non-empty-string>
      */
-    private array $audiences = [];
+    private array $resources = [];
 
     /**
      * @return list<non-empty-string>
      */
-    public function getAudiences(): array
+    public function getResources(): array
     {
-        return $this->audiences;
+        return $this->resources;
     }
 
     /**
-     * @param list<non-empty-string> $audiences
+     * @param list<non-empty-string> $resources
      */
-    public function setAudiences(array $audiences): void
+    public function setResources(array $resources): void
     {
-        $this->audiences = $audiences;
+        $this->resources = $resources;
     }
 }
