@@ -75,4 +75,3 @@ class RequestAccessTokenAudiencesEvent extends RequestEvent
         return $this->denyReason;
     }
 }
-
