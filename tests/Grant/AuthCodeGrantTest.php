@@ -20,6 +20,7 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use League\OAuth2\Server\RequestAccessTokenAudiencesEvent;
 use League\OAuth2\Server\RequestAccessTokenEvent;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestRefreshTokenEvent;
@@ -37,7 +38,6 @@ use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use LogicException;
 use PHPUnit\Framework\TestCase;
-
 use function json_decode;
 use function json_encode;
 use function parse_str;
@@ -45,7 +45,6 @@ use function parse_url;
 use function str_repeat;
 use function time;
 use function uniqid;
-
 use const PHP_URL_QUERY;
 
 class AuthCodeGrantTest extends TestCase
@@ -687,7 +686,7 @@ class AuthCodeGrantTest extends TestCase
                 'redirect_uri' => self::REDIRECT_URI,
                 'code'         => $this->cryptStub->doEncrypt(
                     json_encode([
-                        'auth_code_id' => uniqid(),
+                        'auth_code_id' => uniqid('', true),
                         'expire_time'  => time() + 3600,
                         'client_id'    => 'foo',
                         'user_id'      => '123',
@@ -768,7 +767,7 @@ class AuthCodeGrantTest extends TestCase
                 'client_secret' => 'bar',
                 'code'         => $this->cryptStub->doEncrypt(
                     json_encode([
-                        'auth_code_id' => uniqid(),
+                        'auth_code_id' => uniqid('', true),
                         'expire_time'  => time() + 3600,
                         'client_id'    => 'foo',
                         'user_id'      => '123',
@@ -3217,10 +3216,10 @@ class AuthCodeGrantTest extends TestCase
         // Vanilla AccessTokenEntity does NOT implement AudienceRestrictedTokenInterface.
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
         $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AccessTokenEntity());
-        $accessTokenRepositoryMock->expects(self::never())->method('persistNewAccessToken');
+        $accessTokenRepositoryMock->expects($this->never())->method('persistNewAccessToken');
 
         $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
-        $refreshTokenRepositoryMock->expects(self::never())->method('persistNewRefreshToken');
+        $refreshTokenRepositoryMock->expects($this->never())->method('persistNewRefreshToken');
 
         $grant = new AuthCodeGrant(
             $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
@@ -3406,5 +3405,164 @@ class AuthCodeGrantTest extends TestCase
         $token = (new Parser(new JoseEncoder()))->parse($jwt);
         self::assertInstanceOf(UnencryptedToken::class, $token);
         self::assertSame(['foo'], $token->claims()->get('aud'));
+    }
+
+    public function testRespondToAccessTokenRequestCanCustomizeAudiencesThroughEvent(): void
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setConfidential();
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $accessToken = new AudienceRestrictedAccessTokenEntity();
+        $accessToken->setClient($client);
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn($accessToken);
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('persistNewRefreshToken')->willReturnSelf();
+        $refreshTokenRepositoryMock->method('getNewRefreshToken')->willReturn(new RefreshTokenEntity());
+
+        $grant = new AuthCodeGrant(
+            $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock(),
+            $refreshTokenRepositoryMock,
+            new DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::ACCESS_TOKEN_AUDIENCES_RESOLVING,
+            static function (RequestAccessTokenAudiencesEvent $event): void {
+                $event->setAudiences(['https://events.example.com/']);
+            }
+        );
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'client_secret' => 'bar',
+                'redirect_uri'  => self::REDIRECT_URI,
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid(),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => '123',
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => self::REDIRECT_URI,
+                        'resources'    => ['https://api.example.com/'],
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
+
+        /** @var StubResponseType $response */
+        $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
+
+        $jwt = $response->getAccessToken()->toString();
+        $token = (new Parser(new JoseEncoder()))->parse($jwt);
+        self::assertInstanceOf(UnencryptedToken::class, $token);
+        self::assertSame(['https://events.example.com/'], $token->claims()->get('aud'));
+    }
+
+    public function testRespondToAccessTokenRequestCanBeDeniedThroughAudienceEvent(): void
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $client->setRedirectUri(self::REDIRECT_URI);
+        $client->setConfidential();
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new AudienceRestrictedAccessTokenEntity());
+        $accessTokenRepositoryMock->expects($this->never())->method('persistNewAccessToken');
+
+        $authCodeRepositoryMock = $this->getMockBuilder(AuthCodeRepositoryInterface::class)->getMock();
+        $authCodeRepositoryMock->expects($this->never())->method('revokeAuthCode');
+
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->expects($this->never())->method('persistNewRefreshToken');
+
+        $grant = new AuthCodeGrant(
+            $authCodeRepositoryMock,
+            $refreshTokenRepositoryMock,
+            new DateInterval('PT10M')
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setRefreshTokenRepository($refreshTokenRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::ACCESS_TOKEN_AUDIENCES_RESOLVING,
+            static function (RequestAccessTokenAudiencesEvent $event): void {
+                $event->denyRequest('Denied by audience policy');
+            }
+        );
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            'php://input',
+            [],
+            [],
+            [],
+            [
+                'grant_type'    => 'authorization_code',
+                'client_id'     => 'foo',
+                'client_secret' => 'bar',
+                'redirect_uri'  => self::REDIRECT_URI,
+                'code'          => $this->cryptStub->doEncrypt(
+                    json_encode([
+                        'auth_code_id' => uniqid('', true),
+                        'expire_time'  => time() + 3600,
+                        'client_id'    => 'foo',
+                        'user_id'      => '123',
+                        'scopes'       => ['foo'],
+                        'redirect_uri' => self::REDIRECT_URI,
+                        'resources'    => ['https://api.example.com/'],
+                    ], JSON_THROW_ON_ERROR)
+                ),
+            ]
+        );
+
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(9);
+
+        $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
     }
 }

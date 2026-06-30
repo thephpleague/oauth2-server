@@ -24,6 +24,7 @@ use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use League\OAuth2\Server\RequestAccessTokenAudiencesEvent;
 use League\OAuth2\Server\RequestAccessTokenEvent;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestRefreshTokenEvent;
@@ -153,6 +154,19 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         // ensures a misconfigured consumer fails fast without leaving an orphaned
         // row in the token repository.
         $accessToken = $this->buildAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
+        $audiencesEvent = new RequestAccessTokenAudiencesEvent(
+            RequestEvent::ACCESS_TOKEN_AUDIENCES_RESOLVING,
+            $request,
+            $accessToken,
+            $audiences
+        );
+        $this->getEmitter()->emit($audiencesEvent);
+
+        if ($audiencesEvent->isRequestDenied()) {
+            throw OAuthServerException::accessDenied($audiencesEvent->getDenyReason());
+        }
+
+        $audiences = $audiencesEvent->getAudiences();
         $this->applyResourceIndicators($accessToken, $audiences);
         $accessToken = $this->persistAccessToken($accessToken);
 

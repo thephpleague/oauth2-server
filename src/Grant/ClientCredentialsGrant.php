@@ -15,6 +15,7 @@ namespace League\OAuth2\Server\Grant;
 
 use DateInterval;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\RequestAccessTokenAudiencesEvent;
 use League\OAuth2\Server\RequestAccessTokenEvent;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -55,6 +56,19 @@ class ClientCredentialsGrant extends AbstractGrant
         // ensures a misconfigured consumer fails fast without leaving an orphaned
         // row in the token repository.
         $accessToken = $this->buildAccessToken($accessTokenTTL, $client, null, $finalizedScopes);
+        $audiencesEvent = new RequestAccessTokenAudiencesEvent(
+            RequestEvent::ACCESS_TOKEN_AUDIENCES_RESOLVING,
+            $request,
+            $accessToken,
+            $audiences
+        );
+        $this->getEmitter()->emit($audiencesEvent);
+
+        if ($audiencesEvent->isRequestDenied()) {
+            throw OAuthServerException::accessDenied($audiencesEvent->getDenyReason());
+        }
+
+        $audiences = $audiencesEvent->getAudiences();
         $this->applyResourceIndicators($accessToken, $audiences);
         $accessToken = $this->persistAccessToken($accessToken);
 
