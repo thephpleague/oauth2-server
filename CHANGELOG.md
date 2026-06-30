@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Support for RFC 8707 resource indicators.
+
+
 ## [9.4.1] - released 2026-06-25
 
 ### Removed
