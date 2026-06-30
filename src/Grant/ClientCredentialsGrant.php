@@ -46,20 +46,17 @@ class ClientCredentialsGrant extends AbstractGrant
         // Finalize the requested scopes
         $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client);
 
-        // Issue and persist access token
-        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, null, $finalizedScopes);
-
         //RFC 8707: parse resource indicators
-        //$audiences = $this->parseResourceIndicators($this->getRawRequestParameter('resource', $request));
+        $audiences = $this->parseResourceIndicators($this->getRawRequestParameter('resource', $request));
 
         // Build → apply audiences → persist, in that order. applyResourceIndicators()
         // throws LogicException when the access token entity does not implement
         // AudienceRestrictedTokenInterface; running it before persistAccessToken()
         // ensures a misconfigured consumer fails fast without leaving an orphaned
         // row in the token repository.
-        //$accessToken = $this->buildAccessToken($accessTokenTTL, $client, null, $finalizedScopes);
-        //$this->applyResourceIndicators($accessToken, $audiences);
-        //$accessToken = $this->persistAccessToken($accessToken);
+        $accessToken = $this->buildAccessToken($accessTokenTTL, $client, null, $finalizedScopes);
+        $this->applyResourceIndicators($accessToken, $audiences);
+        $accessToken = $this->persistAccessToken($accessToken);
 
         // Send event to emitter
         $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
