@@ -3120,7 +3120,7 @@ class AuthCodeGrantTest extends TestCase
         self::assertSame(['https://api.example.com/'], $payload['resources']);
     }
 
-    public function testRespondToAccessTokenRequestEmitsResourceIndicatorsAsJwtAudiences(): void
+    public function testRespondToAccessTokenRequestStoresResourceIndicatorsInCustomClaim(): void
     {
         $client = new ClientEntity();
         $client->setIdentifier('foo');
@@ -3194,9 +3194,13 @@ class AuthCodeGrantTest extends TestCase
         $token = (new Parser(new JoseEncoder()))->parse($jwt);
         self::assertInstanceOf(UnencryptedToken::class, $token);
 
+        // RFC 7519 §10.1: `aud` contains the intended recipient (client)
+        self::assertSame(['foo'], $token->claims()->get('aud'));
+
+        // RFC 8707: `resource` contains the resource indicators
         self::assertSame(
             ['https://api.example.com/', 'https://files.example.com/'],
-            $token->claims()->get('aud')
+            $token->claims()->get('resource')
         );
     }
 
@@ -3406,7 +3410,10 @@ class AuthCodeGrantTest extends TestCase
 
         $token = (new Parser(new JoseEncoder()))->parse($jwt);
         self::assertInstanceOf(UnencryptedToken::class, $token);
+        // RFC 7519 §10.1: `aud` contains the intended recipient (client).
+        // When no resources are specified, there should be no separate `resource` claim.
         self::assertSame(['foo'], $token->claims()->get('aud'));
+        self::assertFalse($token->claims()->has('resource'));
     }
 
     public function testRespondToAccessTokenRequestCanCustomizeAudiencesThroughEvent(): void
@@ -3487,7 +3494,10 @@ class AuthCodeGrantTest extends TestCase
         $jwt = $response->getAccessToken()->toString();
         $token = (new Parser(new JoseEncoder()))->parse($jwt);
         self::assertInstanceOf(UnencryptedToken::class, $token);
-        self::assertSame(['https://events.example.com/'], $token->claims()->get('aud'));
+        // RFC 7519 §10.1: `aud` is the intended recipient (client)
+        self::assertSame(['foo'], $token->claims()->get('aud'));
+        // RFC 8707: `resource` contains the modified resource indicators from the event listener
+        self::assertSame(['https://events.example.com/'], $token->claims()->get('resource'));
     }
 
     public function testRespondToAccessTokenRequestCanBeDeniedThroughAudienceEvent(): void

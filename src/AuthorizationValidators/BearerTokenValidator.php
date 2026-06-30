@@ -32,6 +32,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
 use function date_default_timezone_get;
+use function is_array;
 use function preg_replace;
 use function trim;
 
@@ -133,10 +134,18 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         }
 
         // Return the request with additional attributes
-        return $request
+        $request = $request
             ->withAttribute('oauth_access_token_id', $claims->get('jti'))
             ->withAttribute('oauth_client_id', $claims->get('aud')[0])
             ->withAttribute('oauth_user_id', $claims->get('sub'))
             ->withAttribute('oauth_scopes', $claims->get('scopes'));
+
+        // RFC 8707: Attach resource indicators if present
+        if ($claims->has('resource')) {
+            $resource = $claims->get('resource');
+            $request = $request->withAttribute('oauth_resource_indicators', is_array($resource) ? $resource : [$resource]);
+        }
+
+        return $request;
     }
 }

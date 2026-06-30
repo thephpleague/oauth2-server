@@ -74,41 +74,43 @@ trait AccessTokenTrait
     {
         $this->initJwtConfiguration();
 
-        $audiences = $this->resolveAudiences();
-
-        return $this->jwtConfiguration->builder()
-            ->permittedFor(...$audiences)
+        $builder = $this->jwtConfiguration->builder()
+            ->permittedFor($this->getClient()->getIdentifier())
             ->identifiedBy($this->getIdentifier())
             ->issuedAt(new DateTimeImmutable())
             ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt($this->getExpiryDateTime())
             ->relatedTo($this->getSubjectIdentifier())
-            ->withClaim('scopes', $this->getScopes())
-            ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
+            ->withClaim('scopes', $this->getScopes());
+
+        // RFC 8707: Add resource indicators as a separate custom claim.
+        // The `aud` claim strictly represents the JWT's intended recipient
+        // (RFC 7519 §10.1), which is the client. Resources are stored
+        // separately in the `resource` custom claim.
+        $resources = $this->resolveResourceIndicators();
+        if ($resources !== []) {
+            $builder = $builder->withClaim('resource', $resources);
+        }
+
+        return $builder->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
     }
 
     /**
-     * Resolve the JWT `aud` claim values. RFC 8707 resource indicators take
-     * precedence when the entity opts in via
+     * Resolve RFC 8707 resource indicators for the JWT `resource` custom claim.
+     * When the entity opts in via
      * {@see \League\OAuth2\Server\Entities\AudienceRestrictedTokenInterface}
-     * and supplies a non-empty audience list; an empty audience list is
-     * treated as "no restriction asserted" and falls back to the client id,
-     * preserving the historical single-audience behaviour for tokens issued
-     * without a `resource` parameter.
+     * and supplies a non-empty audience list, those values are included;
+     * otherwise an empty list is returned (no resources restriction).
      *
-     * @return non-empty-list<non-empty-string>
+     * @return list<non-empty-string>
      */
-    private function resolveAudiences(): array
+    private function resolveResourceIndicators(): array
     {
         if ($this instanceof AudienceRestrictedTokenInterface) {
-            $audiences = $this->getAudiences();
-
-            if ($audiences !== []) {
-                return $audiences;
-            }
+            return $this->getAudiences();
         }
 
-        return [$this->getClient()->getIdentifier()];
+        return [];
     }
 
     /**
