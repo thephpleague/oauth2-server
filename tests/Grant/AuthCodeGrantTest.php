@@ -3492,6 +3492,7 @@ class AuthCodeGrantTest extends TestCase
         $response = $grant->respondToAccessTokenRequest($request, new StubResponseType(), new DateInterval('PT10M'));
 
         $jwt = $response->getAccessToken()->toString();
+        self::assertNotSame('', $jwt);
         $token = (new Parser(new JoseEncoder()))->parse($jwt);
         self::assertInstanceOf(UnencryptedToken::class, $token);
         // RFC 7519 §10.1: `aud` is the intended recipient (client)
