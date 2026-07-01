@@ -25,6 +25,7 @@ use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Entities\ResourceRestrictedTokenInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\EventEmitting\EmitterAwarePolyfill;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -40,6 +41,8 @@ use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use League\OAuth2\Server\ResponseTypes\DeviceCodeResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\Uri\Exceptions\SyntaxError;
+use League\Uri\Uri;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use TypeError;
@@ -49,6 +52,7 @@ use function array_key_exists;
 use function base64_decode;
 use function bin2hex;
 use function explode;
+use function is_array;
 use function is_string;
 use function random_bytes;
 use function substr;
@@ -290,6 +294,154 @@ abstract class AbstractGrant implements GrantTypeInterface
     }
 
     /**
+     * Apply RFC 8707 resource indicators as resource restrictions on an
+     * access token that has been built by {@see buildAccessToken()} but not
+     * yet persisted. Call this before {@see persistAccessToken()} so the
+     * misconfiguration branch below fails fast and never leaves an orphaned
+     * row behind in the token repository.
+     *
+     * @param list<non-empty-string> $resources
+     *
+     * @throws LogicException When resources are supplied but the entity does
+     *                        not implement {@see ResourceRestrictedTokenInterface}.
+     *                        This is a library-level misconfiguration, not a
+     *                        protocol error, hence a programmer exception.
+     */
+    protected function applyResourceIndicators(AccessTokenEntityInterface $accessToken, array $resources): void
+    {
+        if ($resources === []) {
+            // Intentional no-op: grants that do not process resource
+            // indicators, or whose client omitted the `resource` parameter,
+            // still call this method unconditionally. Short-circuiting here
+            // lets them remain oblivious to the feature.
+            return;
+        }
+
+        if (!$accessToken instanceof ResourceRestrictedTokenInterface) {
+            throw new LogicException(
+                'The access token entity must implement '
+                . ResourceRestrictedTokenInterface::class
+                . ' to support RFC 8707 resource indicators.'
+            );
+        }
+
+        $accessToken->setResources($resources);
+    }
+
+    /**
+     * Parse and validate repeatable `resource` parameters per RFC 8707.
+     *
+     * Accepts either a single string or an array (PSR-7 normalizes repeated
+     * query/body params to arrays). Each entry must be an absolute URI without
+     * a fragment component.
+     *
+     * @param string|array<array-key, mixed>|null $raw Value as returned by
+     *                                                 {@see getRawRequestParameter()} / {@see getRawQueryStringParameter()}.
+     *
+     * @throws OAuthServerException When any entry is not a valid absolute URI.
+     *
+     * @return list<non-empty-string> The normalized list of resource indicators (empty if none provided).
+     */
+    protected function parseResourceIndicators(string|array|null $raw, ?string $redirectUri = null): array
+    {
+        if ($raw === null || $raw === '' || $raw === []) {
+            return [];
+        }
+
+        $values = is_string($raw) ? [$raw] : $raw;
+        $resources = [];
+
+        foreach ($values as $value) {
+            $resources[] = $this->validateResourceIndicator($value, $redirectUri);
+        }
+
+        return $resources;
+    }
+
+    /**
+     * Validate a single RFC 8707 `resource` entry as an absolute URI without
+     * a fragment component.
+     *
+     * No trimming is performed: leading or trailing whitespace is treated as
+     * an invalid indicator rather than silently normalized. This keeps the
+     * exact-string comparison in
+     * {@see AuthCodeGrant::resolveTokenEndpointResources()} symmetric — the
+     * value stored in the auth code payload and the value presented at the
+     * token endpoint must both survive this method unchanged.
+     *
+     * @throws OAuthServerException
+     *
+     * @return non-empty-string
+     */
+    private function validateResourceIndicator(mixed $value, ?string $redirectUri): string
+    {
+        if (!is_string($value)) {
+            throw OAuthServerException::invalidTarget(
+                'Resource indicator must be a string',
+                $redirectUri
+            );
+        }
+
+        if ($value === '') {
+            throw OAuthServerException::invalidTarget(
+                'Resource indicator must not be empty',
+                $redirectUri
+            );
+        }
+
+        if ($value !== trim($value)) {
+            throw OAuthServerException::invalidTarget(
+                'Resource indicator must not contain leading or trailing whitespace',
+                $redirectUri
+            );
+        }
+
+        try {
+            $uri = Uri::new($value);
+        } catch (SyntaxError) {
+            throw OAuthServerException::invalidTarget(
+                'Resource indicator must be a valid URI',
+                $redirectUri
+            );
+        }
+
+        $scheme = $uri->getScheme();
+        if ($scheme === null || $scheme === '') {
+            throw OAuthServerException::invalidTarget(
+                'Resource indicator must be an absolute URI',
+                $redirectUri
+            );
+        }
+
+        $fragment = $uri->getFragment();
+        if ($fragment !== null && $fragment !== '') {
+            throw OAuthServerException::invalidTarget(
+                'Resource indicator must not contain a fragment component',
+                $redirectUri
+            );
+        }
+
+        // RFC 8707 §2: the resource URI must not contain credentials; a
+        // `userinfo` component (e.g. `https://user:pass@api.example.com/`)
+        // would leak through the token response into logs and audit trails.
+        $userInfo = $uri->getUserInfo();
+        if ($userInfo !== null && $userInfo !== '') {
+            throw OAuthServerException::invalidTarget(
+                'Resource indicator must not contain a userinfo component',
+                $redirectUri
+            );
+        }
+
+        // RFC 8707 §2 says the URI "SHOULD NOT" include a query component.
+        // We deliberately allow it: some APIs version themselves through
+        // query strings (`https://api.example.com/?version=2`), and the
+        // "SHOULD NOT" strength leaves the decision to the authorization
+        // server. A future release may gate this behind a flag.
+
+        return $value;
+    }
+
+    /**
      * Parse request parameter.
      *
      * @param array<array-key, mixed> $request
@@ -329,6 +481,50 @@ abstract class AbstractGrant implements GrantTypeInterface
     protected function getRequestParameter(string $parameter, ServerRequestInterface $request, ?string $default = null): ?string
     {
         return self::parseParam($parameter, (array) $request->getParsedBody(), $default);
+    }
+
+    /**
+     * Retrieve a raw request parameter without coercion. Used for parameters
+     * that may legitimately be repeated (and thus arrive as arrays), such as
+     * the RFC 8707 `resource` parameter.
+     *
+     * @throws OAuthServerException When the value is neither null, string, nor array.
+     *
+     * @return string|array<array-key, mixed>|null
+     */
+    protected function getRawRequestParameter(string $parameter, ServerRequestInterface $request): string|array|null
+    {
+        return $this->extractRawParameterValue((array) $request->getParsedBody(), $parameter);
+    }
+
+    /**
+     * Retrieve a raw query string parameter without coercion.
+     *
+     * @throws OAuthServerException When the value is neither null, string, nor array.
+     *
+     * @return string|array<array-key, mixed>|null
+     */
+    protected function getRawQueryStringParameter(string $parameter, ServerRequestInterface $request): string|array|null
+    {
+        return $this->extractRawParameterValue($request->getQueryParams(), $parameter);
+    }
+
+    /**
+     * @param array<array-key, mixed> $source
+     *
+     * @throws OAuthServerException When the value is neither null, string, nor array.
+     *
+     * @return string|array<array-key, mixed>|null
+     */
+    private function extractRawParameterValue(array $source, string $parameter): string|array|null
+    {
+        $value = $source[$parameter] ?? null;
+
+        if ($value === null || is_string($value) || is_array($value)) {
+            return $value;
+        }
+
+        throw OAuthServerException::invalidRequest($parameter);
     }
 
     /**
@@ -420,11 +616,42 @@ abstract class AbstractGrant implements GrantTypeInterface
         string|null $userIdentifier,
         array $scopes = []
     ): AccessTokenEntityInterface {
-        $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
+        return $this->persistAccessToken(
+            $this->buildAccessToken($accessTokenTTL, $client, $userIdentifier, $scopes)
+        );
+    }
 
+    /**
+     * Build and configure an access token entity without persisting it. Grants
+     * that need to apply additional configuration (e.g. RFC 8707 resource
+     * indicators) before the token hits storage can call this method, mutate
+     * the returned entity, and then hand it to {@see persistAccessToken()}.
+     *
+     * @param ScopeEntityInterface[] $scopes
+     */
+    protected function buildAccessToken(
+        DateInterval $accessTokenTTL,
+        ClientEntityInterface $client,
+        string|null $userIdentifier,
+        array $scopes = []
+    ): AccessTokenEntityInterface {
         $accessToken = $this->accessTokenRepository->getNewToken($client, $scopes, $userIdentifier);
         $accessToken->setExpiryDateTime((new DateTimeImmutable())->add($accessTokenTTL));
         $accessToken->setPrivateKey($this->privateKey);
+
+        return $accessToken;
+    }
+
+    /**
+     * Persist a fully configured access token entity, retrying on unique
+     * identifier collisions.
+     *
+     * @throws OAuthServerException
+     * @throws UniqueTokenIdentifierConstraintViolationException
+     */
+    protected function persistAccessToken(AccessTokenEntityInterface $accessToken): AccessTokenEntityInterface
+    {
+        $maxGenerationAttempts = self::MAX_RANDOM_TOKEN_GENERATION_ATTEMPTS;
 
         while ($maxGenerationAttempts-- > 0) {
             $accessToken->setIdentifier($this->generateUniqueIdentifier());

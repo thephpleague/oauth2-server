@@ -25,15 +25,18 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestAccessTokenResourcesEvent;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
+use League\OAuth2\Server\RequestTypes\ResourceIndicatorAwareInterface;
 use League\OAuth2\Server\ResponseTypes\RedirectResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use LogicException;
 use Psr\Http\Message\ServerRequestInterface;
 use stdClass;
 
+use function array_diff;
 use function array_key_exists;
 use function array_keys;
 use function array_map;
@@ -42,6 +45,7 @@ use function hash_algos;
 use function implode;
 use function in_array;
 use function is_array;
+use function is_string;
 use function json_decode;
 use function json_encode;
 use function preg_match;
@@ -137,8 +141,35 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $this->validateCodeChallenge($authCodePayload, $codeVerifier);
         }
 
-        // Issue and persist new access token
-        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
+        // RFC 8707: parse `resource` parameters and narrow against the authorized set
+        $authorizedResources = $this->extractAuthCodeResources($authCodePayload);
+        $requestedResources = $this->parseResourceIndicators(
+            $this->getRawRequestParameter('resource', $request)
+        );
+        $resources = $this->resolveTokenEndpointResources($authorizedResources, $requestedResources);
+
+        // Build → apply resources → persist, in that order. applyResourceIndicators()
+        // throws LogicException when the access token entity does not implement
+        // ResourceRestrictedTokenInterface; running it before persistAccessToken()
+        // ensures a misconfigured consumer fails fast without leaving an orphaned
+        // row in the token repository.
+        $accessToken = $this->buildAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
+        $resourcesEvent = new RequestAccessTokenResourcesEvent(
+            RequestEvent::ACCESS_TOKEN_RESOURCES_RESOLVING,
+            $request,
+            $accessToken,
+            $resources
+        );
+        $this->getEmitter()->emit($resourcesEvent);
+
+        if ($resourcesEvent->isRequestDenied()) {
+            throw OAuthServerException::accessDenied($resourcesEvent->getDenyReason());
+        }
+
+        $resources = $resourcesEvent->getResources();
+        $this->applyResourceIndicators($accessToken, $resources);
+        $accessToken = $this->persistAccessToken($accessToken);
+
         $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
         $responseType->setAccessToken($accessToken);
 
@@ -154,6 +185,99 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
         $this->authCodeRepository->revokeAuthCode($authCodePayload->auth_code_id);
 
         return $responseType;
+    }
+
+    /**
+     * Extract the RFC 8707 resource indicators persisted in the auth code
+     * payload. Older payloads that predate the RFC 8707 implementation will
+     * not carry this field, so a missing property is treated as "no resource
+     * restriction was asserted during authorization". Anything else (non-list
+     * data, non-string entries, empty entries) is a tampered or corrupted
+     * payload and must abort the exchange — silently dropping malformed
+     * entries would strip a resource restriction that the authorization
+     * step explicitly asserted.
+     *
+     * @throws OAuthServerException
+     *
+     * @return list<non-empty-string>
+     */
+    private function extractAuthCodeResources(stdClass $authCodePayload): array
+    {
+        if (!property_exists($authCodePayload, 'resources')) {
+            return [];
+        }
+
+        $resources = $authCodePayload->resources;
+
+        if (!is_array($resources)) {
+            throw OAuthServerException::invalidGrant('Authorization code malformed');
+        }
+
+        $normalized = [];
+
+        foreach ($resources as $resource) {
+            if (!is_string($resource) || $resource === '') {
+                throw OAuthServerException::invalidGrant('Authorization code malformed');
+            }
+
+            $normalized[] = $resource;
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Apply RFC 8707 §2.2 narrowing rules for the token endpoint.
+     *
+     * If the client supplied `resource` parameters at the token endpoint, each
+     * must be a subset of the set authorized by the auth code. If the client
+     * omits `resource`, we carry the full authorized set through to the issued
+     * access token.
+     *
+     * Policy when the auth code carries no authorized resources but the token
+     * request supplies one: rejected with `invalid_target`. RFC 8707 §2.2
+     * permits servers to fall back to "all resources the client is authorized
+     * to access", which could be interpreted as allowing first-time resource
+     * indication at the token endpoint. This library takes the conservative
+     * stance of requiring the resource set to be established at `/authorize`,
+     * so resource restrictions cannot be tightened *or* introduced under a
+     * previously unrestricted authorization code.
+     *
+     * URI comparison follows RFC 3986 §6.2.1 "Simple String Comparison" — the
+     * byte sequences must match exactly. Clients are expected to send the
+     * same canonical form at `/authorize` and `/token`; this library does
+     * not perform scheme/host lower-casing or default-port normalization, so
+     * `https://api.example.com/` and `https://api.example.com` are considered
+     * distinct.
+     *
+     * @param list<non-empty-string> $authorized
+     * @param list<non-empty-string> $requested
+     *
+     * @throws OAuthServerException
+     *
+     * @return list<non-empty-string>
+     */
+    private function resolveTokenEndpointResources(array $authorized, array $requested): array
+    {
+        if ($requested === []) {
+            return $authorized;
+        }
+
+        if ($authorized === []) {
+            // See the class-level policy note above: first-time resource
+            // indication at the token endpoint is rejected on purpose.
+            throw OAuthServerException::invalidTarget(
+                'Requested resource was not authorized by the authorization code'
+            );
+        }
+
+        if (array_diff($requested, $authorized) !== []) {
+            throw OAuthServerException::invalidTarget(
+                'Requested resource exceeds the set authorized by the authorization code'
+            );
+        }
+
+        return $requested;
     }
 
     private function validateCodeChallenge(object $authCodePayload, ?string $codeVerifier): void
@@ -281,18 +405,27 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
 
         $stateParameter = $this->getQueryStringParameter('state', $request);
 
+        $finalRedirectUri = $this->makeRedirectUri(
+            $redirectUri ?? $this->getClientRedirectUri($client),
+            $stateParameter !== null ? ['state' => $stateParameter] : []
+        );
+
         $scopes = $this->validateScopes(
             $this->getQueryStringParameter('scope', $request, $this->defaultScope),
-            $this->makeRedirectUri(
-                $redirectUri ?? $this->getClientRedirectUri($client),
-                $stateParameter !== null ? ['state' => $stateParameter] : []
-            )
+            $finalRedirectUri
+        );
+
+        $resources = $this->parseResourceIndicators(
+            $this->getRawQueryStringParameter('resource', $request),
+            $finalRedirectUri
         );
 
         $authorizationRequest = $this->createAuthorizationRequest();
         $authorizationRequest->setGrantTypeId($this->getIdentifier());
         $authorizationRequest->setClient($client);
         $authorizationRequest->setRedirectUri($redirectUri);
+
+        $this->applyResourcesToAuthorizationRequest($authorizationRequest, $resources);
 
         if ($stateParameter !== null) {
             $authorizationRequest->setState($stateParameter);
@@ -373,6 +506,9 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
                 'expire_time'           => (new DateTimeImmutable())->add($this->authCodeTTL)->getTimestamp(),
                 'code_challenge'        => $authorizationRequest->getCodeChallenge(),
                 'code_challenge_method' => $authorizationRequest->getCodeChallengeMethod(),
+                'resources'             => $authorizationRequest instanceof ResourceIndicatorAwareInterface
+                    ? $authorizationRequest->getResources()
+                    : [],
             ];
 
             $jsonPayload = json_encode($payload);

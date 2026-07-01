@@ -17,6 +17,7 @@ namespace League\OAuth2\Server\Grant;
 use DateInterval;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestAccessTokenResourcesEvent;
 use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -47,8 +48,30 @@ class ClientCredentialsGrant extends AbstractGrant
         // Finalize the requested scopes
         $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client);
 
-        // Issue and persist access token
-        $accessToken = $this->issueAccessToken($accessTokenTTL, $client, null, $finalizedScopes);
+        //RFC 8707: parse resource indicators
+        $resources = $this->parseResourceIndicators($this->getRawRequestParameter('resource', $request));
+
+        // Build → apply resources → persist, in that order. applyResourceIndicators()
+        // throws LogicException when the access token entity does not implement
+        // ResourceRestrictedTokenInterface; running it before persistAccessToken()
+        // ensures a misconfigured consumer fails fast without leaving an orphaned
+        // row in the token repository.
+        $accessToken = $this->buildAccessToken($accessTokenTTL, $client, null, $finalizedScopes);
+        $resourcesEvent = new RequestAccessTokenResourcesEvent(
+            RequestEvent::ACCESS_TOKEN_RESOURCES_RESOLVING,
+            $request,
+            $accessToken,
+            $resources
+        );
+        $this->getEmitter()->emit($resourcesEvent);
+
+        if ($resourcesEvent->isRequestDenied()) {
+            throw OAuthServerException::accessDenied($resourcesEvent->getDenyReason());
+        }
+
+        $resources = $resourcesEvent->getResources();
+        $this->applyResourceIndicators($accessToken, $resources);
+        $accessToken = $this->persistAccessToken($accessToken);
 
         // Send event to emitter
         $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));

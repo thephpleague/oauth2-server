@@ -19,10 +19,17 @@ use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ResourceRestrictedTokenInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use RuntimeException;
 use SensitiveParameter;
 
+/**
+ * Default implementation of the access-token entity contract.
+ *
+ * This trait is aware of {@see ResourceRestrictedTokenInterface} and
+ * degrades gracefully if the composing class does not implement it.
+ */
 trait AccessTokenTrait
 {
     private CryptKeyInterface $privateKey;
@@ -64,15 +71,43 @@ trait AccessTokenTrait
     {
         $this->initJwtConfiguration();
 
-        return $this->jwtConfiguration->builder()
+        $builder = $this->jwtConfiguration->builder()
             ->permittedFor($this->getClient()->getIdentifier())
             ->identifiedBy($this->getIdentifier())
             ->issuedAt(new DateTimeImmutable())
             ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt($this->getExpiryDateTime())
             ->relatedTo($this->getSubjectIdentifier())
-            ->withClaim('scopes', $this->getScopes())
-            ->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
+            ->withClaim('scopes', $this->getScopes());
+
+        // RFC 8707: Add resource indicators as a separate custom claim.
+        // The `aud` claim strictly represents the JWT's intended recipient
+        // (RFC 7519 §10.1), which is the client. Resources are stored
+        // separately in the `resource` custom claim.
+        $resources = $this->resolveResourceIndicators();
+        if ($resources !== []) {
+            $builder = $builder->withClaim('resource', $resources);
+        }
+
+        return $builder->getToken($this->jwtConfiguration->signer(), $this->jwtConfiguration->signingKey());
+    }
+
+    /**
+     * Resolve RFC 8707 resource indicators for the JWT `resource` custom claim.
+     * When the entity opts in via
+     * {@see \League\OAuth2\Server\Entities\ResourceRestrictedTokenInterface}
+     * and supplies a non-empty resource list, those values are included;
+     * otherwise an empty list is returned (no resources restriction).
+     *
+     * @return list<non-empty-string>
+     */
+    private function resolveResourceIndicators(): array
+    {
+        if ($this instanceof ResourceRestrictedTokenInterface) {
+            return $this->getResources();
+        }
+
+        return [];
     }
 
     /**

@@ -7,14 +7,17 @@ namespace LeagueTests\Grant;
 use DateInterval;
 use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestAccessTokenResourcesEvent;
 use League\OAuth2\Server\RequestEvent;
 use LeagueTests\Stubs\AccessTokenEntity;
 use LeagueTests\Stubs\ClientEntity;
+use LeagueTests\Stubs\ResourceRestrictedAccessTokenEntity;
 use LeagueTests\Stubs\ScopeEntity;
 use LeagueTests\Stubs\StubResponseType;
 use PHPUnit\Framework\TestCase;
@@ -81,5 +84,94 @@ class ClientCredentialsGrantTest extends TestCase
         if (!$accessTokenEventEmitted) {
             self::fail('Access token issued event is not emitted.');
         }
+    }
+
+    public function testRespondToRequestCanCustomizeResourcesThroughEvent(): void
+    {
+        $client = new ClientEntity();
+        $client->setConfidential();
+        $client->setIdentifier('client-id');
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new ResourceRestrictedAccessTokenEntity());
+        $accessTokenRepositoryMock->method('persistNewAccessToken')->willReturnSelf();
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $grant = new ClientCredentialsGrant();
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::ACCESS_TOKEN_RESOURCES_RESOLVING,
+            static function (RequestAccessTokenResourcesEvent $event): void {
+                $event->setResources(['https://event.example.com/']);
+            }
+        );
+
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'resource'      => ['https://api.example.com/'],
+        ]);
+
+        /** @var StubResponseType $response */
+        $response = $grant->respondToAccessTokenRequest($serverRequest, new StubResponseType(), new DateInterval('PT5M'));
+
+        $issuedToken = $response->getAccessToken();
+        self::assertInstanceOf(ResourceRestrictedAccessTokenEntity::class, $issuedToken);
+        self::assertSame(['https://event.example.com/'], $issuedToken->getResources());
+    }
+
+    public function testRespondToRequestCanBeDeniedThroughResourceEvent(): void
+    {
+        $client = new ClientEntity();
+        $client->setConfidential();
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $accessTokenRepositoryMock->method('getNewToken')->willReturn(new ResourceRestrictedAccessTokenEntity());
+        $accessTokenRepositoryMock->expects($this->never())->method('persistNewAccessToken');
+
+        $scopeRepositoryMock = $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock();
+        $scopeRepositoryMock->method('getScopeEntityByIdentifier')->willReturn(new ScopeEntity());
+        $scopeRepositoryMock->method('finalizeScopes')->willReturnArgument(0);
+
+        $grant = new ClientCredentialsGrant();
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setScopeRepository($scopeRepositoryMock);
+        $grant->setDefaultScope(self::DEFAULT_SCOPE);
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        $grant->getListenerRegistry()->subscribeTo(
+            RequestEvent::ACCESS_TOKEN_RESOURCES_RESOLVING,
+            static function (RequestAccessTokenResourcesEvent $event): void {
+                $event->denyRequest('Denied by resource policy');
+            }
+        );
+
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'resource'      => ['https://api.example.com/'],
+        ]);
+
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(9);
+
+        $grant->respondToAccessTokenRequest($serverRequest, new StubResponseType(), new DateInterval('PT5M'));
     }
 }
