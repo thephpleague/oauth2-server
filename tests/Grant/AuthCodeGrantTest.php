@@ -38,6 +38,7 @@ use LeagueTests\Stubs\StubResponseType;
 use LeagueTests\Stubs\UserEntity;
 use LogicException;
 use PHPUnit\Framework\TestCase;
+
 use function json_decode;
 use function json_encode;
 use function parse_str;
@@ -45,6 +46,7 @@ use function parse_url;
 use function str_repeat;
 use function time;
 use function uniqid;
+
 use const PHP_URL_QUERY;
 
 class AuthCodeGrantTest extends TestCase
