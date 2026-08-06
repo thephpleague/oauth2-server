@@ -127,6 +127,10 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
 
         $claims = $token->claims();
 
+        if (!$claims->has('jti')) {
+            throw OAuthServerException::accessDenied('Access token is missing the "jti" claim');
+        }
+
         // Check if token has been revoked
         if ($this->accessTokenRepository->isAccessTokenRevoked($claims->get('jti'))) {
             throw OAuthServerException::accessDenied('Access token has been revoked');
