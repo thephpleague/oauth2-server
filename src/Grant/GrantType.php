@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * OAuth 2.0 grant types enum.
  *
  * @author      Alex Bilbie <hello@alexbilbie.com>

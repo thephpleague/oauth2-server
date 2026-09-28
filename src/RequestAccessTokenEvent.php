@@ -17,7 +17,6 @@ use League\OAuth2\Server\Grant\GrantType;
 use Psr\Http\Message\ServerRequestInterface;
 use SensitiveParameter;
 
-
 class RequestAccessTokenEvent extends RequestEvent
 {
     public function __construct(
