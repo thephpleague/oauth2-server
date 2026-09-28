@@ -9,6 +9,7 @@ use Laminas\Diactoros\ServerRequest;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Grant\GrantType;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -81,6 +82,7 @@ class PasswordGrantTest extends TestCase
             RequestEvent::ACCESS_TOKEN_ISSUED,
             function ($event) use (&$accessTokenEventEmitted): void {
                 self::assertInstanceOf(RequestAccessTokenEvent::class, $event);
+                self::assertEquals(GrantType::Password, $event->getGrantType());
 
                 $accessTokenEventEmitted = true;
             }

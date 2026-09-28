@@ -51,7 +51,7 @@ class ClientCredentialsGrant extends AbstractGrant
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, null, $finalizedScopes);
 
         // Send event to emitter
-        $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
+        $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, GrantType::ClientCredentials, $accessToken));
 
         // Inject access token into response type
         $responseType->setAccessToken($accessToken);
