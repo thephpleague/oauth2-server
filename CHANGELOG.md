@@ -6,10 +6,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+
+- Added the grant type that issues a refresh token to the access token issue event (PR #1516)
+
 ### Changed
-- Changed additional attribute added from `oauth_user_id` to the more appropriately named `oauth_owner_id` which can encompass either the user ID or client ID (PR #XXX) 
+
+- Changed additional attribute added from `oauth_user_id` to the more appropriately named `oauth_owner_id` which can encompass either the user ID or client ID (PR #XXX)
 
 ### Fixed
+
 - If the same access token is requested twice, the issued at time will now be identical (PR #XXX)
 
 ## [9.4.1] - released 2026-06-25
