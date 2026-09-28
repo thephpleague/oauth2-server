@@ -605,7 +605,7 @@ class RefreshTokenGrantTest extends TestCase
         $scopeRepositoryMock
             ->expects(self::once())
             ->method('finalizeScopes')
-            ->with($scopes, $grant->getIdentifier(), $client)
+            ->with($scopes, $grant->getIdentifier(), $client, '123', null)
             ->willReturn($finalizedScopes);
 
         $accessToken = new AccessTokenEntity();

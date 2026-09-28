@@ -27,6 +27,7 @@ use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use SensitiveParameter;
 
 class AuthorizationServer implements EmitterAwareInterface
 {
@@ -61,7 +62,9 @@ class AuthorizationServer implements EmitterAwareInterface
         private ClientRepositoryInterface $clientRepository,
         private AccessTokenRepositoryInterface $accessTokenRepository,
         private ScopeRepositoryInterface $scopeRepository,
+        #[SensitiveParameter]
         CryptKeyInterface|string $privateKey,
+        #[SensitiveParameter]
         Key|string $encryptionKey,
         ResponseTypeInterface|null $responseType = null
     ) {
@@ -110,6 +113,10 @@ class AuthorizationServer implements EmitterAwareInterface
      */
     public function validateAuthorizationRequest(ServerRequestInterface $request): AuthorizationRequestInterface
     {
+        if (!isset($request->getQueryParams()['response_type'])) {
+            throw OAuthServerException::invalidRequest('response_type');
+        }
+
         foreach ($this->enabledGrantTypes as $grantType) {
             if ($grantType->canRespondToAuthorizationRequest($request)) {
                 return $grantType->validateAuthorizationRequest($request);

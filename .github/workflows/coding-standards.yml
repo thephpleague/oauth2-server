@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - 8.3
+          - 8.5
         operating-system:
           - ubuntu-latest
 

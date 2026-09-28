@@ -63,7 +63,12 @@ class AuthorizationServerTest extends TestCase
 
         $server->enableGrantType(new GrantType(), new DateInterval('PT1M'));
 
-        $authRequest = $server->validateAuthorizationRequest($this->createMock(ServerRequestInterface::class));
+        $request = (new ServerRequest())->withQueryParams([
+            'response_type' => 'foo',
+        ]);
+
+        $authRequest = $server->validateAuthorizationRequest($request);
+
         self::assertSame(GrantType::class, $authRequest->getGrantTypeId());
     }
 
@@ -140,7 +145,6 @@ class AuthorizationServerTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($server);
         $method = $abstractGrantReflection->getMethod('getResponseType');
-        $method->setAccessible(true);
 
         self::assertInstanceOf(BearerTokenResponse::class, $method->invoke($server));
     }
@@ -161,17 +165,14 @@ class AuthorizationServerTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($server);
         $method = $abstractGrantReflection->getMethod('getResponseType');
-        $method->setAccessible(true);
 
         $responseType = $method->invoke($server);
 
         $responseTypeReflection = new ReflectionClass($responseType);
 
         $privateKeyProperty = $responseTypeReflection->getProperty('privateKey');
-        $privateKeyProperty->setAccessible(true);
 
         $encryptionKeyProperty = $responseTypeReflection->getProperty('encryptionKey');
-        $encryptionKeyProperty->setAccessible(true);
 
         // generated instances should have keys setup
         self::assertSame($privateKey, $privateKeyProperty->getValue($responseType)->getKeyPath());
@@ -211,7 +212,6 @@ class AuthorizationServerTest extends TestCase
 
         $abstractGrantReflection = new ReflectionClass($server);
         $method = $abstractGrantReflection->getMethod('getResponseType');
-        $method->setAccessible(true);
 
         $responseTypeA = $method->invoke($server);
         $responseTypeB = $method->invoke($server);
@@ -336,5 +336,23 @@ class AuthorizationServerTest extends TestCase
         $this->expectExceptionCode(2);
 
         $server->validateAuthorizationRequest($request);
+    }
+
+    public function testValidateAuthorizationRequestWithoutResponseType(): void
+    {
+        $server = new AuthorizationServer(
+            $this->getMockBuilder(ClientRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(ScopeRepositoryInterface::class)->getMock(),
+            'file://' . __DIR__ . '/Stubs/private.key',
+            'file://' . __DIR__ . '/Stubs/public.key'
+        );
+
+        $server->enableGrantType(new GrantType(), new DateInterval('PT1M'));
+
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(3);
+
+        $server->validateAuthorizationRequest($this->createMock(ServerRequestInterface::class));
     }
 }

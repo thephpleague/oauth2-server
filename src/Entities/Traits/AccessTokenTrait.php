@@ -21,6 +21,7 @@ use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use RuntimeException;
+use SensitiveParameter;
 
 trait AccessTokenTrait
 {
@@ -31,8 +32,10 @@ trait AccessTokenTrait
     /**
      * Set the private key used to encrypt this access token.
      */
-    public function setPrivateKey(CryptKeyInterface $privateKey): void
-    {
+    public function setPrivateKey(
+        #[SensitiveParameter]
+        CryptKeyInterface $privateKey
+    ): void {
         $this->privateKey = $privateKey;
     }
 
