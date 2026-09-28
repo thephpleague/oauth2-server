@@ -12,6 +12,7 @@ use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
+use League\OAuth2\Server\Grant\GrantType;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -647,6 +648,7 @@ class AuthCodeGrantTest extends TestCase
             RequestEvent::ACCESS_TOKEN_ISSUED,
             function ($event) use (&$accessTokenEventEmitted): void {
                 self::assertInstanceOf(RequestAccessTokenEvent::class, $event);
+                self::assertEquals(GrantType::AuthorizationCode, $event->getGrantType());
 
                 $accessTokenEventEmitted = true;
             }
@@ -1775,11 +1777,11 @@ class AuthCodeGrantTest extends TestCase
             [],
             [],
             [
-            'grant_type'   => 'authorization_code',
-            'client_id'    => 'foo',
-            'client_secret' => 'bar',
-            'redirect_uri' => self::REDIRECT_URI,
-            'code'         => 'badCode',
+                'grant_type'   => 'authorization_code',
+                'client_id'    => 'foo',
+                'client_secret' => 'bar',
+                'redirect_uri' => self::REDIRECT_URI,
+                'code'         => 'badCode',
             ]
         );
 

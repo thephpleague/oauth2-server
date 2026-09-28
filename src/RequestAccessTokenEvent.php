@@ -13,18 +13,26 @@ declare(strict_types=1);
 namespace League\OAuth2\Server;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Grant\GrantType;
 use Psr\Http\Message\ServerRequestInterface;
 use SensitiveParameter;
+
 
 class RequestAccessTokenEvent extends RequestEvent
 {
     public function __construct(
         string $name,
         ServerRequestInterface $request,
+        private GrantType $grantType,
         #[SensitiveParameter]
         private AccessTokenEntityInterface $accessToken
     ) {
         parent::__construct($name, $request);
+    }
+
+    public function getGrantType(): GrantType
+    {
+        return $this->grantType;
     }
 
     /**

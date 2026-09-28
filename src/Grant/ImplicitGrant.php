@@ -30,9 +30,7 @@ use function time;
 
 class ImplicitGrant extends AbstractAuthorizeGrant
 {
-    public function __construct(private DateInterval $accessTokenTTL, private string $queryDelimiter = '#')
-    {
-    }
+    public function __construct(private DateInterval $accessTokenTTL, private string $queryDelimiter = '#') {}
 
     /**
      * @throws LogicException
@@ -152,7 +150,7 @@ class ImplicitGrant extends AbstractAuthorizeGrant
         }
 
         $finalRedirectUri = $authorizationRequest->getRedirectUri()
-                          ?? $this->getClientRedirectUri($authorizationRequest->getClient());
+            ?? $this->getClientRedirectUri($authorizationRequest->getClient());
 
         // The user approved the client, redirect them back with an access token
         if ($authorizationRequest->isAuthorizationApproved() === true) {

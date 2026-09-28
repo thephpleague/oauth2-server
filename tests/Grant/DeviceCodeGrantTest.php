@@ -13,6 +13,7 @@ use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\DeviceCodeGrant;
+use League\OAuth2\Server\Grant\GrantType;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
@@ -304,7 +305,7 @@ class DeviceCodeGrantTest extends TestCase
         $server->setDefaultScope(self::DEFAULT_SCOPE);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
-           'client_id'     => 'foo',
+            'client_id'     => 'foo',
         ]);
 
         $deviceCodeGrant = new DeviceCodeGrant(
@@ -391,6 +392,7 @@ class DeviceCodeGrantTest extends TestCase
             RequestEvent::ACCESS_TOKEN_ISSUED,
             function ($event) use (&$accessTokenEventEmitted): void {
                 self::assertInstanceOf(RequestAccessTokenEvent::class, $event);
+                self::assertEquals(GrantType::DeviceCode, $event->getGrantType());
 
                 $accessTokenEventEmitted = true;
             }
@@ -775,8 +777,8 @@ class DeviceCodeGrantTest extends TestCase
         $grant->completeDeviceAuthorizationRequest($deviceCode->getIdentifier(), '1', false);
 
         $serverRequest = (new ServerRequest())->withParsedBody([
-                'client_id'     => 'foo',
-                'device_code'   => $deviceCode->getIdentifier(),
+            'client_id'     => 'foo',
+            'device_code'   => $deviceCode->getIdentifier(),
         ]);
 
         $responseType = new StubResponseType();
