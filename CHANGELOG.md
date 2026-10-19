@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - If the same access token is requested twice, the issued at time will now be identical (PR #XXX)
+- The Content-Type header now has the correct case when retrieving all http headers set with error responses. Previously, the word "type" was all lower-case (PR #XXXX)
 
 ## [9.4.1] - released 2026-06-25
 

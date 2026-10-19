@@ -305,7 +305,7 @@ class OAuthServerException extends Exception
     public function getHttpHeaders(): array
     {
         $headers = [
-            'Content-type' => 'application/json',
+            'Content-Type' => 'application/json',
         ];
 
         // Add "WWW-Authenticate" header
