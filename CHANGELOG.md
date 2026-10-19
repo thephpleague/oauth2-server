@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Deprecated
+
+- Deprecate `includeVerificationUriComplete` related code in `DeviceCodeTrait` (PR #1517)
+
 ## [9.4.1] - released 2026-06-25
 
 ### Removed
