@@ -16,7 +16,7 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 
-class AuthorizationRequest implements AuthorizationRequestInterface
+class AuthorizationRequest implements AuthorizationRequestInterface, ResourceIndicatorAwareInterface
 {
     /**
      * The grant type identifier
@@ -64,6 +64,13 @@ class AuthorizationRequest implements AuthorizationRequestInterface
      * The code challenge method (if provided)
      */
     protected string $codeChallengeMethod;
+
+    /**
+     * The requested resource indicators (RFC 8707). Each value is an absolute URI.
+     *
+     * @var list<non-empty-string>
+     */
+    protected array $resources = [];
 
     public function getGrantTypeId(): string
     {
@@ -159,5 +166,21 @@ class AuthorizationRequest implements AuthorizationRequestInterface
     public function setCodeChallengeMethod(string $codeChallengeMethod): void
     {
         $this->codeChallengeMethod = $codeChallengeMethod;
+    }
+
+    /**
+     * @return list<non-empty-string>
+     */
+    public function getResources(): array
+    {
+        return $this->resources;
+    }
+
+    /**
+     * @param list<non-empty-string> $resources
+     */
+    public function setResources(array $resources): void
+    {
+        $this->resources = $resources;
     }
 }

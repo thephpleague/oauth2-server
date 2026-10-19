@@ -149,4 +149,25 @@ class OAuthServerExceptionTest extends TestCase
 
         self::assertSame('invalid_grant', $exception->getErrorType());
     }
+
+    public function testInvalidTargetExposesRfc8707ErrorType(): void
+    {
+        $exception = OAuthServerException::invalidTarget('The requested resource is not allowed');
+
+        self::assertSame('invalid_target', $exception->getErrorType());
+        self::assertSame(400, $exception->getHttpStatusCode());
+        self::assertSame('The requested resource is not allowed', $exception->getPayload()['hint']);
+        self::assertNull($exception->getRedirectUri());
+    }
+
+    public function testInvalidTargetCanCarryRedirectUri(): void
+    {
+        $exception = OAuthServerException::invalidTarget(
+            'Invalid resource indicator',
+            'https://example.com/cb'
+        );
+
+        self::assertTrue($exception->hasRedirect());
+        self::assertSame('https://example.com/cb', $exception->getRedirectUri());
+    }
 }
