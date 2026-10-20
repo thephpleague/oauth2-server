@@ -19,7 +19,6 @@ use League\OAuth2\Server\Entities\ScopeEntityInterface;
 trait DeviceCodeTrait
 {
     private bool $userApproved = false;
-    private bool $includeVerificationUriComplete = false;
     private int $interval = 5;
     private string $userCode;
     private string $verificationUri;
@@ -92,15 +91,5 @@ trait DeviceCodeTrait
     public function setUserApproved(bool $userApproved): void
     {
         $this->userApproved = $userApproved;
-    }
-
-    public function getVerificationUriCompleteInAuthResponse(): bool
-    {
-        return $this->includeVerificationUriComplete;
-    }
-
-    public function setVerificationUriCompleteInAuthResponse(bool $includeVerificationUriComplete): void
-    {
-        $this->includeVerificationUriComplete = $includeVerificationUriComplete;
     }
 }
