@@ -31,6 +31,8 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, sodium, zip
           coverage: pcov
+        env:
+          update: true # Forces latest version of PHP on Windows builds
 
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
