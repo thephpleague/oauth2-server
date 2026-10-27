@@ -22,7 +22,7 @@ interface TokenHandlerInterface extends EmitterAwareInterface
 
     public function setAccessTokenRepository(AccessTokenRepositoryInterface $accessTokenRepository): void;
 
-    public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $accessTokenRepository): void;
+    public function setRefreshTokenRepository(RefreshTokenRepositoryInterface $refreshTokenRepository): void;
 
     public function setPublicKey(CryptKeyInterface $publicKey): void;
 
