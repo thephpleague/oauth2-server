@@ -105,5 +105,5 @@ curl -X "POST" "http://localhost:4444/token_introspection.php/introspect_token" 
 	--data-urlencode "client_id=myawesomeapp" \
 	--data-urlencode "client_secret=abc123" \
 	--data-urlencode "token_type_hint=access_token" \
-	--data-urlencode "refresh_token={{TOKEN}}"
+	--data-urlencode "token={{TOKEN}}"
 ```
