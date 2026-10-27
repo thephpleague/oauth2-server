@@ -6,6 +6,7 @@ namespace LeagueTests\Handlers;
 
 use Closure;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Laminas\Diactoros\ServerRequest;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Configuration;
@@ -174,6 +175,7 @@ class AbstractTokenHandlerTest extends TestCase
         $client->setIdentifier('client2');
 
         $result = (fn () => $this->validateToken($request, $client))->call($handler);
+        self::assertNotNull($result);
         $result['data']['exp'] = $result['data']['exp']->getTimestamp();
 
         self::assertSame(['type' => 'access_token', 'data' => [

@@ -17,7 +17,7 @@ class IntrospectionResponse implements IntrospectionResponseTypeInterface
     private ?string $tokenType = null;
 
     /**
-     * @var array<non-empty-string, mixed>
+     * @var array<non-empty-string, mixed>|null
      */
     private ?array $tokenData = null;
 
