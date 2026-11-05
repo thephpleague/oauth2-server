@@ -137,6 +137,10 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $this->validateCodeChallenge($authCodePayload, $codeVerifier);
         }
 
+        // Revoke used auth code BEFORE issuing tokens to prevent race condition
+        // (https://github.com/thephpleague/oauth2-server/issues/1306)
+        $this->authCodeRepository->revokeAuthCode($authCodePayload->auth_code_id);
+
         // Issue and persist new access token
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $authCodePayload->user_id, $scopes);
         $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
@@ -149,9 +153,6 @@ class AuthCodeGrant extends AbstractAuthorizeGrant
             $this->getEmitter()->emit(new RequestRefreshTokenEvent(RequestEvent::REFRESH_TOKEN_ISSUED, $request, $refreshToken));
             $responseType->setRefreshToken($refreshToken);
         }
-
-        // Revoke used auth code
-        $this->authCodeRepository->revokeAuthCode($authCodePayload->auth_code_id);
 
         return $responseType;
     }
