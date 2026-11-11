@@ -133,6 +133,18 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
         }
 
         // Return the request with additional attributes
+        $request = $this->addClaimsToRequest($request, $token);
+
+        return $request;
+    }
+
+    /**
+     * Return a new ServerRequestInterface annotated with OAuth information.
+     */
+    protected function addClaimsToRequest(ServerRequestInterface $request, UnencryptedToken $token): ServerRequestInterface
+    {
+        $claims = $token->claims();
+
         return $request
             ->withAttribute('oauth_access_token_id', $claims->get('jti'))
             ->withAttribute('oauth_client_id', $claims->get('aud')[0])
