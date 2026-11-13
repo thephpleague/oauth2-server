@@ -189,6 +189,64 @@ class DeviceCodeGrantTest extends TestCase
         $grant->respondToDeviceAuthorizationRequest($request);
     }
 
+    public function testValidateDeviceAuthorizationRequestMissingClientSecret(): void
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $client->setConfidential();
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+
+        $grant = new DeviceCodeGrant(
+            $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M'),
+            'http://foo/bar'
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+
+        $request = (new ServerRequest())->withParsedBody([
+            'client_id' => 'foo',
+            'scope' => 'basic',
+        ]);
+
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(3);
+
+        $grant->respondToDeviceAuthorizationRequest($request);
+    }
+
+    public function testValidateDeviceAuthorizationRequestInvalidClientSecret(): void
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $client->setConfidential();
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(false);
+
+        $grant = new DeviceCodeGrant(
+            $this->getMockBuilder(DeviceCodeRepositoryInterface::class)->getMock(),
+            $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock(),
+            new DateInterval('PT10M'),
+            'http://foo/bar'
+        );
+        $grant->setClientRepository($clientRepositoryMock);
+
+        $request = (new ServerRequest())->withParsedBody([
+            'client_id' => 'foo',
+            'client_secret' => 'bar',
+            'scope' => 'basic',
+        ]);
+
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(4);
+
+        $grant->respondToDeviceAuthorizationRequest($request);
+    }
+
     public function testValidateDeviceAuthorizationRequestEmptyScope(): void
     {
         $client = new ClientEntity();
@@ -279,6 +337,7 @@ class DeviceCodeGrantTest extends TestCase
 
         $clientRepository = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
         $clientRepository->method('getClientEntity')->willReturn($client);
+        $clientRepository->method('validateClient')->willReturn(true);
 
         $scopeEntity = new ScopeEntity();
         $scopeEntity->setIdentifier('basic');
@@ -305,6 +364,7 @@ class DeviceCodeGrantTest extends TestCase
 
         $serverRequest = (new ServerRequest())->withParsedBody([
            'client_id'     => 'foo',
+           'client_secret' => 'bar',
         ]);
 
         $deviceCodeGrant = new DeviceCodeGrant(

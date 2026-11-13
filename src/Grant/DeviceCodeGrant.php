@@ -76,17 +76,7 @@ class DeviceCodeGrant extends AbstractGrant
      */
     public function respondToDeviceAuthorizationRequest(ServerRequestInterface $request): DeviceCodeResponse
     {
-        $clientId = $this->getRequestParameter(
-            'client_id',
-            $request,
-            $this->getServerParameter('PHP_AUTH_USER', $request)
-        );
-
-        if ($clientId === null) {
-            throw OAuthServerException::invalidRequest('client_id');
-        }
-
-        $client = $this->getClientEntityOrFail($clientId, $request);
+        $client = $this->validateClient($request);
 
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
 
