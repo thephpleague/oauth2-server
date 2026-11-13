@@ -24,8 +24,10 @@ use League\OAuth2\Server\RequestRefreshTokenEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function array_key_exists;
 use function implode;
 use function in_array;
+use function is_array;
 use function json_decode;
 use function time;
 
@@ -116,6 +118,15 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         $refreshTokenData = json_decode($refreshToken, true);
+
+        if (
+            !is_array($refreshTokenData)
+            || !isset($refreshTokenData['client_id'], $refreshTokenData['refresh_token_id'], $refreshTokenData['access_token_id'], $refreshTokenData['scopes'], $refreshTokenData['expire_time'])
+            || !array_key_exists('user_id', $refreshTokenData)
+        ) {
+            throw OAuthServerException::invalidRefreshToken('Refresh token malformed');
+        }
+
         if ($refreshTokenData['client_id'] !== $clientId) {
             $this->getEmitter()->emit(new RequestEvent(RequestEvent::REFRESH_TOKEN_CLIENT_FAILED, $request));
             throw OAuthServerException::invalidRefreshToken('Token is not linked to client');

@@ -511,6 +511,58 @@ class RefreshTokenGrantTest extends TestCase
         $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
     }
 
+    public function testRespondToRequestMalformedToken(): void
+    {
+        $client = new ClientEntity();
+        $client->setIdentifier('foo');
+        $client->setRedirectUri('http://foo/bar');
+
+        $clientRepositoryMock = $this->getMockBuilder(ClientRepositoryInterface::class)->getMock();
+        $clientRepositoryMock->method('getClientEntity')->willReturn($client);
+        $clientRepositoryMock->method('validateClient')->willReturn(true);
+
+        $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock = $this->getMockBuilder(RefreshTokenRepositoryInterface::class)->getMock();
+        $refreshTokenRepositoryMock->method('isRefreshTokenRevoked')->willReturn(false);
+
+        $grant = new RefreshTokenGrant($refreshTokenRepositoryMock);
+        $grant->setClientRepository($clientRepositoryMock);
+        $grant->setAccessTokenRepository($accessTokenRepositoryMock);
+        $grant->setEncryptionKey($this->cryptStub->getKey());
+        $grant->setPrivateKey(new CryptKey('file://' . __DIR__ . '/../Stubs/private.key'));
+
+        // an authorization code is encrypted with the same key, so it decrypts but has no refresh_token_id
+        $authCode = json_encode(
+            [
+                'client_id'    => 'foo',
+                'redirect_uri' => null,
+                'auth_code_id' => 'zyxwvu',
+                'scopes'       => ['foo'],
+                'user_id'      => 123,
+                'expire_time'  => time() + 3600,
+            ]
+        );
+
+        if ($authCode === false) {
+            self::fail('json_encode failed');
+        }
+
+        $encryptedAuthCode = $this->cryptStub->doEncrypt($authCode);
+
+        $serverRequest = (new ServerRequest())->withParsedBody([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'refresh_token' => $encryptedAuthCode,
+        ]);
+
+        $responseType = new StubResponseType();
+
+        $this->expectException(OAuthServerException::class);
+        $this->expectExceptionCode(8);
+
+        $grant->respondToAccessTokenRequest($serverRequest, $responseType, new DateInterval('PT5M'));
+    }
+
     public function testRespondToRequestRevokedToken(): void
     {
         $client = new ClientEntity();
