@@ -52,6 +52,11 @@ class BearerTokenResponse extends AbstractResponseType
             $responseParams['refresh_token'] = $this->encrypt($refreshTokenPayload);
         }
 
+        if (is_string($this->tokenType)) {
+            // RFC 8693 issued_token_type
+            $responseParams['issued_token_type'] = $this->issuedTokenType;
+        }
+
         $responseParams = json_encode(array_merge($this->getExtraParams($this->accessToken), $responseParams));
 
         if ($responseParams === false) {
