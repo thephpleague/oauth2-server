@@ -7,21 +7,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [9.5.0] - 2026-11-20
+
 ### Added
 
-- Support PHP 8.6.
+- Support for PHP 8.6 (PR #1528)
 
 ### Deprecated
 
 - Deprecate `includeVerificationUriComplete` related code in `DeviceCodeTrait` (PR #1517)
 
-## [9.4.1] - released 2026-06-25
+## [9.4.1] - 2026-06-25
 
 ### Removed
 
 - Removed the dependency on Lcobbuci's Clock to avoid conflicts with other clock implemenations in user land (PR #1505)
 
-## [9.4.0] - released 2026-06-14
+## [9.4.0] - 2026-06-14
 
 ### Changed
 
@@ -32,7 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Removed support for PHP 8.1 (PR #1500)
 
-## [9.3.0] - released 2025-11-25
+## [9.3.0] - 2025-11-25
 
 ### Added
 
@@ -43,7 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Made the Bearer header case insensitive to match the specs correctly (PR #1491)
 
-## [9.2.0] - released 2025-02-15
+## [9.2.0] - 2025-02-15
 
 ### Added
 
@@ -61,7 +63,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Key permission checks ignored on Windows regardless of userland choice as cannot be run successfully on this OS (PR #1447)
 
-## [9.1.0] - released 2024-11-21
+## [9.1.0] - 2024-11-21
 
 ### Added
 
@@ -73,7 +75,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed spec compliance issue where device access token request was mistakenly expecting to receive scopes in the request (PR #1412)
 - Refresh tokens pre version 9 might have had user IDs set as ints which meant they were incorrectly rejected. We now cast these values to strings to allow old refresh tokens (PR #1436)
 
-## [9.0.1] - released 2024-10-14
+## [9.0.1] - 2024-10-14
 
 ### Fixed
 
@@ -82,7 +84,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed bug where "state" parameter wasn't present on `invalid_scope` error response and wasn't on fragment part of `access_denied` redirect URI on Implicit grant (PR #1298)
 - Fixed bug where disabling refresh token revocation via `revokeRefreshTokens(false)` unintentionally disables issuing new refresh token (PR #1449)
 
-## [9.0.0] - released 2024-05-13
+## [9.0.0] - 2024-05-13
 
 ### Added
 
@@ -110,7 +112,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Removed message property from OAuthException HTTP response. Now just use error_description as per the OAuth 2 spec (PR #1375)
 
-## [9.0.0-RC1] - released 2024-03-27
+## [9.0.0-RC1] - 2024-03-27
 
 ### Added
 
@@ -135,13 +137,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Removed message property from OAuthException HTTP response. Now just use error_description as per the OAuth 2 spec (PR #1375)
 
-## [8.5.4] - released 2023-08-25
+## [8.5.4] - 2023-08-25
 
 ### Added
 
 - Support for league/uri ^7.0 (PR #1367)
 
-## [8.5.3] - released 2023-07-06
+## [8.5.3] - 2023-07-06
 
 ### Security
 
@@ -149,20 +151,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   passphrase, the LogicException message generated will expose the given key.
   The key is no longer leaked via this exception (PR #1353)
 
-## [8.5.2] - released 2023-06-16
+## [8.5.2] - 2023-06-16
 
 ### Changed
 
 - Bumped the versions for laminas/diactoros and psr/http-message to support
   PSR-7 v2.0 (PR #1339)
 
-## [8.5.1] - released 2023-04-04
+## [8.5.1] - 2023-04-04
 
 ### Fixed
 
 - Fixed PHP version constraints and lcobucci/clock version constraint to support PHP 8.1 (PR #1336)
 
-## [8.5.0] - released 2023-04-03
+## [8.5.0] - 2023-04-03
 
 ### Added
 
@@ -172,13 +174,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Support PHP 7.2, 7.3, and 7.4 (PR #1333)
 
-## [8.4.1] - released 2023-03-22
+## [8.4.1] - 2023-03-22
 
 ### Fixed
 
 - Fix deprecation notices for PHP 8.x (PR #1329)
 
-## [8.4.0] - released 2023-02-15
+## [8.4.0] - 2023-02-15
 
 ### Added
 
@@ -189,31 +191,31 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Access token requests that contain a code_verifier but are not bound to a code_challenge will be rejected to prevent
   a PKCE downgrade attack (PR #1326)
 
-## [8.3.6] - released 2022-11-14
+## [8.3.6] - 2022-11-14
 
 ### Fixed
 
 - Use LooseValidAt instead of StrictValidAt so that users aren't forced to use claims such as NBF in their JWT tokens (PR #1312)
 
-## [8.3.5] - released 2022-05-12
+## [8.3.5] - 2022-05-12
 
 ### Fixed
 
 - Use InMemory::plainText('empty', 'empty') instead of InMemory::plainText('') to avoid [new empty string exception](https://github.com/lcobucci/jwt/pull/833) thrown by lcobucci/jwt (PR #1282)
 
-## [8.3.4] - released 2022-04-07
+## [8.3.4] - 2022-04-07
 
 ### Fixed
 
 - Server previously rejected valid uris with custom schemes. Now use league/uri for parsing to accept all valid uris (PR #1274)
 
-## [8.3.3] - released 2021-10-11
+## [8.3.3] - 2021-10-11
 
 ### Security
 
 - Removed the use of `LocalFileReference()` in lcobucci/jwt. Function deprecated as per [GHSA-7322-jrq4-x5hf](https://github.com/lcobucci/jwt/security/advisories/GHSA-7322-jrq4-x5hf) (PR #1249)
 
-## [8.3.2] - released 2021-07-27
+## [8.3.2] - 2021-07-27
 
 ### Changed
 
@@ -222,13 +224,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Keys are always stored in memory now and are not written to a file in the /tmp directory (PR #1180)
 - The regex for matching the bearer token has been simplified (PR #1238)
 
-## [8.3.1] - released 2021-06-04
+## [8.3.1] - 2021-06-04
 
 ### Fixed
 
 - Revert check on clientID. We will no longer require this to be a string (PR #1233)
 
-## [8.3.0] - released 2021-06-03
+## [8.3.0] - 2021-06-03
 
 ### Added
 
@@ -246,31 +248,31 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added type validation for redirect uri, client ID, client secret, scopes, auth code, state, username, and password inputs (PR #1210)
 - Allow scope "0" to be used. Previously this was removed from a request because it failed an `empty()` check (PR #1181)
 
-## [8.2.4] - released 2020-12-10
+## [8.2.4] - 2020-12-10
 
 ### Fixed
 
 - Reverted the enforcement of at least one redirect_uri for a client. This change has instead been moved to version 9 (PR #1169)
 
-## [8.2.3] - released 2020-12-02
+## [8.2.3] - 2020-12-02
 
 ### Added
 
 - Re-added support for PHP 7.2 (PR #1165, #1167)
 
-## [8.2.2] - released 2020-11-30
+## [8.2.2] - 2020-11-30
 
 ### Fixed
 
 - Fix issue where the private key passphrase isn't correctly passed to JWT library (PR #1164)
 
-## [8.2.1] - released 2020-11-26
+## [8.2.1] - 2020-11-26
 
 ### Fixed
 
 - If you have a password on your private key, it is now passed correctly to the JWT configuration object. (PR #1159)
 
-## [8.2.0] - released 2020-11-25
+## [8.2.0] - 2020-11-25
 
 ### Added
 
@@ -286,14 +288,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix typo in parameter hint. `code_challenged` changed to `code_challenge`. Thrown by Auth Code Grant when the code challenge does not match the regex. (PR #1130)
 - Undefined offset was returned when no client redirect URI was set. Now throw an invalidClient exception if no redirect URI is set against a client (PR #1140)
 
-## [8.1.1] - released 2020-07-01
+## [8.1.1] - 2020-07-01
 
 ### Fixed
 
 - If you provide a valid redirect_uri with the auth code grant and an invalid scope, the server will use the given
   redirect_uri instead of the default client redirect uri (PR #1126)
 
-## [8.1.0] - released 2020-04-29
+## [8.1.0] - 2020-04-29
 
 ### Added
 
@@ -321,7 +323,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Can now send access token request without being forced to specify a redirect URI (PR #1096)
 - In the BearerTokenValidator, if an implementation is using PDO, there is a possibility that a RuntimeException will be thrown when checking if an access token is revoked. This scenario no longer incorrectly issues an exception with a hint mentioning an issue with JSON decoding. (PR #1107)
 
-## [8.0.0] - released 2019-07-13
+## [8.0.0] - 2019-07-13
 
 ### Added
 
@@ -347,13 +349,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Support for PHP 7.0 (PR #1014)
 - Remove JTI claim from JWT header (PR #1031)
 
-## [7.4.0] - released 2019-05-05
+## [7.4.0] - 2019-05-05
 
 ### Changed
 
 - RefreshTokenRepository can now return null, allowing refresh tokens to be optional. (PR #649)
 
-## [7.3.3] - released 2019-03-29
+## [7.3.3] - 2019-03-29
 
 ### Added
 
@@ -363,19 +365,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Error payload will not issue `message` value in the next major release (PR #1006)
 
-## [7.3.2] - released 2018-11-21
+## [7.3.2] - 2018-11-21
 
 ### Fixed
 
 - Revert setting keys on response type to be inside `getResponseType()` function instead of AuthorizationServer constructor (PR #969)
 
-## [7.3.1] - released 2018-11-15
+## [7.3.1] - 2018-11-15
 
 ### Fixed
 
 - Fix issue with previous release where interface had changed for the AuthorizationServer. Reverted to the previous interface while maintaining functionality changes (PR #970)
 
-## [7.3.0] - released 2018-11-13
+## [7.3.0] - 2018-11-13
 
 ### Changed
 
@@ -390,7 +392,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Fix issue where AuthorizationServer is not stateless as ResponseType could store state of a previous request (PR #960)
 
-## [7.2.0] - released 2018-06-23
+## [7.2.0] - 2018-06-23
 
 ### Changed
 
@@ -405,19 +407,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Catch and handle `BadMethodCallException` from the `verify()` method of the JWT token in the `validateAuthorization` method (PR #904)
 
-## [4.1.7] - released 2018-06-23
+## [4.1.7] - 2018-06-23
 
 ### Fixed
 
 - Ensure `empty()` function call only contains variable to be compatible with PHP 5.4 (PR #918)
 
-## [7.1.1] - released 2018-05-21
+## [7.1.1] - 2018-05-21
 
 ### Fixed
 
 - No longer set a WWW-Authenticate header for invalid clients if the client did not send an Authorization header in the original request (PR #902)
 
-## [7.1.0] - released 2018-04-22
+## [7.1.0] - 2018-04-22
 
 ### Changed
 
@@ -433,7 +435,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Remove paragone/random_compat from dependencies
 
-## [7.0.0] - released 2018-02-18
+## [7.0.0] - 2018-02-18
 
 ### Added
 
@@ -807,7 +809,8 @@ Version 5 is a complete code rewrite.
 
 - First major release
 
-[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/9.4.1...HEAD
+[Unreleased]: https://github.com/thephpleague/oauth2-server/compare/9.5.0...HEAD
+[9.5.0]: https://github.com/thephpleague/oauth2-server/compare/9.4.1...9.5.0
 [9.4.1]: https://github.com/thephpleague/oauth2-server/compare/9.4.0...9.4.1
 [9.4.0]: https://github.com/thephpleague/oauth2-server/compare/9.3.0...9.4.0
 [9.3.0]: https://github.com/thephpleague/oauth2-server/compare/9.2.0...9.3.0
