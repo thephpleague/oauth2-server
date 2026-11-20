@@ -54,6 +54,8 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
 
+        $responseType->setIssuedTokenType('urn:ietf:params:oauth:token-type:access_token');
+
         $response = $responseType->generateHttpResponse(new Response());
 
         self::assertEquals(200, $response->getStatusCode());
@@ -67,6 +69,7 @@ class BearerResponseTypeTest extends TestCase
         self::assertObjectHasProperty('expires_in', $json);
         self::assertObjectHasProperty('access_token', $json);
         self::assertObjectHasProperty('refresh_token', $json);
+        self::assertObjectHasProperty('issued_token_type', $json);
     }
 
     public function testGenerateHttpResponseWithExtraParams(): void
@@ -97,6 +100,8 @@ class BearerResponseTypeTest extends TestCase
         $responseType->setAccessToken($accessToken);
         $responseType->setRefreshToken($refreshToken);
 
+        $responseType->setIssuedTokenType('urn:ietf:params:oauth:token-type:access_token');
+
         $response = $responseType->generateHttpResponse(new Response());
 
         self::assertEquals(200, $response->getStatusCode());
@@ -110,6 +115,7 @@ class BearerResponseTypeTest extends TestCase
         self::assertObjectHasProperty('expires_in', $json);
         self::assertObjectHasProperty('access_token', $json);
         self::assertObjectHasProperty('refresh_token', $json);
+        self::assertObjectHasProperty('issued_token_type', $json);
 
         self::assertObjectHasProperty('foo', $json);
         self::assertEquals('bar', $json->foo);
