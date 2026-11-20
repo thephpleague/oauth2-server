@@ -4,6 +4,8 @@ parameters:
         - src
         - tests
     ignoreErrors:
-        - 
-            message: '#Deprecated since v5.5, please use {@see self::withValidationConstraints\(\)} instead#'
+        # Preserve support for tokens without exp; PermissiveValidAt would reject them.
+        -
+            message: '#deprecated class Lcobucci\\JWT\\Validation\\Constraint\\LooseValidAt#'
+            path: src/AuthorizationValidators/BearerTokenValidator.php
             reportUnmatched: false

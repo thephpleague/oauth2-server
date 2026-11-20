@@ -7,12 +7,14 @@ namespace LeagueTests\AuthorizationValidators;
 use DateInterval;
 use DateTimeImmutable;
 use Laminas\Diactoros\ServerRequest;
+use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -20,7 +22,46 @@ use function sprintf;
 
 class BearerTokenValidatorTest extends TestCase
 {
-    public function testBearerTokenValidatorAcceptsValidToken(): void
+    public function testBearerTokenValidatorAcceptsTokenWithoutExpiration(): void
+    {
+        $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
+        $accessTokenRepository->expects(self::once())->method('isAccessTokenRevoked')
+            ->with('token-id')->willReturn(false);
+
+        $validator = new BearerTokenValidator($accessTokenRepository);
+        $validator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
+
+        $configuration = Configuration::forAsymmetricSigner(
+            new Sha256(),
+            InMemory::file(__DIR__ . '/../Stubs/private.key'),
+            InMemory::file(__DIR__ . '/../Stubs/public.key')
+        );
+        $token = $configuration->builder()
+            ->permittedFor('client-id')
+            ->identifiedBy('token-id')
+            ->relatedTo('user-id')
+            ->withClaim('scopes', [])
+            ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
+
+        $validRequest = $validator->validateAuthorization(
+            (new ServerRequest())->withHeader('authorization', 'Bearer ' . $token->toString())
+        );
+
+        self::assertSame('token-id', $validRequest->getAttribute('oauth_access_token_id'));
+        self::assertSame('client-id', $validRequest->getAttribute('oauth_client_id'));
+        self::assertSame('user-id', $validRequest->getAttribute('oauth_user_id'));
+        self::assertSame([], $validRequest->getAttribute('oauth_scopes'));
+    }
+
+    /** @return iterable<string, array{bool}> */
+    public static function provideTemporalClaims(): iterable
+    {
+        yield 'all temporal claims' => [true];
+        yield 'expiration only' => [false];
+    }
+
+    #[DataProvider('provideTemporalClaims')]
+    public function testBearerTokenValidatorAcceptsValidToken(bool $includeOptionalTimes): void
     {
         $accessTokenRepositoryMock = $this->getMockBuilder(AccessTokenRepositoryInterface::class)->getMock();
 
@@ -30,15 +71,18 @@ class BearerTokenValidatorTest extends TestCase
         $bearerTokenValidatorReflection = new ReflectionClass(BearerTokenValidator::class);
         $jwtConfiguration = $bearerTokenValidatorReflection->getProperty('jwtConfiguration');
 
-        $validJwt = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
+        $builder = $jwtConfiguration->getValue($bearerTokenValidator)->builder()
             ->permittedFor('client-id')
             ->identifiedBy('token-id')
-            ->issuedAt(new DateTimeImmutable())
-            ->canOnlyBeUsedAfter(new DateTimeImmutable())
             ->expiresAt((new DateTimeImmutable())->add(new DateInterval('PT1H')))
             ->relatedTo('user-id')
-            ->withClaim('scopes', 'scope1 scope2 scope3 scope4')
-            ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
+            ->withClaim('scopes', 'scope1 scope2 scope3 scope4');
+
+        if ($includeOptionalTimes) {
+            $builder = $builder->issuedAt(new DateTimeImmutable())->canOnlyBeUsedAfter(new DateTimeImmutable());
+        }
+
+        $validJwt = $builder->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
         $request = (new ServerRequest())->withHeader('authorization', sprintf('Bearer %s', $validJwt->toString()));
 
