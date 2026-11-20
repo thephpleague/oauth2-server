@@ -3,3 +3,9 @@ parameters:
     paths:
         - src
         - tests
+    ignoreErrors:
+        # JWT 5.6 fallback for PHP 8.2/8.3; the class is deprecated only in JWT 5.7+.
+        -
+            message: '#deprecated class Lcobucci\\JWT\\Validation\\Constraint\\LooseValidAt#'
+            path: src/AuthorizationValidators/BearerTokenValidator.php
+            reportUnmatched: false

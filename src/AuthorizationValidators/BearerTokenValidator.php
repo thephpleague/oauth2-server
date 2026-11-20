@@ -20,7 +20,9 @@ use Lcobucci\JWT\Exception;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\UnencryptedToken;
+use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
+use Lcobucci\JWT\Validation\Constraint\PermissiveValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use League\OAuth2\Server\CryptKeyInterface;
@@ -31,6 +33,7 @@ use Psr\Clock\ClockInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
+use function class_exists;
 use function date_default_timezone_get;
 use function preg_replace;
 use function trim;
@@ -80,8 +83,16 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             throw new RuntimeException('Public key is empty');
         }
 
+        if (class_exists(PermissiveValidAt::class)) {
+            /** @var PermissiveValidAt&Constraint $validAt */
+            $validAt = new PermissiveValidAt($clock, $this->jwtValidAtDateLeeway);
+        } else {
+            // JWT 5.6 supports PHP 8.2/8.3 and does not provide PermissiveValidAt.
+            $validAt = new LooseValidAt($clock, $this->jwtValidAtDateLeeway);
+        }
+
         $this->jwtConfiguration = $this->jwtConfiguration->withValidationConstraints(
-            new LooseValidAt($clock, $this->jwtValidAtDateLeeway),
+            $validAt,
             new SignedWith(
                 new Sha256(),
                 InMemory::plainText($publicKeyContents, $this->publicKey->getPassPhrase() ?? '')
@@ -110,6 +121,11 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             $token = $this->jwtConfiguration->parser()->parse($jwt);
         } catch (Exception $exception) {
             throw OAuthServerException::accessDenied($exception->getMessage(), null, $exception);
+        }
+
+        // Require expiration with JWT 5.6 too, where LooseValidAt allows it to be absent.
+        if ($token instanceof UnencryptedToken && !$token->claims()->has('exp')) {
+            throw OAuthServerException::accessDenied('Access token is missing the expiration time');
         }
 
         try {
