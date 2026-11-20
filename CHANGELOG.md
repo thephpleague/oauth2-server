@@ -11,10 +11,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Support PHP 8.6.
 
-### Changed
-
-- Require an expiration claim when validating bearer tokens, including when using JWT 5.6 on PHP 8.2/8.3.
-
 ### Deprecated
 
 - Deprecate `includeVerificationUriComplete` related code in `DeviceCodeTrait` (PR #1517)

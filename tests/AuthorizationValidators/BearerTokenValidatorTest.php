@@ -22,10 +22,11 @@ use function sprintf;
 
 class BearerTokenValidatorTest extends TestCase
 {
-    public function testBearerTokenValidatorRejectsTokenWithoutExpiration(): void
+    public function testBearerTokenValidatorAcceptsTokenWithoutExpiration(): void
     {
         $accessTokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
-        $accessTokenRepository->expects(self::never())->method('isAccessTokenRevoked');
+        $accessTokenRepository->expects(self::once())->method('isAccessTokenRevoked')
+            ->with('token-id')->willReturn(false);
 
         $validator = new BearerTokenValidator($accessTokenRepository);
         $validator->setPublicKey(new CryptKey('file://' . __DIR__ . '/../Stubs/public.key'));
@@ -42,12 +43,14 @@ class BearerTokenValidatorTest extends TestCase
             ->withClaim('scopes', [])
             ->getToken(new Sha256(), InMemory::file(__DIR__ . '/../Stubs/private.key'));
 
-        $this->expectException(OAuthServerException::class);
-        $this->expectExceptionCode(9);
-
-        $validator->validateAuthorization(
+        $validRequest = $validator->validateAuthorization(
             (new ServerRequest())->withHeader('authorization', 'Bearer ' . $token->toString())
         );
+
+        self::assertSame('token-id', $validRequest->getAttribute('oauth_access_token_id'));
+        self::assertSame('client-id', $validRequest->getAttribute('oauth_client_id'));
+        self::assertSame('user-id', $validRequest->getAttribute('oauth_user_id'));
+        self::assertSame([], $validRequest->getAttribute('oauth_scopes'));
     }
 
     /** @return iterable<string, array{bool}> */
